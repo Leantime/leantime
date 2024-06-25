@@ -20,7 +20,7 @@ if (str_contains($formUrl, '?delComment=')) {
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
         <div class="mainToggler-<?=$formHash ?>" id="">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?=format($_SESSION['userdata']['modified'])->timestamp() ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=session("userdata.id") ?>&v=<?=format(session("userdata.modified"))->timestamp() ?>" />
             </div>
             <div class="commentReply inactive">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, null, '<?=$formHash?>')">
@@ -31,7 +31,7 @@ if (str_contains($formUrl, '?delComment=')) {
 
         <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?> commenterFields" style="display:none;">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?=format($_SESSION['userdata']['modified'])->timestamp() ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=session("userdata.id")?>&v=<?=format(session("userdata.modified"))->timestamp() ?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
@@ -66,7 +66,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                             </a>
 
                                             <ul class="dropdown-menu">
-                                                <?php if (($row['userId'] == $_SESSION['userdata']['id']) || $login::userIsAtLeast($roles::$manager)) { ?>
+                                                <?php if (($row['userId'] == session("userdata.id")) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment formModal">
                                                         <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                     </a></li>
@@ -126,7 +126,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                                        onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash ?>')">
                                                         <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                     </a>
-                                                    <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
+                                                    <?php if ($comment['userId'] == session("userdata.id")) { ?>
                                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                                            class="deleteComment formModal">
                                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
@@ -144,7 +144,7 @@ if (str_contains($formUrl, '?delComment=')) {
                             <?php endif; ?>
                             <div style="display:none;" id="comment-<?=$formHash?>-<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= format($_SESSION['userdata']['modified'])->timestamp() ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session("userdata.id") ?>&v=<?= format(session("userdata.modified"))->timestamp() ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" id="submit-reply-button" class="btn btn-primary"/>

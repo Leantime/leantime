@@ -49,8 +49,8 @@ namespace Leantime\Domain\Clients\Controllers {
             $this->commentService = $commentService;
             $this->fileService = $fileService;
 
-            if (!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL . "/clients/showAll";
+            if (!session()->exists("lastPage")) {
+                session(["lastPage" => BASE_URL . "/clients/showAll"]);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 $file = app()->make(FileRepository::class);
                 $project = app()->make(ProjectRepository::class);
 
-                if ($_SESSION['userdata']['role'] == 'admin') {
+                if (session("userdata.role") == 'admin') {
                     $this->tpl->assign('admin', true);
                 }
 

@@ -11,8 +11,10 @@ use Leantime\Core\Environment;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Middleware\Request;
 use Leantime\Domain\Api\Services\Api;
+use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -25,6 +27,7 @@ class RequestRateLimiter
     use Eventhelpers;
 
     protected RateLimiter $limiter;
+    protected Environment $config;
 
     /**
      * __construct
@@ -33,34 +36,39 @@ class RequestRateLimiter
      * @param RateLimiter $limiter The RateLimiter object to be initialized.
      * @return void.
      */
-    public function __construct()
+    public function __construct(Environment $config, RateLimiter $limiter)
     {
-        app()->singleton(RateLimiter::class, fn($app)=> new RateLimiter(Cache::store("installation")));
-        $this->limiter = app()->make(RateLimiter::class);
+        $this->limiter = $limiter;
+        $this->config = $config;
     }
 
     /**
      * Handle the incoming request.
      *
      * @param IncomingRequest $request The incoming request object.
-     * @param Closure $next The next middleware closure.
+     * @param Closure         $next    The next middleware closure.
      * @return Response The response object.
      * @throws BindingResolutionException
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+
+        if(!session("isInstalled")) {
+            return $next($request);
+        }
+
         //Configurable rate limits
-        $rateLimitGeneral = app()->make(Environment::class)->get('LEAN_RATELIMIT_GENERAL') ?? 1000;
-        $rateLimitApi = app()->make(Environment::class)->get('LEAN_RATELIMIT_API') ?? 10;
-        $rateLimitAuth = app()->make(Environment::class)->get('LEAN_RATELIMIT_AUTH') ?? 20;
+        $rateLimitGeneral = $this->config->ratelimitGeneral ?? 2000;
+        $rateLimitApi = $this->config->ratelimitApi ?? 10;
+        $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
 
         //Key
         $keyModifier = "-1";
-        if(isset($_SESSION['userdata'])){
-            $keyModifier =  $_SESSION['userdata']['id'];
+        if (session()->exists("userdata")) {
+            $keyModifier =  session("userdata.id");
         }
 
-        $key = $request->getClientIp()."-".$keyModifier;
+        $key = $request->getClientIp() . "-" . $keyModifier;
 
         //General Limit per minute
         $limit = $rateLimitGeneral;
@@ -80,7 +88,7 @@ class RequestRateLimiter
         }
 
         $key = self::dispatch_filter(
-            "rateLimit",
+            "rateLimitKey",
             $key,
             [
                 "bootloader" => $this,

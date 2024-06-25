@@ -223,7 +223,7 @@ namespace Leantime\Domain\Projects\Services {
 
             //Only users that actually want to be notified
             foreach ($users as $user) {
-                if ($user["notifications"] != 0 && ($user['username'] != $_SESSION['userdata']['mail'])) {
+                if ($user["notifications"] != 0 && ($user['username'] != session("userdata.mail"))) {
                     $to[] = $user;
                 }
             }
@@ -259,7 +259,7 @@ namespace Leantime\Domain\Projects\Services {
 
 
             $mailer->setHtml($emailMessage);
-            //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+            //$mailer->sendMail($users, session("userdata.name"));
             */
 
             $emailMessage = $notification->message;
@@ -603,16 +603,16 @@ namespace Leantime\Domain\Projects\Services {
             }
 
             if (
-                ! empty($_SESSION['currentProject'])
-                && $this->changeCurrentSessionProject($_SESSION['currentProject'])
+                session()->has("currentProject")
+                && $this->changeCurrentSessionProject(session("currentProject"))
             ) {
                 return;
             }
 
-            $_SESSION['currentProject'] = 0;
+            session(["currentProject" => 0]);
 
             //If last project setting is set use that
-            $lastProject = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject");
+            $lastProject = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".lastProject");
             if (
                 ! empty($lastProject)
                 && $this->changeCurrentSessionProject($lastProject)
@@ -620,7 +620,7 @@ namespace Leantime\Domain\Projects\Services {
                 return;
             }
 
-            $allProjects = $this->getProjectsAssignedToUser($_SESSION['userdata']['id']);
+            $allProjects = $this->getProjectsAssignedToUser(session("userdata.id"));
             if (empty($allProjects)) {
                 return;
             }
@@ -640,7 +640,7 @@ namespace Leantime\Domain\Projects\Services {
         public function getCurrentProjectId(): int
         {
             // Make sure that we never return a value less than 0.
-            return max(0, (int) ($_SESSION['currentProject'] ?? 0));
+            return max(0, (int) (session("currentProject") ?? 0));
         }
 
         /**
@@ -656,80 +656,80 @@ namespace Leantime\Domain\Projects\Services {
 
             $projectId = (int)$projectId;
 
-            $_SESSION["currentProjectName"] = '';
+            session(["currentProjectName" => '']);
 
-            if ($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
+            if ($this->isUserAssignedToProject(session("userdata.id"), $projectId) === true) {
                 //Get user project role
 
                 $project = $this->getProject($projectId);
 
                 if ($project) {
                     if (
-                        isset($_SESSION["currentProject"]) &&
-                        $_SESSION["currentProject"] == $project['id']
+                        session()->exists("currentProject") &&
+                        session("currentProject") == $project['id']
                     ) {
                         return true;
                     }
 
-                    $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
+                    $projectRole = $this->getProjectRole(session("userdata.id"), $projectId);
 
-                    $_SESSION["currentProject"] = $projectId;
+                    session(["currentProject" => $projectId]);
 
                     if (mb_strlen($project['name']) > 25) {
-                        $_SESSION["currentProjectName"] = mb_substr($project['name'], 0, 25) . " (...)";
+                        session(["currentProjectName" => mb_substr($project['name'], 0, 25) . " (...)"]);
                     } else {
-                        $_SESSION["currentProjectName"] = $project['name'];
+                        session(["currentProjectName" => $project['name']]);
                     }
 
-                    $_SESSION["currentProjectClient"] = $project['clientName'];
+                    session(["currentProjectClient" => $project['clientName']]);
 
-                    $_SESSION['userdata']['projectRole'] = '';
+                    session(["userdata.projectRole" => '']);
                     if ($projectRole != '') {
-                        $_SESSION['userdata']['projectRole'] = Roles::getRoleString($projectRole);
+                        session(["userdata.projectRole" => Roles::getRoleString($projectRole)]);
                     }
 
-                    $_SESSION["currentSprint"] = "";
-                    $_SESSION['currentIdeaCanvas'] = "";
-                    $_SESSION['lastTicketView'] = "";
-                    $_SESSION['lastFilterdTicketTableView'] = "";
-                    $_SESSION['lastFilterdTicketKanbanView'] = "";
-                    $_SESSION['currentWiki'] = '';
-                    $_SESSION['lastArticle'] = "";
+                    session(["currentSprint" => ""]);
+                    session(["currentIdeaCanvas" => ""]);
+                    session(["lastTicketView" => ""]);
+                    session(["lastFilterdTicketTableView" => ""]);
+                    session(["lastFilterdTicketKanbanView" => ""]);
+                    session(["currentWiki" => '']);
+                    session(["lastArticle" => ""]);
 
-                    $_SESSION['currentSWOTCanvas'] = "";
-                    $_SESSION['currentLEANCanvas'] = "";
-                    $_SESSION['currentEMCanvas'] = "";
-                    $_SESSION['currentINSIGHTSCanvas'] = "";
-                    $_SESSION['currentSBCanvas'] = "";
-                    $_SESSION['currentRISKSCanvas'] = "";
-                    $_SESSION['currentEACanvas'] = "";
-                    $_SESSION['currentLBMCanvas'] = "";
-                    $_SESSION['currentOBMCanvas'] = "";
-                    $_SESSION['currentDBMCanvas'] = "";
-                    $_SESSION['currentSQCanvas'] = "";
-                    $_SESSION['currentCPCanvas'] = "";
-                    $_SESSION['currentSMCanvas'] = "";
-                    $_SESSION['currentRETROSCanvas'] = "";
-                    $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject", $_SESSION["currentProject"]);
+                    session(["currentSWOTCanvas" => ""]);
+                    session(["currentLEANCanvas" => ""]);
+                    session(["currentEMCanvas" => ""]);
+                    session(["currentINSIGHTSCanvas" => ""]);
+                    session(["currentSBCanvas" => ""]);
+                    session(["currentRISKSCanvas" => ""]);
+                    session(["currentEACanvas" => ""]);
+                    session(["currentLBMCanvas" => ""]);
+                    session(["currentOBMCanvas" => ""]);
+                    session(["currentDBMCanvas" => ""]);
+                    session(["currentSQCanvas" => ""]);
+                    session(["currentCPCanvas" => ""]);
+                    session(["currentSMCanvas" => ""]);
+                    session(["currentRETROSCanvas" => ""]);
+                    $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".lastProject", session("currentProject"));
 
 
-                    $recentProjects =  $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
+                    $recentProjects =  $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".recentProjects");
                     $recent = unserialize($recentProjects);
 
                     if (is_array($recent) === false) {
                         $recent = array();
                     }
-                    $key = array_search($_SESSION["currentProject"], $recent);
+                    $key = array_search(session("currentProject"), $recent);
                     if ($key !== false) {
                         unset($recent[$key]);
                     }
-                    array_unshift($recent, $_SESSION["currentProject"]);
+                    array_unshift($recent, session("currentProject"));
 
                     $recent = array_slice($recent, 0, 20);
 
-                    $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects", serialize($recent));
+                    $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".recentProjects", serialize($recent));
 
-                    unset($_SESSION["projectsettings"]);
+                    session()->forget("projectsettings");
 
                     self::dispatch_event("projects.setCurrentProject", $project);
 
@@ -749,30 +749,30 @@ namespace Leantime\Domain\Projects\Services {
         public function resetCurrentProject(): void
         {
 
-            $_SESSION["currentProject"] = "";
-            $_SESSION["currentProjectClient"] = "";
-            $_SESSION["currentProjectName"] = "";
+            session(["currentProject" => ""]);
+            session(["currentProjectClient" => ""]);
+            session(["currentProjectName" => ""]);
 
-            $_SESSION["currentSprint"] = "";
-            $_SESSION['currentIdeaCanvas'] = "";
+            session(["currentSprint" => ""]);
+            session(["currentIdeaCanvas" => ""]);
 
-            $_SESSION['currentSWOTCanvas'] = "";
-            $_SESSION['currentLEANCanvas'] = "";
-            $_SESSION['currentEMCanvas'] = "";
-            $_SESSION['currentINSIGHTSCanvas'] = "";
-            $_SESSION['currentSBCanvas'] = "";
-            $_SESSION['currentRISKSCanvas'] = "";
-            $_SESSION['currentEACanvas'] = "";
-            $_SESSION['currentLBMCanvas'] = "";
-            $_SESSION['currentOBMCanvas'] = "";
-            $_SESSION['currentDBMCanvas'] = "";
-            $_SESSION['currentSQCanvas'] = "";
-            $_SESSION['currentCPCanvas'] = "";
-            $_SESSION['currentSMCanvas'] = "";
-            $_SESSION['currentRETROSCanvas'] = "";
-            unset($_SESSION["projectsettings"]);
+            session(["currentSWOTCanvas" => ""]);
+            session(["currentLEANCanvas" => ""]);
+            session(["currentEMCanvas" => ""]);
+            session(["currentINSIGHTSCanvas" => ""]);
+            session(["currentSBCanvas" => ""]);
+            session(["currentRISKSCanvas" => ""]);
+            session(["currentEACanvas" => ""]);
+            session(["currentLBMCanvas" => ""]);
+            session(["currentOBMCanvas" => ""]);
+            session(["currentDBMCanvas" => ""]);
+            session(["currentSQCanvas" => ""]);
+            session(["currentCPCanvas" => ""]);
+            session(["currentSMCanvas" => ""]);
+            session(["currentRETROSCanvas" => ""]);
+            session()->forget("projectsettings");
 
-            $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject", $_SESSION["currentProject"]);
+            $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".lastProject", session("currentProject"));
 
             $this->setCurrentProject();
         }
@@ -976,7 +976,7 @@ namespace Leantime\Domain\Projects\Services {
                         'description' => $ticket->description,
                         'projectId' => $newProjectId,
                         'editorId' => $ticket->editorId,
-                        'userId' => $_SESSION['userdata']['id'],
+                        'userId' => session("userdata.id"),
                         'date' => date("Y-m-d H:i:s"),
                         'dateToFinish' => $dateToFinishValue,
                         'status' => $ticket->status,
@@ -1029,7 +1029,7 @@ namespace Leantime\Domain\Projects\Services {
                         'description' => $ticket->description,
                         'projectId' => $newProjectId,
                         'editorId' => $ticket->editorId,
-                        'userId' => $_SESSION['userdata']['id'],
+                        'userId' => session("userdata.id"),
                         'date' => date("Y-m-d H:i:s"),
                         'dateToFinish' => $dateToFinishValue,
                         'status' => $ticket->status,
@@ -1098,7 +1098,7 @@ namespace Leantime\Domain\Projects\Services {
             foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
-                    "author" => $_SESSION['userdata']['id'],
+                    "author" => session("userdata.id"),
                     "projectId" => $newProjectId,
                     "description" => $canvas['description'] ?? '',
                 );
@@ -1239,13 +1239,13 @@ namespace Leantime\Domain\Projects\Services {
                         "description" => array(
                             "title" => "label.projectDescription",
                             "status" => "",
-                            "link" => BASE_URL . "/projects/showProject/" . $_SESSION['currentProject'] . "",
+                            "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "",
                             "description" => "checklist.define.tasks.description",
                     ),
                         "defineTeam" => array(
                             "title" => "label.defineTeam",
                             "status" => "",
-                            "link" => BASE_URL . "/projects/showProject/" . $_SESSION['currentProject'] . "#team",
+                            "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "#team",
                             "description" => "checklist.define.tasks.defineTeam",
                     ),
                         "createBlueprint" => array(

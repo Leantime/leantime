@@ -59,7 +59,7 @@ if (str_contains($formUrl, '?delComment=')) {
                             <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                         </a>
 
-                        <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
+                        <?php if ($row['userId'] == session("userdata.id")) { ?>
                             |
                             <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
                                class="deleteComment">
@@ -97,7 +97,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                 <div class="clear"></div>
 
                                 <div style="padding-left:60px">
-                                    <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
+                                    <?php if ($comment['userId'] == session("userdata.id")) { ?>
                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                            class="deleteComment">
                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>

@@ -61,14 +61,14 @@ class ProjectSelector extends Composer
         $projectType = '';
         $menuType = 'default';
 
-        $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
+        $projectSelectFilter = session("usersettings.projectSelectFilter", array(
             "groupBy" => "structure",
             "client" => null,
-        );
+        ));
 
-        if (isset($_SESSION['userdata'])) {
+        if (session()->exists("userdata")) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
-            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id'], $projectSelectFilter["client"]);
+            $projectVars = $this->menuService->getUserProjectList(session("userdata.id"), $projectSelectFilter["client"]);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects  = $projectVars['availableProjects'];

@@ -86,7 +86,7 @@ class CsvImport extends Provider implements ProviderIntegration
      */
     public function getFields(): mixed
     {
-        return $_SESSION['csvImporter']['headers'] ?? array();
+        return session("csvImporter.headers") ?? array();
     }
 
     /**
@@ -96,7 +96,7 @@ class CsvImport extends Provider implements ProviderIntegration
     public function setFields(array $fields): void
     {
 
-        //$_SESSION['csvImporter']['headers'] = json_encode($fields);
+
     }
 
     //Get available entities
@@ -114,7 +114,7 @@ class CsvImport extends Provider implements ProviderIntegration
      */
     public function getValues(Entity $Entity): mixed
     {
-        $integrationMeta = $_SESSION['csvImporter']['meta'] ?? '';
+        $integrationMeta = session("csvImporter.meta", '');
 
         if (empty($integrationMeta)) {
             return false;
@@ -133,6 +133,6 @@ class CsvImport extends Provider implements ProviderIntegration
     public function geValues()
     {
 
-        return $_SESSION['csv_records'] ?? [];
+        return session("csv_records") ?? [];
     }
 }

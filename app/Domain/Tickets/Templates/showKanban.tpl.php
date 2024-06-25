@@ -77,7 +77,7 @@ $allTicketGroups = $tpl->get("allTickets");
                             <ul class="dropdown-menu">
                                 <li><a href="#/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$tpl->__('headlines.edit_label')?></a>
                                 </li>
-                                <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$tpl->__('links.add_remove_col')?></a></li>
+                                <li><a href="<?=BASE_URL ?>/projects/showProject/<?=session("currentProject");?>#todosettings"><?=$tpl->__('links.add_remove_col')?></a></li>
                             </ul>
                         </div>
                     <?php } ?>
@@ -99,7 +99,7 @@ $allTicketGroups = $tpl->get("allTickets");
                             <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
                             <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
                             <input type="hidden" name="status" value="<?php echo $key; ?> " />
-                            <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
+                            <input type="hidden" name="sprint" value="<?php echo session("currentSprint"); ?> " />
                             <input type="submit" value="Save" name="quickadd" />
                             <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?=$key?>, #ticket_new_link_<?=$key?>').toggle('fast');">
                                 <?=$tpl->__("links.cancel") ?>

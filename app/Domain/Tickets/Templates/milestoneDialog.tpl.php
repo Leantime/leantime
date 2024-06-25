@@ -43,7 +43,7 @@ $statusLabels = $tpl->get('statusLabels');
                         && $currentMilestone->projectId == $project['id']
                 ) {
                     echo "selected";
-                } else if ($_SESSION['currentProject'] == $project['id']) {
+                } else if (session("currentProject") == $project['id']) {
                     echo "selected";
                 }
                 ?>

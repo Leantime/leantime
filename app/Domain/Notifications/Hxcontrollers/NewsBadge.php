@@ -44,7 +44,7 @@ class NewsBadge extends HtmxController
     {
 
         try {
-            $hasNews = $this->newsService->hasNews($_SESSION['userdata']['id']);
+            $hasNews = $this->newsService->hasNews(session("userdata.id"));
         }catch(\Exception $e) {
             error_log($e);
             $hasNews = false;

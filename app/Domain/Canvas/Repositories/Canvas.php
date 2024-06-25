@@ -529,7 +529,7 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function getCanvasItemsById($id): false|array
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
 
             $sql = "SELECT
                         zp_canvas_items.id,
@@ -782,7 +782,7 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function getSingleCanvasItem($id): mixed
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
 
             $sql = "SELECT
                         zp_canvas_items.id,

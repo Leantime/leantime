@@ -42,7 +42,7 @@ class Stopwatch extends HtmxController
     public function getStatus(): void
     {
 
-        $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
+        $onTheClock = session()->exists("userdata") ? $this->timesheetService->isClocked(session("userdata.id")) : false;
         $this->tpl->assign("onTheClock", $onTheClock);
     }
 
@@ -66,7 +66,7 @@ class Stopwatch extends HtmxController
 
         $this->setHTMXEvent("timerUpdate");
 
-        $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
+        $onTheClock = session()->exists("userdata") ? $this->timesheetService->isClocked(session("userdata.id")) : false;
 
         $this->tpl->assign("onTheClock", $onTheClock);
     }
@@ -91,7 +91,7 @@ class Stopwatch extends HtmxController
 
         $this->setHTMXEvent("timerUpdate");
 
-        $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
+        $onTheClock = session()->exists("userdata") ? $this->timesheetService->isClocked(session("userdata.id")) : false;
         $this->tpl->assign("onTheClock", $onTheClock);
     }
 }

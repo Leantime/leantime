@@ -60,7 +60,6 @@ class TrustProxies
             ['bootloader' => $this]
         );
 
-        IncomingRequest::setTrustedProxies($this->proxies, $this->headers);
     }
 
     /**
@@ -73,6 +72,8 @@ class TrustProxies
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+
+        $request::setTrustedProxies($this->proxies, $this->headers);
 
         if (!$request->isFromTrustedProxy()) {
             return new Response(json_encode(['error' => 'Not a trusted proxy']), 403);

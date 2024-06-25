@@ -43,7 +43,7 @@ class Login
         $this->I->waitForElementVisible('.stickyHeader', 120);
         $this->I->see('Hi John');
 
-        $this->saveSessionSnapshot('sid');
+        $this->saveSessionSnapshot('ltid');
     }
 
     protected function loadSessionShapshot(string $name): bool

@@ -50,7 +50,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
         public function post($params): Response
         {
 
-            if (isset($_SESSION['userdata']) && $this->authService->use2FA()) {
+            if (session()->exists("userdata") && $this->authService->use2FA()) {
                 if (isset($params['twoFA_code']) === true) {
                     $redirectUrl = filter_var($params['redirectUrl'], FILTER_SANITIZE_URL);
 

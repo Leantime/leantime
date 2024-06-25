@@ -291,8 +291,8 @@ namespace Leantime\Domain\Install\Repositories {
 
             if ($currentDBVersion == $newDBVersion) {
 
-                unset($_SESSION['isUpdated']);
-                unset($_SESSION['dbVersion']);
+                session()->forget("isUpdated");
+                session()->forget("dbVersion");
 
                 return true;
             }
@@ -326,8 +326,8 @@ namespace Leantime\Domain\Install\Repositories {
                 }
             }
 
-            unset($_SESSION['isUpdated']);
-            unset($_SESSION['dbVersion']);
+            session()->forget("isUpdated");
+            session()->forget("dbVersion");
 
             return true;
         }

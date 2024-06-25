@@ -78,8 +78,9 @@ namespace Leantime\Domain\Users\Controllers {
                 );
 
                 if (isset($_GET['resendInvite']) && $row !== false) {
-                    if (!isset($_SESSION['lastInvite.' . $values['id']]) || $_SESSION['lastInvite.' . $values['id']] < time() - 240) {
-                        $_SESSION['lastInvite.' . $values['id']] = time();
+                    if (!session()->exists("lastInvite." . $values['id']) ||
+                        session("lastInvite." . $values['id']) < time() - 240) {
+                        session(["lastInvite." . $values['id'] => time()]);
 
                         //If pw reset is empty for whatever reason, create new invite code
                         if(empty($values['pwReset'])){
@@ -103,7 +104,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
 
                 if (isset($_POST['save'])) {
-                    if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+                    if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                         $values = array(
                             'id' =>  $row['id'],
                             'firstname' => ($_POST['firstname'] ?? $row['firstname']),
@@ -187,8 +188,8 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-                $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-                $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+                session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+                session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
                 $this->tpl->assign('values', $values);
                 $this->tpl->assign('relations', $projectrelation);

@@ -25,7 +25,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
 <div class="pageheader">
     <div class="pageicon"><i class="far fa-lightbulb"></i></div>
     <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectClient") . " // " . session("currentProjectName")); ?></h5>
         <?php if (count($allCanvas) > 0) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
         <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>

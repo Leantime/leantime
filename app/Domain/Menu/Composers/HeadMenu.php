@@ -64,9 +64,9 @@ class HeadMenu extends Composer
         $notificationService = $this->notificationService;
         $notifications = array();
         $newnotificationCount = 0;
-        if (isset($_SESSION['userdata'])) {
-            $notifications = $notificationService->getAllNotifications($_SESSION['userdata']['id']);
-            $newnotificationCount = $notificationService->getAllNotifications($_SESSION['userdata']['id'], true);
+        if (session()->exists("userdata")) {
+            $notifications = $notificationService->getAllNotifications(session("userdata.id"));
+            $newnotificationCount = $notificationService->getAllNotifications(session("userdata.id"), true);
         }
 
         $nCount = is_array($newnotificationCount) ? count($newnotificationCount) : 0;
@@ -92,8 +92,8 @@ class HeadMenu extends Composer
         }
 
         $user = false;
-        if (isset($_SESSION['userdata'])) {
-            $user = $this->userService->getUser($_SESSION['userdata']['id']);
+        if (session()->exists("userdata")) {
+            $user = $this->userService->getUser(session("userdata.id"));
         }
 
         if (!$user) {
@@ -103,8 +103,8 @@ class HeadMenu extends Composer
 
         $modal = $this->helperService->getHelperModalByRoute(FrontcontrollerCore::getCurrentRoute());
 
-        if (!isset($_SESSION['companysettings.logoPath'])) {
-            $_SESSION['companysettings.logoPath'] = $this->themeCore->getLogoUrl();
+        if (!session()->exists("companysettings.logoPath")) {
+            session(["companysettings.logoPath" => $this->themeCore->getLogoUrl()]);
         }
 
         return [
@@ -115,7 +115,7 @@ class HeadMenu extends Composer
             'totalNewNotifications' => $totalNewNotifications,
             'menuType' => $menuType,
             'notifications' => $notifications ?? [],
-            'onTheClock' => isset($_SESSION['userdata']) ? $this->timesheets->isClocked($_SESSION["userdata"]["id"]) : false,
+            'onTheClock' => session()->exists("userdata") ? $this->timesheets->isClocked(session("userdata.id")) : false,
             'activePath' => FrontcontrollerCore::getCurrentRoute(),
             'action' => FrontcontrollerCore::getActionName(),
             'module' => FrontcontrollerCore::getModuleName(),

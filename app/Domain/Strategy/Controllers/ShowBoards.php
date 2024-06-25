@@ -136,7 +136,7 @@ namespace Leantime\Domain\Strategy\Controllers {
             );
 
 
-            $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas($_SESSION['currentProject'], $boards);
+            $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas(session("currentProject"), $boards);
 
             $recentProgressCanvas = array();
 
@@ -155,7 +155,7 @@ namespace Leantime\Domain\Strategy\Controllers {
 
             $this->tpl->assign('recentProgressCanvas', $recentProgressCanvas);
 
-            $canvasProgress = $this->canvasService->getBoardProgress($_SESSION['currentProject'], $boards);
+            $canvasProgress = $this->canvasService->getBoardProgress(session("currentProject"), $boards);
 
             $this->tpl->assign('recentlyUpdatedCanvas', $recentlyUpdatedCanvas);
             $this->tpl->assign('canvasProgress', $canvasProgress);

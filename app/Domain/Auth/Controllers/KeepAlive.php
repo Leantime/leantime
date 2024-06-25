@@ -40,7 +40,7 @@ class KeepAlive extends Controller
     public function get(array $params): Response
     {
 
-        $userId = $_SESSION['userdata']['id'];
+        $userId = session("userdata.id");
         $sessionId = $this->authService->getSessionId();
 
         // @TODO: Once we have a session table, check the session is valid in there as well as

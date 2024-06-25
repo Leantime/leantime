@@ -66,7 +66,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 }
             }
 
-            $allprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allprojects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"), 'open');
             $clients = array();
 
             $projectResults = array();

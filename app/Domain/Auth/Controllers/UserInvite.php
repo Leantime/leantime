@@ -118,7 +118,7 @@ class UserInvite extends Controller
             $userInvite["status"] = "I";
             $userInvite["user"] =  $userInvite["username"];
             $userInvite["password"] = $_POST['password'];
-            $_SESSION['tempPassword'] = $_POST['password'];
+            session(["tempPassword" => $_POST['password']]);
 
             $editUser = $this->userService->editUser($userInvite, $userInvite["id"]);
 
@@ -178,9 +178,9 @@ class UserInvite extends Controller
                 "success",
                 "user_activated"
             );
-            $loggedIn = $this->authService->login($userInvite["username"], $_SESSION['tempPassword']);
+            $loggedIn = $this->authService->login($userInvite["username"], session("tempPassword"));
 
-            unset($_SESSION['tempPassword']);
+            session()->forget("tempPassword");
 
             self::dispatch_event("userSignUpSuccess", ['user' => $userInvite]);
 

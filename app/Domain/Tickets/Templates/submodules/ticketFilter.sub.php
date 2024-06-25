@@ -16,7 +16,7 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
 <form action="" method="get" id="ticketSearch">
 
     <input type="hidden" value="1" name="search"/>
-    <input type="hidden" value="<?php echo $_SESSION['currentProject']; ?>" name="projectId" id="projectIdInput"/>
+    <input type="hidden" value="<?php echo session("currentProject"); ?>" name="projectId" id="projectIdInput"/>
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
