@@ -193,7 +193,7 @@ if (str_contains($formUrl, '?delComment=')) {
 
         <?php } ?>
     }
-    function cancel(id, formHash,) {
+    function cancel(id, formHash) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
             jQuery(`#comment-to-hide-on-edit-${formHash}-${id}`).show();
             jQuery(`.commentBox-${formHash} textarea`).remove();
