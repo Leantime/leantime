@@ -181,7 +181,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
 
             if (isset($params['changeItem'])) {
-                $currentCanvasId = $params["canvasId"] ?? (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
+                $currentCanvasId = $params["canvasId"] ?? (int)session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
 
                 if (isset($params['itemId']) && !empty($params['itemId'])) {
                     if (isset($params['title']) && !empty($params['title'])) {

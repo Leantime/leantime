@@ -130,6 +130,7 @@ namespace Leantime\Domain\Comments\Services {
                             $subject = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_subject"), $this->language->__("label." . strtolower($entity->type)), $entity->id, $entity->headline);
                             $message = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_message"), session("userdata.name"), $this->language->__("label." . strtolower($entity->type)), $entity->headline, $values['text']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
+                            $currentUrl = BASE_URL . "#/tickets/showTicket/" . $entity->id;
                             break;
                         case "project":
                             $entity = $this->projectService->getProject($entityId);

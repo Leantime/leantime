@@ -65,8 +65,8 @@ namespace Leantime\Domain\Canvas\Controllers {
             // Retrieve id of canvas to print
             if (isset($_GET['id']) === true) {
                 $canvasId = (int)$_GET['id'];
-            } elseif (session()->exists("current' . strtoupper(static::CANVAS_NAME) . 'Canvas")) {
-                $canvasId = session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
+            } elseif (session()->exists("current" . strtoupper(static::CANVAS_NAME) . "Canvas")) {
+                $canvasId = session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
             } else {
                 return new Response();
             }

@@ -23,18 +23,16 @@ if (isset($currentSprint->id)) {
     <label><?=$tpl->__('label.project') ?></label>
     <select name="projectId">
         <?php foreach($allAssignedprojects as $project) { ?>
-        <option value="<?=$project['id'] ?>"
-            <?php foreach($allAssignedprojects as $project) { ?>
-                <option value="<?=$project['id'] ?>"
+            <option value="<?=$project['id'] ?>"
                     <?php
-                    if($currentSprint->projectId == $project['id']) {
-                        echo "selected";
-                    }else if( session("currentProject") == $project['id']){
+                    if(isset($currentSprint)) {
+                        if($currentSprint->projectId == $project['id']) {
+                            echo "selected";
+                        }
+                    }elseif( session("currentProject") == $project['id']){
                         echo "selected";
                     }
                     ?>
-                ><?=$tpl->escape($project["name"]); ?></option>
-            <?php } ?>
         ><?=$tpl->escape($project["name"]); ?></option>
         <?php } ?>
     </select><br />
