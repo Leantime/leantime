@@ -2209,6 +2209,11 @@ body .widgettitle .editHeadline:hover {
     margin-bottom:20px;
 }
 
+.commentReply input[type="button"] {
+    margin-top:10px;
+    margin-bottom:20px;
+}
+
 
 .sortHandle {
     font-size:16px;

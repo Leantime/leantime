@@ -60,7 +60,6 @@ namespace Leantime\Domain\Comments\Services {
          */
         public function addComment($values, $module, $entityId, $entity): bool
         {
-
             if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
                 $mapper = array(
                     'text' => $values['text'],
@@ -120,9 +119,16 @@ namespace Leantime\Domain\Comments\Services {
         }
 
         /**
-         * @param $commentId
+         * @param $values
+         * @param $id
          * @return bool
+         * @throws BindingResolutionException
          */
+        public function editComment($values, $id): bool
+        {
+            return $this->commentRepository->editComment($values['text'], $id);
+        }
+
         /**
          * @param $commentId
          * @return bool
@@ -132,6 +138,7 @@ namespace Leantime\Domain\Comments\Services {
 
             return $this->commentRepository->deleteComment($commentId);
         }
+
     }
 
 }
