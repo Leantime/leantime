@@ -5,12 +5,12 @@
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
     "@fortawesome/fontawesome-free": "^6.5.2",
-    "@fullcalendar/google-calendar": "^6.1.11",
-    "@fullcalendar/icalendar": "^6.1.11",
+    "@fullcalendar/google-calendar": "^6.1.13",
+    "@fullcalendar/icalendar": "^6.1.13",
     "@fullcalendar/luxon3": "^6.1.11",
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
-    "@sentry/browser": "^7.109.0",
+    "@sentry/browser": "^7.116.0",
     "@sentry/webpack-plugin": "^2.16.1",
     "ajv": "^8.13.0",
     "canvas-confetti": "^1.9.3",
@@ -43,7 +43,7 @@
     "tinymce": "5.10.9",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^3.24.0"
+    "uppy": "^3.25.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
