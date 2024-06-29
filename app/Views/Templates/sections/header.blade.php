@@ -43,6 +43,11 @@
 <script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
 @dispatchEvent('afterMainScriptTag')
 
+<!--
+//For future file based ref js loading
+<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Frontcontroller::getModuleName()) }}/Js/{{ Leantime\Core\Frontcontroller::getModuleName() }}Controller.js"></script>
+-->
+
 <!-- theme & custom -->
 @foreach ($themeScripts as $script)
     <script src="{!! $script !!}"></script>

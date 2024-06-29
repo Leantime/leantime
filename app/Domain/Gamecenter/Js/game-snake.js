@@ -160,22 +160,22 @@ SNAKE.Snake = SNAKE.Snake || (function() {
 
         // ----- public variables -----
         me.snakeBody = {};
-        me.snakeBody["b0"] = new SnakeBlock(); // create snake head
-        me.snakeBody["b0"].row = config.startRow || 1;
-        me.snakeBody["b0"].col = config.startCol || 1;
-        me.snakeBody["b0"].xPos = me.snakeBody["b0"].row * playingBoard.getBlockWidth();
-        me.snakeBody["b0"].yPos = me.snakeBody["b0"].col * playingBoard.getBlockHeight();
-        me.snakeBody["b0"].elm = createSnakeElement();
-        me.snakeBody["b0"].elmStyle = me.snakeBody["b0"].elm.style;
-        playingBoard.getBoardContainer().appendChild( me.snakeBody["b0"].elm );
-        me.snakeBody["b0"].elm.style.left = me.snakeBody["b0"].xPos + "px";
-        me.snakeBody["b0"].elm.style.top = me.snakeBody["b0"].yPos + "px";
-        me.snakeBody["b0"].next = me.snakeBody["b0"];
-        me.snakeBody["b0"].prev = me.snakeBody["b0"];
+        me.snakeBody.b0 = new SnakeBlock(); // create snake head
+        me.snakeBody.b0.row = config.startRow || 1;
+        me.snakeBody.b0.col = config.startCol || 1;
+        me.snakeBody.b0.xPos = me.snakeBody.b0.row * playingBoard.getBlockWidth();
+        me.snakeBody.b0.yPos = me.snakeBody.b0.col * playingBoard.getBlockHeight();
+        me.snakeBody.b0.elm = createSnakeElement();
+        me.snakeBody.b0.elmStyle = me.snakeBody.b0.elm.style;
+        playingBoard.getBoardContainer().appendChild( me.snakeBody.b0.elm );
+        me.snakeBody.b0.elm.style.left = me.snakeBody.b0.xPos + "px";
+        me.snakeBody.b0.elm.style.top = me.snakeBody.b0.yPos + "px";
+        me.snakeBody.b0.next = me.snakeBody.b0;
+        me.snakeBody.b0.prev = me.snakeBody.b0;
 
         me.snakeLength = 1;
-        me.snakeHead = me.snakeBody["b0"];
-        me.snakeTail = me.snakeBody["b0"];
+        me.snakeHead = me.snakeBody.b0;
+        me.snakeTail = me.snakeBody.b0;
         me.snakeHead.elm.className = me.snakeHead.elm.className.replace(/\bsnake-snakebody-dead\b/,'');
         me.snakeHead.elm.id = "snake-snakehead-alive";
         me.snakeHead.elm.className += " snake-snakebody-alive";

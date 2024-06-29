@@ -680,7 +680,11 @@ class Template
 
         if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">confetti.start();</script>',
+                '<script type="text/javascript">confetti({
+                    spread: 70,
+                    origin: { y: 1.2 },
+                  });
+                  </script>',
                 []
             );
 
@@ -754,7 +758,10 @@ class Template
 
         if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">confetti.start();</script>',
+                '<script type="text/javascript">confetti({
+                    spread: 70,
+                    origin: { y: 1.2 },
+                  });</script>',
                 []
             );
 

@@ -3,6 +3,30 @@ const glob = require('glob');
 const path = require('path');
 const version = pjson.version;
 
+const fs = require("fs");
+
+// Helper to get all files of a given extension in a given directory and its subfolders.
+function getFilesRecursive(dir, type) {
+    // The list of files that we will return.
+    let files = []
+    // Loop everything in given location.
+    fs.readdirSync(dir).forEach(file => {
+        let fileName = `${dir}/${file}`
+        // Add if its a file and it is of the correct file type.
+        if(fs.statSync(fileName).isFile() && fileName.endsWith(type)) {
+            files.push(fileName)
+        }
+        // Process subfolder.
+        if(!fs.statSync(fileName).isFile()) {
+            // Recusively loop this function for the subfolder.
+            files = files.concat(getFilesRecursive(fileName, type))
+        }
+    })
+    return files
+}
+
+
+
 let mix = require('laravel-mix');
 require('laravel-mix-eslint');
 require('mix-tailwindcss');
@@ -10,8 +34,22 @@ require('mix-tailwindcss');
 require('dotenv').config({ path: 'config/.env' });
 
 mix
-    .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
-    .setResourceRoot(`../`) // this is what to prefix the URL with
+    .setPublicPath('public/dist')
+    .setResourceRoot(`../`);
+
+/*
+
+//Draft for file based js controller loading
+getFilesRecursive('app/Domain', '.js').forEach(file => {
+    subfolder = file.match(/(.*)[\/\\]/)[1]||''; // 'src/js/libraries'
+    subfolder = subfolder.replace('app/Domain', ''); // '/libraries'
+    mix.js(file, 'js' + subfolder);
+});
+*/
+
+
+ // this is the URL to place assets referenced in the CSS/JS
+    mix // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
     .js('./public/assets/js/app/htmx-headSupport.js', `public/dist/js/compiled-htmx-headSupport.${version}.min.js`)
@@ -45,7 +83,7 @@ mix
         "./node_modules/@popperjs/core/dist/umd/popper.js",
         "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
         "./public/assets/js/libs/slimselect.min.js",
-        "./public/assets/js/libs/confetti/js/confetti.js",
+        "./node_modules/canvas-confetti/dist/confetti.browser.js",
         "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
         "./public/assets/js/libs/uppy/uppy.js",
         "./node_modules/croppie/croppie.js",
