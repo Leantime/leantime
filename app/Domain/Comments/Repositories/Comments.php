@@ -264,15 +264,13 @@ namespace Leantime\Domain\Comments\Repositories {
          */
         public function editComment($text, $id): bool
         {
-
             $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-            $stmn->bindValue(':text', $text, PDO::PARAM_INT);
+            $stmn->bindValue(':text', $text, PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();
-
             return $result;
         }
     }

@@ -110,7 +110,6 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
             }
-
             //Delete Subtask
             if (isset($params['delSubtask']) === true) {
 
@@ -205,8 +204,22 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $tab = "#files";
             }
 
-            //Add a comment
-
+            // Add or edit a comment
+            if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '' && isset($params['edit-comment-helper']) && $params['edit-comment-helper'] !== "") {
+                if ($this->commentService->editComment($_POST, (int)$params['edit-comment-helper'])) {
+                    $this->tpl->setNotification($this->language->__("notifications.comment_edited_success"), "success");
+                } else {
+                    $this->tpl->setNotification($this->language->__("notifications.comment_edit_error"), "error");
+                }
+                $tab = "#comment";
+            } else if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '') {
+                if ($this->commentService->addComment($_POST, "ticket", $id, $ticket)) {
+                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                } else {
+                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                }
+                $tab = "#comment";
+            }
 
             //Log time
             if (isset($params['saveTimes']) === true) {

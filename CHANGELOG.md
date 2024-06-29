@@ -1,3 +1,105 @@
+# Version: 3.2.0-beta
+
+* [ced1094](https://github.com/Leantime/leantime/commit/ced10941789425d07b8f3c00bce7cb549bf2b739): - added comments and sprint conflict fix
+* [7536022](https://github.com/Leantime/leantime/commit/753602262e6c5d0765841f406d6290ffa6b3f703): version bump
+* [2911bb4](https://github.com/Leantime/leantime/commit/2911bb40459e3d3272960b80320d4615bde8339b): quotes
+* [352f71a](https://github.com/Leantime/leantime/commit/352f71aee19bbb8f6174f18808962f48de399907): Fixing template for new sprint creation
+* [6640dd1](https://github.com/Leantime/leantime/commit/6640dd14f0a51bb4a846d246d4a47a8809caad94): Change cookie setting to Lax to fix OIDC connection issue
+* [57501b9](https://github.com/Leantime/leantime/commit/57501b9713c1ef8b888aef343192db619f81d643): Delete 5bac1d3aee24b76ccad2a413c6a76d4780014219
+* [197a282](https://github.com/Leantime/leantime/commit/197a28259fed73f0b3e07eeb55a8f5b81c648d98): fix: upgrade @fullcalendar/google-calendar from 6.1.11 to 6.1.13
+
+Snyk has created this PR to upgrade @fullcalendar/google-calendar from 6.1.11 to 6.1.13.
+
+See this package in npm:
+@fullcalendar/google-calendar
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [5890e5f](https://github.com/Leantime/leantime/commit/5890e5f226300ff287cbb77229a9040a658ef339): fix: upgrade @fullcalendar/icalendar from 6.1.11 to 6.1.13
+
+Snyk has created this PR to upgrade @fullcalendar/icalendar from 6.1.11 to 6.1.13.
+
+See this package in npm:
+@fullcalendar/icalendar
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [4a4ca80](https://github.com/Leantime/leantime/commit/4a4ca8021c16ac45f2fe8beaa97aa6ba5adca14d): Added link on headline
+* [2b30634](https://github.com/Leantime/leantime/commit/2b30634b267b7b0f68f7d9e13abdee48a64c4405): Fixing Typo
+* [3c0c9ed](https://github.com/Leantime/leantime/commit/3c0c9ed5aa5267ee5f594572ddde1c2ff91fd0b9): Fix typo
+* [6bc3e8e](https://github.com/Leantime/leantime/commit/6bc3e8e666b6d4ec16d999a8262c502655cc1ab3): Add ratelimits to default config
+* [d670a27](https://github.com/Leantime/leantime/commit/d670a2769f5eb1957f99a5d471c99cc97bcc0384): Add better ratelimits for unit tests
+* [a91b8cc](https://github.com/Leantime/leantime/commit/a91b8ccc0f9aefcd7ff773aacd3a8bd0c588dc19): Update Comments.php to fix ticket comment notification url
+* [4bae0a0](https://github.com/Leantime/leantime/commit/4bae0a0fd6fe6e0cf9b7984853cc46798b4cc34b): fix: upgrade uppy from 3.24.0 to 3.25.3
+
+Snyk has created this PR to upgrade uppy from 3.24.0 to 3.25.3.
+
+See this package in npm:
+uppy
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [87c23c0](https://github.com/Leantime/leantime/commit/87c23c085d39a134f0fd93d09d44988c0e562034): fix: upgrade @sentry/browser from 7.109.0 to 7.116.0
+
+Snyk has created this PR to upgrade @sentry/browser from 7.109.0 to 7.116.0.
+
+See this package in npm:
+@sentry/browser
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [0559ac7](https://github.com/Leantime/leantime/commit/0559ac7ae23febdff90b4790150bbf2b8095bc6e): Add ServiceProvider for ratelimiter
+* [6f9fcee](https://github.com/Leantime/leantime/commit/6f9fceed5e99f100ebcec7e43900627b096513b1): Create .gitignore
+* [418fce9](https://github.com/Leantime/leantime/commit/418fce974d9d9127996935b53a8a035d8ae6525f): * add ldap fields to AD config suggestions
+* [f562ad3](https://github.com/Leantime/leantime/commit/f562ad39ce389f79b10537953ec1ea2f5211952d): Update unit tests
+* [630d578](https://github.com/Leantime/leantime/commit/630d57859c006d187c0fc152f963a5a5677985ea): Setting ServiceProviders
+* [329b478](https://github.com/Leantime/leantime/commit/329b4782c0983480f9b1cda0221965240bc7ae1e): Update Tickets.php to include zp_tickets.userId in simpleTicketQuery
+* [43c3c18](https://github.com/Leantime/leantime/commit/43c3c18d08e444b625e47e236906b11f6565ae4b): 1620: remove -22px, as it pushed the pop-up out of the browser
+* [283e0f7](https://github.com/Leantime/leantime/commit/283e0f7897ab650f0665a9659189494c21ad0975): Move language caching into installation cache
+* [76cb99d](https://github.com/Leantime/leantime/commit/76cb99d315ddcb796f64c61a97f0e55e8d8d964f): Enable Session locking for file driver
+* [2d82668](https://github.com/Leantime/leantime/commit/2d82668fdbd9465c34909f07befecfd604a91890): session naming clean up & core core clean up
+* [35b64b6](https://github.com/Leantime/leantime/commit/35b64b6d6aea8a9931dde68f82d52810e9e5df0e): 1618: add group by priority to dashboard/home
+* [bc4d921](https://github.com/Leantime/leantime/commit/bc4d92189728fa3cb15b299be2a5ca8e2fae687b): haskey check in environment file
+* [1dcf5b1](https://github.com/Leantime/leantime/commit/1dcf5b13f695fd6368c6836829d463a52b08b3ab): Add redis
+* [b987602](https://github.com/Leantime/leantime/commit/b98760295d0353e1cd93c446b2c8ef8b7e8cc5cd): Fix conflict
+* [ce3af40](https://github.com/Leantime/leantime/commit/ce3af405ffb80bec8e51817dc5610e67686fb50f): Use Laravel as new session handler
+* [2996192](https://github.com/Leantime/leantime/commit/2996192f6a1b213042ebc41ba6ea0c3a75144a5e): Added Retry-After header to support standard ratelimit response expectations
+* [095b3fc](https://github.com/Leantime/leantime/commit/095b3fca4509d698423b6e2899dd0b662eabfb1c): clean up theme file
+* [efab082](https://github.com/Leantime/leantime/commit/efab0827be8123516e5806e46262378ea6d311a5): Ensure name doesn't contain any funky content.
+* [89258e2](https://github.com/Leantime/leantime/commit/89258e28f060194fca017b2ff53b4bfe30ad6266): Renamed rate limit variables to follow convention
+* [139a9b8](https://github.com/Leantime/leantime/commit/139a9b88272b0da7abdce74bcff77296a16c2fc5): removed ratelimit type from headers
+* [9f3e9bb](https://github.com/Leantime/leantime/commit/9f3e9bb7c081f9710c22429537f34f17d273eff7): added method to return useful headers when hitting rate limit
+* [0f74da5](https://github.com/Leantime/leantime/commit/0f74da59048a17cb7a764fce2965cef14ef9d7a7): added rate limit defaults to sample env
+* [8808c3c](https://github.com/Leantime/leantime/commit/8808c3c0cdc6541c45a2814087469fa57ab717fd): [cleanup] meta file updates
+* [7272807](https://github.com/Leantime/leantime/commit/727280714859ff376ad40124b1d4ce2730e50311): [fix] Fix menu filter issue for plugins
+* [8afdce2](https://github.com/Leantime/leantime/commit/8afdce2ef1177ecbd43ad7aba2d1baa686d7dfc3): [cleanup] code cleanup
+* [b29c801](https://github.com/Leantime/leantime/commit/b29c801e068aa0a4c10ab21eeba51790f140172d): [fix] add aws to allowed image sources
+* [aa1726e](https://github.com/Leantime/leantime/commit/aa1726ef63f45d9594a8831b055ab18820e7caef): [cleanup] add plugin interface
+* [c596342](https://github.com/Leantime/leantime/commit/c59634209b4680e3ec7d007d699264f62f49ba67): [fix] ratelimit restrictions too low
+* [caa4784](https://github.com/Leantime/leantime/commit/caa47849f9ffcb00c79a360fb71d9a7cc7543b7b): 1510: "Task" changed to lowercase "task" to streamline database
+* [cfb2dd1](https://github.com/Leantime/leantime/commit/cfb2dd1e50afd502dffcf1a976ddc7fd54fc70f2): fix: upgrade ajv from 8.12.0 to 8.13.0
+
+Snyk has created this PR to upgrade ajv from 8.12.0 to 8.13.0.
+
+See this package in npm:
+ajv
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [a582755](https://github.com/Leantime/leantime/commit/a5827558644a65165cd8923bf1f3134633e82f33): Improved Discord notifications
+* [b1f576f](https://github.com/Leantime/leantime/commit/b1f576fa170d9fd7cfa63bb2bae34c0a19e35542): fix: upgrade htmx.org from 1.9.11 to 1.9.12
+
+Snyk has created this PR to upgrade htmx.org from 1.9.11 to 1.9.12.
+
+See this package in npm:
+https://www.npmjs.com/package/htmx.org
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [b8252d3](https://github.com/Leantime/leantime/commit/b8252d3b66cfa1121b96875b248e233c72efb672): [housekeeping] update descriptions
+* [9fb0e70](https://github.com/Leantime/leantime/commit/9fb0e7002ae4ebd3b4c64f81a2b4220b20990e22): [housekeeping] Update CHANGELOG.md
+
+
 # Version: 3.1.4
 
 * [b5ba975](https://github.com/Leantime/leantime/commit/b5ba975164f7b2a7029be879b4b9982ea93b645e): [housekeeping] version bump
