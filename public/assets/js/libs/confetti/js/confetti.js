@@ -8,8 +8,8 @@ var confetti = (function () {
     let cy = '';
 
     let confetti = [];
-    const confettiCount = 500;
-    const gravity = 0.7;
+    const confettiCount = 50;
+    const gravity = 1.2;
     const terminalVelocity = 5;
     const drag = 0.075;
     const colors = [
@@ -85,7 +85,8 @@ var confetti = (function () {
 
           velocity: {
             x: randomRange(-25, 25),
-            y: randomRange(0, -50) } });
+            y: randomRange(0, -50) }
+        });
 
       }
 
@@ -93,6 +94,7 @@ var confetti = (function () {
 
     //---------Render-----------
     let render = () => {
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       confetti.forEach((confetto, index) => {

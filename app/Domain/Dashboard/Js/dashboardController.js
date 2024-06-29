@@ -202,7 +202,7 @@ leantime.dashboardController = (function () {
                         label: leantime.i18n.__("label.done_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.green,
                         borderColor: leantime.dashboardController.chartColors.green,
-                        data: actualData['done']['data'],
+                        data: actualData.done.data,
                         fill: true,
                         lineTension: 0,
                         pointRadius:0,
@@ -211,7 +211,7 @@ leantime.dashboardController = (function () {
                         label: leantime.i18n.__("label.progress_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.yellow,
                         borderColor: leantime.dashboardController.chartColors.yellow,
-                        data: actualData['progress']['data'],
+                        data: actualData.progress.data,
                         fill: true,
                         lineTension: 0,
                         pointRadius:0,
@@ -221,7 +221,7 @@ leantime.dashboardController = (function () {
                         label: leantime.i18n.__("label.new_todos"),
                         backgroundColor: leantime.dashboardController.chartColors.red,
                         borderColor: leantime.dashboardController.chartColors.red,
-                        data: actualData['open']['data'],
+                        data: actualData.open.data,
                         fill: true,
                         lineTension: 0,
                         pointRadius:0,
@@ -296,10 +296,10 @@ leantime.dashboardController = (function () {
         jQuery("#" + id).click(
             function (event) {
 
-                chart.data.datasets[0].data = actualData['done']['data'];
+                chart.data.datasets[0].data = actualData.done.data;
 
-                chart.data.datasets[1].data = actualData['progress']['data'];
-                chart.data.datasets[2].data = actualData['open']['data'];
+                chart.data.datasets[1].data = actualData.progress.data;
+                chart.data.datasets[2].data = actualData.open.data;
 
 
                 chart.options.scales.y.title.text = label;

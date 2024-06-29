@@ -203,7 +203,10 @@ leantime.helperController = (function () {
                 scrollTo:true,
                 when: {
                     show: function() {
-                        confetti.start();
+                        confetti({
+                            spread: 70,
+                            origin: { y: 1.2 },
+                        });
                     }
                 },
                 advanceOn: '.headmenu click'

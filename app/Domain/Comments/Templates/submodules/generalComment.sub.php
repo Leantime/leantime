@@ -204,7 +204,10 @@ if (str_contains($formUrl, '?delComment=')) {
     }
 
     jQuery(".confetti").click(function(){
-        confetti.start();
+        confetti({
+            spread: 70,
+            origin: { y: 1.2 },
+        });
     });
 
     function respondToVisibility(element, callback) {
