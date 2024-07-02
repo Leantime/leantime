@@ -284,6 +284,14 @@ a.barmenu:hover {
     background:var(--element-gradient);
 }
 
+.projectselector .projectAvatar .projectAvatar-text {
+    margin: auto;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
 .headmenu .projectselector .projectAvatar img {
     width:30px;
     height:30px;

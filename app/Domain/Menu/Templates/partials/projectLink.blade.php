@@ -3,11 +3,7 @@
        data-tippy-content='{{ $project["name"] }}'
     @endif >
     <span class='projectAvatar'>
-        @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
-            <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
-        @else
-            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  format($project['modified'])->timestamp() }}' />
-        @endif
+       <span class="projectAvatar-text">{{ substr($project["name"], 0, 2) }}</span>
     </span>
     <span class='projectName'>
         @if($project["clientName"] != '')
