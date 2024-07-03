@@ -101,6 +101,8 @@ Unless you have a database defined somewhere else you should use our [docker-com
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
 
+**Important: If you are planning to use plugins you need to mount the plugin folder `plugins:/var/www/html/app/Plugins` and ensure the www-data user has access to it. Otherwise installation may fail or plugins will be removed after a restart**
+
 ##### Docker Installation Notes #####
 
 If you intend to place Leantime behind a reverse proxy (nginx, etc.) to handle custom domain name resolution and SSL offloading, you will need to set the following environment variable in docker
@@ -166,7 +168,7 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
 * Delete/Stop existing container
-* Pull the latest docker image and rebuild using your compose file
+* Pull the latest docker image and rebuild using your compose file 
 
 ## ☁️ Not interested in hosting yourself? Let us do it for you ##
 
