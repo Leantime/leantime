@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Leantime\Domain\Comments\Hxcontrollers;
 
 use Illuminate\Support\Facades\Lang;
@@ -49,14 +48,15 @@ class CommentList extends HtmxController
         $module = $this->incomingRequest->input("module");
         $moduleId = $this->incomingRequest->input("moduleId");
         $includeStatus = $this->incomingRequest->input("includeStatus");
+        $editComment = filter_var($this->incomingRequest->input("editComment"), FILTER_SANITIZE_NUMBER_INT);
 
-
-        if ($this->commentService->addComment($_POST, $module, $moduleId)) {
-            $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+        if ($editComment > 0 && $this->commentService->editComment($_POST, $editComment)) {
+                $this->tpl->setNotification($this->language->__("notifications.comment_saved_success"), "success");
+        } elseif ($editComment == "" && $this->commentService->addComment($_POST, $module, $moduleId)) {
+                $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
         } else {
             $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
         }
-
 
         $comments = $this->commentService->getComments($module, $moduleId);
 
@@ -66,7 +66,6 @@ class CommentList extends HtmxController
         $this->tpl->assign("comments", $comments);
 
         $this->setHTMXEvent("HTMX.ShowNotification");
-
     }
 
     /**
@@ -89,7 +88,6 @@ class CommentList extends HtmxController
         $this->tpl->assign("moduleId", $moduleId);
         $this->tpl->assign("includeStatus", $includeStatus);
         $this->tpl->assign("comments", $comments);
-
     }
 
     public function delete()

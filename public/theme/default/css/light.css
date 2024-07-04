@@ -55,7 +55,7 @@
     --main-action-hover-bg: var(--accent1-hover);
     --main-action-hover-color: var(--accent1-color);
 
-    --secondary-action-bg: var(--primary-background);
+    --secondary-action-bg: var(--neutral);
     --secondary-action-color: var(--primary-font-color);
     --secondary-action-hover-bg: var(--accent2-hover);
     --secondary-action-hover-color: var(--accent2-color);

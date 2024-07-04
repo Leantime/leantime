@@ -157,7 +157,7 @@ class Events
      * @return void
      * @throws BindingResolutionException
      */
-    public static function discover_listeners(): void
+    public static function discoverListeners(): void
     {
         static $discovered;
         $discovered ??= false;
@@ -170,14 +170,19 @@ class Events
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
 
-            $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
+            $testers = $customModules->map(
+                fn ($path) => str_replace('/custom/', '/app/', $path)
+            );
 
-            $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
+            $filteredModules = $domainModules->filter(
+                fn ($path) => ! $testers->contains($path)
+            );
 
             return $customModules->concat($filteredModules)->all();
         });
 
         foreach ($modules as $module) {
+            //File exists is not expensive and builds it's own cache to speed up performance
             if (file_exists($moduleEventsPath = "$module/register.php")) {
                 include_once $moduleEventsPath;
             }
@@ -205,7 +210,6 @@ class Events
             $enabledPlugins = $pluginService->getEnabledPlugins();
 
             foreach ($enabledPlugins as $plugin) {
-
                 //Catch issue when plugins are cached on load but autoloader is not quite done loading.
                 //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
                 //Clearing session cache in that case.
@@ -473,7 +477,7 @@ class Events
                 continue;
             }
 
-            if($index == 0) {
+            if ($index == 0) {
                 $filteredPayload = $payload;
             }
         }

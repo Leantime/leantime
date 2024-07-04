@@ -7,15 +7,15 @@
 
 @if($type == \Leantime\Core\Support\DateTimeInfoEnum::WrittenOnAt)
 {{
-    printf(
+    sprintf(
     $tpl->__('text.written_on'),
     format($date)->date(),
     format($date)->time()
     )
 }}
 @elseif($type == \Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt)
-    {{
-    printf(
+{{
+    sprintf(
         $tpl->__('text.updated_on'),
         format($date)->date(),
         format($date)->time()

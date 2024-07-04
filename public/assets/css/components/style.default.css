@@ -796,36 +796,6 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 /*** DASHBOARD ***/
 
-.commentlist {
-    list-style: none;
-    clear: both;
-}
-
-.commentlist li {
-    display: block;
-    border-bottom: 1px solid #ddd;
-    padding: 15px;
-}
-
-.commentlist li img {
-    width: 60px;
-}
-
-.commentlist li .comment-info {
-    margin-left: 80px;
-}
-
-.commentlist li p:last-child {
-    margin-bottom: 0;
-}
-
-.commentlist li .btn {
-    margin-right: 3px;
-}
-
-.commentlist li .btn span {
-    margin-right: 5px;
-}
 
 .tabtitle {
     padding: 10px;
@@ -1728,10 +1698,6 @@ a.filter-term {
     font-weight: bold;
 }
 
-.commentBox textarea {
-    width: 80%;
-    height: 70px;
-}
 
 .actionButtons {
     float: right;
@@ -2116,104 +2082,6 @@ body .widgettitle .editHeadline:hover {
     padding-top:5px;
     margin-top:5px;
 }
-
-.commentMain {
-    width:calc(100% - 50px);
-    margin-bottom:10px;
-    float:left;
-}
-
-.commentContent {
-    background:var(--layered-background);
-    border: 1px solid var(--main-border-color);
-    border-radius:var(--box-radius);
-    width:100%;
-    padding:12px 15px;
-    font-size:var(--base-font-size);
-}
-
-.commentContent.statusUpdate {
-    background:var(--layered-background);
-    border: 1px solid var(--main-border-color);
-}
-
-.commentContent.statusUpdate h3 {
-    margin-bottom:8px;
-    font-weight: bold;
-}
-
-.commentContent .text {
-    text-align:left;
-    margin: 0;
-}
-
-#mainToggler {
-    margin-bottom:15px;
-    display:block;
-}
-
-.commentContent .name {
-    font-weight:bold;
-    display:block;
-    margin-bottom:5px;
-}
-
-.commentContent .commentDate {
-    font-size:var(--font-size-s);
-}
-
-.commentImage {
-    margin-top:0px;
-    float:left;
-    margin-right:10px;
-
-}
-
-.commentImage img {
-    border-radius:50%;
-    width:38px;
-    height:38px;
-    border:1px solid var(--main-border-color);
-    background:var(--secondary-background);
-}
-.commentLinks {
-
-}
-
-.commentLinks a {
-    display:inline-block;
-    margin-right:10px;
-    margin-bottom:10px;
-    font-size:var(--font-size-s);
-}
-
-.commentMain .replies {
-    padding-left:10px;
-}
-
-.commentMain .replies .commentMain{
-    margin-bottom:0px;
-}
-
-.commentMain .replies .commentMain:last-child {
-    margin-bottom:0px;
-}
-
-.commentReply {
-    width:calc(100% - 50px);
-    float:left;
-}
-
-.commentReply input[type="submit"] {
-    margin-top:10px;
-    margin-bottom:20px;
-}
-
-.commentReply input[type="button"] {
-    margin-top:10px;
-    margin-bottom:20px;
-}
-
 
 .sortHandle {
     font-size:16px;

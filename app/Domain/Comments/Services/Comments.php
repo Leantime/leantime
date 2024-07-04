@@ -73,25 +73,24 @@ namespace Leantime\Domain\Comments\Services {
 
             //Create an array of comment parents
             foreach ($comments as $comment) {
-
                 $commentObject = app()->make(Comment::class);
                 $commentObject->mapRootDbArray($comment);
 
                 if ($comment['commentParent'] == $parent && !isset($commentsArray[$commentObject->id])) {
-
                     $commentsArray[$commentObject->id] = $commentObject;
                 }
             }
 
             //Now add replies
             foreach ($comments as $comment) {
-
                 $commentObject = app()->make(Comment::class);
                 $commentObject->mapRepliesDbArray($comment);
-                if($commentObject !== false){
+                if (
+                    $commentObject->mapRepliesDbArray($comment) !== false
+                    && isset($commentsArray[$commentObject->commentParent])
+                ) {
                     $commentsArray[$commentObject->commentParent]->replies[] = $commentObject;
                 }
-
             }
 
             return $commentsArray;
@@ -186,7 +185,6 @@ namespace Leantime\Domain\Comments\Services {
 
             return $this->commentRepository->deleteComment($commentId);
         }
-
     }
 
 }

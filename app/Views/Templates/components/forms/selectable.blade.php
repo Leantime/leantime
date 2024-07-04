@@ -5,9 +5,9 @@
         <div class="selectableContent">
             {{ $slot }}
         </div>
-
         <input type="radio"  name="{{ $name }}" {!!  $selected == "true" ? "checked='checked'" : ""  !!} id="selectable-{{ $id }}" value="{{ $value }}" class="selectableRadio tw-hidden"/>
-        <label for="selectable-{{ $id }}" class="selectable-label" >
+
+    <label for="selectable-{{ $id }}" class="selectable-label" >
             {{ $label }}
         </label>
 
@@ -25,7 +25,6 @@
                     jQuery(this).find("input.selectableRadio").prop("checked", true);
                 });
             });
-
         })
     </script>
 @endpushonce

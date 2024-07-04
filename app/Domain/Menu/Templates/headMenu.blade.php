@@ -29,7 +29,7 @@
 
         <div class='dropdown-menu tw-p-m' id='newsDropdown'>
             <div class="htmx-indicator">
-                <x-global::loadingText type="text" count="3" includeHeadline="true" />
+                <x-global::elements.loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
     </li>

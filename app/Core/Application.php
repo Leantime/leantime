@@ -80,7 +80,7 @@ class Application extends Container
 
         Facade::setFacadeApplication($this);
 
-        Events::discover_listeners();
+        Events::discoverListeners();
     }
     /**
      * Check if application has been bootstrapped

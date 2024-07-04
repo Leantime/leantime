@@ -4,11 +4,33 @@ a, a:hover, a:link, a:active, a:focus {
     text-decoration: none;
 }
 
-body a:hover {
+body a:hover,
+body a:focus {
     text-decoration: none;
     color:var(--primary-font-color);
 
 }
+
+a.secondary,
+a.secondary:link {
+    color:var(--interactive-icon-color);
+}
+
+a.secondary:hover,
+a.secondary:focus {
+    color:var(--primary-font-color);
+}
+
+a.delete,
+a.delete:link {
+    color:var(--red);
+}
+
+a.delete:hover,
+a.delete:focus {
+    color:var(--dark-red);
+}
+
 
 label, input, textarea, select, button {
     font-size: var(--base-font-size);
