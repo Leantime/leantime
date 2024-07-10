@@ -2083,4 +2083,29 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $milestones;
         }
+
+        // TODO: update this to be todo and update zapier as well 
+        public function pollForNewAccountTickets(): array|false
+        {
+            return $this->ticketRepository->getAllBySearchCriteria(
+                ["excludeType" => "milestone"],
+                'date'
+            );
+        }
+
+        // Since the date attribute of todos gets updated when the todo is updated we need to poll for updated todos
+        // using that date attribute
+        public function pollForUpdatedAccountTodos(): array|false
+        {
+            $todos = $this->ticketRepository->getAllBySearchCriteria(
+                ["excludeType" => "milestone"],
+                'date'
+            );
+
+            foreach ($todos as $key => $todo) {
+                $todos[$key]['id'] = $todo['id'] . '-' . $todo['date'];
+            }
+
+            return $todos;
+        }
 }
