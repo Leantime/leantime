@@ -626,5 +626,40 @@ namespace Leantime\Domain\Ideas\Repositories {
 
             return true;
         }
+
+        /**
+         * @return array|false
+         */
+        public function getAllIdeas(): array|false
+        {
+
+            // TODO: make this not select * and identify what fields we want back.
+
+            $sql = "SELECT zp_canvas_items.id,
+                zp_canvas_items.description,
+                zp_canvas_items.assumptions,
+                zp_canvas_items.data,
+                zp_canvas_items.conclusion,
+                zp_canvas_items.box,
+                zp_canvas_items.author,
+                zp_canvas_items.created,
+                zp_canvas_items.modified,
+                zp_canvas_items.canvasId,
+                zp_canvas_items.sortindex,
+                zp_canvas_items.status,
+                zp_canvas_items.tags,
+                zp_canvas_items.milestoneId
+                FROM zp_canvas_items
+                LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
+                WHERE canvasBoard.type = 'idea'";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
+            $stmn->closeCursor();
+
+            return $values;
+        }
     }
 }
