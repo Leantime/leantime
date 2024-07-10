@@ -2059,6 +2059,28 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $values;
         }
-    }
 
+        public function pollForNewAccountMilestones(): array | false
+        {
+            return $this->ticketRepository->getAllBySearchCriteria(
+                ["type" => "milestone"],
+                'date'
+            );
+        }
+
+        // since the date attribute of milestones gets updated when the milestone is updated we need to poll for updated milestones
+        // using that date attribute
+        public function pollForUpdatedAccountMilestones(): array|false
+        {
+            $milestones = $this->ticketRepository->getAllBySearchCriteria(
+                ["type" => "milestone"],
+                'date'
+            );
+
+            foreach ($milestones as $key => $milestone) {
+                $milestones[$key]['id'] = $milestone['id'] . '-' . $milestone['date'];
+            }
+
+            return $milestones;
+        }
 }
