@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Support\FromFormat;
@@ -469,4 +470,42 @@ class Timesheets
         return $timesheets;
     }
 
+    /**
+     * Create a timesheet entry via Zapier.
+     *
+     * @param array $values {
+     *     @type int    $ticketId     The I?D of the ticket.
+     *     @type int?    $userId       Th?e ID of the user.
+     *     @type string $date         The date in 'YYYY-MM-DD' format.
+     *     @type string $kind         The type of work done (e.g., 'DEVELOPMENT').
+     *     @type int    $hours        The number of hours worked.
+     *     @type float?  $rate         The rate of pay.
+     *     @type string? $description  A description of the work done.
+     *     @type bool?   $paid         Whether the time has been paid.
+     * }
+     *
+     * @return array {
+     *     @type bool $success Whether the timesheet entry was created successfully.
+     * }
+     *
+     * @throws InvalidArgumentException if required parameters are missing.
+     */
+    public function createTimesheetViaZapierAction($values): array
+    {
+        if (isset($values['date'])) {
+            $values['date'] = Carbon::parse($values['date']);
+        }
+
+        $success = $this->logTime($values['ticketId'], $values);
+
+        if ($success) {
+            return [
+                'success' => true,
+            ];
+        } else {
+            return [
+                'success' => false,
+            ];
+        }
+    }
 }
