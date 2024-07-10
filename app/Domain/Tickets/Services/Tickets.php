@@ -399,8 +399,8 @@ namespace Leantime\Domain\Tickets\Services {
                             $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"
                         )
                     ) {
-                            $ticketCounter++;
-                            continue;
+                        $ticketCounter++;
+                        continue;
                     }
 
                     if (
@@ -590,7 +590,7 @@ namespace Leantime\Domain\Tickets\Services {
                 case "priority":
                 case "storypoints":
                     $ticketGroups = array_sort($ticketGroups, 'id');
-                // no break
+                    // no break
                 default:
                     $ticketGroups = array_sort($ticketGroups, 'label');
                     break;
@@ -808,10 +808,10 @@ namespace Leantime\Domain\Tickets\Services {
                     } else {
                         // If the priority is not set, the label for priority not defined is used.
                         if (empty($this->ticketRepository->priority[$row['priority']])) {
-                            $label =$this->language->__("label.priority_not_defined");
+                            $label = $this->language->__("label.priority_not_defined");
                         }
                         $tickets[$row['priority']] = array(
-                            "labelName" =>$label,
+                            "labelName" => $label,
                             "tickets" => array($row),
                             "groupValue" => $row['time'],
                         );
@@ -1232,14 +1232,16 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function addTicket($values)
         {
+            $userId = $values['userId'] ?? session("userdata.id");
+
             $values = array(
                 'id' => '',
                 'headline' => $values['headline'] ?? "",
                 'type' => $values['type'] ?? "task",
                 'description' => $values['description'] ?? "",
-                'projectId' => $values['projectId'] ?? session("currentProject") ,
+                'projectId' => $values['projectId'] ?? session("currentProject"),
                 'editorId' => $values['editorId'] ?? "",
-                'userId' => session("userdata.id"),
+                'userId' => $userId,
                 'date' => gmdate("Y-m-d H:i:s"),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
@@ -1259,7 +1261,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $values['milestoneid'] ?? "",
             );
 
-            if (!$this->projectService->isUserAssignedToProject(session("userdata.id"), $values['projectId'])) {
+            if (!$this->projectService->isUserAssignedToProject($userId, $values['projectId'])) {
                 return array("msg" => "notifications.ticket_save_error_no_access", "type" => "error");
             }
 
@@ -2108,4 +2110,108 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $todos;
         }
+
+        public function createTodoUsingZapier($values): array|bool
+        {
+            $values = array(
+                'headline' => $values['headline'] ?? "",
+                'userId' => $values['userId'] ?? "",
+                'type' => $values['type'] ?? "",
+                'description' => $values['description'] ?? "",
+                'projectId' => $values['projectId'] ?? session("currentProject"),
+                'editorId' => $values['editorId'] ?? "",
+                'date' => dtHelper()->userNow()->formatDateTimeForDb(),
+                'dateToFinish' => $values['dateToFinish'] ?? "",
+                'timeToFinish' => $values['timeToFinish'] ?? "",
+                'status' => $values['status'] ?? "",
+                'planHours' => $values['planHours'] ?? "",
+                'tags' => $values['tags'] ?? "",
+                'sprint' => $values['sprint'] ?? "",
+                'storypoints' => $values['storypoints'] ?? "",
+                'hourRemaining' => $values['hourRemaining'] ?? "",
+                'priority' => $values['priority'] ?? "",
+                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
+                'editFrom' => $values['editFrom'] ?? "",
+                'editTo' => $values['editTo'] ?? "",
+                'dependingTicketId' => $values['dependingTicketId'] ?? "",
+                'milestoneid' => $values['milestoneid'] ?? "",
+            );
+
+            return $this->addTicket($values);
+        }
+
+        public function updateTodoUsingZapier($values): array
+        {
+            if (!isset($values['ticketId'])) {
+                error_log('we dont have a ticket ..');
+                return [
+                    "message" => "Missing ticketId",
+                    "status" => "error",
+                ];
+            }
+
+            $currentTicket = $this->getTicket($values['ticketId']);
+
+            if (!$currentTicket) {
+                return [
+                    "message" => "We do not have a ticket for id " . $values['ticketId'],
+                    "status" => "error",
+                ];
+            }
+
+            $values = array(
+                'id' => $values['ticketId'],
+                'headline' => $currentTicket->headline,
+                'editorId' => $values['editorId'] ?? "",
+                'status' => $values['status'] ?? "",
+                'milestoneid' => $values['milestoneid'] ?? "",
+            );
+
+            try {
+                $sucessfullyUpdated = $this->updateTicket($values);
+                if ($sucessfullyUpdated) {
+                    return [
+                        "message" => "Ticket updated successfully",
+                        "status" => "success",
+                    ];
+                } else {
+                    return [
+                        "message" => "Ticket could not be updated",
+                        "status" => "error",
+                    ];
+                }
+            } catch (\Exception $e) {
+                return [
+                    "message" => "Ticket could not be updated. Reason: " . $e->getMessage(),
+                    "status" => "error",
+                ];
+            }
+        }
+
+        public function createMilestoneUsingZapier($values): array|bool
+        {
+            $values = array(
+                'status' => $values['status'] ?? "",
+                'description' => $values['description'] ?? "",
+                'projectId' => $values['projectId'] ?? session("currentProject"),
+                'editorId' => $values['editorId'] ?? "",
+                'date' => dtHelper()->userNow()->formatDateTimeForDb(),
+                'dateToFinish' => $values['dateToFinish'] ?? "",
+                'timeToFinish' => $values['timeToFinish'] ?? "",
+                'planHours' => $values['planHours'] ?? "",
+                'tags' => $values['tags'] ?? "",
+                'sprint' => $values['sprint'] ?? "",
+                'storypoints' => $values['storypoints'] ?? "",
+                'hourRemaining' => $values['hourRemaining'] ?? "",
+                'priority' => $values['priority'] ?? "",
+                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
+                'editFrom' => $values['editFrom'] ?? "",
+                'editTo' => $values['editTo'] ?? "",
+                'dependingTicketId' => $values['dependingTicketId'] ?? "",
+                'milestoneid' => $values['milestoneid'] ?? "",
+            );
+
+            return $this->addTicket($values);
+        }
+    }
 }
