@@ -61,11 +61,11 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
          * @var   array
          */
         protected array $dataLabels = [
-                                        1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
-                                        2 => ['title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true],
-                                        3 => ['title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true],
+            1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
+            2 => ['title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true],
+            3 => ['title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true],
 
-                                        ];
+        ];
 
 
         /**
@@ -157,6 +157,63 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
+            return $values;
+        }
+
+        /**
+         * Gets all goals related to a milestone
+         *
+         * @return array|false
+         */
+        public function getAllAccountGoals(): false|array
+        {
+            $sql = "SELECT
+                    zp_canvas_items.id,
+                    zp_canvas_items.description,
+                    zp_canvas_items.title,
+                    zp_canvas_items.assumptions,
+                    zp_canvas_items.data,
+                    zp_canvas_items.conclusion,
+                    zp_canvas_items.box,
+                    zp_canvas_items.author,
+                    zp_canvas_items.created,
+                    zp_canvas_items.modified,
+                    zp_canvas_items.canvasId,
+                    zp_canvas_items.sortindex,
+                    zp_canvas_items.status,
+                    zp_canvas_items.relates,
+                    zp_canvas_items.milestoneId,
+                    zp_canvas_items.kpi,
+                    zp_canvas_items.data1,
+                    zp_canvas_items.data2,
+                    zp_canvas_items.data3,
+                    zp_canvas_items.data4,
+                    zp_canvas_items.data5,
+                    zp_canvas_items.startDate,
+                    zp_canvas_items.endDate,
+                    zp_canvas_items.setting,
+                    zp_canvas_items.metricType,
+                    zp_canvas_items.startValue,
+                    zp_canvas_items.currentValue,
+                    zp_canvas_items.endValue,
+                    zp_canvas_items.impact,
+                    zp_canvas_items.effort,
+                    zp_canvas_items.probability,
+                    zp_canvas_items.action,
+                    zp_canvas_items.assignedTo,
+                    zp_canvas_items.parent,
+                    zp_canvas_items.tags
+            FROM
+            zp_canvas_items
+
+            WHERE zp_canvas_items.box = 'goal'
+
+            ";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
             return $values;
         }
     }
