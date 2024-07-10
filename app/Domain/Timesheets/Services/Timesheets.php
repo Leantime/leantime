@@ -452,4 +452,21 @@ class Timesheets
     {
         return $this->timesheetsRepo->kind;
     }
+
+    public function pollTimesheets(): array|false
+    {
+        return $this->timesheetsRepo->getAllAccountTimesheets();
+    }
+
+    public function pollForUpdatedTimesheets(): array|false
+    {
+        $timesheets = $this->timesheetsRepo->getAllAccountTimesheets();
+
+        foreach ($timesheets as $key => $timesheet) {
+            $timesheets[$key]['id'] = $timesheet['id'] . '-' . $timesheet['modified'];
+        }
+
+        return $timesheets;
+    }
+
 }

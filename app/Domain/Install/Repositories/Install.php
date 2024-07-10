@@ -613,7 +613,7 @@ namespace Leantime\Domain\Install\Repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
-                (9,3,'Getting Started with Leantime', '".$gettingStartedDescription."','','".date("Y-m-d")."','".date("Y-m-d")."',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
+                (9,3,'Getting Started with Leantime', '" . $gettingStartedDescription . "','','" . date("Y-m-d") . "','" . date("Y-m-d") . "',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
                   `id` int(255) NOT NULL AUTO_INCREMENT,
@@ -630,6 +630,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `rate` varchar(255) DEFAULT NULL,
                   `paid` int(2) DEFAULT NULL,
                   `paidDate` datetime DEFAULT NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1310,11 +1311,11 @@ namespace Leantime\Domain\Install\Repositories {
                 "UPDATE zp_projects SET menuType = '" . MenuRepository::DEFAULT_MENU . "'",
                 "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
             ];
 
@@ -1903,7 +1904,8 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        public function update_sql_30002(): bool|array {
+        public function update_sql_30002(): bool|array
+        {
 
             $errors = array();
 
@@ -1924,8 +1926,6 @@ namespace Leantime\Domain\Install\Repositories {
 
 
             return true;
-
         }
-
     }
 }
