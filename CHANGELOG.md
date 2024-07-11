@@ -1,3 +1,21 @@
+# Version: 3.2.0-beta-2
+
+* [c31f6cc](https://github.com/Leantime/leantime/commit/c31f6cc8a98f69c6738893aaebfcdc39cdf675e0): Update AppSettings.php
+* [1763cdd](https://github.com/Leantime/leantime/commit/1763cddab245ebe4e6d48e3f145ec557d7608247): Update composer.json
+* [0a29e25](https://github.com/Leantime/leantime/commit/0a29e250dbcefd6a10e9ed6cd32fc61ec99a6c39): Update package.json
+* [0335c22](https://github.com/Leantime/leantime/commit/0335c223f3a8ec271eec9d32b4acc82d96d77c44): Version Bump
+* [5e67df7](https://github.com/Leantime/leantime/commit/5e67df71b5e9b14eab21d9ab2d3be77318823655): Update Language.php
+* [dc4e9a1](https://github.com/Leantime/leantime/commit/dc4e9a15e9f09fea8a4b2ce5be87f9ea3c1bcf95): Update README.md
+* [7eafa1e](https://github.com/Leantime/leantime/commit/7eafa1e821c43b3929f329805f29bbc9fffc4a96): Confetti
+* [8e274a4](https://github.com/Leantime/leantime/commit/8e274a43d699750f8a0f8f2570670dd98407d23b): Apply suggestions from code review
+
+remove embarrassing comma that snuck into my function declaration
+
+Co-authored-by: Jeppe Julius Krogh <106669866+jeppekroghitk@users.noreply.github.com>
+* [e1e0e6a](https://github.com/Leantime/leantime/commit/e1e0e6ab7658c7362339eed216526c8ef8436e9f): 1717: introduce space between texts
+* [7492cdd](https://github.com/Leantime/leantime/commit/7492cdd4692514d588e0ca161345bf08b18a6f3a): 1717: update strings to use an anchor
+
+
 # Version: 3.2.0-beta
 
 * [ced1094](https://github.com/Leantime/leantime/commit/ced10941789425d07b8f3c00bce7cb549bf2b739): - added comments and sprint conflict fix
