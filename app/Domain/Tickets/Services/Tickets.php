@@ -2114,54 +2114,6 @@ namespace Leantime\Domain\Tickets\Services {
             return $todos;
         }
 
-        public function updateTodoUsingZapier($values): array
-        {
-            if (!isset($values['ticketId'])) {
-                error_log('we dont have a ticket ..');
-                return [
-                    "message" => "Missing ticketId",
-                    "status" => "error",
-                ];
-            }
-
-            $currentTicket = $this->getTicket($values['ticketId']);
-
-            if (!$currentTicket) {
-                return [
-                    "message" => "We do not have a ticket for id " . $values['ticketId'],
-                    "status" => "error",
-                ];
-            }
-
-            $values = array(
-                'id' => $values['ticketId'],
-                'headline' => $currentTicket->headline,
-                'editorId' => $values['editorId'] ?? "",
-                'status' => $values['status'] ?? "",
-                'milestoneid' => $values['milestoneid'] ?? "",
-            );
-
-            try {
-                $sucessfullyUpdated = $this->updateTicket($values);
-                if ($sucessfullyUpdated) {
-                    return [
-                        "message" => "Ticket updated successfully",
-                        "status" => "success",
-                    ];
-                } else {
-                    return [
-                        "message" => "Ticket could not be updated",
-                        "status" => "error",
-                    ];
-                }
-            } catch (\Exception $e) {
-                return [
-                    "message" => "Ticket could not be updated. Reason: " . $e->getMessage(),
-                    "status" => "error",
-                ];
-            }
-        }
-
         public function createMilestoneUsingZapier($values): array|bool
         {
             $values = array(
