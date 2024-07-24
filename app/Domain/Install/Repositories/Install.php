@@ -528,7 +528,6 @@ namespace Leantime\Domain\Install\Repositories {
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
                     `sortIndex` INT(11) NULL,
-                    `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1915,13 +1914,8 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = [
-
-                "ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
-                "ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
-                "ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
-                "ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
-                "ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
-                "ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_plugins` ADD COLUMN `license` TEXT NULL DEFAULT NULL",
+                "ALTER TABLE `zp_plugins` ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
             ];
 
             foreach ($sql as $statement) {
@@ -1942,8 +1936,12 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = [
-                "ALTER TABLE `zp_plugins` ADD COLUMN `license` TEXT NULL DEFAULT NULL",
-                "ALTER TABLE `zp_plugins` ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+                "ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
             ];
 
             foreach ($sql as $statement) {

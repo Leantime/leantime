@@ -39,7 +39,7 @@ class CsvImport extends Provider implements ProviderIntegration
         $this->id = "csv_importer";
         $this->name = "CSV Import";
         $this->image = "/dist/images/svg/csv-icon.svg";
-        $this->description = "Impport data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/support/solutions/articles/154000063304-importing-data-via-csv' target='_blank'>documentation</a>";
+        $this->description = "Impport data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/en/article/importing-data-via-csv-1v941gy' target='_blank'>documentation</a>";
 
         $this->methods[] = "import, update";
 
