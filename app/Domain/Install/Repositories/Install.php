@@ -100,6 +100,7 @@ namespace Leantime\Domain\Install\Repositories {
             20406,
             20407,
             30002,
+            30003,
         );
 
         /**
@@ -386,6 +387,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `projectId` INT NULL,
                   `type` VARCHAR(45) NULL,
                   `description` TEXT,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -459,6 +461,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `published` int(1) DEFAULT NULL,
                   `age` int(3) DEFAULT NULL,
                   `email` varchar(255) DEFAULT NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -525,6 +528,7 @@ namespace Leantime\Domain\Install\Repositories {
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
                     `sortIndex` INT(11) NULL,
+                    `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -606,6 +610,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `retrospectiveid` INT NULL,
                   `ideaid` INT NULL,
                   `zp_ticketscol` VARCHAR(45) NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   KEY `ProjectUserId` (`projectId`,`userId`),
                   KEY `StatusSprint` (`status`,`sprint`),
@@ -630,6 +635,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `rate` varchar(255) DEFAULT NULL,
                   `paid` int(2) DEFAULT NULL,
                   `paidDate` datetime DEFAULT NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -680,6 +686,7 @@ namespace Leantime\Domain\Install\Repositories {
                     `name` VARCHAR(45) NULL,
                     `startDate` DATETIME NULL,
                     `endDate` DATETIME NULL,
+                    `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1904,6 +1911,33 @@ namespace Leantime\Domain\Install\Repositories {
         }
 
         public function update_sql_30002(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+
+                "ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    //Just swallow your pride
+                    //One day we'll get ALTER IF EXISTS
+                }
+            }
+
+            return true;
+        }
+
+        public function update_sql_30003(): bool|array {
 
             $errors = array();
 
