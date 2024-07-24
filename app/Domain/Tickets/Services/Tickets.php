@@ -1323,6 +1323,15 @@ namespace Leantime\Domain\Tickets\Services {
          *                      - 'time*/
         public function updateTicket($values): array|bool
         {
+            if (!isset($values["headline"])) {
+                $currentTicket = $this->getTicket($values['id']);
+
+                if (!$currentTicket) {
+                    return array("msg" => "This ticket id does not exist within your leantime account.", "type" => "error");
+                }
+
+                $values["headline"] = $currentTicket->headline;
+            }
 
             $values = array(
                 'id' => $values['id'],
