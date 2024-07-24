@@ -632,9 +632,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         public function getAllIdeas(): array|false
         {
-
-            // TODO: make this not select * and identify what fields we want back.
-
             $sql = "SELECT zp_canvas_items.id,
                 zp_canvas_items.description,
                 zp_canvas_items.assumptions,
