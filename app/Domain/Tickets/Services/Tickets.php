@@ -1354,34 +1354,30 @@ namespace Leantime\Domain\Tickets\Services {
                 return array("msg" => "notifications.ticket_save_error_no_access", "type" => "error");
             }
 
-            if ($values['headline'] === '') {
-                return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
-            } else {
-                $values = $this->prepareTicketDates($values);
+            $values = $this->prepareTicketDates($values);
 
-                //Update Ticket
-                if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
-                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
-                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
-                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), session("userdata.name"), $values['headline']);
+            //Update Ticket
+            if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
+                $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
+                $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
+                $message = sprintf($this->language->__("email_notifications.todo_update_message"), session("userdata.name"), $values['headline']);
 
-                    $notification = app()->make(NotificationModel::class);
-                    $notification->url = array(
-                        "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.todo_update_cta"),
-                    );
-                    $notification->entity = $values;
-                    $notification->module = "tickets";
-                    $notification->projectId = session("currentProject");
-                    $notification->subject = $subject;
-                    $notification->authorId = session("userdata.id");
-                    $notification->message = $message;
+                $notification = app()->make(NotificationModel::class);
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.todo_update_cta"),
+                );
+                $notification->entity = $values;
+                $notification->module = "tickets";
+                $notification->projectId = session("currentProject");
+                $notification->subject = $subject;
+                $notification->authorId = session("userdata.id");
+                $notification->message = $message;
 
-                    $this->projectService->notifyProjectUsers($notification);
+                $this->projectService->notifyProjectUsers($notification);
 
 
-                    return true;
-                }
+                return true;
             }
 
 
@@ -2107,35 +2103,6 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             return $todos;
-        }
-
-        public function createTodoUsingZapier($values): array|bool
-        {
-            $values = array(
-                'headline' => $values['headline'] ?? "",
-                'userId' => $values['userId'] ?? "",
-                'type' => $values['type'] ?? "",
-                'description' => $values['description'] ?? "",
-                'projectId' => $values['projectId'] ?? session("currentProject"),
-                'editorId' => $values['editorId'] ?? "",
-                'date' => dtHelper()->userNow()->formatDateTimeForDb(),
-                'dateToFinish' => $values['dateToFinish'] ?? "",
-                'timeToFinish' => $values['timeToFinish'] ?? "",
-                'status' => $values['status'] ?? "",
-                'planHours' => $values['planHours'] ?? "",
-                'tags' => $values['tags'] ?? "",
-                'sprint' => $values['sprint'] ?? "",
-                'storypoints' => $values['storypoints'] ?? "",
-                'hourRemaining' => $values['hourRemaining'] ?? "",
-                'priority' => $values['priority'] ?? "",
-                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
-                'editFrom' => $values['editFrom'] ?? "",
-                'editTo' => $values['editTo'] ?? "",
-                'dependingTicketId' => $values['dependingTicketId'] ?? "",
-                'milestoneid' => $values['milestoneid'] ?? "",
-            );
-
-            return $this->addTicket($values);
         }
 
         public function updateTodoUsingZapier($values): array
