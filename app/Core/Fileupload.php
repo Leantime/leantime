@@ -376,7 +376,10 @@ class Fileupload
         );
 
         $responseFailure = new Response(file_get_contents(ROOT . '/dist/images/doc.png'));
+        $sLastModified = filemtime(ROOT . '/dist/images/doc.png');
         $responseFailure->headers->set('Content-Type', 'image/png');
+        $responseFailure->headers->set("Cache-Control", 'max-age=86400');
+        $responseFailure->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
 
         if ($this->config->useS3 && $fullPath == '') {
             try {
@@ -392,11 +395,11 @@ class Fileupload
 
                 foreach (
                     [
-                    'Content-Type' => $result['ContentType'],
-                    'Pragma' => 'public',
-                    'Cache-Control' => 'max-age=86400',
-                    'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
-                    'Content-disposition' => 'inline; filename="' . $imageName . '";',
+                        'Content-Type' => $result['ContentType'],
+                        'Pragma' => 'public',
+                        'Cache-Control' => 'max-age=86400',
+                        'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
+                        'Content-disposition' => 'inline; filename="' . $imageName . '";',
                     ] as $header => $value
                 ) {
                     $response->headers->set($header, $value);
