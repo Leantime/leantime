@@ -3,8 +3,11 @@
 namespace Leantime\Domain\Comments\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Exceptions\AuthException;
     use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Comments\Models\Comment;
     use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -105,6 +108,11 @@ namespace Leantime\Domain\Comments\Services {
          */
         public function addComment($values, $module, $entityId): bool
         {
+
+            if (!Auth::userIsAtLeast(Roles::$commenter)) {
+                throw new AuthException("User is not authorized to add comments");
+            }
+
             if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId)) {
                 $mapper = array(
                     'text' => $values['text'],
@@ -173,6 +181,17 @@ namespace Leantime\Domain\Comments\Services {
          */
         public function editComment($values, $id): bool
         {
+
+            if ($id == 0) {
+                throw new MissingParameterException("Comment Id is required");
+            }
+
+            $comment = (object) $this->getComment($id);
+
+            if ($comment->userId !== session("userdata.id") && !Auth::userIsAtLeast(Roles::$manager)) {
+                throw new AuthException("User is not authorized to edit comment");
+            }
+
             return $this->commentRepository->editComment($values['text'], $id);
         }
 
@@ -180,10 +199,26 @@ namespace Leantime\Domain\Comments\Services {
          * @param $commentId
          * @return bool
          */
-        public function deleteComment($commentId): bool
+        public function deleteComment(int $commentId): bool
         {
 
+            if ($commentId == 0) {
+                throw new MissingParameterException("Comment Id is required");
+            }
+
+            $comment = (object) $this->getComment($commentId);
+
+            if ($comment->userId !== session("userdata.id") && !Auth::userIsAtLeast(Roles::$manager)) {
+                throw new AuthException("User is not authorized to delete comment");
+            }
+
             return $this->commentRepository->deleteComment($commentId);
+        }
+
+        public function getComment($id): array
+        {
+
+            return $this->commentRepository->getComment($id);
         }
     }
 

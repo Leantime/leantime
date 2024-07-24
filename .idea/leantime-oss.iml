@@ -2,6 +2,8 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="Leantime\" />
+      <sourceFolder url="file://$MODULE_DIR$/custom" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/html-to-markdown" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bacon/bacon-qr-code" />
@@ -160,6 +162,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/encryption" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/redis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/prompts" />
+      <excludeFolder url="file://$MODULE_DIR$/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/public/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/public/js" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/userfiles" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

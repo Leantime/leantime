@@ -24,6 +24,8 @@
 
 @elseif($type == \Leantime\Core\Support\DateTimeInfoEnum::HumanReadable)
 
+    {{ dtHelper()->parseDbDateTime($date)->diffForHumans() }}
+
 @elseif($type == \Leantime\Core\Support\DateTimeInfoEnum::Plain)
 
 {{ format($date)->date() }} {{ format($date)->time() }}

@@ -232,8 +232,8 @@ namespace Leantime\Domain\Projects\Controllers {
                         'menuType' => $_POST['menuType'],
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
-                        'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
-                        'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime() : ''
+                        'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC(),
+                        'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC() : ''
                     );
 
                     if ($values['name'] !== '') {

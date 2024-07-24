@@ -112,6 +112,7 @@
     --input-radius: 15px;
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
     --input-padding: 4px 14px;
+    --form-element-line-height: 22px;
 
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);
@@ -167,6 +168,14 @@
     --fc-border-color: var(--main-border-color);
 
     --transparencyLayer: rgba(0,0,0,1);
+
+    --spacing-none: 0;
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-base: 15px;
+    --spacing-m: 15px;
+    --spacing-l: 20px;
+    --spacing-xl: 30px;
 
 }
 

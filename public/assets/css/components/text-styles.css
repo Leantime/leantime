@@ -1,6 +1,6 @@
 a, a:hover, a:link, a:active, a:focus {
     outline: none;
-    color: var(--primary-color);
+    color: var(--accent1);
     text-decoration: none;
 }
 

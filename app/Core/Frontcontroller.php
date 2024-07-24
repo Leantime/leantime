@@ -131,20 +131,6 @@ class Frontcontroller
     }
 
     /**
-     * includeAction - possible to include action from everywhere
-     *
-     * @access public
-     * @param string $completeName
-     * @param array  $params
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public static function includeAction(string $completeName, array $params = array()): void
-    {
-        self::executeAction($completeName, $params);
-    }
-
-    /**
      * getActionName - split string to get actionName
      *
      * @access public

@@ -97,23 +97,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $this->tpl->setNotification($result["msg"], "error");
             }
 
-            //Delete comment
-            if (isset($params['delComment']) === true) {
-                $commentId = (int)($params['delComment']);
-
-                if ($this->commentService->deleteComment($commentId)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
-                    $response->headers->set('HX-Trigger', 'ticketUpdate');
-                    return $response;
-                }
-
-                $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
-            }
-            //Delete Subtask
-            if (isset($params['delSubtask']) === true) {
-
-            }
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));
@@ -143,11 +126,6 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $projectData = $this->projectService->getProject($ticket->projectId);
             $this->tpl->assign('projectData', $projectData);
-
-            $comments = $this->commentService->getComments('ticket', $id);
-
-            $this->tpl->assign('numComments', count($comments));
-            $this->tpl->assign('comments', $comments);
 
             $files = $this->fileService->getFilesByModule('ticket', $id);
             $this->tpl->assign('numFiles', count($files));
@@ -204,23 +182,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $tab = "#files";
             }
 
-            // Add or edit a comment
-            if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '' && isset($params['edit-comment-helper']) && $params['edit-comment-helper'] !== "") {
-                if ($this->commentService->editComment($_POST, (int)$params['edit-comment-helper'])) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_edited_success"), "success");
-                } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_edit_error"), "error");
-                }
-                $tab = "#comment";
-            } else if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '') {
-                if ($this->commentService->addComment($_POST, "ticket", $id, $ticket)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
-                }
-                $tab = "#comment";
-            }
-
             //Log time
             if (isset($params['saveTimes']) === true) {
                 $result = $this->timesheetService->logTime($id, $params);
@@ -231,7 +192,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__($result['msg']), "error");
                 }
             }
-
 
             //Save Ticket
             if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {

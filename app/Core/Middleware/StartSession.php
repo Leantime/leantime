@@ -89,6 +89,7 @@ class StartSession
             ->betweenBlockedAttemptsSleepFor(100);
 
         try {
+
             $lock->block(
                 $this->manager->defaultRouteBlockWaitSeconds()
             );

@@ -4,14 +4,14 @@
     'selectedKey' => '',
     'parentId' => '',
     'options' => [],
-    'extraClass',
-    'linkStyle',
+    'extraClass' => '',
+    'linkStyle' => '',
     'submit' => "false"
 ])
 
 <div {{ $attributes->merge([ 'class' => '' ]) }} >
-    <div class="dropdown ticketDropdown {{ $type }}Dropdown show {{ $extraClass }}">
-        <a style="{{ $linkStyle }}" class="dropdown-toggle f-left {{ $type }} {{ $selectedClass }}" href="javascript:void(0);" role="button" id="{{ $type }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div class="dropdown ticketDropdown {{ $type }}Dropdown show {{ $extraClass }}" id="dropdownPillWrapper-{{ $parentId }}-{{ $type }}">
+        <a style="{{ $linkStyle }}" class="dropdown-toggle tw-inline-block {{ $type }} {{ $selectedClass }} {{ $type }}-bg-{{ $selectedClass }}" href="javascript:void(0);" role="button" id="{{ $type }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="text">
                 @if(isset($options[$selectedKey]))
                     @if(is_array($options[$selectedKey]))
@@ -26,29 +26,32 @@
             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
         <ul class="dropdown-menu" aria-labelledby="{{ $type  }}DropdownMenuLink{{ $parentId }}">
-            <li class="nav-header border"> {{ __("label.select_".$type) }}</li>
-            @foreach ($options as $key => $value)
-               <li class='dropdown-item'>
-                    <a href='javascript:void(0);' class="dropdownPillLink"
-
-                       id='{{ $type }}Change{{ $parentId }}{{ $key }}'
-                       onclick="jQuery('#dropdownPill-{{ $parentId }}-{{ $type }}').val('{{ $key }}'); @if($submit !== "false") document.querySelector('{{ $submit }}').submit(); @endif"
-                         @if(is_array($value))
-                           class='{{ $type }}-bg-{{ $key }} {{ $value["class"] }}'
-                           data-label='{{ $value["name"] }}'
-                           data-value='{{ $parentId }}_{{ $key }}_{{ $value["class"] }}'
-                            >
-                            {{ $value["name"] }}
-                       @else
-                           class='{{ $type }}-bg-{{ $key }}'
-                           data-value='{{ $parentId  }}_{{ $key }}'
-                            >
-                            {{ $value }}
-                        @endif
-                    </a>
-                </li>
-            @endforeach
+            {{ $slot }}
         </ul>
     </div>
-    <input type="hidden" name="{{ $type }}" value="{{ $selectedKey }}" id="dropdownPill-{{ $parentId }}-{{ $type }}" />
+    <input type="hidden" name="{{ $type }}Field" value="{{ $selectedKey }}" id="dropdownPillInput-{{ $parentId }}-{{ $type }}" />
 </div>
+
+<script>
+
+    jQuery.fn.removeClassStartingWith = function (filter) {
+        jQuery(this).removeClass(function (index, className) {
+            return (className.match(new RegExp("\\S*" + filter + "\\S*", 'g')) || []).join(' ')
+        });
+        return this;
+    };
+
+    function pillSelect(key, bgClass, type, parentId) {
+
+        jQuery('#dropdownPillInput-' + parentId + '-'+ type).val(key);
+
+        let selectedLabel = jQuery('#dropdownPillWrapper-' + parentId + '-'+ type + ' #'+ type +'Change'+parentId+''+key).attr("data-label");
+        let selectedValue = jQuery('#dropdownPillWrapper-' + parentId + '-'+ type + ' #'+ type +'Change'+parentId+''+key).attr("data-label");
+        jQuery('#dropdownPillWrapper-' + parentId + '-'+ type + ' .dropdown-toggle .text').text(selectedLabel);
+        jQuery('#dropdownPillWrapper-' + parentId + '-'+ type + ' .dropdown-toggle').removeClassStartingWith(type+'-bg-');
+        jQuery('#dropdownPillWrapper-' + parentId + '-'+ type + ' .dropdown-toggle').addClass(type+'-bg-'+bgClass);
+
+
+    }
+
+</script>

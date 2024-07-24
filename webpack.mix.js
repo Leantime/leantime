@@ -59,8 +59,9 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/app/core/snippets.js",
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
-        "./public/assets/js/app/core/datePickers.js",
         "./public/assets/js/app/core/dateHelper.js",
+        "./public/assets/js/app/core/datePickers.js",
+        "./public/assets/js/app/core/selects.js",
         ...glob.sync("./app/Domain/**/*.js").map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([
@@ -75,6 +76,8 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/jquery.form.js",
         "./public/assets/js/libs/jquery.tagsinput.min.js",
         "./public/assets/js/libs/bootstrap-fileupload.min.js",
+        "./node_modules/flatpickr/dist/flatpickr.js",
+
     ], `public/dist/js/compiled-framework-plugins.${version}.min.js`)
     .combine([
         "./node_modules/luxon/build/global/luxon.js",
@@ -83,6 +86,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/@popperjs/core/dist/umd/popper.js",
         "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
         "./public/assets/js/libs/slimselect.min.js",
+        "./node_modules/leantime.choices.js/public/assets/scripts/choices.min.js",
         "./node_modules/canvas-confetti/dist/confetti.browser.js",
         "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
         "./public/assets/js/libs/uppy/uppy.js",

@@ -168,13 +168,9 @@ namespace Leantime\Domain\Comments\Repositories {
 
         /**
          * @param $id
-         * @return void
+         * @return array
          */
-        /**
-         * @param $id
-         * @return void
-         */
-        public function getComment($id): void
+        public function getComment($id): array
         {
 
             $sql = "SELECT
@@ -188,14 +184,13 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
+            $values = $stmn->fetch();
             $stmn->closeCursor();
+
+            return $values;
         }
 
-        /**
-         * @param $values
-         * @param $module
-         * @return false|string
-         */
+
         /**
          * @param $values
          * @param $module

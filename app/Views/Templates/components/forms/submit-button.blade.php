@@ -9,7 +9,7 @@
         {{ $value }}
     </button>
     @if($htmxIndicator)
-        <div class="htmx-indicator htmx-indicator-small tw-float-left tw-mt-[4px]]">
+        <div class="htmx-indicator htmx-indicator-small tw-float-left tw-mt-[4px]">
             <x-global::elements.loader id="loadingthis" size="25px" />
         </div>
     @endif

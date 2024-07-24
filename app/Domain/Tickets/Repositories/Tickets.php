@@ -405,7 +405,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     zp_tickets.editFrom,
                     zp_tickets.editTo,
                     zp_tickets.hourRemaining,
-                    (SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
+                    0 AS bookedHours,
                     zp_projects.name AS projectName,
                     zp_clients.name AS clientName,
                     zp_clients.id AS clientId,
@@ -418,9 +418,9 @@ namespace Leantime\Domain\Tickets\Repositories {
                     t2.profileId AS editorProfileId,
                     milestone.headline AS milestoneHeadline,
                     IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
-                    (SELECT COUNT(*) FROM zp_comment WHERE zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket') AS commentCount,
-                    (SELECT COUNT(*) FROM zp_file WHERE zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket') AS fileCount,
-                    (SELECT COUNT(*) FROM zp_tickets AS subtasks WHERE zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0) AS subtaskCount,
+                    0 AS commentCount,
+                    0 AS fileCount,
+                    0 AS subtaskCount,
                     parent.headline AS parentHeadline
                 FROM
                     zp_tickets

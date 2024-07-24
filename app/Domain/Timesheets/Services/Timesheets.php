@@ -115,9 +115,9 @@ class Timesheets
         }
 
         if (empty($params['time'])) {
-            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
         } else {
-            $values['date'] = format($params['date'], $params['time'], FromFormat::UserDateTime)->isoDateTime();
+            $values['date'] = format($params['date'], $params['time'], FromFormat::UserDateTime)->isoDateTimeUTC();
         }
 
         $values['hours'] = $params['hours'];
@@ -180,7 +180,7 @@ class Timesheets
         }
 
         if (empty($params['timestamp'])) {
-            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
         } else {
             $values['date'] = dtHelper()->timestamp($params['timestamp'])->formatDateTimeForDb();
         }

@@ -48,7 +48,12 @@ class CommentList extends HtmxController
         $module = $this->incomingRequest->input("module");
         $moduleId = $this->incomingRequest->input("moduleId");
         $includeStatus = $this->incomingRequest->input("includeStatus");
+        $simpleStatusField = $this->incomingRequest->input("simpleStatusField");
         $editComment = filter_var($this->incomingRequest->input("editComment"), FILTER_SANITIZE_NUMBER_INT);
+
+        if($includeStatus == true) {
+            $_POST['status'] = $simpleStatusField;
+        }
 
         if ($editComment > 0 && $this->commentService->editComment($_POST, $editComment)) {
                 $this->tpl->setNotification($this->language->__("notifications.comment_saved_success"), "success");
@@ -94,24 +99,25 @@ class CommentList extends HtmxController
     {
 
         $getVars = $_GET;
-        $id = $getVars["ticketId"];
-        $parentId = $getVars["parentTicket"];
+        $id = $getVars["commentId"];
 
-        if ($this->ticketService->delete($id)) {
-            $this->tpl->setNotification($this->language->__("notifications.subtask_deleted"), "success");
+        if ($this->commentService->deleteComment($id)) {
+            $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
         } else {
-            $this->tpl->setNotification($this->language->__("notifications.subtask_delete_error"), "error");
+            $this->tpl->setNotification($this->language->__("notifications.comment_delete_error"), "error");
         }
 
-        $ticket = $this->ticketService->getTicket($parentId);
-        $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);
-        $statusLabels  = $this->ticketService->getStatusLabels(session("currentProject"));
-        $efforts = $this->ticketService->getEffortLabels();
+        $module = $this->incomingRequest->input("module");
+        $moduleId = $this->incomingRequest->input("moduleId");
+        $includeStatus = $this->incomingRequest->input("includeStatus");
+
+        $comments = $this->commentService->getComments($module, $moduleId);
+
+        $this->tpl->assign("module", $module);
+        $this->tpl->assign("moduleId", $moduleId);
+        $this->tpl->assign("includeStatus", $includeStatus);
+        $this->tpl->assign("comments", $comments);
 
         $this->setHTMXEvent("HTMX.ShowNotification");
-        $this->tpl->assign("ticket", $ticket);
-        $this->tpl->assign("ticketSubtasks", $ticketSubtasks);
-        $this->tpl->assign("statusLabels", $statusLabels);
-        $this->tpl->assign("efforts", $efforts);
     }
 }
