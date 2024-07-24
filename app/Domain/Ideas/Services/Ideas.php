@@ -13,7 +13,7 @@ namespace Leantime\Domain\Ideas\Services {
             $this->ideasRepository = $ideasRepository;
         }
 
-        public function pollIdeas(): array
+        public function pollForNewIdeas(): array
         {
             return $this->ideasRepository->getAllIdeas();
         }
