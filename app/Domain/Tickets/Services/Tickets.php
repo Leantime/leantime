@@ -2112,31 +2112,5 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $todos;
         }
-
-        public function createMilestoneUsingZapier($values): array|bool
-        {
-            $values = array(
-                'status' => $values['status'] ?? "",
-                'description' => $values['description'] ?? "",
-                'projectId' => $values['projectId'] ?? session("currentProject"),
-                'editorId' => $values['editorId'] ?? "",
-                'date' => dtHelper()->userNow()->formatDateTimeForDb(),
-                'dateToFinish' => $values['dateToFinish'] ?? "",
-                'timeToFinish' => $values['timeToFinish'] ?? "",
-                'planHours' => $values['planHours'] ?? "",
-                'tags' => $values['tags'] ?? "",
-                'sprint' => $values['sprint'] ?? "",
-                'storypoints' => $values['storypoints'] ?? "",
-                'hourRemaining' => $values['hourRemaining'] ?? "",
-                'priority' => $values['priority'] ?? "",
-                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
-                'editFrom' => $values['editFrom'] ?? "",
-                'editTo' => $values['editTo'] ?? "",
-                'dependingTicketId' => $values['dependingTicketId'] ?? "",
-                'milestoneid' => $values['milestoneid'] ?? "",
-            );
-
-            return $this->addTicket($values);
-        }
     }
 }
