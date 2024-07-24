@@ -2089,8 +2089,7 @@ namespace Leantime\Domain\Tickets\Services {
             return $milestones;
         }
 
-        // TODO: update this to be todo and update zapier as well 
-        public function pollForNewAccountTickets(): array|false
+        public function pollForNewAccountTodos(): array|false
         {
             return $this->ticketRepository->getAllBySearchCriteria(
                 ["excludeType" => "milestone"],
