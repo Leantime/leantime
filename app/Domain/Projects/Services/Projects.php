@@ -1561,9 +1561,6 @@ namespace Leantime\Domain\Projects\Services {
             return $this->projectRepository->getAll($showClosedProjects);
         }
 
-        /**
-         * @return array
-         */
         public function pollForUpdatedProjects(): array
         {
             $projects = $this->projectRepository->getAll(false);
