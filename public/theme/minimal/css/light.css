@@ -17,9 +17,9 @@
     --tab-active-background:  rgba(230, 230, 230, 1);
     --tab-active-color: #555;
 
-    --primary-content-bg-opacity: 0.4;
+    --primary-content-bg-opacity: 0.3;
 
-    --main-titles-color: var(--accent1);
+    --main-titles-color: #555;
 
     --primary-background: rgba(255, 255, 255, 1);
     --secondary-background: #fff;
@@ -63,7 +63,7 @@
     --main-menu-link-bg: var(--secondary-background);
     --main-menu-link-color: var(--primary-font-color);
 
-    --main-menu-link-hover-bg: rgba(220, 220, 220, 0.8);
+    --main-menu-link-hover-bg: rgba(250, 250, 250, 0.8);
     --main-menu-link-hover-color: var(--accent1);
 
     --main-menu-overlayed-link-hover-bg: rgba(255, 255, 255, 0.4);
