@@ -1232,8 +1232,6 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function addTicket($values)
         {
-            $userId = $values['userId'] ?? session("userdata.id");
-
             $values = array(
                 'id' => '',
                 'headline' => $values['headline'] ?? "",
@@ -1241,7 +1239,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? session("currentProject"),
                 'editorId' => $values['editorId'] ?? "",
-                'userId' => $userId,
+                'userId' => session("userdata.id"),
                 'date' => gmdate("Y-m-d H:i:s"),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
@@ -1261,7 +1259,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $values['milestoneid'] ?? "",
             );
 
-            if (!$this->projectService->isUserAssignedToProject($userId, $values['projectId'])) {
+            if (!$this->projectService->isUserAssignedToProject(session("userdata.id"), $values['projectId'])) {
                 return array("msg" => "notifications.ticket_save_error_no_access", "type" => "error");
             }
 
