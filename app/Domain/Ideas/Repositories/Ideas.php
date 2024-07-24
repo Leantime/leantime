@@ -627,9 +627,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             return true;
         }
 
-        /**
-         * @return array|false
-         */
         public function getAllIdeas(): array|false
         {
             $sql = "SELECT zp_canvas_items.id,
