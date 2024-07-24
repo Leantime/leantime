@@ -454,7 +454,7 @@ class Timesheets
         return $this->timesheetsRepo->kind;
     }
 
-    public function pollTimesheets(): array|false
+    public function pollForNewTimesheets(): array|false
     {
         return $this->timesheetsRepo->getAllAccountTimesheets();
     }
