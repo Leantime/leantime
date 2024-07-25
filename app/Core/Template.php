@@ -681,9 +681,10 @@ class Template
         if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti({
-                    spread: 70,
-                    origin: { y: 1.2 },
-                  });
+                     spread: 70,
+                     origin: { y: 1.2 },
+                     disableForReducedMotion: true
+                    });
                   </script>',
                 []
             );
@@ -759,9 +760,11 @@ class Template
         if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti({
-                    spread: 70,
-                    origin: { y: 1.2 },
-                  });</script>',
+                        spread: 70,
+                        origin: { y: 1.2 },
+                        disableForReducedMotion: true
+                      });
+                      </script>',
                 []
             );
 
