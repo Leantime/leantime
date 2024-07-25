@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Support\FromFormat;
@@ -451,5 +452,21 @@ class Timesheets
     public function getBookedHourTypes(): array
     {
         return $this->timesheetsRepo->kind;
+    }
+
+    public function pollForNewTimesheets(): array|false
+    {
+        return $this->timesheetsRepo->getAllAccountTimesheets();
+    }
+
+    public function pollForUpdatedTimesheets(): array|false
+    {
+        $timesheets = $this->timesheetsRepo->getAllAccountTimesheets();
+
+        foreach ($timesheets as $key => $timesheet) {
+            $timesheets[$key]['id'] = $timesheet['id'] . '-' . $timesheet['modified'];
+        }
+
+        return $timesheets;
     }
 }

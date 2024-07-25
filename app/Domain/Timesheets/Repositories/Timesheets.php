@@ -82,6 +82,7 @@ class Timesheets extends Repository
                     zp_tickets.headline,
                     zp_tickets.planHours,
                     zp_tickets.tags,
+                    zp_tickets.modified,
                     milestone.headline as milestone
                 FROM
                     zp_timesheets
@@ -231,6 +232,7 @@ class Timesheets extends Repository
             zp_timesheets.paid,
             zp_timesheets.paidDate,
             zp_timesheets.kind,
+            zp_timesheets.modified,
             zp_tickets.headline,
             zp_tickets.planHours,
             zp_projects.name,
@@ -329,7 +331,8 @@ class Timesheets extends Repository
             invoicedCompDate,
             rate,
             paid,
-            paidDate
+            paidDate,
+            modified
         ) VALUES (
             :userId,
             :ticket,
@@ -343,7 +346,8 @@ class Timesheets extends Repository
             :invoicedCompDate,
             :rate,
             :paid,
-            :paidDate
+            :paidDate,
+            :modified
         ) ON DUPLICATE KEY UPDATE
              hours = hours + :hours,
              description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
@@ -367,6 +371,7 @@ class Timesheets extends Repository
         $call->bindValue(':hours', $values['hours']);
         $call->bindValue(':paid', $values['paid'] ?? '');
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -396,7 +401,8 @@ class Timesheets extends Repository
                 invoicedCompDate,
                 rate,
                 paid,
-                paidDate
+                paidDate,
+                modified
             ) VALUES (
                 :userId,
                 :ticket,
@@ -409,7 +415,8 @@ class Timesheets extends Repository
                 :invoicedCompDate,
                 :rate,
                 :paid,
-                :paidDate
+                :paidDate,
+                :modified
             ) ON DUPLICATE KEY UPDATE
                  hours = :hours";
 
@@ -431,6 +438,7 @@ class Timesheets extends Repository
         $call->bindValue(':hours', $values['hours']);
         $call->bindValue(':paid', $values['paid'] ?? '');
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -460,7 +468,8 @@ class Timesheets extends Repository
             zp_timesheets.invoicedEmplDate,
             zp_timesheets.invoicedCompDate,
             zp_timesheets.paid,
-            zp_timesheets.paidDate
+            zp_timesheets.paidDate,
+            zp_timesheets.modified
 
         FROM zp_timesheets
         LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
@@ -498,7 +507,8 @@ class Timesheets extends Repository
                 invoicedEmplDate =:invoicedEmplDate,
                 invoicedCompDate =:invoicedCompDate,
                 paid =:paid,
-                paidDate =:paidDate
+                paidDate =:paidDate,
+                modified =:modified
             WHERE
                 id = :id";
 
@@ -517,6 +527,7 @@ class Timesheets extends Repository
         $call->bindValue(':paid', $values['paid']);
         $call->bindValue(':paidDate', $values['paidDate']);
         $call->bindValue(':id', $values['id']);
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -537,7 +548,8 @@ class Timesheets extends Repository
         $query = "UPDATE
                 zp_timesheets
             SET
-                hours = :hours
+                hours = :hours,
+                modified =:modified
             WHERE
                 userId = :userId
                 AND ticketId = :ticketId
@@ -555,6 +567,7 @@ class Timesheets extends Repository
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticketId', $values['ticket']);
         $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -658,8 +671,8 @@ class Timesheets extends Repository
         } else {
             $utc = dtHelper()->dbNow()->format("Y-m-d");
             $returnValues[$utc] = [
-              'utc' => $utc,
-              'summe' => 0,
+                'utc' => $utc,
+                'summe' => 0,
             ];
         }
 
@@ -716,13 +729,15 @@ class Timesheets extends Repository
         foreach ($invEmpl as $row1) {
             $query = "UPDATE zp_timesheets
                       SET invoicedEmpl = 1,
-                          invoicedEmplDate = :date
+                          invoicedEmplDate = :date,
+                          modified = :modified
                       WHERE id = :id ";
 
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
             $invEmplCall->bindValue(':id', $row1);
             $invEmplCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invEmplCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $invEmplCall->execute();
 
             unset($invEmplCall);
@@ -731,13 +746,15 @@ class Timesheets extends Repository
         foreach ($invComp as $row2) {
             $query2 = "UPDATE zp_timesheets
                        SET invoicedComp = 1,
-                           invoicedCompDate = :date
+                           invoicedCompDate = :date,
+                           modified = :modified
                        WHERE id = :id ";
 
             $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
             $invCompCall->prepare($query2);
             $invCompCall->bindValue(':id', $row2);
             $invCompCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invCompCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $invCompCall->execute();
 
             unset($invCompCall);
@@ -746,13 +763,15 @@ class Timesheets extends Repository
         foreach ($paid as $row3) {
             $query3 = "UPDATE zp_timesheets
                        SET paid = 1,
-                           paidDate = :date
+                           paidDate = :date,
+                           modified = :modified
                        WHERE id = :id ";
 
             $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
             $paidCol->prepare($query3);
             $paidCol->bindValue(':id', $row3);
             $paidCol->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $paidCol->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $paidCol->execute();
 
             unset($paidCol);
@@ -905,5 +924,55 @@ class Timesheets extends Repository
         return $onTheClock;
     }
 
+    public function getAllAccountTimesheets(): array|false
+    {
+        $query = "SELECT
+                        zp_timesheets.id,
+                        zp_timesheets.userId,
+                        zp_timesheets.ticketId,
+                        zp_timesheets.workDate,
+                        zp_timesheets.hours,
+                        zp_timesheets.description,
+                        zp_timesheets.kind,
+                        zp_projects.name,
+                        zp_projects.id AS projectId,
+                        zp_clients.name AS clientName,
+                        zp_clients.id AS clientId,
+                        zp_timesheets.invoicedEmpl,
+                        zp_timesheets.invoicedComp,
+                        zp_timesheets.invoicedEmplDate,
+                        zp_timesheets.invoicedCompDate,
+                        zp_timesheets.paid,
+                        zp_timesheets.paidDate,
+                        zp_timesheets.modified,
+                        zp_user.firstname,
+                        zp_user.lastname,
+                        zp_tickets.id as ticketId,
+                        zp_tickets.headline,
+                        zp_tickets.planHours,
+                        zp_tickets.tags,
+                        milestone.headline as milestone
+                    FROM
+                        zp_timesheets
+                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
+                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id";
 
+        $query .= " GROUP BY
+                zp_timesheets.id,
+                zp_timesheets.userId,
+                zp_timesheets.ticketId,
+                zp_timesheets.workDate,
+                zp_timesheets.hours,
+                zp_timesheets.description,
+                zp_timesheets.kind";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+
+        return $call->fetchAll();
+    }
 }

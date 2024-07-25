@@ -172,19 +172,35 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
-        public function updateGoalboard($values) {
+        public function updateGoalboard($values)
+        {
             return $this->goalRepository->updateCanvas($values);
         }
 
-        public function createGoalboard($values) {
+        public function createGoalboard($values)
+        {
             return $this->goalRepository->addCanvas($values);
         }
 
-        public function getSingleCanvas($id) {
+        public function getSingleCanvas($id)
+        {
             return $this->goalRepository->getSingleCanvas($id);
         }
 
+        public function pollGoals()
+        {
+            return $this->goalRepository->getAllAccountGoals();
+        }
 
+        public function pollForUpdatedGoals(): array|false
+        {
+            $goals = $this->goalRepository->getAllAccountGoals();
+
+            foreach ($goals as $key => $goal) {
+                $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
+            }
+
+            return $goals;
+        }
     }
-
 }

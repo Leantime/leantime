@@ -139,6 +139,9 @@ namespace Leantime\Domain\Comments\Services {
             return $this->commentRepository->deleteComment($commentId);
         }
 
+        public function pollComments(): array | false
+        {
+            return $this->commentRepository->getAllAccountComments();
+        }
     }
-
 }

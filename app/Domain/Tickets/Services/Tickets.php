@@ -399,8 +399,8 @@ namespace Leantime\Domain\Tickets\Services {
                             $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"
                         )
                     ) {
-                            $ticketCounter++;
-                            continue;
+                        $ticketCounter++;
+                        continue;
                     }
 
                     if (
@@ -590,7 +590,7 @@ namespace Leantime\Domain\Tickets\Services {
                 case "priority":
                 case "storypoints":
                     $ticketGroups = array_sort($ticketGroups, 'id');
-                // no break
+                    // no break
                 default:
                     $ticketGroups = array_sort($ticketGroups, 'label');
                     break;
@@ -808,10 +808,10 @@ namespace Leantime\Domain\Tickets\Services {
                     } else {
                         // If the priority is not set, the label for priority not defined is used.
                         if (empty($this->ticketRepository->priority[$row['priority']])) {
-                            $label =$this->language->__("label.priority_not_defined");
+                            $label = $this->language->__("label.priority_not_defined");
                         }
                         $tickets[$row['priority']] = array(
-                            "labelName" =>$label,
+                            "labelName" => $label,
                             "tickets" => array($row),
                             "groupValue" => $row['time'],
                         );
@@ -1237,7 +1237,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'headline' => $values['headline'] ?? "",
                 'type' => $values['type'] ?? "task",
                 'description' => $values['description'] ?? "",
-                'projectId' => $values['projectId'] ?? session("currentProject") ,
+                'projectId' => $values['projectId'] ?? session("currentProject"),
                 'editorId' => $values['editorId'] ?? "",
                 'userId' => session("userdata.id"),
                 'date' => gmdate("Y-m-d H:i:s"),
@@ -1323,6 +1323,15 @@ namespace Leantime\Domain\Tickets\Services {
          *                      - 'time*/
         public function updateTicket($values): array|bool
         {
+            if (!isset($values["headline"])) {
+                $currentTicket = $this->getTicket($values['id']);
+
+                if (!$currentTicket) {
+                    return array("msg" => "This ticket id does not exist within your leantime account.", "type" => "error");
+                }
+
+                $values["headline"] = $currentTicket->headline;
+            }
 
             $values = array(
                 'id' => $values['id'],
@@ -1354,34 +1363,30 @@ namespace Leantime\Domain\Tickets\Services {
                 return array("msg" => "notifications.ticket_save_error_no_access", "type" => "error");
             }
 
-            if ($values['headline'] === '') {
-                return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
-            } else {
-                $values = $this->prepareTicketDates($values);
+            $values = $this->prepareTicketDates($values);
 
-                //Update Ticket
-                if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
-                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
-                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
-                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), session("userdata.name"), $values['headline']);
+            //Update Ticket
+            if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
+                $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
+                $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
+                $message = sprintf($this->language->__("email_notifications.todo_update_message"), session("userdata.name"), $values['headline']);
 
-                    $notification = app()->make(NotificationModel::class);
-                    $notification->url = array(
-                        "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.todo_update_cta"),
-                    );
-                    $notification->entity = $values;
-                    $notification->module = "tickets";
-                    $notification->projectId = session("currentProject");
-                    $notification->subject = $subject;
-                    $notification->authorId = session("userdata.id");
-                    $notification->message = $message;
+                $notification = app()->make(NotificationModel::class);
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.todo_update_cta"),
+                );
+                $notification->entity = $values;
+                $notification->module = "tickets";
+                $notification->projectId = session("currentProject");
+                $notification->subject = $subject;
+                $notification->authorId = session("userdata.id");
+                $notification->message = $message;
 
-                    $this->projectService->notifyProjectUsers($notification);
+                $this->projectService->notifyProjectUsers($notification);
 
 
-                    return true;
-                }
+                return true;
             }
 
 
@@ -2059,6 +2064,53 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $values;
         }
-    }
 
+        public function pollForNewAccountMilestones(): array | false
+        {
+            return $this->ticketRepository->getAllBySearchCriteria(
+                ["type" => "milestone"],
+                'date'
+            );
+        }
+
+        // since the date attribute of milestones gets updated when the milestone is updated we need to poll for updated milestones
+        // using that date attribute
+        public function pollForUpdatedAccountMilestones(): array|false
+        {
+            $milestones = $this->ticketRepository->getAllBySearchCriteria(
+                ["type" => "milestone"],
+                'date'
+            );
+
+            foreach ($milestones as $key => $milestone) {
+                $milestones[$key]['id'] = $milestone['id'] . '-' . $milestone['date'];
+            }
+
+            return $milestones;
+        }
+
+        public function pollForNewAccountTodos(): array|false
+        {
+            return $this->ticketRepository->getAllBySearchCriteria(
+                ["excludeType" => "milestone"],
+                'date'
+            );
+        }
+
+        // Since the date attribute of todos gets updated when the todo is updated we need to poll for updated todos
+        // using that date attribute
+        public function pollForUpdatedAccountTodos(): array|false
+        {
+            $todos = $this->ticketRepository->getAllBySearchCriteria(
+                ["excludeType" => "milestone"],
+                'date'
+            );
+
+            foreach ($todos as $key => $todo) {
+                $todos[$key]['id'] = $todo['id'] . '-' . $todo['date'];
+            }
+
+            return $todos;
+        }
+    }
 }

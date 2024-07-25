@@ -180,7 +180,7 @@ namespace Leantime\Domain\Projects\Services {
             }
 
 
-            $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate , "plannedCompletionDate" => '');
+            $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate, "plannedCompletionDate" => '');
             if ($numberOfClosedTickets < 10) {
                 $returnValue['estimatedCompletionDate'] = "<a href='" . BASE_URL . "/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
             } elseif ($finalPercent == 100) {
@@ -614,7 +614,7 @@ namespace Leantime\Domain\Projects\Services {
             //If last project setting is set use that
             $lastProject = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".lastProject");
             if (
-                ! empty($lastProject)
+                !empty($lastProject)
                 && $this->changeCurrentSessionProject($lastProject)
             ) {
                 return;
@@ -1053,26 +1053,26 @@ namespace Leantime\Domain\Projects\Services {
 
             //Ideas
             $this->duplicateCanvas(
-                repository:IdeaRepository::class,
+                repository: IdeaRepository::class,
                 originalProjectId: $projectId,
                 newProjectId: $newProjectId
             );
 
             $this->duplicateCanvas(
-                repository:GoalcanvaRepository::class,
+                repository: GoalcanvaRepository::class,
                 originalProjectId: $projectId,
                 newProjectId: $newProjectId
             );
 
             $this->duplicateCanvas(
-                repository:Wiki::class,
+                repository: Wiki::class,
                 originalProjectId: $projectId,
                 newProjectId: $newProjectId,
                 canvasTypeName: "wiki"
             );
 
             $this->duplicateCanvas(
-                repository:LeancanvaRepository::class,
+                repository: LeancanvaRepository::class,
                 originalProjectId: $projectId,
                 newProjectId: $newProjectId
             );
@@ -1241,19 +1241,19 @@ namespace Leantime\Domain\Projects\Services {
                             "status" => "",
                             "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "",
                             "description" => "checklist.define.tasks.description",
-                    ),
+                        ),
                         "defineTeam" => array(
                             "title" => "label.defineTeam",
                             "status" => "",
                             "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "#team",
                             "description" => "checklist.define.tasks.defineTeam",
-                    ),
+                        ),
                         "createBlueprint" => array(
                             "title" => "label.createBlueprint",
                             "status" => "",
                             "link" => BASE_URL . "/strategy/showBoards/",
                             "description" => "checklist.define.tasks.createBlueprint",
-                    ),
+                        ),
                     ),
                     "status" => '',
                 ),
@@ -1266,7 +1266,7 @@ namespace Leantime\Domain\Projects\Services {
                             "status" => "",
                             "link" => BASE_URL . "/goalcanvas/dashboard",
                             "description" => "checklist.goals.tasks.setGoals",
-                    ),
+                        ),
                     ),
                     "status" => '',
                 ),
@@ -1279,7 +1279,7 @@ namespace Leantime\Domain\Projects\Services {
                             "status" => "",
                             "link" => BASE_URL . "/tickets/roadmap",
                             "description" => "checklist.timeline.tasks.createMilestones",
-                    ),
+                        ),
 
                     ),
                     "status" => '',
@@ -1292,13 +1292,13 @@ namespace Leantime\Domain\Projects\Services {
                             "title" => "label.createTasks",
                             "status" => "", "link" => BASE_URL . "/tickets/showAll",
                             "description" => "checklist.implementation.tasks.createTasks ",
-                    ),
+                        ),
                         "finish80percent" =>  array(
                             "title" => "label.finish80percent",
                             "status" => "",
                             "link" => BASE_URL . "/reports/show",
                             "description" => "checklist.implementation.tasks.finish80percent",
-                    ),
+                        ),
                     ),
                     "status" => '',
                 ),
@@ -1344,7 +1344,7 @@ namespace Leantime\Domain\Projects\Services {
             }
 
             //Add overrides
-            if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
+            if (!$stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
                 $stepsCompleted = [];
             } else {
                 $stepsCompleted = unserialize($stepsCompleted);
@@ -1390,7 +1390,7 @@ namespace Leantime\Domain\Projects\Services {
                 // otherwise, set the step as completed
                 $progressSteps[$name]['status'] = 'done';
                 if (
-                    ! in_array($previousValue['stepType'] ?? null, ['current', ''])
+                    !in_array($previousValue['stepType'] ?? null, ['current', ''])
                     || $name == array_key_first($progressSteps)
                 ) {
                     $progressSteps[$name]['stepType'] = 'complete';
@@ -1443,7 +1443,8 @@ namespace Leantime\Domain\Projects\Services {
          * @param array $projects An array of project IDs to be assigned to the user.
          * @return bool Returns true if the project relations were successfully edited, false otherwise.
          */
-        public function editUserProjectRelations($id, $projects): bool {
+        public function editUserProjectRelations($id, $projects): bool
+        {
             return $this->projectRepository->editUserProjectRelations($id, $projects);
         }
 
@@ -1559,6 +1560,16 @@ namespace Leantime\Domain\Projects\Services {
         {
             return $this->projectRepository->getAll($showClosedProjects);
         }
-    }
 
+        public function pollForUpdatedProjects(): array
+        {
+            $projects = $this->projectRepository->getAll(false);
+
+            foreach ($projects as $key => $project) {
+                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+            }
+
+            return $projects;
+        }
+    }
 }
