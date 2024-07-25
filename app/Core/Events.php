@@ -70,6 +70,14 @@ class Events
         self::executeHandlers($matchedEvents, "events", $eventName, $payload);
     }
 
+    public function dispatch(
+        string $eventName,
+        mixed $payload = [],
+        string $context = ''
+    ) {
+        $this->dispatch_event($eventName, $payload, $context);
+    }
+
 
     /**
      * Finds event listeners by event names,

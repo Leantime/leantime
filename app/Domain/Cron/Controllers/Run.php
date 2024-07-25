@@ -56,6 +56,7 @@ namespace Leantime\Domain\Cron\Controllers {
                 /** @return never **/
                 (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
 
+
             });
 
             return tap(new Response(), function ($response) {

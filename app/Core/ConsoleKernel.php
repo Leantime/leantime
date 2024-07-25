@@ -39,6 +39,7 @@ class ConsoleKernel implements ConsoleKernelContract
     {
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplicationContract::class);
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplication::class);
+
         return $this->artisan ??= app()->instance(\Illuminate\Console\Application::class, new class extends ConsoleApplication implements ConsoleApplicationContract
         {
             /**
@@ -124,6 +125,7 @@ class ConsoleKernel implements ConsoleKernelContract
 
         $customCommands = $customPluginCommands = null;
 
+
         session(["commands.core" => collect(glob(APP_ROOT . '/app/Command/*.php') ?? [])
             ->filter(function ($command) use (&$customCommands) {
                 return ! Arr::has(
@@ -155,6 +157,14 @@ class ConsoleKernel implements ConsoleKernelContract
          *
          * @var LaravelCommand[]|SymfonyCommand[] $additionalCommands
          **/
+        $glob = glob(APP_ROOT . '/vendor/illuminate/*/Console/*.php');
+        $laravelCommands = collect($glob)->map(function ($command) {
+            $path = Str::replace(APP_ROOT."/vendor/illuminate/", "", $command);
+            $cleanPath = ucfirst(Str::replace(['/', '.php'], ['\\', ''], $path));
+            return "Illuminate\\".$cleanPath;
+        });
+        session(["commands.laravel" => $laravelCommands]);
+
         $additionalCommands = self::dispatch_filter('additional_commands', [
             \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
             \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
@@ -162,8 +172,9 @@ class ConsoleKernel implements ConsoleKernelContract
             \Illuminate\Console\Scheduling\ScheduleTestCommand::class,
             \Illuminate\Console\Scheduling\ScheduleWorkCommand::class,
             \Illuminate\Console\Scheduling\ScheduleClearCacheCommand::class,
-            \Illuminate\Cache\Console\ClearCommand::class,
         ]);
+
+        $commands = collect($commands)->concat($laravelCommands);
 
         collect($commands)->concat($additionalCommands)
             ->each(function ($command) {

@@ -32,15 +32,15 @@ class Environment extends ServiceProvider
 
         $this->app->alias(\Leantime\Core\Environment::class, 'config');
         $this->app->alias(\Leantime\Core\Environment::class, \Illuminate\Contracts\Config\Repository::class);
+
     }
 
     public function boot() {
 
+
         $this->app->make(\Leantime\Core\AppSettings::class)->loadSettings();
 
         $config = $this->app->make(\Leantime\Core\AppSettings::class);
-
-
         $this->setErrorHandler($config->debug ?? 0);
 
         self::dispatch_event('config_initialized');
