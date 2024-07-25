@@ -67,19 +67,19 @@ class Cache extends ServiceProvider
 
             return $cacheManager;
         });
+
+
         $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
         $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
 
-
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
         $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
+
 
     }
 
     public function boot() {
-
-
 
         $currentVersion = $this->app->make(AppSettings::class)->appVersion;
         $cachedVersion = \Illuminate\Support\Facades\Cache::store('installation')->rememberForever('version', fn () => $currentVersion);

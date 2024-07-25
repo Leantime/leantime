@@ -62,6 +62,20 @@ class Application extends Container
     protected $booted = false;
 
     /**
+     * The array of booting callbacks.
+     *
+     * @var callable[]
+     */
+    protected $bootingCallbacks = [];
+
+    /**
+     * The array of booted callbacks.
+     *
+     * @var callable[]
+     */
+    protected $bootedCallbacks = [];
+
+    /**
      * Constructor method for the class.
      *
      * Initializes the object and sets up the required dependencies and bindings.
@@ -81,6 +95,8 @@ class Application extends Container
         Facade::setFacadeApplication($this);
 
         Events::discover_listeners();
+
+        $this->boot();
     }
     /**
      * Check if application has been bootstrapped
@@ -191,6 +207,8 @@ class Application extends Container
         $this->alias(HttpKernel::class, HttpKernelContract::class);
 
         $this->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
+
+        $this->alias(\Leantime\Core\Events::class, 'events');
     }
 
     /**
@@ -654,6 +672,10 @@ class Application extends Container
         }
     }
 
+    public function runningUnitTests() {
+        return false;
+    }
+
     /**
      * Flush the container of all bindings and resolved instances.
      *
@@ -677,5 +699,14 @@ class Application extends Container
         $this->globalBeforeResolvingCallbacks = [];
         $this->globalResolvingCallbacks = [];
         $this->globalAfterResolvingCallbacks = [];
+    }
+
+    public function storagePath($path) {
+
+        if($path == "framework/cache") {
+            $path = "cache";
+        }
+
+        return APP_ROOT."/".$path;
     }
 }
