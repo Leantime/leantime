@@ -40,8 +40,13 @@ leantime.modals = (function () {
                     tippy('[data-tippy-content]');
                 },
                 beforeClose: function () {
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-                    console.log(window.globalModalCallback);
+                    try{
+                        history.pushState("", document.title, window.location.pathname + window.location.search);
+
+                    }catch(error){
+                        //Code to handle error comes here
+                        console.log("Issue pushing history");
+                    }
 
                     if(typeof window.globalModalCallback === 'function') {
                         window.globalModalCallback();
