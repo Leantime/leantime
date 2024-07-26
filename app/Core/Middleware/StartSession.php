@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Leantime\Core\Eventhelpers;
+use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,8 +19,8 @@ use Illuminate\Encryption\Encrypter;
 
 class StartSession
 {
-
     use Eventhelpers;
+
     /**
      * The session manager.
      *
@@ -64,33 +65,29 @@ class StartSession
 
         self::dispatch_event('session_initialized');
 
-        //Enable session locking by default
-        //We have too many async requests with session write requests creating all sorts of odd behavior
-        //if session locking is not enabled
         return $this->handleRequestWhileBlocking($request, $session, $next);
     }
 
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest  $request
-     * @param  \Illuminate\Contracts\Session\Session  $session
-     * @param  \Closure  $next
+     * @param  IncomingRequest                       $request
+     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param  \Closure                              $next
      * @return mixed
      */
-    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next) {
-
+    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
+    {
 
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
-        $lock = Cache::store("installation")
-            ->lock('session:'.$session->getId(), $lockFor)
+        $lock = $this->cache("installation")
+            ->lock('session:' . $session->getId(), $lockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-            $lock->block(
-                $this->manager->defaultRouteBlockWaitSeconds()
-            );
+            //Acquire lock every 50ms for 20 seconds
+            $lock->block(20);
 
             return $this->handleStatefulRequest($request, $session, $next);
         } finally {
@@ -303,6 +300,6 @@ class StartSession
      */
     protected function cache($driver)
     {
-        return call_user_func($this->cacheFactoryResolver)->driver($driver);
+        return Cache::store($driver);
     }
 }

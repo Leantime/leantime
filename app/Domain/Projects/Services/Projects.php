@@ -656,6 +656,13 @@ namespace Leantime\Domain\Projects\Services {
 
             $projectId = (int)$projectId;
 
+            if (
+                session()->exists("currentProject") &&
+                session("currentProject") == $projectId
+            ) {
+                return true;
+            }
+
             session(["currentProjectName" => '']);
 
             if ($this->isUserAssignedToProject(session("userdata.id"), $projectId) === true) {
