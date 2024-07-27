@@ -71,7 +71,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                                         <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                     </a></li>
                                                 <?php } ?>
-                                                <?php if (($row['userId'] == $_SESSION['userdata']['id']) || $login::userIsAtLeast($roles::$manager)) { ?>
+                                                <?php if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash?>', true)">
                                                             <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
