@@ -215,11 +215,15 @@ namespace Leantime\Domain\Comments\Services {
             return $this->commentRepository->deleteComment($commentId);
         }
 
+        public function pollComments(): array | false
+        {
+            return $this->commentRepository->getAllAccountComments();
+        }
+
         public function getComment($id): array
         {
 
             return $this->commentRepository->getComment($id);
         }
     }
-
 }

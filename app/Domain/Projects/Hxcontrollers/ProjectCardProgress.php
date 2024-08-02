@@ -77,7 +77,7 @@ class ProjectCardProgress extends HtmxController
 
     public function getProgress() {
 
-        $projectId = $_GET['projectId'];
+        $projectId = $_GET['pId'];
 
         $project = array("id" => $projectId);
 

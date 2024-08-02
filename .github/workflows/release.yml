@@ -33,7 +33,10 @@ jobs:
           changelog_filename: CHANGELOG.md
           release_version: ${{ steps.version.outputs.version }}
           config_file: .github/workflows/changelogConfig.yml
-          github_token: ${{ secrets.GITHUB_TOKEN }}  
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract Repo Attributes
+        id: attrs
+        uses: ibnesayeed/repo-attrs@master
       - name: release
         uses: ncipollo/release-action@v1
         id: create_release
@@ -44,7 +47,24 @@ jobs:
           tag: v${{ steps.version.outputs.version }}
           generateReleaseNotes: false
           makeLatest: true
-          body: ${{ steps.changelog_ci.outputs.changelog }}
+          body: |
+            ## Changes in this Release
+
+            History from `${{ steps.attrs.outputs.tail }}` to `${{ steps.attrs.outputs.head }}`
+
+            ### Commits
+
+            ${{ steps.attrs.outputs.commits }}
+
+            ### Contributors
+
+            ${{ steps.attrs.outputs.contributors }}
+
+            ### Files
+
+            ```
+            ${{ steps.attrs.outputs.files }}
+            ```
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: upload zip

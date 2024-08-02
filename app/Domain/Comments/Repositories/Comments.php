@@ -268,5 +268,26 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->closeCursor();
             return $result;
         }
+
+        public function getAllAccountComments(): array|false
+        {
+            $sql = "SELECT comment.id,
+                comment.module,
+                comment.text,
+                comment.date,
+                comment.moduleId,
+                comment.userId,
+                comment.commentParent,
+                comment.status
+            FROM zp_comment as comment";
+
+            $stmn = $this->db->database->prepare($sql);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
     }
 }

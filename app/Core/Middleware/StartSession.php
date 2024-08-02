@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Leantime\Core\Eventhelpers;
+use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,9 +65,6 @@ class StartSession
 
         self::dispatch_event('session_initialized');
 
-        //Enable session locking by default
-        //We have too many async requests with session write requests creating all sorts of odd behavior
-        //if session locking is not enabled
         return $this->handleRequestWhileBlocking($request, $session, $next);
     }
 
@@ -84,9 +82,9 @@ class StartSession
 
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
-        $lock = Cache::store("installation")
+        $lock = $this->cache("installation")
             ->lock('session:' . $session->getId(), $lockFor)
-            ->betweenBlockedAttemptsSleepFor(100);
+            ->betweenBlockedAttemptsSleepFor(50);
 
         try {
 
@@ -305,6 +303,6 @@ class StartSession
      */
     protected function cache($driver)
     {
-        return call_user_func($this->cacheFactoryResolver)->driver($driver);
+        return Cache::store($driver);
     }
 }

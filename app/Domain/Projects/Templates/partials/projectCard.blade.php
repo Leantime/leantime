@@ -3,8 +3,6 @@
     'type' => 'simple'
 ])
 
-
-
 <div class="projectBox" id="projectBox-{{ $project['id'] }}">
     <div class="row" >
         <div class="col-md-12 fixed">
@@ -42,7 +40,7 @@
 
             @if($type != "simple")
                 <div id="projectProgressBox-{{ $project['id'] }}"
-                    hx-get="{{ BASE_URL }}/hx/projects/projectCardProgress/getProgress?projectId={{ $project['id'] }}"
+                    hx-get="{{ BASE_URL }}/hx/projects/projectCardProgress/getProgress?pId={{ $project['id'] }}"
                     hx-trigger="load"
                     hx-swap="innerHTML"
                     hx-target="#projectProgressBox-{{ $project['id'] }}"

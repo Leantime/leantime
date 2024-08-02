@@ -77,8 +77,8 @@ class Helper
     {
 
         $steps = array(
-            0 => array("class" => "Leantime\Domain\Help\Services\ProjectIntroStep", "next" => 10),
-            10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
+            0 => array("class" => "Leantime\Domain\Help\Services\ProjectIntroStep", "next" => 20),
+            //10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
             20 => array("class" => "Leantime\Domain\Help\Services\InviteTeamStep", "next" => "end"),
         );
 

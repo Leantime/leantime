@@ -100,6 +100,7 @@ namespace Leantime\Domain\Install\Repositories {
             20406,
             20407,
             30002,
+            30003,
         );
 
         /**
@@ -386,6 +387,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `projectId` INT NULL,
                   `type` VARCHAR(45) NULL,
                   `description` TEXT,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -459,6 +461,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `published` int(1) DEFAULT NULL,
                   `age` int(3) DEFAULT NULL,
                   `email` varchar(255) DEFAULT NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -606,6 +609,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `retrospectiveid` INT NULL,
                   `ideaid` INT NULL,
                   `zp_ticketscol` VARCHAR(45) NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   KEY `ProjectUserId` (`projectId`,`userId`),
                   KEY `StatusSprint` (`status`,`sprint`),
@@ -613,7 +617,7 @@ namespace Leantime\Domain\Install\Repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
-                (9,3,'Getting Started with Leantime', '".$gettingStartedDescription."','','".date("Y-m-d")."','".date("Y-m-d")."',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
+                (9,3,'Getting Started with Leantime', '" . $gettingStartedDescription . "','','" . date("Y-m-d") . "','" . date("Y-m-d") . "',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
                   `id` int(255) NOT NULL AUTO_INCREMENT,
@@ -630,6 +634,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `rate` varchar(255) DEFAULT NULL,
                   `paid` int(2) DEFAULT NULL,
                   `paidDate` datetime DEFAULT NULL,
+                  `modified` datetime DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -680,6 +685,7 @@ namespace Leantime\Domain\Install\Repositories {
                     `name` VARCHAR(45) NULL,
                     `startDate` DATETIME NULL,
                     `endDate` DATETIME NULL,
+                    `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1310,11 +1316,11 @@ namespace Leantime\Domain\Install\Repositories {
                 "UPDATE zp_projects SET menuType = '" . MenuRepository::DEFAULT_MENU . "'",
                 "ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
-                "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+                    "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
             ];
 
@@ -1903,7 +1909,8 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        public function update_sql_30002(): bool|array {
+        public function update_sql_30002(): bool|array
+        {
 
             $errors = array();
 
@@ -1922,10 +1929,34 @@ namespace Leantime\Domain\Install\Repositories {
                 }
             }
 
-
             return true;
-
         }
 
+        public function update_sql_30003(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+                "ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    //Just swallow your pride
+                    //One day we'll get ALTER IF EXISTS
+                }
+            }
+
+
+            return true;
+        }
     }
 }

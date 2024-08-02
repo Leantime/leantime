@@ -347,12 +347,12 @@ class Theme
     {
 
         if ($id == '') {
-            $id = 'default';
+            $id = static::DEFAULT;
         }
 
         //not a valid theme. Use default
         if (!is_dir(ROOT . '/theme/' . $id) || !file_exists(ROOT . '/theme/' . $id . '/' . static::DEFAULT_INI . '.ini')) {
-            $id = 'default';
+            $id = static::DEFAULT;
         }
 
         //Only set if user is logged in

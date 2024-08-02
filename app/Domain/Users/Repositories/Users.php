@@ -282,7 +282,7 @@ namespace Leantime\Domain\Users\Repositories {
                       jobTitle,
                       jobLevel,
                       department,
-                      modified
+                      zp_user.modified
                     FROM `zp_user`
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";

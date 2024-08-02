@@ -693,7 +693,6 @@ namespace Leantime\Domain\Tickets\Repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
 
         public function getScheduledTasks(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, ?int $userId = null)
@@ -1792,6 +1791,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 				description=:description,
 				projectId=:projectId,
 				status = :status,
+                date = :date,
 				dateToFinish = :dateToFinish,
 				sprint = :sprint,
 				storypoints = :storypoints,
@@ -1814,6 +1814,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
             $stmn->bindValue(':dateToFinish', $values['dateToFinish'], PDO::PARAM_STR);
             $stmn->bindValue(':sprint', $values['sprint'], PDO::PARAM_STR);
             $stmn->bindValue(':storypoints', $values['storypoints'], PDO::PARAM_STR);
@@ -2064,5 +2065,4 @@ namespace Leantime\Domain\Tickets\Repositories {
             return true;
         }
     }
-
 }
