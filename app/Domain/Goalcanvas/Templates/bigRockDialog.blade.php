@@ -25,10 +25,11 @@
 <script>
     jQuery(document).ready(function(){
 
-        @if (isset($_GET['closeModal']))
+        <?php if (isset($_GET['closeModal'])): ?>
             jQuery.nmTop().close();
-        @endif
-
+        
+        <?php endif ?>
+        
        if(jQuery("#wikiTitle").val().length >= 2) {
            jQuery("#saveBtn").removeAttr("disabled");
        }else{
