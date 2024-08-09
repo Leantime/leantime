@@ -74,7 +74,7 @@ namespace Leantime\Domain\Projects\Controllers {
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 $id = (int)($_GET['id']);
                 $projectName = $params['projectName'];
-                $startDate = format(value: $_POST['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+                $startDate = format(value: $_POST['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
                 $clientId = (int) $params['clientId'];
                 $assignSameUsers = false;
 

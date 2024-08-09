@@ -1,5 +1,5 @@
 @props([
-    'user' => null
+    'user'
 ])
 
 <img {{ $attributes->merge([

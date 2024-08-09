@@ -43,7 +43,8 @@ leantime.dateHelper =  (function () {
 
     var target = {
         "jquery": {},
-        "luxon": {}
+        "luxon": {},
+        "flatpickr": {}
     };
 
     target.jquery = {
@@ -125,6 +126,47 @@ leantime.dateHelper =  (function () {
         'c': '',     // ISO 8601 formatted date. No equivalent in Luxon.
         'r': '',     // RFC2822 formatted date. No equivalent in Luxon.
         'U': 'X',    // Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)
+    };
+
+    target.flatpickr = {
+        'd': 'd',   // Day of the month, two digits with leading zeros
+        'D': 'D',  // A textual representation of a day, abbreviated (Mon through Sun)
+        'j': 'j',    // Day of the month without leading zeros
+        'l': 'l',   // A full textual representation of the day of the week (Sunday through Saturday)
+        'N': '',    // ISO-8601 numeric representation of the day of the week (1 for Monday through 7 for Sunday)
+        'S': 'J',     // English ordinal suffix for the day of the month, 2 characters.
+        'w': 'w',    // Numeric representation of the day of the week (0 for Sunday through 6 for Saturday). Converted to ISO (1 for Monday through 7 for Sunday)
+        'z': '',    // Day of the year (0 through 365)
+        'W': '',   // ISO-8601 week number of year, weeks starting on Monday
+        'F': 'F', // A full textual representation of a month (January through December)
+        'm': 'm',   // Numeric representation of a month, with leading zeros (01 through 12)
+        'M': 'M',  // A short textual representation of a month (Jan through Dec)
+        'n': 'n',    // Numeric representation of a month, without leading zeros (1 through 12)
+        't': '',     // Number of days in the given month. No equivalent in Luxon.
+        'L': '',     // Whether it's a leap year (1 if it is a leap year, 0 otherwise). No equivalent in Luxon.
+        'o': '',   // ISO-8601 year number
+        'Y': 'Y', // A full numeric representation of a year, 4 digits
+        'y': 'y',   // A two digit representation of a year
+        'a': 'K',    // Lowercase Ante meridiem and Post meridiem (am or pm)
+        'A': 'K',    // Uppercase Ante meridiem and Post meridiem (AM or PM)
+        'B': '',     // Swatch Internet time (000 through 999). No equivalent in Luxon.
+        'g': '',    // 12-hour format of an hour without leading zeros (1 through 12)
+        'G': 'G',    // 24-hour format of an hour without leading zeros (0 through 23)
+        'h': 'h',   // 12-hour format of an hour with leading zeros (01 through 12)
+        'H': 'H',   // 24-hour format of an hour with leading zeros (00 through 23)
+        'i': 'i',   // Minutes with leading zeros (00 to 59)
+        's': 'S',   // Seconds with leading zeros (00 through 59)
+        'u': '',  // Microseconds (up to 999), mapped to milliseconds
+        'v': '',  // Milliseconds (added in PHP 7.0.0). No equivalent in Luxon, so we map it to the same as 'u'
+        'e': '',    // Timezone identifier (e.g., UTC, GMT, Atlantic/Azores)
+        'I': '',     // Whether or not the date is in daylight saving time. No equivalent in Luxon.
+        'O': '',   // Difference to Greenwich time (GMT) without colon between hours and minutes (+0200)
+        'P': '',   // Difference to Greenwich time (GMT) with colon between hours and minutes (+02:00)
+        'T': '',  // Timezone (e.g., EST, MDT). Mapped to the closest thing in Luxon, display in the user's locale.
+        'Z': '',     // Timezone offset in seconds. The offset for time zones west of UTC is always negative, and for those east of UTC is always positive. No equivalent in Luxon.
+        'c': '',     // ISO 8601 formatted date.
+        'r': '',     // RFC2822 formatted date.
+        'U': 'U',    // Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)
     };
 
     var mapFormat = function (inputPhpFormat, targetFormat) {

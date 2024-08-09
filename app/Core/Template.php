@@ -18,6 +18,7 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
+use Leantime\Core\Support\DateTimeInfoEnum;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Core\Support\FromFormat;
@@ -371,7 +372,7 @@ class Template
             'login' => $this->login,
             'roles' => $this->roles,
             'language' => $this->language,
-
+            'dateTimeInfoEnum' => DateTimeInfoEnum::class,
         ]);
     }
 

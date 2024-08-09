@@ -36,7 +36,7 @@ tox-edit-area,
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
     height: auto;
     background-color: var(--secondary-background);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
@@ -230,14 +230,12 @@ body input[type='submit'].btn-default,
 .btn-group>.btn:last-child,
 .btn-group>.dropdown-toggle,
 a.btn-default,
-.btn-default:link
-
-{
+.btn-default:link {
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     font-weight:bold;
     padding: var(--input-padding);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     background: var(--secondary-action-bg);
     text-shadow: none;
     box-shadow:none;
@@ -251,12 +249,8 @@ a.btn-default,
 }
 
 body .btn-default:hover,
-body .btn-default.active,
 body input[type='submit'].btn-default:hover,
 .btn-group .btn:hover,
-body .btn-default:active,
-body input[type='submit'].btn-default:active,
-.btn-group .btn:active,
 .btn-group.open .btn.dropdown-toggle{
     background:var(--secondary-action-hover-bg);
     color:var(--secondary-action-hover-color);
@@ -274,19 +268,23 @@ body input[type='submit'].btn-default .caret,
 body .btn-default:hover .caret,
 body input[type='submit'].btn-default:hover .caret,
 .btn-group .btn:hover .caret,
-body .btn-default:active .caret,
-body input[type='submit'].btn-default:active .caret,
-.btn-group .btn:active .caret,
 .btn-group.open .btn.dropdown-toggle .caret{
     border-top-color:var(--secondary-action-hover-color);
 
 }
 
+body .btn-default:active .caret,
+body input[type='submit'].btn-default:active .caret,
+.btn-group .btn:active .caret,
 body .btn-default:active,
+body .btn-default.active,
 body input[type='submit'].btn-default:active,
 .btn-group .btn:active,
 .btn-group.open .btn.dropdown-toggle {
     box-shadow: inset 0 2px 4px rgb(0 0 0 / 15%), 0 1px 2px rgb(0 0 0 / 5%);
+    border:1px solid var(--primary-font-color);
+    background: var(--neutral);
+    color:var(--primary-font-color);
 }
 
 
@@ -308,7 +306,7 @@ input[type='submit'],
     font-size: var(--base-font-size);
     font-weight:bold;
     padding: var(--input-padding);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     box-shadow:none;
     text-shadow: none;
     color: var(--main-action-color);
@@ -318,7 +316,6 @@ input[type='submit'],
 }
 
 body .btn-primary:hover,
-body .btn-primary:active,
 body .btn-primary:focus,
 body input[type='submit']:hover,
 body .btn-group.open .btn-primary.dropdown-toggle,
@@ -343,13 +340,17 @@ body input[type='submit'].btn-primary .caret,
     cursor:not-allowed;
 }
 
+body .btn-primary:active {
+
+}
+
 
 .chosen-container-single .chosen-single {
 
     height: auto;
     background:none;
     background-color: var(--secondary-background);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
@@ -373,7 +374,7 @@ body input[type='submit'].btn-primary .caret,
 
 .chosen-container-multi .chosen-choices {
     background-color: var(--secondary-background);
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     border-radius: var(--input-radius);
 }
@@ -611,8 +612,8 @@ a:link.btn{
 .btn-circle.btn-inverse, .btn-circle.btn-inverse:hover, .btn-circle.btn-inverse:focus,
 .btn-circle.btn-inverse:active, .btn-circle.btn-inverse.active,
 .btn-circle.btn-inverse.disabled, .btn-circle.btn-inverse[disabled] {
-    border-color: #555;
-    color: #555;
+    border-color: var(--primary-font-color);
+    color: var(--primary-font-color);
     background: none;
 }
 
@@ -641,7 +642,7 @@ select,
 
 .filterBar select {
     height: auto;
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
 }
 
 .filterBoxLeft input[type="text"] {
@@ -741,7 +742,7 @@ input[type=color] {
 
     height: auto;
     background-color: var(--input-background);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
 
     -webkit-transition: border linear .2s, box-shadow linear .2s;
@@ -780,7 +781,7 @@ input[type=color] {
 body input[type=text].main-title-input.main-title-input {
     border: 1px solid transparent;
     box-shadow:none;
-    font-size:var(--font-size-xxl);
+    font-size:var(--font-size-xxxl);
     margin-bottom:5px;
 }
 
@@ -797,10 +798,7 @@ body select {
 }
 
 input.secretInput {
-    width:126px;
     border:0px;
-    margin-left:3px;
-    padding-left:3px;
     background:none;
     -webkit-box-shadow:none;
     -moz-box-shadow: none;
@@ -816,7 +814,7 @@ input.secretInput {
 input.secretInput:hover,
 input.secretInput:focus,
 input.secretInput:active {
-
+    box-shadow: var(--input-shadow);
     border: 1px solid var(--main-border-color-hover);
     text-decoration:none;
 }
@@ -875,7 +873,7 @@ input.secretInput:active {
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
     padding: var(--input-padding);
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     border-radius: var(--element-radius);
     vertical-align: top;
 }
@@ -1171,7 +1169,7 @@ input[type=range]:focus::-ms-fill-upper {
     padding: var(--input-padding);
     border: 1px solid var(--main-border-color);
     background-color: var(--input-background);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
@@ -1190,7 +1188,7 @@ input[type=range]:focus::-ms-fill-upper {
 .ss-main .ss-multi-selected {
     min-height: auto;
     background-color: var(--input-background);
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     box-shadow: var(--input-shadow);
     transition: border linear .2s, box-shadow linear .2s;
@@ -1198,7 +1196,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .ss-main .ss-single-selected .placeholder {
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-disabled {
@@ -1466,6 +1464,7 @@ body .croppie-container {
     border-radius: 50%;
     width: 60px;
     height: 60px;
+    padding:5px;
 }
 
 .selectable .selectableContent .emoji {
@@ -1476,9 +1475,10 @@ body .croppie-container {
 
 .colorCircle {
     display:block;
-    width:100%;
-    height:100%;
+    width:48px; /* Account for border on parent element */
+    height:48px; /* Account for border on parent element */
     border-radius: 50%;
+    opacity:1;
 }
 
 .selectable.active .selectableContent{
@@ -1691,16 +1691,423 @@ div.tagsinput span.tag {
 .headerEditDropdown .caret {
     border-top-color:var(--main-action-color);
 }
-
-
-.commentReply.inactive {
-    border:1px solid var(--main-border-color);
-    padding:9px 14px;
-    border-radius:var(--box-radius);
-    margin-bottom:10px;
-}
-
 .round-button {
     padding:4px 0px !important;
     min-width:31px;
 }
+
+
+/* Choices.js select boxes */
+
+.choices__inner,
+.choices .choices__inner,
+.choices[data-type*=select-one] .choices__inner {
+    height: auto;
+    background-color: var(--secondary-background);
+    border: 1px solid transparent;
+    box-shadow: none;
+    -webkit-transition: border linear .2s, box-shadow linear .2s;
+    -moz-transition: border linear .2s, box-shadow linear .2s;
+    -o-transition: border linear .2s, box-shadow linear .2s;
+    transition: border linear .2s, box-shadow linear .2s;
+    border-radius: var(--input-radius);
+    padding: var(--input-padding);
+    color:var(--primary-font-color);
+    min-height: 19px;
+    height: 31px;
+    line-height: 1;
+    font-size:var(--base-font-size);
+}
+
+.choices__inner.show-border,
+.choices .choices__inner.show-border,
+.choices[data-type*=select-one] .choices__inner.show-border,
+.choices__inner:hover,
+.choices .choices__inner:hover,
+.choices[data-type*=select-one] .choices__inner:hover {
+    border-color:var(--main-border-color);
+    box-shadow: var(--input-shadow);
+}
+
+.choices__inner .choices__list--single {
+    padding: 0px 16px 0px 0px;
+}
+
+.is-focused .choices__inner,
+.is-open .choices__inner {
+    border-color:var(--main-border-color);
+    border-top-left-radius:var(--input-radius);
+    border-top-right-radius:var(--input-radius);
+    border-bottom-left-radius:var(--input-radius);
+    border-bottom-right-radius:var(--input-radius);
+}
+
+.choices.is-open {
+    margin-bottom:6px;
+}
+
+.choices .choices__input {
+    display: block;
+    width: 100%;
+    border-radius:0px;
+    padding: var(--input-padding);
+    border:0px;
+    border-bottom: 1px solid var(--main-border-color);
+    background-color: var(--secondary-background);
+}
+
+.tags .choices__input {
+    display:inline;
+    witdth:auto;
+    border:0px;
+    background-color:transparent;
+    box-shadow:none;
+    padding: 0;
+    margin: 0;
+    line-height: var(--form-element-line-height);
+    height: 21px;
+    min-height:21px;
+}
+
+.choices__list--dropdown,
+.choices__list[aria-expanded],
+.is-open .choices__list--dropdown,
+.is-open .choices__list[aria-expanded] {
+    background:var(--secondary-background);
+    border-color:var(--main-border-color);
+    border-radius:var(--box-radius);
+    box-shadow:var(--regular-shadow);
+    word-break: normal;
+    text-wrap: nowrap;
+    width:max-content;
+    margin-top:5px;
+    z-index:var(--zlayer-2);
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    background-color:var(--dropdown-link-hover-bg);
+}
+
+.choices__list--multiple .choices__item {
+    background-color: var(--main-action-bg);
+    border: 1px solid var(--main-action-bg);
+    color:var(--main-action-color);
+    padding: 0px 10px;
+    font-size:var(--font-size-m);
+    margin:0px;
+    margin-top: -1px;
+    margin-right:5px;
+    line-height: 19px;
+}
+
+.choices[data-type*=select-multiple] .choices__button,
+.choices[data-type*=text] .choices__button {
+    border-top-right-radius:var(--input-radius);
+    border-bottom-right-radius:var(--input-radius);
+    border-left: 1px solid var(--secondary-background);
+}
+
+.choices[data-type*=select-multiple] .choices__button:hover,
+.choices[data-type*=text] .choices__button:hover {
+    background-color:rgba(0,0,0,0.2);
+    color:var(--primary-font-color);
+}
+
+.choices__list--single .choices__item {
+    line-height: var(--form-element-line-height);
+    height:  var(--form-element-line-height);
+}
+
+.choices[data-type*=select-one]::after {
+    border-color:var(--primary-font-color) transparent transparent transparent;
+}
+
+
+/* Date Pickers */
+#ui-datepicker-div {
+    box-shadow: var(--regular-shadow);
+}
+
+.ui-datepicker {
+    border:none;
+    margin-top:5px;
+    border-radius:var(--box-radius);
+}
+
+.ui-datepicker-calendar {
+    border-bottom-left-radius: var(--box-radius);
+    border-bottom-right-radius: var(--box-radius);
+}
+
+.ui-datepicker-header {
+    position: relative;
+    text-align: center;
+    padding: 5px;
+    color: var(--dropdown-link-hover-color);
+    background: var(--dropdown-link-hover-bg);
+    font-weight:bold;
+    border-top-left-radius: var(--box-radius);
+    border-top-right-radius: var(--box-radius);
+}
+
+.ui-datepicker-next {
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px 1px;
+}
+
+.ui-datepicker-prev {
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px -39px;
+}
+
+.ui-datepicker-calendar td a.ui-state-active {
+    background: var(--main-action-bg);
+    color: var(--main-action-color);
+}
+.ui-datepicker-calendar td a.ui-state-active:hover {
+    background: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+}
+
+.ui-datepicker-calendar td.ui-datepicker-today a {
+    background: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+}
+
+.ui-state-highlight {
+    border:none;
+}
+
+.ui-datepicker-calendar td {
+    border-color:var(--main-border-color);
+    background:transparent;
+    font-size:var(--font-size-s);
+}
+
+.ui-datepicker-calendar thead th {
+    background:none;
+    text-transform:none;
+    font-size:var(--font-size-s);
+
+}
+
+/* new datetimepicker */
+
+.xdsoft_datetimepicker
+.input-proxy {
+    box-shadow:var(--regular-shadow);
+    border:0px;
+    border-radius:var(--box-radius);
+    background:var(--secondary-background);
+    color:var(--primary-font-color);
+    font-family: var(--primary-font-family);
+    padding:var(--spacing-sm);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar {
+    border-radius:var(--box-radius);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar th {
+    background:var(--dropdown-link-hover-bg);
+    color:var(--primary-font-color);
+    border-color:var(--main-border-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td {
+    background:transparent;
+    border-color:var(--main-border-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default,
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div.xdsoft_current {
+    background:var(--main-action-bg);
+    color:var(--main-action-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default:hover,
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current:hover,
+.xdsoft_datetimepicker .xdsoft_calendar td:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div.xdsoft_current:hover {
+    background:var(--secondary-action-hover-bg) !important;
+    color:var(--secondary-action-hover-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_today_button {
+    margin-left:0px;
+}
+
+.xdsoft_datetimepicker .xdsoft_month {
+    width:70px;
+    text-align:right;
+}
+
+.xdsoft_datetimepicker .xdsoft_year {
+    width:70px;
+    text-align:left;
+}
+
+.xdsoft_datetimepicker .xdsoft_next,
+.xdsoft_datetimepicker .xdsoft_prev,
+.xdsoft_datetimepicker .xdsoft_today_button {
+    opacity:0.2;
+}
+
+.flatpickr-calendar {
+    font-size: var(--base-font-size);
+    background:var(--secondary-background);
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius);
+}
+
+.flatpickr-day {
+    color:var(--primary-font-color);
+}
+
+.flatpickr-current-month {
+    font-size:var(--font-size-l);
+    padding-top:2px;
+}
+
+.flatpickr-current-month input,
+.flatpickr-current-month select {
+    box-shadow:none;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill:var(--accent1);
+}
+
+.flatpickr-time .numInputWrapper input {
+    box-shadow:none;
+    border:none;
+    height:inherit;
+    background:transparent;
+    border-radius:none;
+}
+
+.flatpickr-current-month .numInputWrapper {
+    width:8ch;
+}
+
+input.flatpickr-input:read-only {
+    border: inherit;
+    box-shadow: inherit;
+    opacity: 1;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+    background:var(--main-action-bg);
+    border-color:var(--main-action-bg);
+}
+
+.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
+    border-top:0px;
+}
+
+.flatpickr-day {
+
+}
+
+.datetime-dropdown {
+    max-width:320px;
+    padding:10px;
+    margin-top: 5px;
+}
+
+.datetime-dropdown .form-control.input {
+
+}
+
+.datetime-dropdown > label {
+    float:left;
+    width:120px;
+    padding-top:var(--spacing-xs);
+}
+
+.datetime-dropdown .flatpickr-calendar {
+    box-shadow:none;
+}
+
+
+.input-proxy,
+a.input-proxy,
+a.input-proxy:link {
+    display:inline-block;
+    box-shadow:none;
+    min-width:150px;
+    border:1px solid transparent;
+    border-radius:var(--input-radius);
+    background:var(--secondary-background);
+    color:var(--primary-font-color);
+    font-weight:normal;
+    font-family: var(--primary-font-family);
+    padding:var(--input-padding);
+}
+
+.input-proxy:hover,
+a.input-proxy:hover {
+    box-shadow:var(--input-shadow);
+    border:1px solid var(--main-border-color);
+}
+
+.flatpickr-time .numInputWrapper,
+.flatpickr-time .flatpickr-am-pm{
+    border-radius:var(--box-radius);
+}
+
+:root {
+    --dayWidth: 30px;
+    --calWidth: calc((var(--dayWidth) + 2px) * 7)
+}
+
+/* flatpickr sizes */
+.flatpickr-day {
+    max-width: var(--dayWidth);
+    height: var(--dayWidth);
+    line-height: var(--dayWidth);
+    /*     flex-basis: 14.2857143%; for reference only */
+}
+
+.flatpickr-days,
+.flatpickr-calendar {
+    width: var(--calWidth);
+}
+
+.datetime-dropdown {
+    max-width: calc(var(--calWidth) + 22px);
+}
+
+.dayContainer {
+    width: var(--calWidth);
+    min-width: var(--calWidth);
+    max-width: var(--calWidth);
+}
+

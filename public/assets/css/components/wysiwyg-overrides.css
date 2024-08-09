@@ -22,7 +22,7 @@ body.mce-content-body{
 }
 
 .commentContent .mce-content-body {
-    background: var(--col-title-bg);
+    background: transparent;
 }
 
 
@@ -71,8 +71,11 @@ body.mce-content-body{
 }
 
 body .tox-tinymce {
-    border-radius:3px;
-    z-index: 8;
+    z-index: var(--zlayer-1);
+    border:0px;
+    border-radius:var(--box-radius);
+    box-shadow:var(--min-shadow);
+    margin-bottom: 15px;
 }
 
 body .tox .tox-toolbar,
@@ -95,12 +98,7 @@ body .tox .tox-toolbar__primary {
     display:none;
 }
 
-body .tox-tinymce {
-    border:0px;
-    border-radius:10px 10px 0px 0px;
-    box-shadow:var(--min-shadow);
-    margin-bottom: 15px;
-}
+
 
 body .tox-editor-header {
     border:0px solid var(--main-border-color) !important;
@@ -176,7 +174,7 @@ body.mce-content-body {
     font-weight: bold;
     line-height: normal;
     color:var(--primary-color);
-    margin-top:25px;
+    margin-top:5px;
 }
 
 
@@ -355,7 +353,6 @@ body .tox .tox-dialog-wrap__backdrop {
 
 .maincontentinner .tinyPlaceholder,
 .commentContent .tinyPlaceholder{
-    display:none;
 }
 
 .mce-content-body ul {

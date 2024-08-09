@@ -45,7 +45,7 @@
         </div>
     @endif
 
-    <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+    <x-global::content.accordion id="myProjectsHub-favorites" class="noBackground">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -71,10 +71,10 @@
                 @endif
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 
 
-    <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+    <x-global::content.accordion id="myProjectsHub-otherProjects" class="noBackground">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -93,7 +93,7 @@
                 @endforeach
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 </div>
 
 

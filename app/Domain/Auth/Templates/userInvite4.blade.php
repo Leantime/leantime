@@ -70,30 +70,30 @@
 
         <p>What unique qualities do you have that help you reach your goals?<br /><br /></p>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'focused'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'focused'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">🤓</span> My intense focus and meticulous attention to detail
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'teamplayer'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'teamplayer'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">🧙</span> My ability to bring my team's diverse strength together
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'innovator'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'innovator'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji"> 💡</span> My innovative thinking that powers creative solutions
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'strategist'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'strategist'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">🧭</span> My broad perspective and strategic vision that guide my decisions
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'emotional'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'emotional'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">💖</span> My empathy and EQ that help me deeply understand my team
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'no_answer'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'function'" :value="'no_answer'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji"> 🤷</span> Heck, if I knew
-        </x-global::selectable>
+        </x-global::forms.select-button>
         <br /> <br />
         <input type="submit" name="createAccount"  value="<?php echo $tpl->language->__("buttons.next"); ?>" />
 

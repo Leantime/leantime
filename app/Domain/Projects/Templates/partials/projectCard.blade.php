@@ -46,7 +46,7 @@
                     hx-target="#projectProgressBox-{{ $project['id'] }}"
                     hx-indicator=".htmx-indicator">
                     <div class="htmx-indicator">
-                        <x-global::loadingText type="card" count="1" />
+                        <x-global::elements.loadingText type="card" count="1" />
                     </div>
                 </div>
             @endif

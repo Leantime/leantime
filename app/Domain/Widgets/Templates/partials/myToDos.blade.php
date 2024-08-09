@@ -152,14 +152,14 @@
                         <?=$tpl->__("links.cancel") ?>
                     </a>
                     <div class="htmx-indicator-small">
-                        <x-global::loader id="loadingthis" size="25px" />
+                        <x-global::elements.loader id="loadingthis" size="25px" />
                     </div>
                 </form>
 
                 <div class="clearfix"></div>
             </div>
             <div class="htmx-indicator">
-                <x-global::loadingText type="card" count="5" />
+                <x-global::elements.loadingText type="card" count="5" />
             </div>
             <div class="htmx-indicator htmx-loaded-content">
                 @if($tickets !== null && count($tickets) == 0)
@@ -195,7 +195,7 @@
 
                     @endphp
 
-                    <x-global::accordion id="ticketBox1-{{ $loop->index }}">
+                    <x-global::content.accordion id="ticketBox1-{{ $loop->index }}">
                         <x-slot name="title">
 
 
@@ -349,7 +349,7 @@
                                 @endforeach
                             </ul>
                         </x-slot>
-                    </x-global::accordion>
+                    </x-global::content.accordion>
                 @endforeach
                 @dispatchEvent("afterTodoListWidgetBox")
             </div>

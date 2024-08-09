@@ -128,11 +128,24 @@ class Format
     }
 
     /**
-     * Generates an ISO 8601 formatted date and time string.
+     * Generates an ISO 8601 formatted date and time string in user timezone
      *
      * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
      */
     public function isoDateTime(): string
+    {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
+            return "";
+        }
+        return $this->value->setToUserTimezone()->format("Y-m-d H:i:s");
+    }
+
+    /**
+     * Generates an ISO 8601 formatted date and time string in UTC timezone
+     *
+     * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
+     */
+    public function isoDateTimeUTC(): string
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";

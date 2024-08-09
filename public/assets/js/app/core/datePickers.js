@@ -82,10 +82,85 @@ leantime.dateController = (function () {
         );
     }
 
+    let datepickerInstance = false;
+
+    let dateTimePickerConfig = {
+        enableTime: false,
+        allowInput: true,
+        inline: true,
+        allowInvalidPreload: true,
+        altInput: true,
+        altFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr"),
+        dateFormat:  "Y-m-d H:i:s",
+        shorthandCurrentMonth: true,
+        "locale": {
+            weekdays: {
+                shorthand: leantime.i18n.__("language.dayNamesMin").split(","),
+                longhand: leantime.i18n.__("language.dayNames").split(","),
+            },
+            months: {
+                shorthand: leantime.i18n.__("language.monthNamesShort").split(","),
+                longhand: leantime.i18n.__("language.monthNames").split(","),
+            },
+            firstDayOfWeek: leantime.i18n.__("language.firstDayOfWeek"),
+            weekAbbreviation: leantime.i18n.__("language.weekHeader"),
+            rangeSeparator: " " + leantime.i18n.__("language.until") + " ",
+            scrollTitle: leantime.i18n.__("language.scroll_to_change"),
+            toggleTitle: leantime.i18n.__("language.buttonText"),
+            time_24hr: !leantime.i18n.__("language.timeformat").includes("A"),
+        },
+        onChange: function(selectedDates, dateStr, instance) {
+
+            console.log(instance);
+
+            let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
+
+            let formattedDate = luxon.DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userDateFormat);
+
+            if(formattedDate == "Invalid DateTime")
+                formattedDate = leantime.i18n.__("language.anytime");
+
+            jQuery(instance.element).parent().parent().find(".dateField").text(formattedDate);
+
+            if(instance.config.enableTime) {
+                let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
+                let formattedTime = luxon.DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userTimeFormat);
+                jQuery(instance.element).parent().parent().find(".timeField").text(formattedTime);
+            }
+        }
+    };
+
+    var initDateTimePicker = function (element, callback) {
+
+        datepickerInstance = jQuery(element).flatpickr(dateTimePickerConfig);
+
+    }
+
+    var toggleTime = function (datePickerElement, toggleElement) {
+
+        if(datepickerInstance.config.enableTime) {
+            datepickerInstance.destroy();
+            dateTimePickerConfig.enableTime = false;
+            dateTimePickerConfig.altFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr");
+            datepickerInstance = jQuery(datePickerElement).flatpickr(dateTimePickerConfig);
+            jQuery(toggleElement).removeClass("active");
+        }else{
+            datepickerInstance.destroy();
+            dateTimePickerConfig.enableTime = true;
+            dateTimePickerConfig.altFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr") + " | " + leantime.dateHelper.getFormatFromSettings("timeformat", "flatpickr");
+            datepickerInstance = jQuery(datePickerElement).flatpickr(dateTimePickerConfig);
+            jQuery(toggleElement).addClass("active");
+        }
+
+
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         initDateRangePicker:initDateRangePicker,
         initDatePicker:initDatePicker,
+        initDateTimePicker:initDateTimePicker,
+        toggleTime:toggleTime
     };
 
 })();

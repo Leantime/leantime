@@ -79,6 +79,7 @@ class StartSession
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
+
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
         $lock = $this->cache("installation")
@@ -86,8 +87,10 @@ class StartSession
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-            //Acquire lock every 50ms for 20 seconds
-            $lock->block(20);
+
+            $lock->block(
+                $this->manager->defaultRouteBlockWaitSeconds()
+            );
 
             return $this->handleStatefulRequest($request, $session, $next);
         } finally {

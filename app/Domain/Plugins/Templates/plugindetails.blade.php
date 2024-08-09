@@ -134,7 +134,7 @@
                                     :type="'secondary'"
                                 >Install</x-global::button>
                                 <div class="htmx-indicator">
-                                    <x-global::loadingText type="text" :count="5" />
+                                    <x-global::elements.loadingText type="text" :count="5" />
                                 </div>
                             </form>
                         </div>

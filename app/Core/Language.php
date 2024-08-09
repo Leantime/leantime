@@ -169,7 +169,7 @@ class Language
     public function readIni(): array
     {
         if (Cache::store('installation')->has('cache.language_resources_' . $this->language) && $this->config->debug == 0) {
-            
+
             $this->ini_array =  self::dispatch_filter(
                 'language_resources',
                 Cache::store('installation')->get('cache.language_resources_' . $this->language),

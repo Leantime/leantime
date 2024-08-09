@@ -13,7 +13,7 @@
                 <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
                 <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
                 <div class="htmx-indicator-small">
-                    <x-global::loader id="loadingthis" size="25px" />
+                    <x-global::elements.loader id="loadingthis" size="25px" />
                 </div>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />

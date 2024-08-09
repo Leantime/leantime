@@ -75,7 +75,8 @@
         "spatie/icalendar-generator": "^2.6",
         "carbon-cli/carbon-cli": "^1.2",
 
-        "metasyntactical/composer-plugin-license-check": "^2.1"
+        "metasyntactical/composer-plugin-license-check": "^2.1",
+        "": ""
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",

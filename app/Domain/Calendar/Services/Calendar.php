@@ -105,13 +105,13 @@ class Calendar
 
         $dateFrom = null;
         if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-            $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTime();
+            $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTimeUTC();
         }
         $values['dateFrom'] = $dateFrom;
 
         $dateTo = null;
         if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-            $dateTo =  format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
+            $dateTo =  format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTimeUTC();
         }
         $values['dateTo'] = $dateTo;
 
@@ -165,13 +165,13 @@ class Calendar
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTime();
+                $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTimeUTC();
             }
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
+                $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTimeUTC();
             }
             $values['dateTo'] = $dateTo;
 
