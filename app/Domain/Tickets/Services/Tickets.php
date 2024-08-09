@@ -545,8 +545,12 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
                                     $class = '" style="color:' . $color . '"';
-
-                                    $label = $ticket["milestoneHeadline"] . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                    $startDate = strtok($milestone->editFrom,' ');
+                                    $endDate = strtok($milestone->editTo, " ");
+                                    $statusLabels = $this->getStatusLabels($milestone->projectId);
+                                    $status = $statusLabels[$milestone->status]['name'];
+                                    $class = '" style="color:' . $color . '"';
+                                    $label = $ticket["milestoneHeadline"] .  ", " . $this->language->__("label.start") . ": " . $startDate . ", " . $this->language->__("label.end") . ": " . $endDate . ", " . $this->language->__("label.status_lowercase") . ": " . $status . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
                                 break;
