@@ -116,12 +116,15 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $comments = [];
             }
 
+            $this->tpl->assign('id', $canvasItem['id']??"");
+            $this->tpl->assign('canvasId', $canvasItem['canvasId']);
             $this->tpl->assign('comments', $comments);
 
 
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
 
             $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
             $this->tpl->assign('canvasItem', $canvasItem);

@@ -305,12 +305,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 }
             }
 
-            // request
-            // $filter['status'] = request('filter_status', session('filter_status', 'all'));
-            // session(['filter_status' => $filter['status']]);
-            // $filter['relates'] = request('filter_relates', session('filter_relates', 'all'));
-            // session(['filter_relates' => $filter['relates']]);
-
             $filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
             session(["filter_status" => $filter['status']]);
             $filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');

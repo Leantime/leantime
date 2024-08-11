@@ -78,8 +78,6 @@ $goalStats = $tpl->get("goalStats");
 
 <div class="maincontent">
 
-{!! $tpl->displayNotification() !!}
-
 <div class="row" style="margin-bottom:20px; ">
     <div class="col-md-4">
         <div class="bigNumberBox" style="padding: 29px 15px;">
