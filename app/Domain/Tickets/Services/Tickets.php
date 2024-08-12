@@ -507,6 +507,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($tickets as $ticket) {
                 $class = '';
+                $moreInfo = '';
 
                 if (isset($ticket[$searchCriteria['groupBy']])) {
                     $groupedFieldValue = strtolower($ticket[$searchCriteria['groupBy']]);
@@ -550,7 +551,8 @@ namespace Leantime\Domain\Tickets\Services {
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
                                     $class = '" style="color:' . $color . '"';
-                                    $label = $ticket["milestoneHeadline"] .  ", " . $this->language->__("label.start") . ": " . $startDate . ", " . $this->language->__("label.end") . ": " . $endDate . ", " . $this->language->__("label.status_lowercase") . ": " . $status . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                    $moreInfo = $this->language->__("label.start") . ": " . $startDate . ", " . $this->language->__("label.end") . ": " . $endDate . ", " . $this->language->__("label.status_lowercase") . ": " . $status;
+                                    $label = $ticket["milestoneHeadline"] .  " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
                                 break;
@@ -579,6 +581,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                         $ticketGroups[$groupedFieldValue] = array(
                             "label" => $label,
+                            "more-info" => $moreInfo,
                             "id" => strtolower($groupedFieldValue),
                             "class" => $class,
                             'items' => [$ticket],
