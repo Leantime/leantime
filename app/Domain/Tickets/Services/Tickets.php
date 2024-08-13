@@ -507,6 +507,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($tickets as $ticket) {
                 $class = '';
+                $moreInfo = '';
 
                 if (isset($ticket[$searchCriteria['groupBy']])) {
                     $groupedFieldValue = strtolower($ticket[$searchCriteria['groupBy']]);
@@ -545,8 +546,13 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
                                     $class = '" style="color:' . $color . '"';
-
-                                    $label = $ticket["milestoneHeadline"] . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                    $startDate = strtok($milestone->editFrom,' ');
+                                    $endDate = strtok($milestone->editTo, " ");
+                                    $statusLabels = $this->getStatusLabels($milestone->projectId);
+                                    $status = $statusLabels[$milestone->status]['name'];
+                                    $class = '" style="color:' . $color . '"';
+                                    $moreInfo = $this->language->__("label.start") . ": " . $startDate . ", " . $this->language->__("label.end") . ": " . $endDate . ", " . $this->language->__("label.status_lowercase") . ": " . $status;
+                                    $label = $ticket["milestoneHeadline"] .  " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
                                 break;
@@ -575,6 +581,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                         $ticketGroups[$groupedFieldValue] = array(
                             "label" => $label,
+                            "more-info" => $moreInfo,
                             "id" => strtolower($groupedFieldValue),
                             "class" => $class,
                             'items' => [$ticket],
