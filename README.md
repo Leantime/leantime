@@ -44,7 +44,7 @@ Leantime is an open source project management system for non-project manager.<br
 ### ❗System Requirements ###
 
 * PHP 8.1+
-* MySQL 5.7+
+* MySQL 8.0+
 * Apache or Nginx (IIS works with some modifications)
 * PHP Extensions: 
 * * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
