@@ -39,8 +39,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         ) {
             $this->projectService = $projectService;
             $this->goalService = $goalService;
-            $canvasName = Str::studly(static::CANVAS_NAME) . 'canvas';
-            $repoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+            $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
             $this->canvasRepo = app()->make($repoName);
         }
 
@@ -305,6 +304,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 }
             }
 
+            $filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
+            session(["filter_status" => $filter['status']]);
+            $filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');
+            session(["filter_relates" => $filter['relates']]);
+
+            $this->tpl->assign('filter', $filter);
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('goalStats', $goalAnalytics);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());

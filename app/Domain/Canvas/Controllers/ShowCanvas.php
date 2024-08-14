@@ -255,6 +255,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                 }
             }
 
+            $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
+            session(['filter_status' => $filter['status']]);
+            $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+            session(['filter_relates' => $filter['relates']]);
+
+            $this->tpl->assign('filter', $filter);
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());

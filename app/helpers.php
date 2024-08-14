@@ -7,6 +7,7 @@ use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Bootloader;
+use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
@@ -340,4 +341,28 @@ if (! function_exists('storage_path')) {
         return app()->storagePath($path);
     }
 
+}
+
+if (! function_exists('request')) {
+    /**
+     * Get an instance of the current request or an input item from the request.
+     *
+     * @param  list<string>|string|null  $key
+     * @param  mixed  $default
+     * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return app()->make(IncomingRequest::class);
+        }
+
+        if (is_array($key)) {
+            return app()->make(IncomingRequest::class)->only($key);
+        }
+
+        $value = app()->make(IncomingRequest::class)->__get($key);
+
+        return is_null($value) ? value($default) : $value;
+    }
 }
