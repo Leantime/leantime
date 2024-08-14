@@ -7,41 +7,26 @@ use Leantime\Domain\Comments\Repositories\Comments;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 
-$canvasName = 'goal';
 $elementName = 'goal';
 
 /**
  * showCanvasTop.inc template - Top part of the main canvas page
  *
  * Required variables:
- * - $canvasName       Name of current canvas
+ * - goal      Name of current canvas
  */
 
 $canvasTitle = '';
-$allCanvas = $tpl->get('allCanvas');
-$canvasIcon = $tpl->get('canvasIcon');
-$canvasTypes = $tpl->get('canvasTypes');
-$statusLabels = $statusLabels ?? $tpl->get('statusLabels');
-$relatesLabels = $relatesLabels ?? $tpl->get('relatesLabels');
-$dataLabels = $tpl->get('dataLabels');
-$disclaimer = $tpl->get('disclaimer');
-$canvasItems = $tpl->get('canvasItems');
-
-$filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
-session(["filter_status" => $filter['status']]);
-$filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');
-session(["filter_relates" => $filter['relates']]);
 
 //get canvas title
-foreach ($tpl->get('allCanvas') as $canvasRow) {
-    if ($canvasRow["id"] == $tpl->get('currentCanvas')) {
+foreach ($allCanvas as $canvasRow) {
+    if ($canvasRow["id"] == $currentCanvas) {
         $canvasTitle = $canvasRow["title"];
         $canvasId = $canvasRow["id"];
         break;
     }
 }
 
-$goalStats = $tpl->get("goalStats");
 @endphp
 
 <style>
@@ -56,7 +41,7 @@ $goalStats = $tpl->get("goalStats");
     <div class="pagetitle">
         <h5>{{ session("currentProjectClient") . " // " . session("currentProjectName") }}</h5>
 
-        <h1>{{ __("headline.$canvasName.dashboardboard") }} //
+        <h1>{{ __("headline.goal.dashboardboard") }} //
             @if (count($allCanvas) > 0)
                 <span class="dropdown dropdownWrapper">
                     <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">All Goal Groups&nbsp;<i class="fa fa-caret-down"></i></a>
@@ -66,8 +51,8 @@ $goalStats = $tpl->get("goalStats");
                             <li><a href="#/goalcanvas/bigRock">{{ __("links.icon.create_new_board") }}</a></li>
                         @endif
                         <li class="border"></li>
-                        @foreach ($tpl->get('allCanvas') as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
+                        @foreach ($allCanvas as $canvasRow)
+                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
                         @endforeach
                     </ul>
                 </span>
@@ -118,12 +103,12 @@ $goalStats = $tpl->get("goalStats");
         <div class="col-md-6"></div>
     </div>
     @if (count($allCanvas) > 0)
-        @foreach ($tpl->get('allCanvas') as $canvasRow)
+        @foreach ($allCanvas as $canvasRow)
             <div class="row">
                 <div class="col-md-12">
                     <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> Create New Goal</a>
 
-                    <h5 class='subtitle'><a href='{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $tpl->escape($canvasRow["title"]) }}</a></h5>
+                    <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $tpl->escape($canvasRow["title"]) }}</a></h5>
                 </div>
             </div>
             <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
@@ -136,7 +121,7 @@ $goalStats = $tpl->get("goalStats");
                         <div class="col-md-12">
                             <div class="row">
                                 @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                    <div class='col-md-12'>No goals on this board yet. Open the <a href='{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
+                                    <div class='col-md-12'>No goals on this board yet. Open the <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>board</a> to start adding goals</div>
                                 @endif
                                 @foreach ($canvasItems as $row)
                                     @php
@@ -162,15 +147,15 @@ $goalStats = $tpl->get("goalStats");
                                                                 &nbsp;&nbsp;&nbsp;
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header">{{ __("subtitles.edit") }}</li>
-                                                                    <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row["id"] }}" class="{{ $canvasName }}CanvasModal" data="item_{{ $row["id"] }}">{{ __("links.edit_canvas_item") }}</a></li>
-                                                                    <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/{{ $row["id"] }}" class="delete {{ $canvasName }}CanvasModal" data="item_{{ $row["id"] }}">{{ __("links.delete_canvas_item") }}</a></li>
+                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.edit_canvas_item") }}</a></li>
+                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.delete_canvas_item") }}</a></li>
                                                                 </ul>
                                                             @endif
                                                         </div>
 
                                                         <h4>
                                                             <strong>Goal:</strong>
-                                                            <a href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}" class="{{ $canvasName }}CanvasModal" data="item_{{ $row['id'] }}">
+                                                            <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal" data="item_{{ $row['id'] }}">
                                                                 {{ $tpl->e($row["title"]) }}
                                                             </a>
                                                         </h4>
@@ -269,7 +254,7 @@ $goalStats = $tpl->get("goalStats");
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
                                                                 <li class="nav-header border">{{ __("dropdown.choose_user") }}</li>
-                                                                @foreach ($tpl->get('users') as $user)
+                                                                @foreach ($users as $user)
                                                                     <li class='dropdown-item'>
                                                                         <a href='javascript:void(0);' data-label='{{ sprintf(__("text.full_name"), $tpl->escape($user["firstname"]), $tpl->escape($user['lastname'])) }}' data-value='{{ $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] }}' id='userStatusChange{{ $row['id'] . $user['id'] }}'>
                                                                             <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}' width='25' style='vertical-align: middle; margin-right:5px;'/>
@@ -281,7 +266,7 @@ $goalStats = $tpl->get("goalStats");
                                                         </div>
 
                                                         <div class="right" style="margin-right:10px;">
-                                                            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasComment/{{ $row['id'] }}" class="{{ $canvasName }}CanvasModal" data="item_{{ $row['id'] }}" @if($nbcomments == 0) style="color: grey;" @endif>
+                                                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasComment/{{ $row['id'] }}" class="goalCanvasModal" data="item_{{ $row['id'] }}" @if($nbcomments == 0) style="color: grey;" @endif>
                                                                 <span class="fas fa-comments"></span>
                                                             </a>
                                                             <small>{{ $nbcomments }}</small>
@@ -317,7 +302,7 @@ $goalStats = $tpl->get("goalStats");
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
  * Required variables:
- * - $canvasName       Name of current canvas
+ * - goal      Name of current canvas
 --}}
 
 @if (count($allCanvas) > 0)
@@ -328,8 +313,8 @@ $goalStats = $tpl->get("goalStats");
         <div class='svgContainer'>
             {!! file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg") !!}
         </div>
-        <h3>{{ __("headlines.$canvasName.analysis") }}</h3>
-        <br>{!! __("text.$canvasName.helper_content") !!}
+        <h3>{{ __("headlines.goal.analysis") }}</h3>
+        <br>{!! __("text.goal.helper_content") !!}
         
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
@@ -355,8 +340,8 @@ jQuery(document).ready(function() {
         new SlimSelect({ select: '#searchCanvas' });
     }
 
-    leantime.{{ $canvasName }}CanvasController.setRowHeights();
-    leantime.canvasController.setCanvasName('{{ $canvasName }}');
+    leantime.goalCanvasController.setRowHeights();
+    leantime.canvasController.setCanvasName('goal');
     leantime.canvasController.initFilterBar();
 
     @if ($login::userIsAtLeast($roles::$editor))
@@ -374,8 +359,8 @@ jQuery(document).ready(function() {
                 ? "&type=" . array_key_first($canvasTypes)
                 : "/" . (int)$_GET['showModal'];
         @endphp
-        leantime.canvasController.openModalManually("{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem{{ $modalUrl }}");
-        window.history.pushState({}, document.title, '{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/');
+        leantime.canvasController.openModalManually("{{ BASE_URL }}/goalcanvas/editCanvasItem{{ $modalUrl }}");
+        window.history.pushState({}, document.title, '{{ BASE_URL }}/goalcanvas/showCanvas/');
     @endif
 });
 </script>

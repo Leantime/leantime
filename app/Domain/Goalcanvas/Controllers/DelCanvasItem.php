@@ -29,7 +29,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          */
         public function init()
         {
-            $canvasName ='goalcanvas';
             $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
             $this->canvasRepo = app()->make($repoName);
         }

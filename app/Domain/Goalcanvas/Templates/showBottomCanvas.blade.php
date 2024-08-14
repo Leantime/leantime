@@ -1,4 +1,4 @@
-@if (count($tpl->get('allCanvas')) > 0)
+@if (count($allCanvas) > 0)
 @else
     <br /><br />
     <div class='center'>
@@ -6,8 +6,8 @@
             {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
         </div>
 
-        <h3>{{ __("headlines.$canvasName.analysis") }}</h3>
-        <br />{{ __("text.$canvasName.helper_content") }}
+        <h3>{{ __("headlines.goal.analysis") }}</h3>
+        <br />{{ __("text.goal.helper_content") }}
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
@@ -18,7 +18,7 @@
     </div>
 @endif
 
-@if (!empty($disclaimer) && count($tpl->get('allCanvas')) > 0)
+@if (!empty($disclaimer) && count($allCanvas) > 0)
     <small class="align-center">{{ $disclaimer }}</small>
 @endif
 

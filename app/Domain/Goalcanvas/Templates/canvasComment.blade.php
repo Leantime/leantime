@@ -6,12 +6,9 @@
 /**
 * canvasComment.inc template - Generic template for comments
 *
-* Required variables:
-* - $canvasName Name of current canvas
 */
 
 
-$canvasName = "goal";
 
 @endphp
 
@@ -19,7 +16,7 @@ $canvasName = "goal";
     window.onloa39d = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href = "<?= BASE_URL ?>/<?= $canvasName ?>canvas/showCanvas?showModal=<?= $canvasItem['id']; ?>";
+            location.href = "<?= BASE_URL ?>/goalcanvas/showCanvas?showModal=<?= $canvasItem['id']; ?>";
         }
     }
 </script>
