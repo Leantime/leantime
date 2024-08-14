@@ -1,27 +1,57 @@
 <?php
 
 /**
- * Controller / Delete Canvas Item
+ * delCanvasItem class - Generic canvas controller / Delete Canvas Item
  */
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
-    use Symfony\Component\HttpFoundation\Response;
+
+    use Leantime\Core\Controller;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Illuminate\Support\Str;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
      */
-    class DelCanvasItem extends \Leantime\Domain\Canvas\Controllers\DelCanvasItem
+    class DelCanvasItem extends Controller
     {
+        /**
+         * Constant that must be redefined
+         */
         protected const CANVAS_NAME = 'goal';
-        public function get($params):Response
+
+        private mixed $canvasRepo;
+
+        /**
+         * init - initialize private variables
+         */
+        public function init()
         {
-            $id = filter_var($params['id'] ?? '', FILTER_SANITIZE_NUMBER_INT);
-            $this->tpl->assign('id', $id);
-
-            return $this->tpl->displayPartial('goalcanvas.delCanvasItem');
-
+            $canvasName ='goalcanvas';
+            $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
+            $this->canvasRepo = app()->make($repoName);
         }
 
-    }
+        /**
+         * run - display template and edit data
+         *
+         * @access public
+         */
+        public function run()
+        {
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
+            if (isset($_POST['del']) && isset($_GET['id'])) {
+                $id = (int)($_GET['id']);
+                $this->canvasRepo->delCanvasItem($id);
+
+                $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_deleted');
+                return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+            }
+
+            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvasItem');
+        }
+    }
 }

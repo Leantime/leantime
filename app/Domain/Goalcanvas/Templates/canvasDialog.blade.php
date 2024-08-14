@@ -15,7 +15,7 @@
             {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
 
 
-        <form class="formModal" method="post" action="{{ BASE_URL . "/goal/canvas/editCanvasItem/$id" }}">
+        <form class="formModal" method="post" action="{{ BASE_URL . "/goalcanvas/editCanvasItem/$id" }}">
 
             <input type="hidden" value="{{ $currentCanvas }}" name="canvasId">
             <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box">
@@ -85,21 +85,19 @@
                 @endif
 
                 @if ($id !== '')
-                    <br><br><br>
-                    <input type="hidden" name="comment" value="1">
+                    <br /><br /><br />
+                    <input type="hidden" name="comment" value="1" />
                     <h4 class="widgettitle title-light"><span
-                            class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
+                            class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
                     @php
-                        $formUrl = '/strategyPro/editCanvasItem/' . $id;
+                        $tpl->assign('formUrl', '/strategyPro/editCanvasItem/' . $id . '');
+                        $tpl->displaySubmodule('comments-generalComment');
                     @endphp
-                    @include('comments.generalComment', [
-                        'formUrl' => '/goalcanvas/editCanvasComment/' . $id,
-                    ])
                 @endif
             </div>
 
             @if ($id != '')
-                <a href="{{ url("/goal/canvas/delCanvasItem/$id") }}" class="formModal delete right">
+                <a href="{{ BASE_URL . "goalcanvas/delCanvasItem/$id" }}" class="formModal delete right">
                     <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
                 </a>
             @endif

@@ -286,8 +286,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
                         );
-
-                        $id = $this->canvasRepo->addCanvasItem($canvasItem);
+                        $id = $this->canvasRepo->addCanvasItem($canvasItem);                        
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                         $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success', "goal_item_created");
