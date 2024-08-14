@@ -4,7 +4,7 @@
         window.onload = function() {
             if (!window.jQuery) {
                 //It's not a modal
-                location.href = "<?= BASE_URL ?>/goalcanvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
+                location.href = "{{ BASE_URL }}/goalcanvas/showCanvas?showModal={{ $canvasItem['id'] }}";
             }
         }
     </script>
@@ -90,7 +90,7 @@
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-comments"></span>{{ $tpl->__('subtitles.discussion') }}</h4>
                     @php
-                        $tpl->assign('formUrl', '/strategyPro/editCanvasItem/' . $id . '');
+                        $tpl->assign('formUrl', '/goalcanvas/editCanvasItem/' . $id . '');
                         $tpl->displaySubmodule('comments-generalComment');
                     @endphp
                 @endif

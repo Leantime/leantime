@@ -11,11 +11,6 @@
 
         $canvasTitle = '';
 
-        $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
-        session(['filter_status' => $filter['status']]);
-        $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
-        session(['filter_relates' => $filter['relates']]);
-
         //get canvas title
         foreach ($allCanvas as $canvasRow) {
             if ($canvasRow['id'] == $currentCanvas) {
@@ -64,7 +59,7 @@
                             </li>
                         @endif
                         <li><a
-                                href="<?= BASE_URL ?>/goalcanvas/export/{{ $currentCanvas }}">{{ __('links.icon.export') }}</a>
+                                href="{{ BASE_URL }} /goalcanvas/export/{{ $currentCanvas }}">{{ __('links.icon.export') }}</a>
                         </li>
                         <li><a href="javascript:window.print();">{{ __('links.icon.print') }}</a></li>
                         @if ($login::userIsAtLeast($roles::$editor))
@@ -88,7 +83,7 @@
                             <li class="border"></li>
                             @foreach ($allCanvas as $canvasRow)
                                 <li><a
-                                        href='<?= BASE_URL ?>/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
+                                        href='{{ BASE_URL }} /goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
                                 </li>
                             @endforeach
                         </ul>
@@ -128,11 +123,11 @@
                                         {{ $statusLabels[$filter['status']]['title'] }} {{ __('links.view') }}</button>
                                 @endif
                                 <ul class="dropdown-menu">
-                                    <li><a href="<?= BASE_URL ?>/goalcanvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all')
+                                    <li><a href="{{ BASE_URL }} /goalcanvas/showCanvas?filter_status=all" @if ($filter['status'] == 'all')
                                             class="active"
                             @endif><i class="fas fa-globe"></i> {{ __('status.all') }}</a></li>
                             @foreach ($statusLabels as $key => $data)
-                                <li><a href="<?= BASE_URL ?>/goalcanvas/showCanvas?filter_status={{ $key }}"
+                                <li><a href="{{ BASE_URL }} /goalcanvas/showCanvas?filter_status={{ $key }}"
                                         @if ($filter['status'] == $key)
                                         class="active"
                             @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
@@ -154,11 +149,11 @@
                                         {{ $relatesLabels[$filter['relates']]['title'] }} {{ __('links.view') }}</button>
                                 @endif
                                 <ul class="dropdown-menu">
-                                    <li><a href="<?= BASE_URL ?>/goalcanvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all')
+                                    <li><a href="{{ BASE_URL }} /goalcanvas/showCanvas?filter_relates=all" @if ($filter['relates'] == 'all')
                                             class="active"
                             @endif><i class="fas fa-globe"></i> {{ __('relates.all') }}</a></li>
                             @foreach ($relatesLabels as $key => $data)
-                                <li><a href="<?= BASE_URL ?>/goalcanvas/showCanvas?filter_relates={{ $key }}"
+                                <li><a href="{{ BASE_URL }} /goalcanvas/showCanvas?filter_relates={{ $key }}"
                                         @if ($filter['relates'] == $key)
                                         class="active"
                             @endif><i class="fas fa-fw {{ $data['icon'] }}"></i>
@@ -337,14 +332,14 @@
                                                                 <span class="text">
                                                                     @if ($row['authorFirstname'] != '')
                                                                         <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='<?= BASE_URL ?>/api/users?profileImage={{ $row['author'] }}'
+                                                                            <img src='{{ BASE_URL }} /api/users?profileImage={{ $row['author'] }}'
                                                                                 width='25'
                                                                                 style='vertical-align: middle;' />
                                                                         </span>
                                                                         <span id='user{{ $row['id'] }}'></span>
                                                                     @else
                                                                         <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='<?= BASE_URL ?>/api/users?profileImage=false'
+                                                                            <img src='{{ BASE_URL }} /api/users?profileImage=false'
                                                                                 width='25'
                                                                                 style='vertical-align: middle;' />
                                                                         </span>
@@ -362,7 +357,7 @@
                                                                             data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
                                                                             data-value='{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}'
                                                                             id='userStatusChange{{ $row['id'] . $user['id'] }}'>
-                                                                            <img src='<?= BASE_URL ?>/api/users?profileImage={{ $user['id'] }}'
+                                                                            <img src='{{ BASE_URL }} /api/users?profileImage={{ $user['id'] }}'
                                                                                 width='25'
                                                                                 style='vertical-align: middle; margin-right:5px;' />
                                                                             {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
@@ -386,7 +381,7 @@
                                                 @if ($row['milestoneHeadline'] != '')
                                                     <br />
                                                     <div hx-trigger="load" hx-indicator=".htmx-indicator"
-                                                        hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
+                                                        hx-get="{{ BASE_URL }} /hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
                                                         <div class="htmx-indicator">
                                                             {{ __('label.loading_milestone') }}
                                                         </div>
