@@ -13,14 +13,10 @@
 
 $canvasName = "goal";
 
-$id = "";
-if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
-$id = $canvasItem['id'];
-}
 @endphp
 
 <script type="text/javascript">
-    window.onload = function() {
+    window.onloa39d = function() {
         if (!window.jQuery) {
             //It's not a modal
             location.href = "<?= BASE_URL ?>/<?= $canvasName ?>canvas/showCanvas?showModal=<?= $canvasItem['id']; ?>";
