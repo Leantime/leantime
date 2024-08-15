@@ -116,12 +116,15 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $comments = [];
             }
 
+            $this->tpl->assign('id', $canvasItem['id']??"");
+            $this->tpl->assign('canvasId', $canvasItem['canvasId']);
             $this->tpl->assign('comments', $comments);
 
 
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
 
             $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
             $this->tpl->assign('canvasItem', $canvasItem);
@@ -283,8 +286,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
                         );
-
-                        $id = $this->canvasRepo->addCanvasItem($canvasItem);
+                        $id = $this->canvasRepo->addCanvasItem($canvasItem);                        
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                         $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success', "goal_item_created");

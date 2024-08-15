@@ -29,9 +29,11 @@ package: clean build
 	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
+	touch $(TARGET_DIR)/logs/error.log
 	mkdir -p $(TARGET_DIR)/cache
 	mkdir -p $(TARGET_DIR)/cache/avatars
 	mkdir -p $(TARGET_DIR)/cache/views
+	mkdir -p $(TARGET_DIR)/cache/sessions
 	touch $(TARGET_DIR)/logs/.gitkeep
 	cp -R ./public $(TARGET_DIR)
 	rm -rf $(TARGET_DIR)/public/assets
