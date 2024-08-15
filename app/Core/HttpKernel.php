@@ -156,9 +156,9 @@ class HttpKernel implements HttpKernelContract
         return self::dispatch_filter('http_middleware', [
             Middleware\TrustProxies::class,
             Middleware\InitialHeaders::class,
+            Middleware\StartSession::class,
             Middleware\Installed::class,
             Middleware\Updated::class,
-            Middleware\StartSession::class,
             Middleware\RequestRateLimiter::class,
             $this->app->make(IncomingRequest::class) instanceof ApiRequest
                 ? Middleware\ApiAuth::class

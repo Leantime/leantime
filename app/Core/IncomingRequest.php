@@ -161,5 +161,9 @@ class IncomingRequest extends Request
         return $this->getFullUrl();
     }
 
+    public function isApiOrCronRequest(): bool
+    {
+        return str_starts_with($_SERVER['REQUEST_URI'], "/api") || str_starts_with($_SERVER['REQUEST_URI'], "/cron");
+    }
 
 }
