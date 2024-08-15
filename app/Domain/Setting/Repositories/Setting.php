@@ -32,10 +32,6 @@ namespace Leantime\Domain\Setting\Repositories {
          * @param $type
          * @return false|mixed
          */
-        /**
-         * @param $type
-         * @return false|mixed
-         */
         public function getSetting($type): mixed
         {
             if ($this->checkIfInstalled() === false) {
@@ -67,11 +63,6 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
         }
 
-        /**
-         * @param $type
-         * @param $value
-         * @return bool
-         */
         /**
          * @param $type
          * @param $value
