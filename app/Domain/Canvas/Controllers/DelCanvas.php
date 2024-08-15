@@ -49,7 +49,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $this->canvasRepo->deleteCanvas($id);
 
                 $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $allCanvas[0]['id'] ?? -1]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $allCanvas[0]['id'] ?? -1]);
 
                 $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success', strtoupper(static::CANVAS_NAME) . 'canvas_deleted');
 

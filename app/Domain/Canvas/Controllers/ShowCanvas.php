@@ -73,26 +73,26 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 if (!$found) {
                     $currentCanvasId = -1;
-                    session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
+                    session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => '']);
                 }
             } else {
                 $currentCanvasId = -1;
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => '']);
             }
 
             if (count($allCanvas) > 0 && session("current" . strtoupper(static::CANVAS_NAME) . "Canvas") == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             if (isset($_GET['id']) === true) {
                 $currentCanvasId = (int)$_GET['id'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             if (isset($_REQUEST['searchCanvas']) === true) {
                 $currentCanvasId = (int)$_REQUEST['searchCanvas'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
             }
 
@@ -133,7 +133,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -174,7 +174,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -219,7 +219,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                         if ($importCanvasId !== false) {
                             $currentCanvasId = $importCanvasId;
                             $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
-                            session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                            session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
 
                             $mailer = app()->make(MailerCore::class);
                             $this->projectService = app()->make(ProjectService::class);
