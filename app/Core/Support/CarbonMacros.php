@@ -56,9 +56,9 @@ class CarbonMacros
         $mixin = $this;
         return function () use ($mixin): String {
             return self::this()
-                ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
-                ->format($mixin->userDateFormat);
+                ->setTimezone($mixin->userTimezone)
+                ->translatedFormat($mixin->userDateFormat);
         };
     }
 
@@ -76,7 +76,7 @@ class CarbonMacros
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
-                ->format($mixin->userTimeFormat);
+                ->translatedFormat($mixin->userTimeFormat);
         };
     }
 
@@ -94,7 +94,7 @@ class CarbonMacros
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
-                ->format("H:i");
+                ->translatedFormat("H:i");
         };
     }
 

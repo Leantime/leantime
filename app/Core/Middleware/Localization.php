@@ -40,7 +40,7 @@ class Localization
 
             CarbonImmutable::mixin(new CarbonMacros(
                 $this->config->defaultTimezone,
-                session("companysettings.language"),
+                str_replace("-", "_", session("companysettings.language")),
                 $this->language->__("language.dateformat"),
                 $this->language->__("language.timeformat")
             ));
@@ -58,7 +58,7 @@ class Localization
         // Set macros for CabonImmutable date handling
         CarbonImmutable::mixin(new CarbonMacros(
             session("usersettings.timezone"),
-            session("usersettings.language"),
+            str_replace("-", "_", session("usersettings.language")),
             session("usersettings.date_format"),
             session("usersettings.time_format")
         ));
