@@ -14,6 +14,8 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
     use Leantime\Core\Frontcontroller;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Ideas\Services\Ideas as IdeasService;
 
     /**
      *
@@ -28,104 +30,84 @@ namespace Leantime\Domain\Ideas\Controllers {
         private ProjectService $projectService;
         private object $canvasRepo;
 
+        private IdeasService $ideasService;
+
         /**
          * init - initialize private variables
          */
         public function init(ProjectService $projectService)
         {
+            $this->ideasService = app()->make(IdeasService::class);
             $this->projectService = $projectService;
             $canvasName = "Ideas";
             $this->canvasRepo = app()->make(Ideas::class);
         }
+
+        public function get($params): Response
+        {
+            $data = $this->ideasService->prepareCanvasData($params['id'] ?? null);
+
+            $this->assignTemplateVariables($data);
+
+            // if (!isset($params['raw'])) {
+            //     return $this->tpl->displayPartial('ideas.boardDialog');
+            // }
+
+            return $this->tpl->displayPartial('ideas.boardDialog');
+            // if (!isset($params['raw'])) {
+            // }
+        }
+
+        public function post($params):Response
+    {
+        if (isset($params['newCanvas'])) {
+            $result = $this->ideasService->createNewCanvas($params);
+            if ($result['success']) {
+                $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
+                return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+            }
+        }
+
+        if (isset($params['editCanvas'])) {
+            
+            if(!empty($params['id'])){
+                $currentCanvasId = (int)$params['id'];
+            }
+            $result = $this->ideasService->editCanvas($params,$currentCanvasId);
+            if ($result['success']) {
+                $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
+                return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+            } else {
+                $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+            }
+        }
+
+        $data = $this->ideasService->prepareCanvasData();
+        $this->assignTemplateVariables($data);
+
+        return $this->tpl->displayPartial('ideas.boardDialog');
+
+        if (!isset($params['raw'])) {
+            return $this->tpl->displayPartial('ideas.boardDialog');
+        }
+    }
 
         /**
          * run - display template and edit data
          *
          * @access public
          */
-        public function run()
+
+
+        private function assignTemplateVariables($data)
         {
-
-            $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
-            $currentCanvasId = '';
-
-            $canvasTitle = "";
-
-            if (isset($_GET['id']) === true) {
-                $currentCanvasId = (int)$_GET['id'];
-                $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-                $canvasTitle = $singleCanvas[0]["title"] ?? "";
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
-            }
-
-            // Add Canvas
-            if (isset($_POST['newCanvas'])) {
-                if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                        $values = [
-                            'title' => $_POST['canvastitle'],
-                            'author' => session("userdata.id"),
-                            'projectId' => session("currentProject"),
-                        ];
-                        $currentCanvasId = $this->canvasRepo->addCanvas($values);
-                        $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
-
-                        $mailer = app()->make(MailerCore::class);
-                        $this->projectService = app()->make(ProjectService::class);
-                        $users = $this->projectService->getUsersToNotify(session("currentProject"));
-
-                        $mailer->setSubject($this->language->__('notification.board_created'));
-
-                        $actual_link = CURRENT_URL;
-                        $message = sprintf(
-                            $this->language->__('email_notifications.canvas_created_message'),
-                            session("userdata.name"),
-                            "<a href='" . $actual_link . "'>" . $values['title'] . '</a>'
-                        );
-                        $mailer->setHtml($message);
-
-                        // New queuing messaging system
-                        $queue = app()->make(QueueRepository::class);
-                        $queue->queueMessageToUsers(
-                            $users,
-                            $message,
-                            $this->language->__('notification.board_created'),
-                            session("currentProject")
-                        );
-
-                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
-
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
-                        return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/'.$currentCanvasId);
-
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
-                }
-            }
-
-            // Edit Canvas
-            if (isset($_POST['editCanvas']) && $currentCanvasId > 0) {
-                if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                        $values = array('title' => $_POST['canvastitle'], 'id' => $currentCanvasId);
-                        $currentCanvasId = $this->canvasRepo->updateCanvas($values);
-
-                        $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                        return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/'.$values['id']);
-
-                } else {
-                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
-                }
-            }
-
-            $this->tpl->assign('canvasTitle', $canvasTitle);
-            $this->tpl->assign('currentCanvas', $currentCanvasId);
+            $this->tpl->assign('canvasTitle', $data['canvasTitle']);
+            $this->tpl->assign('currentCanvas', $data['currentCanvasId']);
             $this->tpl->assign('canvasname', "idea");
-
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
-
-            if (!isset($_GET['raw'])) {
-                return $this->tpl->displayPartial('ideas.boardDialog');
-            }
+            $this->tpl->assign('users', $data['users']);
         }
-    }
 
+    }
 }
