@@ -107,7 +107,8 @@ class ProjectCard extends HtmxController
 
         $this->setHTMXEvent("HTMX.updateProjectList");
 
-
+        $project = $this->projectsService->getProject($projectId);
+        $this->tpl->assign("project", $project);
     }
 
     public function getProgress() {
@@ -131,6 +132,8 @@ class ProjectCard extends HtmxController
         $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
 
         $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+
+        $project = $this->projectsService->getProject($projectId);
 
         $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
         $this->tpl->assign("currentUrlPath", $currentUrlPath);

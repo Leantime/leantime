@@ -500,12 +500,18 @@ namespace Leantime\Domain\Projects\Repositories {
 					SUM(case when zp_tickets.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
                     SUM(case when zp_tickets.type = 'milestone' then 1 else 0 end) as numberMilestones,
                     COUNT(relation.projectId) AS numUsers,
-                    COUNT(definitionCanvas.id) AS numDefinitionCanvas
+                    COUNT(definitionCanvas.id) AS numDefinitionCanvas,
+                    IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects
 				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId
 				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 				  LEFT JOIN zp_relationuserproject as relation ON zp_projects.id = relation.projectId
 				  LEFT JOIN zp_canvas as definitionCanvas ON zp_projects.id = definitionCanvas.projectId AND definitionCanvas.type NOT IN('idea', 'retroscanvas', 'goalcanvas', 'wiki')
+				  LEFT JOIN zp_reactions as favorite ON zp_projects.id = favorite.moduleId
+				                                          AND favorite.module = 'project'
+				                                          AND favorite.reaction = 'favorite'
+				                                          AND favorite.userId = :id
+                    LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
 				WHERE zp_projects.id = :projectId
 				GROUP BY
 					zp_projects.id,
@@ -516,6 +522,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
+            $stmn->bindValue(':id', session("userdata.id"), PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();
