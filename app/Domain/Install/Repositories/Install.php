@@ -145,7 +145,7 @@ namespace Leantime\Domain\Install\Repositories {
                 );
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                error_log($e);
+                report($e);
                 echo $e->getMessage();
             }
         }
@@ -203,7 +203,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
         }
@@ -244,7 +244,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
         }
@@ -315,8 +315,8 @@ namespace Leantime\Domain\Install\Repositories {
 
                             $currentDBVersion = $updateVersion;
                         } catch (PDOException $e) {
-                            error_log($e);
-                            error_log($e->getTraceAsString());
+                            report($e);
+                            report($e->getTraceAsString());
                             return array("There was a problem updating the database");
                         }
                     }

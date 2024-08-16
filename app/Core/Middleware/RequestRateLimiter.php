@@ -104,7 +104,7 @@ class RequestRateLimiter
             ],
         );
         if ($this->limiter->tooManyAttempts($key, $limit)) {
-            error_log("too many requests per minute: " . $key);
+            report("too many requests per minute: " . $key);
             return new Response(
                 json_encode(['error' => 'Too many requests per minute.']),
                 Response::HTTP_TOO_MANY_REQUESTS,

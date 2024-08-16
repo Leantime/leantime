@@ -169,7 +169,7 @@ class Template
                 //@TODO: Check on callstack to make sure autoload loads before sessions
                 if (!is_a($plugin, '__PHP_Incomplete_Class')) {
                     if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
-                        error_log("Plugin $basename conflicts with domain");
+                        report("Plugin $basename conflicts with domain");
                         //Clear cache, something is up
                         session()->forget("enabledPlugins");
                         return [];
@@ -1033,7 +1033,7 @@ class Template
             $this->dispatchTplHook('event', $hookName, $payload);
         }catch(\Exception $e){
             //If some plugin or other event decides to go rouge it shouldn't take down the entire page
-            error_log($e);
+            report($e);
         }
     }
 
@@ -1052,7 +1052,7 @@ class Template
 
         }catch(\Exception $e){
             //If some plugin or other event decides to go rouge it shouldn't take down the entire page
-            error_log($e);
+            report($e);
 
             return $payload;
         }

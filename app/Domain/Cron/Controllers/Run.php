@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Cron\Controllers {
 
+    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Controller;
     use Leantime\Core\Environment;
     use Leantime\Core\Events;
@@ -34,7 +35,7 @@ namespace Leantime\Domain\Cron\Controllers {
         public function run(): Response
         {
             if (! $this->config->poorMansCron) {
-                error_log("Poor mans cron off");
+                Log::info("Poor Mans Cron is turned off");
                 return new Response();
             }
 
@@ -48,8 +49,10 @@ namespace Leantime\Domain\Cron\Controllers {
 
                     register_shutdown_function(function () use ($output) {
                         if ($this->config->debug) {
-                            error_log("Command Output: " . $output->fetch());
-                            error_log("Cron run finished");
+
+                            Log::info("Command Output: " . $output->fetch());
+                            Log::info("Cron run finished");
+
                         }
                     });
 

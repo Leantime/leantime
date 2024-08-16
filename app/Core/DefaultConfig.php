@@ -72,6 +72,11 @@ class DefaultConfig
     public int|bool $debug = 0;
 
     /**
+     * @var bool|int Debug flag
+     */
+    public string $editor = 'phpstorm';
+
+    /**
      * @var string Log Path
      */
     public string $logPath = APP_ROOT . '/logs/error.log';

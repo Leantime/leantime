@@ -101,7 +101,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 }
 
             }catch(\Exception $e){
-                error_log($e);
+                report($e);
             }*/
 
             return $this->tpl->display('dashboard.home');

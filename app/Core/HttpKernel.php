@@ -75,11 +75,11 @@ class HttpKernel implements HttpKernelContract
             return self::dispatch_filter('beforeSendResponse', $response);
 
         } catch (HttpResponseException $e) {
-            error_log($e);
+            report($e);
             return $e->getResponse();
         } catch (\Throwable $e) {
 
-            error_log($e);
+            report($e);
 
             if (! $this->app->make(Environment::class)->debug) {
 
@@ -130,8 +130,8 @@ class HttpKernel implements HttpKernelContract
             $this->app->make($middleware)->terminate($request, $response);
         }
 
-        //error_log("Before Request Terminated");
-        //error_log(print_r($request, true));
+        //report("Before Request Terminated");
+        //report(print_r($request, true));
         self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
 
         $this->requestStartedAt = null;

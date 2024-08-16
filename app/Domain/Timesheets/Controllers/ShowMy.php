@@ -144,7 +144,7 @@ class ShowMy extends Controller
                         $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
                     } catch (\Exception $e) {
                         $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
-                        error_log($e);
+                        report($e);
                         continue;
                     }
                 }

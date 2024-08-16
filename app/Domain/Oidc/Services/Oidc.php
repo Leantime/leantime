@@ -447,7 +447,7 @@ class Oidc
             $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
             $endpoints = json_decode($response->getBody()->getContents(), true);
         }catch(\Exception $e) {
-            error_log($e);
+            report($e);
             return false;
         }
         //load all not yet defined endpoints from well-known configuration

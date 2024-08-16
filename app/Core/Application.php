@@ -183,6 +183,8 @@ class Application extends Container
 
         $this->singleton(Application::class, fn() => Application::getInstance());
 
+        $this->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, ExceptionHandler::class);
+
         $this->singleton(Frontcontroller::class, Frontcontroller::class);
         $this->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem());
 
@@ -206,6 +208,9 @@ class Application extends Container
         $this->alias(ConsoleKernel::class, ConsoleKernelContract::class);
         $this->alias(HttpKernel::class, HttpKernelContract::class);
 
+        $this->alias(ExceptionHandler::class, 'exceptions');
+
+
         $this->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
 
         $this->alias(\Leantime\Core\Events::class, 'events');
@@ -221,6 +226,7 @@ class Application extends Container
 
         $this->register(new \Leantime\Core\Providers\Environment($this));
 
+        $this->register(new \Leantime\Core\Providers\Logging($this));
         $this->register(new \Leantime\Core\Providers\Events($this));
 
         $this->register(new \Leantime\Core\Providers\Cache($this));
@@ -708,5 +714,9 @@ class Application extends Container
         }
 
         return APP_ROOT."/".$path;
+    }
+
+    public function runningInConsole() {
+        return defined('LEAN_CLI') && LEAN_CLI;
     }
 }

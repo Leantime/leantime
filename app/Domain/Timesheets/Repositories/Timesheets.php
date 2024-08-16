@@ -660,7 +660,7 @@ class Timesheets extends Repository
                 }
             } catch (\Exception $e) {
                 // Some broken date formats in the db. Log error and return empty results.
-                error_log($e);
+                report($e);
 
                 $utc = dtHelper()->dbNow()->format("Y-m-d");
                 $returnValues[$utc] = [

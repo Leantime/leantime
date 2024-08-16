@@ -43,7 +43,7 @@ class Api
         $apiKeyParts = explode("_", $apiKey);
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
-            error_log("Not a valid API Key format");
+            report("Not a valid API Key format");
 
             return false;
         }
@@ -53,7 +53,7 @@ class Api
         $key = $apiKeyParts[2];
 
         if ($namespace != "lt") {
-            error_log("Unknown namespace for API request");
+            report("Unknown namespace for API request");
 
             return false;
         }
