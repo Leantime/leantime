@@ -35,6 +35,7 @@ class Logging extends ServiceProvider
                     'single' => [
                         'driver' => 'single',
                         'path' => !empty($app['config']['logPath']) ? $app['config']['logPath'] : APP_ROOT . '/logs/leantime.log',
+                        'permission' => 0664,
                     ],
                     'deprecations' => [
                         'driver' => 'single',

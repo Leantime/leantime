@@ -56,3 +56,5 @@ VOLUME /var/www/uploads
 
 RUN mkdir -p /var/www/uploads \
  && chown -R www-data:www-data /var/www/uploads
+ && chown -R www-data:www-data /var/www/logs
+ && chown -R www-data:www-data /var/www/cache
