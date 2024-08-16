@@ -182,16 +182,14 @@ class Events implements Dispatcher
             return;
         }
 
-        $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
-            $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
-            $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
+        if(!config('debug')) {
+            $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
+                return Events::getDomainPaths();
+            });
 
-            $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
-
-            $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
-
-            return $customModules->concat($filteredModules)->all();
-        });
+        }else{
+            $modules = self::getDomainPaths();
+        }
 
         foreach ($modules as $module) {
             if (file_exists($moduleEventsPath = "$module/register.php")) {
@@ -261,6 +259,18 @@ class Events implements Dispatcher
         });
 
         $discovered = true;
+    }
+
+    public static function getDomainPaths() {
+
+        $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
+        $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
+
+        $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
+
+        $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
+
+        return $customModules->concat($filteredModules)->all();
     }
 
     /**
