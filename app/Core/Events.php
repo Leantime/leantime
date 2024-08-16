@@ -520,7 +520,10 @@ class Events implements Dispatcher
      * @param  string  $eventName
      * @return bool
      */
-    public function hasListeners($eventName) {}
+    public function hasListeners($eventName) {
+        throw new \Exception("Not implemented");
+        return false;
+    }
 
     /**
      * Register an event subscriber with the dispatcher.
@@ -528,7 +531,9 @@ class Events implements Dispatcher
      * @param  object|string  $subscriber
      * @return void
      */
-    public function subscribe($subscriber) {}
+    public function subscribe($subscriber) {
+        throw new \Exception("Not implemented");
+    }
 
     /**
      * Dispatch an event until the first non-null response is returned.
@@ -537,7 +542,9 @@ class Events implements Dispatcher
      * @param  mixed  $payload
      * @return mixed
      */
-    public function until($event, $payload = []) {}
+    public function until($event, $payload = []) {
+        throw new \Exception("Not implemented");
+    }
 
 
     /**
@@ -547,7 +554,9 @@ class Events implements Dispatcher
      * @param  array  $payload
      * @return void
      */
-    public function push($event, $payload = []) {}
+    public function push($event, $payload = []) {
+        throw new \Exception("Not implemented");
+    }
 
     /**
      * Flush a set of pushed events.
@@ -555,7 +564,9 @@ class Events implements Dispatcher
      * @param  string  $event
      * @return void
      */
-    public function flush($event) {}
+    public function flush($event) {
+        throw new \Exception("Not implemented");
+    }
 
     /**
      * Remove a set of listeners from the dispatcher.
@@ -563,12 +574,16 @@ class Events implements Dispatcher
      * @param  string  $event
      * @return void
      */
-    public function forget($event) {}
+    public function forget($event) {
+        throw new \Exception("Not implemented");
+    }
 
     /**
      * Forget all of the queued listeners.
      *
      * @return void
      */
-    public function forgetPushed() {}
+    public function forgetPushed() {
+        throw new \Exception("Not implemented");
+    }
 }

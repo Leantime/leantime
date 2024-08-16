@@ -176,6 +176,8 @@ class IncomingRequest extends Request
         if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
             return true;
         }
+
+        return false;
     }
 
 }
