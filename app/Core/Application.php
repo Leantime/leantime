@@ -152,11 +152,10 @@ class Application extends Container
     /**
      * Gets the current environment
      * @return string
-     * @todo implement, should be set in env
      **/
     public function environment()
     {
-        return 'production';
+        return config('env');
     }
 
     /**

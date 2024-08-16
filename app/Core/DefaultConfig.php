@@ -72,9 +72,14 @@ class DefaultConfig
     public int|bool $debug = 0;
 
     /**
-     * @var bool|int Debug flag
+     * @var string editor used for code editing
      */
     public string $editor = 'phpstorm';
+
+    /**
+     * @var environment
+     */
+    public string $env = 'production';
 
     /**
      * @var string Log Path

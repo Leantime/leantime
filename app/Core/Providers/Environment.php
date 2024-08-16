@@ -42,7 +42,12 @@ class Environment extends ServiceProvider
 
         $config = $this->app->make(\Leantime\Core\Environment::class);
 
+        if (empty(config("env"))) {
+            config(["env" => 'production']);
+        }
+
         if($config->debug) {
+
             Debug::enable();
             config(['debug' => true]);
             config(['debug_blacklist' => [
