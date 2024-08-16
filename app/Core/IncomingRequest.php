@@ -166,4 +166,18 @@ class IncomingRequest extends Request
         return str_starts_with($_SERVER['REQUEST_URI'], "/api") || str_starts_with($_SERVER['REQUEST_URI'], "/cron");
     }
 
+    /**
+     * Determine if the current request probably expects a JSON response.
+     *
+     * @return bool
+     */
+    public function expectsJson()
+    {
+        if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

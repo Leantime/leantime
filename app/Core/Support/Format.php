@@ -165,7 +165,7 @@ class Format
             try {
                 $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, "start");
             }catch(Exception $e) {
-                error_log($e);
+                report($e);
                 return "";
             }
 

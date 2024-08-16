@@ -110,7 +110,7 @@ class Mailer
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                 $this->mailAgent->Debugoutput = function ($str, $level) {
 
-                    error_log($level . ' ' . $str);
+                    report($level . ' ' . $str);
                 };
             } else {
                 $this->mailAgent->SMTPDebug = 0;
@@ -378,8 +378,8 @@ class Mailer
                     $this->mailAgent->addAddress($recip);
                     $this->mailAgent->send();
                 } catch (Exception $e) {
-                    error_log($this->mailAgent->ErrorInfo);
-                    error_log($e);
+                    report($this->mailAgent->ErrorInfo);
+                    report($e);
                 }
 
                 $this->mailAgent->clearAllRecipients();

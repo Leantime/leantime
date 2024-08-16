@@ -65,7 +65,7 @@ class Details extends HtmxController
             //Parse and clean up error message
             $errorJson = str_replace("HTTP request returned status code 500:", "", $e->getMessage());
             $errors = json_decode(trim($errorJson));
-            error_log($e);
+            report($e);
             $this->tpl->assign('formError', $errors->error ?? "There was an error installing the plugin");
             return 'plugin-installation';
         }

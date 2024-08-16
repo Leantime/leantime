@@ -6,8 +6,8 @@ RUNNING_DOCKER_CONTAINERS:= $(shell docker ps -a -q)
 RUNNING_DOCKER_VOLUMES:= $(shell docker volume ls -q)
 
 install-deps-dev:
-	npm install --only=dev
-	composer install --optimize-autoloader
+	npm install
+	composer install
 
 install-deps:
 	npm install

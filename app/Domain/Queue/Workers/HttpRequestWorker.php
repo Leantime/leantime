@@ -42,7 +42,7 @@ class HttpRequestWorker {
                 }
 
             } catch (GuzzleException $e) {
-                error_log($e);
+                report($e);
             }
 
         }

@@ -309,7 +309,7 @@ class Jsonrpc extends Controller
                 try {
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
-                    error_log($e);
+                    report($e);
                     throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
                 }
             }

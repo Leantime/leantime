@@ -58,7 +58,7 @@ class Welcome extends HtmxController
                 $promise->wait();
             }
         }catch(\Exception $e) {
-            error_log($e);
+            report($e);
         }
 
         $currentUser = $this->usersService->getUser(session("userdata.id"));

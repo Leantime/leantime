@@ -185,7 +185,7 @@ class Get extends Controller
             return $response;
         } catch (\Exception $e) {
 
-            error_log($e);
+            report($e);
 
             return new Response($e->getMessage(), 500);
         }

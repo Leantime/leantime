@@ -17,6 +17,7 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Illuminate\Support\Facades\Log;
 
 if (! function_exists('app')) {
     /**
@@ -56,12 +57,12 @@ if (! function_exists('app')) {
 //                 || $request->isXmlHttpRequest()
 //             )
 //         ) {
-//             error_log('this fires');
+//             report('this fires');
 //
 //             exit(0);
 //         }
 //
-//         error_log(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
+//         report(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
 //
 //         exit();
 //     }
@@ -347,8 +348,8 @@ if (! function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
      *
-     * @param  list<string>|string|null  $key
-     * @param  mixed  $default
+     * @param  list<string>|string|null $key
+     * @param  mixed                    $default
      * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
      */
     function request($key = null, $default = null)
@@ -364,5 +365,18 @@ if (! function_exists('request')) {
         $value = app()->make(IncomingRequest::class)->__get($key);
 
         return is_null($value) ? value($default) : $value;
+    }
+}
+
+if (! function_exists('report')) {
+    /**
+     * Report an exception.
+     *
+     * @param  \Throwable|string $exception
+     * @return void
+     */
+    function report($exception)
+    {
+        Log::critical($exception);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Cron\Services {
 
+    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Environment;
     use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Audit\Repositories\Audit;
@@ -58,7 +59,8 @@ namespace Leantime\Domain\Cron\Services {
 
             if ($timeSince < $this->cronExecTimer) {
                 if ($this->environment->debug) {
-                    error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
+                    //report("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
+                    Log::info("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
 
                 return false;
@@ -80,7 +82,7 @@ namespace Leantime\Domain\Cron\Services {
                 try {
                     $telemetryResponse->wait();
                 } catch (Exception $e) {
-                    error_log($e);
+                   report($e);
                 }
             }
 

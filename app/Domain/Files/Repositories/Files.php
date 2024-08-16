@@ -303,7 +303,7 @@ namespace Leantime\Domain\Files\Repositories {
                         $return = false;
                     }
                 } else {
-                    error_log($upload->error);
+                    //report($upload->error);
                     return $upload->error;
                 }
             }

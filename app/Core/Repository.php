@@ -199,7 +199,7 @@ abstract class Repository
     public function patch(int $id, array $params): bool
     {
         if ($this->entity == '') {
-            error_log("Patch not implemented for this entity");
+            report("Patch not implemented for this entity");
             return false;
         }
 
@@ -233,7 +233,7 @@ abstract class Repository
     {
 
         if ($this->entity == '') {
-            error_log("Insert not implemented for this entity");
+            report("Insert not implemented for this entity");
             return false;
         }
 
@@ -294,7 +294,7 @@ abstract class Repository
     public function get(int $id): mixed
     {
         if ($this->entity == '' || $this->model == '') {
-            error_log("Get not implemented for this entity");
+            report("Get not implemented for this entity");
             return false;
         }
 

@@ -68,7 +68,7 @@ namespace Leantime\Domain\Queue\Repositories {
                 try {
                     $stmn->execute();
                 } catch (\PDOException  $e) {
-                    error_log($e);
+                   report($e);
                 }
 
                 $stmn->closeCursor();
@@ -156,7 +156,7 @@ namespace Leantime\Domain\Queue\Repositories {
             try {
                 $stmn->execute();
             } catch (\PDOException  $e) {
-                error_log($e);
+                report($e);
             }
 
             $stmn->closeCursor();

@@ -51,7 +51,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
 
@@ -144,7 +144,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 session(["isInstalled" => true]);
                 return true;
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 session(["isInstalled" => false]);
                 return false;
             }

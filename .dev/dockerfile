@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 COPY ./dev-apache2.conf /etc/apache2/apache2.conf
 COPY ./dev-ports.conf /etc/apache2/ports.conf
