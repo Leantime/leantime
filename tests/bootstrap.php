@@ -122,6 +122,20 @@ $bootstrapper = get_class(new class {
                 'cwd' => DEV_ROOT,
             ]
         );
+
+        $this->executeCommand(
+            array_filter(
+                [
+                    'chown',
+                    '-R',
+                    'www-data:www-data',
+                    '/var/www/html/logs/',
+                ]
+            ),
+            [
+                'cwd' => DEV_ROOT,
+            ]
+        );
     }
 
     /**
