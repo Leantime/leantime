@@ -23,7 +23,9 @@ class Logging extends ServiceProvider
 
         $this->app->singleton('log', function ($app) {
 
-            $logpath = $app['config']['log_path'];
+            if(!file_exists(APP_ROOT . '/logs/leantime.log')) {
+                touch(APP_ROOT . '/logs/leantime.log');
+            }
 
                 $app['config']['logging'] = [
                 'channels' => [
