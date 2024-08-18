@@ -1,27 +1,27 @@
-<?php
+@extends($layout)
+
+@section('content')
+@php
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$canvasItem = $tpl->get('canvasItem');
-$canvasTypes = $tpl->get('canvasTypes');
+$canvasItem = $canvasItem;
+$canvasTypes = $canvasTypes;
 
 $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
-?>
+@endphp
 
 <script type="text/javascript">
     window.onload = function () {
         if (!window.jQuery) {
             //It's not a modal
-            location.href = "<?=BASE_URL ?>/ideas/showBoards?showIdeaModal=<?php echo $canvasItem['id']; ?>";
+            location.href = "{{ BASE_URL }}/ideas/showBoards?showIdeaModal={{ $canvasItem['id'] }}";
         }
     }
 </script>
-
-<?php echo $tpl->displayNotification(); ?>
-
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
 
@@ -198,7 +198,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>
         leantime.commentsController.enableCommenterForms();
         <?php }?>
-
-
     })
 </script>
+
+@endsection
