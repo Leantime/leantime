@@ -258,6 +258,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
             }
 
+            $this->tpl->assign('id', $_GET['id']);
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');

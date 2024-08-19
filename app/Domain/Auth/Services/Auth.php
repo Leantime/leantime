@@ -181,7 +181,7 @@ class Auth
 
         // Ensure the role is a valid role
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
-            error_log("Check for invalid role detected: " . $roleToCheck);
+            report("Check for invalid role detected: " . $roleToCheck);
             return false;
         }
 
@@ -245,7 +245,7 @@ class Auth
                     if ($userId !== false) {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
-                        error_log("Ldap user creation failed.");
+                        report("Ldap user creation failed.");
                         return false;
                     }
 
@@ -267,7 +267,7 @@ class Auth
 
                     return true;
                 } else {
-                    error_log("Could not retrieve user by email");
+                    report("Could not retrieve user by email");
 
                     return false;
                 }
@@ -276,7 +276,7 @@ class Auth
             // Don't return false, to allow the standard login provider to check the db for contractors or clients not
             // in ldap
         } elseif ($this->config->useLdap === true && !extension_loaded('ldap')) {
-            error_log("Can't use ldap. Extension not installed");
+            report("Can't use ldap. Extension not installed");
         }
 
         // TODO: Single Sign On?
@@ -386,14 +386,6 @@ class Auth
     }
 
     /**
-     * @return string|null
-     */
-    public function getSessionId(): ?string
-    {
-        return session()->getSid();
-    }
-
-    /**
      * logout - destroy sessions and cookies
      *
      * @return void
@@ -484,7 +476,7 @@ class Auth
                     return true;
                 }
             } elseif ($this->config->debug) {
-                error_log(
+                report(
                     "PW reset failed: maximum request count has been reached for user " . $userFromDB['id']
                 );
             }
@@ -525,7 +517,7 @@ class Auth
         $testKey = array_search($role, Roles::getRoles());
 
         if ($role == "" || $testKey === false) {
-            error_log("Check for invalid role detected: " . $role);
+            report("Check for invalid role detected: " . $role);
             return false;
         }
 
@@ -654,6 +646,6 @@ class Auth
         $ip = $_SERVER['REMOTE_ADDR'];
         $msg = "[" . $date . "][" . $ip . "] Login failed for user: " . $user;
 
-        error_log($msg);
+        report($msg);
     }
 }

@@ -327,7 +327,7 @@ namespace Leantime\Domain\Reports\Services {
 
                         return $promise;
                     } catch (\Exception $e) {
-                        error_log($e);
+                        report($e);
                         return false;
                     }
                 }
@@ -417,7 +417,7 @@ namespace Leantime\Domain\Reports\Services {
                     session(["skipTelemetry" => true]);
                 });
             } catch (\Exception $e) {
-                error_log($e);
+                report($e);
 
                 session(["skipTelemetry" => true]);
                 return false;
@@ -430,7 +430,7 @@ namespace Leantime\Domain\Reports\Services {
             try {
                 $promise->wait();
             } catch (\Exception $e) {
-                error_log($e);
+                report($e);
             }
 
             return;

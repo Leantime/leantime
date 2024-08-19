@@ -95,14 +95,11 @@ class Language
         //Get list of available languages
         $this->langlist = $this->getLanguageList();
 
-        //Get language that was set in middleware
-        $language =  session("usersettings.language") ?? $this->config->language;
+        $lang = $this->getCurrentLanguage();
+        $this->readIni();
 
-        //Start checking if the user has a language set
-        if (!$this->setLanguage($language)) {
-            $this->setLanguage("en-US");
-        }
     }
+
 
     /**
      * Set the language for the application.
@@ -120,7 +117,10 @@ class Language
 
         session(["usersettings.language" => $lang]);
 
-        if (! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
+        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !request()->isApiOrCronRequest()) {
+
+            $isAPIRequest = request()->isApiOrCronRequest();
+
             Events::add_filter_listener(
                 'leantime.core.httpkernel.handle.beforeSendResponse',
                 fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
@@ -128,7 +128,7 @@ class Language
                     ->withValue($lang)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('Lax')
                 ))
             );
         }
@@ -145,6 +145,23 @@ class Language
      */
     public function getCurrentLanguage(): string
     {
+
+        if (session()->has("usersettings.language")) {
+            $this->language = session("usersettings.language");
+            return  $this->language;
+        }
+
+        if (isset($_COOKIE['language'])) {
+            $this->language = $_COOKIE['language'];
+            return  $this->language;
+        }
+
+        if(session("companysettings.language")){
+            $this->language = session("companysettings.language");
+            return  $this->language;
+        }
+
+        $this->language = $this->config->language;
         return $this->language;
     }
 
@@ -169,7 +186,7 @@ class Language
     public function readIni(): array
     {
         if (Cache::store('installation')->has('cache.language_resources_' . $this->language) && $this->config->debug == 0) {
-            
+
             $this->ini_array =  self::dispatch_filter(
                 'language_resources',
                 Cache::store('installation')->get('cache.language_resources_' . $this->language),

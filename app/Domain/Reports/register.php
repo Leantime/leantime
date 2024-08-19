@@ -25,7 +25,7 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
             $response = $telemetry->wait();
 
         } catch (\Throwable $e) {
-            error_log($e);
+            report($e);
         }
 
     })->everyMinute();

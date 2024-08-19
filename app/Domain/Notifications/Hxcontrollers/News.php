@@ -47,7 +47,7 @@ class News extends HtmxController
             $news = $this->newsService->getLatest(session("userdata.id"));
 
         }catch(\Exception $e) {
-            error_log($e);
+            report($e);
             $news = "Could not connect to news server";
         }
 

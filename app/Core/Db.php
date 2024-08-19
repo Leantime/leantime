@@ -88,7 +88,7 @@ class Db
                 }
             }
 
-            error_log($e);
+            report($e);
 
             exit();
         }

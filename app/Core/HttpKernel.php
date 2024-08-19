@@ -54,49 +54,24 @@ class HttpKernel implements HttpKernelContract
     {
         $this->requestStartedAt = microtime(true);
 
-        try {
-
-            //Main Pipeline
-            $response = (new Pipeline($this->app))
+        //Main Pipeline
+        $response = (new Pipeline($this->app))
+            ->send($request)
+            ->through($this->getMiddleware())
+            ->then(fn ($request) =>
+                //Then run through plugin pipeline
+            (new Pipeline($this->app))
                 ->send($request)
-                ->through($this->getMiddleware())
-                ->then(fn ($request) =>
-                    //Then run through plugin pipeline
-                    (new Pipeline($this->app))
-                        ->send($request)
-                        ->through(self::dispatch_filter(
-                            hook: 'plugins_middleware',
-                            payload: [],
-                            function: 'handle',
-                        ))
-                    ->then(fn () => Frontcontroller::dispatch_request($request))
-                );
+                ->through(self::dispatch_filter(
+                    hook: 'plugins_middleware',
+                    payload: [],
+                    function: 'handle',
+                ))
+                ->then(fn () => Frontcontroller::dispatch_request($request))
+            );
 
-            return self::dispatch_filter('beforeSendResponse', $response);
+        return self::dispatch_filter('beforeSendResponse', $response);
 
-        } catch (HttpResponseException $e) {
-            error_log($e);
-            return $e->getResponse();
-        } catch (\Throwable $e) {
-
-            error_log($e);
-
-            if (! $this->app->make(Environment::class)->debug) {
-
-                return $this->app->make(Template::class)->display('errors.error500', 'error');
-            }
-
-            if ($request instanceof HtmxRequest) {
-                /** @todo Replace with a proper error template for htmx requests */
-                return new Response(sprintf(
-                    '<dialog style="%s" open>%s</dialog>',
-                    'width: 90vw; height: 90vh; z-index: 9999999; position: fixed; top: 5vh; left: 5vh; overflow: scroll',
-                    (new HtmlErrorRenderer(true))->render($e)->getAsString(),
-                ));
-            }
-
-            throw $e;
-        }
     }
 
     /**
@@ -130,8 +105,8 @@ class HttpKernel implements HttpKernelContract
             $this->app->make($middleware)->terminate($request, $response);
         }
 
-        //error_log("Before Request Terminated");
-        //error_log(print_r($request, true));
+        //report("Before Request Terminated");
+        //report(print_r($request, true));
         self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
 
         $this->requestStartedAt = null;
@@ -156,9 +131,9 @@ class HttpKernel implements HttpKernelContract
         return self::dispatch_filter('http_middleware', [
             Middleware\TrustProxies::class,
             Middleware\InitialHeaders::class,
+            Middleware\StartSession::class,
             Middleware\Installed::class,
             Middleware\Updated::class,
-            Middleware\StartSession::class,
             Middleware\RequestRateLimiter::class,
             $this->app->make(IncomingRequest::class) instanceof ApiRequest
                 ? Middleware\ApiAuth::class

@@ -54,7 +54,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $currentCanvasId = (int)$_GET['id'];
                 $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                 $canvasTitle = $singleCanvas[0]["title"] ?? "";
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             // Add Canvas
@@ -94,7 +94,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/'.static::CANVAS_NAME.'canvas/boardDialog/'.$currentCanvasId);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');

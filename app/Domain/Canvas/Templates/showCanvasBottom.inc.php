@@ -48,6 +48,10 @@ foreach ($__data as $var => $val) {
             new SlimSelect({ select: '#searchCanvas' });
         }
 
+        <?php if (isset($_GET['closeModal'])) { ?>
+            jQuery.nmTop().close();
+        <?php } ?>
+
         leantime.<?=$canvasName ?>CanvasController.setRowHeights();
         leantime.canvasController.setCanvasName('<?=$canvasName ?>');
         leantime.canvasController.initFilterBar();

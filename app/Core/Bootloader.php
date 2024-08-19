@@ -155,13 +155,16 @@ class Bootloader
     private function handleRequest(): void
     {
         if (! ($request = $this->app->make(IncomingRequest::class)) instanceof CliRequest) {
+
             /** @var HttpKernel $kernel */
             $kernel = $this->app->make(HttpKernel::class);
 
             $response = $kernel->handle($request)->send();
 
             $kernel->terminate($request, $response);
+
         } else {
+
             /** @var ConsoleKernel $kernel */
             $kernel = $this->app->make(ConsoleKernel::class);
 

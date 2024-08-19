@@ -154,6 +154,7 @@ class EditCanvasItem extends Controller
     {
 
         if (isset($params['changeItem'])) {
+
             if (isset($params['itemId']) && !empty($params['itemId'])) {
                 if (isset($params['description']) && !empty($params['description'])) {
                     $currentCanvasId = (int)session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");

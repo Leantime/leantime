@@ -62,6 +62,8 @@
         "illuminate/session": "^10.0",
         "illuminate/encryption": "^10.0",
         "illuminate/redis": "^10.0",
+        "illuminate/log": "^10.0",
+        "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
 
         "symfony/http-foundation": "^6.3",
@@ -85,7 +87,6 @@
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
         "phpcsstandards/phpcsextra": "^1.2.1",
-        "leantime/leantime-documentor": "dev-main",
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10"
     },

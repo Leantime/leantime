@@ -117,7 +117,7 @@ namespace Leantime\Domain\Plugins\Services {
                         $installedPluginsById[$plugin]->enabled = true;
                         $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
                     } catch (Exception $e) {
-                        error_log($e);
+                        report($e);
                     }
                 });
             }
@@ -243,7 +243,7 @@ namespace Leantime\Domain\Plugins\Services {
             try {
                 $plugin = $this->createPluginFromComposer($pluginFolder);
             } catch (\Exception $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
 
@@ -254,7 +254,7 @@ namespace Leantime\Domain\Plugins\Services {
                 try {
                     $newPluginSvc->install();
                 } catch (Exception $e) {
-                    error_log($e);
+                    report($e);
                     return false;
                 }
             }
@@ -358,7 +358,7 @@ namespace Leantime\Domain\Plugins\Services {
                     try {
                         $newPluginSvc->uninstall();
                     } catch (\Exception $e) {
-                        error_log($e);
+                        report($e);
                         return false;
                     }
                 }

@@ -22,9 +22,6 @@
         <br /><br />
         <input type="hidden" name="install" value="Install" />
         <p><input type="submit" name="installAction" class="btn btn-primary" value="<?=$tpl->language->__("buttons.install");?>" onClick="this.form.submit(); this.disabled=true; this.value='<?=$tpl->language->__("buttons.install");?>'; "/></p>
-
     </form>
-
-
 
 </div>

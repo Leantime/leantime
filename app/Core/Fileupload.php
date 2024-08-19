@@ -288,7 +288,7 @@ class Fileupload
 
                 return $url;
             } catch (S3Exception $e) {
-                error_log($e, 0);
+                report($e);
                 return false;
             }
         } else {
@@ -297,7 +297,7 @@ class Fileupload
                     return "/userfiles/" . $this->file_name;
                 }
             } catch (Exception $e) {
-                error_log($e, 0);
+                report($e);
                 return false;
             }
         }
@@ -329,10 +329,10 @@ class Fileupload
 
             return true;
         } catch (S3Exception $e) {
-            error_log($e, 0);
+            report($e);
             return false;
         } catch (RequestException $e) {
-            error_log($e, 0);
+            report($e);
             return false;
         }
     }
@@ -351,7 +351,7 @@ class Fileupload
                 return true;
             }
         } catch (Exception $e) {
-            error_log($e, 0);
+            report($e);
             return false;
         }
 

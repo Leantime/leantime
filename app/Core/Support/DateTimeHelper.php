@@ -55,7 +55,8 @@ class DateTimeHelper extends CarbonImmutable
 
         // Session is set in middleware, unlikely to not be set but just in case set defaults.
         $this->userTimezone = session("usersettings.timezone") ?? $this->config->defaultTimezone;
-        $this->userLanguage = session("usersettings.language") ?? $this->config->language;
+        $this->userLanguage = str_replace("-", "_", (session("usersettings.language") ?? $this->config->language));
+
         $this->userDateFormat = session("usersettings.date_format") ?? $this->language->__("language.dateformat");
         $this->userTimeFormat = session("usersettings.time_format") ?? $this->language->__("language.timeformat");
     }
@@ -77,15 +78,15 @@ class DateTimeHelper extends CarbonImmutable
         }
 
         if ($userTime == "start") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->startOfDay();
         } elseif ($userTime == "end") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->endOfDay();
         } elseif ($userTime == "") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone);
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone);
         } else {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, trim($userDate . " " . $userTime), $this->userTimezone);
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, substr($this->userLanguage, 0, 2), trim($userDate . " " . $userTime), $this->userTimezone);
         }
 
         return $this->datetime;

@@ -651,7 +651,7 @@ class Theme
             try {
                 $this->readIniData();
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 return $this->language->__("theme." . $this->getActive() . "name");
             }
         }
@@ -675,7 +675,7 @@ class Theme
             try {
                 $this->readIniData();
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 return '';
             }
         }
@@ -883,7 +883,7 @@ class Theme
     private function readIniData(): void
     {
         if (! file_exists(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini')) {
-            error_log("Configuration file for theme " . $this->getActive() . " not found");
+            report("Configuration file for theme " . $this->getActive() . " not found");
             $this->clearCache();
             $this->setActive("default");
         }

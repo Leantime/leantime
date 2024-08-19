@@ -48,7 +48,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
   <hr style="margin-top: 5px; margin-bottom: 15px;">
     <?php echo $tpl->displayNotification(); ?>
 
-    <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
         <input type="hidden" value="<?php echo $tpl->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
@@ -126,7 +126,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$tpl->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <input type="submit" value="<?=$tpl->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
+            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
+
+
         <?php } ?>
 
         <?php if ($id !== '') { ?>
