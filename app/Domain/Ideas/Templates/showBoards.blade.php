@@ -12,8 +12,8 @@ $canvasLabels = $canvasLabels;
 
 //get canvas title
 foreach ($allCanvas as $canvasRow) {
-    if ($canvasRow["id"] == $currentCanvas) {
-        $canvasTitle = $canvasRow["title"];
+    if ($canvasRow->id == $currentCanvas) {
+        $canvasTitle = $canvasRow->title;
         break;
     }
 }
@@ -48,7 +48,7 @@ foreach ($allCanvas as $canvasRow) {
                     @endif
                     <li class="border"></li>
                     @foreach ($allCanvas as $canvasRow)
-                    <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></li>
+                    <li><a href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->id }}'>{{ $canvasRow->title }}</a></li>
                     @endforeach
                 </ul>
             </span>

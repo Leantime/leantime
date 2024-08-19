@@ -46,7 +46,6 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function get($params): Response
         {
             $data = $this->ideasService->prepareCanvasData($params['id'] ?? null);
-
             $this->assignTemplateVariables($data);
 
             // if (!isset($params['raw'])) {

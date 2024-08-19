@@ -51,7 +51,6 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function get($params):Response
         {
             $result = $this->ideaService->processIdeaDialogGetRequest($params);
-    
             if (isset($result['notification'])) {
                 $this->tpl->setNotification($result['notification']['message'], $result['notification']['type'], $result['notification']['key'] ?? null);
             }

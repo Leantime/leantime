@@ -164,7 +164,7 @@ namespace Leantime\Domain\Ideas\Services {
             if ($canvasId !== null) {
                 $currentCanvasId = (int)$canvasId;
                 $singleCanvas = $this->ideasRepository->getSingleCanvas($currentCanvasId);
-                $canvasTitle = $singleCanvas[0]["title"] ?? "";
+                $canvasTitle = $singleCanvas->title ?? "";
                 session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $currentCanvasId]);
             }
 
@@ -224,11 +224,11 @@ namespace Leantime\Domain\Ideas\Services {
             }
 
             $canvasItem = $this->ideasRepository->getSingleCanvasItem($params['id']);
-            $canvasItem['box'] = $canvasItem['box'] === "0" ? "idea" : $canvasItem['box'];
+            $canvasItem->box = $canvasItem->box === "0" ? "idea" : $canvasItem->box;
 
             $result['canvasItem'] = $canvasItem;
-            $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem['id']);
-            $result['numComments'] = $this->commentRepository->countComments('ideas', $canvasItem['id']);
+            $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem->id);
+            $result['numComments'] = $this->commentRepository->countComments('ideas', $canvasItem->id);
 
             return $result;
         }
