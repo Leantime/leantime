@@ -51,10 +51,35 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function get($params):Response
         {
             $result = $this->ideaService->processIdeaDialogGetRequest($params);
+            $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
+            if (session()->exists("currentIdeaCanvas")) {
+                $currentCanvasId = session("currentIdeaCanvas");
+            } else {
+                $currentCanvasId = -1;
+                session(["currentIdeaCanvas" => ""]);
+            }
+    
+            if (count($allCanvas) > 0 && session("currentIdeaCanvas") == '') {
+                $currentCanvasId = $allCanvas[0]->id;
+                session(["currentIdeaCanvas" => $currentCanvasId]);
+            }
+    
+            if (isset($params["id"]) === true) {
+                $currentCanvasId = (int)$params["id"];
+                session(["currentIdeaCanvas" => $currentCanvasId]);
+            }
+    
+            if (isset($params["searchCanvas"]) === true) {
+                $currentCanvasId = (int)$params["searchCanvas"];
+                session(["currentIdeaCanvas" => $currentCanvasId]);
+            }
+
             if (isset($result['notification'])) {
                 $this->tpl->setNotification($result['notification']['message'], $result['notification']['type'], $result['notification']['key'] ?? null);
             }
-    
+
+
+            $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('comments', $result['comments']);
             $this->tpl->assign('numComments', $result['numComments'] ?? 0);
             $this->tpl->assign('milestones', $result['milestones']);

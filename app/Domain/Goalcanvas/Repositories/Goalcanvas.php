@@ -7,6 +7,8 @@
 namespace Leantime\Domain\Goalcanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
+    use Leantime\Domain\Goalcanvas\Models\Goalcanvas as GoalcanvasModel;
+
     use PDO;
 
     /**
@@ -120,10 +122,10 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 ";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $milestoneId, PDO::PARAM_STR);
+            $stmn->bindValue(':id', $milestoneId, PDO::PARAM_INT);
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, GoalcanvasModel::class);
             $stmn->closeCursor();
             return $values;
         }
@@ -132,7 +134,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
          * @param $canvasId
          * @return array|false
          */
-        public function getSingleCanvas($canvasId): false|array
+        public function getSingleCanvas($canvasId)
         {
             $sql = "SELECT
                         zp_canvas.id,
@@ -151,13 +153,15 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+            $stmn->bindValue(':canvasName', static::CANVAS_NAME . 'canvas', PDO::PARAM_STR);
+            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_INT);
 
             $stmn->execute();
-            $values = $stmn->fetch();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, GoalcanvasModel::class);
+            $value = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values;
+            return $value;
         }
 
         /**
@@ -212,7 +216,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, GoalcanvasModel::class);
             $stmn->closeCursor();
             return $values;
         }

@@ -113,7 +113,6 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
-
             return $values['count'] ?? 0;
         }
 

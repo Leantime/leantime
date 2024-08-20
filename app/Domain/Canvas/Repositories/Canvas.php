@@ -282,7 +282,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $canvasId
          * @return array|false
          */
-        public function getSingleCanvas($canvasId): false|array
+        public function getSingleCanvas($canvasId)
         {
             $sql = "SELECT
                         zp_canvas.id,

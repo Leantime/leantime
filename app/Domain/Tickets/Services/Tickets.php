@@ -1099,8 +1099,8 @@ namespace Leantime\Domain\Tickets\Services {
                 if ($task['milestoneid'] !== '' && $task['milestoneid'] > 0) {
                     $goals = $this->goalcanvasService->getGoalsByMilestone($task['milestoneid']);
                     foreach ($goals as $goal) {
-                        if (!isset($contributedToGoal[$goal['id']])) {
-                            $contributedToGoal[$goal['id']] = $goal;
+                        if (!isset($contributedToGoal[$goal->id])) {
+                            $contributedToGoal[$goal->id] = $goal;
                         }
                     }
                 }

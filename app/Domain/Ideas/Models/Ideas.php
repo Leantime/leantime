@@ -31,4 +31,15 @@ class Ideas
     public function __construct()
     {
     }
+
+    
+    // public function __construct(string $type = '')
+    // {
+    //     $this->box = $type;
+    // }
+
+    // public static function createFromType(string $type): self
+    // {
+    //     return new self($type);
+    // }
 }

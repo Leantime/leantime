@@ -10,6 +10,7 @@ namespace Leantime\Domain\Ideas\Services {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+    use Leantime\Domain\Ideas\Models\Ideas as ModelsIdeas;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 
 
@@ -110,6 +111,7 @@ namespace Leantime\Domain\Ideas\Services {
                         'type' => 'success'
                     ],
                     'success' => true,
+                    'canvasId' => $currentCanvasId,
                     'redirect_url' => BASE_URL . "/ideas/advancedBoards/"
                 ];
             } else {
@@ -235,18 +237,11 @@ namespace Leantime\Domain\Ideas\Services {
 
         private function createNewCanvasItem($type)
         {
-            return [
-                "id" => "",
-                "box" => $type,
-                "tags" => '',
-                "description" => "",
-                "status" => "idea",
-                "assumptions" => "",
-                "data" => "",
-                "conclusion" => "",
-                "milestoneHeadline" => "",
-                "milestoneId" => "",
-            ];
+            $new_idea = new ModelsIdeas();
+            $new_idea->box = $type;
+            $new_idea->status = 'idea';
+            return $new_idea;
+
         }
 
         private function deleteComment($commentId)

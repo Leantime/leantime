@@ -98,7 +98,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
             !empty($canvasAry) || throw new Exception("Cannot find canvas with id '$id'");
-            $projectId = $canvasAry->project_id;
+            $projectId = $canvasAry['project_id'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
             $projectsRepo = app()->make(ProjectRepository::class);
             $projectAry = $projectsRepo->getProject($projectId);
@@ -106,7 +106,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             // Generate XML data
             $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>' . PHP_EOL . PHP_EOL;
-            $xml .= $this->xmlExport(static::CANVAS_NAME . static::CANVAS_TYPE, $canvasAry->title, $recordsAry);
+            $xml .= $this->xmlExport(static::CANVAS_NAME . static::CANVAS_TYPE, $canvasAry['title'], $recordsAry);
             return $xml;
         }
 
