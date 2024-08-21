@@ -4,7 +4,7 @@ namespace Leantime\Domain\Ideas\Services {
 
     use LDAP\Result;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeasRepository;
-    use Leantime\core\Language;
+    use Leantime\Core\Language;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
