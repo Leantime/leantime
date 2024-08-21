@@ -4,7 +4,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Projects\Services\Projects;
-    use Leantime\core\Language;
+    use Leantime\Core\Language;
     use Leantime\Core\Mailer;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
     use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
