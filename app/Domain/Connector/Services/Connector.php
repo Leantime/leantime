@@ -566,8 +566,6 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-
-
         public function importValues($fields, $values, $entity)
         {
 
@@ -738,5 +736,6 @@ namespace Leantime\Domain\Connector\Services {
             session(["serFields" => $serializedFields]);
             session(["serValues" => $serializedValues]);
         }
+
     }
 }

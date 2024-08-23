@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Projects\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Str;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
@@ -784,10 +785,7 @@ namespace Leantime\Domain\Projects\Services {
             $this->setCurrentProject();
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
+
         /**
          * @param $projectId
          * @return array
@@ -795,6 +793,15 @@ namespace Leantime\Domain\Projects\Services {
         public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            foreach ($users as $key => $user) {
+
+                 if(dtHelper()->isValidDateString($user['modified'])) {
+                     $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+                 }else{
+                     $users[$key]['modified'] = null;
+                 }
+            }
 
             if ($users) {
                 return $users;
@@ -1565,18 +1572,81 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function getAll(bool $showClosedProjects = false): array
         {
-            return $this->projectRepository->getAll($showClosedProjects);
+            return $this->projectRepository->getUserProjects( userId: session('userdata.id'),
+                accessStatus: "all",
+                projectTypes: "project");
         }
 
-        public function pollForUpdatedProjects(): array
+        public function findProject(string $term = "")
         {
-            $projects = $this->projectRepository->getAll(false);
+            $projects = $this->projectRepository->getUserProjects(
+                userId: session('userdata.id'),
+                accessStatus: "all",
+                projectTypes: "project");
+
+            $filteredProjects = [];
+            foreach ($projects as $key => $project) {
+
+                if(Str::contains($projects[$key]['name'], $term, ignoreCase: true) || $term =='') {
+                    $projects[$key] = $this->prepareDatesForApiResponse($project);
+                    $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+
+                    $filteredProjects[] =  $projects[$key];
+                }
+            }
+
+            return $filteredProjects;
+        }
+
+
+        public function pollForNewProjects() {
+
+            $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
 
             foreach ($projects as $key => $project) {
-                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+                $projects[$key] = $this->prepareDatesForApiResponse($project);
             }
 
             return $projects;
+
+        }
+
+
+        public function pollForUpdatedProjects(): array
+        {
+            $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
+
+            foreach ($projects as $key => $project) {
+                $projects[$key] = $this->prepareDatesForApiResponse($project);
+                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+
+            }
+
+            return $projects;
+        }
+
+        private function prepareDatesForApiResponse($project) {
+
+            if(dtHelper()->isValidDateString($project['modified'])) {
+                $project['modified'] = dtHelper()->parseDbDateTime($project['modified'])->toIso8601ZuluString();
+            }else{
+                $project['modified'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($project['start'])) {
+                $project['start'] = dtHelper()->parseDbDateTime($project['start'])->toIso8601ZuluString();
+            }else{
+                $project['start'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($project['end'])) {
+                $project['end'] = dtHelper()->parseDbDateTime($project['end'])->toIso8601ZuluString();
+            }else{
+                $project['end'] = null;
+            }
+
+            return $project;
+
         }
     }
 }
