@@ -15,6 +15,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Illuminate\Support\Str;
     use Leantime\Core\Frontcontroller;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Exceptions\MissingParameterException;
+    use Exception;
 
     /**
      *
@@ -53,6 +55,13 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $currentCanvasId = $this->goalService->getCurrentCanvasId($params);
             $allCanvas = $this->goalService->getAllCanvas();
+
+            $filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
+            session(["filter_status" => $filter['status']]);
+            $filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');
+            session(["filter_relates" => $filter['relates']]);
+
+            $this->tpl->assign('filter', $filter);
         
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
@@ -65,7 +74,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('canvasItems', $this->goalService->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
         
-            return $this->tpl->display(static::CANVAS_NAME . 'canvas.showCanvas');
+            return $this->tpl->display('goalcanvas.showCanvas');
         }
 
         public function post($params): Response
@@ -75,25 +84,58 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         
             switch ($action) {
                 case 'newCanvas':
-                    $result = $this->goalService->createNewCanvas($_POST['canvastitle'] ?? '');
+                    try {
+                        $result = $this->goalService->createNewCanvas($_POST['canvastitle'] ?? '');
+                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success');
+                    } catch (\Throwable $th) {
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
                     break;
                 case 'editCanvas':
-                    $result = $this->goalService->editCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                    try {
+                        //code...
+                        $result = $this->goalService->editCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
+
                     break;
                 case 'cloneCanvas':
-                    $result = $this->goalService->cloneCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                    try {
+                        //code...
+                        $result = $this->goalService->cloneCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
                     break;
                 case 'mergeCanvas':
-                    $result = $this->goalService->mergeCanvas($_POST['canvasid'] ?? -1, $_POST['mergeCanvasId'] ?? -1);
+                    try {
+                        //code...
+                        $result = $this->goalService->mergeCanvas($_POST['canvasid'] ?? -1, $_POST['mergeCanvasId'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
                     break;
                 case 'importCanvas':
-                    $result = $this->goalService->importCanvas($_FILES['canvasfile'] ?? null);
+                    try {
+                        $result = $this->goalService->importCanvas($_FILES['canvasfile'] ?? null);
+                        $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
+                    } catch (\Throwable $th) {
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+
+                    }
                     break;
             }
         
             if ($result['success']) {
                 $this->tpl->setNotification($result['message'], 'success');
-                return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
             } else {
                 $this->tpl->setNotification($result['message'], 'error');
             }
@@ -101,5 +143,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             return $this->get($params);
         }
     }
+
+
+    
 
 }

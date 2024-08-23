@@ -68,7 +68,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $bigrock = array("id"=>'', "title" => "", "prpojectId" => "", "author" => '');
             }
 
-            dd($bigrock);
             $this->tpl->assign('bigRock', $bigrock);
 
             return $this->tpl->displayPartial('goalcanvas.bigRockDialog');

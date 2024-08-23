@@ -2,7 +2,6 @@
 
 @section('content')
     @php
-        $id = '';
         if (isset($canvasItem->id) && $canvasItem->id != '') {
             $id = $canvasItem->id;
         }

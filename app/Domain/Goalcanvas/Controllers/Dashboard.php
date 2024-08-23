@@ -25,7 +25,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = 'goal';
 
         private Projects $projectService;
         private Goalcanvas $goalService;
@@ -67,23 +66,74 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
              $this->tpl->assign('canvasItems', $result['canvasItems']);
              $this->tpl->assign('users', $result['users']);
      
-             return $this->tpl->display(static::CANVAS_NAME . 'canvas.dashboard');
+             return $this->tpl->display('goalcanvas.dashboard');
          }
 
 
          public function post($params): Response
          {
-             $result = $this->goalService->handleDashboardPostRequest($params);
-     
-             if ($result['redirect']) {
-                 return Frontcontroller::redirect($result['redirectUrl']);
-             }
-     
-             if ($result['notification']) {
-                 $this->tpl->setNotification($result['notification']['message'], $result['notification']['type']);
-             }
-     
-             return $this->tpl->display(static::CANVAS_NAME . 'canvas.dashboard');
+            $action = $_POST['action'] ?? '';
+            $result = null;
+        
+            switch ($action) {
+                case 'newCanvas':
+                    try {
+                        $result = $this->goalService->createNewCanvas($_POST['canvastitle'] ?? '');
+                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success');
+                    } catch (\Throwable $th) {
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
+                    break;
+                case 'editCanvas':
+                    try {
+                        //code...
+                        $result = $this->goalService->editCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
+
+                    break;
+                case 'cloneCanvas':
+                    try {
+                        //code...
+                        $result = $this->goalService->cloneCanvas($_POST['canvastitle'] ?? '', $_POST['canvasid'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
+                    break;
+                case 'mergeCanvas':
+                    try {
+                        //code...
+                        $result = $this->goalService->mergeCanvas($_POST['canvasid'] ?? -1, $_POST['mergeCanvasId'] ?? -1);
+                        $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+                    }
+                    break;
+                case 'importCanvas':
+                    try {
+                        $result = $this->goalService->importCanvas($_FILES['canvasfile'] ?? null);
+                        $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
+                    } catch (\Throwable $th) {
+                        $this->tpl->setNotification($th->getMessage(), 'error');
+
+                    }
+                    break;
+            }
+        
+            if ($result['success']) {
+                $this->tpl->setNotification($result['message'], 'success');
+                return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
+            } else {
+                $this->tpl->setNotification($result['message'], 'error');
+            }
+        
+            return $this->get($params);
          }
     }
 }

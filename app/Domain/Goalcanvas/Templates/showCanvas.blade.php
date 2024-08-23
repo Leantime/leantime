@@ -2,8 +2,14 @@
 @section('content')
 
 
+
+
+
+
     @php
         $elementName = 'goal';
+
+        use Leantime\Domain\Comments\Repositories\Comments;
 
     @endphp
 

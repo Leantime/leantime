@@ -8,7 +8,6 @@ use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
 
 $elementName = 'goal';
-
 /**
  * showCanvasTop.inc template - Top part of the main canvas page
  *
@@ -48,7 +47,7 @@ foreach ($allCanvas as $canvasRow) {
 
                     <ul class="dropdown-menu canvasSelector">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock">{{ __("links.icon.create_new_board") }}</a></li>
+                            <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
                         @endif
                         <li class="border"></li>
                         @foreach ($allCanvas as $canvasRow)
@@ -147,8 +146,8 @@ foreach ($allCanvas as $canvasRow) {
                                                                 &nbsp;&nbsp;&nbsp;
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header">{{ __("subtitles.edit") }}</li>
-                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.edit_canvas_item") }}</a></li>
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.delete_canvas_item") }}</a></li>
+                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
+                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
                                                                 </ul>
                                                             @endif
                                                         </div>
@@ -319,7 +318,7 @@ foreach ($allCanvas as $canvasRow) {
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
             <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                {{ __("links.icon.create_new_board") }}
+                {!! __("links.icon.create_new_board") !!}
             </a>
         @endif
     </div>

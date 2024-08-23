@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Goalcanvas\Services {
 
+    use Leantime\Core\Exceptions\ElementExistsException;
+    use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Core\Language;
@@ -578,7 +580,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function createNewCanvas(string $title): array
         {
             if (empty($title)) {
-                return ['success' => false, 'message' => $this->language->__('notification.please_enter_title')];
+                throw new MissingParameterException($this->language->__('notification.please_enter_title'));
             }
 
             if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {
@@ -601,11 +603,11 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function editCanvas(string $title, int $canvasId): array
         {
             if (empty($title)) {
-                return ['success' => false, 'message' => $this->language->__('notification.please_enter_title')];
+                throw new MissingParameterException($this->language->__('notification.please_enter_title'));
             }
 
-            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {
-                return ['success' => false, 'message' => $this->language->__('notification.board_exists')];
+            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {               
+                throw new ElementExistsException($this->language->__('notification.board_exists'));
             }
 
             $values = ['title' => $title, 'id' => $canvasId];
@@ -617,11 +619,11 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function cloneCanvas(string $title, int $canvasId): array
         {
             if (empty($title)) {
-                return ['success' => false, 'message' => $this->language->__('notification.please_enter_title')];
+                throw new MissingParameterException($this->language->__('notification.please_enter_title'));
             }
 
-            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {
-                return ['success' => false, 'message' => $this->language->__('notification.board_exists')];
+            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {               
+                throw new ElementExistsException($this->language->__('notification.board_exists'));
             }
 
             $newCanvasId = $this->goalRepository->copyCanvas(
@@ -638,7 +640,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function mergeCanvas(int $canvasId, int $mergeCanvasId): array
         {
             if ($canvasId <= 0 || $mergeCanvasId <= 0) {
-                return ['success' => false, 'message' => $this->language->__('notification.internal_error')];
+                throw new \Exception($this->language->__('notification.internal_error'));
             }
 
             $status = $this->goalRepository->mergeCanvas($canvasId, $mergeCanvasId);
@@ -646,20 +648,21 @@ namespace Leantime\Domain\Goalcanvas\Services {
             if ($status) {
                 return ['success' => true, 'message' => $this->language->__('notification.board_merged')];
             } else {
-                return ['success' => false, 'message' => $this->language->__('notification.merge_error')];
+                throw new \Exception($this->language->__('notification.internal_error'));
+
             }
         }
 
         public function importCanvas(?array $file): array
         {
             if (!$file || $file['error'] !== 0) {
-                return ['success' => false, 'message' => $this->language->__('notification.board_import_failed')];
+                throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
             $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.') . '.xml';
 
             if (!move_uploaded_file($file['tmp_name'], $uploadfile)) {
-                return ['success' => false, 'message' => $this->language->__('notification.board_import_failed')];
+                throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
             $services = app()->make(CanvasService::class);
@@ -672,7 +675,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
             unlink($uploadfile);
 
             if ($importCanvasId === false) {
-                return ['success' => false, 'message' => $this->language->__('notification.board_import_failed')];
+                throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
             session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $importCanvasId]);
