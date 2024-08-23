@@ -44,7 +44,6 @@ class Api
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
             report("Not a valid API Key format");
-
             return false;
         }
 
@@ -201,5 +200,9 @@ class Api
         $correctManifest = array_values($correctManifest)[0];
 
         return $basePath . array_search($referenceValue, $correctManifest);
+    }
+
+    public function healthCheck() {
+        return true;
     }
 }

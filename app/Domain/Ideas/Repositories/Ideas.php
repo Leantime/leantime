@@ -627,7 +627,7 @@ namespace Leantime\Domain\Ideas\Repositories {
             return true;
         }
 
-        public function getAllIdeas(): array|false
+        public function getAllIdeas(?int $projectId, ?int $boardId): array|false
         {
             $sql = "SELECT zp_canvas_items.id,
                 zp_canvas_items.description,
@@ -642,12 +642,46 @@ namespace Leantime\Domain\Ideas\Repositories {
                 zp_canvas_items.sortindex,
                 zp_canvas_items.status,
                 zp_canvas_items.tags,
-                zp_canvas_items.milestoneId
+                zp_canvas_items.milestoneId,
+                zp_canvas.projectId
                 FROM zp_canvas_items
-                LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
-                WHERE canvasBoard.type = 'idea'";
+                LEFT JOIN zp_canvas ON zp_canvas_items.canvasId = zp_canvas.id
+                LEFT JOIN zp_projects ON zp_canvas.projectId = zp_projects.id
+                WHERE zp_canvas_items.box = 'idea' AND (
+                    zp_canvas.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                    OR zp_projects.psettings = 'all'
+                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                    OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
+                )
+                ";
+
+            if (isset($projectId) && $projectId  > 0) {
+                $sql .= " AND (zp_canvas.projectId = :projectId)";
+            }
+
+            if (isset($boardId) && $boardId  > 0) {
+                $sql .= " AND (zp_canvas.id = :boardId)";
+            }
 
             $stmn = $this->db->database->prepare($sql);
+
+            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+            }
+
+
+            if (isset($projectId) && $projectId  > 0) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            if (isset($boardId) && $boardId  > 0) {
+                $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_ASSOC);

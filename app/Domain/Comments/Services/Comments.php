@@ -139,9 +139,20 @@ namespace Leantime\Domain\Comments\Services {
             return $this->commentRepository->deleteComment($commentId);
         }
 
-        public function pollComments(): array | false
+        public function pollComments(?int $projectId = null, ?int $moduleId = null): array | false
         {
-            return $this->commentRepository->getAllAccountComments();
+
+            $comments = $this->commentRepository->getAllAccountComments($projectId, $moduleId);
+
+            foreach ($comments as $key => $comment) {
+                if(dtHelper()->isValidDateString($comment['date'])) {
+                    $comments[$key]['date'] = dtHelper()->parseDbDateTime($comment['date'])->toIso8601ZuluString();
+                }else{
+                    $comments[$key]['date'] = null;
+                }
+            }
+
+            return $comments;
         }
     }
 }

@@ -549,7 +549,8 @@ class Template
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         if (is_array($jsonContent) || is_object($jsonContent)) {
-            $jsonContent = json_encode($jsonContent);
+            $collection = collect($jsonContent);
+            $jsonContent = $collection->toJson();
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return $response;

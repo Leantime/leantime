@@ -31,6 +31,7 @@ class InitialHeaders
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];
+        $cspParts = self::dispatch_filter('cspParts', $cspParts);
         $csp = implode(";", $cspParts);
 
         foreach (
