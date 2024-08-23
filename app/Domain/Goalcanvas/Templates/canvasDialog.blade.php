@@ -33,7 +33,7 @@
                         </select><br>
                     @else
                         <input type="hidden" name="relates"
-                               value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
+                            value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
                     @endif
                     <br>
                     <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i>
@@ -43,26 +43,26 @@
                     <div id="measureGoalContainer">
                         <label>{{ __('text.what_metric_will_you_be_using') }}</label>
                         <input type="text" name="description" value="{{ $canvasItem['description'] }}"
-                               style="width:100%"><br>
+                            style="width:100%"><br>
                     </div>
 
                     <div class="row">
                         <div class="col-md-3">
                             <label>{{ __('label.starting_value') }}</label>
                             <input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
-                                   style="width:105px">
+                                style="width:105px">
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.current_value') }}</label>
                             <input type="number" step="0.01" name="currentValue" id="currentValueField"
-                                   value="{{ $canvasItem['currentValue'] }}"
-                                   @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
-                                   style="width:105px">
+                                value="{{ $canvasItem['currentValue'] }}"
+                                @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
+                                style="width:105px">
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.goal_value') }}</label>
                             <input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
-                                   style="width:105px">
+                                style="width:105px">
                         </div>
                         <div class="col-md-3">
                             <label>{{ __('label.type') }}</label>
@@ -81,7 +81,7 @@
                     @if ($login::userIsAtLeast($roles::$editor))
                         <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton">
                         <button type="submit" class="btn btn-primary" id="saveAndClose" value="closeModal"
-                                onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</button>
+                            onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</button>
                     @endif
 
                     @if ($id !== '')
