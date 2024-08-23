@@ -19,8 +19,9 @@ class Session extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function ($app) {
-            $configKey = $app['config']->sessionPassword;
+        $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function () {
+
+            $configKey =  app('config')->sessionPassword;
 
             if (strlen($configKey) > 32) {
                 $configKey = substr($configKey, 0, 32);
@@ -30,22 +31,24 @@ class Session extends ServiceProvider
                 $configKey =  str_pad($configKey, 32, "x", STR_PAD_BOTH);
             }
 
-            $app['config']['app_key'] = $configKey;
+            app('config')['app_key'] = $configKey;
 
-            $encrypter = new \Illuminate\Encryption\Encrypter($app['config']['app_key'], "AES-256-CBC");
+            $encrypter = new \Illuminate\Encryption\Encrypter(app('config')['app_key'], "AES-256-CBC");
             return $encrypter;
         });
 
-        $this->app->singleton(\Illuminate\Session\SessionManager::class, function ($app) {
+        $this->app->singleton(\Illuminate\Session\SessionManager::class, function () {
 
-            $app['config']['session'] = array(
-                'driver' => "file",
-                'lifetime' =>  $app['config']->sessionExpiration,
+
+            app('config')['session'] = array(
+                'driver' => !empty( app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
+                'lifetime' =>  app('config')->sessionExpiration,
+                'connection' => !empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'session' : null,
                 'expire_on_close' => false,
                 'encrypt' => false,
                 'files' => APP_ROOT . '/cache/sessions',
-                'store' => "instance",
-                'block_store' => 'instance',
+                'store' => "installation",
+                'block_store' => 'installation',
                 'block_lock_seconds' => 10,
                 'block_wait_seconds' => 10,
                 'lottery' => [2, 100],
@@ -57,12 +60,12 @@ class Session extends ServiceProvider
                 'same_site' => "Lax",
             );
 
-            $sessionManager = new \Illuminate\Session\SessionManager($app);
+            $sessionManager = new \Illuminate\Session\SessionManager(app());
 
             return $sessionManager;
         });
 
-        $this->app->singleton('session.store', fn($app) => $app['session']->driver());
+        $this->app->singleton('session.store', fn() =>  app('session')->driver());
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
         $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
 

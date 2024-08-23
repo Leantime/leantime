@@ -25,25 +25,25 @@ class Cache extends ServiceProvider
          *  then memcached if available,
          *  then fileStore
          */
-        $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
+        $this->app->singleton(\Illuminate\Cache\CacheManager::class, function () {
 
             //installation cache is per server
-            $this->app['config']['cache.stores.installation'] = [
-                'driver' => 'file',
+            app('config')['cache.stores.installation'] = [
+                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
                 'path' => APP_ROOT . '/cache/installation',
             ];
 
             //Instance is per company id
             $instanceStore = fn () =>
-            $this->app['config']['cache.stores.instance'] = [
-                'driver' => 'file',
+            app('config')['cache.stores.instance'] = [
+                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
-                'path' => APP_ROOT . "/cache/" . $this->app->make(SettingsService::class)->getCompanyId(),
+                'path' => APP_ROOT . "/cache/" . app()->make(SettingsService::class)->getCompanyId(),
             ];
 
-            if ($this->app->make(IncomingRequest::class) instanceof CliRequest) {
-                if (empty($this->app->make(SettingsService::class)->getCompanyId())) {
+            if (app()->make(IncomingRequest::class) instanceof CliRequest) {
+                if (empty(app()->make(SettingsService::class)->getCompanyId())) {
                     throw new \RuntimeException('You can\'t run this CLI command until you have installed Leantime.');
                 }
 
@@ -61,7 +61,7 @@ class Cache extends ServiceProvider
                 );
             }
 
-            $cacheManager = new \Illuminate\Cache\CacheManager($app);
+            $cacheManager = new \Illuminate\Cache\CacheManager(app());
 
             $cacheManager->setDefaultDriver('instance');
 
@@ -69,8 +69,8 @@ class Cache extends ServiceProvider
         });
 
 
-        $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
-        $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
+        $this->app->singleton('cache.store', fn () => app('cache')->driver());
+        $this->app->singleton('cache.psr6', fn () => new \Symfony\Component\Cache\Adapter\Psr16Adapter(app('cache.store')));
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
 
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
@@ -81,7 +81,7 @@ class Cache extends ServiceProvider
 
     public function boot() {
 
-        $currentVersion = $this->app->make(AppSettings::class)->appVersion;
+        $currentVersion = app()->make(AppSettings::class)->appVersion;
         $cachedVersion = \Illuminate\Support\Facades\Cache::store('installation')->rememberForever('version', fn () => $currentVersion);
 
         if ($currentVersion == $cachedVersion) {

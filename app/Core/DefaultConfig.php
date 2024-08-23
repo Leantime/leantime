@@ -483,6 +483,32 @@ class DefaultConfig
     public string $redisUrl = '';
 
     /**
+     * @var string Redis Host
+     */
+    public string $redisHost = '127.0.0.1';
+
+    /**
+     * @var string Redis Port
+     */
+    public string $redisPort = '6379';
+
+    /**
+     * @var string Redis Password
+     */
+    public string $redisPassword = '';
+
+    /**
+     * @var string Redis Cluster
+     */
+    public string $redisCluster = '';
+
+    /**
+     * @var string Redis Prefix
+     */
+    public string $redisPrefix = 'ltRedis';
+
+    # Security/Rate Limiting Settings ===============================================================================
+    /**
      * @var string trusted Proxies
      */
     public string $trustedProxies = '127.0.0.1,REMOTE_ADDR';
