@@ -8,6 +8,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Illuminate\Container\EntryNotFoundException;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Contracts\Queue\EntityNotFoundException;
+    use Illuminate\Support\Str;
     use Leantime\Core\Eventhelpers;
     use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Core\Service;
@@ -546,7 +547,7 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
                                     $class = '" style="color:' . $color . '"';
-                                    $startDate = strtok($milestone->editFrom,' ');
+                                    $startDate = strtok($milestone->editFrom, ' ');
                                     $endDate = strtok($milestone->editTo, " ");
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
@@ -2070,37 +2071,36 @@ namespace Leantime\Domain\Tickets\Services {
             return $values;
         }
 
-        public function findMilestone(string $term, int $projectId) {
+        public function findMilestone(string $term, int $projectId)
+        {
 
-           $milestones = $this->getAllMilestones(["currentProject" => $projectId]);
+            $milestones = $this->getAllMilestones(["currentProject" => $projectId]);
 
             foreach ($milestones as $key => $milestone) {
-
-                if(Str::contains($milestones[$key]['headline'], $term, ignoreCase: true)) {
+                if (Str::contains($milestones[$key]['headline'], $term, ignoreCase: true)) {
                     $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
-                }else {
+                } else {
                     unset($milestones[$key]);
                 }
             }
 
             return $milestones;
-
         }
 
-        public function findTicket(string $term, int $projectId, ?int $userId) {
+        public function findTicket(string $term, int $projectId, ?int $userId)
+        {
 
             $milestones = $this->getAll([
                 "currentProject" => $projectId,
                 "term" => $term,
-                "users" => $userId
+                "users" => $userId,
             ]);
 
-            foreach ($todos as $key => $todo) {
-                $todos[$key] = $this->prepareDatesForApiResponse($todo);
+            foreach ($milestones as $key => $milestone) {
+                $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
             }
 
-            return $todos;
-
+            return $milestones;
         }
 
         public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array | false
@@ -2109,7 +2109,7 @@ namespace Leantime\Domain\Tickets\Services {
                 [
                     "type" => "milestone",
                     "currentProject" => $projectId,
-                    "users" => $userId
+                    "users" => $userId,
                 ],
                 'date'
             );
@@ -2129,7 +2129,7 @@ namespace Leantime\Domain\Tickets\Services {
                 [
                     "type" => "milestone",
                     "currentProject" => $projectId,
-                    "users" => $userId
+                    "users" => $userId,
                 ],
                 'date'
             );
@@ -2137,7 +2137,6 @@ namespace Leantime\Domain\Tickets\Services {
             foreach ($milestones as $key => $milestone) {
                 $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
                 $milestones[$key]['id'] = $milestone['id'] . '-' . $milestone['date'];
-
             }
 
             return $milestones;
@@ -2146,10 +2145,10 @@ namespace Leantime\Domain\Tickets\Services {
         public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
         {
             $todos = $this->ticketRepository->getAllBySearchCriteria(
-                [   "excludeType" => "milestone",
+                [
+                "excludeType" => "milestone",
                     "currentProject" => $projectId,
-                    "currentProject" => $projectId,
-                    "users" => $userId
+                    "users" => $userId,
                 ],
                 'date'
             );
@@ -2169,7 +2168,7 @@ namespace Leantime\Domain\Tickets\Services {
                 [
                     "excludeType" => "milestone",
                     "currentProject" => $projectId,
-                    "users" => $userId
+                    "users" => $userId,
                 ],
                 'date'
             );
@@ -2182,34 +2181,34 @@ namespace Leantime\Domain\Tickets\Services {
             return $todos;
         }
 
-        private function prepareDatesForApiResponse($todo) {
+        private function prepareDatesForApiResponse($todo)
+        {
 
-            if(dtHelper()->isValidDateString($todo['date'])) {
+            if (dtHelper()->isValidDateString($todo['date'])) {
                 $todo['date'] = dtHelper()->parseDbDateTime($todo['date'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $todo['date'] = null;
             }
 
-            if(dtHelper()->isValidDateString($todo['dateToFinish'])) {
+            if (dtHelper()->isValidDateString($todo['dateToFinish'])) {
                 $todo['dateToFinish'] = dtHelper()->parseDbDateTime($todo['dateToFinish'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $todo['dateToFinish'] = null;
             }
 
-            if(dtHelper()->isValidDateString($todo['editFrom'])) {
+            if (dtHelper()->isValidDateString($todo['editFrom'])) {
                 $todo['editFrom'] = dtHelper()->parseDbDateTime($todo['editFrom'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $todo['editFrom'] = null;
             }
 
-            if(dtHelper()->isValidDateString($todo['editTo'])) {
+            if (dtHelper()->isValidDateString($todo['editTo'])) {
                 $todo['editTo'] = dtHelper()->parseDbDateTime($todo['editTo'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $todo['editTo'] = null;
             }
 
             return $todo;
-
         }
     }
 }
