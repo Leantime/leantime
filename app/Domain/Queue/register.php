@@ -19,4 +19,8 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
     $scheduler
         ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::HTTPREQUESTS))
         ->everyFiveMinutes();
+
+    $scheduler
+        ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::DEFAULT))
+        ->everyFiveMinutes();
 });
