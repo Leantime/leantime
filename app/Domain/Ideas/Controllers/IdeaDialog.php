@@ -67,7 +67,9 @@ namespace Leantime\Domain\Ideas\Controllers {
                 }
                 $comments = $this->commentsRepo->getComments('idea', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('ideas', $canvasItem['id']));
+
             } else {
+
                 $type = $params['type'] ?? "idea";
 
                 $canvasItem = array(
@@ -169,8 +171,8 @@ namespace Leantime\Domain\Ideas\Controllers {
                             $milestone = array();
                             $milestone['headline'] = $params['newMilestone'];
                             $milestone['tags'] = "#ccc";
-                            $milestone['editFrom'] = date("Y-m-d");
-                            $milestone['editTo'] = date("Y-m-d", strtotime("+1 week"));
+                            $milestone['editFrom'] = dtHelper()->userNow()->formatDateForUser();
+                            $milestone['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                             $id = $this->ticketService->quickAddMilestone($milestone);
                             if ($id !== false) {
                                 $canvasItem['milestoneId'] = $id;

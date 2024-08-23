@@ -73,8 +73,17 @@ class DateTimeHelper extends CarbonImmutable
      */
     public function parseUserDateTime(string $userDate, string $userTime = ""): CarbonImmutable
     {
+
         if (!$this->isValidDateString($userDate)) {
             throw new InvalidDateException("The string is not a valid date time string to parse as user datetime string", $userDate);
+        }
+
+        //Check if provided date is iso8601 (from API)
+        try{
+            $this->datetime = CarbonImmutable::createFromFormat(DateTime::ISO8601, $userDate);
+            return $this->datetime;
+        } catch (\Exception $e) {
+            //Do nothing
         }
 
         if ($userTime == "start") {
