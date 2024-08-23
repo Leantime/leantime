@@ -280,13 +280,13 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
-                            'endDate' => format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
+                            'startDate' => format(value: $params['startDate'] ?? '', fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                            'endDate' => format(value: $params['endDate'] ?? '', fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
                         );
-                        $id = $this->canvasRepo->addCanvasItem($canvasItem);                        
+                        $id = $this->canvasRepo->addCanvasItem($canvasItem);
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
                         $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success', "goal_item_created");

@@ -325,7 +325,7 @@ class Auth
             "twoFAVerified" => false,
             "twoFASecret" => $user['twoFASecret'] ?? '',
             "isLdap" => $isLdap,
-            "createdOn" => dtHelper()->parseDbDateTime($user['createdOn']) ?? dtHelper()->userNow(),
+            "createdOn" => !empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
             "modified" => !empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow()
         );
 

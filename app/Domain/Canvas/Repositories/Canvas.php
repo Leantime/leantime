@@ -870,10 +870,6 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $values
          * @return false|string
          */
-        /**
-         * @param $values
-         * @return false|string
-         */
         public function addCanvasItem($values): false|string
         {
 
