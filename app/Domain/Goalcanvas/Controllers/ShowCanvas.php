@@ -133,13 +133,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     break;
             }
         
-            if ($result['success']) {
-                $this->tpl->setNotification($result['message'], 'success');
-                return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
-            } else {
-                $this->tpl->setNotification($result['message'], 'error');
-            }
-        
             return $this->get($params);
         }
     }
