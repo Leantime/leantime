@@ -227,6 +227,7 @@ class Application extends Container
 
         $this->register(new \Leantime\Core\Providers\Logging($this));
         $this->register(new \Leantime\Core\Providers\Events($this));
+        $this->register(new \Leantime\Core\Providers\Redis($this));
 
         $this->register(new \Leantime\Core\Providers\Cache($this));
         $this->register(new \Leantime\Core\Providers\Session($this));
