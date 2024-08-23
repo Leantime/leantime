@@ -26,7 +26,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = 'goal';
 
         private $canvasRepo;
         private Projects $projectService;

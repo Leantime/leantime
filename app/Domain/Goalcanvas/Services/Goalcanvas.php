@@ -23,7 +23,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
         protected ?Language $language;
         protected Mailer $mailer;
 
-        protected const CANVAS_NAME = 'goal';
         protected QueueRepo $queueRepo;
 
         public array $reportingSettings = [
@@ -319,7 +318,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         private function determineCurrentCanvasId(array $allCanvas, array $params): int
         {
-            $sessionKey = "current" . strtoupper(static::CANVAS_NAME) . "Canvas";
+            $sessionKey = "current" . strtoupper('goal') . "Canvas";
 
             if (isset($params['id'])) {
                 $currentCanvasId = (int)$params['id'];
@@ -345,187 +344,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 }
             }
             return -1;
-        }
-
-        // Goal Dashboard Post
-
-        public function handleDashboardPostRequest($params): array
-        {
-            $result = [
-                'redirect' => false,
-                'redirectUrl' => '',
-                'notification' => null,
-            ];
-
-            $currentCanvasId = session("current" . strtoupper(static::CANVAS_NAME) . "Canvas") ?? -1;
-
-            if (isset($params['newCanvas'])) {
-                $result = $this->handleNewCanvas($params, $result);
-            } elseif (isset($params['editCanvas']) && $currentCanvasId > 0) {
-                $result = $this->handleEditCanvas($params, $currentCanvasId, $result);
-            } elseif (isset($params['cloneCanvas']) && $currentCanvasId > 0) {
-                $result = $this->handleCloneCanvas($params, $currentCanvasId, $result);
-            } elseif (isset($params['mergeCanvas']) && $currentCanvasId > 0) {
-                $result = $this->handleMergeCanvas($params, $currentCanvasId, $result);
-            } elseif (isset($params['importCanvas'])) {
-                $result = $this->handleImportCanvas($params, $result);
-            }
-
-            return $result;
-        }
-
-        private function handleNewCanvas($params, $result): array
-        {
-            if (!isset($params['canvastitle']) || empty($params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.please_enter_title', 'error');
-            }
-
-            if ($this->goalRepository->existCanvas(session("currentProject"), $params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.board_exists', 'error');
-            }
-
-            $values = [
-                'title' => $params['canvastitle'],
-                'author' => session("userdata.id"),
-                'projectId' => session("currentProject"),
-            ];
-            $currentCanvasId = $this->goalRepository->addCanvas($values);
-
-            $this->sendCanvasNotification('notification.board_created', $values['title']);
-
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $currentCanvasId]);
-            return $this->setRedirect($result, BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
-        }
-
-        private function handleEditCanvas($params, $currentCanvasId, $result): array
-        {
-            if (!isset($params['canvastitle']) || empty($params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.please_enter_title', 'error');
-            }
-
-            if ($this->goalRepository->existCanvas(session("currentProject"), $params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.board_exists', 'error');
-            }
-
-            $values = ['title' => $params['canvastitle'], 'id' => $currentCanvasId];
-            $this->goalRepository->updateCanvas($values);
-
-            return $this->setRedirect($result, BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/', 'notification.board_edited');
-        }
-
-        private function handleCloneCanvas($params, $currentCanvasId, $result): array
-        {
-            if (!isset($params['canvastitle']) || empty($params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.please_enter_title', 'error');
-            }
-
-            if ($this->goalRepository->existCanvas(session("currentProject"), $params['canvastitle'])) {
-                return $this->setNotification($result, 'notification.board_exists', 'error');
-            }
-
-            $newCanvasId = $this->goalRepository->copyCanvas(
-                session("currentProject"),
-                $currentCanvasId,
-                session("userdata.id"),
-                $params['canvastitle']
-            );
-
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $newCanvasId]);
-            return $this->setRedirect($result, BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/', 'notification.board_copied');
-        }
-
-        private function handleMergeCanvas($params, $currentCanvasId, $result): array
-        {
-            if (!isset($params['canvasid']) || $params['canvasid'] <= 0) {
-                return $this->setNotification($result, 'notification.internal_error', 'error');
-            }
-
-            $status = $this->goalRepository->mergeCanvas($currentCanvasId, $params['canvasid']);
-
-            if ($status) {
-                return $this->setRedirect($result, BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/', 'notification.board_merged');
-            } else {
-                return $this->setNotification($result, 'notification.merge_error', 'error');
-            }
-        }
-
-        private function handleImportCanvas($params, $result): array
-        {
-            if (!isset($_FILES['canvasfile']) || $_FILES['canvasfile']['error'] !== 0) {
-                return $this->setNotification($result, 'notification.board_import_failed', 'error');
-            }
-
-            $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.') . '.xml';
-
-            if (!move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile)) {
-                return $this->setNotification($result, 'notification.board_import_failed', 'error');
-            }
-
-            $services = app()->make(static::class);
-            $importCanvasId = $services->import(
-                $uploadfile,
-                static::CANVAS_NAME . 'canvas',
-                projectId: session("currentProject"),
-                authorId: session("userdata.id")
-            );
-            unlink($uploadfile);
-
-            if ($importCanvasId === false) {
-                return $this->setNotification($result, 'notification.board_import_failed', 'error');
-            }
-
-            $canvas = $this->goalRepository->getSingleCanvas($importCanvasId);
-            $this->sendCanvasNotification('notification.board_imported', $canvas[0]['title']);
-
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $importCanvasId]);
-            return $this->setRedirect($result, BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/', 'notification.board_imported');
-        }
-
-        private function setNotification($result, $message, $type): array
-        {
-            $result['notification'] = [
-                'message' => $this->language ? $this->language->__($message) : $message,
-                'type' => $type
-            ];
-            return $result;
-        }
-
-        private function setRedirect($result, $url, $notificationMessage = null): array
-        {
-            $result['redirect'] = true;
-            $result['redirectUrl'] = $url;
-            if ($notificationMessage) {
-                $result['notification'] = [
-                    'message' => $this->language ? $this->language->__($notificationMessage) : $notificationMessage,
-                    'type' => 'success'
-                ];
-            }
-            return $result;
-        }
-
-        private function sendCanvasNotification($subject, $title): void
-        {
-            if (!$this->mailer || !$this->projectService || !$this->queueRepo) {
-                return;
-            }
-
-            $users = $this->projectService->getUsersToNotify(session("currentProject"));
-            $this->mailer->setSubject($this->language->__($subject));
-
-            $actual_link = CURRENT_URL;
-            $message = sprintf(
-                $this->language->__('email_notifications.canvas_created_message'),
-                session("userdata.name"),
-                "<a href='" . $actual_link . "'>" . $title . '</a>'
-            );
-            $this->mailer->setHtml($message);
-
-            $this->queueRepo->queueMessageToUsers(
-                $users,
-                $message,
-                $this->language->__($subject),
-                session("currentProject")
-            );
         }
 
 
@@ -565,13 +383,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         private function getStoredCanvasId()
         {
-            $sessionKey = "current" . strtoupper(static::CANVAS_NAME) . "Canvas";
+            $sessionKey = "current" . strtoupper('goal') . "Canvas";
             return session()->exists($sessionKey) ? session($sessionKey) : -1;
         }
 
         private function storeCurrentCanvasId($canvasId)
         {
-            $sessionKey = "current" . strtoupper(static::CANVAS_NAME) . "Canvas";
+            $sessionKey = "current" . strtoupper('goal') . "Canvas";
             session([$sessionKey => $canvasId]);
         }
 
@@ -596,7 +414,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             $this->notifyUsers('canvas_created', $title);
 
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $canvasId]);
+            session(["current" . strtoupper('goal') . "Canvas" => $canvasId]);
             return ['success' => true, 'message' => $this->language->__('notification.board_created')];
         }
 
@@ -633,7 +451,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 $title
             );
 
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $newCanvasId]);
+            session(["current" . strtoupper('goal') . "Canvas" => $newCanvasId]);
             return ['success' => true, 'message' => $this->language->__('notification.board_copied')];
         }
 
@@ -668,7 +486,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $services = app()->make(CanvasService::class);
             $importCanvasId = $services->import(
                 $uploadfile,
-                static::CANVAS_NAME . 'canvas',
+                'goal' . 'canvas',
                 projectId: session("currentProject"),
                 authorId: session("userdata.id")
             );
@@ -678,7 +496,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
-            session(["current" . strtoupper(static::CANVAS_NAME) . "Canvas" => $importCanvasId]);
+            session(["current" . strtoupper('goal') . "Canvas" => $importCanvasId]);
             $canvas = $this->goalRepository->getSingleCanvas($importCanvasId);
             $this->notifyUsers('canvas_imported', $canvas[0]['title']);
 
