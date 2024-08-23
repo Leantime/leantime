@@ -42,24 +42,25 @@
     $tpl->displaySubmodule('comments-generalComment');
     @endphp
     @endif
+
 </div>
 
 
 <script type="text/javascript">
-    jQuery(document).ready(function() {
+jQuery(document).ready(function() {
 
-        leantime.editorController.initSimpleEditor();
+   leantime.editorController.initSimpleEditor();
 
-        @if(!$login::userIsAtLeast($roles::$editor))
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+   @if(!$login::userIsAtLeast($roles::$editor))
+       leantime.authController.makeInputReadonly(".nyroModalCont");
 
-        @endif;
+   @endif;
 
-        @if($login::userHasRole([$roles::$commenter]))
-            leantime.commentsController.enableCommenterForms();
-        @endif;
+   @if($login::userHasRole([$roles::$commenter]))
+       leantime.commentsController.enableCommenterForms();
+   @endif;
 
-    })
+})
 </script>
 
 @endsection
