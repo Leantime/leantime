@@ -187,53 +187,53 @@
             leantime.dateController.initDateRangePicker(".startDate", ".endDate");
 
             @if (!empty($statusLabels))
-                new SlimSelect({
-                    select: '#statusCanvas',
-                    showSearch: false,
-                    valuesUseText: false,
-                    data: [
+            new SlimSelect({
+                select: '#statusCanvas',
+                showSearch: false,
+                valuesUseText: false,
+                data: [
                         @foreach ($statusLabels as $key => $data)
-                            @if ($data['active'])
-                                {
-                                    innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                                    text: "{{ $data['title'] }}",
-                                    value: "{{ $key }}",
-                                    selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
-                                },
-                            @endif
-                        @endforeach
-                    ]
-                });
+                        @if ($data['active'])
+                    {
+                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                        text: "{{ $data['title'] }}",
+                        value: "{{ $key }}",
+                        selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
+                    },
+                    @endif
+                    @endforeach
+                ]
+            });
             @endif
 
             @if (!empty($relatesLabels))
-                new SlimSelect({
-                    select: '#relatesCanvas',
-                    showSearch: false,
-                    valuesUseText: false,
-                    data: [
+            new SlimSelect({
+                select: '#relatesCanvas',
+                showSearch: false,
+                valuesUseText: false,
+                data: [
                         @foreach ($relatesLabels as $key => $data)
-                            @if ($data['active'])
-                                {
-                                    innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                                    text: "{{ $data['title'] }}",
-                                    value: "{{ $key }}",
-                                    selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}
-                                },
-                            @endif
-                        @endforeach
-                    ]
-                });
+                        @if ($data['active'])
+                    {
+                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                        text: "{{ $data['title'] }}",
+                        value: "{{ $key }}",
+                        selected: {{ $canvasItem['relates'] == $key ? 'true' : 'false' }}
+                    },
+                    @endif
+                    @endforeach
+                ]
+            });
             @endif
 
             leantime.editorController.initSimpleEditor();
 
             @if (!$login::userIsAtLeast($roles::$editor))
-                leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly(".nyroModalCont");
             @endif
 
             @if ($login::userHasRole([$roles::$commenter]))
-                leantime.commentsController.enableCommenterForms();
+            leantime.commentsController.enableCommenterForms();
             @endif
 
         });

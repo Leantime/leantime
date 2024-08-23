@@ -518,3 +518,9 @@ body.mce-content-body .row .col-md-12 {
 body.mce-content-body div[class^="col-md-"] {
     padding-top:5px;
 }
+
+
+.tox :not(svg) .fas,
+.tox :not(svg) .fa-solid {
+    font-family: 'Font Awesome 6 Free';
+}

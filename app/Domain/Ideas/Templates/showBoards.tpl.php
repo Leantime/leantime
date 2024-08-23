@@ -62,7 +62,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
 </div><!--pageheader-->
 
 <div class="maincontent">
-    <div class="maincontentinner" id="ideaBoards">
+    <div class="maincontentinner" id="ideaBoards" style="min-height:350px;">
         <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
@@ -94,6 +94,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
         </div>
 
         <div class="clearfix"></div>
+
         <?php if (count($tpl->get('allCanvas')) > 0) { ?>
             <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">
 
@@ -290,6 +291,8 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+
+        <div class="clearfix"></div>
 
     </div>
 </div>
