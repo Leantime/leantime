@@ -37,9 +37,7 @@ class HttpRequestWorker {
                     $messageArray
                 );
 
-                if($response->getStatusCode() == 200){
-                    $this->queue->deleteMessageInQueue($request['msghash']);
-                }
+                $this->queue->deleteMessageInQueue($request['msghash']);
 
             } catch (GuzzleException $e) {
                 report($e);
