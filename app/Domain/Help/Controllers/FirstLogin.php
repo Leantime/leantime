@@ -2,17 +2,13 @@
 
 namespace Leantime\Domain\Help\Controllers {
 
-    use Exception;
-    use Leantime\Core\Controller;
-    use Leantime\Core\Frontcontroller;
-    use Leantime\Core\Theme;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Help\Contracts\OnboardingSteps;
     use Leantime\Domain\Help\Services\Helper;
-    use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Domain\Users\Services\Users;
     use Spatie\FlareClient\Http\Response;
 
     /**

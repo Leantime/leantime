@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Cron\Controllers {
 
     use Illuminate\Support\Facades\Log;
-    use Leantime\Core\Controller;
-    use Leantime\Core\Environment;
-    use Leantime\Core\Events;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Events\EventDispatcher;
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +39,7 @@ namespace Leantime\Domain\Cron\Controllers {
                 return new Response();
             }
 
-            Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
+            EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
                 // Removes script execution limit
@@ -57,7 +57,7 @@ namespace Leantime\Domain\Cron\Controllers {
                     });
 
                 /** @return never **/
-                (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
+                (new \Leantime\Core\Console\ConsoleKernel())->call('schedule:run', [], $output);
 
 
             });

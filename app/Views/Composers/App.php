@@ -3,9 +3,9 @@
 namespace Leantime\Views\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Composer;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\Composer;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Domain\Menu\Repositories\Menu;
 
 class App extends Composer

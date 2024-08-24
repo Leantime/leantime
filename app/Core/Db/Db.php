@@ -1,7 +1,11 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Db;
 
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Console\CliRequest;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
 use PDO;
 use PDOException;
 

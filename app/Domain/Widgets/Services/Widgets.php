@@ -2,9 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Services;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Service;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Widgets\Models\Widget;
 

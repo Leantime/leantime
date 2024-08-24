@@ -2,12 +2,12 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
     /**
      *

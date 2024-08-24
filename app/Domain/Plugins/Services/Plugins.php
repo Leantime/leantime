@@ -4,17 +4,17 @@ namespace Leantime\Domain\Plugins\Services {
 
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Eventhelpers;
+    use Illuminate\Http\Client\RequestException;
+    use Illuminate\Support\Facades\File;
+    use Illuminate\Support\Facades\Http;
+    use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
-    use Leantime\Domain\Plugins\Models\InstalledPlugin;
-    use Illuminate\Support\Facades\Http;
-    use Illuminate\Http\Client\RequestException;
     use Leantime\Domain\Setting\Services\Setting as SettingsService;
     use Leantime\Domain\Users\Services\Users as UsersService;
-    use Illuminate\Support\Facades\File;
-    use Illuminate\Support\Str;
 
     /**
      *

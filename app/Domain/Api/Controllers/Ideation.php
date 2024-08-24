@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeationRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Symfony\Component\HttpFoundation\Response;

@@ -3,8 +3,8 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class InitialHeaders
@@ -19,6 +19,7 @@ class InitialHeaders
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+
         $response = $next($request);
 
         //Content Security Policy

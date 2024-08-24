@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Help\Services;
 
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Core\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;

@@ -1,7 +1,8 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Console;
 
+use;
 use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Bus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Str;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;

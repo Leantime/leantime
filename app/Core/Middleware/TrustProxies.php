@@ -3,14 +3,9 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use Leantime\Core\ApiRequest;
-use Leantime\Core\Environment;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
-use Leantime\Core\Middleware\Request;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

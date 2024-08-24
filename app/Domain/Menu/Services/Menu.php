@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Menu\Services;
 
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;

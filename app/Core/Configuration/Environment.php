@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Configuration;
 
 use ArrayAccess;
 use Dotenv\Dotenv;

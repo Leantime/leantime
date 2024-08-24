@@ -2,19 +2,16 @@
 
 namespace Leantime\Domain\Auth\Services;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
-use Leantime\Core\Environment as EnvironmentCore;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
 use Leantime\Core\Theme;
-use Leantime\Domain\Auth\Models\CurrentUser;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;

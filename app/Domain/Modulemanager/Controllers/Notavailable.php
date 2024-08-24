@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\ModuleManager\Controllers {
 
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Events\Eventhelpers;
 
     /**
      *

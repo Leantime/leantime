@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Menu\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 

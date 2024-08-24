@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Reactions\Models;
 
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\Eventhelpers;
 
 /**
  *

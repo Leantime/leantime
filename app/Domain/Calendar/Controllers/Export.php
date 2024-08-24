@@ -7,11 +7,9 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
-use Leantime\Core\Controller;
-use Leantime\Core\Environment;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Auth\Services\Auth;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 

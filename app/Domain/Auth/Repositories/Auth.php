@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Auth\Repositories;
 
-use Leantime\Core\Db as DbCore;
-use Leantime\Core\Environment as EnvironmentCore;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use PDO;
 

@@ -2,13 +2,13 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
     /**
      *

@@ -2,10 +2,9 @@
 
 namespace Test\Unit;
 
-use Leantime\Core\ApiSession;
-use PHPUnit\Framework\TestCase;
 use GuzzleHttp\HandlerStack;
-use kamermans\OAuth2\GrantType\ClientCredentials;
+use Leantime\Core\Http\Client\ApiSession;
+use PHPUnit\Framework\TestCase;
 
 class ApiSessionTest extends TestCase
 {

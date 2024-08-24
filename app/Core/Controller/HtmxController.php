@@ -1,10 +1,13 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Controller;
 
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Template;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 

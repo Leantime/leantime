@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\Menu\Repositories {
 
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;

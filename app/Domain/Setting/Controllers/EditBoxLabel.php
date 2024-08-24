@@ -2,14 +2,14 @@
 
 namespace Leantime\Domain\Setting\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
     use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
     /**
      *

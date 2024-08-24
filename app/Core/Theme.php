@@ -5,6 +5,10 @@ namespace Leantime\Core;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -360,8 +364,8 @@ class Theme
             session(["usersettings.theme" => $id]);
         }
 
-        Events::add_filter_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
+        EventDispatcher::add_filter_listener(
+            'leantime.core.http.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('theme')
                 ->withValue($id)
@@ -391,8 +395,8 @@ class Theme
             session(["usersettings.colorMode" => $colorMode]);
         }
 
-        Events::add_filter_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
+        EventDispatcher::add_filter_listener(
+            'leantime.core.http.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('colorMode')
                 ->withValue($colorMode)
@@ -422,8 +426,8 @@ class Theme
             session(["usersettings.themeFont" => $font]);
         }
 
-        Events::add_filter_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
+        EventDispatcher::add_filter_listener(
+            'leantime.core.http.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('themeFont')
                 ->withValue($font)
@@ -454,8 +458,8 @@ class Theme
             $this->setAccentColors($colorScheme);
         }
 
-        Events::add_filter_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
+        EventDispatcher::add_filter_listener(
+            'leantime.core.http.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('colorScheme')
                 ->withValue($colorScheme)

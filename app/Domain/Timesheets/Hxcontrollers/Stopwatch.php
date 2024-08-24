@@ -3,8 +3,7 @@
 namespace Leantime\Domain\Timesheets\Hxcontrollers;
 
 use Error;
-use Leantime\Core\HtmxController;
-use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**

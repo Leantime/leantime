@@ -2,21 +2,15 @@
 
 namespace Leantime\Domain\Connector\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Canvas\Repositories\Canvas;
-    use Leantime\Domain\Connector\Services\Connector;
-    use Leantime\Domain\Connector\Services\Providers;
-    use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
     use Leantime\Domain\Connector\Repositories\LeantimeEntities;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
-    use Leantime\Domain\Ideas\Repositories\Ideas;
-    use Leantime\Domain\Projects\Services\Projects;
-    use Leantime\Domain\Tickets\Services\Tickets;
-    use Leantime\Domain\Users\Services\Users;
+    use Leantime\Domain\Connector\Services\Connector;
+    use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
+    use Leantime\Domain\Connector\Services\Providers;
 
     /**
      *

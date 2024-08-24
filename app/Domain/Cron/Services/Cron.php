@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Cron\Services {
 
     use Illuminate\Support\Facades\Log;
-    use Leantime\Core\Environment;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Events\Eventhelpers;
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use Leantime\Domain\Reports\Services\Reports;

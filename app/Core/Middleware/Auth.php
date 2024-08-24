@@ -3,9 +3,9 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectsService;
 use Symfony\Component\HttpFoundation\RedirectResponse;

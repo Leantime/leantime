@@ -1,8 +1,9 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Db;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Events\Eventhelpers;
 use PDO;
 use PDOStatement;
 use ReflectionClass;

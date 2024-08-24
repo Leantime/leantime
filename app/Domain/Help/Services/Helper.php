@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Services;
 
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\Eventhelpers;
 use ProjectIntroStep;
 use InviteTeamStep;
 

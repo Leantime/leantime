@@ -4,10 +4,10 @@ namespace Leantime\Core\Providers;
 
 use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\AppSettings;
-use Leantime\Core\CliRequest;
-use Leantime\Core\Events;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Console\CliRequest;
+use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 class Cache extends ServiceProvider
@@ -50,7 +50,7 @@ class Cache extends ServiceProvider
                 $instanceStore();
             } else {
                 //Initialize instance cache store only after install was successfull
-                Events::add_event_listener(
+                EventDispatcher::add_event_listener(
                     'leantime.core.middleware.installed.handle.after_install',
                     function () use ($instanceStore) {
                         if (! session("isInstalled")) {

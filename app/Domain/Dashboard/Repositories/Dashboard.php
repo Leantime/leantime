@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Dashboard\Repositories {
 
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
 
     /**
      *

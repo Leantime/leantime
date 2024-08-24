@@ -4,7 +4,7 @@ namespace Leantime\Core\Support;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\Eventhelpers;
 
 class Mix
 {

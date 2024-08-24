@@ -5,7 +5,7 @@ namespace Leantime\Domain\Api\Services;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\Eventhelpers;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;

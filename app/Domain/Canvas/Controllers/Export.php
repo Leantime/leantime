@@ -8,11 +8,11 @@ namespace Leantime\Domain\Canvas\Controllers {
 
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

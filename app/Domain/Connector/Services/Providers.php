@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Connector\Services {
 
     use Leantime\Domain\CsvImport\Services\CsvImport;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Events\Eventhelpers;
     use Leantime\Domain\Connector\Models\Provider;
 
     /**

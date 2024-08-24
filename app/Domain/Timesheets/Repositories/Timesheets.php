@@ -3,14 +3,11 @@
 namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
-use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db as DbCore;
-use Leantime\Core\Repository;
-use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Db\Repository;
 use PDO;
 use PHPUnit\Exception;
 

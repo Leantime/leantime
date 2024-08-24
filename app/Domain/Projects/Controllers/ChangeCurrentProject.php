@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Projects\Controllers {
 
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *

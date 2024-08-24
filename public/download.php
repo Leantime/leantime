@@ -5,7 +5,7 @@
  *
  */
 
-use Leantime\Core\Environment;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Auth\Services\Auth;
 
 define('RESTRICTED', true);

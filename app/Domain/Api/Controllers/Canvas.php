@@ -7,10 +7,10 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Closure;
-use Illuminate\Support\Str;
-use Leantime\Core\Controller;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
+use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

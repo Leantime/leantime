@@ -2,15 +2,10 @@
 
 namespace Leantime\Domain\Widgets\Controllers {
 
-    use GuzzleHttp\Psr7\Response;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-    use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
-    use DateTime;
-    use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Domain\Widgets\Services\Widgets;
     use Symfony\Component\HttpFoundation;
 

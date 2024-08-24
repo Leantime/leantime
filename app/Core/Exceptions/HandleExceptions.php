@@ -5,7 +5,6 @@ namespace Leantime\Core\Exceptions;
 use ErrorException;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Log\LogManager;
 use Illuminate\Support\Env;
 use Monolog\Handler\NullHandler;
@@ -26,17 +25,17 @@ class HandleExceptions
     /**
      * The application instance.
      *
-     * @var \Leantime\Core\Application
+     * @var \Leantime\Core\Bootstrap\Application
      */
     protected static $app;
 
     /**
      * Bootstrap the given application.
      *
-     * @param  \Leantime\Core\Application  $app
+     * @param  \Leantime\Core\Bootstrap\Application  $app
      * @return void
      */
-    public function bootstrap(\Leantime\Core\Application $app)
+    public function bootstrap(\Leantime\Core\Bootstrap\Application $app)
     {
         static::$reservedMemory = str_repeat('x', 32768);
 

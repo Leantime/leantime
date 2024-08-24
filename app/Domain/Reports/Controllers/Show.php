@@ -3,18 +3,18 @@
 namespace Leantime\Domain\Reports\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Reports\Services\Reports as ReportService;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *

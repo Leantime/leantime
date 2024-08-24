@@ -1,9 +1,13 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\Template;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

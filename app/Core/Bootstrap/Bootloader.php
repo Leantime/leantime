@@ -1,26 +1,15 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Bootstrap;
 
 use GuzzleHttp\Promise\PromiseInterface;
-use Illuminate\Cache\MemcachedConnector;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Illuminate\Contracts\Encryption\Encrypter;
-use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Redis\RedisManager;
-use Illuminate\Session\SessionManager;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\Log;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
-use Leantime\Domain\Oidc\Services\Oidc as OidcService;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Leantime\Core\Console\CliRequest;
+use Leantime\Core\Console\ConsoleKernel;
+use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Http\HttpKernel;
+use Leantime\Core\Http\IncomingRequest;
 use Psr\Container\ContainerInterface as PsrContainerContract;
-use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Bootloader

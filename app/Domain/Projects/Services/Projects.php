@@ -2,30 +2,27 @@
 
 namespace Leantime\Domain\Projects\Services {
 
+    use DateInterval;
+    use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Str;
+    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\EventDispatcher as EventCore;
+    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Events as EventCore;
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Domain\Canvas\Repositories\Canvas;
-    use Leantime\Domain\Notifications\Models\Notification;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-    use DateTime;
-    use DateInterval;
-    use GuzzleHttp\Client;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
+    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Notifications\Services\Messengers;
     use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
-    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Wiki\Repositories\Wiki;
 
     /**
@@ -893,7 +890,7 @@ namespace Leantime\Domain\Projects\Services {
             $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
 
             //Ignoring
-            //Comments, files, timesheets, personalCalendar Events
+            //Comments, files, timesheets, personalCalendar EventDispatcher
             $oldProjectId = $projectId;
 
             //Copy project Entry

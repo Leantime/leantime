@@ -2,16 +2,16 @@
 
 namespace Leantime\Domain\Canvas\Controllers;
 
-use Leantime\Core\Controller;
-use Leantime\Core\IncomingRequest;
+use Illuminate\Support\Str;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-use Illuminate\Support\Str;
-use Leantime\Core\Frontcontroller;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
  * editCanvasItem class - Generic canvas controller / Edit Canvas Item

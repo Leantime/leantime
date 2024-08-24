@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Auth\Models;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\Eventhelpers;
 
 /**
  * @TODO: Role names should be converted into an enum.

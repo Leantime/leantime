@@ -8,9 +8,8 @@
 namespace Leantime\Domain\Calendar\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;

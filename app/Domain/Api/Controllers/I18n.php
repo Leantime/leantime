@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
-use Leantime\Core\Controller;
-use Leantime\Core\Environment;
+use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

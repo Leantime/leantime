@@ -2,18 +2,11 @@
 
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Timesheets\Services\Timesheets;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
  * Class MyToDos

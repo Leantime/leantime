@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller;
-use Leantime\Core\Environment;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\Response;
 
