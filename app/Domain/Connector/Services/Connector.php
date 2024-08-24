@@ -597,14 +597,12 @@ namespace Leantime\Domain\Connector\Services {
             foreach ($finalValues as $row) {
                 $ticket = array();
 
-                array_change_key_case($row, CASE_LOWER);
-
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                $ticket['editorId'] = $row['editorid'];
-                $ticket['projectId'] = $row['projectid'];
-                $ticket['status'] = $row['status'];
+                $ticket['editorId'] = $row['editorId'] ?? '';
+                $ticket['projectId'] = $row['projectId'] ?? '';
+                $ticket['status'] = $row['status'] ?? 3;
                 $ticket['type'] = $row['type'] ?? 'task';
 
                 if (isset($ticket["id"]) && is_numeric($ticket["id"])) {
