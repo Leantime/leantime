@@ -29,6 +29,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Run as Whoops;
+use Symfony\Component\Console\Application as ConsoleApplication;
 
 class ExceptionHandler implements ExceptionHandlerContract
 {
@@ -583,7 +584,7 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     public function renderForConsole($output, Throwable $e)
     {
-        app()->renderThrowable($e, $output);
+        (new ConsoleApplication())->renderThrowable($e, $output);
     }
 
     /**
