@@ -243,7 +243,7 @@ foreach ($__data as $var => $val) {
                         <td data-order="<?=$tpl->e($row['clientName']); ?>"><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
 
                         <td><?php printf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row['lastname'])); ?></td>
-                        <td><?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?></td>
+                        <td><?php echo $tpl->__($tpl->get('kind')[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?></td>
 
                         <td><?php echo $tpl->escape($row["milestone"]); ?></td>
                         <td><?php echo $tpl->escape($row["tags"]); ?></td>
