@@ -2,14 +2,8 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Cache\MemcachedConnector;
-use Illuminate\Session\SymfonySessionDecorator;
-use Illuminate\Support\ServiceProvider;
-use Leantime\Core\CliRequest;
-use Leantime\Core\Events;
-use Leantime\Core\IncomingRequest;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Illuminate\Log;
+use Illuminate\Support\ServiceProvider;
 
 class Logging extends ServiceProvider
 {

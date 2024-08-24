@@ -1,18 +1,17 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Session\Middleware\StartSession;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
+use Leantime\Core\Bootstrap\Application;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Middleware;
 
 class HttpKernel implements HttpKernelContract
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * The timestamp when the request started.
@@ -115,9 +114,9 @@ class HttpKernel implements HttpKernelContract
     /**
      * Get the application instance.
      *
-     * @return \Leantime\Core\Application
+     * @return \Leantime\Core\Bootstrap\Application
      */
-    public function getApplication(): \Leantime\Core\Application
+    public function getApplication(): \Leantime\Core\Bootstrap\Application
     {
         return $this->app;
     }

@@ -3,11 +3,12 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\Factory;
-use Leantime\Core\Application;
-use Leantime\Core\AppSettings;
-use Leantime\Core\Bootloader;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Bootstrap\Application;
+use Leantime\Core\Bootstrap\Bootloader;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
@@ -17,7 +18,6 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Illuminate\Support\Facades\Log;
 
 if (! function_exists('app')) {
     /**

@@ -7,33 +7,31 @@ namespace Leantime\Domain\Tickets\Services {
     use DateTime;
     use Illuminate\Container\EntryNotFoundException;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Contracts\Queue\EntityNotFoundException;
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Core\Exceptions\MissingParameterException;
-    use Leantime\Core\Service;
+    use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
+    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Tickets\Repositories\TicketHistory as TicketHistory;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 
     /**
      *
      */
     class Tickets
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
 
         /**
@@ -546,7 +544,7 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
                                     $class = '" style="color:' . $color . '"';
-                                    $startDate = strtok($milestone->editFrom,' ');
+                                    $startDate = strtok($milestone->editFrom, ' ');
                                     $endDate = strtok($milestone->editTo, " ");
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
@@ -1250,7 +1248,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'date' => gmdate("Y-m-d H:i:s"),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
-                'status' => (int) $values['status'] ?? 3,
+                'status' => $values['status'] ?? 3,
                 'planHours' => $values['planHours'] ?? "",
                 'tags' => $values['tags'] ?? "",
                 'sprint' => $values['sprint'] ?? "",
@@ -2039,9 +2037,7 @@ namespace Leantime\Domain\Tickets\Services {
 
         public function prepareTicketDates(&$values)
         {
-
             //Prepare dates for db
-
             if (!empty($values['dateToFinish'])) {
                 if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
                     $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
@@ -2072,52 +2068,144 @@ namespace Leantime\Domain\Tickets\Services {
             return $values;
         }
 
-        public function pollForNewAccountMilestones(): array | false
+        public function findMilestone(string $term, int $projectId)
         {
-            return $this->ticketRepository->getAllBySearchCriteria(
-                ["type" => "milestone"],
+
+            $milestones = $this->getAllMilestones(["currentProject" => $projectId]);
+
+            foreach ($milestones as $key => $milestone) {
+                if (Str::contains($milestones[$key]['headline'], $term, ignoreCase: true)) {
+                    $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
+                } else {
+                    unset($milestones[$key]);
+                }
+            }
+
+            return $milestones;
+        }
+
+        public function findTicket(string $term, int $projectId, ?int $userId)
+        {
+
+            $milestones = $this->getAll([
+                "currentProject" => $projectId,
+                "term" => $term,
+                "users" => $userId,
+            ]);
+
+            foreach ($milestones as $key => $milestone) {
+                $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
+            }
+
+            return $milestones;
+        }
+
+        public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array | false
+        {
+            $todos = $this->ticketRepository->getAllBySearchCriteria(
+                [
+                    "type" => "milestone",
+                    "currentProject" => $projectId,
+                    "users" => $userId,
+                ],
                 'date'
             );
+
+            foreach ($todos as $key => $todo) {
+                $todos[$key] = $this->prepareDatesForApiResponse($todo);
+            }
+
+            return $todos;
         }
 
         // since the date attribute of milestones gets updated when the milestone is updated we need to poll for updated milestones
         // using that date attribute
-        public function pollForUpdatedAccountMilestones(): array|false
+        public function pollForUpdatedAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
         {
             $milestones = $this->ticketRepository->getAllBySearchCriteria(
-                ["type" => "milestone"],
+                [
+                    "type" => "milestone",
+                    "currentProject" => $projectId,
+                    "users" => $userId,
+                ],
                 'date'
             );
 
             foreach ($milestones as $key => $milestone) {
+                $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
                 $milestones[$key]['id'] = $milestone['id'] . '-' . $milestone['date'];
             }
 
             return $milestones;
         }
 
-        public function pollForNewAccountTodos(): array|false
-        {
-            return $this->ticketRepository->getAllBySearchCriteria(
-                ["excludeType" => "milestone"],
-                'date'
-            );
-        }
-
-        // Since the date attribute of todos gets updated when the todo is updated we need to poll for updated todos
-        // using that date attribute
-        public function pollForUpdatedAccountTodos(): array|false
+        public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
         {
             $todos = $this->ticketRepository->getAllBySearchCriteria(
-                ["excludeType" => "milestone"],
+                [
+                "excludeType" => "milestone",
+                    "currentProject" => $projectId,
+                    "users" => $userId,
+                ],
                 'date'
             );
 
             foreach ($todos as $key => $todo) {
+                $todos[$key] = $this->prepareDatesForApiResponse($todo);
+            }
+
+            return $todos;
+        }
+
+        // Since the date attribute of todos gets updated when the todo is updated we need to poll for updated todos
+        // using that date attribute
+        public function pollForUpdatedAccountTodos(?int $projectId = null, ?int $userId = null): array|false
+        {
+            $todos = $this->ticketRepository->getAllBySearchCriteria(
+                [
+                    "excludeType" => "milestone",
+                    "currentProject" => $projectId,
+                    "users" => $userId,
+                ],
+                'date'
+            );
+
+            foreach ($todos as $key => $todo) {
+                $todos[$key] = $this->prepareDatesForApiResponse($todo);
                 $todos[$key]['id'] = $todo['id'] . '-' . $todo['date'];
             }
 
             return $todos;
+        }
+
+        private function prepareDatesForApiResponse($todo)
+        {
+
+            if (dtHelper()->isValidDateString($todo['date'])) {
+                $todo['date'] = dtHelper()->parseDbDateTime($todo['date'])->toIso8601ZuluString();
+            } else {
+                $todo['date'] = null;
+            }
+
+            if (dtHelper()->isValidDateString($todo['dateToFinish'])) {
+                $todo['dateToFinish'] = dtHelper()->parseDbDateTime($todo['dateToFinish'])->toIso8601ZuluString();
+            } else {
+                $todo['dateToFinish'] = null;
+            }
+
+            if (dtHelper()->isValidDateString($todo['editFrom'])) {
+                $todo['editFrom'] = dtHelper()->parseDbDateTime($todo['editFrom'])->toIso8601ZuluString();
+            } else {
+                $todo['editFrom'] = null;
+            }
+
+            if (dtHelper()->isValidDateString($todo['editTo'])) {
+                $todo['editTo'] = dtHelper()->parseDbDateTime($todo['editTo'])->toIso8601ZuluString();
+            } else {
+                $todo['editTo'] = null;
+            }
+
+            return $todo;
         }
     }
 }

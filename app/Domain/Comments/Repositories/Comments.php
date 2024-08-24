@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Comments\Repositories {
 
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use PDO;
 
     /**
@@ -260,7 +260,7 @@ namespace Leantime\Domain\Comments\Repositories {
             return $result;
         }
 
-        public function getAllAccountComments(): array|false
+        public function getAllAccountComments(?int $projectId, ?int $moduleId): array|false
         {
             $sql = "SELECT comment.id,
                 comment.module,
@@ -270,9 +270,45 @@ namespace Leantime\Domain\Comments\Repositories {
                 comment.userId,
                 comment.commentParent,
                 comment.status
-            FROM zp_comment as comment";
+            FROM zp_comment as comment
+                LEFT JOIN zp_tickets ON comment.moduleId = zp_tickets.id
+                LEFT JOIN zp_canvas_items ON comment.moduleId = zp_tickets.id
+                LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
+                LEFT JOIN zp_projects ON zp_canvas.projectId = zp_projects.id OR zp_tickets.projectId = zp_projects.id
+            WHERE zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                    OR zp_projects.psettings = 'all'
+                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                    OR (:requesterRole = 'admin' OR :requesterRole = 'manager') ";
+
+            if (isset($projectId) && $projectId  > 0) {
+                $sql .= " AND (zp_projects.id = :projectId)";
+            }
+
+            if (isset($moduleId) && $moduleId  > 0) {
+                $sql .= " AND ( comment.moduleId = :moduleId)";
+            }
+
+            $sql .= " GROUP BY comment.id";
 
             $stmn = $this->db->database->prepare($sql);
+
+            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+
+
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+            }
+
+            if (isset($projectId) && $projectId  > 0) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            if (isset($moduleId) && $moduleId  > 0) {
+                $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll();

@@ -6,14 +6,14 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
     use Leantime\Domain\Ideas\Repositories\Ideas;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Domain\Ideas\Services\Ideas as IdeasService;
 
@@ -70,7 +70,7 @@ namespace Leantime\Domain\Ideas\Controllers {
         }
 
         if (isset($params['editCanvas'])) {
-            
+
             if(!empty($params['id'])){
                 $currentCanvasId = (int)$params['id'];
             }

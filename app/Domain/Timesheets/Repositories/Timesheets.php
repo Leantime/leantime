@@ -3,14 +3,11 @@
 namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
-use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db as DbCore;
-use Leantime\Core\Repository;
-use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Db\Repository;
 use PDO;
 use PHPUnit\Exception;
 
@@ -184,6 +181,86 @@ class Timesheets extends Repository
         return $call->fetchAll();
     }
 
+    public function getAllAccountTimesheets(?int $projectId): array|false
+    {
+        $query = "SELECT
+                        zp_timesheets.id,
+                        zp_timesheets.userId,
+                        zp_timesheets.ticketId,
+                        zp_timesheets.workDate,
+                        zp_timesheets.hours,
+                        zp_timesheets.description,
+                        zp_timesheets.kind,
+                        zp_projects.name,
+                        zp_projects.id AS projectId,
+                        zp_clients.name AS clientName,
+                        zp_clients.id AS clientId,
+                        zp_timesheets.invoicedEmpl,
+                        zp_timesheets.invoicedComp,
+                        zp_timesheets.invoicedEmplDate,
+                        zp_timesheets.invoicedCompDate,
+                        zp_timesheets.paid,
+                        zp_timesheets.paidDate,
+                        zp_timesheets.modified,
+                        zp_user.firstname,
+                        zp_user.lastname,
+                        zp_tickets.id as ticketId,
+                        zp_tickets.headline,
+                        zp_tickets.planHours,
+                        zp_tickets.tags,
+                        milestone.headline as milestone
+                    FROM
+                        zp_timesheets
+                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
+                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id
+                    WHERE (
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                        OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
+                    )";
+
+        //If user is not a manager, only pull their own timesheet entries
+        if( session("userdata.role") !== 'admin' && session("userdata.role") !== 'manager') {
+            $query .= " AND zp_timesheets.userId = :userId";
+        }
+
+        if (isset($projectId) && $projectId  > 0) {
+            $query .= " AND (zp_projects.id = :projectId)";
+        }
+
+        $query .= " GROUP BY
+                zp_timesheets.id,
+                zp_timesheets.userId,
+                zp_timesheets.ticketId,
+                zp_timesheets.workDate,
+                zp_timesheets.hours,
+                zp_timesheets.description,
+                zp_timesheets.kind";
+
+        $stmn = $this->db->database->prepare($query);
+
+        if (session()->exists("userdata")) {
+            $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+        } else {
+            $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+        }
+
+        $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+        $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+        if (isset($projectId) && $projectId  > 0) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+
+        $stmn->closeCursor();
+        return $values;
+    }
 
     /**
      * Retrieves the total number of hours booked from the timesheets table.
@@ -308,144 +385,6 @@ class Timesheets extends Repository
     }
 
     /**
-     * addTime - add user-specific time entry
-     *
-     * @param array $values
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function addTime(array $values): void
-    {
-        $query = "INSERT INTO zp_timesheets (
-            userId,
-            ticketId,
-            workDate,
-            hours,
-            kind,
-            description,
-            invoicedEmpl,
-            invoicedComp,
-            invoicedEmplDate,
-            invoicedCompDate,
-            rate,
-            paid,
-            paidDate,
-            modified
-        ) VALUES (
-            :userId,
-            :ticket,
-            :date,
-            :hours,
-            :kind,
-            :description,
-            :invoicedEmpl,
-            :invoicedComp,
-            :invoicedEmplDate,
-            :invoicedCompDate,
-            :rate,
-            :paid,
-            :paidDate,
-            :modified
-        ) ON DUPLICATE KEY UPDATE
-             hours = hours + :hours,
-             description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
-
-        $query = self::dispatch_filter('sql', $query);
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-
-        $call->bindValue(':userId', $values['userId']);
-        $call->bindValue(':ticket', $values['ticket']);
-        $call->bindValue(':date', $values['date']);
-        $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':description', $values['description'] ?? '');
-        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
-        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
-        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
-        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
-        $call->bindValue(':rate', $values['rate'] ?? '');
-        $call->bindValue(':hours', $values['hours']);
-        $call->bindValue(':paid', $values['paid'] ?? '');
-        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-
-        $call->execute();
-
-        $this->cleanUpEmptyTimesheets();
-    }
-
-    /**
-     * addTime - add user-specific time entry
-     *
-     * @param array $values
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function upsertTimesheetEntry(array $values): void
-    {
-        $query = "INSERT INTO zp_timesheets (
-                userId,
-                ticketId,
-                workDate,
-                hours,
-                kind,
-                invoicedEmpl,
-                invoicedComp,
-                invoicedEmplDate,
-                invoicedCompDate,
-                rate,
-                paid,
-                paidDate,
-                modified
-            ) VALUES (
-                :userId,
-                :ticket,
-                :date,
-                :hours,
-                :kind,
-                :invoicedEmpl,
-                :invoicedComp,
-                :invoicedEmplDate,
-                :invoicedCompDate,
-                :rate,
-                :paid,
-                :paidDate,
-                :modified
-            ) ON DUPLICATE KEY UPDATE
-                 hours = :hours";
-
-        $query = self::dispatch_filter('sql', $query);
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-
-        $call->bindValue(':userId', $values['userId']);
-        $call->bindValue(':ticket', $values['ticket']);
-        $call->bindValue(':date', $values['date']);
-        $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
-        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
-        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
-        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
-        $call->bindValue(':rate', $values['rate'] ?? '');
-        $call->bindValue(':hours', $values['hours']);
-        $call->bindValue(':paid', $values['paid'] ?? '');
-        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-
-        $call->execute();
-
-        $this->cleanUpEmptyTimesheets();
-    }
-
-    /**
      * getTime - get a specific time entry
      *
      * @param int $id
@@ -483,95 +422,6 @@ class Timesheets extends Repository
         $call->bindValue(':id', $id);
 
         return $call->fetch();
-    }
-
-    /**
-     * updatTime - update specific time entry
-     *
-     * @param array $values
-     *
-     * @return void
-     */
-    public function updateTime(array $values): void
-    {
-        $query = "UPDATE
-                zp_timesheets
-            SET
-                ticketId = :ticket,
-                workDate = :date,
-                hours = :hours,
-                kind = :kind,
-                description =:description,
-                invoicedEmpl =:invoicedEmpl,
-                invoicedComp =:invoicedComp,
-                invoicedEmplDate =:invoicedEmplDate,
-                invoicedCompDate =:invoicedCompDate,
-                paid =:paid,
-                paidDate =:paidDate,
-                modified =:modified
-            WHERE
-                id = :id";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-        $call->bindValue(':ticket', $values['ticket']);
-        $call->bindValue(':date', $values['date']);
-        $call->bindValue(':hours', $values['hours']);
-        $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':description', $values['description']);
-        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl']);
-        $call->bindValue(':invoicedComp', $values['invoicedComp']);
-        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate']);
-        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate']);
-        $call->bindValue(':paid', $values['paid']);
-        $call->bindValue(':paidDate', $values['paidDate']);
-        $call->bindValue(':id', $values['id']);
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-
-        $call->execute();
-
-        $this->cleanUpEmptyTimesheets();
-    }
-
-    /**
-     * updatTime - update specific time entry
-     *
-     * @param array $values
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function updateHours(array $values): void
-    {
-        $query = "UPDATE
-                zp_timesheets
-            SET
-                hours = :hours,
-                modified =:modified
-            WHERE
-                userId = :userId
-                AND ticketId = :ticketId
-                AND kind = :kind
-                AND TO_DAYS(workDate) = TO_DAYS(:date)
-                LIMIT 1";
-
-        $query = self::dispatch_filter('sql', $query);
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-        $call->bindValue(':date', $values['date']);
-        $call->bindValue(':hours', $values['hours']);
-        $call->bindValue(':userId', $values['userId']);
-        $call->bindValue(':ticketId', $values['ticket']);
-        $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-
-        $call->execute();
-
-        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -680,104 +530,122 @@ class Timesheets extends Repository
     }
 
     /**
-     * @param int $id
+     * isClocked - Checks to see whether a user is clocked in
+     *
+     * @param int $id $id
+     *
+     * @return array|false
+     */
+    public function isClocked(int $id): false|array
+    {
+        if (!session()->exists("userdata")) {
+            return false;
+        }
+
+        $query = "SELECT
+                 zp_punch_clock.id,
+                 zp_punch_clock.userId,
+                 zp_punch_clock.minutes,
+                 zp_punch_clock.hours,
+                 zp_punch_clock.punchIn,
+                 zp_tickets.headline,
+                 zp_tickets.id as ticketId
+              FROM `zp_punch_clock`
+              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
+
+        $onTheClock = false;
+
+        $call = $this->dbcall(func_get_args());
+        $call->prepare($query);
+        $call->bindValue(':sessionId', session("userdata.id"));
+
+        $results = $call->fetchAll();
+
+        if (count($results) > 0) {
+            $onTheClock = array();
+            $onTheClock["id"] = $results[0]["id"];
+            $onTheClock["since"] = $results[0]["punchIn"];
+            $onTheClock["headline"] = $results[0]["headline"];
+            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
+            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+
+            $r = $since_start->format('%H:%I');
+
+            $onTheClock["totalTime"] = $r;
+        }
+
+        return $onTheClock;
+    }
+
+    /**
+     * addTime - add user-specific time entry
+     *
+     * @param array $values
      *
      * @return void
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function deleteTime(int $id): void
+    public function addTime(array $values): void
     {
-        $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
+        $query = "INSERT INTO zp_timesheets (
+            userId,
+            ticketId,
+            workDate,
+            hours,
+            kind,
+            description,
+            invoicedEmpl,
+            invoicedComp,
+            invoicedEmplDate,
+            invoicedCompDate,
+            rate,
+            paid,
+            paidDate,
+            modified
+        ) VALUES (
+            :userId,
+            :ticket,
+            :date,
+            :hours,
+            :kind,
+            :description,
+            :invoicedEmpl,
+            :invoicedComp,
+            :invoicedEmplDate,
+            :invoicedCompDate,
+            :rate,
+            :paid,
+            :paidDate,
+            :modified
+        ) ON DUPLICATE KEY UPDATE
+             hours = hours + :hours,
+             description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
+
+        $query = self::dispatch_filter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-        $call->bindValue(':id', $id);
+
+        $call->bindValue(':userId', $values['userId']);
+        $call->bindValue(':ticket', $values['ticket']);
+        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':description', $values['description'] ?? '');
+        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
+        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
+        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
+        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
+        $call->bindValue(':rate', $values['rate'] ?? '');
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':paid', $values['paid'] ?? '');
+        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
         $call->execute();
-    }
 
-    /**
-     * Clean up empty timesheets.
-     *
-     * This function deletes all timesheets from the "zp_timesheets" table
-     * where the hours value is equal to 0.
-     *
-     * @return void
-     */
-    public function cleanUpEmptyTimesheets(): void
-    {
-        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-
-        $call->execute();
-    }
-
-    /**
-     * updateInvoices
-     *
-     * @param array $invEmpl
-     * @param array $invComp
-     * @param array $paid
-     *
-     * @return bool
-     */
-    public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
-    {
-        foreach ($invEmpl as $row1) {
-            $query = "UPDATE zp_timesheets
-                      SET invoicedEmpl = 1,
-                          invoicedEmplDate = :date,
-                          modified = :modified
-                      WHERE id = :id ";
-
-            $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
-            $invEmplCall->prepare($query);
-            $invEmplCall->bindValue(':id', $row1);
-            $invEmplCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
-            $invEmplCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $invEmplCall->execute();
-
-            unset($invEmplCall);
-        }
-
-        foreach ($invComp as $row2) {
-            $query2 = "UPDATE zp_timesheets
-                       SET invoicedComp = 1,
-                           invoicedCompDate = :date,
-                           modified = :modified
-                       WHERE id = :id ";
-
-            $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
-            $invCompCall->prepare($query2);
-            $invCompCall->bindValue(':id', $row2);
-            $invCompCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
-            $invCompCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $invCompCall->execute();
-
-            unset($invCompCall);
-        }
-
-        foreach ($paid as $row3) {
-            $query3 = "UPDATE zp_timesheets
-                       SET paid = 1,
-                           paidDate = :date,
-                           modified = :modified
-                       WHERE id = :id ";
-
-            $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
-            $paidCol->prepare($query3);
-            $paidCol->bindValue(':id', $row3);
-            $paidCol->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
-            $paidCol->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $paidCol->execute();
-
-            unset($paidCol);
-        }
-
-        return true;
+        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -857,8 +725,8 @@ class Timesheets extends Repository
             return 0;
         }
 
-        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind)
-                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE')
+        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
+                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
 
@@ -870,6 +738,7 @@ class Timesheets extends Repository
         $call->bindValue(':sessionId', session("userdata.id"));
         $call->bindValue(':hoursWorked', $hoursWorked);
         $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
+        $call->bindValue(':modified',  date('Y-m-d H:i:s'));
 
         $call->execute();
 
@@ -877,102 +746,260 @@ class Timesheets extends Repository
     }
 
     /**
-     * isClocked - Checks to see whether a user is clocked in
+     * addTime - add user-specific time entry
      *
-     * @param int $id $id
+     * @param array $values
      *
-     * @return array|false
+     * @return void
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function isClocked(int $id): false|array
+    public function upsertTimesheetEntry(array $values): void
     {
-        if (!session()->exists("userdata")) {
-            return false;
-        }
+        $query = "INSERT INTO zp_timesheets (
+                userId,
+                ticketId,
+                workDate,
+                hours,
+                kind,
+                invoicedEmpl,
+                invoicedComp,
+                invoicedEmplDate,
+                invoicedCompDate,
+                rate,
+                paid,
+                paidDate,
+                modified
+            ) VALUES (
+                :userId,
+                :ticket,
+                :date,
+                :hours,
+                :kind,
+                :invoicedEmpl,
+                :invoicedComp,
+                :invoicedEmplDate,
+                :invoicedCompDate,
+                :rate,
+                :paid,
+                :paidDate,
+                :modified
+            ) ON DUPLICATE KEY UPDATE
+                 hours = :hours";
 
-        $query = "SELECT
-                 zp_punch_clock.id,
-                 zp_punch_clock.userId,
-                 zp_punch_clock.minutes,
-                 zp_punch_clock.hours,
-                 zp_punch_clock.punchIn,
-                 zp_tickets.headline,
-                 zp_tickets.id as ticketId
-              FROM `zp_punch_clock`
-              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
-
-        $onTheClock = false;
-
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-        $call->bindValue(':sessionId', session("userdata.id"));
-
-        $results = $call->fetchAll();
-
-        if (count($results) > 0) {
-            $onTheClock = array();
-            $onTheClock["id"] = $results[0]["id"];
-            $onTheClock["since"] = $results[0]["punchIn"];
-            $onTheClock["headline"] = $results[0]["headline"];
-            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
-            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
-
-            $r = $since_start->format('%H:%I');
-
-            $onTheClock["totalTime"] = $r;
-        }
-
-        return $onTheClock;
-    }
-
-    public function getAllAccountTimesheets(): array|false
-    {
-        $query = "SELECT
-                        zp_timesheets.id,
-                        zp_timesheets.userId,
-                        zp_timesheets.ticketId,
-                        zp_timesheets.workDate,
-                        zp_timesheets.hours,
-                        zp_timesheets.description,
-                        zp_timesheets.kind,
-                        zp_projects.name,
-                        zp_projects.id AS projectId,
-                        zp_clients.name AS clientName,
-                        zp_clients.id AS clientId,
-                        zp_timesheets.invoicedEmpl,
-                        zp_timesheets.invoicedComp,
-                        zp_timesheets.invoicedEmplDate,
-                        zp_timesheets.invoicedCompDate,
-                        zp_timesheets.paid,
-                        zp_timesheets.paidDate,
-                        zp_timesheets.modified,
-                        zp_user.firstname,
-                        zp_user.lastname,
-                        zp_tickets.id as ticketId,
-                        zp_tickets.headline,
-                        zp_tickets.planHours,
-                        zp_tickets.tags,
-                        milestone.headline as milestone
-                    FROM
-                        zp_timesheets
-                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
-                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id";
-
-        $query .= " GROUP BY
-                zp_timesheets.id,
-                zp_timesheets.userId,
-                zp_timesheets.ticketId,
-                zp_timesheets.workDate,
-                zp_timesheets.hours,
-                zp_timesheets.description,
-                zp_timesheets.kind";
+        $query = self::dispatch_filter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
-        return $call->fetchAll();
+        $call->bindValue(':userId', $values['userId']);
+        $call->bindValue(':ticket', $values['ticket']);
+        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
+        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
+        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
+        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
+        $call->bindValue(':rate', $values['rate'] ?? '');
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':paid', $values['paid'] ?? '');
+        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+
+        $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
     }
+
+    /**
+     * updatTime - update specific time entry
+     *
+     * @param array $values
+     *
+     * @return void
+     */
+    public function updateTime(array $values): void
+    {
+        $query = "UPDATE
+                zp_timesheets
+            SET
+                ticketId = :ticket,
+                workDate = :date,
+                hours = :hours,
+                kind = :kind,
+                description =:description,
+                invoicedEmpl =:invoicedEmpl,
+                invoicedComp =:invoicedComp,
+                invoicedEmplDate =:invoicedEmplDate,
+                invoicedCompDate =:invoicedCompDate,
+                paid =:paid,
+                paidDate =:paidDate,
+                modified =:modified
+            WHERE
+                id = :id";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticket', $values['ticket']);
+        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':description', $values['description']);
+        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl']);
+        $call->bindValue(':invoicedComp', $values['invoicedComp']);
+        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate']);
+        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate']);
+        $call->bindValue(':paid', $values['paid']);
+        $call->bindValue(':paidDate', $values['paidDate']);
+        $call->bindValue(':id', $values['id']);
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+
+        $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
+    }
+
+    /**
+     * updatTime - update specific time entry
+     *
+     * @param array $values
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function updateHours(array $values): void
+    {
+        $query = "UPDATE
+                zp_timesheets
+            SET
+                hours = :hours,
+                modified =:modified
+            WHERE
+                userId = :userId
+                AND ticketId = :ticketId
+                AND kind = :kind
+                AND TO_DAYS(workDate) = TO_DAYS(:date)
+                LIMIT 1";
+
+        $query = self::dispatch_filter('sql', $query);
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':userId', $values['userId']);
+        $call->bindValue(':ticketId', $values['ticket']);
+        $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+
+        $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
+    }
+
+    /**
+     * updateInvoices
+     *
+     * @param array $invEmpl
+     * @param array $invComp
+     * @param array $paid
+     *
+     * @return bool
+     */
+    public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
+    {
+        foreach ($invEmpl as $row1) {
+            $query = "UPDATE zp_timesheets
+                      SET invoicedEmpl = 1,
+                          invoicedEmplDate = :date,
+                          modified = :modified
+                      WHERE id = :id ";
+
+            $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
+            $invEmplCall->prepare($query);
+            $invEmplCall->bindValue(':id', $row1);
+            $invEmplCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invEmplCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $invEmplCall->execute();
+
+            unset($invEmplCall);
+        }
+
+        foreach ($invComp as $row2) {
+            $query2 = "UPDATE zp_timesheets
+                       SET invoicedComp = 1,
+                           invoicedCompDate = :date,
+                           modified = :modified
+                       WHERE id = :id ";
+
+            $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
+            $invCompCall->prepare($query2);
+            $invCompCall->bindValue(':id', $row2);
+            $invCompCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invCompCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $invCompCall->execute();
+
+            unset($invCompCall);
+        }
+
+        foreach ($paid as $row3) {
+            $query3 = "UPDATE zp_timesheets
+                       SET paid = 1,
+                           paidDate = :date,
+                           modified = :modified
+                       WHERE id = :id ";
+
+            $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
+            $paidCol->prepare($query3);
+            $paidCol->bindValue(':id', $row3);
+            $paidCol->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $paidCol->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $paidCol->execute();
+
+            unset($paidCol);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return void
+     */
+    public function deleteTime(int $id): void
+    {
+        $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':id', $id);
+
+        $call->execute();
+    }
+
+    /**
+     * Clean up empty timesheets.
+     *
+     * This function deletes all timesheets from the "zp_timesheets" table
+     * where the hours value is equal to 0.
+     *
+     * @return void
+     */
+    public function cleanUpEmptyTimesheets(): void
+    {
+        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+
+        $call->execute();
+    }
+
 }

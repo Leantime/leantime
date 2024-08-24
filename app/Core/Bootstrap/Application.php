@@ -1,22 +1,26 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Bootstrap;
 
-use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Illuminate\Support\Arr;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Facade;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Illuminate\Support\ServiceProvider;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Console\CliRequest;
+use Leantime\Core\Console\ConsoleKernel;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Exceptions\ExceptionHandler;
+use Leantime\Core\Http\ApiRequest;
+use Leantime\Core\Http\HtmxRequest;
+use Leantime\Core\Http\HttpKernel;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
-use Leantime\Domain\Oidc\Services\Oidc as OidcService;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Psr\Container\ContainerInterface as PsrContainerContract;
-use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Application Class - IoC Container for the application
@@ -94,7 +98,7 @@ class Application extends Container
 
         Facade::setFacadeApplication($this);
 
-        Events::discover_listeners();
+        EventDispatcher::discover_listeners();
 
         $this->boot();
     }
@@ -212,7 +216,7 @@ class Application extends Container
 
         $this->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
 
-        $this->alias(\Leantime\Core\Events::class, 'events');
+        $this->alias(\Leantime\Core\Events\EventDispatcher::class, 'events');
     }
 
     /**
@@ -227,6 +231,7 @@ class Application extends Container
 
         $this->register(new \Leantime\Core\Providers\Logging($this));
         $this->register(new \Leantime\Core\Providers\Events($this));
+        $this->register(new \Leantime\Core\Providers\Redis($this));
 
         $this->register(new \Leantime\Core\Providers\Cache($this));
         $this->register(new \Leantime\Core\Providers\Session($this));

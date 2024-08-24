@@ -2,17 +2,17 @@
 
 namespace Leantime\Domain\Projects\Repositories {
 
+    use DateInterval;
+    use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
-    use Leantime\Core\Environment;
-    use Leantime\Core\Eventhelpers as EventhelperCore;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use DateInterval;
-    use DatePeriod;
     use PDO;
     use SVG\SVG;
 
@@ -96,7 +96,9 @@ namespace Leantime\Domain\Projects\Repositories {
                     project.modified,
 					client.name AS clientName,
 					client.id AS clientId,
-					comments.status as status
+					comments.status as status,
+					project.start,
+					project.end
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
                 LEFT JOIN zp_comment as comments ON comments.id = (
@@ -150,12 +152,30 @@ namespace Leantime\Domain\Projects\Repositories {
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND
-                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
-				ORDER BY zp_user.lastname";
+				LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
+                WHERE
+				    zp_relationuserproject.projectId = :projectId
+				    AND !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
+                    AND
+				    zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                        OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
+                    AND zp_user.id IS NOT NULL
+				GROUP BY zp_user.id
+                ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
+
+            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -186,6 +206,8 @@ namespace Leantime\Domain\Projects\Repositories {
 				    project.type,
 				    project.parent,
 				    project.modified,
+				    project.start,
+				    project.end,
 					client.name AS clientName,
 					client.id AS clientId,
 					parent.id AS parentId,
@@ -275,7 +297,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
             $stmn->closeCursor();
 
             return $values;

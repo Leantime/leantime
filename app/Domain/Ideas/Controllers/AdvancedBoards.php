@@ -2,15 +2,14 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
-use Leantime\Core\Mailer as MailerCore;
-use Leantime\Core\Controller;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Core\Frontcontroller;
-use Symfony\Component\HttpFoundation\Response;
-use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
-
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Ideas\Services\Ideas
 /**
  *
  */
@@ -42,7 +41,7 @@ class AdvancedBoards extends Controller
 
     public function get($params): Response
     {
-        
+
         $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
 
 
@@ -116,7 +115,7 @@ class AdvancedBoards extends Controller
         if ($allCanvas === null) {
             $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
         }
-        
+
 
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));

@@ -5,16 +5,12 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Cache;
-use Leantime\Core\ApiRequest;
-use Leantime\Core\Environment;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
-use Leantime\Core\Language;
-use Leantime\Core\Middleware\Request;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\ApiRequest;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api;
-use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -24,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestRateLimiter
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     protected RateLimiter $limiter;
     protected Environment $config;

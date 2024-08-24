@@ -2,13 +2,12 @@
 
 namespace Leantime\Domain\Plugins;
 
-use Leantime\Core\Events;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Support\Facades\Http;
-use Leantime\Domain\Users\Services\Users as UsersService;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Leantime\Domain\Users\Services\Users as UsersService;
 
-Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function ($params) {
+EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedule.cron', function ($params) {
     if (get_class($params['schedule']) !== Schedule::class) {
         return;
     }

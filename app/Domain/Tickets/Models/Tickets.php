@@ -12,6 +12,7 @@ namespace Leantime\Domain\Tickets\Models {
         public mixed $type = null;
         public ?string $description = '';
         public mixed $projectId = null;
+        public mixed $projectDescription = null;
         public mixed $editorId = null;
         public mixed $userId = null;
         public mixed $priority = null;

@@ -2,7 +2,7 @@
 
 namespace  Leantime\Domain\CsvImport\Services;
 
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;

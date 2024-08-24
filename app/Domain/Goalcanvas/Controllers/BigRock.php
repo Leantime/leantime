@@ -7,15 +7,13 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *

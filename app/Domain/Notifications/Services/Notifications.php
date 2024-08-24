@@ -4,7 +4,7 @@ namespace Leantime\Domain\Notifications\Services {
 
     use DOMDocument;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;

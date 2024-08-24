@@ -2,19 +2,16 @@
 
 namespace Leantime\Domain\CsvImport\Controllers;
 
-use Leantime\Core\Frontcontroller;
-use Leantime\Domain\Connector\Models\Integration;
-use Leantime\Domain\Connector\Services\Integrations;
-use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use League\Csv\Exception;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\CsvImport\Controllers\models;
-use Leantime\Domain\CsvImport\Controllers\services;
+use Leantime\Domain\Connector\Models\Integration;
+use Leantime\Domain\Connector\Services\Integrations;
+use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

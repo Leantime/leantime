@@ -3,8 +3,9 @@
 namespace Leantime\Domain\Menu\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
@@ -13,6 +14,8 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
  */
 class ProjectSelector extends HtmxController
 {
+    Use DispatchesEvents;
+
     /**
      * @var string
      */
@@ -112,6 +115,7 @@ class ProjectSelector extends HtmxController
             ];
         }
 
+        $newProjectUrl = self::dispatch_filter("startSomething", "#/projects/createnew");
 
         $this->tpl->assign('currentClient', $currentClient);
         $this->tpl->assign('module', FrontcontrollerCore::getModuleName());
@@ -132,6 +136,8 @@ class ProjectSelector extends HtmxController
         $this->tpl->assign('projectSelectGroupOptions', $projectSelectGroupOptions);
         $this->tpl->assign('projectSelectFilter', $projectSelectFilter);
         $this->tpl->assign('clients', $clients);
+        $this->tpl->assign('startSomethingUrl', $newProjectUrl);
+
     }
 
     /**

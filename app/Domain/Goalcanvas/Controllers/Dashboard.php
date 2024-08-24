@@ -6,15 +6,14 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer;
-    use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
     use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
     use Symfony\Component\HttpFoundation\Response;
 
     /**
@@ -53,7 +52,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          {
 
              $result = $this->goalService->handleDashboardGetRequest($params);
-     
+
              $this->tpl->assign('currentCanvas', $result['currentCanvasId']);
              $this->tpl->assign('goalStats', $result['goalAnalytics']);
              $this->tpl->assign('canvasIcon', $result['canvasIcon']);
@@ -65,7 +64,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
              $this->tpl->assign('allCanvas', $result['allCanvas']);
              $this->tpl->assign('canvasItems', $result['canvasItems']);
              $this->tpl->assign('users', $result['users']);
-     
+
              return $this->tpl->display('goalcanvas.dashboard');
          }
 
@@ -74,7 +73,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          {
             $action = $_POST['action'] ?? '';
             $result = null;
-        
+
             switch ($action) {
                 case 'newCanvas':
                     try {
@@ -125,14 +124,14 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                     break;
             }
-        
+
             if ($result['success']) {
                 $this->tpl->setNotification($result['message'], 'success');
                 return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
             } else {
                 $this->tpl->setNotification($result['message'], 'error');
             }
-        
+
             return $this->get($params);
          }
     }

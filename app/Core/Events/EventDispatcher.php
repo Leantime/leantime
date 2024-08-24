@@ -1,19 +1,21 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Events;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Frontcontroller;
 
 /**
- * Events class - Handles all events and filters
+ * EventDispatcher class - Handles all events and filters
  *
  * @package    leantime
  * @subpackage core
  */
-class Events implements Dispatcher
+class EventDispatcher implements Dispatcher
 {
     /**
      * Registry of all events added to a hook
@@ -184,7 +186,7 @@ class Events implements Dispatcher
 
         if(!config('debug')) {
             $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
-                return Events::getDomainPaths();
+                return EventDispatcher::getDomainPaths();
             });
 
         }else{
@@ -209,7 +211,7 @@ class Events implements Dispatcher
             }
         }
 
-        Events::add_event_listener('leantime.core.middleware.installed.handle.after_install', function () {
+        EventDispatcher::add_event_listener('leantime.core.middleware.installed.handle.after_install', function () {
             if (! session("isInstalled")) {
                 return;
             }

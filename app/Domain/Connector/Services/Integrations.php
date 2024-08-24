@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Connector\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Service;
     use Leantime\Domain\Connector\Repositories\Integrations as IntegrationsRepo;
 
     /**

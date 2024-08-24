@@ -3,14 +3,14 @@
 namespace Leantime\Domain\Auth\Models;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 
 /**
  * @TODO: Role names should be converted into an enum.
  */
 class Roles
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     public static string $readonly = 'readonly';
     public static string $commenter = 'commenter';

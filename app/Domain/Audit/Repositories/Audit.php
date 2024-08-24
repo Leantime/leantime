@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Audit\Repositories;
 
-use Leantime\Core\Db as DbCore;
+use Leantime\Core\Db\Db as DbCore;
 use PDO;
 
 /**

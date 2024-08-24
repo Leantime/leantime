@@ -3,17 +3,17 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use DateInterval;
+    use DateTime;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-    use DateTime;
-    use DateInterval;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
     /**
      *

@@ -3,13 +3,13 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class InitialHeaders
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Set up the initial headers
@@ -19,6 +19,7 @@ class InitialHeaders
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+
         $response = $next($request);
 
         //Content Security Policy
@@ -31,6 +32,7 @@ class InitialHeaders
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];
+        $cspParts = self::dispatch_filter('cspParts', $cspParts);
         $csp = implode(";", $cspParts);
 
         foreach (

@@ -8,10 +8,10 @@
 namespace Leantime\Domain\Calendar\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

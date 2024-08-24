@@ -2,7 +2,7 @@
 
 <?php
 
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 
 /**
  * @param $route

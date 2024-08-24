@@ -2,10 +2,10 @@
 
 namespace Leantime\Domain\Install\Controllers {
 
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Install\Repositories\Install as InstallRepository;
     use Illuminate\Http\Exceptions\HttpResponseException;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+    use Leantime\Domain\Install\Repositories\Install as InstallRepository;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

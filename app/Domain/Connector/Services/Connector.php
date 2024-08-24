@@ -566,8 +566,6 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-
-
         public function importValues($fields, $values, $entity)
         {
 
@@ -602,10 +600,10 @@ namespace Leantime\Domain\Connector\Services {
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                $ticket['editorId'] = $row['editorId'];
-                $ticket['projectId'] = $row['projectId'];
-                $ticket['status'] = $row['status'];
-                $ticket['type'] = $row['type'] ?? 'task' != '' ? $row['type'] : 'task';
+                $ticket['editorId'] = $row['editorId'] ?? '';
+                $ticket['projectId'] = $row['projectId'] ?? '';
+                $ticket['status'] = $row['status'] ?? 3;
+                $ticket['type'] = $row['type'] ?? 'task';
 
                 if (isset($ticket["id"]) && is_numeric($ticket["id"])) {
                     $this->ticketService->updateTicket($ticket);
@@ -738,5 +736,6 @@ namespace Leantime\Domain\Connector\Services {
             session(["serFields" => $serializedFields]);
             session(["serValues" => $serializedValues]);
         }
+
     }
 }

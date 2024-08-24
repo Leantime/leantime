@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
 
     /**
      *

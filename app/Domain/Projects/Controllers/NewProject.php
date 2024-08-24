@@ -2,18 +2,18 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
     /**
      *
@@ -80,6 +80,7 @@ namespace Leantime\Domain\Projects\Controllers {
             );
 
             if (isset($_POST['save']) === true) {
+
                 if (!isset($_POST['hourBudget']) || $_POST['hourBudget'] == '' || $_POST['hourBudget'] == null) {
                     $hourBudget = '0';
                 } else {

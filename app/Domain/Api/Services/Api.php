@@ -5,7 +5,7 @@ namespace Leantime\Domain\Api\Services;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
@@ -15,7 +15,7 @@ use RangeException;
  */
 class Api
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     private ApiRepository $apiRepository;
     private UserRepository $userRepo;
@@ -44,7 +44,6 @@ class Api
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
             report("Not a valid API Key format");
-
             return false;
         }
 
@@ -201,5 +200,9 @@ class Api
         $correctManifest = array_values($correctManifest)[0];
 
         return $basePath . array_search($referenceValue, $correctManifest);
+    }
+
+    public function healthCheck() {
+        return true;
     }
 }

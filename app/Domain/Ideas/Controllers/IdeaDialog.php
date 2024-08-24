@@ -2,15 +2,16 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+
     /**
      *
      */
@@ -39,7 +40,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->commentsRepo = $commentsRepo;
             $this->ticketService = $ticketService;
             $this->projectService = $projectService;
-            $this->ideaService = $ideaService; 
+            $this->ideaService = $ideaService;
         }
 
         /**
@@ -70,7 +71,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('milestones', $result['milestones']);
             $this->tpl->assign('canvasTypes', $result['canvasTypes']);
             $this->tpl->assign('canvasItem', $result['canvasItem']);
-    
+
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 
@@ -86,14 +87,14 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($result['notification'])) {
                 $this->tpl->setNotification($result['notification']['message'], $result['notification']['type'], $result['notification']['key'] ?? '');
             }
-    
+
             if (isset($result['redirect'])) {
                 return Frontcontroller::redirect($result['redirect']);
             }
-    
+
             $this->tpl->assign('canvasTypes', $result['canvasTypes']);
             $this->tpl->assign('canvasItem', $result['canvasItem']);
-            
+
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 

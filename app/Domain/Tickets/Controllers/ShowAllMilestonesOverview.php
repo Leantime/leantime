@@ -2,14 +2,14 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Clients\Repositories\Clients;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Users\Services\Users as UserService;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

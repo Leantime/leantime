@@ -7,8 +7,8 @@
 
 namespace Leantime\Domain\Clients\Repositories {
 
-    use Leantime\Core\Db as DbCore;
-    use Leantime\Core\Repository;
+    use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Core\Db\Repository;
     use PDO;
 
     /**

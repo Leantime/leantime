@@ -4,12 +4,10 @@ namespace Leantime\Core\Middleware;
 
 use Carbon\CarbonImmutable;
 use Closure;
-use Leantime\Core\Environment;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\CarbonMacros;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 

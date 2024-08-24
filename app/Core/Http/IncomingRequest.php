@@ -1,10 +1,11 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Session\SessionManager;
 use Illuminate\Session\SymfonySessionDecorator;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -163,8 +164,35 @@ class IncomingRequest extends Request
 
     public function isApiOrCronRequest(): bool
     {
-        return str_starts_with($_SERVER['REQUEST_URI'], "/api") || str_starts_with($_SERVER['REQUEST_URI'], "/cron");
+        $requestUri = $this->getRequestUri();
+        return str_starts_with($requestUri, "/api") || str_starts_with($requestUri, "/cron");
     }
+
+    public function isHtmxRequest(): bool
+    {
+        return !empty($this->headers->get('Hx-Request')) ? true : false;
+    }
+
+    public function isBoostedHtmxRequest(): bool
+    {
+        if($this->isHtmxRequest() &&
+            this->headers->get('Hx-Boost') == 'true') {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isUnboostedHtmxRequest(): bool
+    {
+        if($this->isHtmxRequest() &&
+            empty($this->headers->get('Hx-Boost'))) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * Determine if the current request probably expects a JSON response.

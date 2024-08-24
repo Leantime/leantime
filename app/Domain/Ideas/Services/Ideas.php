@@ -39,16 +39,23 @@ namespace Leantime\Domain\Ideas\Services {
         }
 
 
-        public function pollForNewIdeas(): array
+        public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
         {
-            return $this->ideasRepository->getAllIdeas();
-        }
-
-        public function pollForUpdatedIdeas(): array
-        {
-            $ideas = $this->ideasRepository->getAllIdeas();
+            $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
 
             foreach ($ideas as $key => $idea) {
+                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
+            }
+
+            return $ideas;
+        }
+
+        public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
+        {
+            $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
+
+            foreach ($ideas as $key => $idea) {
+                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
                 $ideas[$key]['id'] = $idea['id'] . '-' . $idea['modified'];
             }
 
@@ -467,7 +474,7 @@ namespace Leantime\Domain\Ideas\Services {
             session(["currentIdeaCanvas" => $currentCanvasId]);
             return $this->prepareResponseData($currentCanvasId);
         }
-    
+
 
         private function handleEditCanvas($postParams)
         {
@@ -522,6 +529,24 @@ namespace Leantime\Domain\Ideas\Services {
                 'canvasItems' => $this->ideasRepository->getCanvasItemsById($currentCanvasId),
                 'users' => $this->projectService->getUsersAssignedToProject(session("currentProject"))
             ];
+        }
+
+        private function prepareDatesForApiResponse($idea) {
+
+            if(dtHelper()->isValidDateString($idea['created'])) {
+                $idea['created'] = dtHelper()->parseDbDateTime($idea['created'])->toIso8601ZuluString();
+            }else{
+                $idea['created'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($idea['modified'])) {
+                $idea['modified'] = dtHelper()->parseDbDateTime($idea['modified'])->toIso8601ZuluString();
+            }else{
+                $idea['modified'] = null;
+            }
+
+            return $idea;
+
         }
     }
 }

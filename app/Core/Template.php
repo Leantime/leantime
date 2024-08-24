@@ -18,9 +18,15 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
+use Leantime\Core\Bootstrap\Application;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Composer;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Core\Support\FromFormat;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Template
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /** @var array - vars that are set in the action */
     private array $vars = array();
@@ -244,7 +250,7 @@ class Template
         );
         $app->alias(ViewFinderInterface::class, 'view.finder');
 
-        // Setup Events Dispatcher
+        // Setup EventDispatcher Dispatcher
         $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, Dispatcher::class);
 
         // Setup View Factory
@@ -549,7 +555,8 @@ class Template
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         if (is_array($jsonContent) || is_object($jsonContent)) {
-            $jsonContent = json_encode($jsonContent);
+            $collection = collect($jsonContent);
+            $jsonContent = $collection->toJson();
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return $response;

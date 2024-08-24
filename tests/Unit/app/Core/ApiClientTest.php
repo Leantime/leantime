@@ -2,12 +2,11 @@
 
 namespace Test\Unit;
 
-use Leantime\Core\ApiSession;
-use PHPUnit\Framework\TestCase;
 use GuzzleHttp\HandlerStack;
-use kamermans\OAuth2\GrantType\ClientCredentials;
+use Leantime\Core\Http\Client\ApiClient;
+use PHPUnit\Framework\TestCase;
 
-class ApiSessionTest extends TestCase
+class ApiClientTest extends TestCase
 {
     public function testOAuth2(): void
     {
@@ -15,7 +14,7 @@ class ApiSessionTest extends TestCase
         $stack = HandlerStack::create();
         $requestDefaults = [];
 
-        $client = ApiSession::oAuth2($baseUri, $stack, $requestDefaults);
+        $client = ApiClient::oAuth2($baseUri, $stack, $requestDefaults);
 
         $this->assertEquals('http://test.com', $client->getConfig('base_uri'));
         $this->assertSame($stack, $client->getConfig('handler'));
@@ -30,7 +29,7 @@ class ApiSessionTest extends TestCase
             'client_secret' => 'testsecret',
         ];
 
-        $stack = ApiSession::oAuth2Grants($baseUri, $creds);
+        $stack = ApiClient::oAuth2Grants($baseUri, $creds);
 
         $this->assertInstanceOf(HandlerStack::class, $stack);
     }
@@ -45,7 +44,7 @@ class ApiSessionTest extends TestCase
             'token_secret' => 'testtokensecret',
         ];
 
-        $client = ApiSession::oAuth1($baseUri, $creds);
+        $client = ApiClient::oAuth1($baseUri, $creds);
 
         $this->assertEquals('http://test.com', $client->getConfig('base_uri'));
         $this->assertEquals('oauth', $client->getConfig('auth'));
@@ -59,7 +58,7 @@ class ApiSessionTest extends TestCase
             'password' => 'testpass',
         ];
 
-        $client = ApiSession::basicAuth($baseUri, $creds);
+        $client = ApiClient::basicAuth($baseUri, $creds);
 
         $this->assertEquals('http://test.com', $client->getConfig('base_uri'));
         $this->assertEquals($creds, $client->getConfig('auth'));
@@ -74,7 +73,7 @@ class ApiSessionTest extends TestCase
             'digest' => 'testdigest',
         ];
 
-        $client = ApiSession::digest($baseUri, $creds);
+        $client = ApiClient::digest($baseUri, $creds);
 
         $config = $client->getConfig();
         $this->assertEquals('http://test.com', $config[1]['base_uri']);
@@ -90,7 +89,7 @@ class ApiSessionTest extends TestCase
             'ntlm' => 'testntlm',
         ];
 
-        $client = ApiSession::ntlm($baseUri, $creds);
+        $client = ApiClient::ntlm($baseUri, $creds);
 
         $this->assertEquals('http://test.com', $client->getConfig('base_uri'));
         $this->assertEquals($creds, $client->getConfig('auth'));

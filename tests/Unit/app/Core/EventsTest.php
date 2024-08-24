@@ -3,12 +3,12 @@
 namespace Unit\app\Core;
 
 use Codeception\Test\Unit;
-use Leantime\Core\Events;
+use Leantime\Core\Events\EventDispatcher;
 
 class EventsTest extends Unit
 {
     /**
-     * This test will check the dispatch_event method of the Events class.
+     * This test will check the dispatch_event method of the EventDispatcher class.
      * It will dispatch an event and assert if it is added to the available_hooks array.
      */
     public function testDispatchEvent()
@@ -18,10 +18,10 @@ class EventsTest extends Unit
         $context = 'testContext';
 
         // Dispatch event
-        Events::dispatch_event($eventName, $payload, $context);
+        EventDispatcher::dispatch_event($eventName, $payload, $context);
 
         // Get all available hooks
-        $available_hooks = Events::get_available_hooks();
+        $available_hooks = EventDispatcher::get_available_hooks();
 
         // Test that the dispatched event has been registered in available_hooks
         $this->assertContains("$context.$eventName", $available_hooks["events"]);
@@ -29,7 +29,7 @@ class EventsTest extends Unit
 
 
     /**
-     * This test will check the findEventListeners method of the Events class.
+     * This test will check the findEventListeners method of the EventDispatcher class.
      */
     public function testFindEventListeners()
     {
@@ -39,14 +39,14 @@ class EventsTest extends Unit
         $context = 'testContext';
         $eventListeners = [$listenerName => [$payload]];
 
-        Events::add_event_listener($listenerName, function () {
+        EventDispatcher::add_event_listener($listenerName, function () {
         }, 10);
         // Test that the event listener has been found
-        $this->assertEquals([$payload], Events::findEventListeners($listenerName, $eventListeners));
+        $this->assertEquals([$payload], EventDispatcher::findEventListeners($listenerName, $eventListeners));
     }
 
     /**
-     * This test will check the get_registries method of the Events class.
+     * This test will check the get_registries method of the EventDispatcher class.
      * It will add new event listener and a new filter listener and check both listeners
      * are in the registry arrays.
      */
@@ -56,15 +56,15 @@ class EventsTest extends Unit
         $filterName = 'filter.test.name';
 
         // Add an event listener
-        Events::add_event_listener($eventName, function () {
+        EventDispatcher::add_event_listener($eventName, function () {
         }, 10);
 
         // Add a filter listener
-        Events::add_filter_listener($filterName, function () {
+        EventDispatcher::add_filter_listener($filterName, function () {
         }, 10);
 
         // Get registries
-        $registries = Events::get_registries();
+        $registries = EventDispatcher::get_registries();
 
         // Check registries
         $this->assertContains($eventName, $registries['events']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Http\Client;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -18,7 +18,7 @@ use kamermans\OAuth2\OAuth2Middleware;
  * @package    leantime
  * @subpackage core
  */
-class ApiSession
+class ApiClient
 {
     /**
      * Checks passed credentials to see if they are properly provided

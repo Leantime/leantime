@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Files\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Fileupload;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;

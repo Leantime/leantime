@@ -1,4 +1,4 @@
-VERSION := $(shell grep "appVersion" ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
+VERSION := $(shell grep "appVersion" ./app/Core/Configuration/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
 TARGET_DIR:= ./target/leantime
 DOCS_DIR:= ./builddocs
 DOCS_REPO:= git@github.com:Leantime/docs.git
@@ -30,6 +30,7 @@ package: clean build
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
 	touch $(TARGET_DIR)/logs/error.log
+	touch $(TARGET_DIR)/logs/leantime.log
 	mkdir -p $(TARGET_DIR)/cache
 	mkdir -p $(TARGET_DIR)/cache/avatars
 	mkdir -p $(TARGET_DIR)/cache/views

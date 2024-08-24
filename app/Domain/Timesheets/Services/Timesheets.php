@@ -454,19 +454,63 @@ class Timesheets
         return $this->timesheetsRepo->kind;
     }
 
-    public function pollForNewTimesheets(): array|false
+    public function pollForNewTimesheets(?int $projectId = null): array|false
     {
-        return $this->timesheetsRepo->getAllAccountTimesheets();
-    }
-
-    public function pollForUpdatedTimesheets(): array|false
-    {
-        $timesheets = $this->timesheetsRepo->getAllAccountTimesheets();
+        $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
 
         foreach ($timesheets as $key => $timesheet) {
+          $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
+        }
+
+        return $timesheets;
+
+    }
+
+    public function pollForUpdatedTimesheets(?int $projectId = null): array|false
+    {
+        $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
+
+        foreach ($timesheets as $key => $timesheet) {
+            $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
             $timesheets[$key]['id'] = $timesheet['id'] . '-' . $timesheet['modified'];
         }
 
         return $timesheets;
+    }
+
+    private function prepareDatesForApiResponse($timesheet) {
+
+        if(dtHelper()->isValidDateString($timesheet['workDate'])) {
+            $timesheet['workDate'] = dtHelper()->parseDbDateTime($timesheet['workDate'])->toIso8601ZuluString();
+        } else {
+            $timesheet['workDate'] = null;
+        }
+
+        if(dtHelper()->isValidDateString($timesheet['invoicedEmplDate'])) {
+            $timesheet['invoicedEmplDate'] = dtHelper()->parseDbDateTime($timesheet['invoicedEmplDate'])->toIso8601ZuluString();
+        } else {
+            $timesheet['invoicedEmplDate'] = null;
+        }
+
+        if(dtHelper()->isValidDateString($timesheet['invoicedCompDate'])) {
+            $timesheet['invoicedCompDate'] = dtHelper()->parseDbDateTime($timesheet['invoicedCompDate'])->toIso8601ZuluString();
+        } else {
+            $timesheet['invoicedCompDate'] = null;
+        }
+
+        if(dtHelper()->isValidDateString($timesheet['paidDate'])) {
+            $timesheet['paidDate'] = dtHelper()->parseDbDateTime($timesheet['paidDate'])->toIso8601ZuluString();
+        } else {
+            $timesheet['paidDate'] = null;
+        }
+
+        if(dtHelper()->isValidDateString($timesheet['modified'])) {
+            $timesheet['modified'] = dtHelper()->parseDbDateTime($timesheet['modified'])->toIso8601ZuluString();
+        } else {
+            $timesheet['modified'] = null;
+        }
+
+        return $timesheet;
+
     }
 }

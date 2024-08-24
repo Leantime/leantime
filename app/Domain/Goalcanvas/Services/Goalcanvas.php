@@ -209,23 +209,34 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $this->goalRepository->getSingleCanvas($id);
         }
 
-        public function pollGoals()
+        public function createGoal($values)
         {
-            return $this->goalRepository->getAllAccountGoals();
+            return $this->goalRepository->createGoal($values);
         }
 
-        public function pollForUpdatedGoals(): array|false
+        public function pollGoals(?int $projectId = null, ?int $board = null)
         {
-            $goals = $this->goalRepository->getAllAccountGoals();
+            $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
 
             foreach ($goals as $key => $goal) {
-                $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
+                $goals[$key] = $this->prepareDatesForApiResponse($goal);
             }
 
             return $goals;
         }
 
+        public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
+        {
 
+            $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
+
+            foreach ($goals as $key => $goal) {
+                $goals[$key] = $this->prepareDatesForApiResponse($goal);
+                $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
+            }
+
+            return $goals;
+        }
 
         // Goal Dashboard Get
         public function handleDashboardGetRequest($params): array
@@ -424,7 +435,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 throw new MissingParameterException($this->language->__('notification.please_enter_title'));
             }
 
-            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {               
+            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {
                 throw new ElementExistsException($this->language->__('notification.board_exists'));
             }
 
@@ -440,7 +451,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 throw new MissingParameterException($this->language->__('notification.please_enter_title'));
             }
 
-            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {               
+            if ($this->goalRepository->existCanvas(session("currentProject"), $title)) {
                 throw new ElementExistsException($this->language->__('notification.board_exists'));
             }
 
@@ -526,6 +537,36 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 $subject,
                 session("currentProject")
             );
+        }
+
+        private function prepareDatesForApiResponse($goal) {
+
+            if(dtHelper()->isValidDateString($goal['created'])) {
+                $goal['created'] = dtHelper()->parseDbDateTime($goal['created'])->toIso8601ZuluString();
+            }else{
+                $goal['created'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['modified'])) {
+                $goal['modified'] = dtHelper()->parseDbDateTime($goal['modified'])->toIso8601ZuluString();
+            }else{
+                $goal['modified'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['startDate'])) {
+                $goal['startDate'] = dtHelper()->parseDbDateTime($goal['startDate'])->toIso8601ZuluString();
+            }else{
+                $goal['startDate'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['endDate'])) {
+                $goal['endDate'] = dtHelper()->parseDbDateTime($goal['endDate'])->toIso8601ZuluString();
+            }else{
+                $goal['endDate'] = null;
+            }
+
+            return $goal;
+
         }
     }
 }

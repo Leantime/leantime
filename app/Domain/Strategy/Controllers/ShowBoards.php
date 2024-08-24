@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Strategy\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Symfony\Component\HttpFoundation\Response;
 

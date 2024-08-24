@@ -6,13 +6,12 @@
 
 namespace Leantime\Domain\Canvas\Controllers {
 
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 
     /**
      *
