@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Connector\Controllers {
 
+    use http\Client\Response;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
@@ -84,7 +85,11 @@ namespace Leantime\Domain\Connector\Controllers {
                 //STEP 1: Initiate connection
                 if ($params["step"] == "connect") {
                     //This should handle connection UI
-                    $provider->connect();
+                    $connection = $provider->connect();
+
+                    if($connection instanceof \Symfony\Component\HttpFoundation\Response) {
+                        return $connection;
+                    }
                 }
 
 

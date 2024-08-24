@@ -597,13 +597,15 @@ namespace Leantime\Domain\Connector\Services {
             foreach ($finalValues as $row) {
                 $ticket = array();
 
+                array_change_key_case($row, CASE_LOWER);
+
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                $ticket['editorId'] = $row['editorId'];
-                $ticket['projectId'] = $row['projectId'];
+                $ticket['editorId'] = $row['editorid'];
+                $ticket['projectId'] = $row['projectid'];
                 $ticket['status'] = $row['status'];
-                $ticket['type'] = $row['type'] ?? 'task' != '' ? $row['type'] : 'task';
+                $ticket['type'] = $row['type'] ?? 'task';
 
                 if (isset($ticket["id"]) && is_numeric($ticket["id"])) {
                     $this->ticketService->updateTicket($ticket);
