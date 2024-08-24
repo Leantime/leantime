@@ -22,25 +22,19 @@ namespace Leantime\Domain\Ideas\Controllers {
      */
     class BoardDialog extends Controller
     {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = '??';
-
         private ProjectService $projectService;
-        private object $canvasRepo;
 
         private IdeasService $ideasService;
 
         /**
          * init - initialize private variables
          */
-        public function init(ProjectService $projectService)
-        {
-            $this->ideasService = app()->make(IdeasService::class);
+        public function init(
+            ProjectService $projectService,
+            IdeaService $ideaService,
+        ) {
+            $this->ideasService = $ideaService;
             $this->projectService = $projectService;
-            $canvasName = "Ideas";
-            $this->canvasRepo = app()->make(Ideas::class);
         }
 
         public function get($params): Response
@@ -48,58 +42,52 @@ namespace Leantime\Domain\Ideas\Controllers {
             $data = $this->ideasService->prepareCanvasData($params['id'] ?? null);
             $this->assignTemplateVariables($data);
 
-            // if (!isset($params['raw'])) {
-            //     return $this->tpl->displayPartial('ideas.boardDialog');
-            // }
-
-            return $this->tpl->displayPartial('ideas.boardDialog');
-            // if (!isset($params['raw'])) {
-            // }
-        }
-
-        public function post($params):Response
-    {
-        if (isset($params['newCanvas'])) {
-            $result = $this->ideasService->createNewCanvas($params);
-            if ($result['success']) {
-                $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
-                return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
-            } else {
-                $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
-            }
-        }
-
-        if (isset($params['editCanvas'])) {
-
-            if(!empty($params['id'])){
-                $currentCanvasId = (int)$params['id'];
-            }
-            $result = $this->ideasService->editCanvas($params,$currentCanvasId);
-            if ($result['success']) {
-                $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
-            } else {
-                $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
-            }
-        }
-
-        $data = $this->ideasService->prepareCanvasData();
-        $this->assignTemplateVariables($data);
-
-        return $this->tpl->displayPartial('ideas.boardDialog');
-
-        if (!isset($params['raw'])) {
             return $this->tpl->displayPartial('ideas.boardDialog');
         }
-    }
+
+        public function post($params): Response
+        {
+            if (isset($params['newCanvas'])) {
+                $result = $this->ideasService->createNewCanvas($params);
+                if ($result['success']) {
+                    $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
+                    return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+                } else {
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+                }
+            }
+
+            if (isset($params['editCanvas'])) {
+
+                $result = [];
+                if (!empty($params['id'])) {
+                    $currentCanvasId = (int)$params['id'];
+                    $result = $this->ideasService->editCanvas($params, $currentCanvasId);
+                }
+
+                if (!empty($result['success'])) {
+                    $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
+                    return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+                } else {
+                    $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+                }
+            }
+
+            $data = $this->ideasService->prepareCanvasData();
+            $this->assignTemplateVariables($data);
+
+            return $this->tpl->displayPartial('ideas.boardDialog');
+
+            if (!isset($params['raw'])) {
+                return $this->tpl->displayPartial('ideas.boardDialog');
+            }
+        }
 
         /**
          * run - display template and edit data
          *
          * @access public
          */
-
-
         private function assignTemplateVariables($data)
         {
             $this->tpl->assign('canvasTitle', $data['canvasTitle']);
@@ -107,6 +95,5 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('canvasname', "idea");
             $this->tpl->assign('users', $data['users']);
         }
-
     }
 }

@@ -38,6 +38,20 @@ namespace Leantime\Domain\Ideas\Services {
             $this->ticketService = app()->make(TicketService::class);
         }
 
+        public function getAllCanvas($projectId) {
+            return $this->ideasRepository->getAllCanvas($projectId);
+        }
+
+        public function getCanvasItemsById($currentCanvasId) {
+            return $this->ideasRepository->getCanvasItemsById($currentCanvasId);
+        }
+        public function getCanvasLabels() {
+            return $this->ideasRepository->getCanvasLabels();
+        }
+
+        public function deleteCanvas(int $id) {
+            return $this->ideasRepository->deleteCanvas($id);
+        }
 
         public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
         {
