@@ -3,6 +3,7 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Routing\Route;
 use Illuminate\Session\SessionManager;
@@ -86,12 +87,9 @@ class StartSession
             //Acquire lock every 50ms for 20 seconds
             $lock->block(20);
             return $this->handleStatefulRequest($request, $session, $next);
-
         } catch (LockTimeoutException $e) {
-
             $lock->block(60);
             return $this->handleStatefulRequest($request, $session, $next);
-
         } finally {
             $lock?->release();
         }

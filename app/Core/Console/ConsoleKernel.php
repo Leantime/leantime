@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Console;
 
-use;
 use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
