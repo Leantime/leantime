@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Services;
 
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Widgets\Models\Widget;
 
@@ -11,7 +11,7 @@ use Leantime\Domain\Widgets\Models\Widget;
  */
 class Widgets
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var array
@@ -123,7 +123,7 @@ class Widgets
      */
     public function getAll(): array
     {
-        return Eventhelpers::dispatch_filter("availableWidgets", $this->availableWidgets);
+        return DispatchesEvents::dispatch_filter("availableWidgets", $this->availableWidgets);
     }
 
     /**

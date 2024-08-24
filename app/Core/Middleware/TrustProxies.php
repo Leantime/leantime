@@ -4,7 +4,7 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TrustProxies
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * The trusted proxies for this application.

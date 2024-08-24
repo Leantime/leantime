@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\ApiRequest;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Language
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string

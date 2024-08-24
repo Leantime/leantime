@@ -9,7 +9,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
@@ -21,7 +21,7 @@ namespace Leantime\Domain\Plugins\Services {
      */
     class Plugins
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         /**
          * @var string

@@ -4,7 +4,7 @@ namespace Leantime\Domain\Cron\Services {
 
     use Illuminate\Support\Facades\Log;
     use Leantime\Core\Configuration\Environment;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use Leantime\Domain\Reports\Services\Reports;
@@ -15,7 +15,7 @@ namespace Leantime\Domain\Cron\Services {
      */
     class Cron
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private Audit $auditRepo;
         private Queue $queueSvc;

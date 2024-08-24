@@ -5,14 +5,14 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class Updated
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Check if Leantime is installed

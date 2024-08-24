@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Services;
 
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;
@@ -14,7 +14,7 @@ use Leantime\Domain\Users\Services\Users;
  */
 class InviteTeamStep implements OnboardingSteps
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     public function __construct(
         private Setting $settingsRepo,

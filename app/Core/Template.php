@@ -23,7 +23,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -39,7 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Template
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /** @var array - vars that are set in the action */
     private array $vars = array();

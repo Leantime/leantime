@@ -7,7 +7,7 @@
 namespace Leantime\Domain\Menu\Repositories {
 
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -18,7 +18,7 @@ namespace Leantime\Domain\Menu\Repositories {
      */
     class Menu
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         // Default menu
         public const DEFAULT_MENU = 'default';

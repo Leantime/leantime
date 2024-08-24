@@ -6,7 +6,7 @@ namespace Leantime\Domain\Projects\Services {
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Str;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Events\EventDispatcher as EventCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\FromFormat;
@@ -30,7 +30,7 @@ namespace Leantime\Domain\Projects\Services {
      */
     class Projects
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private TemplateCore $tpl;
         private ProjectRepository $projectRepository;
@@ -1215,7 +1215,7 @@ namespace Leantime\Domain\Projects\Services {
         public function getProjectAvatar($id): mixed
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
-            $avatar = static::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
+            $avatar = self::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
             return $avatar;
         }
 

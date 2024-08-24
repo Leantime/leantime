@@ -7,7 +7,7 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestRateLimiter
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     protected RateLimiter $limiter;
     protected Environment $config;

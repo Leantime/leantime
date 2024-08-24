@@ -2,7 +2,7 @@
 
 namespace Leantime\Core;
 
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 
 /**
  * Plugins class
@@ -12,7 +12,7 @@ use Leantime\Core\Events\Eventhelpers;
  */
 class Plugins
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Enabled plugins

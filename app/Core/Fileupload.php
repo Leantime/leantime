@@ -8,7 +8,7 @@ use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Fileupload
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var    string path on the server

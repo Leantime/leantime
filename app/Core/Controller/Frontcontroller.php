@@ -4,7 +4,7 @@ namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HtmxRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Frontcontroller
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string - rootpath (is set in index.php)

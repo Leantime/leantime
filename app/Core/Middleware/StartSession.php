@@ -10,14 +10,14 @@ use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 class StartSession
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * The session manager.

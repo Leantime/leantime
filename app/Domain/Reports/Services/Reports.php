@@ -10,7 +10,7 @@ namespace Leantime\Domain\Reports\Services {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
@@ -42,7 +42,7 @@ namespace Leantime\Domain\Reports\Services {
      */
     class Reports
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private TemplateCore $tpl;
         private AppSettingCore $appSettings;

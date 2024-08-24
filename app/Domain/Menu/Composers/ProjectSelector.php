@@ -5,7 +5,7 @@ namespace Leantime\Domain\Menu\Composers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
@@ -15,7 +15,7 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 class ProjectSelector extends Composer
 {
 
-    Use Eventhelpers;
+    Use DispatchesEvents;
 
     public static array $views = [
         'menu::projectSelector',

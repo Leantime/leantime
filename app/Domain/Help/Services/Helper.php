@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Services;
 
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use ProjectIntroStep;
 use InviteTeamStep;
 
@@ -11,7 +11,7 @@ use InviteTeamStep;
  */
 class Helper
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     private $availableModals = [
         "dashboard.show" => "dashboard",

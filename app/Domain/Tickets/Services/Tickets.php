@@ -9,7 +9,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
@@ -31,7 +31,7 @@ namespace Leantime\Domain\Tickets\Services {
      */
     class Tickets
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
 
         /**

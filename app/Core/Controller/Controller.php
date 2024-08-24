@@ -6,7 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Template;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class Controller
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var Response

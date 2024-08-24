@@ -5,6 +5,7 @@ namespace Leantime\Domain\Menu\Hxcontrollers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
@@ -13,6 +14,8 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
  */
 class ProjectSelector extends HtmxController
 {
+    Use DispatchesEvents;
+
     /**
      * @var string
      */

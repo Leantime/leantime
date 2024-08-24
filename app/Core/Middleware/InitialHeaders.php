@@ -3,13 +3,13 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class InitialHeaders
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Set up the initial headers

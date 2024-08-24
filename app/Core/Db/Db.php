@@ -4,7 +4,7 @@ namespace Leantime\Core\Db;
 
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use PDO;
 use PDOException;
@@ -17,7 +17,7 @@ use PDOException;
  */
 class Db
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string database host default: localhost

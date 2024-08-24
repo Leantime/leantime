@@ -7,7 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Theme
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Name of default theme

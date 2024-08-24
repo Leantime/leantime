@@ -7,7 +7,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
@@ -24,7 +24,7 @@ use RobThree\Auth\TwoFactorAuth;
  */
 class Auth
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var int|null user id from DB

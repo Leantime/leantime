@@ -6,7 +6,7 @@ use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Console\CliRequest;
 use Leantime\Core\Console\ConsoleKernel;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HttpKernel;
 use Leantime\Core\Http\IncomingRequest;
 use Psr\Container\ContainerInterface as PsrContainerContract;
@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface as PsrContainerContract;
  */
 class Bootloader
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Bootloader instance
@@ -118,6 +118,7 @@ class Bootloader
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
 
         self::dispatch_event("beginning", ['bootloader' => $this]);
+
 
         if ($this->app::hasBeenBootstrapped()) {
             return;

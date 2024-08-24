@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Str;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
@@ -18,7 +18,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class ConsoleKernel implements ConsoleKernelContract
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     protected ConsoleApplication $artisan;
 

@@ -6,12 +6,12 @@ use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Pipeline\Pipeline;
 use Leantime\Core\Bootstrap\Application;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Middleware;
 
 class HttpKernel implements HttpKernelContract
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * The timestamp when the request started.

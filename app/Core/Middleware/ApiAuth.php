@@ -4,7 +4,7 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api as ApiService;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ApiAuth
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Handle an incoming request

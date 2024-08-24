@@ -3,7 +3,7 @@
 namespace Leantime\Core\Db;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Events\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 use PDOStatement;
 use ReflectionClass;
@@ -17,7 +17,7 @@ use ReflectionProperty;
  */
 abstract class Repository
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string

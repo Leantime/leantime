@@ -8,7 +8,7 @@ namespace Leantime\Core\Events {
     /**
      *
      */
-    trait Eventhelpers
+    trait DispatchesEvents
     {
         private static string $event_context = '';
 

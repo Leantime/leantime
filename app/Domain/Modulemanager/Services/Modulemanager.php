@@ -15,7 +15,7 @@ namespace Leantime\Domain\Modulemanager\Services {
      */
     class Modulemanager
     {
-        use \Leantime\Core\Events\Eventhelpers;
+        use \Leantime\Core\Events\DispatchesEvents;
 
         private static array $modules = array(
             "api" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),

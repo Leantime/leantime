@@ -5,7 +5,7 @@ namespace Leantime\Domain\Tickets\Repositories {
     use Carbon\CarbonImmutable;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db\Db as DbCore;
-    use Leantime\Core\Events\Eventhelpers as EventhelperCore;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Users\Services\Users;
     use PDO;
