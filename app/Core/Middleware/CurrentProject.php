@@ -3,9 +3,9 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\HtmxRequest;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\HtmxRequest;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Symfony\Component\HttpFoundation\Response;

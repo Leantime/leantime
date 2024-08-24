@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Plugins\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 

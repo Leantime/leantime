@@ -3,13 +3,13 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Support\Str;
-use Leantime\Core\Controller;
-use Leantime\Core\Environment;
-use Symfony\Component\HttpFoundation\Response;
-use Leantime\Core\Eventhelpers;
-use Leantime\Domain\Api\Services\Api as ApiService;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
+use Leantime\Domain\Api\Services\Api as ApiService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class StaticAsset extends Controller
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     private Environment $config;
     private ApiService $apiService;

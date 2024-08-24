@@ -3,13 +3,13 @@
 namespace Leantime\Domain\Install\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Core\Environment;
-    use PDO;
+    use Leantime\Core\Configuration\AppSettings as AppSettingCore;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+    use Leantime\Domain\Setting\Repositories\Setting;
+    use PDO;
     use PDOException;
-    use Leantime\Core\Eventhelpers as EventhelperCore;
-    use Leantime\Core\AppSettings as AppSettingCore;
 
     /**
      *

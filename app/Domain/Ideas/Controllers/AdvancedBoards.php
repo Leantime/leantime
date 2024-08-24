@@ -2,12 +2,12 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 
     /**
      *

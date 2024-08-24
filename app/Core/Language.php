@@ -5,6 +5,10 @@ namespace Leantime\Core;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\ApiRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Language
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string
@@ -121,8 +125,8 @@ class Language
 
             $isAPIRequest = request()->isApiOrCronRequest();
 
-            Events::add_filter_listener(
-                'leantime.core.httpkernel.handle.beforeSendResponse',
+            EventDispatcher::add_filter_listener(
+                'leantime.core.http.httpkernel.handle.beforeSendResponse',
                 fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                     Cookie::create('language')
                     ->withValue($lang)

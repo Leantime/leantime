@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Exceptions;
 
 use Closure;
 use Exception;
@@ -14,25 +14,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Traits\ReflectsClosures;
-use Illuminate\Support\ViewErrorBag;
 use InvalidArgumentException;
-use Leantime\Core\Exceptions\ReportableHandler;
-use Leantime\Core\Exceptions\WhoopsHandler;
+use Leantime\Core\Template;
 use PHP_CodeSniffer\Reports\Report;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Run as Whoops;

@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Notifications\Listeners;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Events;
 use Leantime\Domain\Notifications\Services\Notifications;
 
 /**

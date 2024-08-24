@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Errors\Controllers {
 
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

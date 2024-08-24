@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Contracts;
 
 /**
  * Service Interface - Base interface for all services
@@ -65,5 +65,5 @@ interface Service
      * @param array|null $searchparams Search parameters
      * @return array|false Returns array on success, false on failure. No results should return empty array
      */
-    public function getAll(array $searchparams = null);
+        public function query(array $searchparams = null);
 }

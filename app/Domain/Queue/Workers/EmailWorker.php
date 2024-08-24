@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
-use Leantime\Core\Environment;
 use Leantime\Core\Language;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;

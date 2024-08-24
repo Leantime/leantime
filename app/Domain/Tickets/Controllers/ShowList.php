@@ -3,13 +3,13 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Core\Frontcontroller;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *

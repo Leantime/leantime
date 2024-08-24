@@ -2,15 +2,14 @@
 
 namespace Leantime\Domain\Users\Controllers {
 
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Setting\Services\Setting as SettingService;
-    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Theme as ThemeCore;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Setting\Services\Setting as SettingService;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

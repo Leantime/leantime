@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core {
+namespace Leantime\Core\Events {
 
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
@@ -8,7 +8,7 @@ namespace Leantime\Core {
     /**
      *
      */
-    trait Eventhelpers
+    trait DispatchesEvents
     {
         private static string $event_context = '';
 
@@ -25,7 +25,7 @@ namespace Leantime\Core {
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int $function = null): void
         {
-            Events::dispatch_event($hook, $available_params, static::get_event_context($function));
+            EventDispatcher::dispatch_event($hook, $available_params, static::get_event_context($function));
         }
 
         /**
@@ -42,7 +42,7 @@ namespace Leantime\Core {
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {
-            return Events::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
         }
 
         /**

@@ -2,9 +2,7 @@
 
 namespace Leantime\Domain\Wiki\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Comments\Services\Comments as CommentService;
-    use Leantime\Domain\Wiki\Services\Wiki as WikiService;
+    use Leantime\Core\Controller\Controller;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

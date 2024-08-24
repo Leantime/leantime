@@ -3,13 +3,12 @@
 namespace Leantime\Command;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Configuration\Environment;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Leantime\Domain\Install\Repositories\Install;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Leantime\Core\Environment;
 
 use function PHPUnit\Framework\directoryExists;
 

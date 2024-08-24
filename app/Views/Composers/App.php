@@ -3,14 +3,14 @@
 namespace Leantime\Views\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Composer;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\Composer;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Repositories\Menu;
 
 class App extends Composer
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     public static array $views = [
         'global::layouts.app',

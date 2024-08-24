@@ -2,16 +2,9 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Contracts\Redis\Factory;
 use Illuminate\Redis\RedisManager;
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\AppSettings;
-use Leantime\Core\CliRequest;
-use Leantime\Core\Events;
-use Leantime\Core\IncomingRequest;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 class Redis extends ServiceProvider
 {

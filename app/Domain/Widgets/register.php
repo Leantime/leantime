@@ -1,8 +1,8 @@
 <?php
 
-use Leantime\Core\Events;
+use Leantime\Core\Events\EventDispatcher;
 
-Events::add_filter_listener("leantime.core.template.tpl.dashboard.home.settingsLink", function ($settingsLink) {
+EventDispatcher::add_filter_listener("leantime.core.template.tpl.dashboard.home.settingsLink", function ($settingsLink) {
 
     return [
         "module" => "widgets",

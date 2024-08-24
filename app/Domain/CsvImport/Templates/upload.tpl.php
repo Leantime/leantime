@@ -14,7 +14,7 @@ foreach ($__data as $var => $val) {
     <?php echo $tpl->displayNotification() ?>
 
     <h2>Upload CSV file</h2>
-    <p>You can upload CSVs to import or update Tasks, Projects, Goals. <a href="https://support.leantime.io/importing-data-via-csv" target="_blank">Check our documentaiton</a> to learn more about the formatting and to download templates</p>
+    <p>You can upload CSVs to import or update Tasks, Projects, Goals. <a href="https://support.leantime.io/importing-data-via-csv" target="_blank">Check our documentation</a> to learn more about the formatting and to download templates</p>
     <br /><br/>
     <div class="uploadWrapper" style="width:100%">
 

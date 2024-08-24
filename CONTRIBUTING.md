@@ -57,7 +57,7 @@ We are using the [PSR-12 coding style](https://www.php-fig.org/psr/psr-12/) for 
 As mentioned above we are following PSR-12 naming conventions. Some areas are not covered in the standard and will be covered in this section. For sake of completion we include all naming conventions in this section.
 
 **Classes**
-Pascal Case (Example: `Leantime.Core.FrontController`
+Pascal Case (Example: `leantime.core.controller.frontcontroller`
 
 **Class Methods**
 Camel Case (Example: `$object->getItem()`

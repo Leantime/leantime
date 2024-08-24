@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;

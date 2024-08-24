@@ -7,34 +7,31 @@ namespace Leantime\Domain\Tickets\Services {
     use DateTime;
     use Illuminate\Container\EntryNotFoundException;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Contracts\Queue\EntityNotFoundException;
     use Illuminate\Support\Str;
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Core\Exceptions\MissingParameterException;
-    use Leantime\Core\Service;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
+    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Tickets\Repositories\TicketHistory as TicketHistory;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 
     /**
      *
      */
     class Tickets
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
 
         /**

@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Repositories;
 
-use Leantime\Core\Db as DbCore;
-use Leantime\Core\Repository;
+use Leantime\Core\Db\Db as DbCore;
 use PDO;
 
 /**

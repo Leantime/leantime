@@ -2,6 +2,8 @@
 
 namespace Leantime\Core;
 
+use Leantime\Core\Events\DispatchesEvents;
+
 /**
  * Plugins class
  *
@@ -10,7 +12,7 @@ namespace Leantime\Core;
  */
 class Plugins
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Enabled plugins
@@ -22,10 +24,10 @@ class Plugins
     /**
      * constructor
      *
-     * @param \Leantime\Core\Environment $config
+     * @param \Leantime\Core\Configuration\Environment $config
      * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config)
+    public function __construct(Configuration\Environment $config)
     {
         if (isset($config->plugins)) {
             $plugins = json_decode($config->plugins);

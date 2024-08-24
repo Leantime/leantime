@@ -2,13 +2,13 @@
 
 namespace Leantime\Domain\Users\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Users\Services\Users as UserService;
 
     /**
      *

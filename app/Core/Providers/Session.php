@@ -2,13 +2,8 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Session\SymfonySessionDecorator;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\CliRequest;
-use Leantime\Core\Events;
-use Leantime\Core\IncomingRequest;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 class Session extends ServiceProvider
 {
@@ -45,7 +40,7 @@ class Session extends ServiceProvider
                 'lifetime' =>  app('config')->sessionExpiration,
                 'connection' => !empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'session' : null,
                 'expire_on_close' => false,
-                'encrypt' => false,
+                'encrypt' => true,
                 'files' => APP_ROOT . '/cache/sessions',
                 'store' => "installation",
                 'block_store' => 'installation',

@@ -7,13 +7,13 @@
 
 namespace Leantime\Domain\Calendar\Controllers;
 
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Symfony\Component\HttpFoundation\Response;
-use Leantime\Core\Frontcontroller;
 
 /**
  *

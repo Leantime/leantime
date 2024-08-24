@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Connector\Repositories {
 
-    use Leantime\Core\Repository;
-    use Leantime\Core\Service;
+    use Leantime\Core\Db\Repository;
     use Leantime\Domain\Connector\Models\Integration;
 
     /**

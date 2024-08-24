@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Users\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Auth\Models\Roles;
@@ -20,7 +20,7 @@ namespace Leantime\Domain\Users\Services {
      */
     class Users
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private UserRepository $userRepo;
         private LanguageCore $language;

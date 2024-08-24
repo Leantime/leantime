@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Hxcontrollers;
 
-use Leantime\Core\HtmxController;
-use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**

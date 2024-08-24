@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Connector\Services {
 
     use Leantime\Domain\CsvImport\Services\CsvImport;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Connector\Models\Provider;
 
     /**
@@ -11,7 +11,7 @@ namespace Leantime\Domain\Connector\Services {
      */
     class Providers
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private array $providers = [];
 

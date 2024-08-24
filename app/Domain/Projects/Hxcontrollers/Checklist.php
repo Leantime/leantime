@@ -4,7 +4,7 @@ namespace Leantime\Domain\Projects\Hxcontrollers;
 
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Projects\Services\Projects;
 
 /**

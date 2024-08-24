@@ -1,10 +1,10 @@
 <?php
 
-use Leantime\Core\Events;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\CsvImport\Listeners\AddCSVImportProvider;
 
 //Register event listener
-Events::add_filter_listener(
+EventDispatcher::add_filter_listener(
     "domain.connector.services.providers.loadProviders.providerList",
     new AddCSVImportProvider()
 );

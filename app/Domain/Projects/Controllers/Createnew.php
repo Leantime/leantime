@@ -2,20 +2,11 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Modulemanager\Services\Modulemanager;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Core\Frontcontroller;
-    use PhpParser\Node\Expr\AssignOp\Mod;
+    use Leantime\Domain\Modulemanager\Services\Modulemanager;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
     /**
      *

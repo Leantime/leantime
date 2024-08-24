@@ -2,7 +2,7 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\Composer;
+use Leantime\Core\Controller\Composer;
 use Leantime\Core\Theme;
 
 class Entry extends Composer

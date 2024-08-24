@@ -2,8 +2,8 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\AppSettings;
-use Leantime\Core\Composer;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Controller\Composer;
 
 class Footer extends Composer
 {

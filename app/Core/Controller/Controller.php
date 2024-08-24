@@ -1,9 +1,15 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Log;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
+use Leantime\Core\Template;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -14,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class Controller
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var Response
@@ -65,6 +71,12 @@ abstract class Controller
      */
     private function executeActions(string $method, object|array $params): void
     {
+
+        //HEAD execution is equal to GET. Server can handle the content response cutting for us.
+        if(strtoupper($method) == "HEAD") {
+            $method = "GET";
+        }
+
         $available_params = [
             'controller' => $this,
             'method' => $method,
@@ -83,7 +95,8 @@ abstract class Controller
         } elseif (method_exists($this, 'run')) {
             $this->response = $this->run();
         } else {
-            throw new HttpResponseException(Frontcontroller::redirect(BASE_URL . "/errors/error501", 307));
+            Log::error('Method not found: ' . $method);
+            Frontcontroller::redirect(BASE_URL . "/errors/error501", 307);
         }
     }
 

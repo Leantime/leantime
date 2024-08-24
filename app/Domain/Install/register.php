@@ -1,9 +1,9 @@
 <?php
 
-use Leantime\Core\Events;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\EventDispatcher;
 
-Events::add_filter_listener("leantime.core.template.*.welcomeText", function ($welcomeText) {
+EventDispatcher::add_filter_listener("leantime.core.template.*.welcomeText", function ($welcomeText) {
 
     $language = app()->make(Leantime\Core\Language::class);
 

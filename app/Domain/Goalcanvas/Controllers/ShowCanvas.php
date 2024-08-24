@@ -6,14 +6,13 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer;
+    use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
-    use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *

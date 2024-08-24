@@ -3,8 +3,8 @@
 namespace Leantime\Domain\TwoFA\Controllers {
 
     use Endroid\QrCode\QrCode;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Core\Controller;
     use RobThree\Auth\Providers\Qr\IQRCodeProvider;
     use RobThree\Auth\TwoFactorAuth;
     use RobThree\Auth\TwoFactorAuthException;

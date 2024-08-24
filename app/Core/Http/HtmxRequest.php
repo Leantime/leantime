@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Leantime\Core;
+namespace Leantime\Core\Http;
 
 /**
  *

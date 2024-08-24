@@ -2,17 +2,17 @@
 
 namespace Leantime\Domain\Projects\Repositories {
 
+    use DateInterval;
+    use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
-    use Leantime\Core\Environment;
-    use Leantime\Core\Eventhelpers as EventhelperCore;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use DateInterval;
-    use DatePeriod;
     use PDO;
     use SVG\SVG;
 
