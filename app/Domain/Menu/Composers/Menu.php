@@ -106,6 +106,8 @@ class Menu extends Composer
             ];
         }
 
+        $newProjectUrl = self::dispatch_filter("startSomething", "#/projects/createnew");
+
         return [
             'currentClient' => $currentClient,
             'module' => FrontcontrollerCore::getModuleName(),
@@ -126,6 +128,7 @@ class Menu extends Composer
             'projectSelectGroupOptions' => $projectSelectGroupOptions,
             'projectSelectFilter' => $projectSelectFilter,
             'clients' => $clients,
+            'startSomethingUrl' => $newProjectUrl
         ];
     }
 }

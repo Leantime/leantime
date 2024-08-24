@@ -96,7 +96,7 @@ abstract class Controller
             $this->response = $this->run();
         } else {
             Log::error('Method not found: ' . $method);
-            throw new HttpResponseException(Frontcontroller::redirect(BASE_URL . "/errors/error501", 307));
+            Frontcontroller::redirect(BASE_URL . "/errors/error501", 307);
         }
     }
 
