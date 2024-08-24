@@ -80,6 +80,7 @@ namespace Leantime\Domain\Projects\Controllers {
             );
 
             if (isset($_POST['save']) === true) {
+
                 if (!isset($_POST['hourBudget']) || $_POST['hourBudget'] == '' || $_POST['hourBudget'] == null) {
                     $hourBudget = '0';
                 } else {
