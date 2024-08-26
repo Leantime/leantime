@@ -1,5 +1,75 @@
 # Version: 3.2.0
 
+* [2ad43d2](https://github.com/Leantime/leantime/commit/2ad43d2e1013c572a2a993b9c37149970a329f10): Fixes to version management for plugins
+* [53e546f](https://github.com/Leantime/leantime/commit/53e546fb7b8e793ca9ec5b52561fa076e84ae419): [Changelog CI] Add Changelog for Version 3.2.0
+* [7c272f9](https://github.com/Leantime/leantime/commit/7c272f9afac4c3bfac23cb8cc4445a0526a416c5): Update release.yml
+* [3be5698](https://github.com/Leantime/leantime/commit/3be5698658484520fb1ec73b35333ccaf7b4a6cc): file list
+* [16ad712](https://github.com/Leantime/leantime/commit/16ad7129af10cdb9c9125dcd95f03f58ccabac66): Timesheet fixes
+* [7c4e93c](https://github.com/Leantime/leantime/commit/7c4e93c3eb52e0e7277888b8a892ce16c2ff7231): Update Connector.php
+* [5aeafc0](https://github.com/Leantime/leantime/commit/5aeafc0d87f2cbc8e30ba05802cbb45e941a1aca): Update ApiClientTest.php
+* [b365dbe](https://github.com/Leantime/leantime/commit/b365dbeebb7d990d6fb4ee1182a0c06c0155c315): fixing csv
+* [103c79e](https://github.com/Leantime/leantime/commit/103c79ecb5ac4af169a5ff74731a18509a6d17fb): Rename eventhelpers trait
+* [0c41896](https://github.com/Leantime/leantime/commit/0c418967fe3044bb65914184acbe632597ee8978): fixing menu related bugs
+* [d8afdd9](https://github.com/Leantime/leantime/commit/d8afdd9a45cf926b822a072f5009726abfbd2c67): Support for head requests
+* [a83f645](https://github.com/Leantime/leantime/commit/a83f6457bdd8437d1309c0b3ffa00fac1efa6a3d): Update ApiClient.php
+* [cdf332d](https://github.com/Leantime/leantime/commit/cdf332dea983bc7835ebf32924b60778cf503499): more cleanup
+* [91dde9e](https://github.com/Leantime/leantime/commit/91dde9eedb588a59cdfddd4a008ec2e78654a2f7): Cleaning core file structure
+* [15e26f8](https://github.com/Leantime/leantime/commit/15e26f842f76eb21e9feda74e6509951a6b0bfab): version bump
+* [26531b0](https://github.com/Leantime/leantime/commit/26531b004547d3e4518103db39d97065f2d2448e): resolving conflicts
+* [f601580](https://github.com/Leantime/leantime/commit/f6015804e36ce4aa440413b2c72b7fe446048dd0): Update composer.lock
+* [679364a](https://github.com/Leantime/leantime/commit/679364acefdfcbc337adb956834a50c00157a1d0): Fixing phpstan issues
+* [73ad52c](https://github.com/Leantime/leantime/commit/73ad52c86f4fb488809ccaaa75a913fca401593f): Misc template enhancements
+* [d58e164](https://github.com/Leantime/leantime/commit/d58e1648f3d1fd8a115b6ba712b74000533385aa): Improves update check in case dbs have to be downgraded.
+* [0538d68](https://github.com/Leantime/leantime/commit/0538d68019719d2c615a842edfeacfe0cadcf68a): Fixing various dateTime bugs across the system
+* [c64f09c](https://github.com/Leantime/leantime/commit/c64f09c8be8a74c728bb72f90760aefa1ada19c8): Adding a new default job worker that can execute queue jobs via classes added to subject
+* [7cb0199](https://github.com/Leantime/leantime/commit/7cb019985e324006c56234832c55d86b787c1430): Allow API to use any service and new api endpoints
+* [9ac2732](https://github.com/Leantime/leantime/commit/9ac273265a0309acbcb6481f81d1de2c0ade3a68): Adding Redis Support for cache and sessions
+* [30b4fff](https://github.com/Leantime/leantime/commit/30b4fff567662fabb902ad5c982f52aee0066542): fix the canvas dialogue
+* [9fd512b](https://github.com/Leantime/leantime/commit/9fd512b64fe1061b52d60acd763771cd490dc84f): Fix for broken project favorite function
+* [2bce7b6](https://github.com/Leantime/leantime/commit/2bce7b65b139dfd39121fcf50be1f24799ba22dd): Update queue service to include web worker
+* [b60b8be](https://github.com/Leantime/leantime/commit/b60b8be8548fd88c8efdec6cfe309d196593f752): update event cache to include check for debug
+* [0323519](https://github.com/Leantime/leantime/commit/0323519795ef3da47e1d1308c6cc91b38317d2da): Update bootstrap.php
+* [19fd0d3](https://github.com/Leantime/leantime/commit/19fd0d3641cb8ed1f40365d631d8e60605bd4c40): Update Logging.php
+* [d3d9008](https://github.com/Leantime/leantime/commit/d3d90080c53ce738f3519197dfd093eb0519c32f): test improvements
+* [aa36199](https://github.com/Leantime/leantime/commit/aa36199344e6b5bd2f6895f2fdaee1bc9078ce39): Update dockerfile
+* [a028f1e](https://github.com/Leantime/leantime/commit/a028f1eaca0e7fb0cf855cc1c6c085ecd5c4e03e): Fix docker permissions for log files
+* [d362108](https://github.com/Leantime/leantime/commit/d36210882671457867921f008fe827df98471d96): Fix make file
+* [6358e85](https://github.com/Leantime/leantime/commit/6358e857e12c78ff27b601f0c511be6a1ffa3929): Clean up old excception handling in httpkernel
+* [199ce6d](https://github.com/Leantime/leantime/commit/199ce6d351717abfedefa2c125a65bc02d38db8b): piping environment config through
+* [1fa1f46](https://github.com/Leantime/leantime/commit/1fa1f467ef792dde4f2bfd630bddf6b0c26d2e4d): Removed exception service provider since handler is managed in environment
+* [5e5c0a6](https://github.com/Leantime/leantime/commit/5e5c0a6ad1a3a7ad3bb40925bce1a65991daeaec): Added Laravel exception handler with whoops
+* [c12ea2c](https://github.com/Leantime/leantime/commit/c12ea2cdee852f338ce73f21feaeb58453114a8f): Update PULL_REQUEST_TEMPLATE.md
+* [9397ee7](https://github.com/Leantime/leantime/commit/9397ee739f7304748539679d03fda01c91adf501): Fix localization issues for dates with translated day, month names
+* [83a06bf](https://github.com/Leantime/leantime/commit/83a06bfbe7ffe26f42c6f558ff6632f0331273be): Fix for storing language
+* [b4bfcd3](https://github.com/Leantime/leantime/commit/b4bfcd3a841e2171260728367ed46571045b850a): Move changelogConfig out of the workflow folder
+* [6cd0649](https://github.com/Leantime/leantime/commit/6cd06493830d39ba421bd6ae09828187c5c9b9e1): version bump
+* [559ab75](https://github.com/Leantime/leantime/commit/559ab7563e555386cdc4c6759ef538e90338cdcd): version bump
+* [6764016](https://github.com/Leantime/leantime/commit/6764016e659145b1cf14f5ea1b7f6d4c830b10f9): Fix for #2606 and saving new items on blueprints
+* [89bcdd6](https://github.com/Leantime/leantime/commit/89bcdd6ee22a55a35f13aae644fafc5934e6f846): Install welcome message update
+* [4d0f450](https://github.com/Leantime/leantime/commit/4d0f45068fa66c012d6355f3cb3087ab4177cac5): variable name update and feedback review
+* [6f68fe1](https://github.com/Leantime/leantime/commit/6f68fe1ca00e588c9cddad588b9cfd5fe69638df): variable name update
+* [2c9e8f8](https://github.com/Leantime/leantime/commit/2c9e8f803bcd2913409227ce892b745ed1a29982): done
+* [a2fd8f8](https://github.com/Leantime/leantime/commit/a2fd8f8c9275aef82cf7de79c37c5c7ad6b5c943): feedback
+* [256a23a](https://github.com/Leantime/leantime/commit/256a23aadeb2904c3988722a2ee425f29c48dc62): remove unnecessary plugins
+* [213f5a9](https://github.com/Leantime/leantime/commit/213f5a996ec49ac5977c04447273b7cb000c07cc): fix make build-dev compile issue and add ddev config
+* [961b829](https://github.com/Leantime/leantime/commit/961b82963287c95988345cf9bb406bc5cda157a7): 1882: move moreinfo into span
+* [a4e0b11](https://github.com/Leantime/leantime/commit/a4e0b11f1ae9311122eacba9193866472336ac76): resolving the feedback
+* [9422468](https://github.com/Leantime/leantime/commit/94224686829fe2dfd9d27eb254f3fde2398e9944): blade conversion
+* [7a37ee2](https://github.com/Leantime/leantime/commit/7a37ee20f32492880021cc55a8a304f75db83ca6): Update README.md for newer mysql version
+
+Changed the requirements from MySQL 5.7+ to MySQL 8.0+
+The 5.7 version is not supported anymore since 2023-10-31 and will not get any security updates. We should not encourage our users to use old and insecure software.
+
+MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS release (Generic support until 2025-04-30 and extended until 2026-04-30)
+* [a78ed98](https://github.com/Leantime/leantime/commit/a78ed984a48dbb3d343e7aad479de3acad1ea789): Lossless image filesize reduction
+* [5c82d32](https://github.com/Leantime/leantime/commit/5c82d328b8a1fa9ce673b92d14aa194a852feae8): 1882: add translations
+* [8eaee14](https://github.com/Leantime/leantime/commit/8eaee143ae13a855c5e24d1ec12e407133bb5149): 1882: improve danish translation
+* [966beb5](https://github.com/Leantime/leantime/commit/966beb5fc241c65bc329477d3dca0ddbf2238775): 1882: add status, start and end date to milestone headline
+* [3cf5c54](https://github.com/Leantime/leantime/commit/3cf5c54c1cdf61871fc1a9a1808a14a97db87668): Improve current project setting flow
+
+
+# Version: 3.2.0
+
 * [7c272f9](https://github.com/Leantime/leantime/commit/7c272f9afac4c3bfac23cb8cc4445a0526a416c5): Update release.yml
 * [3be5698](https://github.com/Leantime/leantime/commit/3be5698658484520fb1ec73b35333ccaf7b4a6cc): file list
 * [16ad712](https://github.com/Leantime/leantime/commit/16ad7129af10cdb9c9125dcd95f03f58ccabac66): Timesheet fixes
