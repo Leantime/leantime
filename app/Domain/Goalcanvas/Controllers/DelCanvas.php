@@ -43,7 +43,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            if (isset($_POST['del']) && t($_GET['id'])) {
+            if (isset($_POST['del']) && ($_GET['id'])) {
                 $id = (int)($_GET['id']);
                 $this->canvasRepo->deleteCanvas($id);
 

@@ -6,7 +6,7 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
-    use leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Services\Projects;
     use Symfony\Component\HttpFoundation\Response;
