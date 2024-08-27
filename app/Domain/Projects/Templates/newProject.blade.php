@@ -1,3 +1,6 @@
+@extends($layout)
+
+@section('content')
 
 <?php
 defined('RESTRICTED') or die('Restricted access');
@@ -63,7 +66,8 @@ $project = $tpl->get('project');
                                         <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
                                     </div>
                                 <?php endif; ?>
-                                <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
+
+                                <x-global::forms.button type="submit" :tag="'input'" :btnType="'secondary'" :btnState="'error'" name="save" id="save" value="{{ __('buttons.save') }}" />
 
                             </div>
                         </div>
@@ -169,3 +173,5 @@ $project = $tpl->get('project');
     );
 
 </script>
+
+@endsection

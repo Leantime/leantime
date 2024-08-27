@@ -1,11 +1,20 @@
 @props([
-    'link' => '#',
-    'type' => 'primary',
-    'tag'  => 'a',
+    'label' => '',
+    'btnType' => 'primary',
+    'size' => '',
+    'btnState' => '',
+    'tag' => 'button'
 ])
 
-<{{ $tag }} {{ $attributes->merge([
-    'class' => 'btn btn-' . $type
-] + ($tag == 'a' ? ['href' => $link] : [])) }}>
-    {{ $slot }}
+@php
+    $typeClass = ($btnType == 'secondary' || $btnType == 'tertiary') ? 'btn-outline' : ''.' btn-'.$btnType;
+    $sizeClass = $size ? 'btn-'.$size : '';
+    $stateClass = $btnState ? 'btn-'.$btnState : ''
+@endphp
+
+<{{ $tag }} {{$attributes->merge(['class' => 'btn '.$typeClass.' '.$sizeClass. ' '.$stateClass])}}>
+    {{ $label }}
 </{{ $tag }}>
+
+
+
