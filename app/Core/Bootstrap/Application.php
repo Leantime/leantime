@@ -98,7 +98,7 @@ class Application extends Container
 
         Facade::setFacadeApplication($this);
 
-        EventDispatcher::discover_listeners();
+        EventDispatcher::discoverListeners();
 
         $this->boot();
     }

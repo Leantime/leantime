@@ -2,11 +2,11 @@
 
 @section('content')
 
-<x-global::pageheader :icon="'fa fa-user'">
+<x-global::content.pageheader :icon="'fa fa-user'">
     <h5>{{ __('label.overview') }}</h5>
     <h1>{!! __('headlines.accountSettings') !!}</h1>
 
-</x-global::pageheader>
+</x-global::content.pageheader>
 
 <div class="maincontent">
 
@@ -230,17 +230,17 @@
                                         <hr />
                                         <label for="colormode" >{{ __('label.colormode') }}</label>
 
-                                        <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
+                                        <x-global::forms.select-button :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                                             <label for="colormode-light" class="tw-w-[100px]">
                                                 <i class="fa-solid fa-sun tw-font-xxl"></i>
                                             </label>
-                                        </x-global::selectable>
+                                        </x-global::forms.select-button>
 
-                                        <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
+                                        <x-global::forms.select-button :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                                             <label for="colormode-light" class="tw-w-[100px]">
                                                 <i class="fa-solid fa-moon tw-font-xxl"></i>
                                             </label>
-                                        </x-global::selectable>
+                                        </x-global::forms.select-button>
 
                                     </div>
                                 </div>
@@ -250,12 +250,12 @@
                                         <label>Font</label>
                                         @foreach($availableFonts as $key => $font)
 
-                                            <x-global::selectable  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
+                                            <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                                                 <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
                                                        style="font-family:'{{ $font }}'; font-size:16px;">
                                                     The quick brown fox jumps over the lazy dog
                                                 </label>
-                                            </x-global::selectable>
+                                            </x-global::forms.select-button>
 
                                         @endforeach
 
@@ -266,11 +266,11 @@
                                         <hr />
                                         <label>Color Scheme</label>
                                         @foreach($availableColorSchemes as $key => $scheme )
-                                            <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
+                                            <x-global::forms.select-button class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                                                 <label for="color-{{ $key }}" class="colorCircle"
                                                        style="background:linear-gradient(135deg, {{ $scheme["primaryColor"] }} 20%, {{ $scheme["secondaryColor"] }} 100%);">
                                                 </label>
-                                            </x-global::selectable>
+                                            </x-global::forms.select-button>
                                         @endforeach
                                     </div>
                                 </div>

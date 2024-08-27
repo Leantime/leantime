@@ -25,6 +25,7 @@ use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Support\DateTimeInfoEnum;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use ReflectionClass;
@@ -377,7 +378,7 @@ class Template
             'login' => $this->login,
             'roles' => $this->roles,
             'language' => $this->language,
-
+            'dateTimeInfoEnum' => DateTimeInfoEnum::class,
         ]);
     }
 
