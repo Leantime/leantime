@@ -2,9 +2,10 @@
 
 namespace Leantime\Domain\Cron\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Core\Environment;
-    use Leantime\Core\Events;
+    use Illuminate\Support\Facades\Log;
+    use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Events\EventDispatcher;
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
 
@@ -34,11 +35,11 @@ namespace Leantime\Domain\Cron\Controllers {
         public function run(): Response
         {
             if (! $this->config->poorMansCron) {
-                error_log("Poor mans cron off");
+                Log::info("Poor Mans Cron is turned off");
                 return new Response();
             }
 
-            Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
+            EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
                 // Removes script execution limit
@@ -48,13 +49,15 @@ namespace Leantime\Domain\Cron\Controllers {
 
                     register_shutdown_function(function () use ($output) {
                         if ($this->config->debug) {
-                            error_log("Command Output: " . $output->fetch());
-                            error_log("Cron run finished");
+
+                            Log::info("Command Output: " . $output->fetch());
+                            Log::info("Cron run finished");
+
                         }
                     });
 
                 /** @return never **/
-                (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
+                (new \Leantime\Core\Console\ConsoleKernel())->call('schedule:run', [], $output);
 
 
             });

@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\Canvas\Repositories {
 
+    use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Tickets\Repositories\Tickets;
     use PDO;
 
@@ -866,10 +866,6 @@ namespace Leantime\Domain\Canvas\Repositories {
             }
         }
 
-        /**
-         * @param $values
-         * @return false|string
-         */
         /**
          * @param $values
          * @return false|string

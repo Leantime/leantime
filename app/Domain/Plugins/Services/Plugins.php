@@ -4,24 +4,24 @@ namespace Leantime\Domain\Plugins\Services {
 
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Eventhelpers;
+    use Illuminate\Http\Client\RequestException;
+    use Illuminate\Support\Facades\File;
+    use Illuminate\Support\Facades\Http;
+    use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
-    use Leantime\Domain\Plugins\Models\InstalledPlugin;
-    use Illuminate\Support\Facades\Http;
-    use Illuminate\Http\Client\RequestException;
     use Leantime\Domain\Setting\Services\Setting as SettingsService;
     use Leantime\Domain\Users\Services\Users as UsersService;
-    use Illuminate\Support\Facades\File;
-    use Illuminate\Support\Str;
 
     /**
      *
      */
     class Plugins
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         /**
          * @var string
@@ -117,7 +117,7 @@ namespace Leantime\Domain\Plugins\Services {
                         $installedPluginsById[$plugin]->enabled = true;
                         $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
                     } catch (Exception $e) {
-                        error_log($e);
+                        report($e);
                     }
                 });
             }
@@ -243,7 +243,7 @@ namespace Leantime\Domain\Plugins\Services {
             try {
                 $plugin = $this->createPluginFromComposer($pluginFolder);
             } catch (\Exception $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
 
@@ -254,7 +254,7 @@ namespace Leantime\Domain\Plugins\Services {
                 try {
                     $newPluginSvc->install();
                 } catch (Exception $e) {
-                    error_log($e);
+                    report($e);
                     return false;
                 }
             }
@@ -358,7 +358,7 @@ namespace Leantime\Domain\Plugins\Services {
                     try {
                         $newPluginSvc->uninstall();
                     } catch (\Exception $e) {
-                        error_log($e);
+                        report($e);
                         return false;
                     }
                 }
@@ -414,6 +414,7 @@ namespace Leantime\Domain\Plugins\Services {
                         ->set('vendorEmail', $plugin['vendor_email'] ?? '')
                         ->set('startingPrice', '$' . ($plugin['price'] ?? '') . (! empty($plugin['sub_interval']) ? '/' . $plugin['sub_interval'] : ''))
                         ->set('rating', $plugin['rating'] ?? '')
+                        ->set('version', $plugin['version'] ?? '')
                         ->get();
                 }
             }

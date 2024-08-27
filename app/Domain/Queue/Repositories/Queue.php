@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Queue\Repositories {
 
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use Leantime\Domain\Queue\Workers\Workers;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Queue\Repositories {
                 try {
                     $stmn->execute();
                 } catch (\PDOException  $e) {
-                    error_log($e);
+                   report($e);
                 }
 
                 $stmn->closeCursor();
@@ -156,7 +156,7 @@ namespace Leantime\Domain\Queue\Repositories {
             try {
                 $stmn->execute();
             } catch (\PDOException  $e) {
-                error_log($e);
+                report($e);
             }
 
             $stmn->closeCursor();

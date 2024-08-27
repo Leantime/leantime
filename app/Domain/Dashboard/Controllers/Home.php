@@ -2,25 +2,19 @@
 
 namespace Leantime\Domain\Dashboard\Controllers {
 
-    use GuzzleHttp\Promise\Promise;
     use Illuminate\Contracts\Container\BindingResolutionException;
-
-    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Reactions\Services\Reactions;
     use Leantime\Domain\Reports\Services\Reports;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Users\Services\Users as UserService;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Reports\Services\Reports as ReportService;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-    use Leantime\Core\Controller;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Widgets\Services\Widgets;
-    use SimplePie\Exception;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -101,7 +95,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 }
 
             }catch(\Exception $e){
-                error_log($e);
+                report($e);
             }*/
 
             return $this->tpl->display('dashboard.home');

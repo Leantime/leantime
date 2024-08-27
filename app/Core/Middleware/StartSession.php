@@ -3,23 +3,21 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Session\Session;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Encryption\Encrypter;
 
 class StartSession
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * The session manager.
@@ -87,11 +85,11 @@ class StartSession
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-
-            $lock->block(
-                $this->manager->defaultRouteBlockWaitSeconds()
-            );
-
+            //Acquire lock every 50ms for 20 seconds
+            $lock->block(20);
+            return $this->handleStatefulRequest($request, $session, $next);
+        } catch (LockTimeoutException $e) {
+            $lock->block(60);
             return $this->handleStatefulRequest($request, $session, $next);
         } finally {
             $lock?->release();
@@ -113,13 +111,15 @@ class StartSession
         // so that the data is ready for an application. Note that the Laravel sessions
         // do not make use of PHP "native" sessions in any way since they are crappy.
         $request->setLaravelSession(
-            $this->startsession($request, $session)
+            $this->startSession($request, $session)
         );
 
         $this->collectGarbage($session);
 
+        //Going deeper down the rabbit hole and executing the rest of the middleware and stack.
         $response = $next($request);
 
+        // Done processing the request, closing out the session
         $this->storeCurrentUrl($request, $session);
 
         $this->addCookieToResponse($response, $session);
@@ -139,7 +139,7 @@ class StartSession
      * @param  \Illuminate\Contracts\Session\Session $session
      * @return \Illuminate\Contracts\Session\Session
      */
-    protected function startsession(IncomingRequest $request, $session)
+    protected function startSession(IncomingRequest $request, $session)
     {
         return tap($session, function ($session) use ($request) {
             $session->setRequestOnHandler($request);
@@ -154,7 +154,7 @@ class StartSession
      * @param  IncomingRequest $request
      * @return \Illuminate\Contracts\Session\Session
      */
-    public function getsession(IncomingRequest $request)
+    public function getSession(IncomingRequest $request)
     {
         return tap($this->manager->driver(), function ($session) use ($request) {
             $session->setId($request->cookies->get($session->getName()));
@@ -201,12 +201,10 @@ class StartSession
     {
         if (
             $request->isMethod('GET')
-            /*&&
-            $request->route() instanceof Route &&
-            ! $request->ajax() &&
-            ! $request->prefetch() &&
-            ! $request->isPrecognitive()*/
+            && !$request->isApiOrCronRequest()
+            && !$request->isUnboostedHtmxRequest()
         ) {
+            $fullUrl = $request->fullUrl();
             $session->setPreviousUrl($request->fullUrl());
         }
     }
@@ -242,10 +240,11 @@ class StartSession
      * @param  IncomingRequest $request
      * @return void
      */
-    protected function savesession(IncomingRequest $request)
+    protected function saveSession(IncomingRequest $request)
     {
-
-        $this->manager->driver()->save();
+        if (!$request->isUnboostedHtmxRequest()) {
+            $this->manager->driver()->save();
+        }
     }
 
     /**

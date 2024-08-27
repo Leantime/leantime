@@ -7,8 +7,8 @@ namespace Leantime\Domain\Oidc\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Leantime\Core\Environment;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -447,7 +447,7 @@ class Oidc
             $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
             $endpoints = json_decode($response->getBody()->getContents(), true);
         }catch(\Exception $e) {
-            error_log($e);
+            report($e);
             return false;
         }
         //load all not yet defined endpoints from well-known configuration

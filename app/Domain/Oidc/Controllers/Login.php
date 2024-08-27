@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Oidc\Controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Leantime\Core\Controller;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 use Symfony\Component\HttpFoundation\Response;
 

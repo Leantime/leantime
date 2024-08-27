@@ -6,15 +6,15 @@
 
 namespace Leantime\Domain\Canvas\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
     /**
      *
@@ -258,6 +258,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
             }
 
+            $this->tpl->assign('id', $_GET['id']);
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
             return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');

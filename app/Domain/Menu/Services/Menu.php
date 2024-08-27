@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Menu\Services;
 
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -21,7 +21,7 @@ namespace Leantime\Domain\Menu\Services;
      */
 class Menu
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     private TemplateCore $tpl;
     private LanguageCore $language;

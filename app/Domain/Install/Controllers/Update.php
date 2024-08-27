@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Install\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\AppSettings as AppSettingCore;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Controller;
+    use Leantime\Core\Configuration\AppSettings as AppSettingCore;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +64,7 @@ namespace Leantime\Domain\Install\Controllers {
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
                         $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
-                        error_log($errorMessage);
+                        //report($errorMessage);
                     }
                     $this->tpl->setNotification("There was a problem updating your database. Please check your error logs to verify your database is up to date.", "error");
                     return FrontcontrollerCore::redirect(BASE_URL . "/install/update");

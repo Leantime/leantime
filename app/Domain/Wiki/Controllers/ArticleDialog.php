@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Wiki\Models\Article;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;

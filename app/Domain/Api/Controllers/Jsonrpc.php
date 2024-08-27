@@ -9,8 +9,7 @@ namespace Leantime\Domain\Api\Controllers;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
-use Leantime\Core\Controller;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Controller\Controller;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -160,10 +159,11 @@ class Jsonrpc extends Controller
 
         $jsonRpcVer = $params['jsonrpc'] ?? null;
 
+        $moduleName = Str::studly($methodparts['module']);
         $serviceName = Str::studly($methodparts['service']);
 
-        $domainServiceNamespace = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
-        $pluginServiceNamespace = app()->getNamespace() . "Plugins\\$serviceName\\Services\\$serviceName";
+        $domainServiceNamespace = app()->getNamespace() . "Domain\\$moduleName\\Services\\$serviceName";
+        $pluginServiceNamespace = app()->getNamespace() . "Plugins\\$moduleName\\Services\\$serviceName";
 
         $methodName = Str::camel($methodparts['method']);
 
@@ -180,6 +180,9 @@ class Jsonrpc extends Controller
         if (! method_exists($serviceName, $methodName)) {
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
+
+        //Check method attributes
+        //TODO: Check if method is available for api
 
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest("You must include a \"jsonrpc\" parameter with a value of \"2.0\"", $id);
@@ -204,7 +207,7 @@ class Jsonrpc extends Controller
         // can be null
         try {
             $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
-        } catch (\Error $e) {
+        } catch (Exception $e) {
             return $this->returnServerError($e, $id);
         }
 
@@ -236,15 +239,31 @@ class Jsonrpc extends Controller
             throw new Exception("Method string doesn't start with \"leantime.rpc.\"");
         }
 
+        //method parameter breakdown
+        //00000000.111.22222222.3333333333333.444444444444
+        //leantime.rpc.{module}.{servicename}.{methodname}
         $methodStringPieces = explode('.', $methodstring);
-        if (count($methodStringPieces) !== 4) {
-            throw new Exception("Method is case sensitive and must follow the following naming convention: \"leantime.rpc.{servicename}.{methodname}\"");
+
+        if (count($methodStringPieces) !== 4 && count($methodStringPieces) !== 5) {
+            throw new Exception("Method is case sensitive and must follow the following naming convention: \"leantime.rpc.{domain}.{servicename}.{methodname}\"");
         }
 
-        return [
-            'service' => $methodStringPieces[2],
-            'method' => $methodStringPieces[3],
-        ];
+        if (count($methodStringPieces) === 4){
+            return [
+                'module' => $methodStringPieces[2],
+                'service' => $methodStringPieces[2],
+                'method' => $methodStringPieces[3],
+            ];
+        }
+
+        if (count($methodStringPieces) === 5){
+            return [
+                'module' => $methodStringPieces[2],
+                'service' => $methodStringPieces[3],
+                'method' => $methodStringPieces[4],
+            ];
+        }
+
     }
 
     /**
@@ -309,7 +328,7 @@ class Jsonrpc extends Controller
                 try {
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
-                    error_log($e);
+                    report($e);
                     throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
                 }
             }

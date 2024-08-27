@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Entityrelations\Repositories {
 
     use Exception;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use PDO;
 
     /**
@@ -55,7 +55,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
 
@@ -153,7 +153,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 session(["isInstalled" => true]);
                 return true;
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 session(["isInstalled" => false]);
                 return false;
             }

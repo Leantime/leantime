@@ -3,23 +3,21 @@
 namespace Leantime\Domain\Dashboard\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Reactions\Models\Reactions;
-    use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Users\Services\Users as UserService;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Comments\Services\Comments as CommentService;
-    use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
-    use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Controller;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Reactions\Models\Reactions;
+    use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
+    use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -81,7 +79,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }
 
-            $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
+            $projectRedirectFilter = self::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
             if ($projectRedirectFilter != "/dashboard/show") {
                 return FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
             }

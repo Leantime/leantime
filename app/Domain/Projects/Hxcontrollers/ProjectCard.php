@@ -2,20 +2,19 @@
 
 namespace Leantime\Domain\Projects\Hxcontrollers;
 
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Controller\HtmxController;
+use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Menu\Services\Menu;
-use Leantime\Domain\Reactions\Services\Reactions;
-use Leantime\Domain\Timesheets\Services\Timesheets;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Reactions\Services\Reactions;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Users\Services\Users as UserService;
 
 class ProjectCard extends HtmxController
 {
@@ -107,7 +106,8 @@ class ProjectCard extends HtmxController
 
         $this->setHTMXEvent("HTMX.updateProjectList");
 
-
+        $project = $this->projectsService->getProject($projectId);
+        $this->tpl->assign("project", $project);
     }
 
     public function getProgress() {
@@ -131,6 +131,8 @@ class ProjectCard extends HtmxController
         $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
 
         $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+
+        $project = $this->projectsService->getProject($projectId);
 
         $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
         $this->tpl->assign("currentUrlPath", $currentUrlPath);

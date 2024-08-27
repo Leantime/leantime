@@ -2,14 +2,14 @@
 
 namespace Leantime\Domain\Reactions\Models;
 
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 
 /**
  *
  */
 class Reactions
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @access public

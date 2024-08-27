@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Connector\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
 

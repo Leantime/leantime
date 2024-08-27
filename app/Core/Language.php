@@ -5,6 +5,10 @@ namespace Leantime\Core;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\ApiRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Language
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var string
@@ -95,14 +99,11 @@ class Language
         //Get list of available languages
         $this->langlist = $this->getLanguageList();
 
-        //Get language that was set in middleware
-        $language =  session("usersettings.language") ?? $this->config->language;
+        $lang = $this->getCurrentLanguage();
+        $this->readIni();
 
-        //Start checking if the user has a language set
-        if (!$this->setLanguage($language)) {
-            $this->setLanguage("en-US");
-        }
     }
+
 
     /**
      * Set the language for the application.
@@ -120,15 +121,18 @@ class Language
 
         session(["usersettings.language" => $lang]);
 
-        if (! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-            Events::add_filter_listener(
-                'leantime.core.httpkernel.handle.beforeSendResponse',
+        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !request()->isApiOrCronRequest()) {
+
+            $isAPIRequest = request()->isApiOrCronRequest();
+
+            EventDispatcher::add_filter_listener(
+                'leantime.core.http.httpkernel.handle.beforeSendResponse',
                 fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                     Cookie::create('language')
                     ->withValue($lang)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
-                    ->withSameSite('Strict')
+                    ->withSameSite('Lax')
                 ))
             );
         }
@@ -145,6 +149,23 @@ class Language
      */
     public function getCurrentLanguage(): string
     {
+
+        if (session()->has("usersettings.language")) {
+            $this->language = session("usersettings.language");
+            return  $this->language;
+        }
+
+        if (isset($_COOKIE['language'])) {
+            $this->language = $_COOKIE['language'];
+            return  $this->language;
+        }
+
+        if(session("companysettings.language")){
+            $this->language = session("companysettings.language");
+            return  $this->language;
+        }
+
+        $this->language = $this->config->language;
         return $this->language;
     }
 

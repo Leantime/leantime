@@ -2,9 +2,9 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\AppSettings;
-use Leantime\Core\Composer;
-use Leantime\Core\Environment;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Composer;
 use Leantime\Core\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
 

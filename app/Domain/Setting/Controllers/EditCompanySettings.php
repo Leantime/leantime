@@ -3,15 +3,14 @@
 namespace Leantime\Domain\Setting\Controllers {
 
 
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Api\Services\Api as ApiService;
-    use Leantime\Domain\Setting\Services\Setting as SettingService;
-    use Leantime\Domain\Reports\Services\Reports as ReportService;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Reports\Services\Reports as ReportService;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Setting\Services\Setting as SettingService;
 
     /**
      *

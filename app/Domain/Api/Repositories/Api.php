@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Api\Repositories;
 
-use Leantime\Core\Db as DbCore;
-use PDO;
+use Leantime\Core\Db\Db as DbCore;
 
 /**
  *

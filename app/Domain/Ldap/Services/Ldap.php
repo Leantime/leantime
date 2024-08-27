@@ -4,7 +4,7 @@ namespace Leantime\Domain\Ldap\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use LDAP\Connection;
-use Leantime\Core\Environment;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
@@ -82,12 +82,12 @@ class Ldap
             $this->ldapUri = $this->config->ldapUri;
 
             if (!is_object($this->ldapLtGroupAssignments)) {
-                error_log("LDAP: Group Assignment array failed to parse. Please check for valid json");
+                report("LDAP: Group Assignment array failed to parse. Please check for valid json");
                 return false;
             }
 
             if (!is_object($this->ldapKeys)) {
-                error_log("LDAP: Ldap Keys failed to parse. Please check for valid json");
+                report("LDAP: Ldap Keys failed to parse. Please check for valid json");
                 return false;
             }
         }
@@ -121,7 +121,7 @@ class Ldap
 
             return true;
         } else {
-            error_log("ldap extension not installed", 0);
+            report("ldap extension not installed", 0);
             return false;
         }
     }
@@ -158,10 +158,10 @@ class Ldap
             }
 
             if ($this->config->debug == 1) {
-                error_log(ldap_error($this->ldapConnection));
+                report(ldap_error($this->ldapConnection));
                 ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
                 if ($err) {
-                    error_log($err);
+                    report($err);
                 }
             }
         }
@@ -175,7 +175,7 @@ class Ldap
     public function getEmail($username)
     {
         if (!$this->ldapConnection) {
-            error_log("No connection, last error: " . ldap_error($this->ldapConnection));
+            report("No connection, last error: " . ldap_error($this->ldapConnection));
         }
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
 
@@ -185,9 +185,9 @@ class Ldap
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
         if ($entries === false) {
-            error_log(ldap_error($this->ldapConnection));
+            report(ldap_error($this->ldapConnection));
             ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            error_log($err);
+            report($err);
         }
         $mail = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
         return $mail;
@@ -201,7 +201,7 @@ class Ldap
     {
 
         if (!$this->ldapConnection) {
-            error_log("No connection, last error: " . ldap_error($this->ldapConnection));
+            report("No connection, last error: " . ldap_error($this->ldapConnection));
         }
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
@@ -212,9 +212,9 @@ class Ldap
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
         if ($entries === false || !isset($entries[0])) {
-            error_log(ldap_error($this->ldapConnection));
+            report(ldap_error($this->ldapConnection));
             ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            error_log($err);
+            report($err);
             return false;
         }
 
@@ -250,20 +250,20 @@ class Ldap
         $jobTitle = isset($entries[0][strtolower($this->ldapKeys->jobTitle)]) ? $entries[0][strtolower($this->ldapKeys->jobTitle)][0] : '';
         $jobLevel = isset($entries[0][strtolower($this->ldapKeys->jobLevel)]) ? $entries[0][strtolower($this->ldapKeys->jobLevel)][0] : '';
         $department = isset($entries[0][strtolower($this->ldapKeys->department)]) ? $entries[0][strtolower($this->ldapKeys->department)][0] : '';
-	
-        if ($this->config->debug) {
-            error_log("LEANTIME: Testing the logging\n");
 
-            error_log("LEANTIME: >>>Attributes Begin>>>>>>\n");
-            error_log("LEANTIME: fn $firstname", 0);
-            error_log("LEANTIME: sn $lastname", 0);
-            error_log("LEANTIME: phone $phone", 0);
-            error_log("LEANTIME: role $role", 0);
-            error_log("LEANTIME: username $uname ", 0);
-            error_log("LEANTIME: jobTitle $jobTitle ", 0);
-            error_log("LEANTIME: jobLevel $jobLevel ", 0);
-            error_log("LEANTIME: department $department ", 0);
-            error_log("LEANTIME: >>>Attributes End>>>>>>\n", 0);
+        if ($this->config->debug) {
+            report("LEANTIME: Testing the logging\n");
+
+            report("LEANTIME: >>>Attributes Begin>>>>>>\n");
+            report("LEANTIME: fn $firstname", 0);
+            report("LEANTIME: sn $lastname", 0);
+            report("LEANTIME: phone $phone", 0);
+            report("LEANTIME: role $role", 0);
+            report("LEANTIME: username $uname ", 0);
+            report("LEANTIME: jobTitle $jobTitle ", 0);
+            report("LEANTIME: jobLevel $jobLevel ", 0);
+            report("LEANTIME: department $department ", 0);
+            report("LEANTIME: >>>Attributes End>>>>>>\n", 0);
         }
 
         return array(
@@ -325,7 +325,7 @@ class Ldap
 
             return $allUsers;
         } else {
-            error_log("ldap extension not installed", 0);
+            report("ldap extension not installed", 0);
             return false;
         }
     }

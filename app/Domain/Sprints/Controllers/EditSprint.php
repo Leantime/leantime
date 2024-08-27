@@ -2,15 +2,12 @@
 
 namespace Leantime\Domain\Sprints\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Core\Support\DateTimeHelper;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Projects\Services\Projects;
-    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-    use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
-    use DateTime;
-    use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Projects\Services\Projects;
+    use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 
     /**
      *

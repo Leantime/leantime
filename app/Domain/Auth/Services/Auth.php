@@ -2,19 +2,16 @@
 
 namespace Leantime\Domain\Auth\Services;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
-use Leantime\Core\Environment as EnvironmentCore;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
 use Leantime\Core\Theme;
-use Leantime\Domain\Auth\Models\CurrentUser;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
@@ -27,7 +24,7 @@ use RobThree\Auth\TwoFactorAuth;
  */
 class Auth
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * @var int|null user id from DB
@@ -181,7 +178,7 @@ class Auth
 
         // Ensure the role is a valid role
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
-            error_log("Check for invalid role detected: " . $roleToCheck);
+            report("Check for invalid role detected: " . $roleToCheck);
             return false;
         }
 
@@ -245,7 +242,7 @@ class Auth
                     if ($userId !== false) {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
-                        error_log("Ldap user creation failed.");
+                        report("Ldap user creation failed.");
                         return false;
                     }
 
@@ -267,7 +264,7 @@ class Auth
 
                     return true;
                 } else {
-                    error_log("Could not retrieve user by email");
+                    report("Could not retrieve user by email");
 
                     return false;
                 }
@@ -276,7 +273,7 @@ class Auth
             // Don't return false, to allow the standard login provider to check the db for contractors or clients not
             // in ldap
         } elseif ($this->config->useLdap === true && !extension_loaded('ldap')) {
-            error_log("Can't use ldap. Extension not installed");
+            report("Can't use ldap. Extension not installed");
         }
 
         // TODO: Single Sign On?
@@ -325,7 +322,7 @@ class Auth
             "twoFAVerified" => false,
             "twoFASecret" => $user['twoFASecret'] ?? '',
             "isLdap" => $isLdap,
-            "createdOn" => dtHelper()->parseDbDateTime($user['createdOn']) ?? dtHelper()->userNow(),
+            "createdOn" => !empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
             "modified" => !empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow()
         );
 
@@ -383,14 +380,6 @@ class Auth
         } else {
             return false;
         }
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSessionId(): ?string
-    {
-        return session()->getSid();
     }
 
     /**
@@ -484,7 +473,7 @@ class Auth
                     return true;
                 }
             } elseif ($this->config->debug) {
-                error_log(
+                report(
                     "PW reset failed: maximum request count has been reached for user " . $userFromDB['id']
                 );
             }
@@ -525,7 +514,7 @@ class Auth
         $testKey = array_search($role, Roles::getRoles());
 
         if ($role == "" || $testKey === false) {
-            error_log("Check for invalid role detected: " . $role);
+            report("Check for invalid role detected: " . $role);
             return false;
         }
 
@@ -654,6 +643,6 @@ class Auth
         $ip = $_SERVER['REMOTE_ADDR'];
         $msg = "[" . $date . "][" . $ip . "] Login failed for user: " . $user;
 
-        error_log($msg);
+        report($msg);
     }
 }

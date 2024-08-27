@@ -4,8 +4,8 @@ namespace Leantime\Domain\Tickets\Repositories {
 
     use Carbon\CarbonImmutable;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Eventhelpers as EventhelperCore;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Users\Services\Users;
     use PDO;
@@ -610,7 +610,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $stmn->execute();
 
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
             $stmn->closeCursor();
 
             return $values;
@@ -642,7 +642,9 @@ namespace Leantime\Domain\Tickets\Repositories {
                     zp_tickets.planHours,
                     zp_tickets.editFrom,
                     zp_tickets.editTo,
-                    zp_tickets.hourRemaining
+                    zp_tickets.hourRemaining,
+                    zp_projects.name AS projectName,
+                    zp_projects.details AS projectDescription
                 FROM
                     zp_tickets
                 LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
@@ -880,6 +882,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 						zp_tickets.dependingTicketId,
 						zp_tickets.milestoneid,
 						zp_projects.name AS projectName,
+						zp_projects.details AS projectDescription,
 						zp_clients.name AS clientName,
 						zp_user.firstname AS userFirstname,
 						zp_user.lastname AS userLastname,

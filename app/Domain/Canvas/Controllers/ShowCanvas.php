@@ -6,13 +6,13 @@
 
 namespace Leantime\Domain\Canvas\Controllers {
 
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 
     /**
      *
@@ -73,26 +73,26 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 if (!$found) {
                     $currentCanvasId = -1;
-                    session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
+                    session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => '']);
                 }
             } else {
                 $currentCanvasId = -1;
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => '']);
             }
 
             if (count($allCanvas) > 0 && session("current" . strtoupper(static::CANVAS_NAME) . "Canvas") == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             if (isset($_GET['id']) === true) {
                 $currentCanvasId = (int)$_GET['id'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             if (isset($_REQUEST['searchCanvas']) === true) {
                 $currentCanvasId = (int)$_REQUEST['searchCanvas'];
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
             }
 
@@ -133,7 +133,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -174,7 +174,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -219,7 +219,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                         if ($importCanvasId !== false) {
                             $currentCanvasId = $importCanvasId;
                             $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
-                            session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                            session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
 
                             $mailer = app()->make(MailerCore::class);
                             $this->projectService = app()->make(ProjectService::class);
@@ -255,6 +255,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                 }
             }
 
+            $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
+            session(['filter_status' => $filter['status']]);
+            $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+            session(['filter_relates' => $filter['relates']]);
+
+            $this->tpl->assign('filter', $filter);
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());

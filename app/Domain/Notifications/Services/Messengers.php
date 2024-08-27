@@ -96,7 +96,7 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e);
+                report($e);
 
                 return false;
             }
@@ -134,7 +134,7 @@ class Messengers
 
                 return true;
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
 
                 return false;
             }
@@ -187,7 +187,7 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e);
+                report($e);
 
                 return false;
             }
@@ -252,7 +252,7 @@ class Messengers
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
                 } catch (GuzzleException $e) {
-                    error_log($e);
+                    report($e);
 
                     return false;
                 }

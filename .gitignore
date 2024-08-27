@@ -118,4 +118,3 @@ config/.env
 
 # Local Dev Files
 .dev/docker-compose.local.yaml
-logs/error.log

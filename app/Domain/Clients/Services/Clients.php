@@ -2,13 +2,9 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\Service;
 use Leantime\Core\Template as TemplateCore;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Template;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Projects\Repositories\Projects;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
 /**
  * Class Clients

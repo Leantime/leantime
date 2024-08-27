@@ -1,6 +1,6 @@
 <?php
 
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 
 $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
 

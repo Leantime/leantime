@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 
     /**
      *

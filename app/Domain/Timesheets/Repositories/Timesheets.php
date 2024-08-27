@@ -3,14 +3,11 @@
 namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
-use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db as DbCore;
-use Leantime\Core\Repository;
-use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Db\Repository;
 use PDO;
 use PHPUnit\Exception;
 
@@ -184,6 +181,86 @@ class Timesheets extends Repository
         return $call->fetchAll();
     }
 
+    public function getAllAccountTimesheets(?int $projectId): array|false
+    {
+        $query = "SELECT
+                        zp_timesheets.id,
+                        zp_timesheets.userId,
+                        zp_timesheets.ticketId,
+                        zp_timesheets.workDate,
+                        zp_timesheets.hours,
+                        zp_timesheets.description,
+                        zp_timesheets.kind,
+                        zp_projects.name,
+                        zp_projects.id AS projectId,
+                        zp_clients.name AS clientName,
+                        zp_clients.id AS clientId,
+                        zp_timesheets.invoicedEmpl,
+                        zp_timesheets.invoicedComp,
+                        zp_timesheets.invoicedEmplDate,
+                        zp_timesheets.invoicedCompDate,
+                        zp_timesheets.paid,
+                        zp_timesheets.paidDate,
+                        zp_timesheets.modified,
+                        zp_user.firstname,
+                        zp_user.lastname,
+                        zp_tickets.id as ticketId,
+                        zp_tickets.headline,
+                        zp_tickets.planHours,
+                        zp_tickets.tags,
+                        milestone.headline as milestone
+                    FROM
+                        zp_timesheets
+                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
+                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id
+                    WHERE (
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                        OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
+                    )";
+
+        //If user is not a manager, only pull their own timesheet entries
+        if( session("userdata.role") !== 'admin' && session("userdata.role") !== 'manager') {
+            $query .= " AND zp_timesheets.userId = :userId";
+        }
+
+        if (isset($projectId) && $projectId  > 0) {
+            $query .= " AND (zp_projects.id = :projectId)";
+        }
+
+        $query .= " GROUP BY
+                zp_timesheets.id,
+                zp_timesheets.userId,
+                zp_timesheets.ticketId,
+                zp_timesheets.workDate,
+                zp_timesheets.hours,
+                zp_timesheets.description,
+                zp_timesheets.kind";
+
+        $stmn = $this->db->database->prepare($query);
+
+        if (session()->exists("userdata")) {
+            $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+        } else {
+            $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+        }
+
+        $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+        $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+        if (isset($projectId) && $projectId  > 0) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+
+        $stmn->closeCursor();
+        return $values;
+    }
 
     /**
      * Retrieves the total number of hours booked from the timesheets table.
@@ -308,6 +385,199 @@ class Timesheets extends Repository
     }
 
     /**
+     * getTime - get a specific time entry
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function getTimesheet(int $id): mixed
+    {
+        $query = "SELECT
+            zp_timesheets.id,
+            zp_timesheets.userId,
+            zp_timesheets.ticketId,
+            zp_timesheets.workDate,
+            zp_timesheets.hours,
+            zp_timesheets.description,
+            zp_timesheets.kind,
+            zp_projects.id AS projectId,
+            zp_timesheets.invoicedEmpl,
+            zp_timesheets.invoicedComp,
+            zp_timesheets.invoicedEmplDate,
+            zp_timesheets.invoicedCompDate,
+            zp_timesheets.paid,
+            zp_timesheets.paidDate,
+            zp_timesheets.modified
+
+        FROM zp_timesheets
+        LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+        LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+        WHERE zp_timesheets.id = :id";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+
+        $call->bindValue(':id', $id);
+
+        return $call->fetch();
+    }
+
+    /**
+     * getProjectHours - get the Project hours for a specific project
+     *
+     * @TODO: Function is currently not used by core.
+     *
+     * @param int $projectId
+     *
+     * @return mixed
+     */
+    public function getProjectHours(int $projectId)
+    {
+        $query = "SELECT
+            MONTH(zp_timesheets.workDate) AS month,
+            SUM(zp_timesheets.hours) AS summe
+        FROM
+            zp_timesheets LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
+        WHERE
+            zp_tickets.projectId = :projectId
+        GROUP BY
+            MONTH(zp_timesheets.workDate)
+            WITH ROLLUP
+        LIMIT 12";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':projectId', $projectId);
+
+        return $call->fetchAll();
+    }
+
+    /**
+     * getLoggedHoursForTicket - get the Ticket hours for a specific ticket
+     *
+     * @access public
+     *
+     * @param int $ticketId
+     *
+     * @return array
+     *
+     * @throws BindingResolutionException
+     */
+    public function getLoggedHoursForTicket(int $ticketId): array
+    {
+        $query = "SELECT
+                YEAR(zp_timesheets.workDate) AS year,
+                zp_timesheets.workdate,
+                DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
+                DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
+                DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
+                SUM(ROUND(zp_timesheets.hours, 2)) AS summe
+            FROM
+                zp_timesheets
+            WHERE
+                zp_timesheets.ticketId = :ticketId
+                AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
+            GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
+            ORDER BY utc";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $ticketId);
+
+        $values = $call->fetchAll();
+        $returnValues = array();
+
+        if (count($values) > 0) {
+            try {
+                $startDate = dtHelper()->parseDbDateTime($values[0]['workdate'])->startOfMonth();
+                $endDate = dtHelper()->parseDbDateTime(last($values)['workdate'])->lastOfMonth();
+
+                $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
+                foreach ($range as $key => $date) {
+                    $utc = $date->format('Y-m-d');
+                    $returnValues[$utc] = [
+                        'utc' => $utc,
+                        'summe' => 0,
+                    ];
+                }
+
+                foreach ($values as $row) {
+                    $returnValues[$row['utc']]["summe"] = $row['summe'];
+                }
+            } catch (\Exception $e) {
+                // Some broken date formats in the db. Log error and return empty results.
+                report($e);
+
+                $utc = dtHelper()->dbNow()->format("Y-m-d");
+                $returnValues[$utc] = [
+                    'utc' => $utc,
+                    'summe' => 0,
+                ];
+            }
+        } else {
+            $utc = dtHelper()->dbNow()->format("Y-m-d");
+            $returnValues[$utc] = [
+                'utc' => $utc,
+                'summe' => 0,
+            ];
+        }
+
+        return $returnValues;
+    }
+
+    /**
+     * isClocked - Checks to see whether a user is clocked in
+     *
+     * @param int $id $id
+     *
+     * @return array|false
+     */
+    public function isClocked(int $id): false|array
+    {
+        if (!session()->exists("userdata")) {
+            return false;
+        }
+
+        $query = "SELECT
+                 zp_punch_clock.id,
+                 zp_punch_clock.userId,
+                 zp_punch_clock.minutes,
+                 zp_punch_clock.hours,
+                 zp_punch_clock.punchIn,
+                 zp_tickets.headline,
+                 zp_tickets.id as ticketId
+              FROM `zp_punch_clock`
+              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
+
+        $onTheClock = false;
+
+        $call = $this->dbcall(func_get_args());
+        $call->prepare($query);
+        $call->bindValue(':sessionId', session("userdata.id"));
+
+        $results = $call->fetchAll();
+
+        if (count($results) > 0) {
+            $onTheClock = array();
+            $onTheClock["id"] = $results[0]["id"];
+            $onTheClock["since"] = $results[0]["punchIn"];
+            $onTheClock["headline"] = $results[0]["headline"];
+            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
+            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+
+            $r = $since_start->format('%H:%I');
+
+            $onTheClock["totalTime"] = $r;
+        }
+
+        return $onTheClock;
+    }
+
+    /**
      * addTime - add user-specific time entry
      *
      * @param array $values
@@ -379,6 +649,103 @@ class Timesheets extends Repository
     }
 
     /**
+     * punchIn - clock in on a specified ticket
+     *
+     * @param int $ticketId
+     *
+     * @return mixed
+     */
+    public function punchIn(int $ticketId): mixed
+    {
+        $query = "INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+
+        $call->bindValue(':ticketId', $ticketId);
+        $call->bindValue(':sessionId', session("userdata.id"));
+        // Unix timestamp is by default UTC.
+        $call->bindValue(':time', time());
+
+        $value = $call->execute();
+
+        return $value;
+    }
+
+    /**
+     * punchOut - clock out on whatever ticket is open for the user
+     *
+     * @param int $ticketId
+     *
+     * @return float|false|int
+     *
+     * @throws BindingResolutionException
+     */
+    public function punchOut(int $ticketId): float|false|int
+    {
+        $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
+
+        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'select']);
+
+        $call->prepare($query);
+
+        $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+        $call->bindValue(':sessionId', session("userdata.id"), PDO::PARAM_INT);
+
+        $result = $call->fetch();
+        unset($call);
+
+        if (!$result) {
+            return false;
+        }
+
+        $inTimestamp = $result['punchIn'];
+        $outTimestamp = time();
+
+        $seconds =  ($outTimestamp - $inTimestamp);
+        $totalMinutesWorked = $seconds / 60;
+        $hoursWorked = round(($totalMinutesWorked / 60), 2);
+
+        $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
+
+        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'delete']);
+
+        $call->prepare($query);
+
+        $call->bindValue(':ticketId', $ticketId);
+        $call->bindValue(':sessionId', session("userdata.id"));
+
+        $call->execute();
+
+        unset($call);
+
+        // At least 1 minutes
+        if ($hoursWorked < 0.016) {
+            return 0;
+        }
+
+        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
+                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
+                  ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
+
+
+        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, "UTC")->setToUserTimezone()->startOfDay();
+
+        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $ticketId);
+        $call->bindValue(':sessionId', session("userdata.id"));
+        $call->bindValue(':hoursWorked', $hoursWorked);
+        $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
+        $call->bindValue(':modified',  date('Y-m-d H:i:s'));
+
+        $call->execute();
+
+        return $hoursWorked;
+    }
+
+    /**
      * addTime - add user-specific time entry
      *
      * @param array $values
@@ -443,46 +810,6 @@ class Timesheets extends Repository
         $call->execute();
 
         $this->cleanUpEmptyTimesheets();
-    }
-
-    /**
-     * getTime - get a specific time entry
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function getTimesheet(int $id): mixed
-    {
-        $query = "SELECT
-            zp_timesheets.id,
-            zp_timesheets.userId,
-            zp_timesheets.ticketId,
-            zp_timesheets.workDate,
-            zp_timesheets.hours,
-            zp_timesheets.description,
-            zp_timesheets.kind,
-            zp_projects.id AS projectId,
-            zp_timesheets.invoicedEmpl,
-            zp_timesheets.invoicedComp,
-            zp_timesheets.invoicedEmplDate,
-            zp_timesheets.invoicedCompDate,
-            zp_timesheets.paid,
-            zp_timesheets.paidDate,
-            zp_timesheets.modified
-
-        FROM zp_timesheets
-        LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-        LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-        WHERE zp_timesheets.id = :id";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-
-        $call->bindValue(':id', $id);
-
-        return $call->fetch();
     }
 
     /**
@@ -575,147 +902,6 @@ class Timesheets extends Repository
     }
 
     /**
-     * getProjectHours - get the Project hours for a specific project
-     *
-     * @TODO: Function is currently not used by core.
-     *
-     * @param int $projectId
-     *
-     * @return mixed
-     */
-    public function getProjectHours(int $projectId)
-    {
-        $query = "SELECT
-            MONTH(zp_timesheets.workDate) AS month,
-            SUM(zp_timesheets.hours) AS summe
-        FROM
-            zp_timesheets LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-        WHERE
-            zp_tickets.projectId = :projectId
-        GROUP BY
-            MONTH(zp_timesheets.workDate)
-            WITH ROLLUP
-        LIMIT 12";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-        $call->bindValue(':projectId', $projectId);
-
-        return $call->fetchAll();
-    }
-
-    /**
-     * getLoggedHoursForTicket - get the Ticket hours for a specific ticket
-     *
-     * @access public
-     *
-     * @param int $ticketId
-     *
-     * @return array
-     *
-     * @throws BindingResolutionException
-     */
-    public function getLoggedHoursForTicket(int $ticketId): array
-    {
-        $query = "SELECT
-                YEAR(zp_timesheets.workDate) AS year,
-                zp_timesheets.workdate,
-                DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
-                DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
-                DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-                SUM(ROUND(zp_timesheets.hours, 2)) AS summe
-            FROM
-                zp_timesheets
-            WHERE
-                zp_timesheets.ticketId = :ticketId
-                AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
-            GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
-            ORDER BY utc";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-        $call->bindValue(':ticketId', $ticketId);
-
-        $values = $call->fetchAll();
-        $returnValues = array();
-
-        if (count($values) > 0) {
-            try {
-                $startDate = dtHelper()->parseDbDateTime($values[0]['workdate'])->startOfMonth();
-                $endDate = dtHelper()->parseDbDateTime(last($values)['workdate'])->lastOfMonth();
-
-                $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
-                foreach ($range as $key => $date) {
-                    $utc = $date->format('Y-m-d');
-                    $returnValues[$utc] = [
-                        'utc' => $utc,
-                        'summe' => 0,
-                    ];
-                }
-
-                foreach ($values as $row) {
-                    $returnValues[$row['utc']]["summe"] = $row['summe'];
-                }
-            } catch (\Exception $e) {
-                // Some broken date formats in the db. Log error and return empty results.
-                error_log($e);
-
-                $utc = dtHelper()->dbNow()->format("Y-m-d");
-                $returnValues[$utc] = [
-                    'utc' => $utc,
-                    'summe' => 0,
-                ];
-            }
-        } else {
-            $utc = dtHelper()->dbNow()->format("Y-m-d");
-            $returnValues[$utc] = [
-                'utc' => $utc,
-                'summe' => 0,
-            ];
-        }
-
-        return $returnValues;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return void
-     */
-    public function deleteTime(int $id): void
-    {
-        $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-        $call->bindValue(':id', $id);
-
-        $call->execute();
-    }
-
-    /**
-     * Clean up empty timesheets.
-     *
-     * This function deletes all timesheets from the "zp_timesheets" table
-     * where the hours value is equal to 0.
-     *
-     * @return void
-     */
-    public function cleanUpEmptyTimesheets(): void
-    {
-        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($query);
-
-        $call->execute();
-    }
-
-    /**
      * updateInvoices
      *
      * @param array $invEmpl
@@ -781,198 +967,39 @@ class Timesheets extends Repository
     }
 
     /**
-     * punchIn - clock in on a specified ticket
+     * @param int $id
      *
-     * @param int $ticketId
-     *
-     * @return mixed
+     * @return void
      */
-    public function punchIn(int $ticketId): mixed
+    public function deleteTime(int $id): void
     {
-        $query = "INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)";
+        $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
+        $call->bindValue(':id', $id);
 
-        $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
-        // Unix timestamp is by default UTC.
-        $call->bindValue(':time', time());
-
-        $value = $call->execute();
-
-        return $value;
+        $call->execute();
     }
 
     /**
-     * punchOut - clock out on whatever ticket is open for the user
+     * Clean up empty timesheets.
      *
-     * @param int $ticketId
+     * This function deletes all timesheets from the "zp_timesheets" table
+     * where the hours value is equal to 0.
      *
-     * @return float|false|int
-     *
-     * @throws BindingResolutionException
+     * @return void
      */
-    public function punchOut(int $ticketId): float|false|int
+    public function cleanUpEmptyTimesheets(): void
     {
-        $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
-
-        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'select']);
-
-        $call->prepare($query);
-
-        $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-        $call->bindValue(':sessionId', session("userdata.id"), PDO::PARAM_INT);
-
-        $result = $call->fetch();
-        unset($call);
-
-        if (!$result) {
-            return false;
-        }
-
-        $inTimestamp = $result['punchIn'];
-        $outTimestamp = time();
-
-        $seconds =  ($outTimestamp - $inTimestamp);
-        $totalMinutesWorked = $seconds / 60;
-        $hoursWorked = round(($totalMinutesWorked / 60), 2);
-
-        $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
-
-        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'delete']);
-
-        $call->prepare($query);
-
-        $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
-
-        $call->execute();
-
-        unset($call);
-
-        // At least 1 minutes
-        if ($hoursWorked < 0.016) {
-            return 0;
-        }
-
-        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind)
-                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE')
-                  ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
-
-
-        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, "UTC")->setToUserTimezone()->startOfDay();
-
-        $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
-        $call->prepare($query);
-        $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
-        $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
-
-        $call->execute();
-
-        return $hoursWorked;
-    }
-
-    /**
-     * isClocked - Checks to see whether a user is clocked in
-     *
-     * @param int $id $id
-     *
-     * @return array|false
-     */
-    public function isClocked(int $id): false|array
-    {
-        if (!session()->exists("userdata")) {
-            return false;
-        }
-
-        $query = "SELECT
-                 zp_punch_clock.id,
-                 zp_punch_clock.userId,
-                 zp_punch_clock.minutes,
-                 zp_punch_clock.hours,
-                 zp_punch_clock.punchIn,
-                 zp_tickets.headline,
-                 zp_tickets.id as ticketId
-              FROM `zp_punch_clock`
-              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
-
-        $onTheClock = false;
-
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-        $call->bindValue(':sessionId', session("userdata.id"));
-
-        $results = $call->fetchAll();
-
-        if (count($results) > 0) {
-            $onTheClock = array();
-            $onTheClock["id"] = $results[0]["id"];
-            $onTheClock["since"] = $results[0]["punchIn"];
-            $onTheClock["headline"] = $results[0]["headline"];
-            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
-            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
-
-            $r = $since_start->format('%H:%I');
-
-            $onTheClock["totalTime"] = $r;
-        }
-
-        return $onTheClock;
-    }
-
-    public function getAllAccountTimesheets(): array|false
-    {
-        $query = "SELECT
-                        zp_timesheets.id,
-                        zp_timesheets.userId,
-                        zp_timesheets.ticketId,
-                        zp_timesheets.workDate,
-                        zp_timesheets.hours,
-                        zp_timesheets.description,
-                        zp_timesheets.kind,
-                        zp_projects.name,
-                        zp_projects.id AS projectId,
-                        zp_clients.name AS clientName,
-                        zp_clients.id AS clientId,
-                        zp_timesheets.invoicedEmpl,
-                        zp_timesheets.invoicedComp,
-                        zp_timesheets.invoicedEmplDate,
-                        zp_timesheets.invoicedCompDate,
-                        zp_timesheets.paid,
-                        zp_timesheets.paidDate,
-                        zp_timesheets.modified,
-                        zp_user.firstname,
-                        zp_user.lastname,
-                        zp_tickets.id as ticketId,
-                        zp_tickets.headline,
-                        zp_tickets.planHours,
-                        zp_tickets.tags,
-                        milestone.headline as milestone
-                    FROM
-                        zp_timesheets
-                    LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
-                    LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
-                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id";
-
-        $query .= " GROUP BY
-                zp_timesheets.id,
-                zp_timesheets.userId,
-                zp_timesheets.ticketId,
-                zp_timesheets.workDate,
-                zp_timesheets.hours,
-                zp_timesheets.description,
-                zp_timesheets.kind";
+        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
-        return $call->fetchAll();
+        $call->execute();
     }
+
 }

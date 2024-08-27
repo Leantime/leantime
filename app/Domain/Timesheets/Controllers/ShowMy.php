@@ -2,19 +2,16 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller;
-use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Auth\Services\Auth;
 use PHPUnit\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -144,7 +141,7 @@ class ShowMy extends Controller
                         $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
                     } catch (\Exception $e) {
                         $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
-                        error_log($e);
+                        report($e);
                         continue;
                     }
                 }

@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Setting\Repositories {
 
     use Exception;
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use PDO;
 
     /**
@@ -32,10 +32,6 @@ namespace Leantime\Domain\Setting\Repositories {
          * @param $type
          * @return false|mixed
          */
-        /**
-         * @param $type
-         * @return false|mixed
-         */
         public function getSetting($type): mixed
         {
             if ($this->checkIfInstalled() === false) {
@@ -55,7 +51,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 return false;
             }
 
@@ -67,11 +63,6 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
         }
 
-        /**
-         * @param $type
-         * @param $value
-         * @return bool
-         */
         /**
          * @param $type
          * @param $value
@@ -153,7 +144,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 session(["isInstalled" => true]);
                 return true;
             } catch (Exception $e) {
-                error_log($e);
+                report($e);
                 session(["isInstalled" => false]);
                 return false;
             }

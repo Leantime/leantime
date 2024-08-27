@@ -3,15 +3,15 @@
 namespace Leantime\Domain\Projects\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Support\FromFormat;
-    use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *

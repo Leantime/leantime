@@ -43,9 +43,6 @@
         <exclude name="Squiz.Commenting.VariableComment.Missing" />
     </rule>
 
-
-
-
     <!-- Keeping this in here for future use
     <rule ref="Generic.Files.LineLength">
         <properties>

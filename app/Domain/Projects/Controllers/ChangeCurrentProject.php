@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Projects\Controllers {
 
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -47,7 +47,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->projectService->changeCurrentSessionProject($id);
 
             $defaultURL = "/dashboard/show";
-            $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
+            $redirectFilter = self::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
 
             return Frontcontroller::redirect(BASE_URL . $redirectFilter);
         }

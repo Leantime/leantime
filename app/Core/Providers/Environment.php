@@ -2,22 +2,16 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\ApiRequest;
-use Leantime\Core\CliRequest;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Events;
-use Leantime\Core\HtmxRequest;
-use Leantime\Core\IncomingRequest;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Exceptions\HandleExceptions;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\ErrorHandler\Debug;
 
 class Environment extends ServiceProvider
 {
 
-    Use Eventhelpers;
+    Use DispatchesEvents;
 
     /**
      * Register any application services.
@@ -26,22 +20,54 @@ class Environment extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Leantime\Core\AppSettings::class, \Leantime\Core\AppSettings::class);
-        $this->app->singleton(\Leantime\Core\Environment::class, \Leantime\Core\Environment::class);
-        $this->app->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\ExceptionHandler::class);
+        $this->app->singleton(\Leantime\Core\Configuration\AppSettings::class, \Leantime\Core\Configuration\AppSettings::class);
+        $this->app->singleton(\Leantime\Core\Configuration\Environment::class, \Leantime\Core\Configuration\Environment::class);
+        $this->app->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\Exceptions\ExceptionHandler::class);
 
-        $this->app->alias(\Leantime\Core\Environment::class, 'config');
-        $this->app->alias(\Leantime\Core\Environment::class, \Illuminate\Contracts\Config\Repository::class);
+        $this->app->singleton(HandleExceptions::class, HandleExceptions::class);
+
+        $this->app->alias(\Leantime\Core\Configuration\Environment::class, 'config');
+        $this->app->alias(\Leantime\Core\Configuration\Environment::class, \Illuminate\Contracts\Config\Repository::class);
 
     }
 
     public function boot() {
 
+        $config = $this->app->make(\Leantime\Core\Configuration\Environment::class);
 
-        $this->app->make(\Leantime\Core\AppSettings::class)->loadSettings();
+        if (empty(config("env"))) {
+            config(["env" => 'production']);
+        }
 
-        $config = $this->app->make(\Leantime\Core\AppSettings::class);
-        $this->setErrorHandler($config->debug ?? 0);
+        if($config->debug) {
+
+            Debug::enable();
+            config(['debug' => true]);
+            config(['debug_blacklist' => [
+                '_ENV' => [
+                    'LEAN_EMAIL_SMTP_PASSWORD',
+                    'LEAN_DB_PASSWORD',
+                    'LEAN_SESSION_PASSWORD',
+                    'LEAN_OIDC_CLIEND_SECRET',
+                    'LEAN_S3_SECRET',
+                ],
+
+                '_SERVER' => [
+                    'LEAN_EMAIL_SMTP_PASSWORD',
+                    'LEAN_DB_PASSWORD',
+                    'LEAN_SESSION_PASSWORD',
+                    'LEAN_OIDC_CLIEND_SECRET',
+                    'LEAN_S3_SECRET',
+                ],
+                '_POST' => [
+                    'password',
+                ],
+            ]]);
+        }
+
+        $exceptionsHandler = $this->app->make(HandleExceptions::class);
+        $exceptionsHandler->bootstrap($this->app);
+
 
         self::dispatch_event('config_initialized');
 

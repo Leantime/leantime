@@ -3,8 +3,7 @@
 namespace Leantime\Domain\Notifications\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
@@ -46,7 +45,7 @@ class NewsBadge extends HtmxController
         try {
             $hasNews = $this->newsService->hasNews(session("userdata.id"));
         }catch(\Exception $e) {
-            error_log($e);
+            report($e);
             $hasNews = false;
         }
 

@@ -7,17 +7,15 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller;
-    use Leantime\Core\Support\DateTimeHelper;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -116,12 +114,15 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $comments = [];
             }
 
+            $this->tpl->assign('id', $canvasItem['id']??"");
+            $this->tpl->assign('canvasId', $canvasItem['canvasId']);
             $this->tpl->assign('comments', $comments);
 
 
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
 
             $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
             $this->tpl->assign('canvasItem', $canvasItem);
@@ -277,13 +278,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC(),
-                            'endDate' => format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC(),
+                            'startDate' => format(value: $params['startDate'] ?? '', fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC(),
+                            'endDate' => format(value: $params['endDate'] ?? '', fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
                         );
-
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 

@@ -17,7 +17,7 @@ if (!file_exists($composer = __DIR__ . '/../vendor/autoload.php')) {
 require $composer;
 
 define('PROJECT_ROOT', realpath(__DIR__ . '/..') . '/');
-define('APP_ROOT', PROJECT_ROOT . 'app/');
+define('APP_ROOT', PROJECT_ROOT . '/');
 define('DEV_ROOT', PROJECT_ROOT . '.dev/');
 
 $bootstrapper = get_class(new class {
@@ -116,6 +116,20 @@ $bootstrapper = get_class(new class {
                     '-R',
                     'www-data:www-data',
                     '/var/www/html/cache/',
+                ]
+            ),
+            [
+                'cwd' => DEV_ROOT,
+            ]
+        );
+
+        $this->executeCommand(
+            array_filter(
+                [
+                    'chown',
+                    '-R',
+                    'www-data:www-data',
+                    '/var/www/html/logs/',
                 ]
             ),
             [

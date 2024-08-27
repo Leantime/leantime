@@ -1,7 +1,7 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
-    "version": "3.2.0-beta-2",
+    "version": "3.2.0",
     "type": "project",
     "config": {
         "platform-check": false,
@@ -10,7 +10,8 @@
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "metasyntactical/composer-plugin-license-check": true
+            "metasyntactical/composer-plugin-license-check": true,
+            "php-http/discovery": true
         }
     },
     "authors": [
@@ -26,14 +27,14 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-ldap": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
         "ext-fileinfo": "*",
 
-        "guzzlehttp/guzzle": "7.4.5",
-        "aws/aws-sdk-php": "3.219.0",
+        "guzzlehttp/guzzle": "^7.9.2",
+        "aws/aws-sdk-php": "^3.314",
         "phpmailer/phpmailer": "6.6.0",
         "robthree/twofactorauth": "1.8.2",
         "endroid/qr-code": "3.9.7",
@@ -62,6 +63,8 @@
         "illuminate/session": "^10.0",
         "illuminate/encryption": "^10.0",
         "illuminate/redis": "^10.0",
+        "illuminate/log": "^10.0",
+        "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
 
         "symfony/http-foundation": "^6.3",
@@ -76,7 +79,8 @@
         "carbon-cli/carbon-cli": "^1.2",
 
         "metasyntactical/composer-plugin-license-check": "^2.1",
-        "": ""
+
+        "predis/predis": "^2.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
@@ -86,7 +90,6 @@
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
         "phpcsstandards/phpcsextra": "^1.2.1",
-        "leantime/leantime-documentor": "dev-main",
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10"
     },

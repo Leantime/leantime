@@ -5,13 +5,12 @@ namespace Leantime\Core\Support;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\Exceptions\InvalidDateException;
-use DateTimeInterface;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\ApiRequest;
-use Leantime\Core\Environment;
-use Leantime\Core\Language;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Language;
 
 /**
  * Class DateTimeHelper
@@ -55,7 +54,8 @@ class DateTimeHelper extends CarbonImmutable
 
         // Session is set in middleware, unlikely to not be set but just in case set defaults.
         $this->userTimezone = session("usersettings.timezone") ?? $this->config->defaultTimezone;
-        $this->userLanguage = session("usersettings.language") ?? $this->config->language;
+        $this->userLanguage = str_replace("-", "_", (session("usersettings.language") ?? $this->config->language));
+
         $this->userDateFormat = session("usersettings.date_format") ?? $this->language->__("language.dateformat");
         $this->userTimeFormat = session("usersettings.time_format") ?? $this->language->__("language.timeformat");
     }
@@ -72,20 +72,29 @@ class DateTimeHelper extends CarbonImmutable
      */
     public function parseUserDateTime(string $userDate, string $userTime = ""): CarbonImmutable
     {
+
         if (!$this->isValidDateString($userDate)) {
             throw new InvalidDateException("The string is not a valid date time string to parse as user datetime string", $userDate);
         }
 
+        //Check if provided date is iso8601 (from API)
+        try{
+            $this->datetime = CarbonImmutable::createFromFormat(DateTime::ISO8601, $userDate);
+            return $this->datetime;
+        } catch (\Exception $e) {
+            //Do nothing
+        }
+
         if ($userTime == "start") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->startOfDay();
         } elseif ($userTime == "end") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->endOfDay();
         } elseif ($userTime == "") {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone);
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone);
         } else {
-            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, trim($userDate . " " . $userTime), $this->userTimezone);
+            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, substr($this->userLanguage, 0, 2), trim($userDate . " " . $userTime), $this->userTimezone);
         }
 
         return $this->datetime;

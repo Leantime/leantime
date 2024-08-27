@@ -10,11 +10,9 @@ namespace Leantime\Domain\Calendar\Controllers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use JetBrains\PhpStorm\NoReturn;
-use Leantime\Core\AppSettings;
-use Leantime\Core\Controller;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  *

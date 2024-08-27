@@ -6,14 +6,12 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Controller;
     use Leantime\Domain\Ideas\Repositories\Ideas;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
-    use Illuminate\Support\Str;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 
     /**
      *
@@ -55,7 +53,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 $currentCanvasId = (int)$_GET['id'];
                 $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                 $canvasTitle = $singleCanvas[0]["title"] ?? "";
-                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
             }
 
             // Add Canvas
@@ -94,7 +92,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
+                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/'.$currentCanvasId);
 
                 } else {

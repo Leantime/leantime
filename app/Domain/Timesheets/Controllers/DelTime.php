@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Core\Frontcontroller;
+use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

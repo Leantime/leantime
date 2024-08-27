@@ -141,7 +141,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <?=$tpl->__("label.loading_milestone") ?>
                             </div>
                         </div>
-                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="ideaCanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
 
                     </li>
                 <?php } ?>

@@ -2,13 +2,13 @@
 
 namespace Leantime\Domain\Ideas\Controllers {
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-    use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
     /**
      *
@@ -67,7 +67,9 @@ namespace Leantime\Domain\Ideas\Controllers {
                 }
                 $comments = $this->commentsRepo->getComments('idea', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('ideas', $canvasItem['id']));
+
             } else {
+
                 $type = $params['type'] ?? "idea";
 
                 $canvasItem = array(
@@ -169,8 +171,8 @@ namespace Leantime\Domain\Ideas\Controllers {
                             $milestone = array();
                             $milestone['headline'] = $params['newMilestone'];
                             $milestone['tags'] = "#ccc";
-                            $milestone['editFrom'] = date("Y-m-d");
-                            $milestone['editTo'] = date("Y-m-d", strtotime("+1 week"));
+                            $milestone['editFrom'] = dtHelper()->userNow()->formatDateForUser();
+                            $milestone['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                             $id = $this->ticketService->quickAddMilestone($milestone);
                             if ($id !== false) {
                                 $canvasItem['milestoneId'] = $id;

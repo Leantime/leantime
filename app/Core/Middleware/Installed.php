@@ -3,16 +3,15 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class Installed
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Check if Leantime is installed

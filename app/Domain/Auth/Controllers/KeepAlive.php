@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Auth\Controllers;
 
-use Leantime\Core\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +41,7 @@ class KeepAlive extends Controller
     {
 
         $userId = session("userdata.id");
-        $sessionId = $this->authService->getSessionId();
+        $sessionId = session()->getId();
 
         // @TODO: Once we have a session table, check the session is valid in there as well as
         //        added security layer. If not we can log the user out.

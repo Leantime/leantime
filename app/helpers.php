@@ -3,10 +3,12 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\Factory;
-use Leantime\Core\Application;
-use Leantime\Core\AppSettings;
-use Leantime\Core\Bootloader;
+use Leantime\Core\Bootstrap\Application;
+use Leantime\Core\Bootstrap\Bootloader;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
@@ -55,12 +57,12 @@ if (! function_exists('app')) {
 //                 || $request->isXmlHttpRequest()
 //             )
 //         ) {
-//             error_log('this fires');
+//             report('this fires');
 //
 //             exit(0);
 //         }
 //
-//         error_log(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
+//         report(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
 //
 //         exit();
 //     }
@@ -340,4 +342,41 @@ if (! function_exists('storage_path')) {
         return app()->storagePath($path);
     }
 
+}
+
+if (! function_exists('request')) {
+    /**
+     * Get an instance of the current request or an input item from the request.
+     *
+     * @param  list<string>|string|null $key
+     * @param  mixed                    $default
+     * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return app()->make(IncomingRequest::class);
+        }
+
+        if (is_array($key)) {
+            return app()->make(IncomingRequest::class)->only($key);
+        }
+
+        $value = app()->make(IncomingRequest::class)->__get($key);
+
+        return is_null($value) ? value($default) : $value;
+    }
+}
+
+if (! function_exists('report')) {
+    /**
+     * Report an exception.
+     *
+     * @param  \Throwable|string $exception
+     * @return void
+     */
+    function report($exception)
+    {
+        Log::critical($exception);
+    }
 }

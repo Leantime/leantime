@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Users\Controllers {
 
-    use Leantime\Core\Controller;
+    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Ldap\Services\Ldap as LdapService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Ldap\Services\Ldap as LdapService;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

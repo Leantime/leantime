@@ -3,16 +3,16 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\AppSettings;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\Frontcontroller;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class Updated
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     /**
      * Check if Leantime is installed
@@ -31,7 +31,10 @@ class Updated
             session(["dbVersion" => $dbVersion]);
         }
 
-        session(["isUpdated" => $dbVersion == $settingsDbVersion]);
+        $dbVersionInt = $this->getVersionInt($dbVersion);
+        $settingsDbVersionInt = $this->getVersionInt($settingsDbVersion);
+
+        session(["isUpdated" => $dbVersionInt >= $settingsDbVersionInt]);
 
         if (session("isUpdated")) {
             return $next($request);
@@ -63,5 +66,18 @@ class Updated
         $route = BASE_URL . "/install/update";
         $route = self::dispatch_filter("redirectroute", $route);
         return $frontController::redirect($route);
+    }
+
+    private function getVersionInt($version)
+    {
+            $versionArray = explode(".", $version);
+            if (is_array($versionArray) && count($versionArray) == 3) {
+                $major = $versionArray[0];
+                $minor = str_pad($versionArray[1], 2, "0", STR_PAD_LEFT);
+                $patch = str_pad($versionArray[2], 2, "0", STR_PAD_LEFT);
+                $newDBVersion = $major . $minor . $patch;
+                return $newDBVersion;
+            }
+            return false;
     }
 }

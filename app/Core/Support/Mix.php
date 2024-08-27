@@ -4,11 +4,11 @@ namespace Leantime\Core\Support;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Leantime\Core\Eventhelpers;
+use Leantime\Core\Events\DispatchesEvents;
 
 class Mix
 {
-    use Eventhelpers;
+    use DispatchesEvents;
 
     private $manifest = [];
 

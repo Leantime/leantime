@@ -271,7 +271,7 @@ class Calendar
 
             }catch(\Exception $e) {
                 //Do not include event in ical
-                error_log($e);
+                report($e);
             }
         }
 

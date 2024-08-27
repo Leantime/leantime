@@ -3,12 +3,10 @@
 namespace Leantime\Domain\Files\Controllers;
 
 use Aws\S3\S3Client;
-use Leantime\Core\Controller;
-use Leantime\Core\Environment;
-use Leantime\Core\Frontcontroller;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -185,7 +183,7 @@ class Get extends Controller
             return $response;
         } catch (\Exception $e) {
 
-            error_log($e);
+            report($e);
 
             return new Response($e->getMessage(), 500);
         }

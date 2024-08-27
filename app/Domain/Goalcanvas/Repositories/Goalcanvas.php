@@ -165,7 +165,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
          *
          * @return array|false
          */
-        public function getAllAccountGoals(): false|array
+        public function getAllAccountGoals(?int $projectId, ?int $boardId): false|array
         {
             $sql = "SELECT
                     zp_canvas_items.id,
@@ -202,19 +202,158 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                     zp_canvas_items.action,
                     zp_canvas_items.assignedTo,
                     zp_canvas_items.parent,
-                    zp_canvas_items.tags
+                    zp_canvas_items.tags,
+                    zp_canvas.projectId
             FROM
             zp_canvas_items
-
-            WHERE zp_canvas_items.box = 'goal'
-
+            LEFT JOIN zp_canvas ON zp_canvas_items.canvasId = zp_canvas.id
+            LEFT JOIN zp_projects ON zp_canvas.projectId = zp_projects.id
+            WHERE zp_canvas_items.box = 'goal' AND (
+                    zp_canvas.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                    OR zp_projects.psettings = 'all'
+                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                     OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
+                )
             ";
 
+            if (isset($projectId) && $projectId  > 0) {
+                $sql .= " AND (zp_canvas.projectId = :projectId)";
+            }
+
+            if (isset($boardId) && $boardId  > 0) {
+                $sql .= " AND (zp_canvas.id = :boardId)";
+            }
+
             $stmn = $this->db->database->prepare($sql);
+
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+            }
+
+            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+
+            if (isset($projectId) && $projectId  > 0) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            if (isset($boardId) && $boardId  > 0) {
+                $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
+            }
+
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
             return $values;
         }
+
+        /**
+         * @param $values
+         * @return false|string
+         */
+        public function createGoal($values): false|string
+        {
+
+            $query = "INSERT INTO zp_canvas_items (
+                        description,
+                            title,
+                        assumptions,
+                        data,
+                        conclusion,
+                        box,
+                        author,
+                        created,
+                        modified,
+                        canvasId,
+                        status,
+                        relates,
+                        milestoneId,
+                        kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue,
+                            parent,
+                            tags
+                ) VALUES (
+                        :description,
+                        :title,
+                        :assumptions,
+                        :data,
+                        :conclusion,
+                        :box,
+                        :author,
+                        NOW(),
+                        NOW(),
+                        :canvasId,
+                        :status,
+                        :relates,
+                        :milestoneId,
+                        :kpi,
+                        :data1,
+                        :startDate,
+                        :endDate,
+                        :setting,
+                        :metricType,
+                        :impact,
+                        :effort,
+                        :probability,
+                        :action,
+                        :assignedTo,
+                        :startValue,
+                        :currentValue,
+                        :endValue,
+                        :parent,
+                        :tags
+                )";
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
+            $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
+            $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
+
+            $stmn->execute();
+            $id = $this->db->database->lastInsertId();
+            $stmn->closeCursor();
+
+            return $id;
+        }
+
     }
 }

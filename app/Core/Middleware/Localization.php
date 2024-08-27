@@ -4,12 +4,10 @@ namespace Leantime\Core\Middleware;
 
 use Carbon\CarbonImmutable;
 use Closure;
-use Leantime\Core\Environment;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\CarbonMacros;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,7 +38,7 @@ class Localization
 
             CarbonImmutable::mixin(new CarbonMacros(
                 $this->config->defaultTimezone,
-                session("companysettings.language"),
+                str_replace("-", "_", session("companysettings.language")),
                 $this->language->__("language.dateformat"),
                 $this->language->__("language.timeformat")
             ));
@@ -58,7 +56,7 @@ class Localization
         // Set macros for CabonImmutable date handling
         CarbonImmutable::mixin(new CarbonMacros(
             session("usersettings.timezone"),
-            session("usersettings.language"),
+            str_replace("-", "_", session("usersettings.language")),
             session("usersettings.date_format"),
             session("usersettings.time_format")
         ));

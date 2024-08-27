@@ -2,29 +2,27 @@
 
 namespace Leantime\Domain\Projects\Services {
 
+    use DateInterval;
+    use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Str;
+    use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\Events\EventDispatcher as EventCore;
+    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Events as EventCore;
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Domain\Canvas\Repositories\Canvas;
-    use Leantime\Domain\Notifications\Models\Notification;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-    use DateTime;
-    use DateInterval;
-    use GuzzleHttp\Client;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
+    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Notifications\Services\Messengers;
     use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
-    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Wiki\Repositories\Wiki;
 
     /**
@@ -32,7 +30,7 @@ namespace Leantime\Domain\Projects\Services {
      */
     class Projects
     {
-        use Eventhelpers;
+        use DispatchesEvents;
 
         private TemplateCore $tpl;
         private ProjectRepository $projectRepository;
@@ -784,10 +782,7 @@ namespace Leantime\Domain\Projects\Services {
             $this->setCurrentProject();
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
+
         /**
          * @param $projectId
          * @return array
@@ -795,6 +790,15 @@ namespace Leantime\Domain\Projects\Services {
         public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+
+            foreach ($users as $key => $user) {
+
+                 if(dtHelper()->isValidDateString($user['modified'])) {
+                     $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+                 }else{
+                     $users[$key]['modified'] = null;
+                 }
+            }
 
             if ($users) {
                 return $users;
@@ -886,7 +890,7 @@ namespace Leantime\Domain\Projects\Services {
             $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
 
             //Ignoring
-            //Comments, files, timesheets, personalCalendar Events
+            //Comments, files, timesheets, personalCalendar EventDispatcher
             $oldProjectId = $projectId;
 
             //Copy project Entry
@@ -1211,7 +1215,7 @@ namespace Leantime\Domain\Projects\Services {
         public function getProjectAvatar($id): mixed
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
-            $avatar = static::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
+            $avatar = self::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
             return $avatar;
         }
 
@@ -1565,18 +1569,81 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function getAll(bool $showClosedProjects = false): array
         {
-            return $this->projectRepository->getAll($showClosedProjects);
+            return $this->projectRepository->getUserProjects( userId: session('userdata.id'),
+                accessStatus: "all",
+                projectTypes: "project");
         }
 
-        public function pollForUpdatedProjects(): array
+        public function findProject(string $term = "")
         {
-            $projects = $this->projectRepository->getAll(false);
+            $projects = $this->projectRepository->getUserProjects(
+                userId: session('userdata.id'),
+                accessStatus: "all",
+                projectTypes: "project");
+
+            $filteredProjects = [];
+            foreach ($projects as $key => $project) {
+
+                if(Str::contains($projects[$key]['name'], $term, ignoreCase: true) || $term =='') {
+                    $projects[$key] = $this->prepareDatesForApiResponse($project);
+                    $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+
+                    $filteredProjects[] =  $projects[$key];
+                }
+            }
+
+            return $filteredProjects;
+        }
+
+
+        public function pollForNewProjects() {
+
+            $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
 
             foreach ($projects as $key => $project) {
-                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+                $projects[$key] = $this->prepareDatesForApiResponse($project);
             }
 
             return $projects;
+
+        }
+
+
+        public function pollForUpdatedProjects(): array
+        {
+            $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
+
+            foreach ($projects as $key => $project) {
+                $projects[$key] = $this->prepareDatesForApiResponse($project);
+                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+
+            }
+
+            return $projects;
+        }
+
+        private function prepareDatesForApiResponse($project) {
+
+            if(dtHelper()->isValidDateString($project['modified'])) {
+                $project['modified'] = dtHelper()->parseDbDateTime($project['modified'])->toIso8601ZuluString();
+            }else{
+                $project['modified'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($project['start'])) {
+                $project['start'] = dtHelper()->parseDbDateTime($project['start'])->toIso8601ZuluString();
+            }else{
+                $project['start'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($project['end'])) {
+                $project['end'] = dtHelper()->parseDbDateTime($project['end'])->toIso8601ZuluString();
+            }else{
+                $project['end'] = null;
+            }
+
+            return $project;
+
         }
     }
 }
