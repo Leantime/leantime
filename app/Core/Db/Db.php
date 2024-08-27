@@ -72,9 +72,12 @@ class Db
             );
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+            $this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
+
             $newline = app()->make(IncomingRequest::class) instanceof CliRequest ? "\n" : "<br />\n";
-            echo "No database connection, check your database credentials in your configuration file.$newline";
+            echo "We are currently performing important maintenance work on the systems. Leantime will be back shortly. $newline";
             $found_errors = [];
 
             if (!extension_loaded('PDO')) {
@@ -92,9 +95,9 @@ class Db
                 }
             }
 
-            report($e);
+            throw new \Exception($e);
 
-            exit();
+
         }
     }
 

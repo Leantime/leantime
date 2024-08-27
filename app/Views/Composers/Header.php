@@ -48,7 +48,7 @@ class Header extends Composer
         $colorMode = $this->themeCore->getColorMode();
         $colorScheme = $this->themeCore->getColorScheme();
         $themeFont = $this->themeCore->getFont();
-
+        $sitename = '';
         // Set colors to use
         if (! session()->exists("companysettings.sitename")) {
             $sitename = $this->settingsRepo->getSetting("companysettings.sitename");

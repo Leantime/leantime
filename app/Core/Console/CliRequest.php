@@ -7,4 +7,7 @@ use Leantime\Core\Http\IncomingRequest;
 class CliRequest extends IncomingRequest
 {
     //
+    public function handle() {
+
+    }
 }

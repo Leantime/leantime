@@ -10,4 +10,4 @@ if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
 }
 require $composer;
 
-\Leantime\Core\Bootstrap\Bootloader::getInstance()->boot();
+return \Leantime\Core\Bootloader::getInstance(APP_ROOT)->boot();

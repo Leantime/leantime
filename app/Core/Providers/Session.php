@@ -63,6 +63,7 @@ class Session extends ServiceProvider
         $this->app->singleton('session.store', fn() =>  app('session')->driver());
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
         $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
+        $this->app->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
 
     }
 

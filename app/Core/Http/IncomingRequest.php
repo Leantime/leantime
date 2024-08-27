@@ -29,9 +29,12 @@ class IncomingRequest extends Request
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
+        $this->setUrlConstants();
 
         $this->setRequestDest();
     }
+
+
 
     /**
      * Sets the request destination from the path
@@ -71,6 +74,21 @@ class IncomingRequest extends Request
         isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }
 
+    public function setUrlConstants($appUrl = '') {
+
+        if (! defined('BASE_URL')) {
+            if (isset($appUrl) && !empty($appUrl)) {
+                define('BASE_URL', $appUrl);
+            } else {
+                define('BASE_URL', $this->getSchemeAndHttpHost());
+            }
+        }
+
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', BASE_URL . $this->getRequestUri());
+        }
+    }
+
     /**
      * Gets the full URL including request uri and protocol
      *
@@ -88,18 +106,16 @@ class IncomingRequest extends Request
      * @return string
      * @throws BindingResolutionException
      */
-    public function getRequestUri(): string
+    public function getRequestUri($appUrl = ''): string
     {
 
         $requestUri = parent::getRequestUri();
 
-        $config = app()->make(Environment::class);
-
-        if (empty($config->appUrl)) {
+        if (empty($appUrl)) {
             return $requestUri;
         }
 
-        $baseUrlParts = explode('/', rtrim($config->appUrl, '/'));
+        $baseUrlParts = explode('/', rtrim($appUrl, '/'));
 
         if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
             return $requestUri;
@@ -193,7 +209,6 @@ class IncomingRequest extends Request
         return false;
     }
 
-
     /**
      * Determine if the current request probably expects a JSON response.
      *
@@ -206,6 +221,45 @@ class IncomingRequest extends Request
         }
 
         return false;
+    }
+
+    public function getCurrentRoute() {
+        return $this->query->get("act", '');
+    }
+
+    public function getModuleName(string $completeName = null): string
+    {
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? $this->currentRoute : $completeName);
+
+        if (is_array($actionParts)) {
+            return $actionParts[0];
+        }
+
+        return "";
+    }
+
+    /**
+     * getActionName - split string to get actionName
+     *
+     * @access public
+     * @param string|null $completeName
+     * @return string
+     * @throws BindingResolutionException
+     */
+    public function getActionName(string $completeName = null): string
+    {
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? $this->currentRoute : $completeName);
+
+        //If not action name was given, call index controller
+        if (is_array($actionParts) && count($actionParts) == 1) {
+            return "index";
+        } elseif (is_array($actionParts) && count($actionParts) == 2) {
+            return $actionParts[1];
+        }
+
+        return "";
     }
 
 }

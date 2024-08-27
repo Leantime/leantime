@@ -39,16 +39,17 @@ abstract class Composer
      * @return void
      * @throws BindingResolutionException
      */
-    public function compose(View $view): void
+    public function compose(array $parameters): void
     {
-        $this->view = $view;
-        $this->data = new Fluent($view->getData());
+
+        $this->view =  $parameters[0];
+        $this->data = new Fluent( $this->view->getData());
 
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
 
-        $view->with($this->merge());
+        $this->view->with($this->merge());
     }
 
     /**

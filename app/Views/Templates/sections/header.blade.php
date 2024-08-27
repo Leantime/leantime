@@ -45,7 +45,7 @@
 
 <!--
 //For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Controller\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Controller\Frontcontroller::getModuleName() }}Controller.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/{{ ucwords($frontController->getModuleName()) }}/Js/{{ $frontController->getModuleName() }}Controller.js"></script>
 -->
 
 <!-- theme & custom -->

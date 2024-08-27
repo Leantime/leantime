@@ -3,7 +3,6 @@
 namespace Leantime\Core\Configuration;
 
 use ArrayAccess;
-use Dotenv\Dotenv;
 use Exception;
 use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
@@ -20,10 +19,7 @@ use Symfony\Component\Yaml\Yaml;
 class Environment implements ArrayAccess, ConfigContract
 {
     # Config Files ===============================================================================
-    /**
-     * @var Dotenv
-     */
-    public Dotenv $dotenv;
+
 
     /**
      * @var ?object
@@ -82,10 +78,10 @@ class Environment implements ArrayAccess, ConfigContract
     public function __construct(DefaultConfig $defaultConfiguration)
     {
 
-
         /* PHP */
         $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
+
             require_once $phpConfigFile;
 
             if (! class_exists(Config::class)) {
@@ -94,10 +90,6 @@ class Environment implements ArrayAccess, ConfigContract
 
             $this->phpConfig = new Config();
         }
-
-        /* Dotenv */
-        $this->dotenv = Dotenv::createImmutable(APP_ROOT . "/config");
-        $this->dotenv->safeLoad();
 
         /* YAML */
         $this->yaml = null;
@@ -108,6 +100,7 @@ class Environment implements ArrayAccess, ConfigContract
         $defaultConfigurationProperties = get_class_vars($defaultConfiguration::class);
 
         foreach (array_keys($defaultConfigurationProperties) as $propertyName) {
+
             $type = gettype($defaultConfigurationProperties[$propertyName]);
             $type = $type == 'NULL' ? 'string' : $type;
 
@@ -122,9 +115,6 @@ class Environment implements ArrayAccess, ConfigContract
 
     }
 
-    public function updateCache() {
-        file_put_contents(APP_ROOT . "/cache/configCache", serialize($this->config));
-    }
     /**
      * getBool - get a boolean value from the environment
      *

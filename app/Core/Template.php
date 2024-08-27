@@ -13,17 +13,18 @@ use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\Compilers\CompilerInterface;
 use Illuminate\View\DynamicComponent;
 use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\View\Engines\Engine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
-use Leantime\Core\Bootstrap\Application;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -46,6 +47,8 @@ class Template
 
     /** @var string */
     private string $notifcation = '';
+
+
 
     /**
      * @var string
@@ -83,7 +86,6 @@ class Template
      *
      * @param Theme           $theme
      * @param Language        $language
-     * @param Frontcontroller $frontcontroller
      * @param IncomingRequest $incomingRequest
      * @param Environment     $config
      * @param AppSettings     $settings
@@ -101,9 +103,6 @@ class Template
         /** @var Language */
         public Language $language,
 
-        /** @var Frontcontroller */
-        public Frontcontroller $frontcontroller,
-
         /** @var IncomingRequest */
         public IncomingRequest $incomingRequest,
 
@@ -119,204 +118,17 @@ class Template
         /** @var Roles */
         private Roles $roles,
 
-        /** @var \Illuminate\View\Factory|null */
-        public ?Factory $viewFactory = null,
+        private \Illuminate\View\Factory $viewFactory,
 
-        /** @var CompilerInterface|null */
-        private ?CompilerInterface $bladeCompiler = null,
+
+
     ) {
 
-        if (! is_null($this->viewFactory) && ! is_null($this->bladeCompiler)) {
-            return;
-
-        }
-
-        app()->call([$this, 'setupBlade']);
-        $this->attachComposers();
         $this->setupDirectives();
         $this->setupGlobalVars();
     }
 
-    /**
-     * Create View Factory capable of rendering PHP and Blade templates
-     *
-     * @param Application $app
-     * @param Dispatcher  $eventDispatcher
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public function setupBlade(
-        Application $app,
-        Dispatcher $eventDispatcher
-    ): void {
-        // ComponentTagCompiler Expects the Foundation\Application Implmentation, let's trick it and give it the container.
-        $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
-        // View/Component createBladeViewFromString method needs to access the view compiled path, expects it to be attached to config
-        $this->config->set('view.compiled', APP_ROOT . '/cache/views');
-
-        // Find Template Paths
-        if (!session()->has("template_paths") || $this->config->debug) {
-            $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
-                ->mapWithKeys(fn ($path) => [
-                    $basename = strtolower(basename($path)) => [
-                        APP_ROOT . '/custom/Domain/' . $basename . '/Templates',
-                        "$path/Templates",
-                    ],
-                ]);
-
-            $plugins = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
-
-            $pluginPaths = $plugins->mapWithKeys(function ($plugin) use ($domainPaths) {
-
-                //Catch issue when plugins are cached on load but autoloader is not quite done loading.
-                //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
-                //Clearing session cache in that case.
-                //@TODO: Check on callstack to make sure autoload loads before sessions
-                if (!is_a($plugin, '__PHP_Incomplete_Class')) {
-                    if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
-                        report("Plugin $basename conflicts with domain");
-                        //Clear cache, something is up
-                        session()->forget("enabledPlugins");
-                        return [];
-                    }
-
-                    if ($plugin->format == "phar") {
-                        $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/' . $plugin->foldername . '.phar/Templates';
-                    } else {
-                        $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
-                    }
-
-                    return [$basename => $path];
-                }
-
-                session()->forget("enabledPlugins");
-                return [];
-            });
-
-           $storePaths = $domainPaths
-                ->merge($pluginPaths)
-                ->merge(['global' => APP_ROOT . '/app/Views/Templates'])
-                ->merge(['__components' => $this->config->get('view.compiled')])
-                ->all();
-
-            session(["template_paths" => $storePaths]);
-        }
-
-        // Setup Blade Compiler
-        $app->singleton(
-            CompilerInterface::class,
-            function ($app) {
-
-                $bladeCompiler = new BladeCompiler(
-                    $app->make(Filesystem::class),
-                    $this->config->get('view.compiled'),
-                );
-
-                $namespaces = array_keys(session("template_paths"));
-                array_map(
-                    [$bladeCompiler, 'anonymousComponentNamespace'],
-                    array_map(fn ($namespace) => "$namespace::components", $namespaces),
-                    $namespaces
-                );
-
-                return tap($bladeCompiler, function ($blade) {
-                    $blade->component('dynamic-component', DynamicComponent::class);
-                });
-            }
-        );
-        $app->alias(CompilerInterface::class, 'blade.compiler');
-
-        // Register Blade Engines
-        $app->singleton(
-            EngineResolver::class,
-            function ($app) {
-                $viewResolver = new EngineResolver();
-                $viewResolver->register('blade', fn () => $app->make(CompilerEngine::class));
-                $viewResolver->register('php', fn () => $app->make(PhpEngine::class));
-                return $viewResolver;
-            }
-        );
-        $app->alias(EngineResolver::class, 'view.engine.resolver');
-
-        // Setup View Finder
-        $app->singleton(
-            ViewFinderInterface::class,
-            function ($app) {
-                $viewFinder = $app->make(FileViewFinder::class, ['paths' => []]);
-                array_map([$viewFinder, 'addNamespace'], array_keys(session("template_paths")), array_values(session("template_paths")));
-                return $viewFinder;
-            }
-        );
-        $app->alias(ViewFinderInterface::class, 'view.finder');
-
-        // Setup EventDispatcher Dispatcher
-        $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, Dispatcher::class);
-
-        // Setup View Factory
-        $app->singleton(
-            Factory::class,
-            function ($app) {
-                $viewFactory = $app->make(\Illuminate\View\Factory::class);
-                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
-                // reprioritize blade
-                $viewFactory->addExtension('blade.php', 'blade');
-                $viewFactory->setContainer($app);
-                return $viewFactory;
-            }
-        );
-        $app->alias(Factory::class, 'view');
-
-        $this->bladeCompiler = $app->make(CompilerInterface::class);
-        $this->viewFactory = $app->make(Factory::class);
-    }
-
-    /**
-     * attachComposers - attach view composers
-     *
-     * @return void
-     * @throws \ReflectionException
-     */
-    public function attachComposers(): void
-    {
-        if (!session()->has("composers") || $this->config->debug) {
-            $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/custom/Domain/*/Composers/*.php'));
-
-            $appComposerClasses = collect(glob(APP_ROOT . '/app/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'));
-
-            $pluginComposerClasses = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins())
-                ->map(fn ($plugin) => glob(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Composers/*.php'))
-                ->flatten();
-
-            $testers = $customComposerClasses->map(fn ($path) => str_replace('/custom/', '/app/', $path));
-
-            $stockComposerClasses = $appComposerClasses
-                ->concat($pluginComposerClasses)
-                ->filter(fn ($composerClass) => ! $testers->contains($composerClass));
-
-            $storeComposers = $customComposerClasses
-                ->concat($stockComposerClasses)
-                ->map(fn ($filepath) => Str::of($filepath)
-                    ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
-                    ->replace('/', '\\')
-                    ->start(app()->getNamespace())
-                    ->toString())
-                ->all();
-
-            session(["composers" => $storeComposers]);
-        }
-
-        foreach (session("composers") as $composerClass) {
-            if (
-                is_subclass_of($composerClass, Composer::class) &&
-                ! (new ReflectionClass($composerClass))->isAbstract()
-            ) {
-                $this->viewFactory->composer($composerClass::$views, $composerClass);
-            }
-        }
-    }
 
     /**
      * setupDirectives - setup blade directives
@@ -325,37 +137,37 @@ class Template
      */
     public function setupDirectives(): void
     {
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'dispatchEvent',
             fn ($args) => "<?php \$tpl->dispatchTplEvent($args); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'dispatchFilter',
             fn ($args) => "<?php echo \$tpl->dispatchTplFilter($args); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'spaceless',
             fn ($args) => "<?php ob_start(); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'endspaceless',
             fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'formatDate',
             fn ($args) => "<?php echo format($args)->date(); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'formatTime',
             fn ($args) => "<?php echo format($args)->time(); ?>",
         );
 
-        $this->bladeCompiler->directive(
+        app('blade.compiler')->directive(
             'displayNotification',
             fn ($args) => "<?php echo \$tpl->displayNotification(); ?>",
         );
@@ -368,8 +180,8 @@ class Template
      */
     public function setupGlobalVars(): void
     {
-        $this->viewFactory->share([
-            'frontController' => $this->frontcontroller,
+        app('view')->share([
+            'frontController' => app('frontcontroller'),
             'config' => $this->config,
             /** @todo remove settings after renaming all uses to appSettings */
             'settings' => $this->settings,
@@ -450,7 +262,7 @@ class Template
             ]
         );
 
-        if ($this->viewFactory->exists($fullpath)) {
+        if (app('view')->exists($fullpath)) {
             return $fullpath;
         }
 
@@ -467,9 +279,9 @@ class Template
     public function displayFragment(string $viewPath, string $fragment = ''): Response
     {
         $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
-        $this->viewFactory->share(['tpl' => $this]);
+        app('view')->share(['tpl' => $this]);
         /** @var View $view */
-        $view = $this->viewFactory->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
+        $view = app('view')->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
         return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
 
@@ -492,8 +304,8 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
-        $action = Frontcontroller::getActionName($template);
-        $module = Frontcontroller::getModuleName($template);
+        $action = $this->incomingRequest->getActionName($template);
+        $module =  $this->incomingRequest->getModuleName($template);
 
         $loadFile = $this->getTemplatePath($module, $action);
 
@@ -641,7 +453,7 @@ class Template
 
         $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
-        echo $this->viewFactory->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
+        echo app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     /**

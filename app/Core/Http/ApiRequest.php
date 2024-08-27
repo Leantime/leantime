@@ -72,7 +72,7 @@ class ApiRequest extends IncomingRequest
      */
     public function getAPIKey(): string
     {
-        return trim($this->headers->get('x-api-key') ?? '');
+        return $this->headers->get('x-api-key');
     }
 
     /**

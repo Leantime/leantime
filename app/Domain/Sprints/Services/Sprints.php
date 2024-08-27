@@ -4,7 +4,6 @@ namespace Leantime\Domain\Sprints\Services {
 
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
@@ -20,7 +19,6 @@ namespace Leantime\Domain\Sprints\Services {
      */
     class Sprints
     {
-        private TemplateCore $tpl;
         private LanguageCore $language;
         private ProjectRepository $projectRepository;
         private SprintRepository $sprintRepository;
@@ -28,7 +26,6 @@ namespace Leantime\Domain\Sprints\Services {
         private ReportRepository $reportRepository;
 
         /**
-         * @param TemplateCore      $tpl
          * @param LanguageCore      $language
          * @param ProjectRepository $projectRepository
          * @param SprintRepository  $sprintRepository
@@ -36,14 +33,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param ReportRepository  $reportRepository
          */
         public function __construct(
-            TemplateCore $tpl,
             LanguageCore $language,
             ProjectRepository $projectRepository,
             SprintRepository $sprintRepository,
             TicketRepository $ticketRepository,
             ReportRepository $reportRepository
         ) {
-            $this->tpl = $tpl;
             $this->language = $language;
             $this->projectRepository = $projectRepository;
             $this->sprintRepository = $sprintRepository;
