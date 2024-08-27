@@ -23,7 +23,7 @@
     @endif
     <div class="clearall"></div>
 
-    <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
+    <x-global::content.accordion id="myProjectWidget-favorites" class="{{ $background }}">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -48,10 +48,10 @@
                 @endif
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 
 
-    <x-global::accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
+    <x-global::content.accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -70,7 +70,7 @@
                 @endforeach
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 
 </div>
 

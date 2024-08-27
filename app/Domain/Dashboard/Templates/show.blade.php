@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-gauge-high'">
+<x-global::content.pageheader :icon="'fa fa-gauge-high'">
     @if (count($allUsers) == 1)
         <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
@@ -13,7 +13,7 @@
 
     <h5>{{ session("currentProjectClient") }}</h5>
     <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global::pageheader>
+</x-global::content.pageheader>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}

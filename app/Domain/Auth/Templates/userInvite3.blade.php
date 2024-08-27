@@ -72,29 +72,29 @@
             How will your life change if you solve your current challenges?<br /><br /></p>
 
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'accomplish'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'accomplish'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">🚀</span> I feel like I get to accomplish something
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'manageable'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'manageable'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">💪</span> Things will feel manageable
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'teamWork'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'teamWork'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji"> 👥</span>  My team will work better together
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'safeMoney'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'safeMoney'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">💰</span> I will safe money
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'relateTasks'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'relateTasks'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji">🎯</span> I will be able to relate my tasks to the goals I have
-        </x-global::selectable>
+        </x-global::forms.select-button>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'justWork'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'impact'" :value="'justWork'" :label="''" class="tw-w-full tw-text-left">
             <span class="emoji"> 🥸</span> I just work here
-        </x-global::selectable>
+        </x-global::forms.select-button>
         <br /> <br />
         <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
 

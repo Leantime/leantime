@@ -175,7 +175,7 @@ class EventDispatcher implements Dispatcher
      * @return void
      * @throws BindingResolutionException
      */
-    public static function discover_listeners(): void
+    public static function discoverListeners(): void
     {
         static $discovered;
         $discovered ??= false;
@@ -194,6 +194,7 @@ class EventDispatcher implements Dispatcher
         }
 
         foreach ($modules as $module) {
+            //File exists is not expensive and builds it's own cache to speed up performance
             if (file_exists($moduleEventsPath = "$module/register.php")) {
                 include_once $moduleEventsPath;
             }
@@ -221,7 +222,6 @@ class EventDispatcher implements Dispatcher
             $enabledPlugins = $pluginService->getEnabledPlugins();
 
             foreach ($enabledPlugins as $plugin) {
-
                 //Catch issue when plugins are cached on load but autoloader is not quite done loading.
                 //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
                 //Clearing session cache in that case.
@@ -501,7 +501,7 @@ class EventDispatcher implements Dispatcher
                 continue;
             }
 
-            if($index == 0) {
+            if ($index == 0) {
                 $filteredPayload = $payload;
             }
         }

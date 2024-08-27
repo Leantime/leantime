@@ -80,8 +80,6 @@
 
         "metasyntactical/composer-plugin-license-check": "^2.1",
 
-        "ext-fileinfo": "*",
-        "sentry/sdk": "^3.5",
         "predis/predis": "^2.2"
     },
     "require-dev": {

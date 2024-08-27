@@ -13,7 +13,6 @@
 .wizard .hormenu li a.done,
 .wizard .hormenu li a.selected,
 .actionBar a:hover, .actionBar a:hover,
-.wizard .tabbedmenu, .nav-tabs > .active > a:focus,
 .tabbable > .nav-tabs,
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus,
@@ -25,7 +24,6 @@
 .tabs-left .nav-tabs,
 .tabs-left > .nav-tabs > li > a,
 .progress-primary .bar,
-.ui-datepicker-calendar td.ui-datepicker-today a,
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus,
@@ -144,9 +142,6 @@ span.btn-white:hover{
 div.tagsinput span.tag
 { border-color: var(--main-border-color) }
 
-
-.ui-datepicker-header { background-color: var(--primary-color) !important; }
-.ui-datepicker { border-color: var(--main-border-color) !important; }
 
 
 /* extras */
@@ -283,36 +278,6 @@ body .tox .tox-toolbar-overlord{
 }
 
 
-.ui-datepicker-next {
-    cursor: pointer;
-    position: absolute;
-    top: 8px;
-    right: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px 1px;
-}
-
-.ui-datepicker-prev {
-    cursor: pointer;
-    position: absolute;
-    top: 8px;
-    left: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px -39px;
-}
-
-.ui-datepicker-header {
-    position: relative;
-    text-align: center;
-    padding: 5px;
-    color: #fff;
-    background: var(--primary-color);
-    text-transform: uppercase;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.ui-datepicker {
-    border-radius:5px;
-}
 
 
 div.growl,
