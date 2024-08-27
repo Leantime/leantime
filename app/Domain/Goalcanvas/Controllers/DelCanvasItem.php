@@ -6,11 +6,11 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
-    use leantime\core\Controller\Controller;
+    use Leantime\Core\Controller\Controller;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     // use Illuminate\Support\Str;
-    use Leantime\Core\Controller\Frontcontroller;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;  
 

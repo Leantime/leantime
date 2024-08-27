@@ -7,7 +7,6 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
@@ -18,7 +17,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     /**
      *
      */
-    class BigRock extends Controller
+    class BigRock extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
     {
 
 
