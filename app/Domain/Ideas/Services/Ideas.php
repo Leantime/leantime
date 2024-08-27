@@ -38,45 +38,24 @@ namespace Leantime\Domain\Ideas\Services {
             $this->ticketService = app()->make(TicketService::class);
         }
 
-        public function getAllCanvas($projectId) {
-            return $this->ideasRepository->getAllCanvas($projectId);
-        }
 
-        public function getCanvasItemsById($currentCanvasId) {
-            return $this->ideasRepository->getCanvasItemsById($currentCanvasId);
-        }
-        public function getCanvasLabels() {
-            return $this->ideasRepository->getCanvasLabels();
-        }
-
-        public function deleteCanvas(int $id) {
-            return $this->ideasRepository->deleteCanvas($id);
-        }
-
-        public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
+        public function pollForNewIdeas(): array
         {
-            $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
+            return $this->ideasRepository->getAllIdeas();
+        }
+
+        public function pollForUpdatedIdeas(): array
+        {
+            $ideas = $this->ideasRepository->getAllIdeas();
 
             foreach ($ideas as $key => $idea) {
-                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
-            }
-
-            return $ideas;
-        }
-
-        public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
-        {
-            $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
-
-            foreach ($ideas as $key => $idea) {
-                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
                 $ideas[$key]['id'] = $idea['id'] . '-' . $idea['modified'];
             }
 
             return $ideas;
         }
 
-        public function getCurrentCanvasId($allCanvas = null, $params = null): int
+        public function getCurrentCanvasId($allCanvas = null, $params = null)
         {
             if (!empty($params) && isset($params["id"])) {
                 $currentCanvasId = (int)$params["id"];
@@ -488,7 +467,7 @@ namespace Leantime\Domain\Ideas\Services {
             session(["currentIdeaCanvas" => $currentCanvasId]);
             return $this->prepareResponseData($currentCanvasId);
         }
-
+    
 
         private function handleEditCanvas($postParams)
         {
@@ -545,22 +524,34 @@ namespace Leantime\Domain\Ideas\Services {
             ];
         }
 
-        private function prepareDatesForApiResponse($idea) {
 
-            if(dtHelper()->isValidDateString($idea['created'])) {
-                $idea['created'] = dtHelper()->parseDbDateTime($idea['created'])->toIso8601ZuluString();
-            }else{
-                $idea['created'] = null;
+        public function deleteCanvas(array $params)
+        {
+            $id = $params['id'] ?? $_GET['id'] ?? null;
+
+    
+            if (isset($params['del']) && $id !== null) {
+                $result = $this->ideasRepository->deleteCanvas((int)$id);
+                if ($result) {
+                    session()->forget("currentIdeaCanvas");
+                    return true;
+                }
             }
-
-            if(dtHelper()->isValidDateString($idea['modified'])) {
-                $idea['modified'] = dtHelper()->parseDbDateTime($idea['modified'])->toIso8601ZuluString();
-            }else{
-                $idea['modified'] = null;
-            }
-
-            return $idea;
-
+    
+            return false;
         }
+
+
+        public function deleteCanvasItem(array $params)
+        {
+            $id = $params['id'] ?? $_GET['id']??null;
+    
+            if (isset($params['del']) && $id !== null) {
+                return $this->ideasRepository->delCanvasItem((int)$id);
+            }
+    
+            return false;
+        }
+
     }
 }

@@ -6,17 +6,11 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Mailer;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+    use leantime\core\Controller\Controller;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Services\Projects;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
-    use Illuminate\Support\Str;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Exceptions\MissingParameterException;
-    use Exception;
+
 
     /**
      *
@@ -61,7 +55,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             session(["filter_relates" => $filter['relates']]);
 
             $this->tpl->assign('filter', $filter);
-
+        
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
@@ -72,7 +66,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('allCanvas', $allCanvas);
             $this->tpl->assign('canvasItems', $this->goalService->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
-
+        
             return $this->tpl->display('goalcanvas.showCanvas');
         }
 
@@ -80,7 +74,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $action = $_POST['action'] ?? '';
             $result = null;
-
+        
             switch ($action) {
                 case 'newCanvas':
                     try {
@@ -131,12 +125,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                     break;
             }
-
+        
             return $this->get($params);
         }
     }
 
 
-
+    
 
 }

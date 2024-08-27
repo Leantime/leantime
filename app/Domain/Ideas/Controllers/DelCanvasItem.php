@@ -3,50 +3,64 @@
 namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Controller\Frontcontroller;
+
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
 
     /**
      *
      */
     class DelCanvasItem extends Controller
     {
-        private IdeaRepository $ideasRepo;
-
+        private IdeaService $ideaService;
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init(IdeaRepository $ideasRepo)
-        {
-            $this->ideasRepo = $ideasRepo;
+        public function init(
+            IdeaService $ideaService
+        ) {
+            $this->ideaService = $ideaService;
         }
+
 
         /**
          * run - display template and edit data
          *
          * @access public
          */
-        public function run()
+        public function get(): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
-            if (isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
-            }
-
-            if (isset($_POST['del']) && isset($id)) {
-                $this->ideasRepo->delCanvasItem($id);
-
-                $this->tpl->setNotification($this->language->__("notification.idea_board_item_deleted"), "success", "ideaitem_deleted");
-
-                return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
-            }
-
+    
             return $this->tpl->displayPartial('ideas.delCanvasItem');
+        }
+
+        public function post($params): Response
+        {
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+    
+            $result = $this->ideaService->deleteCanvasItem($params);
+    
+            if ($result) {
+                $this->tpl->setNotification(
+                    $this->language->__("notification.idea_board_item_deleted"),
+                    "success",
+                    "ideaitem_deleted"
+                );
+            } else {
+                $this->tpl->setNotification(
+                    $this->language->__("notification.deletion_failed"),
+                    "error"
+                );
+            }
+    
+            return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
         }
     }
 

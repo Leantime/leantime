@@ -2,12 +2,13 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Domain\Ideas\Services\Ideas;
+use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Core\Controller\Frontcontroller;
+use Symfony\Component\HttpFoundation\Response;
+use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
+
 /**
  *
  */
@@ -15,6 +16,7 @@ namespace Leantime\Domain\Ideas\Controllers;
 class AdvancedBoards extends Controller
 {
     private ProjectService $projectService;
+    private IdeaRepository $ideaRepo;
     private IdeaService $ideaService;
 
     /**
@@ -23,11 +25,12 @@ class AdvancedBoards extends Controller
      * @access public
      */
     public function init(
-        IdeaService $ideaService,
+        IdeaRepository $ideaRepo,
         ProjectService $projectService
     ) {
+        $this->ideaRepo = $ideaRepo;
         $this->projectService = $projectService;
-        $this->ideaService = $ideaService;
+        $this->ideaService = new IdeaService($ideaRepo);
 
         session(["lastPage" => CURRENT_URL]);
         session(["lastIdeaView" => "kanban"]);
@@ -37,8 +40,8 @@ class AdvancedBoards extends Controller
 
     public function get($params): Response
     {
-
-        $allCanvas = $this->ideaService->getAllCanvas(session("currentProject"));
+        
+        $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
 
 
         if (session()->exists("currentIdeaCanvas")) {
@@ -109,15 +112,15 @@ class AdvancedBoards extends Controller
     private function prepareViewData($currentCanvasId, $allCanvas = null)
     {
         if ($allCanvas === null) {
-            $allCanvas = $this->ideaService->getAllCanvas(session("currentProject"));
+            $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
         }
-
+        
 
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
         $this->tpl->assign('allCanvas', $allCanvas);
-        $this->tpl->assign('canvasItems', $this->ideaService->getCanvasItemsById($currentCanvasId));
-        $this->tpl->assign('canvasLabels', $this->ideaService->getCanvasLabels());
+        $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
+        $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
     }
     /**
      * run - display template and edit data

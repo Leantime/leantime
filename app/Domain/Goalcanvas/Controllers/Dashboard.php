@@ -7,12 +7,11 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Mailer;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Services\Projects;
-    use Illuminate\Support\Str;
+
+    use Leantime\Core\Controller\Frontcontroller;
     use Symfony\Component\HttpFoundation\Response;
 
     /**
@@ -24,22 +23,16 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          * Constant that must be redefined
          */
 
-        private Projects $projectService;
         private Goalcanvas $goalService;
-        private object $canvasRepo;
 
         /**
          * init - initialize private variables
          */
         public function init(
-            Projects $projectService,
             Goalcanvas $goalService
         ) {
-            $this->projectService = $projectService;
             $this->goalService = $goalService;
-            $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
-            $this->canvasRepo = app()->make($repoName);
-        }
+          }
 
         /**
          * run - display template and edit data
@@ -51,7 +44,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          {
 
              $result = $this->goalService->handleDashboardGetRequest($params);
-
+     
              $this->tpl->assign('currentCanvas', $result['currentCanvasId']);
              $this->tpl->assign('goalStats', $result['goalAnalytics']);
              $this->tpl->assign('canvasIcon', $result['canvasIcon']);
@@ -63,7 +56,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
              $this->tpl->assign('allCanvas', $result['allCanvas']);
              $this->tpl->assign('canvasItems', $result['canvasItems']);
              $this->tpl->assign('users', $result['users']);
-
+     
              return $this->tpl->display('goalcanvas.dashboard');
          }
 
@@ -72,7 +65,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          {
             $action = $_POST['action'] ?? '';
             $result = null;
-
+        
             switch ($action) {
                 case 'newCanvas':
                     try {
@@ -123,14 +116,14 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                     break;
             }
-
+        
             if ($result['success']) {
                 $this->tpl->setNotification($result['message'], 'success');
                 return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
             } else {
                 $this->tpl->setNotification($result['message'], 'error');
             }
-
+        
             return $this->get($params);
          }
     }

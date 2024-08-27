@@ -8,12 +8,6 @@ namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Domain\Ideas\Repositories\Ideas;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-    use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
-    use Illuminate\Support\Str;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Domain\Ideas\Services\Ideas as IdeasService;
 
@@ -22,19 +16,14 @@ namespace Leantime\Domain\Ideas\Controllers {
      */
     class BoardDialog extends Controller
     {
-        private ProjectService $projectService;
-
         private IdeasService $ideasService;
 
         /**
          * init - initialize private variables
          */
-        public function init(
-            ProjectService $projectService,
-            IdeaService $ideaService,
-        ) {
-            $this->ideasService = $ideaService;
-            $this->projectService = $projectService;
+        public function init()
+        {
+            $this->ideasService = app()->make(IdeasService::class);
         }
 
         public function get($params): Response
@@ -50,7 +39,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($params['newCanvas'])) {
                 $result = $this->ideasService->createNewCanvas($params);
                 if ($result['success']) {
-                    $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
+                    $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', "board_created");
                     return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
@@ -59,13 +48,11 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             if (isset($params['editCanvas'])) {
 
-                $result = [];
                 if (!empty($params['id'])) {
                     $currentCanvasId = (int)$params['id'];
-                    $result = $this->ideasService->editCanvas($params, $currentCanvasId);
                 }
-
-                if (!empty($result['success'])) {
+                $result = $this->ideasService->editCanvas($params, $currentCanvasId);
+                if ($result['success']) {
                     $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
                     return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
                 } else {
@@ -88,6 +75,8 @@ namespace Leantime\Domain\Ideas\Controllers {
          *
          * @access public
          */
+
+
         private function assignTemplateVariables($data)
         {
             $this->tpl->assign('canvasTitle', $data['canvasTitle']);

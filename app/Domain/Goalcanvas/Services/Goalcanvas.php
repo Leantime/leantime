@@ -10,6 +10,10 @@ namespace Leantime\Domain\Goalcanvas\Services {
     use Leantime\Core\Mailer;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
     use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
+    use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+    // use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+
 
 
     /**
@@ -25,6 +29,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         protected QueueRepo $queueRepo;
 
+        protected CommentRepository $commentsRepo;
+
+        protected TicketService $ticketService;
+
+        // protected CommentsService $commentsService;
+
+
         public array $reportingSettings = [
             "linkonly",
             "linkAndReport",
@@ -36,14 +47,20 @@ namespace Leantime\Domain\Goalcanvas\Services {
          */
         public function __construct(
             GoalcanvaRepository $goalRepository,
-            ?Language $language = null
+            CommentRepository $commentsRepo,
+            ?Language $language = null,
+            Projects $projectService,
+            Mailer $mailer,
+            QueueRepo $queueRepo,
         ) {
             $this->goalRepository = $goalRepository;
-            $this->projectService = app()->make(Projects::class);
+            $this->projectService = $projectService;
             $this->language = $language;
+            $this->commentsRepo = $commentsRepo;
 
-            $this->mailer = app()->make(Mailer::class);
-            $this->queueRepo = app()->make(QueueRepo::class);
+
+            $this->mailer = $mailer;
+            $this->queueRepo = $queueRepo;
         }
 
         /**
@@ -186,6 +203,16 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
+
+        // Retrieves goals associated with a specific milestone
+        /**
+         * Retrieves goals by milestone ID.
+         *
+         * @param int $milestoneId The ID of the milestone.
+         * @return array The array of goals.
+         */
+
+
         public function getGoalsByMilestone($milestoneId): array
         {
 
@@ -194,51 +221,87 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
+        /**
+         * Updates an existing goalboard with provided values.
+         *
+         * @param array $values The values to update the goalboard with.
+         * @return mixed The result of the update operation.
+         */
+
+        /**
+         * Updates the goalboard with the given values.
+         *
+         * @param array $values The values to update the goalboard with.
+         * @return mixed The result of the update operation.
+         */
         public function updateGoalboard($values)
         {
             return $this->goalRepository->updateCanvas($values);
         }
 
+
+        /**
+         * Creates a goal board.
+         *
+         * @param array $values The values to be used for creating the goal board.
+         * @return mixed The result of adding the goal board to the repository.
+         */
         public function createGoalboard($values)
         {
             return $this->goalRepository->addCanvas($values);
         }
+
+        /**
+         * Retrieves a single canvas by its ID
+         *
+         * @param int $id The ID of the canvas
+         * @return mixed The canvas object
+         */
+        // Retrieves a single canvas by its ID
 
         public function getSingleCanvas($id)
         {
             return $this->goalRepository->getSingleCanvas($id);
         }
 
-        public function createGoal($values)
+        /**
+         * Retrieves all goals for the current account.
+         *
+         * @return array The list of goals for the current account.
+         */
+        // Retrieves all goals for the current account
+
+        public function pollGoals()
         {
-            return $this->goalRepository->createGoal($values);
+            return $this->goalRepository->getAllAccountGoals();
         }
 
-        public function pollGoals(?int $projectId = null, ?int $board = null)
+        /**
+         * Retrieves all updated goals for the current account, with modified IDs
+         *
+         * @return array|false An array of updated goals with modified IDs, or false if there was an error
+         */
+
+        // Retrieves all updated goals for the current account, with modified IDs
+        public function pollForUpdatedGoals(): array|false
         {
-            $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
+            $goals = $this->goalRepository->getAllAccountGoals();
 
             foreach ($goals as $key => $goal) {
-                $goals[$key] = $this->prepareDatesForApiResponse($goal);
-            }
-
-            return $goals;
-        }
-
-        public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
-        {
-
-            $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
-
-            foreach ($goals as $key => $goal) {
-                $goals[$key] = $this->prepareDatesForApiResponse($goal);
                 $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
             }
 
             return $goals;
         }
 
-        // Goal Dashboard Get
+
+
+        /**
+         * Handles the GET request for the goal dashboard.
+         *
+         * @param array $params The parameters for the request.
+         * @return array The response data for the request.
+         */
         public function handleDashboardGetRequest($params): array
         {
             $allCanvas = $this->goalRepository->getAllCanvas(session("currentProject"));
@@ -265,6 +328,12 @@ namespace Leantime\Domain\Goalcanvas\Services {
             ];
         }
 
+        /**
+         * Creates a default canvas when no canvas exists.
+         *
+         * @return array The array of all canvases after creating the default canvas.
+         */
+        // Creates a default canvas when no canvas exists
         private function createDefaultCanvas(): array
         {
             $values = [
@@ -276,6 +345,8 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $this->goalRepository->getAllCanvas(session("currentProject"));
         }
 
+
+        // Calculates analytics for all goals across all canvases
         private function calculateGoalAnalytics(array $allCanvas): array
         {
             $goalAnalytics = [
@@ -304,6 +375,17 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goalAnalytics;
         }
 
+
+        /**
+         * Updates the goal status counters in the analytics array.
+         *
+         * This method is responsible for updating the goal status counters in the provided goalAnalytics array based on the status of the given item.
+         *
+         * @param array &$goalAnalytics The goal analytics array to update.
+         * @param array $item The item containing the status information.
+         * @return void
+         */
+        // Updates the goal status counters in the analytics array
         private function updateGoalStatus(array &$goalAnalytics, array $item): void
         {
             switch ($item["status"]) {
@@ -319,6 +401,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             }
         }
 
+        /**
+         * Calculates the percentage completion of a goal item.
+         *
+         * @param array $item The goal item containing 'startValue', 'endValue', and 'currentValue'.
+         * @return float The percentage completion of the goal item.
+         */
+        // Calculates the percentage completion of a goal item
+
         private function calculateItemPercentage(array $item): float
         {
             $total = $item['endValue'] - $item['startValue'];
@@ -326,6 +416,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             return $total > 0 ? round($progressValue / $total * 100, 2) : 0;
         }
+
+        /**
+         * Determines the current canvas ID based on various parameters.
+         *
+         * @param array $allCanvas An array of all available canvas.
+         * @param array $params An array of parameters.
+         * @return int The current canvas ID.
+         */
+        // Determines the current canvas ID based on various parameters
 
         private function determineCurrentCanvasId(array $allCanvas, array $params): int
         {
@@ -347,6 +446,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $currentCanvasId;
         }
 
+
+        /**
+         * Validates the canvas ID against an array of all canvases.
+         *
+         * @param int $canvasId The ID of the canvas to validate.
+         * @param array $allCanvas An array of all canvases.
+         * @return int Returns the validated canvas ID if found, otherwise returns -1.
+         */
         private function validateCanvasId(int $canvasId, array $allCanvas): int
         {
             foreach ($allCanvas as $canvas) {
@@ -358,7 +465,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
 
-        // Show canvas get data
+        /**
+         * Retrieves the current canvas ID, creating a default if necessary.
+         *
+         * @param array $params The parameters for retrieving the current canvas ID.
+         * @return int The current canvas ID.
+         */
+        // Retrieves the current canvas ID, creating a default if necessary
 
         public function getCurrentCanvasId($params)
         {
@@ -386,17 +499,43 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $currentCanvasId;
         }
 
+        /**
+         * Retrieves all canvases for the current project.
+         *
+         * @return array The array of canvases.
+         */
+        // Retrieves all canvases for the current project
+
+        /**
+         * Retrieves all canvas from the goal repository.
+         *
+         * @return array The array of canvas.
+         */
         public function getAllCanvas()
         {
             return $this->goalRepository->getAllCanvas(session("currentProject"));
         }
 
-
+        /**
+         * Retrieves the stored canvas ID from the session.
+         *
+         * @return int The stored canvas ID, or -1 if it doesn't exist.
+         */
+        // Retrieves the stored canvas ID from the session
         private function getStoredCanvasId()
         {
             $sessionKey = "current" . strtoupper('goal') . "Canvas";
             return session()->exists($sessionKey) ? session($sessionKey) : -1;
         }
+
+
+        /**
+         * Stores the current canvas ID in the session.
+         *
+         * @param int $canvasId The ID of the canvas to be stored.
+         * @return void
+         */
+        // Stores the current canvas ID in the session
 
         private function storeCurrentCanvasId($canvasId)
         {
@@ -404,7 +543,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             session([$sessionKey => $canvasId]);
         }
 
-        // Show canvas post data
+        /**
+         * Creates a new canvas with the given title.
+         *
+         * @param string $title The title of the canvas.
+         * @return array An array with the success status and a message.
+         * @throws MissingParameterException If the title is empty.
+         */
+        // Creates a new canvas with the given title
 
         public function createNewCanvas(string $title): array
         {
@@ -429,6 +575,18 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return ['success' => true, 'message' => $this->language->__('notification.board_created')];
         }
 
+        /**
+         * Edits an existing canvas with the given title and ID.
+         *
+         * @param string $title The new title for the canvas.
+         * @param int $canvasId The ID of the canvas to be edited.
+         * @return array An array containing the success status and a message.
+         * @throws MissingParameterException If the title parameter is empty.
+         * @throws ElementExistsException If a canvas with the same title already exists.
+         */
+
+        // Edits an existing canvas with the given title and ID
+
         public function editCanvas(string $title, int $canvasId): array
         {
             if (empty($title)) {
@@ -445,6 +603,17 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return ['success' => true, 'message' => $this->language->__('notification.board_edited')];
         }
 
+
+        /**
+         * Clones an existing canvas with a new title.
+         *
+         * @param string $title The new title for the cloned canvas.
+         * @param int $canvasId The ID of the canvas to be cloned.
+         * @return array An array containing the success status and a message.
+         * @throws MissingParameterException If the title parameter is empty.
+         * @throws ElementExistsException If a canvas with the same title already exists.
+         */
+        // Clones an existing canvas with a new title
         public function cloneCanvas(string $title, int $canvasId): array
         {
             if (empty($title)) {
@@ -466,6 +635,18 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return ['success' => true, 'message' => $this->language->__('notification.board_copied')];
         }
 
+
+        /**
+         * Merges two canvases.
+         *
+         * @param int $canvasId The ID of the canvas to merge.
+         * @param int $mergeCanvasId The ID of the canvas to merge with.
+         * @return array An array containing the success status and a message.
+         * @throws \Exception If either $canvasId or $mergeCanvasId is less than or equal to 0.
+         * @throws \Exception If the merge operation fails.
+         */
+        // Merges two canvases
+
         public function mergeCanvas(int $canvasId, int $mergeCanvasId): array
         {
             if ($canvasId <= 0 || $mergeCanvasId <= 0) {
@@ -478,9 +659,19 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 return ['success' => true, 'message' => $this->language->__('notification.board_merged')];
             } else {
                 throw new \Exception($this->language->__('notification.internal_error'));
-
             }
         }
+
+        /**
+         * Imports a canvas from an uploaded file.
+         *
+         * @param array|null $file The uploaded file.
+         *
+         * @return array The result of the import operation.
+         *
+         * @throws \Exception If the file is not provided or there is an error with the file upload.
+         */
+        // Imports a canvas from an uploaded file
 
         public function importCanvas(?array $file): array
         {
@@ -514,6 +705,16 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return ['success' => true, 'message' => $this->language->__('notification.board_imported')];
         }
 
+
+        /**
+         * Notifies users about canvas-related actions.
+         *
+         * @param string $action The action being performed on the canvas.
+         * @param string $canvasTitle The title of the canvas.
+         * @return void
+         */
+        // Notifies users about canvas-related actions
+
         private function notifyUsers(string $action, string $canvasTitle): void
         {
             $mailer = app()->make(Mailer::class);
@@ -539,34 +740,321 @@ namespace Leantime\Domain\Goalcanvas\Services {
             );
         }
 
-        private function prepareDatesForApiResponse($goal) {
+        /**
+         * Deletes a goal canvas item.
+         *
+         * @param int $id The ID of the goal canvas item to be deleted.
+         * @return void
+         */
+        // Deletes a goal canvas item
 
-            if(dtHelper()->isValidDateString($goal['created'])) {
-                $goal['created'] = dtHelper()->parseDbDateTime($goal['created'])->toIso8601ZuluString();
-            }else{
-                $goal['created'] = null;
+        public function deleteGoalCanvasItem(int $id): void
+        {
+            $this->goalRepository->delCanvasItem($id);
+        }
+
+        /**
+         * Retrieves canvas data including comments.
+         *
+         * @param array $params The parameters for retrieving the canvas data.
+         * @return array|false The canvas data including comments, or false if the canvas item is not found.
+         */
+        // Retrieves canvas data including comments
+
+        public function getCanvasData(array $params): array|false
+        {
+            if (isset($params['id'])) {
+                if (isset($params['delComment'])) {
+                    $this->deleteComment((int)$params['delComment']);
+                }
+
+                if (isset($params['removeMilestone'])) {
+                    $this->removeMilestone($params['id']);
+                }
+
+                $canvasItem = $this->goalRepository->getSingleCanvasItem($params['id']);
+
+                if ($canvasItem) {
+                    $comments = $this->commentsRepo->getComments('goalcanvasitem', $canvasItem['id']);
+                    $numComments = $this->commentsRepo->countComments('goalcanvascanvasitem', $canvasItem['id']);
+                } else {
+                    return false;
+                }
+            } else {
+                $canvasItem = $this->getNewCanvasItem();
+                $comments = [];
+                $numComments = 0;
             }
 
-            if(dtHelper()->isValidDateString($goal['modified'])) {
-                $goal['modified'] = dtHelper()->parseDbDateTime($goal['modified'])->toIso8601ZuluString();
-            }else{
-                $goal['modified'] = null;
+            return [
+                'canvasItem' => $canvasItem,
+                'comments' => $comments,
+                'numComments' => $numComments,
+                'canvasIcon' => $this->goalRepository->getIcon(),
+                'canvasTypes' => $this->goalRepository->getCanvasTypes(),
+                'statusLabels' => $this->goalRepository->getStatusLabels(),
+                'dataLabels' => $this->goalRepository->getDataLabels(),
+            ];
+        }
+
+        /**
+         * Deletes a comment.
+         *
+         * @param int $commentId The ID of the comment to be deleted.
+         * @return void
+         */
+        // Deletes a comment
+
+        private function deleteComment(int $commentId): void
+        {
+            $this->commentsRepo->deleteComment($commentId);
+        }
+
+        // Removes a milestone from a canvas item
+
+
+        /**
+         * Removes the milestone from a canvas item.
+         *
+         * @param int $canvasItemId The ID of the canvas item.
+         * @return void
+         */
+        private function removeMilestone(int $canvasItemId): void
+        {
+            $this->goalRepository->patchCanvasItem($canvasItemId, ['milestoneId' => '']);
+        }
+
+
+        /**
+         * Creates a new canvas item with default values
+         *
+         * @return array The newly created canvas item with default values
+         */
+
+        private function getNewCanvasItem(): array
+        {
+            return [
+                'id' => '',
+                'box' => "goal",
+                'title' => '',
+                'description' => '',
+                'status' => array_key_first($this->goalRepository->getStatusLabels()),
+                'relates' => '',
+                'startValue' => '',
+                'currentValue' => '',
+                'canvasId' => $_GET["canvasId"] ?? (int)session("currentGOALCanvas"),
+                'endValue' => '',
+                'kpi' => '',
+                'startDate' => '',
+                'endDate' => '',
+                'setting' => '',
+                'metricType' => '',
+                'assignedTo' => '',
+                'parent' => '',
+            ];
+        }
+
+
+        /**
+         * Adds a new comment to a canvas item.
+         *
+         * @param array $params The parameters for adding a comment.
+         *                      - text: The text of the comment.
+         *                      - father: The parent comment ID.
+         *
+         * @return int|false The ID of the newly added comment, or false if the comment text is empty.
+         */
+        public function addComment($params): int|false
+        {
+            $values = [
+                'text' => $params['text'],
+                'date' => date('Y-m-d H:i:s'),
+                'userId' => session("userdata.id"),
+                'moduleId' => $_GET['id'],
+                'commentParent' => $params['father'],
+            ];
+
+            if ($params['text'] != '') {
+                return $this->commentsRepo->addComment($values, 'goalcanvasitem');
             }
 
-            if(dtHelper()->isValidDateString($goal['startDate'])) {
-                $goal['startDate'] = dtHelper()->parseDbDateTime($goal['startDate'])->toIso8601ZuluString();
-            }else{
-                $goal['startDate'] = null;
+            return false;
+        }
+
+        /**
+         * Updates or creates a canvas item.
+         *
+         * @param array $params The parameters for updating or creating the canvas item.
+         * @return array|false Returns an array with the canvas item, its ID, and a flag indicating if it is a new item. Returns false if the update or creation fails.
+         */
+        // Updates or creates a canvas item
+
+        public function updateCanvasItem($params): array|false
+        {
+            $canvasItem = $this->prepareCanvasItemData($params);
+
+            if (isset($params['itemId']) && !empty($params['itemId'])) {
+                $this->goalRepository->editCanvasItem($canvasItem);
+                return ['canvasItem' => $canvasItem, 'id' => $params['itemId'], 'isNew' => false];
+            } elseif (isset($params['title']) && !empty($params['title'])) {
+                $id = $this->goalRepository->addCanvasItem($canvasItem);
+                return ['canvasItem' => $canvasItem, 'id' => $id, 'isNew' => true];
             }
 
-            if(dtHelper()->isValidDateString($goal['endDate'])) {
-                $goal['endDate'] = dtHelper()->parseDbDateTime($goal['endDate'])->toIso8601ZuluString();
-            }else{
-                $goal['endDate'] = null;
+            return false;
+        }
+
+        /**
+         * Prepares canvas item data for insertion or update.
+         *
+         * @param array $params The parameters for preparing the canvas item data.
+         * @return array The prepared canvas item data.
+         */
+
+        // Prepares canvas item data for insertion or update
+
+        private function prepareCanvasItemData($params): array
+        {
+            $canvasItem = [
+                'box' => $params['box'],
+                'author' => session("userdata.id"),
+                'title' => $params['title'],
+                'description' => $params['description'] ?? '',
+                'status' => $params['status'] ?? '',
+                'relates' => '',
+                'startValue' => $params['startValue'],
+                'currentValue' => $params['currentValue'],
+                'endValue' => $params['endValue'],
+                'canvasId' => $params['canvasId'],
+                'parent' => $params['parent'] ?? null,
+                'kpi' => $params['kpi'] ?? '',
+                'startDate' => !empty($params['startDate']) ? format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime() : '',
+                'endDate' => !empty($params['endDate']) ? format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime() : '',
+                'setting' => $params['setting'] ?? '',
+                'metricType' =>  $params['metricType'],
+                'assignedTo' => $params['assignedTo'] ?? '',
+            ];
+
+            if (isset($params['itemId'])) {
+                $canvasItem['id'] = $params['itemId'];
+                $canvasItem['itemId'] = $params['itemId'];
             }
 
-            return $goal;
+            $this->handleMilestone($params, $canvasItem);
 
+            return $canvasItem;
+        }
+
+
+        /**
+         * Handles milestone creation or association for a canvas item.
+         *
+         * @param array $params The parameters for milestone creation or association.
+         * @param array $canvasItem The canvas item to handle the milestone for.
+         * @return void
+         */
+        // Handles milestone creation or association for a canvas item
+        private function handleMilestone($params, &$canvasItem): void
+        {
+            if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
+                $milestoneParams = [
+                    'headline' => $params['newMilestone'],
+                    'tags' => '#ccc',
+                    'editFrom' => dtHelper()->userNow()->formatDateForUser(),
+                    'editTo' => dtHelper()->userNow()->addDays(7)->formatDateForUser(),
+                    'dependentMilestone' => '',
+                ];
+                $id = $this->ticketService->quickAddMilestone($milestoneParams);
+                if ($id !== false) {
+                    $canvasItem['milestoneId'] = $id;
+                }
+            } elseif (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
+                $canvasItem['milestoneId'] = $params['existingMilestone'];
+            }
+        }
+
+
+        /**
+         * Retrieves all canvas types.
+         *
+         * @return array An array containing all the canvas types.
+         */
+        // Retrieves all canvas types
+
+        public function getCanvasTypes(): array
+        {
+            return $this->goalRepository->getCanvasTypes();
+        }
+
+
+        /**
+         * Retrieves all status labels.
+         *
+         * @return array The array of status labels.
+         */
+        // Retrieves all status labels
+        public function getStatusLabels(): array
+        {
+            return $this->goalRepository->getStatusLabels();
+        }
+
+
+        /**
+         * Retrieves all data labels.
+         *
+         * @return array The array of data labels.
+         */
+        // Retrieves all data labels
+        public function getDataLabels(): array
+        {
+            return $this->goalRepository->getDataLabels();
+        }
+
+        /**
+         * Retrieves data for a specific canvas item including comments.
+         *
+         * @param int $id The ID of the canvas item.
+         * @return array An array containing the canvas item and its comments.
+         */
+
+        // Retrieves data for a specific canvas item including comments
+
+        public function getCanvasItemData($id): array
+        {
+            return [
+                'canvasItem' => $this->goalRepository->getSingleCanvasItem($id),
+                'comments' => $this->commentsRepo->getComments('goalcanvasitem', $id),
+            ];
+        }
+
+
+        
+        /**
+         * Returns a new canvas item template.
+         *
+         * @param array $params The parameters for the canvas item.
+         * @return array The new canvas item template.
+         */
+        public function getNewCanvasItemTemplate($params): array
+        {
+            return [
+                'id' => '',
+                'box' => $params['box'],
+                'author' => session("userdata.id"),
+                'title' => '',
+                'description' => '',
+                'status' => array_key_first($this->getStatusLabels()),
+                'relates' => array_key_first($this->goalRepository->getRelatesLabels()),
+                'startValue' => '',
+                'currentValue' => '',
+                'endValue' => '',
+                'kpi' => '',
+                'startDate' => '',
+                'endDate' => '',
+                'setting' => '',
+                'metricType' => '',
+                'assignedTo' => session("userdata.id"),
+            ];
         }
     }
 }

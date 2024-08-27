@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Goalcanvas\Repositories {
 
-    use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Db\Db as DbCore;
     use Leantime\Domain\Goalcanvas\Models\Goalcanvas as GoalcanvasModel;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Tickets\Repositories\Tickets;
@@ -121,7 +121,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':canvasName', static::CANVAS_NAME . 'canvas', PDO::PARAM_STR);
+            // $stmn->bindValue(':canvasName', static::CANVAS_NAME . 'canvas', PDO::PARAM_STR);
             $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_INT);
 
             $stmn->execute();
@@ -131,6 +131,12 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
             return $value;
         }
+
+        /**
+         * Gets all goals related to a milestone
+         *
+         * @return array|false
+         */
 
         /**
          * Gets all goals related to a milestone
@@ -1405,6 +1411,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             return $values;
         }
 
+        
         /**
          * @param $values
          * @return false|string
