@@ -26,6 +26,7 @@ class MarketplacePlugin implements PluginDisplayStrategy
     public array $reviews;
     public string $marketplaceId;
     public array $compatibility;
+    public string $version;
 
     public function getCardDesc(): string
     {

@@ -32,7 +32,7 @@ jobs:
         with:
           changelog_filename: CHANGELOG.md
           release_version: ${{ steps.version.outputs.version }}
-          config_file: .github/workflows/changelogConfig.yml
+          config_file: .github/changelogConfig.yml
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract Repo Attributes
         id: attrs

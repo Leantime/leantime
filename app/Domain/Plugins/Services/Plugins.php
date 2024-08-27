@@ -414,6 +414,7 @@ namespace Leantime\Domain\Plugins\Services {
                         ->set('vendorEmail', $plugin['vendor_email'] ?? '')
                         ->set('startingPrice', '$' . ($plugin['price'] ?? '') . (! empty($plugin['sub_interval']) ? '/' . $plugin['sub_interval'] : ''))
                         ->set('rating', $plugin['rating'] ?? '')
+                        ->set('version', $plugin['version'] ?? '')
                         ->get();
                 }
             }
