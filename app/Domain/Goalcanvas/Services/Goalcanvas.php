@@ -48,10 +48,10 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function __construct(
             GoalcanvaRepository $goalRepository,
             CommentRepository $commentsRepo,
-            ?Language $language = null,
             Projects $projectService,
             Mailer $mailer,
             QueueRepo $queueRepo,
+            ?Language $language = null,
         ) {
             $this->goalRepository = $goalRepository;
             $this->projectService = $projectService;
