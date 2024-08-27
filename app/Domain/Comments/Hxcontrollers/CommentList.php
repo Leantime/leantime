@@ -2,9 +2,8 @@
 
 namespace Leantime\Domain\Comments\Hxcontrollers;
 
-use Illuminate\Support\Facades\Lang;
-use Leantime\Core\HtmxController;
-use Leantime\Core\IncomingRequest;
+use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Timesheets\Services\Timesheets;

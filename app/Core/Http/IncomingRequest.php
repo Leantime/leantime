@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Session\SymfonySessionDecorator;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -16,6 +17,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class IncomingRequest extends Request
 {
+
+    /**
+     * The decoded JSON content for the request.
+     *
+     * @var \Symfony\Component\HttpFoundation\InputBag|null
+     */
+    protected $json;
+
     /**
      * @param array                $query      The GET parameters
      * @param array                $request    The POST parameters
@@ -153,6 +162,26 @@ class IncomingRequest extends Request
             $key,
             $default
         );
+    }
+
+    /**
+     * Get the JSON payload for the request.
+     *
+     * @param  string|null  $key
+     * @param  mixed  $default
+     * @return \Symfony\Component\HttpFoundation\InputBag|mixed
+     */
+    public function json($key = null, $default = null)
+    {
+        if (! isset($this->json)) {
+            $this->json = new InputBag((array) json_decode($this->getContent() ?: '[]', true));
+        }
+
+        if (is_null($key)) {
+            return $this->json;
+        }
+
+        return data_get($this->json->all(), $key, $default);
     }
 
     /**
