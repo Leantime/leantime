@@ -8,8 +8,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Support\DateTimeHelper;
-    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -18,11 +16,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Controller\Frontcontroller;
+    
 
     /**
      *
      */
-    class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+    class EditCanvasItem extends Controller
     {
         private TicketService $ticketService;
         private ProjectService $projectService;
