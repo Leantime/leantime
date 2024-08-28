@@ -21,27 +21,19 @@
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/app.{!! $version !!}.min.css"/>
 
 @dispatchEvent('afterLinkTags')
+<!---->
+<!-- <script type="text/javascript">var leantime = leantime || {};</script> -->
 
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-htmx-headSupport.{!! $version !!}.min.js"></script>
+<!-- app -->
+<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.{{ app()->make(\Leantime\Core\Configuration\Environment::class)->debug ? 'js' : 'min.js' }}"></script>
 
-<!-- libs -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-framework-plugins.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-global-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
+@dispatchEvent('afterMainScriptTag')
+
 <script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-gantt-component.{!! $version !!}.min.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-chart-component.{!! $version !!}.min.js"></script>
 
 @dispatchEvent('afterScriptLibTags')
-
-<!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
-@dispatchEvent('afterMainScriptTag')
 
 <!--
 //For future file based ref js loading

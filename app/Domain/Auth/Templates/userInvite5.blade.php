@@ -68,7 +68,7 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" headline="You are now one step closer to getting things done!" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>
+        <x-global::elements.undrawSvg image="undraw_adventure_map_hnin.svg" headline="You are now one step closer to getting things done!" maxWidth="60%" maxHeight="300px"></x-global::elements.undrawSvg>
         <br /><br />
         <p>As you get ready to go into the system, start thinking about what you want to accomplish.<br />
             <br />

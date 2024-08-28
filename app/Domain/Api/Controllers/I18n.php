@@ -48,11 +48,9 @@ class I18n extends Controller
         $response = new Response(
             <<<JS
             var leantime = leantime || {};
-            var leantime = {
-                i18n: {
-                    dictionary: $result,
-                    __: function(index){ return leantime.i18n.dictionary[index];  }
-                }
+            leantime.i18n = {
+                dictionary: $result,
+                __: (index) => leantime.i18n.dictionary[index],
             };
             JS,
             200

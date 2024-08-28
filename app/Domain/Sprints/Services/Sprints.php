@@ -144,8 +144,8 @@ namespace Leantime\Domain\Sprints\Services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
-            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
+            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
+            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
 
             $sprint->projectId = $params['projectId'] ?? session("currentProject");
 
@@ -166,8 +166,8 @@ namespace Leantime\Domain\Sprints\Services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
-            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
+            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
+            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
 
             $sprint->projectId = $params['projectId'] ?? session("currentProject");
 

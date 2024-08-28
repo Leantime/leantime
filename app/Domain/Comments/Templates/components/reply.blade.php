@@ -16,16 +16,14 @@
                 $tpl->escape($comment['firstname']),
                 $tpl->escape($comment['lastname'])
             ) !!}</span>
-
             <div class="text">
                 {!! $tpl->escapeMinimal($comment['text']) !!}
             </div>
-
         </div>
         <div class="commentLinks">
             @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$commenter))
                 <a href="javascript:void(0);"
-                   onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
+                   onclick="leantime.commentsComponent.toggleCommentBoxes({{ $comment['commentParent'] }})">
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
                 </a>
                 @if($comment['userId'] == session("userdata.id"));
@@ -36,6 +34,7 @@
                 @endif
             @endif
         </div>
+        <div class="commentReply"></div>
     </div>
     <div class="clearall"></div>
 </div>

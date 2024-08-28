@@ -62,8 +62,8 @@ leantime.modals = (function () {
         if(url.includes("showTicket")
             || url.includes("ideaDialog")
             || url.includes("articleDialog")) {
-            modalOptions.sizes.minW = 1800;
-            modalOptions.sizes.minH = 1800;
+            //modalOptions.sizes.minW = 1800;
+            //modalOptions.sizes.minH = 1800;
         }
 
         var urlParts = url.split("/");

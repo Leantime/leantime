@@ -3,8 +3,6 @@
 namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;

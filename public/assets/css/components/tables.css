@@ -412,7 +412,7 @@
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
     padding: 4px 14px;
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;

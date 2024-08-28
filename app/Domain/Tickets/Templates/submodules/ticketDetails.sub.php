@@ -16,16 +16,13 @@ $ticketTypes = $tpl->get('ticketTypes');
             <div class="col-md-12">
 
                 <div class="form-group">
-                        <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%;" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_todo')?>"/>
-                </div>
+                                  </div>
                 <div class="form-group">
-                    <input type="text" value="<?php $tpl->e($ticket->tags); ?>" name="tags" id="tags" />
+
                 </div>
 
                 <div class="viewDescription mce-content-body">
                     <div class="tw-pl-[9px]">
-                        <p><?=$tpl->__("label.description") ?></p>
-                        <br /><br />
                         <?php echo $tpl->escapeMinimal($ticket->description); ?>
                     </div>
                 </div>
@@ -54,15 +51,7 @@ $ticketTypes = $tpl->get('ticketTypes');
             <?php $tpl->dispatchTplEvent("beforeSubtasks", ["ticketId" => $ticket->id]); ?>
             <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> <?php echo $tpl->__('subtitles.subtasks'); ?></h4>
 
-            <div
-                id="ticketSubtasks"
-                hx-get="<?=BASE_URL ?>/tickets/subtasks/get?ticketId=<?=$ticket->id ?>"
-                hx-trigger="load"
-                hx-indicator=".subtaskIndicator"
-            ></div>
-            <div class="htmx-indicator subtaskIndicator">
-                Loading Subtasks ...<br /><br />
-            </div>
+
 
         <h4 class="widgettitle title-light"><span
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>

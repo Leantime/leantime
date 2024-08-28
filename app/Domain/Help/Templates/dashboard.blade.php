@@ -1,7 +1,7 @@
 <div class="center padding-lg" style="width:800px;">
     <div class="row">
         <div class="col-md-12">
-            <x-global::undrawSvg image="undraw_social_serenity_vhix.svg" maxWidth="auto"  maxheight="auto" height="250px" headline="{{ __('headlines.welcome') }}"></x-global::undrawSvg>
+            <x-global::elements.undrawSvg image="undraw_social_serenity_vhix.svg" maxWidth="auto"  maxheight="auto" height="250px" headline="{{ __('headlines.welcome') }}"></x-global::elements.undrawSvg>
         </div>
     </div>
     <div class="row onboarding">

@@ -862,10 +862,10 @@ namespace Leantime\Domain\Projects\Services {
                 'end' => $values['end'],
             );
             if ($values['start'] != null) {
-                $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+                $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
             }
             if ($values['end'] != null) {
-                $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
+                $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
             }
             return $this->projectRepository->addProject($values);
         }
