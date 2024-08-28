@@ -96,6 +96,7 @@ class Frontcontroller
         $classname = $namespace."".$controllerNs."\\".$moduleName."\\".$controllerType."\\".$actionName;
 
         if (! class_exists($classname)) {
+
              $classname = $namespace."Plugins\\".$moduleName."\\".$controllerType."\\".$actionName;
 
             $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();

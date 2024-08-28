@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Bootstrap;
 
+use Leantime\Core\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core\Application;
@@ -42,6 +43,7 @@ class RegisterProviders
         \Leantime\Core\Providers\Db::class,
         Language::class,
         Views::class,
+        RouteServiceProvider::class,
         Frontcontroller::class,
     ];
 

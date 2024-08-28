@@ -5,7 +5,6 @@
       <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/custom" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/html-to-markdown" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bacon/bacon-qr-code" />
@@ -171,6 +170,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dom-crawler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/zebra-north/phpcs-short-types" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/routing" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/routing" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

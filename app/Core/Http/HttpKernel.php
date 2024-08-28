@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Foundation\Bootstrap\LoadConfig;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
 use Leantime\Core\Application;
 use Leantime\Core\Bootstrap\BootProviders;
@@ -22,6 +23,8 @@ class HttpKernel implements HttpKernelContract
 {
     use DispatchesEvents;
 
+    protected $router;
+
     /**
      * The timestamp when the request started.
      *
@@ -31,9 +34,9 @@ class HttpKernel implements HttpKernelContract
 
     protected Application $app;
 
-    public function __construct(Application $app)
+    public function __construct(Application $app, Router $router)
     {
-
+        $this->router = $router;
         $this->app = $app;
     }
 
@@ -88,7 +91,12 @@ class HttpKernel implements HttpKernelContract
                         )
                     )
                     ->then(function($request) {
-                        return $this->app['frontcontroller']->dispatch();
+
+                            $this->app->instance('request', $request);
+
+                            return $this->router->dispatch($request);
+
+                        //return $this->app['frontcontroller']->dispatch();
                     })
                 );
 

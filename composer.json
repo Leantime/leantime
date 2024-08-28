@@ -64,6 +64,7 @@
         "illuminate/encryption": "^10.0",
         "illuminate/redis": "^10.0",
         "illuminate/log": "^10.0",
+        "illuminate/routing": "^10.0",
         "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
 

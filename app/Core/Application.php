@@ -254,6 +254,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
         $this->register(new \Leantime\Core\Providers\Events($this));
         $this->register(new \Leantime\Core\Providers\Logging($this));
         $this->register(new \Leantime\Core\Providers\Environment($this));
+        $this->register(new RoutingServiceProvider($this));
 
 
     }

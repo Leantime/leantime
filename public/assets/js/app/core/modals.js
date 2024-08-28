@@ -68,7 +68,7 @@ leantime.modals = (function () {
 
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
-            jQuery.nmManual(leantime.appUrl+"/"+url, modalOptions);
+            jQuery.nmManual(leantime.appUrl+""+url, modalOptions);
         }
     }
 

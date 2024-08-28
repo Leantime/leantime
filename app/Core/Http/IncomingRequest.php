@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @package    leantime
  * @subpackage core
  */
-class IncomingRequest extends Request
+class IncomingRequest extends \Illuminate\Http\Request
 {
     /**
      * @param array                $query      The GET parameters
@@ -162,7 +162,7 @@ class IncomingRequest extends Request
      *
      * @return void
      */
-    public function setLaravelSession(\Illuminate\Contracts\Session\Session $session)
+    public function setLaravelSession($session)
     {
         $this->session = new SymfonySessionDecorator($session);
     }
