@@ -692,8 +692,7 @@ class Template
                      spread: 70,
                      origin: { y: 1.2 },
                      disableForReducedMotion: true
-                    });
-                  </script>',
+                });</script>',
                 []
             );
 
