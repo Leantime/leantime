@@ -50,7 +50,8 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
 mix
     // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
-    .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.min.js`)
+    .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.js`)
+    .minify(`./public/dist/js/compiled-app.${version}.js`)
     .combine([
         "./node_modules/tinymce/tinymce.js",
         "./node_modules/tinymce/icons/default/icons.js",

@@ -27,7 +27,7 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 <!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.{{ app()->make(Environment::class)->debug ? 'js' : 'min.js' }}"></script>
 
 @dispatchEvent('afterMainScriptTag')
 
