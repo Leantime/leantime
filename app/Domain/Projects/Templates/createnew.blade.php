@@ -17,7 +17,7 @@
         <div class="col-md-4 {{ $projectType["active"] !== true ? "disabled" : "" }}"  >
             <div class="profileBox">
 
-                <x-global::undrawSvg image="{{ $projectType['image'] }}" headline="{{  __($projectType['label'])  }}" maxWidth="50%" height="150px"></x-global::undrawSvg>
+                <x-global::elements.undrawSvg image="{{ $projectType['image'] }}" headline="{{  __($projectType['label'])  }}" maxWidth="50%" height="150px"></x-global::elements.undrawSvg>
 
                 <br />
                 {!! __($projectType["description"]) !!}

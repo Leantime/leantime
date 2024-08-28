@@ -1,156 +1,132 @@
-var leantime = leantime || {};
+import jQuery from 'jquery';
+import { appUrl } from 'js/app/core/instance-info.module';
+import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { DateTime } from 'luxon';
 
-leantime.ticketsRepository = (function () {
+export const updateMilestoneDates = function (id, start, end, sortIndex) {
+    let userDateFormat = getFormatFromSettings("dateformat", "luxon");
+    let userTimeFormat = getFormatFromSettings("timeformat", "luxon");
 
-    //Functions
+    let editFrom = DateTime.fromSQL(start).toFormat(userDateFormat);
+    let timeFrom = DateTime.fromSQL(start).toFormat(userTimeFormat);
+    let editTo = DateTime.fromSQL(end).toFormat(userDateFormat);
+    let timeTo = DateTime.fromSQL(end).toFormat(userTimeFormat);
 
-    var updateMilestoneDates = function (id, start, end, sortIndex) {
-
-        let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
-        let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
-
-        let editFrom = luxon.DateTime.fromSQL(start).toFormat(userDateFormat);
-        let timeFrom = luxon.DateTime.fromSQL(start).toFormat(userTimeFormat);
-        let editTo = luxon.DateTime.fromSQL(end).toFormat(userDateFormat);
-        let timeTo = luxon.DateTime.fromSQL(end).toFormat(userTimeFormat);
-
-        jQuery.ajax(
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data:
             {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
+                id : id,
+                editFrom:editFrom,
+                editTo:editTo,
+                timeFrom: timeFrom,
+                timeTo: timeTo,
+                sortIndex: sortIndex
+            }
+        }
+    ).done(
+        function () {
+            //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+        }
+    );
+};
+
+export const updateRemainingHours = function (id, remaining, callbackSuccess) {
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data:
+            {
+                id : id,
+                hourRemaining:remaining
+            }
+        }
+    ).done(
+        function () {
+
+                callbackSuccess();
+        }
+    );
+};
+
+export const updatePlannedHours = function (id, planhours, callbackSuccess) {
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data:
                 {
                     id : id,
-                    editFrom:editFrom,
-                    editTo:editTo,
-                    timeFrom: timeFrom,
-                    timeTo: timeTo,
-                    sortIndex: sortIndex
-                }
+                    planHours:planhours
             }
-        ).done(
-            function () {
-                    //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+        }
+    ).done(
+        function () {
 
+            callbackSuccess();
+        }
+    );
+};
+
+export const updateDueDates = function (id, date, callbackSuccess) {
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data: {
+                id: id,
+                dateToFinish:date
             }
-        );
+        }
+    ).done(
+        function () {
+            callbackSuccess();
+        }
+    );
+};
 
-    };
-
-    var updateRemainingHours = function (id, remaining, callbackSuccess) {
-
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                {
-                    id : id,
-                    hourRemaining:remaining
-                }
+export const updateEditFromDates = function (id, date, callbackSuccess) {
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data: {
+                id: id,
+                editFrom:date
             }
-        ).done(
-            function () {
+        }
+    ).done(
+        function () {
+            callbackSuccess();
+        }
+    );
+};
 
-                    callbackSuccess();
+export const updateEditToDates = function (id, date, callbackSuccess) {
+    jQuery.ajax(
+        {
+            type: 'PATCH',
+            url: appUrl + '/api/tickets',
+            data: {
+                id: id,
+                editTo:date
             }
-        );
+        }
+    ).done(
+        function () {
+            callbackSuccess();
+        }
+    );
+};
 
-    };
-
-    var updatePlannedHours = function (id, planhours, callbackSuccess) {
-
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        planHours:planhours
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
-
-    };
-
-    var updateDueDates = function (id, date, callbackSuccess) {
-
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        dateToFinish:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
-
-    };
-
-    var updateEditFromDates = function (id, date, callbackSuccess) {
-
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editFrom:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
-
-    };
-
-    var updateEditToDates = function (id, date, callbackSuccess) {
-
-        jQuery.ajax(
-            {
-                type: 'PATCH',
-                url: leantime.appUrl + '/api/tickets',
-                data:
-                    {
-                        id : id,
-                        editTo:date
-                }
-            }
-        ).done(
-            function () {
-
-                callbackSuccess();
-            }
-        );
-
-    };
-
-
-    // Make public what you want to have public, everything else is private
-    return {
-        updateMilestoneDates: updateMilestoneDates,
-        updateRemainingHours:updateRemainingHours,
-        updatePlannedHours:updatePlannedHours,
-        updateDueDates:updateDueDates,
-        updateEditFromDates:updateEditFromDates,
-        updateEditToDates:updateEditToDates
-
-    };
-})();
+export default {
+    updateMilestoneDates: updateMilestoneDates,
+    updateRemainingHours: updateRemainingHours,
+    updatePlannedHours: updatePlannedHours,
+    updateDueDates: updateDueDates,
+    updateEditFromDates: updateEditFromDates,
+    updateEditToDates: updateEditToDates
+};

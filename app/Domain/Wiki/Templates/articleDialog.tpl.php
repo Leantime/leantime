@@ -197,9 +197,6 @@ if (isset($currentArticle->id)) {
             jQuery.nmTop().close();
         <?php } ?>
 
-
-
-
         jQuery('.iconpicker-container').iconpicker({
             //title: 'Dropdown with picker',
             component:'.btn > .iconPlaceholder',
@@ -283,14 +280,5 @@ if (isset($currentArticle->id)) {
         });
 
         leantime.ticketsController.initTagsInput();
-
-
     });
-
 </script>
-
-
-<?php /*
-
-
- */

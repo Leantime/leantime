@@ -79,28 +79,28 @@
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::content.tabs class="">
             <x-slot:headings class="tw-sticky tw-top-0 !tw-bg-[--secondary-background]">
-                <x-global::tabs.heading name="connections">Connections</x-global::tabs.heading>
-                <x-global::tabs.heading name="discussion">Discussions</x-global::tabs.heading>
-                <x-global::tabs.heading name="subtask">Subtasks</x-global::tabs.heading>
-                <x-global::tabs.heading name="files">Files</x-global::tabs.heading>
+                <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="discussion">Discussions</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="files">Files</x-global::content.tabs.heading>
             </x-slot:headings>
 
             <x-slot:contents>
-                <x-global::tabs.content name="connections" class="tw-p-sm">
+                <x-global::content.tabs.content name="connections" class="tw-p-sm">
                     Connections
-                </x-global::tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::tabs.content name="discussion" class="tw-p-sm">
+                <x-global::content.tabs.content name="discussion" class="tw-p-sm">
                     <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
-                </x-global::tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::tabs.content name="subtask" class="tw-p-sm">
+                <x-global::content.tabs.content name="subtask" class="tw-p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::tabs.content name="files" class="tw-p-sm">
+                <x-global::content.tabs.content name="files" class="tw-p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::tabs.content>
+                </x-global::content.tabs.content>
 
             </x-slot:contents>
         </x-global::content.tabs>

@@ -25,8 +25,8 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
-            </x-global::undrawSvg>
+            <x-global::elements.undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
+            </x-global::elements.undrawSvg>
 
         @endif
 
