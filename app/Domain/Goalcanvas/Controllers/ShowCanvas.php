@@ -58,11 +58,11 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
-            $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
-            $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
-            $this->tpl->assign('relatesLabels', $this->canvasRepo->getRelatesLabels());
-            $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-            $this->tpl->assign('disclaimer', $this->canvasRepo->getDisclaimer());
+            $this->tpl->assign('canvasTypes', $this->goalService->getCanvasTypes());
+            $this->tpl->assign('statusLabels', $this->goalService->getStatusLabels());
+            $this->tpl->assign('relatesLabels', $this->goalService->getRelatesLabels());
+            $this->tpl->assign('dataLabels', $this->goalService->getDataLabels());
+            $this->tpl->assign('disclaimer', $this->goalService->getDisclaimer());
             $this->tpl->assign('allCanvas', $allCanvas);
             $this->tpl->assign('canvasItems', $this->goalService->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));

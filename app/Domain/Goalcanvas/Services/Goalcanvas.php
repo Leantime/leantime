@@ -23,17 +23,17 @@ namespace Leantime\Domain\Goalcanvas\Services {
      */
     class Goalcanvas
     {
+        protected Mailer $mailer;
+        
+        protected QueueRepo $queueRepo;
+        
+        protected CommentRepository $commentsRepo;
+        
+        protected TicketService $ticketService;
         private GoalcanvaRepository $goalRepository;
         private ?Projects $projectService;
 
         protected ?Language $language;
-        protected Mailer $mailer;
-
-        protected QueueRepo $queueRepo;
-
-        protected CommentRepository $commentsRepo;
-
-        protected TicketService $ticketService;
 
         // protected CommentsService $commentsService;
 
@@ -50,9 +50,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function __construct(
             GoalcanvaRepository $goalRepository,
             CommentRepository $commentsRepo,
-            Projects $projectService,
             Mailer $mailer,
             QueueRepo $queueRepo,
+            Projects $projectService,
             ?Language $language = null,
         ) {
             $this->goalRepository = $goalRepository;
@@ -294,6 +294,26 @@ namespace Leantime\Domain\Goalcanvas\Services {
             }
 
             return $goals;
+        }
+
+        /**
+         * Retrieves the related labels for the goal canvas.
+         *
+         * @return array The related labels for the goal canvas.
+         */
+        public function getRelatesLabels()
+        {
+            return $this->goalRepository->getRelatesLabels();
+        }
+
+        /**
+         * Retrieves the disclaimer from the goal repository.
+         *
+         * @return string The disclaimer text.
+         */
+        public function getDisclaimer()
+        {
+            return $this->goalRepository->getDisclaimer();
         }
 
 
