@@ -1013,7 +1013,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
         }
 
         //Before booting any providers we discover events listeners
-        EventDispatcher::discover_listeners();
+        EventDispatcher::discoverListeners();
 
         self::dispatch_event("beforeBootingServiceProviders");
 
