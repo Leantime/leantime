@@ -187,7 +187,12 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             //Override the state values that are in the db
             if ($values !== false) {
+
                 $statusList = array();
+
+                //Archive is required and protected.
+                //Adding the original version back in case folks removed it
+                $statusList[-1] = $this->statusListSeed[-1];
 
                 foreach (unserialize($values['value']) as $key => $status) {
                     if (is_int($key)) {
@@ -197,7 +202,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                         if (!is_array($status)) {
                             $statusList[$key] = $this->statusListSeed[$key];
 
-                            if (is_array($statusList[$key]) && isset($statusList[$key]["name"])) {
+                            if (is_array($statusList[$key]) && isset($statusList[$key]["name"]) && $key !== -1) {
                                 $statusList[$key]["name"] = $status;
                             }
                         } else {
