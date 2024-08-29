@@ -5,6 +5,7 @@ namespace Leantime\Domain\Projects\Repositories {
     use DateInterval;
     use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Log;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
@@ -260,12 +261,12 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if($projectTypes  != "all" && $projectTypes  != "project") {
+            if ($projectTypes  != "all" && $projectTypes  != "project") {
                 $projectTypeIn = DbCore::arrayToPdoBindingString("projectType", count(explode(",", $projectTypes)));
                 $query .= " AND project.type IN(" . $projectTypeIn . ")";
             }
 
-            if($projectTypes  == "project") {
+            if ($projectTypes  == "project") {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
@@ -285,13 +286,13 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
-            if($projectTypes  != "all" && $projectTypes  != "project") {
+            if ($projectTypes  != "all" && $projectTypes  != "project") {
                 foreach (explode(",", $projectTypes) as $key => $type) {
                     $stmn->bindValue(":projectType" . $key, $type, PDO::PARAM_STR);
                 }
             }
 
-            if($projectTypes  == "project") {
+            if ($projectTypes  == "project") {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
@@ -879,7 +880,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -1375,37 +1375,38 @@ namespace Leantime\Domain\Projects\Repositories {
                 $value = $stmn->fetch();
                 $stmn->closeCursor();
             }
-
-            $avatar = (new InitialAvatar())
+            try {
+                $avatar = (new InitialAvatar())
                         ->fontName("Verdana")
                         ->background('#555555')
                         ->color("#fff");
 
-            if(empty($value)){
-                return $avatar->name("🦄")->generateSvg();
+                if (empty($value)) {
+                    return $avatar->name("🦄")->generateSvg();
+                }
+            } catch (\Exception $e) {
+                Log::error("Could not generate project avatar.");
+                Log::error($e);
+                return array("filename" => "not_found", "type" => "uploaded");
             }
-
-            if(empty($value['avatar'])) {
+            if (empty($value['avatar'])) {
 
                 /** @var Initials $initialsClass */
                 $initialsClass = app()->make(Initials::class);
                 $initialsClass->name($value['name']);
                 $imagename = $initialsClass->getInitials();
 
-                if(!file_exists($filename = APP_ROOT . "/cache/avatars/".$imagename .".svg")){
-
+                if (!file_exists($filename = APP_ROOT . "/cache/avatars/" . $imagename . ".svg")) {
                     $image = $avatar->name($value['name'])->generateSvg();
 
-                    if(!is_writable(APP_ROOT . "/cache/avatars/")) {
+                    if (!is_writable(APP_ROOT . "/cache/avatars/")) {
                         return $image;
                     }
 
                     file_put_contents($filename, $image);
-
                 }
 
                 return array("filename" => $filename, "type" => "generated");
-
             }
 
             $files = app()->make(Files::class);
@@ -1419,7 +1420,6 @@ namespace Leantime\Domain\Projects\Repositories {
             }
 
             return $avatar->name("🦄")->generateSvg();
-
         }
     }
 

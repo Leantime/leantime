@@ -721,6 +721,7 @@ namespace Leantime\Domain\Users\Repositories {
             }
 
             try {
+
                 $avatar = (new InitialAvatar())
                     ->fontName("Verdana")
                     ->background('#00a887')
@@ -729,8 +730,9 @@ namespace Leantime\Domain\Users\Repositories {
                 if (empty($value)) {
                     return $avatar->name("👻")->generateSvg();
                 }
+
             } catch (\Exception $e) {
-                Log::error("Could not generate avatar.");
+                Log::error("Could not generate user avatar.");
                 Log::error($e);
                 return array("filename" => "not_found", "type" => "uploaded");
             }
