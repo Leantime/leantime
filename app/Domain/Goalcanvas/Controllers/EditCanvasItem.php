@@ -98,6 +98,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             }
 
             if (isset($params['changeItem'])) {
+
                 $result = $this->goalService->updateCanvasItem($params);
                 if ($result) {
                     $this->notifyOnItemUpdate($result['canvasItem']);

@@ -150,6 +150,7 @@ $allTicketGroups = $tpl->get("allTickets");
                                                                                     ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
 
 
+
                                                     <?php if ($row['dependingTicketId'] > 0) { ?>
                                                         <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //
                                                     <?php } ?>

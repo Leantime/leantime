@@ -25,8 +25,8 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
-            </x-global::undrawSvg>
+            <x-global::elements.undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
+            </x-global::elements.undrawSvg>
 
         @endif
 
@@ -75,7 +75,7 @@
                 </div>
             @endif
 
-            <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+            <x-global::content.accordion id="myProjectsHub-favorites" class="noBackground">
                 <x-slot name="title">
                     ⭐ My Favorites
                 </x-slot>
@@ -101,10 +101,10 @@
                         @endif
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-global::content.accordion>
 
 
-            <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+            <x-global::content.accordion id="myProjectsHub-otherProjects" class="noBackground">
                 <x-slot name="title">
                     {{ __("text.all_assigned_projects")  }}
                 </x-slot>
@@ -122,7 +122,7 @@
                         @endforeach
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-global::content.accordion>
         </div>
     </div>
 @endsection

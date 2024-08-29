@@ -134,6 +134,15 @@ leantime.editorController = (function () {
     var editorSetup = function(editor, callback) {
 
         editor.on('change', function () {
+            editor.save();
+        });
+
+        editor.on("blur", function () {
+
+            editor.save();
+            if (callback === 'function') {
+                callback();
+            }
 
         });
 

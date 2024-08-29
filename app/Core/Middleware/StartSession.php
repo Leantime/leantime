@@ -77,6 +77,7 @@ class StartSession
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
+
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
         $lock = $this->cache("installation")

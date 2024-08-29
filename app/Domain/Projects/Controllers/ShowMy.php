@@ -4,11 +4,8 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Menu\Services\Menu;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Reports\Services\Reports as ReportService;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
     /**
      *
@@ -16,9 +13,6 @@ namespace Leantime\Domain\Projects\Controllers {
     class ShowMy extends Controller
     {
         private ProjectService $projectService;
-        private TicketService $ticketService;
-        private ReportService $reportService;
-        private CommentService $commentService;
         private ClientRepository $clientRepo;
 
         private Menu $menuService;
@@ -33,16 +27,10 @@ namespace Leantime\Domain\Projects\Controllers {
          */
         public function init(
             ProjectService $projectService,
-            TicketService $ticketService,
-            ReportService $reportService,
-            CommentService $commentService,
             ClientRepository $clientRepo,
             Menu $menuService
         ): void {
             $this->projectService = $projectService;
-            $this->ticketService = $ticketService;
-            $this->reportService = $reportService;
-            $this->commentService = $commentService;
             $this->clientRepo = $clientRepo;
             $this->menuService = $menuService;
         }

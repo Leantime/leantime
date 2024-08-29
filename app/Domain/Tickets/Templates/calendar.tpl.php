@@ -153,92 +153,12 @@ echo $tpl->displayNotification();
 
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const heightWindow = jQuery("body").height() - 190;
-
-        const calendarEl = document.getElementById('calendar');
-
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-                timeZone: leantime.i18n.__("usersettings.timezone"),
-
-                height:heightWindow,
-                initialView: '<?=session("usersettings.submenuToggle.myProjectCalendarView") ?>',
-                events: events,
-                editable: true,
-                headerToolbar: false,
-                dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
-                eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
-                slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
-
-            nowIndicator: true,
-                bootstrapFontAwesome: {
-                    close: 'fa-times',
-                    prev: 'fa-chevron-left',
-                    next: 'fa-chevron-right',
-                    prevYear: 'fa-angle-double-left',
-                    nextYear: 'fa-angle-double-right'
-                },
-                eventDrop: function (event) {
-
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
-                            editFrom: event.event.startStr,
-                            editTo: event.event.endStr
-                        }
-                    });
-                },
-                eventResize: function (event) {
-
-                    jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
-                            id: event.event.extendedProps.enitityId,
-                            editFrom: event.event.startStr,
-                            editTo: event.event.endStr
-                        }
-                    })
-
-                },
-                eventMouseEnter: function() {
-                }
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+        leantime.calendarController.initTicketsCalendar(
+            document.getElementById('calendar'),
+            '<?=session("usersettings.submenuToggle.myProjectCalendarView") ?>',
+            events,
         );
-        calendar.setOption('locale', leantime.i18n.__("language.code"));
-        calendar.render();
-        calendar.scrollToTime( 100 );
-        jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
-
-        jQuery('.fc-prev-button').click(function() {
-            calendar.prev();
-            calendar.getCurrentData()
-            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
-        });
-        jQuery('.fc-next-button').click(function() {
-            calendar.next();
-            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
-        });
-        jQuery('.fc-today-button').click(function() {
-            calendar.today();
-            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
-        });
-        jQuery("#my-select").on("change", function(e){
-
-            calendar.changeView(jQuery("#my-select option:selected").val());
-
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/submenu',
-                data : {
-                    submenu : "myProjectCalendarView",
-                    state   : jQuery("#my-select option:selected").val()
-                }
-            });
-
-        });
     });
 
 

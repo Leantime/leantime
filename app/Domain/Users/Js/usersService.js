@@ -1,13 +1,7 @@
-leantime.usersService = (function () {
+import { saveUserPhoto as saveUserPhotoRepo } from './usersRepository';
 
-    //Functions
+export const saveUserPhoto = saveUserPhotoRepo;
 
-    var saveUserPhoto = function (photo) {
-        leantime.usersRepository.saveUserPhoto(photo);
-    };
-
-    // Make public what you want to have public, everything else is private
-    return {
-        saveUserPhoto: saveUserPhoto
-    };
-})();
+export default {
+    saveUserPhoto: saveUserPhoto
+};
