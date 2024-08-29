@@ -1322,13 +1322,14 @@ namespace Leantime\Domain\Projects\Services {
                 $progressSteps["define"]["tasks"]["description"]["status"] = "done";
             }
 
+            /*
             if ($project['numUsers'] > 1) {
                 $progressSteps["define"]["tasks"]["defineTeam"]["status"] = "done";
             }
 
             if ($project['numDefinitionCanvas'] >= 1) {
                 $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
-            }
+            }*/
 
             $goals = app()->make(GoalcanvaRepository::class);
             $allCanvas = $goals->getAllCanvas($projectId);
@@ -1341,13 +1342,14 @@ namespace Leantime\Domain\Projects\Services {
                 $progressSteps["define"]["goals"]["setGoals"]["status"] = "done";
             }
 
+            /*
             if ($project['numberMilestones'] >= 1) {
                 $progressSteps["timeline"]["tasks"]["createMilestones"]["status"] = "done";
             }
 
             if ($project['numberOfTickets'] >= 1) {
                 $progressSteps["implementation"]["tasks"]["createTasks"]["status"] = "done";
-            }
+            }*/
 
             $percentDone = $this->getProjectProgress($projectId);
             if ($percentDone['percent'] >= 80) {
