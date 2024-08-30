@@ -292,7 +292,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * Retrieves all goals for the current account.
          *
- * @param ?int $projectId
+         * @param ?int $projectId
          * @param ?int $board
          * @return array
          *
@@ -1114,6 +1114,41 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 'metricType' => '',
                 'assignedTo' => session("userdata.id"),
             ];
+        }
+
+        /**
+         * Prepares the dates of a goal for API response
+         *
+         * @param array $goal The goal array containing the dates
+         * @return array The goal array with the dates converted to ISO 8601 Zulu format or null if invalid
+         */
+        private function prepareDatesForApiResponse($goal) {
+
+            if(dtHelper()->isValidDateString($goal['created'])) {
+                $goal['created'] = dtHelper()->parseDbDateTime($goal['created'])->toIso8601ZuluString();
+            }else{
+                $goal['created'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['modified'])) {
+                $goal['modified'] = dtHelper()->parseDbDateTime($goal['modified'])->toIso8601ZuluString();
+            }else{
+                $goal['modified'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['startDate'])) {
+                $goal['startDate'] = dtHelper()->parseDbDateTime($goal['startDate'])->toIso8601ZuluString();
+            }else{
+                $goal['startDate'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($goal['endDate'])) {
+                $goal['endDate'] = dtHelper()->parseDbDateTime($goal['endDate'])->toIso8601ZuluString();
+            }else{
+                $goal['endDate'] = null;
+            }
+
+            return $goal;
         }
     }
 }
