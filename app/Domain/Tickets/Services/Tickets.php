@@ -371,8 +371,10 @@ namespace Leantime\Domain\Tickets\Services {
         public function getAll(?array $searchCriteria = null): array|false
         {
             return $this->ticketRepository->getAllBySearchCriteria(
-                $searchCriteria ?? [],
-                $searchCriteria['orderBy'] ?? 'date'
+                searchCriteria: $searchCriteria ?? [],
+                sort: $searchCriteria['orderBy'] ?? 'date',
+                includeCounts: false
+
             );
         }
 
@@ -433,7 +435,8 @@ namespace Leantime\Domain\Tickets\Services {
                         $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
                     }
 
-                    if ($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE") {
+                    if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                        $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE") {
                         $ticketArray[] = $ticket;
                     }
                 }
@@ -659,7 +662,10 @@ namespace Leantime\Domain\Tickets\Services {
                 $searchStatus = "not_done";
             }
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser" => $userId, "users" => $userId, "status" => $searchStatus, "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(
+                searchCriteria: $searchCriteria,
+                sort: "duedate",
+                includeCounts: false);
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -757,7 +763,10 @@ namespace Leantime\Domain\Tickets\Services {
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(
+                searchCriteria: $searchCriteria,
+                sort: "duedate",
+                includeCounts: false);
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -794,7 +803,10 @@ namespace Leantime\Domain\Tickets\Services {
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("users" => $userId, "status" => "", "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "priority");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(
+                searchCriteria: $searchCriteria,
+                sort: "priority",
+                includeCounts: false);
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -837,7 +849,10 @@ namespace Leantime\Domain\Tickets\Services {
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(
+                searchCriteria: $searchCriteria,
+                sort: "duedate",
+                includeCounts: false);
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 

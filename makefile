@@ -52,7 +52,6 @@ package: clean build
 
 	# Remove DeepL.com and mltranslate engine (not needed in production)
 	rm -rf $(TARGET_DIR)/vendor/mpdf/mpdf/ttfonts
-	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/src/fonts
 	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/tests/fonts
 
 	# Remove local configuration, if any
