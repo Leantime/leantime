@@ -6,8 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/custom" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/html-to-markdown" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bacon/bacon-qr-code" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/htmlawed/htmlawed" />
@@ -207,6 +205,7 @@
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/translation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpdoc-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/extension-installer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
