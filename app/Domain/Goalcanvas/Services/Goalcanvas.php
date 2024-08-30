@@ -292,7 +292,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * Retrieves all goals for the current account.
          *
-         * @param ?int $projectId
+ * @param ?int $projectId
          * @param ?int $board
          * @return array
          *
