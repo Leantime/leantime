@@ -19,7 +19,7 @@ If `Module` and `Service` have the same name they can be summarized to `leantime
 {% for namespace in project.indexes.namespaces|sort((a,b) => a.FullyQualifiedStructuralElementName <=> b.FullyQualifiedStructuralElementName) %}
 {% if namespace.classes|length > 0%}
 
-### Module: `{{ namespace.FullyQualifiedStructuralElementName|replace({"\\": "."})|replace({".Leantime.Domain.": "leantime.rpc."})|replace({".Services": ""}) }}`
+### `{{ namespace.FullyQualifiedStructuralElementName|replace({"\\": "."})|replace({".Leantime.Domain.": "leantime.rpc."})|replace({".Services": ""}) }}`
 
 {% if namespace.classes|length > 0 %}
 
