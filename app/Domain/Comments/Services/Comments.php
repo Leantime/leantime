@@ -11,6 +11,8 @@ namespace Leantime\Domain\Comments\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Comments
     {
@@ -22,7 +24,8 @@ namespace Leantime\Domain\Comments\Services {
          * @param CommentRepository $commentRepository
          * @param ProjectService    $projectService
          * @param LanguageCore      $language
-         */
+         *
+     */
         public function __construct(
             CommentRepository $commentRepository,
             ProjectService $projectService,
@@ -38,13 +41,17 @@ namespace Leantime\Domain\Comments\Services {
          * @param $entityId
          * @param $commentOrder
          * @return array|false
-         */
+         *
+     * @api
+     */
         /**
          * @param $module
          * @param $entityId
          * @param int      $commentOrder
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getComments($module, $entityId, int $commentOrder = 0): false|array
         {
             return $this->commentRepository->getComments($module, $entityId, 0, $commentOrder);
@@ -57,7 +64,9 @@ namespace Leantime\Domain\Comments\Services {
          * @param $entity
          * @return bool
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function addComment($values, $module, $entityId, $entity): bool
         {
             if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
@@ -123,7 +132,9 @@ namespace Leantime\Domain\Comments\Services {
          * @param $id
          * @return bool
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function editComment($values, $id): bool
         {
             return $this->commentRepository->editComment($values['text'], $id);
@@ -132,13 +143,22 @@ namespace Leantime\Domain\Comments\Services {
         /**
          * @param $commentId
          * @return bool
-         */
+         *
+     * @api
+     */
         public function deleteComment($commentId): bool
         {
 
             return $this->commentRepository->deleteComment($commentId);
         }
 
+        /**
+         * @param ?int $projectId Project ID
+         * @param ?int $moduleId Id of the entity to pull comments from
+         * @return array
+         *
+         * @api
+         */
         public function pollComments(?int $projectId = null, ?int $moduleId = null): array | false
         {
 

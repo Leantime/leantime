@@ -5,6 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/app" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/custom" isTestSource="false" packagePrefix="Leantime\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/html-to-markdown" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bacon/bacon-qr-code" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/htmlawed/htmlawed" />
@@ -169,6 +172,41 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dom-crawler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/zebra-north/phpcs-short-types" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Billing/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/CustomFields/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/carbonphp/carbon-doctrine-types" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/doctrine/inflector" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/guzzlehttp/psr7" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/illuminate/collections" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/illuminate/conditionable" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/illuminate/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/illuminate/macroable" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/illuminate/support" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/jean85/pretty-package-versions" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/nyholm/psr7" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/http-factory" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/ralouphie/getallheaders" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/sentry/sentry" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/sentry/sentry-laravel" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/deprecation-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/http-foundation" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/options-resolver" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php83" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/psr-http-message-bridge" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/translation-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpdoc-parser" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

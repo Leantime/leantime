@@ -17,6 +17,8 @@ namespace Leantime\Domain\Sprints\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Sprints
     {
@@ -34,7 +36,8 @@ namespace Leantime\Domain\Sprints\Services {
          * @param SprintRepository  $sprintRepository
          * @param TicketRepository  $ticketRepository
          * @param ReportRepository  $reportRepository
-         */
+         *
+     */
         public function __construct(
             TemplateCore $tpl,
             LanguageCore $language,
@@ -54,7 +57,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $id
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getSprint($id): false|Models\Sprints
         {
 
@@ -72,7 +77,9 @@ namespace Leantime\Domain\Sprints\Services {
          *
          * @param $projectId
          * @return int|bool
-         */
+         *
+     * @api
+     */
         public function getCurrentSprintId($projectId): bool|int
         {
 
@@ -95,7 +102,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -111,7 +120,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getAllSprints($projectId = null): array
         {
 
@@ -128,7 +139,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -144,7 +157,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $params
          * @return false|object
-         */
+         *
+     * @api
+     */
         public function addSprint($params): object|false
         {
 
@@ -166,7 +181,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $params
          * @return false|object
-         */
+         *
+     * @api
+     */
         public function editSprint($params): object|false
         {
 
@@ -189,7 +206,9 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $sprint
          * @return array|false
          * @throws \Exception
-         */
+         *
+     * @api
+     */
         public function getSprintBurndown($sprint): false|array
         {
 
@@ -283,7 +302,9 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $project
          * @return array|false
          * @throws \Exception
-         */
+         *
+     * @api
+     */
         public function getCummulativeReport($project): false|array
         {
 

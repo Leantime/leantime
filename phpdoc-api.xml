@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor
+    configVersion="3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://www.phpdoc.org"
+>
+    <title>Leantime Api</title>
+    <!-- Build Paths -->
+    <paths>
+        <output>builddocs/api</output>
+    </paths>
+    <version number="1.0.0">
+        <api format="php">
+            <source dsn=".">
+                <path>app/Domain/**/Services</path>
+            </source>
+            <ignore>
+                <path>app/Domain/Api</path>
+                <path>app/Domain/Auth</path>
+                <path>app/Domain/Connector</path>
+                <path>app/Domain/Cron</path>
+                <path>app/Domain/CsvImport</path>
+                <path>app/Domain/Menu</path>
+                <path>app/Domain/Errors</path>
+                <path>app/Domain/Help</path>
+                <path>app/Domain/Entityrelations</path>
+                <path>app/Domain/Install</path>
+                <path>app/Domain/Ldap</path>
+                <path>app/Domain/Modulemanager</path>
+                <path>app/Domain/OIDC</path>
+            </ignore>
+        </api>
+    </version>
+    <!-- Templates & Theming -->
+    <template name=".phpdoc/template/api-md"/>
+</phpdocumentor>
