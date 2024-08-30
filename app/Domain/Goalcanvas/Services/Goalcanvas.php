@@ -20,15 +20,17 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Goalcanvas
     {
         protected Mailer $mailer;
-        
+
         protected QueueRepo $queueRepo;
-        
+
         protected CommentRepository $commentsRepo;
-        
+
         protected TicketService $ticketService;
         private GoalcanvaRepository $goalRepository;
         private ?Projects $projectService;
@@ -68,7 +70,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param int $id
          * @return array
-         */
+         *
+     * @api
+     */
         public function getCanvasItemsById(int $id): array
         {
 
@@ -104,11 +108,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $parentId
          * @return int|mixed
-         */
+         *
+     * @api
+     */
         /**
          * @param $parentId
          * @return int|mixed
-         */
+         *
+     * @api
+     */
         public function getChildGoalsForReporting($parentId): mixed
         {
 
@@ -133,7 +141,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $parentId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getChildrenbyKPI($parentId): array
         {
 
@@ -184,7 +194,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $projectId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getParentKPIs($projectId): array
         {
 
@@ -267,15 +279,34 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
+         * @param array $values
+         * @return int
+         *
+         * @api
+         */
+        public function createGoal($values)
+        {
+            return $this->goalRepository->createGoal($values);
+        }
+
+        /**
          * Retrieves all goals for the current account.
          *
-         * @return array The list of goals for the current account.
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
          */
-        // Retrieves all goals for the current account
-
-        public function pollGoals()
+        public function pollGoals(?int $projectId = null, ?int $board = null)
         {
-            return $this->goalRepository->getAllAccountGoals();
+            $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
+
+            foreach ($goals as $key => $goal) {
+                $goals[$key] = $this->prepareDatesForApiResponse($goal);
+            }
+
+            return $goals;
         }
 
         /**
@@ -284,8 +315,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @return array|false An array of updated goals with modified IDs, or false if there was an error
          */
 
-        // Retrieves all updated goals for the current account, with modified IDs
-        public function pollForUpdatedGoals(): array|false
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
+        public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
         {
             $goals = $this->goalRepository->getAllAccountGoals();
 
@@ -1050,7 +1087,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
 
-        
+
         /**
          * Returns a new canvas item template.
          *

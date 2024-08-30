@@ -38,13 +38,32 @@ namespace Leantime\Domain\Ideas\Services {
             $this->ticketService = app()->make(TicketService::class);
         }
 
-
-        public function pollForNewIdeas(): array
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
+        public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
         {
-            return $this->ideasRepository->getAllIdeas();
+            $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
+
+            foreach ($ideas as $key => $idea) {
+                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
+            }
+
+            return $ideas;
         }
 
-        public function pollForUpdatedIdeas(): array
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
+        public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
         {
             $ideas = $this->ideasRepository->getAllIdeas();
 
@@ -467,7 +486,7 @@ namespace Leantime\Domain\Ideas\Services {
             session(["currentIdeaCanvas" => $currentCanvasId]);
             return $this->prepareResponseData($currentCanvasId);
         }
-    
+
 
         private function handleEditCanvas($postParams)
         {
@@ -529,7 +548,7 @@ namespace Leantime\Domain\Ideas\Services {
         {
             $id = $params['id'] ?? $_GET['id'] ?? null;
 
-    
+
             if (isset($params['del']) && $id !== null) {
                 $result = $this->ideasRepository->deleteCanvas((int)$id);
                 if ($result) {
@@ -537,7 +556,7 @@ namespace Leantime\Domain\Ideas\Services {
                     return true;
                 }
             }
-    
+
             return false;
         }
 
@@ -545,11 +564,11 @@ namespace Leantime\Domain\Ideas\Services {
         public function deleteCanvasItem(array $params)
         {
             $id = $params['id'] ?? $_GET['id']??null;
-    
+
             if (isset($params['del']) && $id !== null) {
                 return $this->ideasRepository->delCanvasItem((int)$id);
             }
-    
+
             return false;
         }
 

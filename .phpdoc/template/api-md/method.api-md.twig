@@ -1,0 +1,52 @@
+
+
+{{ method.description|raw }}
+
+{% if method.static %}* This method is **static**.{% endif %}
+
+{% if method.abstract %}* This method is **abstract**.{% endif %}
+
+{% if method.final %}* This method is **final**.{% endif %}
+
+{% if method.deprecated %}* **Warning:** this method is **deprecated**. This means that this method will likely be removed in a future version.
+
+{% endif %}
+
+
+{% if method.arguments is not empty %}
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+{% for argument in method.arguments %}
+| `{{ argument.name }}` | **{{ argument.type ? argument.type|raw }}** | {{ argument.description|replace({'|': '&#124;'})|nl2br|replace({"\n": "", "\r": "", "\t": ""})|raw }} |
+{% endfor %}
+
+{% endif %}{# method.arguments is not empty #}
+
+{% if method.response.description %}
+**Returns:**
+{{ method.response.description|raw }}
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {{ method.response.type|raw }}
+}
+```
+
+{% endif %}
+
+{% if method.tags.see is not empty or method.tags.link is not empty %}
+**See Also:**
+
+{% for see in method.tags.see %}
+* {{ see.reference }} {% if see.description %}- {{ see.description|raw }}{% endif %}
+{% endfor %}
+{% for link in method.tags.link %}
+* {{ link.link }} {% if link.description and link.description != link.link %}- {{ link.description|raw }}{% endif %}
+{% endfor %}
+
+{% endif %}{# method.tags.see || method.tags.link #}
+
+---

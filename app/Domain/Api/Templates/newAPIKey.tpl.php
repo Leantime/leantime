@@ -80,16 +80,19 @@ $apiKeyValues = $tpl->get('apiKeyValues');
                     <?php
                     $currentClient = '';
                     $i = 0;
+                    $containerOpen = false;
                     foreach ($tpl->get('allProjects') as $row) {
                         if ($currentClient != $row['clientName']) {
-                            if ($i > 0) {
+                            if ($i > 0 && $containerOpen) {
                                 echo"</div>";
+                                $containerOpen = false;
                             }
                             echo "<h3 id='accordion_link_" . $i . "'>
                         <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
                         </h3>
                         <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                             $currentClient = $row['clientName'];
+                            $containerOpen = true;
                         } ?>
                         <div class="item">
                             <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"

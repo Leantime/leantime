@@ -25,6 +25,7 @@ class Calendar
     /**
      * @param CalendarRepository $calendarRepo
      * @param LanguageCore       $language
+     *
      */
     public function __construct(CalendarRepository $calendarRepo, LanguageCore $language)
     {
@@ -38,6 +39,8 @@ class Calendar
      * @param int $id The ID of the Google Calendar to delete.
      *
      * @return bool Returns true if the Google Calendar was successfully deleted, false otherwise.
+     *
+     * @api
      */
     public function deleteGCal(int $id): bool
     {
@@ -53,6 +56,8 @@ class Calendar
      * @params $params key value array of columns to be updated
      *
      * @return bool true on success, false on failure
+     *
+     * @api
      */
     public function patch($id, $params): bool
     {
@@ -73,6 +78,8 @@ class Calendar
      * @params int $eventId Id of event to be checked
      *
      * @return bool true on success, false on failure
+     *
+     * @api
      */
     private function userIsAllowedToUpdate($eventId): bool
     {
@@ -98,6 +105,8 @@ class Calendar
      * @params array $values array of event values
      *
      * @return int|false returns the id on success, false on failure
+     *
+     * @api
      */
     public function addEvent(array $values): int|false
     {
@@ -128,6 +137,8 @@ class Calendar
      * @param int $eventId
      *
      * @return mixed
+     *
+     * @api
      */
     public function getEvent(int $eventId): mixed
     {
@@ -143,6 +154,8 @@ class Calendar
      * @params array $values array of event values
      *
      * @return bool returns true on success, false on failure
+     *
+     * @api
      */
     public function editEvent(array $values): bool
     {
@@ -193,6 +206,8 @@ class Calendar
      * @param int $id
      *
      * @return int|false returns the id on success, false on failure
+     *
+     * @api
      */
     public function delEvent(int $id): int|false
     {
@@ -204,6 +219,8 @@ class Calendar
      * @param int $userId
      *
      * @return array|false
+     *
+     * @api
      */
     public function getExternalCalendar(int $id, int $userId): bool|array
     {
@@ -215,6 +232,8 @@ class Calendar
      * @param int   $id
      *
      * @return void
+     *
+     * @api
      */
     public function editExternalCalendar(array $values, int $id): void
     {
@@ -230,6 +249,8 @@ class Calendar
      * @return IcalCalendar The iCal calendar generated from the calendar events.
      * @throws MissingParameterException If either user hash or calendar hash is empty.
      *
+     *
+     * @api
      */
     public function getIcalByHash(string $userHash, string $calHash): IcalCalendar
     {
@@ -406,6 +427,8 @@ class Calendar
      * @param int|null $dateTo
      *
      * @return array
+     *
+     * @api
      */
     private function mapEventData(
         string $title,

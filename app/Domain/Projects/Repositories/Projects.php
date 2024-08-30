@@ -5,6 +5,7 @@ namespace Leantime\Domain\Projects\Repositories {
     use DateInterval;
     use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Log;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
@@ -260,12 +261,12 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if($projectTypes  != "all" && $projectTypes  != "project") {
+            if ($projectTypes  != "all" && $projectTypes  != "project") {
                 $projectTypeIn = DbCore::arrayToPdoBindingString("projectType", count(explode(",", $projectTypes)));
                 $query .= " AND project.type IN(" . $projectTypeIn . ")";
             }
 
-            if($projectTypes  == "project") {
+            if ($projectTypes  == "project") {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
@@ -285,13 +286,13 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
-            if($projectTypes  != "all" && $projectTypes  != "project") {
+            if ($projectTypes  != "all" && $projectTypes  != "project") {
                 foreach (explode(",", $projectTypes) as $key => $type) {
                     $stmn->bindValue(":projectType" . $key, $type, PDO::PARAM_STR);
                 }
             }
 
-            if($projectTypes  == "project") {
+            if ($projectTypes  == "project") {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
@@ -305,12 +306,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         // Deprecated
 
-        /**
-         * @param $userId
-         * @param $status
-         * @param $clientId
-         * @return array|false
-         */
         /**
          * @param $userId
          * @param string $status
@@ -330,14 +325,12 @@ namespace Leantime\Domain\Projects\Repositories {
 				    project.menuType,
 				    project.type,
 				    project.modified,
-					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects AS project
 				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId AND favorite.module = 'project' AND favorite.reaction = 'favorite' AND favorite.userId = :id
 				WHERE
 				    (   relation.userId = :id
@@ -435,12 +428,10 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.state,
 				    project.menuType,
 				    project.modified,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				WHERE
 				  (project.active > '-1' OR project.active IS NULL)
 				  AND clientId = :clientId
@@ -517,23 +508,16 @@ namespace Leantime\Domain\Projects\Repositories {
 				    zp_projects.parent,
 				    zp_projects.modified,
 					zp_clients.name AS clientName,
-					 zp_projects.start,
-					  zp_projects.end,
-					SUM(case when zp_tickets.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
-                    SUM(case when zp_tickets.type = 'milestone' then 1 else 0 end) as numberMilestones,
-                    COUNT(relation.projectId) AS numUsers,
-                    COUNT(definitionCanvas.id) AS numDefinitionCanvas,
+					zp_projects.start,
+					zp_projects.end,
                     IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects
-				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId
 				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-				  LEFT JOIN zp_relationuserproject as relation ON zp_projects.id = relation.projectId
-				  LEFT JOIN zp_canvas as definitionCanvas ON zp_projects.id = definitionCanvas.projectId AND definitionCanvas.type NOT IN('idea', 'retroscanvas', 'goalcanvas', 'wiki')
 				  LEFT JOIN zp_reactions as favorite ON zp_projects.id = favorite.moduleId
 				                                          AND favorite.module = 'project'
 				                                          AND favorite.reaction = 'favorite'
 				                                          AND favorite.userId = :id
-                    LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
+                  LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
 				WHERE zp_projects.id = :projectId
 				GROUP BY
 					zp_projects.id,
@@ -896,7 +880,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
-
         }
 
         /**
@@ -1392,37 +1375,38 @@ namespace Leantime\Domain\Projects\Repositories {
                 $value = $stmn->fetch();
                 $stmn->closeCursor();
             }
-
-            $avatar = (new InitialAvatar())
+            try {
+                $avatar = (new InitialAvatar())
                         ->fontName("Verdana")
                         ->background('#555555')
                         ->color("#fff");
 
-            if(empty($value)){
-                return $avatar->name("🦄")->generateSvg();
+                if (empty($value)) {
+                    return $avatar->name("🦄")->generateSvg();
+                }
+            } catch (\Exception $e) {
+                Log::error("Could not generate project avatar.");
+                Log::error($e);
+                return array("filename" => "not_found", "type" => "uploaded");
             }
-
-            if(empty($value['avatar'])) {
+            if (empty($value['avatar'])) {
 
                 /** @var Initials $initialsClass */
                 $initialsClass = app()->make(Initials::class);
                 $initialsClass->name($value['name']);
                 $imagename = $initialsClass->getInitials();
 
-                if(!file_exists($filename = APP_ROOT . "/cache/avatars/".$imagename .".svg")){
-
+                if (!file_exists($filename = APP_ROOT . "/cache/avatars/" . $imagename . ".svg")) {
                     $image = $avatar->name($value['name'])->generateSvg();
 
-                    if(!is_writable(APP_ROOT . "/cache/avatars/")) {
+                    if (!is_writable(APP_ROOT . "/cache/avatars/")) {
                         return $image;
                     }
 
                     file_put_contents($filename, $image);
-
                 }
 
                 return array("filename" => $filename, "type" => "generated");
-
             }
 
             $files = app()->make(Files::class);
@@ -1436,7 +1420,6 @@ namespace Leantime\Domain\Projects\Repositories {
             }
 
             return $avatar->name("🦄")->generateSvg();
-
         }
     }
 

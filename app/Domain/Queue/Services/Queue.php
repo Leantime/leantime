@@ -15,6 +15,8 @@ namespace Leantime\Domain\Queue\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Queue
     {
@@ -34,7 +36,8 @@ namespace Leantime\Domain\Queue\Services {
          * @param SettingRepository $settingsRepo The settings repository.
          * @param MailerCore $mailer The mailer core.
          * @param LanguageCore $language The language core.
-         */
+         *
+     */
         public function __construct(
             QueueRepository $queue,
             UserRepository $userRepo,
@@ -58,7 +61,9 @@ namespace Leantime\Domain\Queue\Services {
          *
          * @param Workers $worker The worker for which to process the queue.
          * @return bool Returns true if the queue was processed successfully, false otherwise.
-         */
+         *
+     * @api
+     */
         public function processQueue(Workers $worker): bool
         {
 

@@ -155,13 +155,10 @@
       <path value="$PROJECT_DIR$/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/vendor/nunomaduro/termwind" />
       <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
-      <path value="$PROJECT_DIR$/app/Plugins/CustomFields/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/spatie/icalendar-generator" />
       <path value="$PROJECT_DIR$/vendor/spatie/enum" />
       <path value="$PROJECT_DIR$/vendor/carbon-cli/carbon-cli" />
       <path value="$PROJECT_DIR$/vendor/simple-cli/simple-cli" />
-      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />
-      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/illuminate/encryption" />
       <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
       <path value="$PROJECT_DIR$/vendor/laravel/prompts" />
@@ -229,9 +226,51 @@
       <path value="$PROJECT_DIR$/vendor/codeception/module-asserts" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-webdriver" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-phpbrowser" />
+      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/leantime/leantime-documentor" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/sentry/sentry" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/sentry/sentry-laravel" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/carbonphp/carbon-doctrine-types" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/support" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/contracts" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/collections" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/macroable" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/conditionable" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/nyholm/psr7" />
+      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/composer" />
+      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/composer" />
+      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />
+      <path value="$PROJECT_DIR$/app/Plugins/CustomFields/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStan">

@@ -8,6 +8,8 @@ namespace Leantime\Domain\Tags\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Tags
     {
@@ -19,7 +21,8 @@ namespace Leantime\Domain\Tags\Services {
          * @param ProjectRepository $projectRepository
          * @param CanvaRepository   $canvasRepository
          * @param TicketRepository  $ticketRepository
-         */
+         *
+     */
         public function __construct(
             ProjectRepository $projectRepository,
             CanvaRepository $canvasRepository,
@@ -34,7 +37,9 @@ namespace Leantime\Domain\Tags\Services {
          * @param int    $projectId
          * @param string $term
          * @return array
-         */
+         *
+     * @api
+     */
         public function getTags(int $projectId, string $term): array
         {
             $tags = array();
@@ -59,7 +64,9 @@ namespace Leantime\Domain\Tags\Services {
          * @param $dbTagValues
          * @param array       $mergeInto
          * @return array
-         */
+         *
+     * @api
+     */
         private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
         {
             foreach ($dbTagValues as $tagGroup) {
