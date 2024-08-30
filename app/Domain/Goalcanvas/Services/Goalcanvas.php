@@ -6,6 +6,8 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Goalcanvas
     {
@@ -18,7 +20,8 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         /**
          * @param GoalcanvaRepository $goalRepository
-         */
+         *
+     */
         public function __construct(GoalcanvaRepository $goalRepository)
         {
             $this->goalRepository = $goalRepository;
@@ -27,7 +30,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param int $id
          * @return array
-         */
+         *
+     * @api
+     */
         public function getCanvasItemsById(int $id): array
         {
 
@@ -63,11 +68,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $parentId
          * @return int|mixed
-         */
+         *
+     * @api
+     */
         /**
          * @param $parentId
          * @return int|mixed
-         */
+         *
+     * @api
+     */
         public function getChildGoalsForReporting($parentId): mixed
         {
 
@@ -92,7 +101,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $parentId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getChildrenbyKPI($parentId): array
         {
 
@@ -143,7 +154,9 @@ namespace Leantime\Domain\Goalcanvas\Services {
         /**
          * @param $projectId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getParentKPIs($projectId): array
         {
 
@@ -187,11 +200,24 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $this->goalRepository->getSingleCanvas($id);
         }
 
+        /**
+         * @param array $values
+         * @return int
+         *
+         * @api
+         */
         public function createGoal($values)
         {
             return $this->goalRepository->createGoal($values);
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
         public function pollGoals(?int $projectId = null, ?int $board = null)
         {
             $goals = $this->goalRepository->getAllAccountGoals($projectId, $board);
@@ -203,6 +229,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
         public function pollForUpdatedGoals(?int $projectId = null, ?int $board = null): array|false
         {
 

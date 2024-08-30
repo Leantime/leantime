@@ -9,12 +9,15 @@ namespace Leantime\Domain\Setting\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Setting
     {
         /**
          * @param SettingRepository $settingsRepo
-         */
+         *
+     */
         public function __construct(
             public SettingRepository $settingsRepo,
         ) {
@@ -25,7 +28,9 @@ namespace Leantime\Domain\Setting\Services {
          * @param $file
          * @return bool
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function setLogo($file): bool
         {
 
@@ -57,7 +62,9 @@ namespace Leantime\Domain\Setting\Services {
 
         /**
          * @return void
-         */
+         *
+     * @api
+     */
         public function resetLogo(): void
         {
 
@@ -70,7 +77,9 @@ namespace Leantime\Domain\Setting\Services {
          * @param $key
          * @param $value
          * @return bool
-         */
+         *
+     * @api
+     */
         public function saveSetting($key, $value): bool
         {
             return $this->settingsRepo->saveSetting($key, $value);
@@ -79,11 +88,15 @@ namespace Leantime\Domain\Setting\Services {
         /**
          * @param $key
          * @return false|mixed
-         */
+         *
+     * @api
+     */
         /**
          * @param $key
          * @return false|mixed
-         */
+         *
+     * @api
+     */
         public function getSetting($key): mixed
         {
             return $this->settingsRepo->getSetting($key);
@@ -91,7 +104,9 @@ namespace Leantime\Domain\Setting\Services {
 
         /**
          * @return SettingRepository
-         */
+         *
+     * @api
+     */
         public function getSettingsRepo(): SettingRepository
         {
             return $this->settingsRepo;
@@ -99,7 +114,9 @@ namespace Leantime\Domain\Setting\Services {
 
         /**
          * @param SettingRepository $settingsRepo
-         */
+         *
+     * @api
+     */
         public function setSettingsRepo(SettingRepository $settingsRepo): void
         {
             $this->settingsRepo = $settingsRepo;

@@ -2208,6 +2208,13 @@ namespace Leantime\Domain\Tickets\Services {
             return $milestones;
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $userId
+         * @return array
+         *
+         * @api
+         */
         public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array | false
         {
             $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -2226,8 +2233,13 @@ namespace Leantime\Domain\Tickets\Services {
             return $todos;
         }
 
-        // since the date attribute of milestones gets updated when the milestone is updated we need to poll for updated milestones
-        // using that date attribute
+        /**
+         * @param ?int $projectId
+         * @param ?int $userId
+         * @return array
+         *
+         * @api
+         */
         public function pollForUpdatedAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
         {
             $milestones = $this->ticketRepository->getAllBySearchCriteria(
@@ -2247,6 +2259,13 @@ namespace Leantime\Domain\Tickets\Services {
             return $milestones;
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $userId
+         * @return array
+         *
+         * @api
+         */
         public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
         {
             $todos = $this->ticketRepository->getAllBySearchCriteria(
@@ -2265,8 +2284,13 @@ namespace Leantime\Domain\Tickets\Services {
             return $todos;
         }
 
-        // Since the date attribute of todos gets updated when the todo is updated we need to poll for updated todos
-        // using that date attribute
+        /**
+         * @param ?int $projectId
+         * @param ?int $userId
+         * @return array
+         *
+         * @api
+         */
         public function pollForUpdatedAccountTodos(?int $projectId = null, ?int $userId = null): array|false
         {
             $todos = $this->ticketRepository->getAllBySearchCriteria(
