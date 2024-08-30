@@ -86,9 +86,12 @@ gendocs: # Requires github CLI (brew install gh)
 	git clone $(DOCS_REPO) $(DOCS_DIR)
 
 	# Generate the docs
-	phpDocumentor
+	phpDocumentor --config=phpdoc.xml
+	phpDocumentor --config=phpdoc-api.xml
+
 	php vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
 
+pushdocs:
 	# create pull request
 	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)"
 	cd $(DOCS_DIR) && git add -A
