@@ -77,8 +77,6 @@ class Auth
             return $next($request);
         }
 
-
-
         if (! $this->authService->loggedIn()) {
             return $this->redirectWithOrigin('auth.login', $request->getRequestUri()) ?: $next($request);
         }

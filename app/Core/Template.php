@@ -120,11 +120,8 @@ class Template
         private Roles $roles,
 
         private \Illuminate\View\Factory $viewFactory,
-
-
-
+        
     ) {
-
         $this->setupDirectives();
         $this->setupGlobalVars();
     }
@@ -317,17 +314,10 @@ class Template
         $view = $this->viewFactory->make($loadFile);
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
-        if ($view->getEngine() instanceof CompilerEngine) {
-            $view->with(array_merge(
-                $this->vars,
-                ['layout' => $layout]
-            ));
-        } else {
-            $view = $this->viewFactory->make($layout, array_merge(
-                $this->vars,
-                ['module' => strtolower($module), 'action' => $action]
-            ));
-        }
+        $view->with(array_merge(
+            $this->vars,
+            ['layout' => $layout]
+        ));
 
         $content = $view->render();
         $content = self::dispatch_filter('content', $content);

@@ -66,8 +66,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->routes(function () {
             Route::any(
-                '{controller_name}/{function_name}/{query1?}/{query2?}/{query3?}',
-                function ($module_name, $action_name, IncomingRequest $request, ?string $query1 = null) {
+                '{controller_name?}/{function_name?}/{query1?}/{query2?}/{query3?}',
+                function (IncomingRequest $request, ?string $controller_name = null, ?string $function_name = null, ?string $query1 = null) {
                        return app('frontcontroller')->dispatch();
                 }
             );

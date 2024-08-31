@@ -65,7 +65,7 @@ class Views extends ServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-            array_map(fn($ext) => $factory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
+            array_map(fn($ext) => $factory->addExtension($ext, 'blade'), ['inc.php', 'sub.php', 'tpl.php']);
 
             // reprioritize blade
             $factory->addExtension('blade.php', 'blade');
