@@ -2,9 +2,10 @@
 
 namespace Leantime\Core\Http;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Foundation\Bootstrap\LoadConfig;
+use Illuminate\Foundation\Http\Events\RequestHandled;
+use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
@@ -14,16 +15,16 @@ use Leantime\Core\Bootstrap\HandleExceptions;
 use Leantime\Core\Bootstrap\LoadEnvironmentVariables;
 use Leantime\Core\Bootstrap\RegisterFacades;
 use Leantime\Core\Bootstrap\RegisterProviders;
-use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Exceptions\ExceptionHandler;
 use Leantime\Core\Middleware;
 
-class HttpKernel implements HttpKernelContract
+class HttpKernel extends Kernel implements HttpKernelContract
 {
     use DispatchesEvents;
 
     protected $router;
+
+    protected $app;
 
     /**
      * The timestamp when the request started.
@@ -32,26 +33,12 @@ class HttpKernel implements HttpKernelContract
      */
     protected $requestStartedAt = null;
 
-    protected Application $app;
-
     public function __construct(Application $app, Router $router)
     {
-        $this->router = $router;
         $this->app = $app;
-    }
+        $this->router = $router;
 
-    /**
-     * Bootstrap the application if it has not been previously bootstrapped.
-     *
-     * @return void
-     */
-    public function bootstrap()
-    {
-        if (! $this->app->hasBeenBootstrapped()) {
-            $this->app->bootstrapWith($this->getBootstrappers());
-        }
 
-        //$this->app->boot();
     }
 
     /**
@@ -62,51 +49,75 @@ class HttpKernel implements HttpKernelContract
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
      * @throws \Throwable  If an error occurs and it is not caught.
+     *
+     * @Overrid
      */
     public function handle($request)
     {
-        $this->requestStartedAt = Carbon::now();
 
-        $this->app->instance('request', $request);
+        $this->middleware = $this->getMiddleware($request);
+        $this->bootstrappers = $this->getBootstrappers();
+        $this->syncMiddlewareToRouter();
 
-        Facade::clearResolvedInstance('request');
-
-        $this->bootstrap();
-
-        $request->setUrlConstants($this->app['config']->appUrl);
+        $this->requestStartedAt = \Illuminate\Support\Carbon::now();
 
         try {
-            //Main Pipeline
-            $response = (new Pipeline($this->app))
-                ->send($request)
-                ->through($this->getMiddleware())
-                ->then(fn($request) => //Then run through plugin pipeline
-                    (new Pipeline($this->app))
-                        ->send($request)
-                        ->through(
-                        self::dispatch_filter(
-                            hook: 'plugins_middleware',
-                            payload: [],
-                            function: 'handle',
-                        )
-                    )
-                    ->then(function($request) {
+            $request->enableHttpMethodParameterOverride();
 
-                            $this->app->instance('request', $request);
-
-                            return $this->router->dispatch($request);
-
-                        //return $this->app['frontcontroller']->dispatch();
-                    })
-                );
-
+            $response = $this->sendRequestThroughRouter($request);
         } catch (Throwable $e) {
             $this->reportException($e);
 
             $response = $this->renderException($request, $e);
         }
 
+        //Execute event with request handled, in case some laravel listener is listening
+        self::dispatch(new RequestHandled($request, $response));
+
+        //filter response
         return self::dispatch_filter('beforeSendResponse', $response);
+    }
+
+    /**
+     * Send the request through the router.
+     *
+     * @param mixed $request The request object.
+     *
+     * @return mixed The response object.
+     *
+     * @Override
+     */
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        $response = (new Pipeline($this->app))
+            ->send($request)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->then(fn($request) => //Then run through plugin pipeline
+            (new Pipeline($this->app))
+                ->send($request)
+                ->through(
+                    self::dispatch_filter(
+                        hook: 'plugins_middleware',
+                        payload: [],
+                        function: 'handle',
+                    )
+                )
+                ->then(function ($request) {
+
+
+                    return $this->router->dispatch($request);
+
+                    //return $this->app['frontcontroller']->dispatch();
+                }));
+
+
+        return $response;
     }
 
     /**
@@ -128,7 +139,7 @@ class HttpKernel implements HttpKernelContract
             return;
         }
 
-        foreach ($this->getMiddleware() as $middleware) {
+        foreach ($this->getMiddleware($request) as $middleware) {
             if (
                 ! is_string($middleware)
                 || ! class_exists($middleware)
@@ -147,21 +158,13 @@ class HttpKernel implements HttpKernelContract
         $this->requestStartedAt = null;
     }
 
-    /**
-     * Get the application instance.
-     *
-     * @return \Leantime\Core\Application
-     */
-    public function getApplication(): \Leantime\Core\Application
-    {
-        return $this->app;
-    }
+
 
     /**
      * Get the application middleware
      * @return array
      **/
-    public function getMiddleware(): array
+    public function getMiddleware(IncomingRequest $request): array
     {
 
         $middleware = [
@@ -173,7 +176,7 @@ class HttpKernel implements HttpKernelContract
             Middleware\RequestRateLimiter::class,
         ];
 
-        if ($this->app->make(IncomingRequest::class) instanceof ApiRequest) {
+        if ($request instanceof ApiRequest) {
             $middleware[] = Middleware\ApiAuth::class;
         } else {
             $middleware[] = Middleware\Auth::class;
@@ -197,38 +200,7 @@ class HttpKernel implements HttpKernelContract
             BootProviders::class,
         ];
 
-        /*
-         * \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-            \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
-            \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class
-         */
-
         return self::dispatch_filter('http_bootstrappers', $bootstrappers);
     }
 
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param  \Throwable $e
-     * @return void
-     */
-    protected function reportException(Throwable $e)
-    {
-        $this->app[ExceptionHandler::class]->report($e);
-    }
-
-    /**
-     * Render the exception to a response.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Throwable               $e
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function renderException($request, Throwable $e)
-    {
-        return $this->app[ExceptionHandler::class]->render($request, $e);
-    }
 }

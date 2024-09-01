@@ -92,7 +92,6 @@ class Template
      * @param AppSettings     $settings
      * @param AuthService     $login
      * @param Roles           $roles
-     * @param Factory|null    $viewFactory
      * @param Compiler|null   $bladeCompiler
      * @throws BindingResolutionException
      * @throws \ReflectionException
@@ -119,9 +118,8 @@ class Template
         /** @var Roles */
         private Roles $roles,
 
-        private \Illuminate\View\Factory $viewFactory,
-        
     ) {
+
         $this->setupDirectives();
         $this->setupGlobalVars();
     }
@@ -178,7 +176,7 @@ class Template
      */
     public function setupGlobalVars(): void
     {
-        app('view')->share([
+        app("view")->share([
             'frontController' => app('frontcontroller'),
             'config' => $this->config,
             /** @todo remove settings after renaming all uses to appSettings */
@@ -295,6 +293,8 @@ class Template
      */
     public function display(string $template, string $layout = "app", int $responseCode = 200): Response
     {
+
+        //
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
 
@@ -308,10 +308,10 @@ class Template
         $loadFile = $this->getTemplatePath($module, $action);
 
         $this->hookContext = "tpl.$module.$action";
-        $this->viewFactory->share(['tpl' => $this]);
+        app('view')->share(['tpl' => $this]);
 
         /** @var View $view */
-        $view = $this->viewFactory->make($loadFile);
+        $view = app('view')->make($loadFile);
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
         $view->with(array_merge(
@@ -320,6 +320,8 @@ class Template
         ));
 
         $content = $view->render();
+
+        //Don't need that
         $content = self::dispatch_filter('content', $content);
         $content = self::dispatch_filter("content.$template", $content);
 
@@ -351,6 +353,8 @@ class Template
      * @param array|object|string $jsonContent The JSON content to be displayed.
      * @param int                 $statusCode  The HTTP response code to be returned (default: 200).
      * @return Response The response object after displaying the JSON content.
+     *
+     * @deprecated
      */
     public function displayJson(array|object|string $jsonContent, int $statusCode = 200): Response
     {
@@ -510,6 +514,8 @@ class Template
      * @access  public
      * @param string $name - the name of the submenu toggle
      * @return  string - the toggle state of the submenu (either "true" or "false")
+     *
+     * @deprecated this should be in a component
      */
     public function getToggleState(string $name): string
     {
@@ -526,6 +532,8 @@ class Template
      * @access public
      * @return string
      * @throws BindingResolutionException
+     *
+     * @deprecated Component
      */
     public function displayInlineNotification(): string
     {
@@ -588,6 +596,9 @@ class Template
      *
      * @param  string $url
      * @return RedirectResponse
+     *
+     * @deprecated
+     *
      */
     public function redirect(string $url): RedirectResponse
     {
@@ -758,6 +769,8 @@ class Template
      * @access public
      * @param string|null $text
      * @return string|null
+     *
+     * @deprecated
      */
     public function convertRelativePaths(?string $text): ?string
     {

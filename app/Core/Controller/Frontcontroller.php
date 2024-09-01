@@ -85,7 +85,7 @@ class Frontcontroller
      */
     private function executeAction(string $completeName, array $params = array()): Response
     {
-        $namespace = app()->getNamespace(false);
+        $namespace = "Leantime\\";
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
 

@@ -53,12 +53,6 @@ class Redis extends ServiceProvider
 
         });
 
-        $this->app->alias(RedisManager::class, 'redis');
-        $this->app->alias(\Illuminate\Contracts\Redis\Connection::class, ' redis.connection');
-        $this->app->alias(\Illuminate\Redis\Connections\Connection::class, ' redis.connection');
-
-        $this->app->alias(RedisManager::class, Factory::class);
-
         $this->app->bind('redis.connection', function ($app) {
             return $app['redis']->connection();
         });

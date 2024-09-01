@@ -120,6 +120,26 @@ class EventDispatcher implements Dispatcher
             self::dispatch_event($eventName, $payload, $context);
         }
 
+    }
+
+    public static function dispatch_laravel_event(
+        $event,
+        $payload = [],
+        $context = ''
+    ) {
+
+        //Leantime Events, simple string
+        if(is_string($event)) {
+            self::dispatch_event($event, $payload, $context);
+        }
+
+        //Laravel Events, objects
+        if(is_object($event)){
+            $eventClass = new \ReflectionClass($event);
+            $eventName = $eventClass->getName();
+            $payload[$eventName] = $event;
+            self::dispatch_event($eventName, $payload, $context);
+        }
 
     }
 

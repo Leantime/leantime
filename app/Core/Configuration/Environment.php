@@ -4,6 +4,7 @@ namespace Leantime\Core\Configuration;
 
 use ArrayAccess;
 use Exception;
+use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -16,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package    leantime
  * @subpackage core
  */
-class Environment implements ArrayAccess, ConfigContract
+class Environment extends Repository implements ArrayAccess, ConfigContract
 {
     # Config Files ===============================================================================
 
@@ -253,7 +254,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param array $keys
      * @return array
      */
-    public function getMany(array $keys): array
+    public function getMany($keys): array
     {
         $config = [];
 

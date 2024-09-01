@@ -39,10 +39,9 @@ class HandleExceptions
      */
     public function bootstrap(Application $app)
     {
-        if($app['config']->debug) {
+        if($app['config']->get("debug")) {
 
             Debug::enable();
-            config(['debug' => true]);
             config(['debug_blacklist' => [
                 '_ENV' => [
                     'LEAN_EMAIL_SMTP_PASSWORD',
@@ -78,7 +77,7 @@ class HandleExceptions
 
         register_shutdown_function($this->forwardsTo('handleShutdown'));
 
-        if($app['config']->debug == true) {
+        if($app['config']->get("debug") == true) {
             ini_set('display_errors', 'On');
         }
 

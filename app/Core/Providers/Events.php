@@ -16,8 +16,10 @@ class Events extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Core\Events\EventDispatcher::class, Core\Events\EventDispatcher::class);
-        $this->app->alias(\Leantime\Core\Events\EventDispatcher::class, 'events');
+
+        $this->app->singleton('events', function ($app) {
+            return new Core\Events\EventDispatcher($app);
+        });
 
         $this->booting(function () {
 

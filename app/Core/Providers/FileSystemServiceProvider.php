@@ -15,9 +15,64 @@ class FileSystemServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        $this->prepareConfig();
+
         $this->registerNativeFilesystem();
 
         $this->registerFlysystem();
+
+        $this->app->alias(\Illuminate\Filesystem\Filesystem::class, 'files');
+
+        $this->app->alias(\Illuminate\Filesystem\FilesystemManager::class, 'filesystem');
+        $this->app->alias(\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class);
+
+        $this->app->alias(\Illuminate\Contracts\Filesystem\Filesystem::class, 'filesystem.disk');
+        $this->app->alias(\Illuminate\Contracts\Filesystem\Cloud::class, 'filesystem.cloud');
+
+    }
+
+    public function prepareConfig() {
+
+        if($this->app['config']['filesystem'] === null) {
+
+            $this->app['config']['filesystem'] = [
+                'default' => 'local',
+                'cloud' => 's3',
+                'disks' => [
+                    'local' => [
+                        'driver' => 'local',
+                        'root' => storage_path('userfiles'),
+                    ],
+
+                    'public' => [
+                        'driver' => 'local',
+                        'root' => storage_path('public/userfiles'),
+                        'url' => $this->app['config']['appUrl'].'/userfiles',
+                        'visibility' => 'public',
+                    ],
+                    's3' => [
+                        'driver' => 's3',
+                        'key' => $this->app['config']['s3Key'],
+                        'secret' => $this->app['config']['s3Secret'],
+                        'region' => $this->app['config']['s3Region'],
+                        'bucket' => $this->app['config']['s3Bucket'],
+                        'url' => $this->app['config']['s3EndPoint'],
+
+                        // Optional cache settings, available with any storage driver
+                        'cache'       => [
+                            'driver' => 'laravel',
+                        ],
+                    ],
+                    'null' => [
+                        'driver' => 'null',
+                    ],
+                ]
+            ];
+
+        }
+
+
     }
 
     /**
@@ -39,6 +94,7 @@ class FileSystemServiceProvider extends ServiceProvider
      */
     protected function registerFlysystem()
     {
+
         $this->registerManager();
 
         $this->app->singleton('filesystem.disk', function ($app) {
@@ -69,6 +125,9 @@ class FileSystemServiceProvider extends ServiceProvider
      */
     protected function getDefaultDriver()
     {
+
+        $this->app['config']['filesystems.default'] = "local";
+
         return $this->app['config']['filesystems.default'];
     }
 

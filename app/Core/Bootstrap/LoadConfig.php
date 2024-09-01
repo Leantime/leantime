@@ -2,16 +2,16 @@
 
 namespace Leantime\Core\Bootstrap;
 
-use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\DispatchesEvents;
-use SplFileInfo;
+use Leantime\Core\Support\Attributes\LaravelConfig;
 use Symfony\Component\Finder\Finder;
 
-class LoadConfig
+class LoadConfig extends LoadConfiguration
 {
 
     protected $ignoreFiles = [
@@ -19,78 +19,47 @@ class LoadConfig
         "configuration.php"
     ];
 
-    /**
-     * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
-     */
-    public function bootstrap(Application $app)
-    {
-        $items = [];
+    public function bootstrap(Application $app){
 
-        // First we will see if we have a cache configuration file. If we do, we'll load
-        // the configuration items from that file so that it is very quick. Otherwise
-        // we will need to spin through every configuration file and load them all.
-        if (file_exists($cached = $app->getCachedConfigPath())) {
-            $items = require $cached;
+        parent::bootstrap($app);
 
-            $loadedFromCache = true;
-        }
+        $app->extend('config', function(Repository $laravelConfig) use ($app) {
 
-        // Next we will spin through all of the configuration files in the configuration
-        // directory and load each one into the repository. This will make all of the
-        // options available to the developer for use in various parts of this app.
-        $app->instance('config', $config = $app->make(Environment::class));
+            $leantimeConfig = $app->make(Environment::class);
 
-        if (! isset($loadedFromCache)) {
-            $this->loadConfigurationFiles($app, $config);
-        }
 
-        // Finally, we will set the application's environment based on the configuration
-        // values that were loaded. We will pass a callback which will be used to get
-        // the environment in a web context where an "--env" switch is not present.
-        $app->detectEnvironment(fn () => $config->get('env', 'production'));
+            foreach ($laravelConfig->all() as $key => $value) {
+                $leantimeConfig->set($key, $value);
+            }
 
-        mb_internal_encoding('UTF-8');
+            //Re-aranging and setting some of the laravel defaults
+            $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
+
+
+            return $finalConfig;
+        });
+
+
     }
 
 
-
     /**
-     * Load the configuration items from all of the files.
+     * Get Laravel configs
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Config\Repository  $repository
-     * @return void
-     *
-     * @throws \Exception
-     */
-    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
-    {
-        $files = $this->getConfigurationFiles($app);
-
-        foreach ($files as $key => $path) {
-            $repository->set($key, require $path);
-        }
-    }
-
-    /**
-     * Get all of the configuration files for the application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  Application  $app
      * @return array
      */
     protected function getConfigurationFiles(Application $app)
     {
+
         $files = [];
 
         $configPath = realpath($app->configPath());
 
-
         foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 
+            //Ignore leantime configs when loading laravel configs
             if(!in_array($file->getFilename(), $this->ignoreFiles)) {
                 $files[$directory.basename($file->getRealPath(), '.php')] = $file->getRealPath();
             }
@@ -102,20 +71,47 @@ class LoadConfig
     }
 
     /**
-     * Get the configuration file nesting path.
+     * Loads configuration files into the repository.
      *
-     * @param  \SplFileInfo  $file
-     * @param  string  $configPath
-     * @return string
+     * @param Application $app The application instance.
+     * @param RepositoryContract $repository The repository contract.
+     * @return void
      */
-    protected function getNestedDirectory(SplFileInfo $file, $configPath)
+    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
     {
-        $directory = $file->getPath();
+        $files = $this->getConfigurationFiles($app);
 
-        if ($nested = trim(str_replace($configPath, '', $directory), DIRECTORY_SEPARATOR)) {
-            $nested = str_replace(DIRECTORY_SEPARATOR, '.', $nested).'.';
+        //We are allowing laravel configuration files in addition to our main config.
+        //However they are optional. Laravel requires app config to be set, so we're
+        //pretending it exists.
+        //This override removes the check for $file['app']
+
+        foreach ($files as $key => $path) {
+            $repository->set($key, require $path);
+        }
+    }
+
+    protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig) {
+
+        $reflectionClass = new \ReflectionClass(DefaultConfig::class);
+        $properties = $reflectionClass->getProperties();
+
+        foreach($properties as $configVar) {
+            $attributes = $configVar->getAttributes(LaravelConfig::class);
+
+            if(isset($attributes[0])){
+                $laravelConfigKey = $attributes[0]->newInstance()->config;
+                $leantimeConfig->set($laravelConfigKey, $laravelConfig->get($configVar->name));
+            }
         }
 
-        return $nested;
+        return $leantimeConfig;
+/*
+        if(!isset($laravelItems['app'])){
+            $laravelItems['app'] = [];
+        }*/
+
+        //$laravelItems['app']['name'] = $leantimeItems
+
     }
 }

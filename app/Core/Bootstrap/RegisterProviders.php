@@ -2,23 +2,23 @@
 
 namespace Leantime\Core\Bootstrap;
 
+use Illuminate\Contracts\Foundation\Application;
 use Leantime\Core\Plugins;
-use Leantime\Core\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Application;
-use \Leantime\Core\Providers\Db;
 use Leantime\Core\Providers\Auth;
 use Leantime\Core\Providers\Cache;
+use Leantime\Core\Providers\Db;
+use Leantime\Core\Providers\EncryptionServiceProvider;
 use Leantime\Core\Providers\FileSystemServiceProvider;
 use Leantime\Core\Providers\Frontcontroller;
 use Leantime\Core\Providers\Language;
 use Leantime\Core\Providers\RateLimiter;
 use Leantime\Core\Providers\Redis;
+use Leantime\Core\Providers\RouteServiceProvider;
 use Leantime\Core\Providers\Session;
+use Leantime\Core\Providers\TemplateServiceProvider;
 use Leantime\Core\Providers\Views;
 
-class RegisterProviders
+class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProviders
 {
     /**
      * The service providers that should be merged before registration.
@@ -34,91 +34,60 @@ class RegisterProviders
      */
     protected static $bootstrapProviderPath;
 
+
+
+    protected static $laravelProviders = [
+
+    ];
     protected static $defaultLeantimeProviders = [
-        FileSystemServiceProvider::class,
-        Redis::class,
+        //\Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        //\Illuminate\Bus\BusServiceProvider::class,
+
         Cache::class,
+
+        //\Illuminate\Cache\CacheServiceProvider::class,
+        //\Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        //\Illuminate\Cookie\CookieServiceProvider::class,
+        //\Illuminate\Database\DatabaseServiceProvider::class,
+        EncryptionServiceProvider::class,
+        FileSystemServiceProvider::class,
+
+        \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        \Illuminate\Hashing\HashServiceProvider::class,
+        //\Illuminate\Mail\MailServiceProvider::class,
+        \Illuminate\Notifications\NotificationServiceProvider::class,
+        \Illuminate\Pagination\PaginationServiceProvider::class,
+        //\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+        \Illuminate\Pipeline\PipelineServiceProvider::class,
+        //\Illuminate\Queue\QueueServiceProvider::class,
+
+        Redis::class,
         Session::class,
+
+        //\Illuminate\Redis\RedisServiceProvider::class,
+        //\Illuminate\Session\SessionServiceProvider::class,
+        //\Illuminate\Translation\TranslationServiceProvider::class,
+        \Illuminate\Validation\ValidationServiceProvider::class,
+        //\Illuminate\View\ViewServiceProvider::class,
+
         Auth::class,
         RateLimiter::class,
-        \Leantime\Core\Providers\Db::class,
-        \Leantime\Core\Providers\Plugins::class,
+        Db::class,
         Language::class,
         RouteServiceProvider::class,
+
         Frontcontroller::class,
         Views::class,
+        TemplateServiceProvider::class,
+
     ];
 
-
-    /**
-     * Bootstrap the given application.
-     *
-     * @param  \Leantime\Core\Application  $app
-     * @return void
-     */
-    public function bootstrap(\Leantime\Core\Application $app)
+    public function bootstrap(Application $app)
     {
-        if (! $app->bound('config_loaded_from_cache') ||
-            $app->make('config_loaded_from_cache') === false) {
-            $this->mergeAdditionalProviders($app);
+        foreach(self::$defaultLeantimeProviders as $provider){
+            $app->register($provider);
         }
 
         $app->registerConfiguredProviders();
-    }
-
-    /**
-     * Merge the additional configured providers into the configuration.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     */
-    protected function mergeAdditionalProviders(Application $app)
-    {
-        if (static::$bootstrapProviderPath &&
-            file_exists(static::$bootstrapProviderPath)) {
-            $packageProviders = require static::$bootstrapProviderPath;
-
-            foreach ($packageProviders as $index => $provider) {
-                if (! class_exists($provider)) {
-                    unset($packageProviders[$index]);
-                }
-            }
-        }
-
-        $app->make('config')->set(
-            'app.providers',
-            array_merge(
-                $app->make('config')->get('app.providers') ?? self::$defaultLeantimeProviders,
-                static::$merge,
-                array_values($packageProviders ?? []),
-            ),
-        );
-    }
-
-    /**
-     * Merge the given providers into the provider configuration before registration.
-     *
-     * @param  array  $providers
-     * @param  string|null  $bootstrapProviderPath
-     * @return void
-     */
-    public static function merge(array $providers, ?string $bootstrapProviderPath = null)
-    {
-        static::$bootstrapProviderPath = $bootstrapProviderPath;
-
-        static::$merge = array_values(array_filter(array_unique(
-            array_merge(static::$merge, $providers)
-        )));
-    }
-
-    /**
-     * Flush the bootstrapper's global state.
-     *
-     * @return void
-     */
-    public static function flushState()
-    {
-        static::$bootstrapProviderPath = null;
-
-        static::$merge = [];
     }
 }

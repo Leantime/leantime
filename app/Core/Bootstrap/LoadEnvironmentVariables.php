@@ -46,14 +46,10 @@ class LoadEnvironmentVariables
             return;
         }
 
-        $environment = Env::get('APP_ENV');
-
-        if (! $environment) {
-            return;
-        }
+        $envPath = $app->environmentFile();
 
         $this->setEnvironmentFilePath(
-            $app, $app->environmentFile().'.'.$environment
+            $app, $app->environmentFile()
         );
     }
 
@@ -66,7 +62,8 @@ class LoadEnvironmentVariables
      */
     protected function setEnvironmentFilePath($app, $file)
     {
-        if (is_file($app->environmentPath().'/'.$file)) {
+
+        if (is_file($app->environmentPath().''.$file)) {
             $app->loadEnvironmentFrom($file);
 
             return true;

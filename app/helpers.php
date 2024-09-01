@@ -103,15 +103,22 @@ if (! function_exists('__')) {
 
 if (! function_exists('view')) {
     /**
-     * Get the view factory instance.
+     * Get the evaluated view contents for the given view.
      *
-     * @return Factory
-     *
-     * @throws BindingResolutionException
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
      */
-    function view(): Factory
+    function view($view = null, $data = [], $mergeData = [])
     {
-        return app()->make(Factory::class);
+        $factory = app(ViewFactory::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->make($view, $data, $mergeData);
     }
 }
 

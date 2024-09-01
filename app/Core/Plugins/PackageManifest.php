@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Env;
 
-class PackageManifest
+class PackageManifest extends \Illuminate\Foundation\PackageManifest
 {
     /**
      * The filesystem instance.

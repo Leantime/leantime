@@ -74,7 +74,6 @@ class Cache extends ServiceProvider
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
 
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
-        $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
 
     }
 

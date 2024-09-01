@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 /**
  * Incoming Request information
@@ -39,8 +40,35 @@ class IncomingRequest extends \Illuminate\Http\Request
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
         $this->setUrlConstants();
-
         $this->setRequestDest();
+    }
+
+    public static function capture()
+    {
+        static::enableHttpMethodParameterOverride();
+
+        $headers = collect(getallheaders())
+            ->mapWithKeys(fn ($val, $key) => [
+                strtolower($key) => match (true) {
+                    in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                    default => $val,
+                },
+            ])
+            ->all();
+
+        $request = match (true) {
+            isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
+            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+            defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
+            default => IncomingRequest::createFromGlobals(),
+        };
+
+        //$request->overrideGlobals();
+        //do_once('overrideGlobals', fn () => $request->overrideGlobals());
+
+        return $request;
+
     }
 
 
@@ -88,10 +116,13 @@ class IncomingRequest extends \Illuminate\Http\Request
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && !empty($appUrl)) {
                 define('BASE_URL', $appUrl);
+
             } else {
                 define('BASE_URL', $this->getSchemeAndHttpHost());
             }
         }
+
+        putenv("APP_URL=".$appUrl);
 
         if (! defined('CURRENT_URL')) {
             define('CURRENT_URL', BASE_URL . $this->getRequestUri());
@@ -164,73 +195,14 @@ class IncomingRequest extends \Illuminate\Http\Request
         };
     }
 
-    /**
-     * Retrieve an input item from the request.
-     *
-     * @param  string|null $key
-     * @param  mixed       $default
-     * @return mixed
-     */
-    public function input($key = null, $default = null)
-    {
-        return data_get(
-            $this->getInputSource()->all() + $this->query->all(),
-            $key,
-            $default
-        );
-    }
-
-    /**
-     * Get the JSON payload for the request.
-     *
-     * @param  string|null  $key
-     * @param  mixed  $default
-     * @return \Symfony\Component\HttpFoundation\InputBag|mixed
-     */
-    public function json($key = null, $default = null)
-    {
-        if (! isset($this->json)) {
-            $this->json = new InputBag((array) json_decode($this->getContent() ?: '[]', true));
-        }
-
-        if (is_null($key)) {
-            return $this->json;
-        }
-
-        return data_get($this->json->all(), $key, $default);
-    }
-
-    /**
-     * Get the input source for the request.
-     *
-     * @return \Symfony\Component\HttpFoundation\InputBag
-     */
-    protected function getInputSource()
-    {
-        if ($this->isJson()) {
-            return $this->json();
-        }
-
-        return in_array($this->getRealMethod(), ['GET', 'HEAD']) ? $this->query : $this->request;
-    }
-
-    /**
-     * Set the Laravel session instance.
-     *
-     * @param \Illuminate\Contracts\Session\Session $session The Laravel session instance.
-     *
-     * @return void
-     */
-    public function setLaravelSession($session)
-    {
-        $this->session = new SymfonySessionDecorator($session);
-    }
 
     /**
      * Get the full URL of the current request.
      * Wrapper for Laravel
      *
      * @return string The full URL of the current request.
+     *
+     * @Override
      */
     public function fullUrl()
     {
@@ -268,78 +240,19 @@ class IncomingRequest extends \Illuminate\Http\Request
         return false;
     }
 
-    /**
-     * Determine if the current request probably expects a JSON response.
-     *
-     * @return bool
-     */
-    public function expectsJson()
-    {
-        if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
-            return true;
-        }
-
-        return false;
-    }
-    /**
-     * Determine if the request is JSON.
-     *
-     * @return bool
-     */
-    public function isJson()
-    {
-        return $this->hasHeader('Content-Type') &&
-            str_contains($this->header('Content-Type')[0], 'json');
-    }
-
-    /**
-     * Determine if a header is set on the request.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function hasHeader($key)
-    {
-        return ! is_null($this->header($key));
-    }
-
-    /**
-     * Retrieve a header from the request.
-     *
-     * @param  string|null  $key
-     * @param  string|array|null  $default
-     * @return string|array|null
-     */
-    public function header($key = null, $default = null)
-    {
-        return $this->retrieveItem('headers', $key, $default);
-    }
-
-    /**
-     * Retrieve a parameter item from a given source.
-     *
-     * @param  string  $source
-     * @param  string|null  $key
-     * @param  string|array|null  $default
-     * @return string|array|null
-     */
-    protected function retrieveItem($source, $key, $default)
-    {
-        if (is_null($key)) {
-            return $this->$source->all();
-        }
-
-        if ($this->$source instanceof InputBag) {
-            return $this->$source->all()[$key] ?? $default;
-        }
-
-        return $this->$source->get($key, $default);
-    }
-
     public function getCurrentRoute() {
         return $this->query->get("act", '');
     }
 
+    /**
+     * Gets the module name from the given complete name or the current route.
+     *
+     * @param string|null $completeName The complete name from which to extract the module name. If not provided, the current route will be used.
+     *
+     * @return string The module name.
+     *
+     * @deprecated
+     */
     public function getModuleName(string $completeName = null): string
     {
         $completeName ??= $this->getCurrentRoute();
@@ -359,6 +272,8 @@ class IncomingRequest extends \Illuminate\Http\Request
      * @param string|null $completeName
      * @return string
      * @throws BindingResolutionException
+     *
+     * @deprecated
      */
     public function getActionName(string $completeName = null): string
     {

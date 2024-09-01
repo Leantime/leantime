@@ -13,10 +13,12 @@ use Illuminate\View\Engines\FileEngine;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
+use Illuminate\View\ViewFinderInterface;
+use Illuminate\View\ViewServiceProvider;
 use Leantime\Core\Controller\Composer;
 use Leantime\Core\Support\PathManifestRepository;
 
-class Views extends ServiceProvider
+class Views extends ViewServiceProvider
 {
 
     protected $viewPaths;
@@ -36,7 +38,6 @@ class Views extends ServiceProvider
         $this->app['config']->set('view.compiled', $this->app->basePath() . "/cache/views/");
         $this->app['config']->set('view.cache', true);
         $this->app['config']->set('view.compiled_extension', 'php');
-
 
         $this->registerFactory();
         $this->registerViewFinder();

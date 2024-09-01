@@ -5,6 +5,7 @@ namespace Leantime\Core;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Illuminate\Translation\Translator;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -335,6 +336,14 @@ class Language
         };
 
         return (string) $returnValue;
+    }
+
+    public function get(string $index,  $default = '', $locale) {
+        $contentReplacement = '';
+        if(is_array($default) && count($default) > 0){
+            $contentReplacement = $default[0];
+        }
+        return $this->__($index, $contentReplacement);
     }
 
 
