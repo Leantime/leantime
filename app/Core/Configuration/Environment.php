@@ -40,7 +40,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * @var array list of legacy mappings
-     * @todo remove this after deprecating configuration.php
+     * @todo warn about key changes after deprecating config/configuration.php
+     * @todo remove this after removing support for config/configuration.php
      */
     private const LEGACY_MAPPINGS = [
         'printLogoUrl' => 'LEAN_PRINT_LOGO_URL',
