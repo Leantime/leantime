@@ -24,20 +24,7 @@ class HttpKernel implements HttpKernelContract
 
     public function __construct(Application $app) {
         $this->app = $app;
-    }
-
-    /**
-     * Bootstrap the application if it has not been previously bootstrapped.
-     *
-     * @return void
-     */
-    public function bootstrap()
-    {
-        if ($this->app->hasBeenBootstrapped()) {
-            return;
-        }
-
-        $this->app->boot();
+        $this->router = $router;
     }
 
     /**
@@ -56,21 +43,10 @@ class HttpKernel implements HttpKernelContract
         //Main Pipeline
         $response = (new Pipeline($this->app))
             ->send($request)
-            ->through($this->getMiddleware())
-            ->then(fn ($request) =>
-                //Then run through plugin pipeline
-            (new Pipeline($this->app))
-                ->send($request)
-                ->through(self::dispatch_filter(
-                    hook: 'plugins_middleware',
-                    payload: [],
-                    function: 'handle',
-                ))
-                ->then(fn () => Frontcontroller::dispatch_request($request))
-            );
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->then(fn($request) => $this->router->dispatch($request));
 
-        return self::dispatch_filter('beforeSendResponse', $response);
-
+        return $response;
     }
 
     /**
@@ -104,21 +80,9 @@ class HttpKernel implements HttpKernelContract
             $this->app->make($middleware)->terminate($request, $response);
         }
 
-        //report("Before Request Terminated");
-        //report(print_r($request, true));
         self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
 
         $this->requestStartedAt = null;
-    }
-
-    /**
-     * Get the application instance.
-     *
-     * @return \Leantime\Core\Bootstrap\Application
-     */
-    public function getApplication(): \Leantime\Core\Bootstrap\Application
-    {
-        return $this->app;
     }
 
     /**
