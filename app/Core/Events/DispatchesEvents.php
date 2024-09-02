@@ -28,6 +28,11 @@ namespace Leantime\Core\Events {
             EventDispatcher::dispatch_event($hook, $available_params, static::get_event_context($function));
         }
 
+        public static function dispatch(mixed $event, mixed $available_params = [], string|int $function = null): void
+        {
+            EventDispatcher::dispatch_laravel_event($event, $available_params, static::get_event_context($function));
+        }
+
         /**
          * dispatches a filter with context
          *

@@ -10,4 +10,9 @@ if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
 }
 require $composer;
 
-\Leantime\Core\Bootstrap\Bootloader::getInstance()->boot();
+
+//Get the application once.
+//Loads everything up once and then let's the bootloader manage it
+$app = require_once APP_ROOT."/app/Core/Bootstrap/App.php";
+
+\Leantime\Core\Bootloader::getInstance()->boot($app);

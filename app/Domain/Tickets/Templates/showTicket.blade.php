@@ -13,14 +13,14 @@
 
 <div style="min-width:1400px"></div>
 
-<div class="tw-float-left tw-pt-[3px] tw-pl-m tw-pr-m">
+<div class="float-left pt-[3px] pl-m pr-m">
     <h1>#{{ $ticket->id }}</h1>
 </div>
-<div class="tw-float-left">
+<div class="float-left">
     <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" />
 </div>
 
-<div class="tw-float-left">
+<div class="float-left">
     <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags>
 </div>
 <div class="clearall"></div>
@@ -28,7 +28,7 @@
 <div class="row">
     <div class="col-md-7">
 
-        <div class="row tw-pb-l">
+        <div class="row pb-l">
             <div class="col-md-12">
                 <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input " autocomplete="off" style="width:99%;" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_todo')?>"/>
             </div>
@@ -36,7 +36,7 @@
 
         <div class="row">
             <div class="col-md-2">
-                <label class="tw-pl-m tw-pt-xs">🚨 {{ __('label.priority') }}</label>
+                <label class="pl-m pt-xs">🚨 {{ __('label.priority') }}</label>
             </div>
             <div class="col-md-5">
                 <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" />
@@ -45,16 +45,16 @@
 
         <div class="row">
             <div class="col-md-2">
-                <label class="tw-pl-m tw-pt-xs">👕  {{ __('label.effort')  }}</label>
+                <label class="pl-m pt-xs">👕  {{ __('label.effort')  }}</label>
             </div>
             <div class="col-md-5">
                 <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
             </div>
         </div>
 
-        <div class="row tw-pb-xl">
+        <div class="row pb-xl">
             <div class="col-md-2">
-                <label class="tw-pl-m tw-pt-xs">📅  {{ __('label.dates') }}</label>
+                <label class="pl-m pt-xs">📅  {{ __('label.dates') }}</label>
             </div>
             <div class="col-md-5">
                 <x-global::dates.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish"/>
@@ -63,9 +63,9 @@
 
 
 
-        <label class="tw-pl-m tw-pb-sm">📄 Details</label>
+        <label class="pl-m pb-sm">📄 Details</label>
         <div class="viewDescription mce-content-body">
-            <div class="tw-pl-sm">
+            <div class="pl-sm">
                 <?php echo $tpl->escapeMinimal($ticket->description); ?>
             </div>
         </div>
@@ -78,7 +78,7 @@
     </div>
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::content.tabs class="">
-            <x-slot:headings class="tw-sticky tw-top-0 !tw-bg-[--secondary-background]">
+            <x-slot:headings class="sticky top-0 !bg-[--secondary-background]">
                 <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
                 <x-global::content.tabs.heading name="discussion">Discussions</x-global::content.tabs.heading>
                 <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
@@ -86,19 +86,19 @@
             </x-slot:headings>
 
             <x-slot:contents>
-                <x-global::content.tabs.content name="connections" class="tw-p-sm">
+                <x-global::content.tabs.content name="connections" class="p-sm">
                     Connections
                 </x-global::content.tabs.content>
 
-                <x-global::content.tabs.content name="discussion" class="tw-p-sm">
+                <x-global::content.tabs.content name="discussion" class="p-sm">
                     <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
                 </x-global::content.tabs.content>
 
-                <x-global::content.tabs.content name="subtask" class="tw-p-sm">
+                <x-global::content.tabs.content name="subtask" class="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
                 </x-global::content.tabs.content>
 
-                <x-global::content.tabs.content name="files" class="tw-p-sm">
+                <x-global::content.tabs.content name="files" class="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
                 </x-global::content.tabs.content>
 

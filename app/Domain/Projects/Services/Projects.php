@@ -10,7 +10,6 @@ namespace Leantime\Domain\Projects\Services {
     use Leantime\Core\Events\EventDispatcher as EventCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
@@ -32,7 +31,6 @@ namespace Leantime\Domain\Projects\Services {
     {
         use DispatchesEvents;
 
-        private TemplateCore $tpl;
         private ProjectRepository $projectRepository;
         private TicketRepository $ticketRepository;
         private SettingRepository $settingsRepo;
@@ -42,7 +40,6 @@ namespace Leantime\Domain\Projects\Services {
         private FileRepository $filesRepository;
 
         /**
-         * @param TemplateCore        $tpl
          * @param ProjectRepository   $projectRepository
          * @param TicketRepository    $ticketRepository
          * @param SettingRepository   $settingsRepo
@@ -52,7 +49,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param NotificationService $notificationService
          */
         public function __construct(
-            TemplateCore $tpl,
             ProjectRepository $projectRepository,
             TicketRepository $ticketRepository,
             SettingRepository $settingsRepo,
@@ -61,7 +57,6 @@ namespace Leantime\Domain\Projects\Services {
             Messengers $messengerService,
             NotificationService $notificationService
         ) {
-            $this->tpl = $tpl;
             $this->projectRepository = $projectRepository;
             $this->ticketRepository = $ticketRepository;
             $this->settingsRepo = $settingsRepo;

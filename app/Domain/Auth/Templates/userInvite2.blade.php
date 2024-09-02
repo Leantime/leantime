@@ -71,27 +71,27 @@
         <p>{{ __("text.challenges_brings_you_here") }}<br /><br /></p>
 
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'organization'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'organization'" :label="''" class="w-full text-left">
             <span class="emoji">🤯</span> I have too many things to manage and organize
         </x-global::forms.select-button>
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'progress'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'progress'" :label="''" class="w-full text-left">
             <span class="emoji">📉</span> I don't feel like I'm making progress
         </x-global::forms.select-button>
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'adoption'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'adoption'" :label="''" class="w-full text-left">
             <span class="emoji"> 👥</span> I need a tool that my team will actually use
         </x-global::forms.select-button>
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'price'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'price'" :label="''" class="w-full text-left">
             <span class="emoji">💰</span> My current tool is too expensive
         </x-global::forms.select-button>
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'brain'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'brain'" :label="''" class="w-full text-left">
             <span class="emoji"> 🧠</span> The other tools don't organize the way my brain does
         </x-global::forms.select-button>
 
-        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'collaboration'" :label="''" class="tw-w-full tw-text-left">
+        <x-global::forms.select-button :selected="false" :id="''" :name="'challenge'" :value="'collaboration'" :label="''" class="w-full text-left">
             <span class="emoji"> 🥸</span> I was just invited to collaborate
         </x-global::forms.select-button>
         <br /> <br />

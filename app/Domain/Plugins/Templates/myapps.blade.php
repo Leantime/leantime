@@ -24,7 +24,7 @@
 
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
-                                <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
+                                <span class="block px-4 mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
                 </div>

@@ -11,7 +11,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;

@@ -1,7 +1,8 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\Plugins;
 
+use Leantime\Core\Configuration;
 use Leantime\Core\Events\DispatchesEvents;
 
 /**

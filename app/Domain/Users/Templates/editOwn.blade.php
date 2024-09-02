@@ -231,14 +231,14 @@
                                         <label for="colormode" >{{ __('label.colormode') }}</label>
 
                                         <x-global::forms.select-button :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
-                                            <label for="colormode-light" class="tw-w-[100px]">
-                                                <i class="fa-solid fa-sun tw-font-xxl"></i>
+                                            <label for="colormode-light" class="w-[100px]">
+                                                <i class="fa-solid fa-sun font-xxl"></i>
                                             </label>
                                         </x-global::forms.select-button>
 
                                         <x-global::forms.select-button :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
-                                            <label for="colormode-light" class="tw-w-[100px]">
-                                                <i class="fa-solid fa-moon tw-font-xxl"></i>
+                                            <label for="colormode-light" class="w-[100px]">
+                                                <i class="fa-solid fa-moon font-xxl"></i>
                                             </label>
                                         </x-global::forms.select-button>
 
@@ -251,7 +251,7 @@
                                         @foreach($availableFonts as $key => $font)
 
                                             <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
-                                                <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
+                                                <label for="selectable-{{ $key }}" class="font w-[200px]"
                                                        style="font-family:'{{ $font }}'; font-size:16px;">
                                                     The quick brown fox jumps over the lazy dog
                                                 </label>
@@ -347,7 +347,7 @@
         </div>
         <div class="col-md-4">
             <div class="maincontentinner center">
-                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw-rounded-full' alt='Profile Picture' id="previousImage"/>
+                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg rounded-full' alt='Profile Picture' id="previousImage"/>
                 <div id="profileImg">
                 </div>
 

@@ -74,32 +74,6 @@ class Cache extends ServiceProvider
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
 
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
-        $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
-
-
-    }
-
-    public function boot() {
-
-        $currentVersion = app()->make(AppSettings::class)->appVersion;
-        $cachedVersion = \Illuminate\Support\Facades\Cache::store('installation')->rememberForever('version', fn () => $currentVersion);
-
-        if ($currentVersion == $cachedVersion) {
-            return;
-        }
-
-        \Illuminate\Support\Facades\Cache::store('installation')->flush();
-
-    }
-
-    /**
-     * Manages the instance cache.
-     *
-     * @return void
-     */
-    public function checkCacheVersion(): void
-    {
-
 
     }
 

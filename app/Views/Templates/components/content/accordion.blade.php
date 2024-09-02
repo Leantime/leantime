@@ -6,7 +6,7 @@
 <div {{ $attributes->merge([ 'class' => 'accordionWrapper' ]) }}>
 
     @if(isset($actionlink) && $actionlink != '')
-        <div class="pull-right tw-pt-xs">
+        <div class="pull-right pt-xs">
             {!! $actionlink !!}
         </div>
     @endif
@@ -18,7 +18,7 @@
         onclick="leantime.snippets.accordionToggle('{{ $id }}');"
     >
         <h5 {{ $title->attributes->merge([
-            'class' => 'accordionTitle tw-pb-15 tw-text-l',
+            'class' => 'accordionTitle pb-15 text-l',
             'id' => "accordion_link_$id"
         ]) }}>
             <i class="fa fa-angle-{{ $state == 'closed' ? 'right' : 'down' }}"></i>

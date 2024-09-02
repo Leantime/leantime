@@ -88,7 +88,7 @@ $project = $tpl->get('project');
                             <?php $tpl->dispatchTplEvent("beforeClientPicker", $project) ?>
 
                             <div style="margin-bottom: 30px;">
-                                <h4 class="widgettitle title-light tw-block"><span
+                                <h4 class="widgettitle title-light block"><span
                                         class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
                                 <div>
                                     <label><?php echo $tpl->__('label.project_start'); ?></label>
