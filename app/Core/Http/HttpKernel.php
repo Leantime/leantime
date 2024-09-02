@@ -98,24 +98,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
         $response = (new Pipeline($this->app))
             ->send($request)
             ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then(fn($request) => //Then run through plugin pipeline
-            (new Pipeline($this->app))
-                ->send($request)
-                ->through(
-                    self::dispatch_filter(
-                        hook: 'plugins_middleware',
-                        payload: [],
-                        function: 'handle',
-                    )
-                )
-                ->then(function ($request) {
-
-
-                    return $this->router->dispatch($request);
-
-                    //return $this->app['frontcontroller']->dispatch();
-                }));
-
+            ->then(fn($request) => $this->router->dispatch($request));
 
         return $response;
     }
@@ -151,8 +134,6 @@ class HttpKernel extends Kernel implements HttpKernelContract
             $this->app->make($middleware)->terminate($request, $response);
         }
 
-        //report("Before Request Terminated");
-        //report(print_r($request, true));
         self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
 
         $this->requestStartedAt = null;

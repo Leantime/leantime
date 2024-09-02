@@ -51,8 +51,6 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 }
 
 /* color */
-
-a,a:hover,a:link,a:active,a:focus,
 .userlist li .uinfo h5,
 .messagemenu ul li.active a,
 .msglist li h4,
@@ -61,9 +59,6 @@ a,a:hover,a:link,a:active,a:focus,
 .wizard .tabbedmenu li a.selected,
 .wizard .tabbedmenu li a.done,
 .tabbable > .nav-tabs > li.active > a,
-.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
-.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover,
 .tabs-right > .nav-tabs .active > a:focus,
@@ -97,13 +92,6 @@ button:hover {
     color:#fff;
 }
 
-.btn-white {
-    background:#fff;
-}
-
-span.btn-white:hover{
-    background:#fff;
-}
 
 
 /* border color */
@@ -122,9 +110,6 @@ span.btn-white:hover{
 .tabbable > .nav-tabs,
 .tabbable > .tab-content,
 .nav-tabs.nav-stacked > li > a:focus,
-.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
-.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .nav-tabs,
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus,
 .tabs-below .tab-content,

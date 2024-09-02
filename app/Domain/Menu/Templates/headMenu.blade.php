@@ -1,4 +1,5 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
+
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu pull-right">
