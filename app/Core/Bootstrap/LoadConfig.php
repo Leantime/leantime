@@ -27,7 +27,6 @@ class LoadConfig extends LoadConfiguration
 
             $leantimeConfig = $app->make(Environment::class);
 
-
             foreach ($laravelConfig->all() as $key => $value) {
                 $leantimeConfig->set($key, $value);
             }
@@ -40,6 +39,27 @@ class LoadConfig extends LoadConfiguration
         });
 
 
+    }
+
+    /**
+     * Loads configuration files into the repository.
+     *
+     * @param Application $app The application instance.
+     * @param RepositoryContract $repository The repository contract.
+     * @return void
+     */
+    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
+    {
+        $files = $this->getConfigurationFiles($app);
+
+        //We are allowing laravel configuration files in addition to our main config.
+        //However they are optional. Laravel requires app config to be set, so we're
+        //pretending it exists.
+        //This override removes the check for $file['app']
+
+        foreach ($files as $key => $path) {
+            $repository->set($key, require $path);
+        }
     }
 
 
@@ -68,27 +88,6 @@ class LoadConfig extends LoadConfiguration
         ksort($files, SORT_NATURAL);
 
         return $files;
-    }
-
-    /**
-     * Loads configuration files into the repository.
-     *
-     * @param Application $app The application instance.
-     * @param RepositoryContract $repository The repository contract.
-     * @return void
-     */
-    protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
-    {
-        $files = $this->getConfigurationFiles($app);
-
-        //We are allowing laravel configuration files in addition to our main config.
-        //However they are optional. Laravel requires app config to be set, so we're
-        //pretending it exists.
-        //This override removes the check for $file['app']
-
-        foreach ($files as $key => $path) {
-            $repository->set($key, require $path);
-        }
     }
 
     protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig) {

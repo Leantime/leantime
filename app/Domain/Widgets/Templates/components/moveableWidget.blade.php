@@ -1,14 +1,14 @@
 <div class="grid-stack-item" {{ $attributes }}>
-    <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw-p-none">
-        <div class="{{ ($background == "default") ? "tw-pb-l" : "" }}">
+    <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} p-none">
+        <div class="{{ ($background == "default") ? "pb-l" : "" }}">
             <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">
-                <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">
+                <div class="grid-handler-top h-[40px] cursor-grab float-left mr-sm">
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">{{ __($name) }}</h5>
+                    <h5 class="subtitle pb-m float-left mr-sm">{{ __($name) }}</h5>
                 @endif
-                <div class="inlineDropDownContainer tw-float-right">
+                <div class="inlineDropDownContainer float-right">
                     <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                     </a>
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <span class="clearall"></span>
-            <div class="widgetContent {{ ($background == "default") ? 'tw-px-m' : '' }}">
+            <div class="widgetContent {{ ($background == "default") ? 'px-m' : '' }}">
                 {{ $slot }}
             </div>
         </div>

@@ -192,12 +192,12 @@ class HttpKernel extends Kernel implements HttpKernelContract
     {
 
         $bootstrappers = [
-            LoadEnvironmentVariables::class,
+            \Leantime\Core\Bootstrap\LoadEnvironmentVariables::class,
             \Leantime\Core\Bootstrap\LoadConfig::class,
-            HandleExceptions::class,
-            RegisterProviders::class,
-            RegisterFacades::class,
-            BootProviders::class,
+            \Leantime\Core\Bootstrap\HandleExceptions::class,
+            \Leantime\Core\Bootstrap\RegisterProviders::class,
+            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+            \Illuminate\Foundation\Bootstrap\BootProviders::class
         ];
 
         return self::dispatch_filter('http_bootstrappers', $bootstrappers);

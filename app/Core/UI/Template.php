@@ -1,35 +1,20 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
-use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Compilers\Compiler;
-use Illuminate\View\Compilers\CompilerInterface;
-use Illuminate\View\DynamicComponent;
-use Illuminate\View\Engines\CompilerEngine;
-use Illuminate\View\Engines\Engine;
-use Illuminate\View\Engines\EngineResolver;
-use Illuminate\View\Engines\PhpEngine;
-use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
-use Illuminate\View\ViewFinderInterface;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Support\DateTimeInfoEnum;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use ReflectionClass;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,8 +33,6 @@ class Template
 
     /** @var string */
     private string $notifcation = '';
-
-
 
     /**
      * @var string

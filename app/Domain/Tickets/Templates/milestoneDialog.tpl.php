@@ -32,7 +32,7 @@ $statusLabels = $tpl->get('statusLabels');
     <input type="text" name="headline" value="<?php $tpl->e($currentMilestone->headline) ?>" placeholder="<?=$tpl->__("label.milestone_title"); ?>"/><br />
 
     <label class="control-label"><?=$tpl->__('label.project') ?></label>
-    <select name="projectId" class="tw-w-full">
+    <select name="projectId" class="w-full">
         <?php foreach ($allAssignedprojects as $project) {
             if (empty($project['type']) || $project['type'] == "project") {
                 ?>

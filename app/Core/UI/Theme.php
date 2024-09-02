@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -9,6 +9,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Symfony\Component\HttpFoundation\Cookie;

@@ -3,9 +3,8 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Redirector;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 
 class TemplateServiceProvider extends ServiceProvider
 {

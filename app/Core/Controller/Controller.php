@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

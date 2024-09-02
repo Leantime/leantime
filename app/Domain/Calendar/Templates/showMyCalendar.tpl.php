@@ -29,7 +29,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
     <div class="row">
         <div class="col-md-2">
             <div class="maincontentinner">
-                <h5 class="subtitle tw-pb-m">Calendars</h5>
+                <h5 class="subtitle pb-m">Calendars</h5>
 
                 <ul class="simpleList">
                     <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>

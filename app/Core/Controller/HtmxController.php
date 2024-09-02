@@ -7,7 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 

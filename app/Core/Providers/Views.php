@@ -3,7 +3,6 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Container\Container;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\DynamicComponent;
@@ -13,10 +12,9 @@ use Illuminate\View\Engines\FileEngine;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
-use Illuminate\View\ViewFinderInterface;
 use Illuminate\View\ViewServiceProvider;
-use Leantime\Core\Controller\Composer;
 use Leantime\Core\Support\PathManifestRepository;
+use Leantime\Core\UI\Composer;
 
 class Views extends ViewServiceProvider
 {
