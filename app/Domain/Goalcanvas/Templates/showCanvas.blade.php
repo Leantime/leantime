@@ -2,8 +2,14 @@
 @section('content')
 
 
+
+
+
+
     @php
         $elementName = 'goal';
+
+        use Leantime\Domain\Comments\Repositories\Comments;
 
     @endphp
 
@@ -203,10 +209,10 @@
                                                                     <li class="nav-header">{{ __('subtitles.edit') }}</li>
                                                                     <li><a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
                                                                             data="item_{{ $row['id'] }}">
-                                                                            {{ __('links.edit_canvas_item') }}</a></li>
+                                                                            {!! __('links.edit_canvas_item') !!}</a></li>
                                                                     <li><a href="#/goalcanvas/delCanvasItem/{{ $row['id'] }}"
                                                                             data="item_{{ $row['id'] }}">
-                                                                            {{ __('links.delete_canvas_item') }}</a></li>
+                                                                            {!! __('links.delete_canvas_item') !!}</a></li>
                                                                 </ul>
                                                             @endif
                                                         </div>

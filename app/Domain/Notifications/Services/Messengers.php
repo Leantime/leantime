@@ -26,6 +26,8 @@ class Messengers
      * __construct - get database connection
      *
      * @access public
+     *
+     * @api
      */
     public function __construct(
         Client $httpClient,
@@ -42,12 +44,16 @@ class Messengers
      * @param $projectName
      * @param array|string $messengers
      * @return void
+     *
+     * @api
      */
     /**
      * @param NotificationModel $notification
      * @param $projectName
      * @param array|string      $messengers
      * @return void
+     *
+     * @api
      */
     public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = "all"): void
     {
@@ -73,6 +79,8 @@ class Messengers
      * slackWebhook
      *
      * @access public
+     *
+     * @api
      */
     private function slackWebhook(NotificationModel $notification): bool
     {
@@ -109,6 +117,8 @@ class Messengers
      * mattermostWebhook
      *
      * @access public
+     *
+     * @api
      */
     private function mattermostWebhook(NotificationModel $notification): bool
     {
@@ -147,6 +157,8 @@ class Messengers
      *  zulipWebhook
      *
      * @access public
+     *
+     * @api
      */
     private function zulipWebhook(NotificationModel $notification): bool
     {
@@ -200,6 +212,8 @@ class Messengers
      * mattermostWebhook
      *
      * @access public
+     *
+     * @api
      */
     public function discordWebhook(NotificationModel $notification): bool
     {
@@ -265,6 +279,8 @@ class Messengers
     /**
      * @param NotificationModel $notification
      * @return array[]
+     *
+     * @api
      */
     public function prepareMessage(NotificationModel $notification): array
     {

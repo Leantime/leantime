@@ -141,14 +141,17 @@ class Ldap
             if ($this->directoryType == 'AD') {
                 $usernameDN = $username;
 
-                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                if (str_contains($usernameDN, '@')) {
+                    $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                } else {
+                    $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
+                }
+
                 if ($bind) {
                     return true;
                 }
-
-                $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
-                //OL requires distinguished name login
             } else {
+                //OL requires distinguished name login
                 $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
