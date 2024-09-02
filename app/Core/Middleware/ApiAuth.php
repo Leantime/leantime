@@ -8,6 +8,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api as ApiService;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectsService;
 use Symfony\Component\HttpFoundation\Response;

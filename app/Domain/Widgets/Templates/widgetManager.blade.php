@@ -7,7 +7,7 @@
         @foreach($availableWidgets as $widget)
             @if($widget->alwaysVisible !== true)
                 <div class="col-md-4">
-                    <div class="projectBox tw-p-m tw-min-w-[250px]">
+                    <div class="projectBox p-m min-w-[250px]">
                         <h5>{{ __($widget->name) }}</h5>
                         <p>{{ __($widget->description) }}</p>
                         <div class="right">

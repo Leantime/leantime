@@ -8,6 +8,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 /**
  * Incoming Request information
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @package    leantime
  * @subpackage core
  */
-class IncomingRequest extends Request
+class IncomingRequest extends \Illuminate\Http\Request
 {
 
     /**
@@ -38,9 +39,39 @@ class IncomingRequest extends Request
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
-
+        $this->setUrlConstants();
         $this->setRequestDest();
     }
+
+    public static function capture()
+    {
+        static::enableHttpMethodParameterOverride();
+
+        $headers = collect(getallheaders())
+            ->mapWithKeys(fn ($val, $key) => [
+                strtolower($key) => match (true) {
+                    in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                    default => $val,
+                },
+            ])
+            ->all();
+
+        $request = match (true) {
+            isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
+            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+            defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
+            default => IncomingRequest::createFromGlobals(),
+        };
+
+        //$request->overrideGlobals();
+        //do_once('overrideGlobals', fn () => $request->overrideGlobals());
+
+        return $request;
+
+    }
+
+
 
     /**
      * Sets the request destination from the path
@@ -80,6 +111,24 @@ class IncomingRequest extends Request
         isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }
 
+    public function setUrlConstants($appUrl = '') {
+
+        if (! defined('BASE_URL')) {
+            if (isset($appUrl) && !empty($appUrl)) {
+                define('BASE_URL', $appUrl);
+
+            } else {
+                define('BASE_URL', $this->getSchemeAndHttpHost());
+            }
+        }
+
+        putenv("APP_URL=".$appUrl);
+
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', BASE_URL . $this->getRequestUri());
+        }
+    }
+
     /**
      * Gets the full URL including request uri and protocol
      *
@@ -97,18 +146,16 @@ class IncomingRequest extends Request
      * @return string
      * @throws BindingResolutionException
      */
-    public function getRequestUri(): string
+    public function getRequestUri($appUrl = ''): string
     {
 
         $requestUri = parent::getRequestUri();
 
-        $config = app()->make(Environment::class);
-
-        if (empty($config->appUrl)) {
+        if (empty($appUrl)) {
             return $requestUri;
         }
 
-        $baseUrlParts = explode('/', rtrim($config->appUrl, '/'));
+        $baseUrlParts = explode('/', rtrim($appUrl, '/'));
 
         if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
             return $requestUri;
@@ -148,73 +195,14 @@ class IncomingRequest extends Request
         };
     }
 
-    /**
-     * Retrieve an input item from the request.
-     *
-     * @param  string|null $key
-     * @param  mixed       $default
-     * @return mixed
-     */
-    public function input($key = null, $default = null)
-    {
-        return data_get(
-            $this->getInputSource()->all() + $this->query->all(),
-            $key,
-            $default
-        );
-    }
-
-    /**
-     * Get the JSON payload for the request.
-     *
-     * @param  string|null  $key
-     * @param  mixed  $default
-     * @return \Symfony\Component\HttpFoundation\InputBag|mixed
-     */
-    public function json($key = null, $default = null)
-    {
-        if (! isset($this->json)) {
-            $this->json = new InputBag((array) json_decode($this->getContent() ?: '[]', true));
-        }
-
-        if (is_null($key)) {
-            return $this->json;
-        }
-
-        return data_get($this->json->all(), $key, $default);
-    }
-
-    /**
-     * Get the input source for the request.
-     *
-     * @return \Symfony\Component\HttpFoundation\InputBag
-     */
-    protected function getInputSource()
-    {
-        if ($this->isJson()) {
-            return $this->json();
-        }
-
-        return in_array($this->getRealMethod(), ['GET', 'HEAD']) ? $this->query : $this->request;
-    }
-
-    /**
-     * Set the Laravel session instance.
-     *
-     * @param \Illuminate\Contracts\Session\Session $session The Laravel session instance.
-     *
-     * @return void
-     */
-    public function setLaravelSession(\Illuminate\Contracts\Session\Session $session)
-    {
-        $this->session = new SymfonySessionDecorator($session);
-    }
 
     /**
      * Get the full URL of the current request.
      * Wrapper for Laravel
      *
      * @return string The full URL of the current request.
+     *
+     * @Override
      */
     public function fullUrl()
     {
@@ -252,73 +240,54 @@ class IncomingRequest extends Request
         return false;
     }
 
+    public function getCurrentRoute() {
+        return $this->query->get("act", '');
+    }
 
     /**
-     * Determine if the current request probably expects a JSON response.
+     * Gets the module name from the given complete name or the current route.
      *
-     * @return bool
+     * @param string|null $completeName The complete name from which to extract the module name. If not provided, the current route will be used.
+     *
+     * @return string The module name.
+     *
+     * @deprecated
      */
-    public function expectsJson()
+    public function getModuleName(string $completeName = null): string
     {
-        if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
-            return true;
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? $this->currentRoute : $completeName);
+
+        if (is_array($actionParts)) {
+            return $actionParts[0];
         }
 
-        return false;
-    }
-    /**
-     * Determine if the request is JSON.
-     *
-     * @return bool
-     */
-    public function isJson()
-    {
-        return $this->hasHeader('Content-Type') &&
-            str_contains($this->header('Content-Type')[0], 'json');
+        return "";
     }
 
     /**
-     * Determine if a header is set on the request.
+     * getActionName - split string to get actionName
      *
-     * @param  string  $key
-     * @return bool
+     * @access public
+     * @param string|null $completeName
+     * @return string
+     * @throws BindingResolutionException
+     *
+     * @deprecated
      */
-    public function hasHeader($key)
+    public function getActionName(string $completeName = null): string
     {
-        return ! is_null($this->header($key));
-    }
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? $this->currentRoute : $completeName);
 
-    /**
-     * Retrieve a header from the request.
-     *
-     * @param  string|null  $key
-     * @param  string|array|null  $default
-     * @return string|array|null
-     */
-    public function header($key = null, $default = null)
-    {
-        return $this->retrieveItem('headers', $key, $default);
-    }
-
-    /**
-     * Retrieve a parameter item from a given source.
-     *
-     * @param  string  $source
-     * @param  string|null  $key
-     * @param  string|array|null  $default
-     * @return string|array|null
-     */
-    protected function retrieveItem($source, $key, $default)
-    {
-        if (is_null($key)) {
-            return $this->$source->all();
+        //If not action name was given, call index controller
+        if (is_array($actionParts) && count($actionParts) == 1) {
+            return "index";
+        } elseif (is_array($actionParts) && count($actionParts) == 2) {
+            return $actionParts[1];
         }
 
-        if ($this->$source instanceof InputBag) {
-            return $this->$source->all()[$key] ?? $default;
-        }
-
-        return $this->$source->get($key, $default);
+        return "";
     }
 
 }

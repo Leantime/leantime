@@ -14,23 +14,6 @@ class Session extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function () {
-
-            $configKey =  app('config')->sessionPassword;
-
-            if (strlen($configKey) > 32) {
-                $configKey = substr($configKey, 0, 32);
-            }
-
-            if (strlen($configKey) < 32) {
-                $configKey =  str_pad($configKey, 32, "x", STR_PAD_BOTH);
-            }
-
-            app('config')['app_key'] = $configKey;
-
-            $encrypter = new \Illuminate\Encryption\Encrypter(app('config')['app_key'], "AES-256-CBC");
-            return $encrypter;
-        });
 
         $this->app->singleton(\Illuminate\Session\SessionManager::class, function () {
 
@@ -60,9 +43,9 @@ class Session extends ServiceProvider
             return $sessionManager;
         });
 
+        $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
         $this->app->singleton('session.store', fn() =>  app('session')->driver());
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
-        $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
 
     }
 

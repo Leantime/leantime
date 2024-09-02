@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Menu\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Composer;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Composer;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepo;
