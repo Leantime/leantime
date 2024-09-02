@@ -4,18 +4,23 @@ namespace Leantime\Domain\Reactions\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Reactions
     {
         /**
          * @access private
          * @var    \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo reactions repository
-         */
+         *
+     * @api
+     */
         private \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo;
 
         /**
          * @param \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo
-         */
+         *
+     */
         public function __construct(\Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo)
         {
             $this->reactionsRepo = $reactionsRepo;
@@ -31,7 +36,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @param string $reaction
          *
          * @return bool
-         */
+         *
+     * @api
+     */
         public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
             if ($module == '' || $moduleId == '' || $userId == '' || $reaction == '') {
@@ -59,7 +66,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @param string $reaction
          *
          * @return string|false
-         */
+         *
+     * @api
+     */
         public function getReactionType(string $reaction): string|false
         {
 
@@ -82,7 +91,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @param int    $moduleId
          *
          * @return array|bool returns the array on success or false on failure
-         */
+         *
+     * @api
+     */
         public function getGroupedEntityReactions(string $module, int $moduleId): array|false
         {
             return $this->reactionsRepo->getGroupedEntityReactions($module, $moduleId);
@@ -98,7 +109,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @param string   $reaction
          *
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getUserReactions(int $userId, string $module = '', ?int $moduleId = null, string $reaction = ''): array|false
         {
 
@@ -115,7 +128,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @param string $reaction
          *
          * @return bool
-         */
+         *
+     * @api
+     */
         public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
             return $this->reactionsRepo->removeUserReaction($userId, $module, $moduleId, $reaction);

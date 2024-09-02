@@ -96,7 +96,6 @@ namespace Leantime\Domain\Comments\Repositories {
          */
         public function countComments($module = null, $moduleId = null): mixed
         {
-
             $sql = "SELECT count(id) as count
 				FROM zp_comment as comment";
 
@@ -126,7 +125,6 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
-
             return $values['count'] ?? 0;
         }
 

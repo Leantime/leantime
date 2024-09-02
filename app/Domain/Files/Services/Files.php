@@ -10,6 +10,8 @@ namespace Leantime\Domain\Files\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Files
     {
@@ -21,7 +23,8 @@ namespace Leantime\Domain\Files\Services {
          * @param FileRepository $fileRepository
          * @param ProjectService $projectService
          * @param LanguageCore   $language
-         */
+         *
+     */
         public function __construct(
             FileRepository $fileRepository,
             ProjectService $projectService,
@@ -39,7 +42,9 @@ namespace Leantime\Domain\Files\Services {
          * @param $entityId
          * @param $userId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getFilesByModule(string $module = '', $entityId = null, $userId = null): false|array
         {
             return $this->fileRepository->getFilesByModule($module, $entityId, $userId);
@@ -52,7 +57,9 @@ namespace Leantime\Domain\Files\Services {
          * @param $entity
          * @return bool
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function uploadFile($file, $module, $entityId, $entity): bool
         {
 
@@ -98,7 +105,9 @@ namespace Leantime\Domain\Files\Services {
         /**
          * @param $fileId
          * @return bool
-         */
+         *
+     * @api
+     */
         public function deleteFile($fileId): bool
         {
             return $this->fileRepository->deleteFile($fileId);

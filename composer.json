@@ -6,12 +6,13 @@
     "config": {
         "platform-check": false,
         "platform": {
-            "php": "8.2"
+            "php": "8.1.13"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "metasyntactical/composer-plugin-license-check": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
         }
     },
     "authors": [
@@ -27,7 +28,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.1.13",
         "ext-ldap": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
@@ -80,7 +81,8 @@
         "codeception/module-webdriver": "^3.2",
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "leantime/leantime-documentor": "@dev"
     },
     "autoload": {
         "psr-4": {

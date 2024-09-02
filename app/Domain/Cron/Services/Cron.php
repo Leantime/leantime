@@ -12,6 +12,8 @@ namespace Leantime\Domain\Cron\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Cron
     {
@@ -29,7 +31,8 @@ namespace Leantime\Domain\Cron\Services {
          * @param Audit       $auditRepo
          * @param Queue       $queueSvc
          * @param Environment $environment
-         */
+         *
+     */
         public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment, Reports $reportService)
         {
             $this->auditRepo =  $auditRepo;
@@ -41,7 +44,9 @@ namespace Leantime\Domain\Cron\Services {
         /**
          * @return bool
          * @throws Exception
-         */
+         *
+     * @api
+     */
         public function runCron(): bool
         {
 

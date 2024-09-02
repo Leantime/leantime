@@ -11,12 +11,11 @@
         <output>builddocs/technical</output>
     </paths>
     <version number="1.0.0">
-        <api>
+        <api format="php">
             <source dsn=".">
                 <path>app</path>
                 <path>config</path>
                 <path>public</path>
-                <path>tests</path>
             </source>
             <ignore>
                 <path>app/Plugins</path>

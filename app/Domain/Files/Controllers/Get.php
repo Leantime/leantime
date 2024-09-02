@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Files\Controllers;
 
 use Aws\S3\S3Client;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
@@ -184,11 +185,12 @@ class Get extends Controller
             $response->headers->set('Content-Disposition', "inline; filename=\"" . $realName . "." . $ext . "\"");
 
             return $response;
+
         } catch (\Exception $e) {
 
-            report($e);
+            Log::error($e);
 
-            return new Response($e->getMessage(), 500);
+            return new Response("File cannot be found", 400);
         }
     }
 }

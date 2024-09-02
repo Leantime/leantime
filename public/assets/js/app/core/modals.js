@@ -66,9 +66,12 @@ leantime.modals = (function () {
             //modalOptions.sizes.minH = 1800;
         }
 
+        //Ensure we have no trailing slash at the end.
+        var baseUrl = leantime.appUrl.replace(/\/$/, '');
+
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
-            jQuery.nmManual(leantime.appUrl+""+url, modalOptions);
+            jQuery.nmManual(baseUrl+""+url, modalOptions);
         }
     }
 

@@ -63,7 +63,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
-                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$editor) && $currentWiki) { ?>
                         <li><a class="inlineEdit" href="#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$tpl->__("link.edit_wiki") ?></a></li>
                         <li><a class="delete" href="#/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a></li>
 

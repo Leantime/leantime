@@ -5,6 +5,8 @@ namespace Leantime\Domain\Ideas\Repositories {
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Tickets\Repositories\Tickets;
+    use Leantime\Domain\Ideas\Models\Ideas as IdeasModel;
+
     use PDO;
 
     /**
@@ -62,7 +64,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $canvasId
          * @return array|false
          */
-        public function getSingleCanvas($canvasId): false|array
+        public function getSingleCanvas($canvasId): IdeasModel|false
         {
             $sql = "SELECT
                         zp_canvas.id,
@@ -72,7 +74,6 @@ namespace Leantime\Domain\Ideas\Repositories {
                         zp_canvas.projectId,
                         t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname
-
                 FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
@@ -83,10 +84,12 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, IdeasModel::class);
+            $value = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values;
+
+            return $value ?: false;
         }
 
         /**
@@ -138,9 +141,8 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function getAllCanvas($projectId): false|array
+        public function getAllCanvas($projectId)
         {
-
             $sql = "SELECT
 						zp_canvas.id,
 						zp_canvas.title,
@@ -159,9 +161,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
+            // $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
+            // dd($values);
             return $values;
         }
 
@@ -377,7 +381,9 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            // $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
+
             $stmn->closeCursor();
 
             return $values;
@@ -423,10 +429,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
-            $values = $stmn->fetch();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, IdeasModel::class);
+            $value = $stmn->fetch();
             $stmn->closeCursor();
 
-            return $values;
+            return $value;
         }
 
         /**
@@ -684,7 +691,9 @@ namespace Leantime\Domain\Ideas\Repositories {
             }
 
             $stmn->execute();
-            $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
+
+            // $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
             $stmn->closeCursor();
 
             return $values;

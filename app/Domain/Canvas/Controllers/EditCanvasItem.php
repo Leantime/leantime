@@ -2,16 +2,16 @@
 
 namespace Leantime\Domain\Canvas\Controllers;
 
-use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Canvas\Repositories\Canvas as CanvasRepository;
 
 /**
  * editCanvasItem class - Generic canvas controller / Edit Canvas Item
@@ -43,10 +43,11 @@ class EditCanvasItem extends Controller
      */
     private CommentRepository $commentsRepo;
 
+
     /**
      * @var object
      */
-    private object $canvasRepo;
+    private CanvasRepository $canvasRepo;
 
     /**
      * __construct - constructor
@@ -57,14 +58,13 @@ class EditCanvasItem extends Controller
     public function __construct(
         IncomingRequest $incomingRequest,
         Template $tpl,
-        Language $language
+        Language $language,
+        CanvasRepository $canvasRepo
     ) {
         $this->ticketService = app()->make(TicketService::class);
         $this->projectService = app()->make(ProjectService::class);
         $this->commentsRepo = app()->make(CommentRepository::class);
-        $canvasName = Str::studly(static::CANVAS_NAME) . 'canvas';
-        $repoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
-        $this->canvasRepo = app()->make($repoName);
+        $this->canvasRepo = $canvasRepo;
 
         parent::__construct($incomingRequest, $tpl, $language);
     }
