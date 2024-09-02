@@ -37,7 +37,7 @@ class Application extends \Illuminate\Foundation\Application {
     public function __construct($basePath = null) {
 
         $this->publicPath = 'public/';
-        $this->namespace == "Leantime\\";
+        $this->namespace = "Leantime\\";
 
         if ($basePath) {
             $this->setBasePath($basePath);
@@ -47,11 +47,11 @@ class Application extends \Illuminate\Foundation\Application {
         //Cache files are in root in Leantime not in bootstrap
         //Env vars are not available in config
 
-        putenv ("APP_EVENTS_CACHE=".$this->basePath."/cache/events.php");
-        putenv ("APP_CONFIG_CACHE=".$this->basePath."/cache/config.php");
-        putenv ("APP_ROUTES_CACHE=".$this->basePath."/cache/routes.php");
-        putenv ("APP_SERVICES_CACHE=".$this->basePath."/cache/services.php");
-        putenv ("APP_PACKAGES_CACHE=".$this->basePath."/cache/packages.php");
+        putenv ("APP_EVENTS_CACHE=cache/events.php");
+        putenv ("APP_CONFIG_CACHE=cache/config.php");
+        putenv ("APP_ROUTES_CACHE=cache/routes.php");
+        putenv ("APP_SERVICES_CACHE=cache/services.php");
+        putenv ("APP_PACKAGES_CACHE=cache/packages.php");
 
         //Our folder structure is different and we shall not bow to the bourgeoisie
         $this->useAppPath($this->basePath."/app/Core/");

@@ -51,7 +51,7 @@ class Auth
      * @return Response|RedirectResponse
      * @throws BindingResolutionException
      */
-    public function redirectWithOrigin(string $route, string $origin,): false|RedirectResponse
+    public function redirectWithOrigin(string $route, string $origin, IncomingRequest $request): false|RedirectResponse
     {
         $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
         $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
@@ -78,7 +78,7 @@ class Auth
         }
 
         if (! $this->authService->loggedIn()) {
-            return $this->redirectWithOrigin('auth.login', $request->getRequestUri()) ?: $next($request);
+            return $this->redirectWithOrigin('auth.login', $request->getRequestUri(), $request) ?: $next($request);
         }
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.

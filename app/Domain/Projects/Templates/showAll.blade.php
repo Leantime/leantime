@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <?php
 
 use Leantime\Domain\Menu\Repositories\Menu;
@@ -103,3 +102,5 @@ $showClosedProjects = $tpl->get('showClosedProjects');
     );
 
 </script>
+
+@endsection

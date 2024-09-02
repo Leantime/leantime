@@ -78,7 +78,7 @@ class Views extends ViewServiceProvider
 
             //Find and set composers
             $composers = $this->getComposerPaths();
-            foreach ($composers as $composerClass) {
+            foreach ($composers as $key => $composerClass) {
                 if (
                     is_subclass_of($composerClass, Composer::class) &&
                     !(new \ReflectionClass($composerClass))->isAbstract()
