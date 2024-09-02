@@ -6,7 +6,7 @@
     "formHash" => md5(CURRENT_URL."selectChoices".mt_rand(0,100))
 ])
 
-<div id="select-wrapper-{{ $formHash }}" hx-target="#select-wrapper-{{ $formHash }}" {{ $attributes->merge([ 'class' => "tw-inline-block" ]) }}>
+<div id="select-wrapper-{{ $formHash }}" hx-target="#select-wrapper-{{ $formHash }}" {{ $attributes->merge([ 'class' => "inline-block" ]) }}>
     <select class="select-{{ $formHash }}" {{ $type == "multiple" ? "multiple" : "" }}>
     </select>
 </div>

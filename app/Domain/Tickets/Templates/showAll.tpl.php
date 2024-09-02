@@ -1,28 +1,14 @@
+@extends($layout)
+
+@section('content')
+
 <?php
 
-    defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
-    $sprints        = $tpl->get("sprints");
-    $searchCriteria = $tpl->get("searchCriteria");
-    $currentSprint  = $tpl->get("currentSprint");
-    $allTickets     = $tpl->get('allTickets');
-
-    echo $tpl->displayNotification();
-
-    $searchCriteria = $tpl->get("searchCriteria");
-    $currentSprint  = $tpl->get("currentSprint");
     $allTicketGroups     = $tpl->get('allTickets');
 
     $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
-    $efforts        = $tpl->get('efforts');
-    $priorities     = $tpl->get('priorities');
     $statusLabels   = $tpl->get('allTicketStates');
-
-
-    $newField       = $tpl->get('newField');
 
     //All states >0 (<1 is archive)
     $numberofColumns = count($tpl->get('allTicketStates')) - 1;
@@ -419,3 +405,5 @@ foreach ($__data as $var => $val) {
     });
 
 </script>
+
+@endsection

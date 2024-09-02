@@ -30,7 +30,7 @@
     @endforeach
 
     @if (count($comments) == 0)
-        <div class="clearall noCommentsMessage tw-pl-0">
+        <div class="clearall noCommentsMessage pl-0">
             {{ __('text.no_comments') }}
         </div>
     @endif

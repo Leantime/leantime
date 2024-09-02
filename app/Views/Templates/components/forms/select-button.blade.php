@@ -1,11 +1,11 @@
 @dispatchEvent('beforeSelectable')
 
-<div {{ $attributes->merge([ 'class' => 'selectable selectable-'.$name.' tw-center '.($selected == "true" ? 'active' : '') ]) }} id="selectableWrapper-{{ $id }}">
+<div {{ $attributes->merge([ 'class' => 'selectable selectable-'.$name.' center '.($selected == "true" ? 'active' : '') ]) }} id="selectableWrapper-{{ $id }}">
 
         <div class="selectableContent {{ $contentClass ?? '' }}">
             {{ $slot }}
         </div>
-        <input type="radio"  name="{{ $name }}" {!!  $selected == "true" ? "checked='checked'" : ""  !!} id="selectable-{{ $id }}" value="{{ $value }}" class="selectableRadio tw-hidden"/>
+        <input type="radio"  name="{{ $name }}" {!!  $selected == "true" ? "checked='checked'" : ""  !!} id="selectable-{{ $id }}" value="{{ $value }}" class="selectableRadio hidden"/>
 
     @if(isset($hideLabel) === false)
         <label for="selectable-{{ $id }}" class="selectable-label" >

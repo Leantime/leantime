@@ -27,7 +27,7 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 <!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.{{ app()->make(\Leantime\Core\Configuration\Environment::class)->debug ? 'js' : 'min.js' }}"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.{{ app('config')->debug ? 'js' : 'min.js' }}"></script>
 
 @dispatchEvent('afterMainScriptTag')
 
@@ -37,7 +37,7 @@
 
 <!--
 //For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Controller\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Controller\Frontcontroller::getModuleName() }}Controller.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/{{ ucwords($frontController->getModuleName()) }}/Js/{{ $frontController->getModuleName() }}Controller.js"></script>
 -->
 
 <!-- theme & custom -->

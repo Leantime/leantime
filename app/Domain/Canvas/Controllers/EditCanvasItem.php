@@ -5,7 +5,7 @@ namespace Leantime\Domain\Canvas\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;

@@ -4,7 +4,7 @@ namespace Leantime\Views\Composers;
 
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Composer;
+use Leantime\Core\UI\Composer;
 
 class PageBottom extends Composer
 {

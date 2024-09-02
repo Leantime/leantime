@@ -22,7 +22,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="viewDescription mce-content-body">
-                    <div class="tw-pl-[9px]">
+                    <div class="pl-[9px]">
                         <?php echo $tpl->escapeMinimal($ticket->description); ?>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ $ticketTypes = $tpl->get('ticketTypes');
 
                 <div class="form-group">
                     <label class="control-label"><?=$tpl->__('label.project') ?></label>
-                    <select name="projectId" class="tw-w-full">
+                    <select name="projectId" class="w-full">
                         <?php foreach($allAssignedprojects as $project) { ?>
                             <option value="<?=$project['id'] ?>"
                                 <?php

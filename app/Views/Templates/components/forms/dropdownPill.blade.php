@@ -11,7 +11,7 @@
 
 <div {{ $attributes->merge([ 'class' => '' ]) }} >
     <div class="dropdown ticketDropdown {{ $type }}Dropdown show {{ $extraClass }}" id="dropdownPillWrapper-{{ $parentId }}-{{ $type }}">
-        <a style="{{ $linkStyle }}" class="dropdown-toggle tw-inline-block {{ $type }} {{ $selectedClass }} {{ $type }}-bg-{{ $selectedClass }}" href="javascript:void(0);" role="button" id="{{ $type }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a style="{{ $linkStyle }}" class="dropdown-toggle inline-block {{ $type }} {{ $selectedClass }} {{ $type }}-bg-{{ $selectedClass }}" href="javascript:void(0);" role="button" id="{{ $type }}DropdownMenuLink{{ $parentId }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="text">
                 @if(isset($options[$selectedKey]))
                     @if(is_array($options[$selectedKey]))

@@ -5,7 +5,6 @@ namespace Leantime\Core\Exceptions;
 use Closure;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -18,8 +17,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Traits\ReflectsClosures;
 use InvalidArgumentException;
-use Leantime\Core\Template;
-use PHP_CodeSniffer\Reports\Report;
+use Leantime\Core\Application;
+use Leantime\Core\UI\Template;
+use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
@@ -29,7 +29,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Run as Whoops;
-use Symfony\Component\Console\Application as ConsoleApplication;
 
 class ExceptionHandler implements ExceptionHandlerContract
 {
@@ -38,9 +37,9 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * The container implementation.
      *
-     * @var \Illuminate\Contracts\Container\Container
+     * @var Application
      */
-    protected $container;
+    protected Application $container;
 
     /**
      * A list of the exception types that are not reported.
@@ -96,10 +95,10 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Create a new exception handler instance.
      *
-     * @param  \Illuminate\Contracts\Container\Container $container
+     * @param  Application
      * @return void
      */
-    public function __construct(Container $container)
+    public function __construct(Application $container)
     {
         $this->container = $container;
 
@@ -222,7 +221,6 @@ class ExceptionHandler implements ExceptionHandlerContract
                 }
             }
         }
-
 
         Log::error(
             $e->getMessage(),

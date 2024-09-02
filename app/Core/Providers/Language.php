@@ -14,6 +14,7 @@ class Language extends ServiceProvider
     public function register()
     {
         $this->app->singleton(\Leantime\Core\Language::class, \Leantime\Core\Language::class);
+        $this->app->alias(\Leantime\Core\Language::class, "translator");
     }
 
 

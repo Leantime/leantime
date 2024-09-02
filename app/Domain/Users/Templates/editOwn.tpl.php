@@ -1,6 +1,6 @@
 <?php
 
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Theme;
 
 defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {

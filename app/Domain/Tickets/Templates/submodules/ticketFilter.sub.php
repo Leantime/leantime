@@ -3,7 +3,7 @@
 
 use Leantime\Core\Controller\Frontcontroller;
 
-$currentRoute = Frontcontroller::getCurrentRoute();
+$currentRoute = currentRoute();
 
 $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", $currentRoute);
 $groupBy        = $tpl->get('groupByOptions');

@@ -21,14 +21,14 @@
     </a>
     <div class="datetime-dropdown dropdown-menu">
 
-        <button type="button" class="btn btn-default tw-float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
+        <button type="button" class="btn btn-default float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
             <i class="fa fa-clock"></i>
         </button>
         <div class="clearall"></div>
         <input type="date" id="datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
-        <hr class="tw-mt-xs"/>
-        <button type="button" class="btn btn-default tw-float-right" onclick="jQuery(body).click()" >Close</button>
-        <button type="button" class="btn btn-default tw-float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();" >Clear</button>
+        <hr class="mt-xs"/>
+        <button type="button" class="btn btn-default float-right" onclick="jQuery(body).click()" >Close</button>
+        <button type="button" class="btn btn-default float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();" >Clear</button>
     </div>
 </div>
 

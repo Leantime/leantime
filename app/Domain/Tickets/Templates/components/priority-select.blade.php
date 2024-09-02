@@ -7,7 +7,7 @@
         <x-global::forms.select.option
             :value="strtolower($priorityKey)"
             :selected="strtolower($priorityKey) == strtolower( $ticket->priority ?? '') ? 'true' : 'false'">
-            <span class="priority-text-{{ $priorityKey }} "><i class="fa fa-flag tw-size-sm tw-pr-xs"></i> {{ $priorityValue }}</span>
+            <span class="priority-text-{{ $priorityKey }} "><i class="fa fa-flag size-sm pr-xs"></i> {{ $priorityValue }}</span>
         </x-global::forms.select.option>
     @endforeach
 </x-global::forms.select>

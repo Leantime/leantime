@@ -4,8 +4,8 @@ namespace Leantime\Views\Composers;
 
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Composer;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Composer;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
 
 class Header extends Composer
@@ -48,7 +48,7 @@ class Header extends Composer
         $colorMode = $this->themeCore->getColorMode();
         $colorScheme = $this->themeCore->getColorScheme();
         $themeFont = $this->themeCore->getFont();
-
+        $sitename = '';
         // Set colors to use
         if (! session()->exists("companysettings.sitename")) {
             $sitename = $this->settingsRepo->getSetting("companysettings.sitename");

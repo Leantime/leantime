@@ -51,20 +51,8 @@
         "league/csv": "^9.8",
 
         "dragonmantank/cron-expression": "^3.3",
-        "illuminate/container": "^10.0",
-        "illuminate/contracts": "^10.0",
-        "illuminate/view": "^10.0",
-        "illuminate/events": "^10.0",
-        "illuminate/filesystem": "^10.0",
-        "illuminate/bus": "^10.0",
-        "illuminate/http": "^10.0",
-        "illuminate/console": "^10.0",
-        "illuminate/pipeline": "^10.0",
-        "illuminate/cache": "^10.0",
-        "illuminate/session": "^10.0",
-        "illuminate/encryption": "^10.0",
-        "illuminate/redis": "^10.0",
-        "illuminate/log": "^10.0",
+
+        "laravel/framework": "^v10.48",
         "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
 
@@ -81,7 +69,8 @@
 
         "metasyntactical/composer-plugin-license-check": "^2.1",
 
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "sentry/sentry-laravel": "^4.8"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",

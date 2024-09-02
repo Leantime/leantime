@@ -14,7 +14,7 @@
 
        <div class="maincontentinner">
 
-           <div class="tw-w-full"
+           <div class="w-full"
                 hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist"
                 hx-trigger="load"
                 hx-target="#pluginList"

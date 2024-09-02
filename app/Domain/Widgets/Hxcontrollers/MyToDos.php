@@ -78,4 +78,5 @@ class MyToDos extends HtmxController
         $tplVars = $this->ticketsService->getToDoWidgetAssignments($params);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
     }
+
 }

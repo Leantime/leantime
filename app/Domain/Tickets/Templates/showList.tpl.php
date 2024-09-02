@@ -63,7 +63,7 @@ $size = floor(100 / $numberofColumns);
                         <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="width: 100%;"/>
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-primary tw-mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; "/>
+                        <input type="submit" class="btn btn-primary mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; "/>
                     </form>
 
 

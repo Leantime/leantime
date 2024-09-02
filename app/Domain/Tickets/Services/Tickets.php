@@ -13,7 +13,6 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -39,7 +38,6 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Constructor method for the class.
          *
-         * @param TemplateCore        $tpl               The template core instance.
          * @param LanguageCore        $language          The language core instance.
          * @param EnvironmentCore     $config            The environment core instance.
          * @param ProjectRepository   $projectRepository The project repository instance.
@@ -56,7 +54,6 @@ namespace Leantime\Domain\Tickets\Services {
         *
         */
         public function __construct(
-            private TemplateCore $tpl,
             private LanguageCore $language,
             private EnvironmentCore $config,
             private ProjectRepository $projectRepository,
