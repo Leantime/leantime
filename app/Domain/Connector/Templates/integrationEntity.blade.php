@@ -1,7 +1,8 @@
+@extends($layout)
+
+@section('content')
+
 <?php
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $providerEntities = $tpl->get("providerEntities");
 $provider = $tpl->get("provider");
 $leantimeEntities = $tpl->get("leantimeEntities");

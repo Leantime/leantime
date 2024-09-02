@@ -1,4 +1,7 @@
-<?php $tpl = $__data['tpl']; ?>
+@extends($layout)
+
+@section('content')
+
 <div class="pageheader">
     <div class="pagetitle">
         <h1><?php echo $tpl->language->__("headlines.installation"); ?></h1>

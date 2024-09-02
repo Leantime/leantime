@@ -1,6 +1,7 @@
-<?php foreach ($__data as $var => $val) {
-    $$var = $val;
-} // necessary for blade refactor?>
+@extends($layout)
+
+@section('content')
+
 <div class="pageheader">
     <div class="pagetitle">
         <h1><?php echo $tpl->language->__("headlines.update_database"); ?></h1>

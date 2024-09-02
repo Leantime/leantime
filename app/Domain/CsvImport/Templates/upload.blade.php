@@ -2,9 +2,6 @@
 
 use Leantime\Core\Fileupload;
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
     $maxSize = Fileupload::getMaximumFileUploadSize();
     $moduleId = $_GET['id'] ?? '';
 ?>

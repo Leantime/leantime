@@ -1,11 +1,8 @@
-<?php
+@extends($layout)
 
-defined('RESTRICTED') or die('Restricted access');
+@section('content')
 
-echo $tpl->displayNotification();
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+    <?php
 $tickets        = $tpl->get("tickets");
 $sprints        = $tpl->get("sprints");
 $searchCriteria = $tpl->get("searchCriteria");

@@ -1,9 +1,8 @@
-<?php
-defined('RESTRICTED') or die('Restricted access');
+@extends($layout)
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+@section('content')
+
+    <?php
 $milestones = $tpl->get('milestones');
 if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
     session(["usersettings.submenuToggle.myProjectCalendarView" => "dayGridMonth"]);

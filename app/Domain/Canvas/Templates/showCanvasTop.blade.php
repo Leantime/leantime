@@ -1,15 +1,8 @@
-<?php
+@extends($layout)
 
-/**
- * showCanvasTop.inc template - Top part of the main canvas page
- *
- * Required variables:
- * - $canvasName       Name of current canvas
- */
+@section('content')
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+    <?php
 
 $canvasTitle = '';
 $allCanvas = $tpl->get('allCanvas');

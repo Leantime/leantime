@@ -1,17 +1,7 @@
-<?php
+@extends($layout)
 
-/**
- * showCanvasBottom.inc template - Bottom part of the main canvas page
- *
- * Required variables:
- * - $canvasName       Name of current canvas
- */
+@section('content')
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
-
-?>
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
     <?php } else {
         echo "<br /><br /><div class='center'>";

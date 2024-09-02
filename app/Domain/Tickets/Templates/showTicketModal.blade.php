@@ -1,9 +1,8 @@
-<?php
+@extends($layout)
 
-defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+@section('content')
+
+    <?php
 $ticket = $tpl->get('ticket');
 $projectData = $tpl->get('projectData');
 $todoTypeIcons  = $tpl->get("ticketTypeIcons");

@@ -1,17 +1,7 @@
-<?php
+@extends($layout)
 
-/**
- * helper.inc - Generic helper template
- *
- * Required variables:
- * - $canvasName       Name of current canvas
- */
+@section('content')
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
-
-?>
 
 <div class="center padding-lg">
 

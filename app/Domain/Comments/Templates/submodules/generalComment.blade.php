@@ -1,7 +1,8 @@
-<?php
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+@extends($layout)
+
+@section('content')
+
+    <?php
 $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 $formHash = md5($formUrl);

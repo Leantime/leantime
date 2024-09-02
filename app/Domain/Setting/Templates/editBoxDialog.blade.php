@@ -1,7 +1,4 @@
 <?php
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $currentLabel = $tpl->get('currentLabel');
 ?>
 

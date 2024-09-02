@@ -1,7 +1,8 @@
+@extends($layout)
+
+@section('content')
+
 <?php
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $companySettings = $tpl->get('companySettings');
 ?>
 
@@ -263,3 +264,5 @@ $companySettings = $tpl->get('companySettings');
         });
     });
 </script>
+
+@endsection

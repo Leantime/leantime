@@ -1,12 +1,11 @@
-<?php
+@extends($layout)
 
-defined('RESTRICTED') or die('Restricted access');
+@section('content')
+
+    <?php
 
 use Leantime\Core\Support\FromFormat;
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $values = $tpl->get('values');
 ?>
 <script type="text/javascript">

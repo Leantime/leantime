@@ -1,16 +1,8 @@
-<?php
+@extends($layout)
 
-/**
- * delCanvasItem.inc template - Generic template for deleting canvas item
- *
- * Required variables:
- * - $canvasName   Name of current canvas
- */
+@section('content')
 
-defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+    <?php
 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 ?>
 

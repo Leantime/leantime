@@ -1,16 +1,8 @@
-<?php
+@extends($layout)
 
-/**
- * canvasDialog.inc template - Generic template for comments
- *
- * Required variables:
- * - $canvasName   Name of current canvas
- */
+@section('content')
 
-defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+    <?php
 $canvasItem = $tpl->get('canvasItem');
 $canvasTypes = $tpl->get('canvasTypes');
 $hiddenStatusLabels = $tpl->get('statusLabels');

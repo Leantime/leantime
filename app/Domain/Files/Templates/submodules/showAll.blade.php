@@ -3,10 +3,6 @@
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Fileupload;
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
-
 $module = Frontcontroller::getModuleName('');
 $action = Frontcontroller::getActionName('');
 $maxSize = Fileupload::getMaximumFileUploadSize();

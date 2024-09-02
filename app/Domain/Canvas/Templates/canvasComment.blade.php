@@ -1,16 +1,8 @@
+@extends($layout)
+
+@section('content')
+
 <?php
-
-/**
- * canvasComment.inc template - Generic template for comments
- *
- * Required variables:
- * - $canvasName   Name of current canvas
- */
-
-defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $canvasItem = $tpl->get('canvasItem');
 $canvasTypes = $tpl->get('canvasTypes');
 

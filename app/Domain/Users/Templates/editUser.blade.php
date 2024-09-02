@@ -1,7 +1,6 @@
+
+
 <?php
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $status = $tpl->get('status');
 $values = $tpl->get('values');
 $projects = $tpl->get('relations');

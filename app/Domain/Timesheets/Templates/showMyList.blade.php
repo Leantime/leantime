@@ -1,11 +1,12 @@
+@extends($layout)
+
+@section('content')
+
+
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
 use Leantime\Core\Support\FromFormat;
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 ?>
 
 <!-- page header -->
