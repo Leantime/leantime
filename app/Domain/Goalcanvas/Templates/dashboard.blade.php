@@ -54,25 +54,13 @@
 
             <h1>{{ __('headline.goal.dashboardboard') }} //
                 @if (count($allCanvas) > 0)
-                    <x-global::actions.dropdown buttonClass="header-title-dropdown">
-                        <!-- Slot for the Dropdown Button -->
-                        <x-slot:button>
-                            All Goal Groups <i class="fa fa-caret-down"></i>
-                        </x-slot:button>
-
-                        <!-- Slot for the Dropdown Menu -->
+                    <x-global::actions.dropdown label-text='All Goal Groups' contentRole="primary" position="bottom">
                         <x-slot:menu>
                             @if ($login::userIsAtLeast($roles::$editor))
-                                <li><a href="#/goalcanvas/bigRock">{!! __('links.icon.create_new_board') !!}</a></li>
-                                <li class="border"></li>
+                                <x-global::actions.dropdown-list-item link="#/goalcanvas/bigRock" label-text="{!! __('links.icon.create_new_board') !!}" border="true" />
                             @endif
-
                             @foreach ($allCanvas as $canvasRow)
-                                <li>
-                                    <a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">
-                                        {{ $tpl->escape($canvasRow['title']) }}
-                                    </a>
-                                </li>
+                                <x-global::actions.dropdown-list-item link="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}" label-text="{{ $tpl->escape($canvasRow['title']) }}" />
                             @endforeach
                         </x-slot:menu>
                     </x-global::actions.dropdown>

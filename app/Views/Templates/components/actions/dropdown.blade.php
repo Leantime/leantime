@@ -1,36 +1,60 @@
 @props([
-    'buttonClass' => 'btn btn-primary',  // Default button class
-    'menuClass' => 'dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow',  // Default menu class
+    'variant' => 'regular', // Dropdown variant: regular or card
+    'contentRole' => 'primary', // Content role: primary, secondary, or tertiary
+    'position' => 'bottom', // Dropdown position: left, right, top, bottom, inner, outer
+    'label-text' => 'Dropdown', // Text for the dropdown button
+    'card-label' => 'Card Title!', // Text for the card title
+    'caption' => ''
 ])
 
-<div {{ $attributes->merge(['class' => 'dropdown']) }}>
-    <!-- Dropdown Button -->
-    <label tabindex="0" class="{{ $buttonClass }}">
-        {{ $button ?? 'Dropdown' }}
-    </label>
+@php
+    // Determine the button class based on the content role
+    $buttonClass = match($contentRole) {
+        'secondary' => 'btn btn-secondary',
+        'tertiary' => 'btn btn-accent',
+        default => 'btn btn-primary',
+    };
 
-    <!-- Dropdown Menu -->
-    <ul tabindex="0" class="{{ $menuClass }}">
-        {{ $menu }}
-    </ul>
+    // Determine the menu class based on the variant
+    $menuClass = match($variant) {
+        'card' => 'card card-compact bg-primary text-primary-content w-64 p-2 shadow', // Card variant class
+        default => 'dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
+    };
+
+    // Determine the dropdown position class
+    $positionClass = match($position) {
+        'left' => 'dropdown-left',
+        'right' => 'dropdown-right',
+        'top' => 'dropdown-top',
+        'inner' => 'dropdown-end', // Use 'dropdown-end' to position inside
+        'outer' => 'dropdown-start', // Use 'dropdown-start' to position outside
+        default => 'dropdown-bottom', // Default to bottom position
+    };
+@endphp
+
+<div {{ $attributes->merge(['class' => "dropdown $positionClass"]) }}>
+    <!-- Dropdown Button -->
+    <div tabindex="0" role="button" class="{{ $buttonClass }}">
+        {{ $labelText }}
+    </div>
+
+    @if ($variant === 'card')
+        <!-- Card Body for Card Variant -->
+        <div tabindex="0" class="{{ $menuClass }}">
+            <div class="card-body">
+                <h3 class="card-title">{{ $cardLabel }}</h3>
+
+            </div>
+        </div>
+    @else
+        <!-- Regular Dropdown Menu -->
+        <ul tabindex="0" class="{{ $menuClass }}">
+            {{ $menu }}
+        </ul>
+    @endif
 </div>
 
 
 
-{{-- <x-dropdown 
-    buttonClass="btn btn-secondary"
-    menuClass="menu dropdown-content p-2 shadow-lg bg-base-200 rounded-box w-64"
-    class="mt-4 mb-2"
->
-    <!-- Slot for the Dropdown Button -->
-    <x-slot:button>
-        Options
-    </x-slot:button>
 
-    <!-- Slot for the Dropdown Menu -->
-    <x-slot:menu>
-        <li><a href="/profile" class="block px-4 py-2 hover:bg-gray-200">Profile</a></li>
-        <li><a href="/settings" class="block px-4 py-2 hover:bg-gray-200">Settings</a></li>
-        <li><a href="/logout" class="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
-    </x-slot:menu>
-</x-dropdown> --}}
+
