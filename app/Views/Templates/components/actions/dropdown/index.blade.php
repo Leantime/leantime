@@ -1,6 +1,8 @@
+<!-- resources/views/components/actions/dropdown/index.blade.php -->
+
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
-    'contentRole' => 'primary', // Content role: primary, secondary, or tertiary
+    'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'label-text' => 'Dropdown', // Text for the dropdown button
@@ -10,9 +12,12 @@
 @php
     // Determine the button class based on the content role
     $buttonClass = match($contentRole) {
+        'primary' => 'btn btn-primary',
         'secondary' => 'btn btn-secondary',
-        'tertiary' => 'btn btn-accent',
-        default => 'btn btn-primary',
+        'accent' => 'btn btn-accent',
+        'ghost' => 'btn btn-tertiary',
+        'link' => 'btn btn-link',
+        default => 'btn', // Default to base button class
     };
 
     // Determine the menu class based on the variant
@@ -45,7 +50,7 @@
         <div tabindex="0" class="{{ $menuClass }}">
             <div class="card-body">
                 <h3 class="card-title">{{ $cardLabel }}</h3>
-                {{ $cardContent??'' }}
+                {{ $cardContent ?? '' }}
             </div>
         </div>
     @else
