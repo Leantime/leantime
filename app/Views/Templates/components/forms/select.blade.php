@@ -1,37 +1,48 @@
 @props([
-    'name',
     'options' => [],
     'labelText' => '',
+    'labelRight' => '',
     'caption' => '',
-    'validationText' => '',
-    'validationState' => '',
-    'trailingVisual' => '',
+    'captionState' => '', 
+    // 'validationText' => '',
+    // 'validationState' => '',
     'leadingVisual' => '',
+    'size' => '',
     'state' => '',
     'variant' => 'single',
     'selected' => [],
 ])
 
+@php
+    $sizeClass = $size && $size != 'md' ? 'select-'.$size : '';
+    $stateClass = $state && $state != 'disabled' ? 'select-'.$state : '';
+    $captionClass = $captionState ? 'text-'.$captionState : '';
+@endphp
+
+
 <div>
-    @if($labelText)
-        <label for="{{ $name }}">
-            <span class="label-text">{{ $labelText }}</span>
-        </label>
+    @if($labelText || $labelRight)
+        <div class="flex justify-between">
+            @if($labelText)
+                <label for="{{ $attributes->get('id') }}">
+                    <span class="label-text">{{ $labelText }}</span>
+                </label>
+            @endif
+            @if($labelRight)
+                <span class="label-text-alt">{{ $labelRight }}</span>
+            @endif
+        </div>
     @endif
 
     <div>
         @if($leadingVisual)
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="{{ $leadingVisual }}"></i>
+                {{ $leadingVisual }}>
             </span>
         @endif
 
-        <select 
-            name="{{ $name }}" 
-            id="{{ $name }}" 
-            @class([
-                'select select-bordered',
-            ])
+        <select  
+            {{$attributes->merge(['class' => 'select select-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '')])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
             {{-- {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }} --}}
         >
@@ -42,16 +53,11 @@
             @endforeach
         </select>
 
-        @if($trailingVisual)
-            <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <i class="{{ $trailingVisual }}"></i>
-            </span>
-        @endif
     </div>
 
     @if($caption)
         <label>
-            <span class="label-text-alt">{{ $caption }}</span>
+            <span class="label-text-alt {{ $captionClass }}">{{ $caption }}</span>
         </label>
     @endif
 
