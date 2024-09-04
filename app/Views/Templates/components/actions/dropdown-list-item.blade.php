@@ -1,15 +1,14 @@
 @props([
-    'link' => '#', // Default URL for the dropdown item link
     'label-text' => '', // Text or HTML content for the dropdown item
-    'border' => false, // Whether to show a border after the item
+    'variant' => 'link', // Variant of the dropdown item: 'link' or 'border'
 ])
 
-<li>
-    <a href="{{ $link }}">
-        {!! $labelText !!}
-    </a>
-</li>
-
-@if ($border)
+@if ($variant === 'link')
+    <li>
+        <a {{ $attributes }}>
+            {!! $labelText !!}
+        </a>
+    </li>
+@elseif ($variant === 'border')
     <li class="border"></li>
 @endif
