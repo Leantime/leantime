@@ -7,13 +7,14 @@
     'leadingVisual' => '',
     'trailingVisual' => '',
     'caption' => '', 
-    'captionState' => '', 
+    'validationText' => '',
+    'validationState' => '', 
 ])
 
 @php
     $sizeClass = $size ? 'input-'.$size : '';
     $stateClass = $state ? 'input-'.$state : '';
-    $captionClass = $captionState ? 'text-'.$captionState : '';
+    $validationClass = $validationState ? 'text-yellow-500' : '';
 @endphp
 
 <div class='par relative w-full max-w-xs'>
@@ -25,9 +26,15 @@
                 </label>
             @endif
             @if($labelRight)
-                <span class="label-text-alt">{{ $labelRight }}</span>
+                <label>
+                    <span class="label-text-alt">{{ $labelRight }}</span>
+                </label>
             @endif
         </div>
+    @endif
+
+    @if($caption)
+        <span class="label-text">{{ $caption }}</span>
     @endif
 
     <div class="relative">
@@ -48,7 +55,10 @@
         @endif
     </div>
 
-    @if($caption)
-        <span class="label-text-alt {{ $captionClass }}">{{ $caption }}</span>
+    @if($validationText)
+        <div class="mt-1 overflow-hidden transition-all duration-300 ease-in-out max-h-0">
+            <p class="text-sm {{ $validationClass }}">{{ $validationText }}</p>
+        </div>
     @endif
+    
 </div>
