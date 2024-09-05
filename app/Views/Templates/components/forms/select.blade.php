@@ -4,34 +4,40 @@
     'labelRight' => '',
     'caption' => '',
     'captionState' => '', 
-    // 'validationText' => '',
-    // 'validationState' => '',
     'leadingVisual' => '',
     'size' => '',
     'state' => '',
     'variant' => 'single',
     'selected' => [],
+    'validationText' => '',
+    'validationState' => '',
 ])
 
 @php
     $sizeClass = $size && $size != 'md' ? 'select-'.$size : '';
     $stateClass = $state && $state != 'disabled' ? 'select-'.$state : '';
-    $captionClass = $captionState ? 'text-'.$captionState : '';
+    $validationClass = $validationState ? 'text-yellow-500' : '';
 @endphp
 
 
-<div>
+<div class='relative w-full max-w-xs'>
     @if($labelText || $labelRight)
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
             @if($labelText)
                 <label for="{{ $attributes->get('id') }}">
                     <span class="label-text">{{ $labelText }}</span>
                 </label>
             @endif
             @if($labelRight)
-                <span class="label-text-alt">{{ $labelRight }}</span>
+                <label>
+                    <span class="label-text-alt">{{ $labelRight }}</span>
+                </label>
             @endif
         </div>
+    @endif
+
+    @if($caption)
+        <span class="label-text">{{ $caption }}</span>
     @endif
 
     <div>
@@ -44,7 +50,7 @@
         <select  
             {{$attributes->merge(['class' => 'select select-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '')])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
-            {{-- {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }} --}}
+            {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
         >
             @foreach($options as $value => $label)
                 <option value="{{ $value }}" {{ in_array($value, (array)$selected) ? 'selected' : '' }}>
@@ -55,15 +61,12 @@
 
     </div>
 
-    @if($caption)
-        <label>
-            <span class="label-text-alt {{ $captionClass }}">{{ $caption }}</span>
-        </label>
+
+    @if($validationText)
+        <div class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
+            <p class="text-sm {{ $validationClass }}">{{ $validationText }}</p>
+        </div>
     @endif
 
-    {{-- @if($validationText)
-        <label>
-            <span class="label-text-alt text-{{ $validationState }}">{{ $validationText }}</span>
-        </label>
-    @endif --}}
 </div>
+
