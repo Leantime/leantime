@@ -39,7 +39,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             }
 
             $this->tpl->assign("wiki", $wiki);
-            return $this->tpl->displayPartial("wiki.wikiDialog");
+            return $this->tpl->displayModal("wiki.wikiDialog");
         }
 
         /**

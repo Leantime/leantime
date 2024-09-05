@@ -162,3 +162,4 @@ echo $tpl->displayNotification();
 
 
 </script>
+@endsection

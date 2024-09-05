@@ -1985,12 +1985,12 @@ namespace Leantime\Domain\Tickets\Services {
                 [
                     'url' => "#/tickets/newTicket",
                     'text' => 'links.add_todo',
-                    'class' => 'ticketModal',
+                    'class' => '',
                 ],
                 [
                     'url' => "#/tickets/editMilestone",
                     'text' => 'links.add_milestone',
-                    'class' => 'milestoneModal',
+                    'class' => '',
                 ],
             ];
         }

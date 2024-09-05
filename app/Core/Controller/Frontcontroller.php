@@ -92,7 +92,14 @@ class Frontcontroller
         $this->dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
 
         $controllerNs = "Domain";
-        $controllerType = $this->incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
+
+        $controllerType = 'Controllers';
+        if(($this->incomingRequest instanceof HtmxRequest) &&
+            $this->incomingRequest->header("is-modal") == false
+            && $this->incomingRequest->header("hx-boosted") == false){
+            $controllerType = 'Hxcontrollers';
+        }
+
         $classname = $namespace."".$controllerNs."\\".$moduleName."\\".$controllerType."\\".$actionName;
 
         if (! class_exists($classname)) {

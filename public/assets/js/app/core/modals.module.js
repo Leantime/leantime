@@ -8,76 +8,70 @@ var setCustomModalCallback = function(callback) {
     }
 }
 
+var windowManager = [];
+
+var checksumhUrl = function(s) {
+    return s.split("").reduce(function(a, b) {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+    }, 0);
+}
+
+var removeHash = function  () {
+    history.pushState("", document.title, window.location.pathname
+        + window.location.search);
+}
+
 var openModal = function () {
-    var modalOptions = {
-        sizes: {
-            minW: 500,
-            minH: 200
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforePostSubmit: function () {
-                jQuery(".showDialogOnLoad").show();
 
-                if (tinymce.editors.length>0) {
-                    jQuery(".simpleEditor").each(function() {
-                        jQuery(this).tinymce().save();
-                        jQuery(this).tinymce().remove();
-                    });
 
-                    jQuery(".complexEditor").each(function() {
-                        jQuery(this).tinymce().save();
-                        jQuery(this).tinymce().remove();
-                    });
-                }
-            },
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-            },
-            afterShowCont: function () {
-                window.htmx.process('.nyroModalCont');
-                jQuery(".formModal, .modal").nyroModal(modalOptions);
-                tippy('[data-tippy-content]');
-            },
-            beforeClose: function () {
-                try{
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-
-                }catch(error){
-                    //Code to handle error comes here
-                    console.log("Issue pushing history");
-                }
-
-                if(typeof window.globalModalCallback === 'function') {
-                    window.globalModalCallback();
-                }else{
-                    location.reload();
-                }
-            }
-        },
-        titleFromIframe: true
-    };
+    var baseUrl = appUrl.replace(/\/$/, '');
 
     var url = window.location.hash.substring(1);
-    if(url.includes("showTicket")
-        || url.includes("ideaDialog")
-        || url.includes("articleDialog")) {
-        // modalOptions.sizes.minW = 1800;
-        // modalOptions.sizes.minH = 1800;
+    var urlParts = url.split("/");
+
+    if(urlParts.length>2 && urlParts[1] !== "tab") {
+
+        htmx.ajax('GET', baseUrl+""+url, {
+            event: "trigger-modal",
+            target:'#modal-wrapper',
+            swap:'afterbegin',
+            headers: {
+                "Is-Modal": true,
+            }
+        }).then(() => {
+
+            let urlHash = "modal"+checksumhUrl(url);
+            if(windowManager[urlHash] == undefined) {
+                windowManager[urlHash] = urlHash;
+            }else{
+                htmx.find("#modal-wrapper dialog."+urlHash);
+            }
+
+            console.log(htmx.find("#modal-wrapper dialog"));
+
+            htmx.find("#modal-wrapper dialog").classList.add(urlHash);
+            htmx.find("#modal-wrapper dialog."+urlHash).showModal();
+
+            htmx.find("#modal-wrapper dialog."+urlHash).addEventListener("close", (event) => {
+                removeHash();
+            });
+
+        });
+
     }
 
-    var urlParts = url.split("/");
-    if(urlParts.length>2 && urlParts[1] !== "tab") {
-        jQuery.nmManual(appUrl + "/" + url, modalOptions);
-    }
 }
+
 
 var closeModal = function () {
     jQuery.nmTop().close();
 }
 
-jQuery(document).ready(openModal);
+jQuery(document).ready(function() {
+    openModal();
+});
+
 window.addEventListener("hashchange", openModal);
 window.addEventListener("closeModal", closeModal);
 
@@ -86,4 +80,3 @@ export default {
     setCustomModalCallback: setCustomModalCallback,
     closeModal: closeModal
 };
-

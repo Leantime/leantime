@@ -171,3 +171,4 @@ $size = floor(100 / $numberofColumns);
     });
 
 </script>
+@endsection

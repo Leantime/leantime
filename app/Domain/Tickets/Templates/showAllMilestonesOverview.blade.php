@@ -236,8 +236,8 @@ $size = floor(100 / $numberofColumns);
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                            <li><a href="#/tickets/editMilestone/<?php echo $row->id; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_milestone"); ?></a></li>
-                                            <li><a href="#/tickets/moveTicket/<?php echo $row->id; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_milestone"); ?></a></li>
+                                            <li><a href="#/tickets/editMilestone/<?php echo $row->id; ?>" class=''><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_milestone"); ?></a></li>
+                                            <li><a href="#/tickets/moveTicket/<?php echo $row->id; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_milestone"); ?></a></li>
                                             <li><a href="#/tickets/delMilestone/<?php echo $row->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                             <li class="nav-header border"></li>
                                             <li><a href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$tpl->__("links.view_todos")?></a></li>
@@ -285,3 +285,4 @@ $size = floor(100 / $numberofColumns);
     <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>
+@endsection

@@ -37,7 +37,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
             </a>
             <ul class="dropdown-menu">
                 <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                 <li id="timerContainer-<?php echo $ticket->id;?>" class="timerContainer">
@@ -142,3 +142,4 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     });
 
 </script>
+@endsection

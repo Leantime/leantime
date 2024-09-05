@@ -52,7 +52,6 @@ jQuery(document).ready(function() {
    leantime.editorController.initSimpleEditor();
 
    @if(!$login::userIsAtLeast($roles::$editor))
-       leantime.authController.makeInputReadonly(".nyroModalCont");
 
    @endif;
 

@@ -67,11 +67,14 @@ leantime.modals = (function () {
         }
 
         //Ensure we have no trailing slash at the end.
-        var baseUrl = leantime.appUrl.replace(/\/$/, '');
+        var baseUrl = leantime.instanceInfo.appUrl.replace(/\/$/, '');
 
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
-            jQuery.nmManual(baseUrl+""+url, modalOptions);
+
+            htmx.ajax('GET', baseUrl+""+url, {target:'#modal-wrapper', swap:'innerHTML'})
+
+            //jQuery.nmManual(baseUrl+""+url, modalOptions);
         }
     }
 

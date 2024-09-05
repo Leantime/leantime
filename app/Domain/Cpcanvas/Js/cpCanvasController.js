@@ -48,68 +48,6 @@ export const setRowHeights = function () {
 
 let closeModal = false;
 
-export const canvasoptions = function () {
-    return {
-        sizes: {
-            minW: 700,
-            minH: 1000,
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                if (closeModal == true) {
-                    closeModal = false;
-                    location.reload();
-                }
-            },
-            afterShowCont: function () {
-                window.htmx.process('.nyroModalCont');
-                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
-
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
-
-    }
-}
-
-//Functions
-
-var _initModals = function () {
-    jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(anvasoptions());
-};
-
-var openModalManually = function (url) {
-    jQuery.nmManual(url, canvasoptions);
-};
-
-var toggleMilestoneSelectors = function (trigger) {
-    if (trigger == 'existing') {
-        jQuery('#newMilestone, #milestoneSelectors').hide('fast');
-        jQuery('#existingMilestone').show();
-        _initModals();
-    }
-    if (trigger == 'new') {
-        jQuery('#newMilestone').show();
-        jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
-        _initModals();
-    }
-
-    if (trigger == 'hide') {
-        jQuery('#newMilestone, #existingMilestone').hide('fast');
-        jQuery('#milestoneSelectors').show('fast');
-    }
-};
-
-var setCloseModal = function () {
-    closeModal = true;
-};
-
 var initUserDropdown = function () {
 
     jQuery("body").on(
@@ -228,9 +166,6 @@ var initRelatesDropdown = function () {
 
 // Make public what you want to have public, everything else is private
 export default {
-    setCloseModal: setCloseModal,
-    toggleMilestoneSelectors: toggleMilestoneSelectors,
-    openModalManually: openModalManually,
     initUserDropdown: initUserDropdown,
     initStatusDropdown: initStatusDropdown,
     initRelatesDropdown: initRelatesDropdown,

@@ -65,7 +65,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
-            return $this->tpl->displayPartial("wiki.articleDialog");
+            return $this->tpl->displayModal("wiki.articleDialog");
         }
 
         /**

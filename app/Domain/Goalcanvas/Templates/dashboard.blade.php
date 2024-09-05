@@ -297,7 +297,7 @@ foreach ($allCanvas as $canvasRow) {
 
 
 
-{{-- 
+{{--
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
  * Required variables:
@@ -314,7 +314,7 @@ foreach ($allCanvas as $canvasRow) {
         </div>
         <h3>{{ __("headlines.goal.analysis") }}</h3>
         <br>{!! __("text.goal.helper_content") !!}
-        
+
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
             <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
@@ -328,7 +328,6 @@ foreach ($allCanvas as $canvasRow) {
     <small class="align-center">{{ $disclaimer }}</small>
 @endif
 
-{!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
 
 </div>
 </div>
@@ -354,7 +353,7 @@ jQuery(document).ready(function() {
 
     @if (isset($_GET['showModal']))
         @php
-            $modalUrl = $_GET['showModal'] == "" 
+            $modalUrl = $_GET['showModal'] == ""
                 ? "&type=" . array_key_first($canvasTypes)
                 : "/" . (int)$_GET['showModal'];
         @endphp

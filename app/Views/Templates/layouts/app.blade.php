@@ -5,7 +5,10 @@
     @stack('styles')
 </head>
 
-<body>
+<body hx-ext="preload">
+    <div id="global-loader">
+        <div class="indeterminate" style=""></div>
+    </div>
 
     @include('global::sections.appAnnouncement')
 
@@ -54,6 +57,7 @@
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->
+    <div id="modal-wrapper" hx-indicator="#global-progress-indicator"></div>
 
     @include('global::sections.pageBottom')
     @stack('scripts')

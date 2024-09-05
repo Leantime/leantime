@@ -64,3 +64,4 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     });
 
 </script>
+@endsection

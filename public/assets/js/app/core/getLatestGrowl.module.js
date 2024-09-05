@@ -1,8 +1,9 @@
 import jQuery from "jquery";
+import { appUrl } from './instance-info.module.js';
 import 'js/libs/jquery.growl';
 
 export default function (evt) {
-    jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
+    jQuery.get(appUrl+"/notifications/getLatestGrowl", function(data){
         console.log(data);
         let notification = JSON.parse(data);
         jQuery.growl({

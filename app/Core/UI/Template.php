@@ -274,7 +274,7 @@ class Template
      * @return Response
      * @throws Exception
      */
-    public function display(string $template, string $layout = "app", int $responseCode = 200): Response
+    public function display(string $template, string $layout = "app", int $responseCode = 200, array $headers = []): Response
     {
 
         //
@@ -308,7 +308,7 @@ class Template
         $content = self::dispatch_filter('content', $content);
         $content = self::dispatch_filter("content.$template", $content);
 
-        return new Response($content, $responseCode);
+        return new Response($content, $responseCode, $headers);
     }
 
 
@@ -369,6 +369,11 @@ class Template
     public function displayPartial(string $template, int $responseCode = 200): Response
     {
         return $this->display($template, 'blank', $responseCode);
+    }
+
+    public function displayModal(string $template, int $responseCode = 200): Response
+    {
+        return $this->display($template, 'modal', $responseCode, ["Is-Modal"=>true]);
     }
 
     /**

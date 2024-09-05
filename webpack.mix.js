@@ -149,6 +149,7 @@ mix
             ],
         },
     }})
+    .sourceMaps()
     .babelConfig({
         sourceType: 'unambiguous',
         presets: ['@babel/preset-env']

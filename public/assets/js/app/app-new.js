@@ -7,8 +7,10 @@ function addToGlobalScope(object) {
 
 /* HTMX */
 import htmx from 'htmx.org';
+htmx.config.defaultSettleDelay=0;
 window.htmx = htmx;
 require('htmx-ext-head-support');
+
 
 /* jQuery */
 import jQuery from 'jquery';
@@ -22,7 +24,6 @@ import 'chosen-js/chosen.jquery';
 import 'js/libs/jquery.form';
 // TODO: Replace this dependency with https://github.com/leantime/choices
 import 'js/libs/jquery.tagsinput.min';
-import 'js/libs/jquery.nyroModal/js/jquery.nyroModal.custom';
 import 'croppie/croppie';
 import 'packery/dist/packery.pkgd';
 import 'imagesloaded/imagesloaded.pkgd';
@@ -30,13 +31,6 @@ import 'jstree/dist/jstree';
 import 'js/libs/bootstrap-dropdown';
 import '@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker';
 import 'js/libs/simple-color-picker-master/jquery.simple-color-picker';
-
-/*
- * Moment.js
- * TODO: Remove this dependency in favor of Luxon
- */
-import moment from 'moment';
-window.moment = moment;
 
 /* Confetti */
 import confetti from 'canvas-confetti';
@@ -48,9 +42,6 @@ window.confetti = confetti;
  */
 import 'js/libs/uppy/uppy';
 
-/* EmojiPicker */
-import EmojiPicker from 'js/libs/emojipicker/vanillaEmojiPicker';
-window.EmojiPicker = EmojiPicker;
 
 /* isotope */
 import Isotope from 'isotope-layout';
@@ -79,13 +70,14 @@ import SlimSelect from 'js/libs/slimselect';
 window.SlimSelect = SlimSelect;
 
 /* Core */
+import modals from './core/modals.module';
 import dateController from './core/dateController.module';
 import dateHelper from './core/dateHelper.module';
 import editorController from './core/editors.module';
 import getLatestGrowl from './core/getLatestGrowl.module';
 import handleAsyncResponse from './core/handleAsyncResponse.module';
 import instanceInfo from './core/instance-info.module';
-import modals from './core/modals.module';
+
 import onDocumentReady from './core/on-document-ready.module';
 import replaceSVGColors from './core/replaceSVGColors.module';
 import snippets from './core/snippets.module';

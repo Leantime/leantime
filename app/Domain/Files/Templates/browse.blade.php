@@ -130,7 +130,7 @@ $moduleId = session("currentProject");
             jQuery(".imageLink").each(function(i) {
                 let ext = jQuery(this).attr("data-ext");
                 if(modalTypes.includes(ext)) {
-                    jQuery(this).nyroModal();
+
                 }
             });
 
@@ -169,9 +169,6 @@ $moduleId = session("currentProject");
 
                 return false;
             });
-
-            jQuery(".deleteFile").nyroModal();
-
 
         });
     </script>

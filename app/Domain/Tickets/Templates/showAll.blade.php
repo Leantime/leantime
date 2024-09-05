@@ -128,7 +128,7 @@
                             <?php if ($row['dependingTicketId'] > 0) { ?>
                                 <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
-                            <a class='ticketModal' href="#/tickets/showTicket/<?=$tpl->e($row['id']); ?>"><?=$tpl->e($row['headline']); ?></a></td>
+                            <a href="#/tickets/showTicket/<?=$tpl->e($row['id']); ?>"><?=$tpl->e($row['headline']); ?></a></td>
 
 
 

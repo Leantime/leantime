@@ -433,3 +433,4 @@ $allTicketGroups = $tpl->get("allTickets");
 
     });
 </script>
+@endsection

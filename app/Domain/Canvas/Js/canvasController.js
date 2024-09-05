@@ -19,96 +19,6 @@ export const initFilterBar = function () {
 
 };
 
-export const initCanvasLinks = function () {
-
-    jQuery(".addCanvasLink").nyroModal();
-
-    jQuery(".editCanvasLink").click(function () {
-
-        jQuery('#editCanvas').modal('show');
-
-    });
-
-    jQuery(".cloneCanvasLink").click(function () {
-
-        jQuery('#cloneCanvas').modal('show');
-
-    });
-
-    jQuery(".mergeCanvasLink").click(function () {
-
-        jQuery('#mergeCanvas').modal('show');
-
-    });
-
-    jQuery(".importCanvasLink").click(function () {
-
-        jQuery('#importCanvas').modal('show');
-
-    });
-
-};
-
-let closeModal = false;
-
-const canvasoptions = {
-    sizes: {
-        minW:  700,
-        minH: 1000,
-    },
-    resizable: true,
-    autoSizable: true,
-    callbacks: {
-        beforeShowCont: function () {
-            jQuery(".showDialogOnLoad").show();
-            if (closeModal == true) {
-                closeModal = false;
-                location.reload();
-            }
-        },
-        afterShowCont: function () {
-            window.htmx.process('.nyroModalCont');
-            jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
-        },
-        beforeClose: function () {
-            location.reload();
-        }
-    },
-    titleFromIframe: true
-};
-
-//Functions
-
-export const _initModals = function () {
-    jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
-};
-
-export const openModalManually = function (url) {
-    jQuery.nmManual(url, canvasoptions);
-};
-
-export const toggleMilestoneSelectors = function (trigger) {
-    if (trigger == 'existing') {
-        jQuery('#newMilestone, #milestoneSelectors').hide('fast');
-        jQuery('#existingMilestone').show();
-        _initModals();
-    }
-    if (trigger == 'new') {
-        jQuery('#newMilestone').show();
-        jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
-        _initModals();
-    }
-
-    if (trigger == 'hide') {
-        jQuery('#newMilestone, #existingMilestone').hide('fast');
-        jQuery('#milestoneSelectors').show('fast');
-    }
-};
-
-export const setCloseModal = function () {
-    closeModal = true;
-};
-
 export const initUserDropdown = function () {
 
     jQuery("body").on(
@@ -229,11 +139,7 @@ export const initRelatesDropdown = function () {
 export default {
     setCanvasName: setCanvasName,
     initFilterBar: initFilterBar,
-    initCanvasLinks: initCanvasLinks,
     initUserDropdown: initUserDropdown,
     initStatusDropdown: initStatusDropdown,
     initRelatesDropdown: initRelatesDropdown,
-    setCloseModal: setCloseModal,
-    toggleMilestoneSelectors: toggleMilestoneSelectors,
-    openModalManually: openModalManually
 };

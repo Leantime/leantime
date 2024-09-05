@@ -312,3 +312,4 @@ $size = floor(100 / $numberofColumns);
         <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
     });
 </script>
+@endsection

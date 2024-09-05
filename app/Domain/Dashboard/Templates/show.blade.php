@@ -540,7 +540,6 @@
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initStatusDropdown();
-            leantime.usersController.initUserEditModal();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
         @endif

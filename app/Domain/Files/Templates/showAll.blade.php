@@ -128,7 +128,6 @@
             return false;
         });
 
-        jQuery(".deleteFile").nyroModal();
 
 
     });

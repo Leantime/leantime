@@ -228,7 +228,6 @@
             leantime.editorController.initSimpleEditor();
 
             @if (!$login::userIsAtLeast($roles::$editor))
-            leantime.authController.makeInputReadonly(".nyroModalCont");
             @endif
 
             @if ($login::userHasRole([$roles::$commenter]))

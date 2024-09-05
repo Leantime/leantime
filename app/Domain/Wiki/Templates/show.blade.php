@@ -24,7 +24,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
         if ((int)$currentParent === (int)$headline->parent) {
             if ($currLevel > $prevLevel) {
                 echo "
-            <ul class='article-toc'> ";
+            <ul class='menu bg-base-200 rounded-box w-56'> ";
             }
             if ($currLevel == $prevLevel) {
                 echo "  ";
@@ -300,3 +300,5 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
     });
 
 </script>
+
+@endsection

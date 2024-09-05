@@ -101,7 +101,6 @@ $moduleId = $_GET['id'] ?? '';
             jQuery(".imageLink").each(function(i) {
                 let ext = jQuery(this).attr("data-ext");
                 if(modalTypes.includes(ext)) {
-                    jQuery(this).nyroModal();
                 }
             });
 
@@ -141,7 +140,6 @@ $moduleId = $_GET['id'] ?? '';
                 return false;
             });
 
-            jQuery(".deleteFile").nyroModal();
 
 
         });

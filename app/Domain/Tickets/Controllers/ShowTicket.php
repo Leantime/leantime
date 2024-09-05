@@ -76,7 +76,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $ticket = $this->ticketService->getTicket($id);
 
             if ($ticket === false) {
-                return $this->tpl->display('errors.error500', responseCode: 500);
+                return $this->tpl->displayModal('errors.error500', responseCode: 500);
             }
 
             //Ensure this ticket belongs to the current project
@@ -146,7 +146,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-            $response = $this->tpl->displayPartial('tickets.showTicket');
+            $response = $this->tpl->displayModal('tickets.showTicket');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
 
             return $response;
