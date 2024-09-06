@@ -1,10 +1,11 @@
 <?php
 
-namespace Leantime\Domain\Tickets\Controllers {
+namespace Leantime\Domain\Tickets\Hxcontrollers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Controller\HtmxController;
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
@@ -21,8 +22,11 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-    class NewTicket extends Controller
+    class Ticket extends HtmxController
     {
+
+        protected static string $view = 'tickets::partials.newTicketModal';
+
         private ProjectService $projectService;
         private TicketService $ticketService;
         private SprintService $sprintService;
@@ -117,8 +121,11 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): Response
+        public function create(): Response
         {
+
+            $params = $this->incomingRequest->getRequestParams();
+
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
 
                 $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();

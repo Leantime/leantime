@@ -57,7 +57,9 @@
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->
-    <div id="modal-wrapper" hx-indicator="#global-progress-indicator"></div>
+    <div id="modal-wrapper" hx-indicator="#global-progress-indicator">
+        <x-global::content.modal id="main-page-modal" />
+    </div>
 
     @include('global::sections.pageBottom')
     @stack('scripts')

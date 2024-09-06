@@ -2,13 +2,11 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
 use GuzzleHttp\Client;
-use PHPUnit\Exception;
 
 class DefaultWorker
 {

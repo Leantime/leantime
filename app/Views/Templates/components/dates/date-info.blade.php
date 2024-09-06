@@ -5,6 +5,7 @@
 ])
 
 
+<span {{ $attributes }}>
 @if($type == \Leantime\Core\Support\DateTimeInfoEnum::WrittenOnAt)
 {{
     sprintf(
@@ -31,3 +32,5 @@
 {{ format($date)->date() }} {{ format($date)->time() }}
 
 @endif
+
+</span>

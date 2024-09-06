@@ -77,16 +77,6 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 { color: var(--primary-color); }
 
 
-input[type='submit'],
-button,
-.paginate_button.current
-{ background-color:  var(--main-action-bg);  }
-
-input[type='submit']:hover,
-button:hover {
-    background-color:  var(--main-action-hover-bg);
-    color:#fff;
-}
 
 .chosen-container-multi .chosen-choices .search-choice {
     color:#fff;
@@ -225,12 +215,6 @@ label.inline {
     float:left;
     margin-right:5px;
     padding-top:6px;
-}
-
-.loading {
-    position:absolute;
-    width:100%;
-    height:40px;
 }
 
 body .widgettitle.title-light {

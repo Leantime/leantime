@@ -8,7 +8,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 /**
  * Incoming Request information

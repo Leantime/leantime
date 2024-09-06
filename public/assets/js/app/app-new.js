@@ -32,6 +32,13 @@ import 'js/libs/bootstrap-dropdown';
 import '@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker';
 import 'js/libs/simple-color-picker-master/jquery.simple-color-picker';
 
+/*
+ * Moment.js
+ * TODO: Remove this dependency in favor of Luxon
+ */
+import moment from 'moment';
+window.moment = moment;
+
 /* Confetti */
 import confetti from 'canvas-confetti';
 window.confetti = confetti;

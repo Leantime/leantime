@@ -17,6 +17,7 @@ body {
 body {
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
+    color:var(--primary-font-color);
 }
 
 body.loginpage {
@@ -1873,15 +1874,6 @@ body .widgettitle .editHeadline:hover {
 .svgContainer.fixedHeight svg {
     width:auto;
     height:100px;
-}
-
-.loading {
-    width:100%;
-    text-align:center;
-    background:url(../../images/svg/loading-animation.svg) center center no-repeat;
-    min-height:31px;
-    background-size:31px 31px;
-    display:none;
 }
 
 .border-bottom {

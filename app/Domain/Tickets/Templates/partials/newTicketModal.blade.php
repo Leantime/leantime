@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $ticket = $tpl->get('ticket');
 $projectData = $tpl->get('projectData');
@@ -5,36 +7,30 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
 ?>
 
-<div style="min-width:90%">
-        <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
+<div class="min-w-[80vw]">
+    <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
 
-        <?php echo $tpl->displayNotification(); ?>
+    <?php echo $tpl->displayNotification(); ?>
 
-        <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
-            <ul>
-                <li><a href="#ticketdetails"><?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
-            </ul>
+        <ul>
+            <li><a href="#ticketdetails"><?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
+        </ul>
 
-            <div id="ticketdetails">
-                <form class="formModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
-                    <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
-                </form>
-            </div>
-
+        <div id="ticketdetails">
+            <form  hx-post="<?=BASE_URL ?>/tickets/ticket/create" method="post">
+                @include("tickets::submodules.ticketDetails")
+            </form>
         </div>
-</div>
-        <br />
 
+    </div>
+</div>
 
 <script type="text/javascript">
 
 
     jQuery(document).ready(function(){
-
-        <?php if (isset($_GET['closeModal'])) { ?>
-        jQuery.nmTop().close();
-        <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
 
@@ -64,4 +60,3 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     });
 
 </script>
-@endsection

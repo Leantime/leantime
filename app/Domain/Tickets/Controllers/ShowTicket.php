@@ -146,7 +146,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-            $response = $this->tpl->displayModal('tickets.showTicket');
+            $response = $this->tpl->displayPartial('tickets::partials.showTicket');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
 
             return $response;

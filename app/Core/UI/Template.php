@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
+use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
@@ -216,6 +217,38 @@ class Template
         session(["confettiInYourFace" => true]);
     }
 
+
+    protected function parseViewPath(string $viewName) {
+
+        $pathParts = array(
+            "module" => "",
+            "path" => "",
+        );
+
+        //view path style
+        //module::path.name
+        if(str_contains($viewName, "::")) {
+            $parts = explode("::", $viewName);
+            $pathParts['module'] = $parts[0];
+            $pathParts['path'] = $parts[1];
+
+            return $pathParts;
+        }
+
+        //leantime path
+        //module.name
+        if(str_contains($viewName, ".")) {
+            $parts = explode(".", $viewName);
+            $pathParts['module'] = $parts[0];
+            $pathParts['path'] = $parts[1];
+
+            return $pathParts;
+        }
+
+        throw new ViewException("View name $viewName could not be parsed");
+
+    }
+
     /**
      * getTemplatePath - Find template in custom and src directories
      *
@@ -225,7 +258,7 @@ class Template
      * @return string Full template path or false if file does not exist
      * @throws Exception If template not found.
      */
-    public function getTemplatePath(string $namespace, string $path): string
+    protected function getTemplatePath(string $namespace, string $path): string
     {
         if ($namespace == '' || $path == '') {
             throw new Exception("Both namespace and path must be provided");
@@ -245,7 +278,7 @@ class Template
             return $fullpath;
         }
 
-        throw new Exception("Template $fullpath not found");
+        throw new ViewException("Template $fullpath not found");
     }
 
     /**
@@ -277,7 +310,6 @@ class Template
     public function display(string $template, string $layout = "app", int $responseCode = 200, array $headers = []): Response
     {
 
-        //
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
 
@@ -285,12 +317,10 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
-        $action = $this->incomingRequest->getActionName($template);
-        $module =  $this->incomingRequest->getModuleName($template);
+        $templateParts = $this->parseViewPath($template);
 
-        $loadFile = $this->getTemplatePath($module, $action);
+        $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
 
-        $this->hookContext = "tpl.$module.$action";
         app('view')->share(['tpl' => $this]);
 
         /** @var View $view */
@@ -329,6 +359,7 @@ class Template
 
         return $layout;
     }
+
 
     /**
      * Display JSON content with an optional response code.
@@ -371,10 +402,6 @@ class Template
         return $this->display($template, 'blank', $responseCode);
     }
 
-    public function displayModal(string $template, int $responseCode = 200): Response
-    {
-        return $this->display($template, 'modal', $responseCode, ["Is-Modal"=>true]);
-    }
 
     /**
      * get - get assigned values
