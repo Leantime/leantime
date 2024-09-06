@@ -96,7 +96,7 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
         Language::class,
         RouteServiceProvider::class,
 
-        Frontcontroller::class,
+        //Frontcontroller::class,
         Views::class,
         TemplateServiceProvider::class,
 

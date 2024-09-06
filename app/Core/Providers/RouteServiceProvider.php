@@ -4,7 +4,7 @@ namespace Leantime\Core\Providers;
 
 use Closure;
 use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Routing\Router;
+use Leantime\Core\Controller\Frontcontroller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -68,7 +68,7 @@ class RouteServiceProvider extends ServiceProvider
             Route::any(
                 '{controller_name?}/{function_name?}/{query1?}/{query2?}/{query3?}',
                 function (IncomingRequest $request, ?string $controller_name = null, ?string $function_name = null, ?string $query1 = null) {
-                       return app('frontcontroller')->dispatch();
+                       return app('router')->dispatch();
                 }
             );
         });

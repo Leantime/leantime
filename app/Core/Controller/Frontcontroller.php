@@ -3,6 +3,8 @@
 namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HtmxRequest;
@@ -16,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package    leantime
  * @subpackage core
  */
-class Frontcontroller
+class Frontcontroller extends Router
 {
     use DispatchesEvents;
 
@@ -89,22 +91,23 @@ class Frontcontroller
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
 
-        $this->dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
+        $this->dispatch_event("execute_action_start", ["action" => $actionName, "module" => $moduleName]);
 
         $controllerNs = "Domain";
 
         $controllerType = 'Controllers';
-        if(($this->incomingRequest instanceof HtmxRequest) &&
-            $this->incomingRequest->header("is-modal") == false
-            && $this->incomingRequest->header("hx-boosted") == false){
+        if (
+            ($this->incomingRequest instanceof HtmxRequest) &&
+            $this->incomingRequest->header("is-modal") == false &&
+            $this->incomingRequest->header("hx-boosted") == false
+        ) {
             $controllerType = 'Hxcontrollers';
         }
 
-        $classname = $namespace."".$controllerNs."\\".$moduleName."\\".$controllerType."\\".$actionName;
+        $classname = $namespace . "" . $controllerNs . "\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
 
         if (! class_exists($classname)) {
-
-             $classname = $namespace."Plugins\\".$moduleName."\\".$controllerType."\\".$actionName;
+             $classname = $namespace . "Plugins\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
 
             $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
@@ -127,7 +130,7 @@ class Frontcontroller
 
         $this->lastAction = $completeName;
 
-        $this->dispatch_event("execute_action_end", ["action"=>$actionName, "module"=>$moduleName ]);
+        $this->dispatch_event("execute_action_end", ["action" => $actionName, "module" => $moduleName]);
 
         return app()->make($classname)->getResponse();
     }
@@ -196,11 +199,10 @@ class Frontcontroller
      *
      * @return string
      */
-    public static function getCurrentRoute() {
+    public static function getCurrentRoute()
+    {
         return app('request')->getCurrentRoute();
     }
-
-
 
     /**
      * setResponseCode - sets the response code
@@ -211,5 +213,86 @@ class Frontcontroller
     public function setResponseCode(int $responseCode): void
     {
         http_response_code($responseCode);
+    }
+
+    protected function getControllerMethod()
+    {
+
+        //Get http methods
+        $method = $this->incomingRequest;
+
+        //HEAD execution is equal to GET. Server can handle the content response cutting for us.
+        if (strtoupper($method) == "HEAD") {
+            $method = "GET";
+        }
+
+        $available_params = [
+            'controller' => $this,
+            'method' => $method,
+            'params' => $params,
+        ];
+
+        self::dispatch_event('before_init', $available_params);
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
+
+        self::dispatch_event('before_action', $available_params);
+
+        if (method_exists($this, $method)) {
+            $this->response = $this->$method($params);
+        } elseif (method_exists($this, 'run')) {
+            $this->response = $this->run();
+        } else {
+            Log::error('Method not found: ' . $method);
+            Frontcontroller::redirect(BASE_URL . "/errors/error501", 307);
+        }
+    }
+
+    protected function findRoute($request) {
+
+
+        $this->current = $route = $this->routes->match($request);
+
+        //$route->setContainer($this->container);
+
+
+        $namespace = "Leantime\\";
+        $actionName = Str::studly(self::getActionName($completeName));
+        $moduleName = Str::studly(self::getModuleName($completeName));
+
+        $this->dispatch_event("execute_action_start", ["action" => $actionName, "module" => $moduleName]);
+
+        $controllerNs = "Domain";
+
+        $controllerType = 'Controllers';
+        if (
+            ($this->incomingRequest instanceof HtmxRequest) &&
+            $this->incomingRequest->header("is-modal") == false &&
+            $this->incomingRequest->header("hx-boosted") == false
+        ) {
+            $controllerType = 'Hxcontrollers';
+        }
+
+        $classname = $namespace . "" . $controllerNs . "\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
+
+        if (! class_exists($classname)) {
+            $classname = $namespace . "Plugins\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
+
+            $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
+
+            $pluginEnabled = false;
+            foreach ($enabledPlugins as $key => $obj) {
+                if (strtolower($obj->foldername) !== strtolower($moduleName)) {
+                    continue;
+                }
+                $pluginEnabled = true;
+                break;
+            }
+
+            if (! $pluginEnabled || ! class_exists($classname)) {
+                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : $this->redirect(BASE_URL . "/errors/error404", 307);
+            }
+        }
     }
 }
