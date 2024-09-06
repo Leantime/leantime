@@ -8,7 +8,7 @@ module.exports = {
         './app/Core/Template.php',
         './app/{Views,Domain}/**/{Composers,Controllers}/**/*.php',
     ],
-    prefix: 'tw-', // temporary prefix until bootstrap is removed
+    prefix: '', // temporary prefix until bootstrap is removed
     theme: {
         extend: {
             colors: {
@@ -66,5 +66,11 @@ module.exports = {
 	    },
         },
     },
-    plugins: [],
+    daisyui: {
+        themes: ["light"],
+    },
+    plugins: [
+        require("@tailwindcss/typography"),
+        require('daisyui'),
+    ],
 }

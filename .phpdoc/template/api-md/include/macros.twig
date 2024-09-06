@@ -1,0 +1,59 @@
+{#
+  Twig implementation of getRelativePath
+#}
+
+{% macro mdGetRelativePath(_from, _to) %}
+{% set from = _from|split('/') %}
+{% set to = _to|split('/') %}
+{% set relPath = to %}
+{% set break = false %}
+{% for dir in from %}
+{% if not break %}
+{% set depth = loop.index0 %}
+{% if dir == to[depth] %}
+{% set relPath = relPath | slice(1) %}
+{% else %}
+{% set remaining = from|length - depth %}
+{% if remaining > 1 %}
+{% set relPathLen = relPath | length %}
+{% set padLength = remaining - 1 %}
+{% for i in 1..padLength %}
+{% set relPath = '..'|split('/')|merge(relPath) %}
+{% endfor %}
+{% set break = true %}
+{% else %}
+{% set relPath0 = 'api/' ~ relPath[0] %}
+{% set relPathRest = relPath | slice(1) %}
+{% set relPath = relPath0|split('/')|merge(relPathRest) %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{{ relPath | join('/') }}{% endmacro %}
+
+{#
+ Get full md link for node with baseDir
+#}
+{% macro mdNodePath(node) %}
+{{ node.FullyQualifiedStructuralElementName | replace({'\\':'/'}) | trim }}.md{% endmacro %}
+
+{#
+  Get full link to class
+#}
+{% macro mdClassPath(node) %}
+{{ 'classes' ~ _self.mdNodePath(node) | trim}}{% endmacro %}
+
+{#
+Create MD link to class node from path
+#}
+{% macro mdClassLink(node, from, name = null) %}
+[{{ name | default(node.name) }}]({{ _self.mdGetRelativePath(from, _self.mdClassPath(node))}}){% endmacro %}
+
+
+{% macro getRpcNamespace(element) %}
+{{ element|replace({"\\": "."})|replace({".Leantime.Domain.": "leantime.rpc."})|replace({".Services": ""}) }}{% endmacro %}
+
+{# Create full endpoint name #}
+{% macro mdEndpointName(parentClass, method) %}
+{{ _self.getRpcNamespace(parentClass) }}.{{ method }}{% endmacro %}
+

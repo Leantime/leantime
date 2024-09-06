@@ -1,4 +1,5 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
+
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu pull-right">
@@ -27,7 +28,7 @@
 
         </a>
 
-        <div class='dropdown-menu tw-p-m' id='newsDropdown'>
+        <div class='dropdown-menu p-m' id='newsDropdown'>
             <div class="htmx-indicator">
                 <x-global::elements.loadingText type="text" count="3" includeHeadline="true" />
             </div>

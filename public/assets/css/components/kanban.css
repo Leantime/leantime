@@ -250,11 +250,6 @@
     padding-bottom:0px;
 }
 
- .ticketBox .timerContainer .btn{
-    padding-top:1px;
-    padding-bottom:1px;
-}
-
 .sortableTicketList .empty {
     text-align:center;
     color:#999;

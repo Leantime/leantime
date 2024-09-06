@@ -2,10 +2,13 @@
 
 namespace Leantime\Core\Events;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Log\Events\MessageLogged;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 
@@ -17,6 +20,16 @@ use Leantime\Core\Controller\Frontcontroller;
  */
 class EventDispatcher implements Dispatcher
 {
+
+    use ReflectsClosures;
+
+    /**
+     * The IoC container instance.
+     *
+     * @var \Illuminate\Contracts\Container\Container
+     */
+    protected $container;
+
     /**
      * Registry of all events added to a hook
      *
@@ -42,6 +55,17 @@ class EventDispatcher implements Dispatcher
     ];
 
     /**
+     * Create a new event dispatcher instance.
+     *
+     * @param  \Illuminate\Contracts\Container\Container|null  $container
+     * @return void
+     */
+    public function __construct(\Illuminate\Contracts\Container\Container $container = null)
+    {
+        $this->container = $container ?: new Container;
+    }
+
+    /**
      * Dispatches an event to be executed somewhere
      *
      * @access public
@@ -58,7 +82,10 @@ class EventDispatcher implements Dispatcher
         mixed $payload = [],
         string $context = ''
     ): void {
-        $eventName = "$context.$eventName";
+
+        if(!empty($context)) {
+            $eventName = "$context.$eventName";
+        }
 
         if (!in_array($eventName, self::$available_hooks['events'])) {
             self::$available_hooks['events'][] = $eventName;
@@ -75,17 +102,45 @@ class EventDispatcher implements Dispatcher
     }
 
     public function dispatch(
-        $eventName,
+        $event,
         $payload = [],
         $context = ''
     ) {
 
-        if($eventName instanceof MessageLogged) {
-            $this->dispatch_event($eventName->message, $payload, $context);
-            return;
+        //Leantime Events, simple string
+        if(is_string($event)) {
+            self::dispatch_event($event, $payload, $context);
         }
 
-        $this->dispatch_event($eventName, $payload, $context);
+        //Laravel Events, objects
+        if(is_object($event)){
+            $eventClass = new \ReflectionClass($event);
+            $eventName = $eventClass->getName();
+            $payload[$eventName] = $event;
+            self::dispatch_event($eventName, $payload, $context);
+        }
+
+    }
+
+    public static function dispatch_laravel_event(
+        $event,
+        $payload = [],
+        $context = ''
+    ) {
+
+        //Leantime Events, simple string
+        if(is_string($event)) {
+            self::dispatch_event($event, $payload, $context);
+        }
+
+        //Laravel Events, objects
+        if(is_object($event)){
+            $eventClass = new \ReflectionClass($event);
+            $eventName = $eventClass->getName();
+            $payload[$eventName] = $event;
+            self::dispatch_event($eventName, $payload, $context);
+        }
+
     }
 
 
@@ -392,7 +447,7 @@ class EventDispatcher implements Dispatcher
 
         if (!isset($default_params)) {
             $default_params = [
-                'current_route' => Frontcontroller::getCurrentRoute(),
+                'current_route' => currentRoute(),
             ];
         }
 
@@ -524,7 +579,28 @@ class EventDispatcher implements Dispatcher
     }
 
 
-    public function listen($events, $listener = null) {}
+
+    //Laravel Compatibility
+    public function listen($events, $listener = null)
+    {
+        if ($events instanceof Closure) {
+            return collect($this->firstClosureParameterTypes($events))
+                ->each(function ($event) use ($events) {
+                    $this->listen($event, $events);
+                });
+        } elseif ($events instanceof QueuedClosure) {
+            return collect($this->firstClosureParameterTypes($events->closure))
+                ->each(function ($event) use ($events) {
+                    $this->listen($event, $events->resolve());
+                });
+        } elseif ($listener instanceof QueuedClosure) {
+            $listener = $listener->resolve();
+        }
+
+        foreach ((array) $events as $event) {
+            self::add_event_listener($event, $listener);
+        }
+    }
 
     /**
      * Determine if a given event has listeners.
@@ -533,8 +609,8 @@ class EventDispatcher implements Dispatcher
      * @return bool
      */
     public function hasListeners($eventName) {
-        throw new \Exception("Not implemented");
-        return false;
+        return key_exists($eventName, self::$eventRegistry);
+
     }
 
     /**
@@ -543,8 +619,40 @@ class EventDispatcher implements Dispatcher
      * @param  object|string  $subscriber
      * @return void
      */
-    public function subscribe($subscriber) {
-        throw new \Exception("Not implemented");
+    public function subscribe($subscriber)
+    {
+        $subscriber = $this->resolveSubscriber($subscriber);
+
+        $events = $subscriber->subscribe($this);
+
+        if (is_array($events)) {
+            foreach ($events as $event => $listeners) {
+                foreach (Arr::wrap($listeners) as $listener) {
+                    if (is_string($listener) && method_exists($subscriber, $listener)) {
+                        $this->listen($event, [get_class($subscriber), $listener]);
+
+                        continue;
+                    }
+
+                    $this->listen($event, $listener);
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve the subscriber instance.
+     *
+     * @param  object|string  $subscriber
+     * @return mixed
+     */
+    protected function resolveSubscriber($subscriber)
+    {
+        if (is_string($subscriber)) {
+            return $this->container->make($subscriber);
+        }
+
+        return $subscriber;
     }
 
     /**

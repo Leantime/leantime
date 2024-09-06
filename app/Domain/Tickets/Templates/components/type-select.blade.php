@@ -7,7 +7,7 @@
         <x-global::forms.select.option
             :value="strtolower($type)"
             :selected="strtolower($type) == strtolower($ticket->type ?? '') ? 'true' : 'false'">
-            <span class="tw-size-sm tw-pr-xs"><i class="fa {{ $typeIcons[strtolower($type)] }}"></i></span> {{  __("label." . strtolower($type)) }}
+            <span class="size-sm pr-xs"><i class="fa {{ $typeIcons[strtolower($type)] }}"></i></span> {{  __("label." . strtolower($type)) }}
         </x-global::forms.select.option>
     @endforeach
 </x-global::forms.select>

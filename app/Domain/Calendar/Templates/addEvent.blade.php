@@ -3,10 +3,7 @@
 @section('content')
 
 <?php
-defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
+
 $values = $tpl->get('values');
 ?>
 
@@ -75,10 +72,9 @@ $values = $tpl->get('values');
     <?php if (isset($values['allDay']) === true && $values['allDay'] === true) {
         echo 'checked="checked" ';
     }?>
-    />
 
+    /><br /><br />
 
-    <br /><br />
 
     <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
@@ -104,3 +100,4 @@ $values = $tpl->get('values');
 </script>
 
 @endsection
+

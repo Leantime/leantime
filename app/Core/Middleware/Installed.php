@@ -50,7 +50,7 @@ class Installed
 
         self::dispatch_event('after_install');
 
-        $route = Frontcontroller::getCurrentRoute();
+        $route = $request->getCurrentRoute();
 
         if($session_says && $route == "install") {
             return Frontcontroller::redirect(BASE_URL . "/auth/logout");

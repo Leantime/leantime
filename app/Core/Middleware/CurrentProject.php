@@ -23,7 +23,7 @@ class CurrentProject
 
         if (app()->make(AuthService::class)->loggedIn()) {
 
-            $actionPath = Frontcontroller::getModuleName();
+            $actionPath = $request->getModuleName();
 
             //Only change/set project if the request is not htmx, api or cron
             if (!($request instanceof HtmxRequest) && $actionPath != 'api' && $actionPath != 'cron') {

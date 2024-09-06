@@ -11,7 +11,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;

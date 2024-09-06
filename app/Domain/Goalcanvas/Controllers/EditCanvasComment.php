@@ -101,6 +101,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             }
 
             $this->tpl->assign('comments', $comments);
+            $this->tpl->assign('id', $canvasItem['id']);
 
             $this->tpl->assign('canvasTypes', $canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);

@@ -7951,3 +7951,5 @@ const EmojiPicker = function(options) {
 
     })()
 }
+
+export default EmojiPicker;

@@ -37,7 +37,6 @@ class Auth
     );
 
     public function __construct(
-        private Frontcontroller $frontController,
         private AuthService $authService,
         private ProjectsService $projectsService,
     ) {
@@ -52,12 +51,12 @@ class Auth
      * @return Response|RedirectResponse
      * @throws BindingResolutionException
      */
-    public function redirectWithOrigin(string $route, string $origin,): false|RedirectResponse
+    public function redirectWithOrigin(string $route, string $origin, IncomingRequest $request): false|RedirectResponse
     {
         $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
         $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
 
-        if ($this->frontController::getCurrentRoute() == $route) {
+        if ($request->getCurrentRoute() == $route) {
             return false;
         }
 
@@ -74,14 +73,12 @@ class Auth
     public function handle(IncomingRequest $request, Closure $next): Response
     {
 
-        if (in_array($this->frontController::getCurrentRoute(), $this->publicActions)) {
+        if (in_array($request->getCurrentRoute(), $this->publicActions)) {
             return $next($request);
         }
 
-
-
         if (! $this->authService->loggedIn()) {
-            return $this->redirectWithOrigin('auth.login', $request->getRequestUri()) ?: $next($request);
+            return $this->redirectWithOrigin('auth.login', $request->getRequestUri(), $request) ?: $next($request);
         }
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
