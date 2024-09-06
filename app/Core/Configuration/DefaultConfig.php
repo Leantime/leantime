@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Configuration;
 
+use Leantime\Core\Support\Attributes\LaravelConfig;
 /**
  * Default Configuration Class
  *
@@ -14,11 +15,13 @@ class DefaultConfig
     /**
      * @var string Name of your site, can be changed later
      */
+    #[LaravelConfig("app.name")]
     public string $sitename = 'Leantime';
 
     /**
      * @var string Default language
      */
+    #[LaravelConfig("app.locale")]
     public string $language = 'en-US';
 
     /**
@@ -34,6 +37,7 @@ class DefaultConfig
     /**
      * @var string Base URL, trailing slash not needed
      */
+    #[LaravelConfig("app.url")]
     public string $appUrl = '';
 
     /**
@@ -59,6 +63,7 @@ class DefaultConfig
     /**
      * @var string Default timezone
      */
+    #[LaravelConfig("app.timezone")]
     public string $defaultTimezone = 'America/Los_Angeles';
 
     /**
@@ -69,6 +74,7 @@ class DefaultConfig
     /**
      * @var bool|int Debug flag
      */
+    #[LaravelConfig("app.debug")]
     public int|bool $debug = 0;
 
     /**
@@ -79,6 +85,7 @@ class DefaultConfig
     /**
      * @var environment
      */
+    #[LaravelConfig("app.env")]
     public string $env = 'production';
 
     /**
@@ -183,6 +190,7 @@ class DefaultConfig
     /**
      * @var string Salting sessions. Replace with a strong password
      */
+    #[LaravelConfig("app.key")]
     public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**

@@ -5,7 +5,7 @@
 
 @dispatchEvent('beforeCalendar')
 
-<div class="tw-h-full minCalendar">
+<div class="h-full minCalendar">
     <div class="clear"></div>
     <div class="fc-toolbar">
         <div class="fc-left pull-left">
@@ -38,13 +38,13 @@
                 </select>
             </div>
         </div>
-        <div class="fc-center center tw-pt-[7px] calendarTitle">
+        <div class="fc-center center pt-[7px] calendarTitle">
             <h2></h2>
         </div>
         <div class="clear"></div>
     </div>
     <div class="clear"></div>
-    <div class="minCalendarWrapper minCalendar tw-h-full" style="height:calc(100% - 55px)"></div>
+    <div class="minCalendarWrapper minCalendar h-full" style="height:calc(100% - 55px)"></div>
 </div>
 
 <script>

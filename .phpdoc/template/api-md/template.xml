@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+  <name>api-md</name>
+  <version>1.0.0</version>
+  <transformations>
+    <transformation writer="twig" source="index.api-md.twig" artifact="README.md"/>
+    <transformation writer="twig" query="indexes.classes" source="class.api-md.twig" artifact="classes/{{FullyQualifiedStructuralElementName}}.md"/>
+  </transformations>
+    <parameters>
+    <parameter key="twig-debug">true</parameter>
+  </parameters>
+</template>

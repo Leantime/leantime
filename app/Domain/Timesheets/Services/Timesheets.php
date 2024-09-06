@@ -31,6 +31,7 @@ class Timesheets
 
     /**
      * @param TimesheetRepository $timesheetsRepo
+     *
      */
     public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo)
     {
@@ -44,6 +45,8 @@ class Timesheets
      * @param int $sessionId
      *
      * @return array|false
+     *
+     * @api
      */
     public function isClocked(int $sessionId): false|array
     {
@@ -54,6 +57,8 @@ class Timesheets
      * @param int $ticketId
      *
      * @return mixed
+     *
+     * @api
      */
     public function punchIn(int $ticketId): mixed
     {
@@ -64,6 +69,8 @@ class Timesheets
      * @param int $ticketId
      *
      * @return false|float|int
+     *
+     * @api
      */
     public function punchOut(int $ticketId): float|false|int
     {
@@ -80,6 +87,8 @@ class Timesheets
      *
      * @throws BindingResolutionException
      * @throws MissingParameterException
+     *
+     * @api
      */
     public function logTime(int $ticketId, array $params): array|bool
     {
@@ -146,6 +155,8 @@ class Timesheets
      *
      * @throws MissingParameterException If any of the required parameters are missing.
      * @throws BindingResolutionException
+     *
+     * @api
      */
     public function upsertTime(int $ticketId, array $params): array|bool
     {
@@ -200,6 +211,8 @@ class Timesheets
      * @param int $ticketId
      *
      * @return array
+     *
+     * @api
      */
     public function getLoggedHoursForTicketByDate(int $ticketId): array
     {
@@ -210,6 +223,8 @@ class Timesheets
      * @param int $ticketId
      *
      * @return int|mixed
+     *
+     * @api
      */
     public function getSumLoggedHoursForTicket(int $ticketId): mixed
     {
@@ -229,6 +244,8 @@ class Timesheets
      * @param Tickets $ticket
      *
      * @return int|mixed
+     *
+     * @api
      */
     public function getRemainingHours(Tickets $ticket): mixed
     {
@@ -249,6 +266,8 @@ class Timesheets
      * @param int $userId
      *
      * @return int|mixed
+     *
+     * @api
      */
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
@@ -257,6 +276,8 @@ class Timesheets
 
     /**
      * @return array|string[]
+     *
+     * @api
      */
     public function getLoggableHourTypes(): array
     {
@@ -276,6 +297,8 @@ class Timesheets
      * @param string          $clientId
      *
      * @return array|false
+     *
+     * @api
      */
     public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
     {
@@ -301,6 +324,8 @@ class Timesheets
      * @return array
      *
      * @throws BindingResolutionException
+     *
+     * @api
      */
     public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): array
     {
@@ -440,6 +465,8 @@ class Timesheets
      * @param array $paid
      *
      * @return bool
+     *
+     * @api
      */
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
@@ -448,12 +475,20 @@ class Timesheets
 
     /**
      * @return array|string[]
+     *
+     * @api
      */
     public function getBookedHourTypes(): array
     {
         return $this->timesheetsRepo->kind;
     }
 
+    /**
+     * @param ?int $projectId
+     * @return array
+     *
+     * @api
+     */
     public function pollForNewTimesheets(?int $projectId = null): array|false
     {
         $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
@@ -466,6 +501,12 @@ class Timesheets
 
     }
 
+    /**
+     * @param ?int $projectId
+     * @return array
+     *
+     * @api
+     */
     public function pollForUpdatedTimesheets(?int $projectId = null): array|false
     {
         $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
@@ -477,6 +518,7 @@ class Timesheets
 
         return $timesheets;
     }
+
 
     private function prepareDatesForApiResponse($timesheet) {
 

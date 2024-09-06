@@ -1,5 +1,4 @@
-@extends($layout)
-@section('content')
+
     <script type="text/javascript">
         window.onload = function() {
             if (!window.jQuery) {

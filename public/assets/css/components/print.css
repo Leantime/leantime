@@ -28,10 +28,6 @@
         text-decoration:none !important;
     }
 
-    .btn-group {
-        display:none;
-    }
-
     a[href]:after {
         content: '' !important;
     }
@@ -54,10 +50,6 @@
 
     .header-title-dropdown {
         vertical-align:middle;
-    }
-
-    .btn {
-        display:none !important;
     }
 
     .popup-wrapper {

@@ -2,6 +2,7 @@ const pjson = require('./package.json');
 const glob = require('glob');
 const path = require('path');
 const version = pjson.version;
+const webpack = require('webpack');
 
 const fs = require("fs");
 
@@ -25,8 +26,6 @@ function getFilesRecursive(dir, type) {
     return files
 }
 
-
-
 let mix = require('laravel-mix');
 require('laravel-mix-eslint');
 require('mix-tailwindcss');
@@ -47,77 +46,12 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
 });
 */
 
-
  // this is the URL to place assets referenced in the CSS/JS
-    mix // this is what to prefix the URL with
+mix
+    // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
-    .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
-    .js('./public/assets/js/app/htmx-headSupport.js', `public/dist/js/compiled-htmx-headSupport.${version}.min.js`)
-    .combine([
-        "./public/assets/js/app/app.js",
-        "./public/assets/js/app/core/editors.js",
-        "./public/assets/js/app/core/snippets.js",
-        "./public/assets/js/app/core/modals.js",
-        "./public/assets/js/app/core/tableHandling.js",
-        "./public/assets/js/app/core/dateHelper.js",
-        "./public/assets/js/app/core/datePickers.js",
-        "./public/assets/js/app/core/selects.js",
-        ...glob.sync("./app/Domain/**/*.js").map(f => `./${f}`)
-    ], `public/dist/js/compiled-app.${version}.min.js`)
-    .combine([
-        "./node_modules/jquery/dist/jquery.js",
-        "./public/assets/js/libs/bootstrap.min.js",
-    ], `public/dist/js/compiled-frameworks.${version}.min.js`)
-    .combine([
-        "./node_modules/jquery-ui-dist/jquery-ui.js",
-        "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
-        "./node_modules/chosen-js/chosen.jquery.js",
-        "./public/assets/js/libs/jquery.growl.js",
-        "./public/assets/js/libs/jquery.form.js",
-        "./public/assets/js/libs/jquery.tagsinput.min.js",
-        "./public/assets/js/libs/bootstrap-fileupload.min.js",
-        "./node_modules/flatpickr/dist/flatpickr.js",
-
-    ], `public/dist/js/compiled-framework-plugins.${version}.min.js`)
-    .combine([
-        "./node_modules/luxon/build/global/luxon.js",
-        "./node_modules/moment/moment.js",
-        "./node_modules/@popperjs/core/dist/umd/popper.js",
-        "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
-        "./public/assets/js/libs/slimselect.min.js",
-        "./node_modules/leantime.choices.js/public/assets/scripts/choices.min.js",
-        "./node_modules/canvas-confetti/dist/confetti.browser.js",
-        "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-        "./public/assets/js/libs/uppy/uppy.js",
-        "./node_modules/croppie/croppie.js",
-        "./node_modules/packery/dist/packery.pkgd.js",
-        "./node_modules/imagesloaded/imagesloaded.pkgd.js",
-        "./node_modules/shepherd.js/dist/js/shepherd.js",
-        "./node_modules/isotope-layout/dist/isotope.pkgd.js",
-        "./node_modules/gridstack/dist/gridstack-all.js",
-        "./node_modules/jstree/dist/jstree.js",
-        "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
-        "./node_modules/leader-line/leader-line.min.js",
-        "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
-        "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
-    ], `public/dist/js/compiled-global-component.${version}.min.js`)
-    .combine([
-        "./node_modules/ical.js/build/ical.min.js",
-        "./node_modules/fullcalendar/index.global.min.js",
-        "./node_modules/@fullcalendar/icalendar/index.global.min.js",
-        "./node_modules/@fullcalendar/google-calendar/index.global.min.js",
-        "./node_modules/@fullcalendar/luxon3/index.global.min.js",
-
-    ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
-    .combine([
-        "./node_modules/datatables.net/js/jquery.dataTables.js",
-        "./node_modules/datatables.net-rowgroup/js/dataTables.rowGroup.js",
-        "./node_modules/datatables.net-rowreorder/js/dataTables.rowReorder.js",
-        "./node_modules/datatables.net-buttons/js/dataTables.buttons.js",
-        "./node_modules/datatables.net-buttons/js/buttons.html5.js",
-        "./node_modules/datatables.net-buttons/js/buttons.print.js",
-        "./node_modules/datatables.net-buttons/js/buttons.colVis.js",
-    ], `public/dist/js/compiled-table-component.${version}.min.js`)
+    .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.js`)
+    .minify(`./public/dist/js/compiled-app.${version}.js`)
     .combine([
         "./node_modules/tinymce/tinymce.js",
         "./node_modules/tinymce/icons/default/icons.js",
@@ -155,14 +89,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
-    .combine([
-        "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
-        "./public/assets/js/libs/simpleGantt/frappe-gantt.js",
-    ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
-    .combine([
-        "./node_modules/chart.js/dist/chart.js",
-        "./node_modules/chartjs-adapter-luxon/dist/chartjs-adapter-luxon.umd.js",
-    ], `public/dist/js/compiled-chart-component.${version}.min.js`)
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,
     })
@@ -188,18 +114,43 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
             parser: '@babel/eslint-parser',
         }
     })
-    .webpackConfig({
+    .webpackConfig(() => {
+    return {
         devtool: 'inline-source-map',
         resolve: {
             alias: {
                 'images': path.resolve(__dirname, 'public/assets/images'),
                 'js': path.resolve(__dirname, 'public/assets/js'),
                 'css': path.resolve(__dirname, 'public/assets/css'),
-                'fonts': path.resolve(__dirname, 'public/assets/fonts')
+                'fonts': path.resolve(__dirname, 'public/assets/fonts'),
+                'domain': path.resolve(__dirname, 'app/Domain'),
             }
-        }
+        },
+        externals: {
+            i18n: 'window.leantime.i18n',
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                i18n: 'window.leantime.i18n',
+            }),
+            new webpack.ProvidePlugin({
+                jQuery: 'jquery',
+            }),
+        ],
+        module: {
+            rules: [
+                {
+                    test: path.resolve(__dirname, 'node_modules/leader-line/'),
+                    use: [{
+                        loader: 'skeleton-loader',
+                        options: { procedure: content => `${content}export default LeaderLine;` }
+                    }]
+                },
+            ],
+        },
+    }})
+    .babelConfig({
+        sourceType: 'unambiguous',
+        presets: ['@babel/preset-env']
     });
-
-
-
 

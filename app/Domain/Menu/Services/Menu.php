@@ -5,7 +5,7 @@ namespace Leantime\Domain\Menu\Services;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;

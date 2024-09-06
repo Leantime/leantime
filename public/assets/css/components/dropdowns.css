@@ -525,34 +525,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:none;
 }
 
-.btn-group .btn.titleIconPicker {
-    font-size: var(--font-size-xl);
-    line-height: var(--form-element-line-height);
-    padding: 5px 6px;
-    color: var(--primary-font-color);
-    background-color: var(--secondary-background);
-    border: 1px solid var(--secondary-background);
-    border-radius: 3px;
-}
-
-.btn-group .btn.titleIconPicker:hover {
-    border: 1px solid var(--main-border-color);
-}
-
-.btn-group .btn.titleIconPicker .caret,
-.btn-group .btn.titleIconPicker .caret,
-.btn-group .btn.titleIconPicker:last-child .caret,
-.btn-group >.btn.titleIconPicker.dropdown-toggle .caret {
-    border-top-color: var(--primary-font-color);
-}
-
-.btn-group .btn.titleIconPicker:hover .caret,
-.btn-group .btn.titleIconPicker:hover .caret,
-.btn-group .btn.titleIconPicker:last-child:hover .caret,
-.btn-group >.btn.titleIconPicker.dropdown-toggle:hover .caret {
-    border-top-color: var(--secondary-action-hover-color);
-}
-
 .inlineDropDownContainerLeft {
     float:left;
     display:inline-block;

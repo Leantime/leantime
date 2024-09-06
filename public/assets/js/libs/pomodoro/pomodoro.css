@@ -37,26 +37,6 @@ footer {
     font-size: 6em;
     font-weight: bold;
 }
-button.btn_default {
-	padding: 8px 12px;
-    margin: 2px 0px;
-    font-weight: bold;
-	border-radius: 4px;
-	-webkit-border-radius: 4px;
-	border: 1px solid;
-}
-#btn_start {
-    background-color: #9F9;
-	border: 1px solid #171;
-}
-#btn_pause {
-    background-color: #FF9;
-	border: 1px solid #771;
-}
-#btn_reset {
-    background-color: #F99;
-	border: 1px solid #711;
-}
 #ipt_custom {
 	padding: 8px 12px;
     width: 75px;

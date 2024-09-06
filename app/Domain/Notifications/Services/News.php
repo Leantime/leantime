@@ -12,6 +12,8 @@ namespace Leantime\Domain\Notifications\Services {
 
     /**
      *
+     *
+     * @api
      */
     class News
     {
@@ -26,7 +28,9 @@ namespace Leantime\Domain\Notifications\Services {
          * __construct - get database connection
          *
          * @access public
-         */
+         *
+     * @api
+     */
         public function __construct(
             DbCore $db,
             NotificationRepository $notificationsRepo,
@@ -84,7 +88,9 @@ namespace Leantime\Domain\Notifications\Services {
          * @access public
          * @return \SimpleXMLElement - The parsed XML content as a SimpleXMLElement object
          * @throws \Exception - If the simplexml_load_string function doesn't exist
-         */
+         *
+     * @api
+     */
         public function getFeed()
         {
 

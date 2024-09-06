@@ -5,8 +5,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\Factory;
-use Leantime\Core\Bootstrap\Application;
-use Leantime\Core\Bootstrap\Bootloader;
+use Leantime\Core\Application;
+use Leantime\Core\Bootloader;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -18,6 +18,7 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 if (! function_exists('app')) {
     /**
@@ -102,15 +103,22 @@ if (! function_exists('__')) {
 
 if (! function_exists('view')) {
     /**
-     * Get the view factory instance.
+     * Get the evaluated view contents for the given view.
      *
-     * @return Factory
-     *
-     * @throws BindingResolutionException
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
      */
-    function view(): Factory
+    function view($view = null, $data = [], $mergeData = [])
     {
-        return app()->make(Factory::class);
+        $factory = app(ViewFactory::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->make($view, $data, $mergeData);
     }
 }
 
@@ -378,5 +386,54 @@ if (! function_exists('report')) {
     function report($exception)
     {
         Log::critical($exception);
+    }
+}
+
+if (! function_exists('base_path')) {
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return app()->basePath($path);
+    }
+}
+
+if (! function_exists('redirect')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $to
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    function redirect($to = null, $status = 302, $headers = [], $secure = null)
+    {
+        return new RedirectResponse(
+            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
+            $http_response_code
+        );
+    }
+}
+
+if (! function_exists('currentRoute')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $to
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     */
+    function currentRoute()
+    {
+
+        return app('request')->getCurrentRoute();
+
     }
 }

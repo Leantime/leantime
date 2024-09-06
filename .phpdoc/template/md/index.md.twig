@@ -15,15 +15,13 @@ This is an automatically generated documentation for **{{project.name}}**.
 [[_TOC_]]
 {% endif %}
 
-## Namespaces
-
 {% for namespace in project.indexes.namespaces|sort((a,b) => a.FullyQualifiedStructuralElementName <=> b.FullyQualifiedStructuralElementName) %}
 {% if namespace.classes|length > 0 or namespace.traits|length > 0 or namespace.interfaces|length > 0 %}
 
-### {{ namespace.FullyQualifiedStructuralElementName }}
+## {{ namespace.FullyQualifiedStructuralElementName }}
 
 {% if namespace.classes|length > 0 %}
-#### Classes
+### Classes
 
 | Class | Description |
 |---    |---          |

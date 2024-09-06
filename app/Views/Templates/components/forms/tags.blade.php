@@ -7,7 +7,7 @@
     "formHash" => md5(CURRENT_URL."input-tags".mt_rand(0,100))
 ])
 
-<div id="input-tags-wrapper-{{ $formHash }}" hx-target="#input-tags-wrapper-{{ $formHash }}" {{ $attributes->merge([ 'class' => "tags tw-inline-block" ]) }}>
+<div id="input-tags-wrapper-{{ $formHash }}" hx-target="#input-tags-wrapper-{{ $formHash }}" {{ $attributes->merge([ 'class' => "tags inline-block" ]) }}>
     <select multiple name="{{ $name }}" class="input-tags-field-{{ $formHash }} {{ $outlineVisible ? "show-border" : '' }}">
     </select>
 </div>

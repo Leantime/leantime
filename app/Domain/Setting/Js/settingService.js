@@ -1,22 +1,7 @@
-leantime.settingService = (function () {
+import { saveLogo as saveLogoRepo } from './settingRepository';
 
-    // Variables (underscore for private variables)
-    var publicThing = "not secret";
-    var _privateThing = "secret";
+export const saveLogo = saveLogoRepo;
 
-    //Constructor
-    (function () {
-
-    })();
-
-    //Functions
-
-    var saveLogo = function (photo) {
-        leantime.settingRepository.saveLogo(photo);
-    };
-
-    // Make public what you want to have public, everything else is private
-    return {
-        saveLogo: saveLogo
-    };
-})();
+export default {
+    saveLogo: saveLogo
+};

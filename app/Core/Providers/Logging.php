@@ -43,5 +43,6 @@ class Logging extends ServiceProvider
 
             return new Log\LogManager($app);
         });
+
     }
 }

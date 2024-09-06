@@ -11,7 +11,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
@@ -39,6 +39,8 @@ namespace Leantime\Domain\Reports\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Reports
     {
@@ -62,7 +64,8 @@ namespace Leantime\Domain\Reports\Services {
          * @param ReportRepository  $reportRepository
          * @param SettingRepository $settings
          * @param TicketRepository  $ticketRepository
-         */
+         *
+     */
         public function __construct(
             TemplateCore $tpl,
             AppSettingCore $appSettings,
@@ -86,7 +89,9 @@ namespace Leantime\Domain\Reports\Services {
         /**
          * @return void
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function dailyIngestion(): void
         {
 
@@ -134,7 +139,9 @@ namespace Leantime\Domain\Reports\Services {
         /**
          * @param $projectId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getFullReport($projectId): false|array
         {
             return $this->reportRepository->getFullReport($projectId);
@@ -145,7 +152,9 @@ namespace Leantime\Domain\Reports\Services {
          * @param $sprintId
          * @return array|bool
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function getRealtimeReport($projectId, $sprintId): array|bool
         {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
@@ -170,7 +179,9 @@ namespace Leantime\Domain\Reports\Services {
          * @param SwotcanvaRepository       $swotCanvasRepo
          * @param WikiRepository            $wikiRepo
          * @return array
-         */
+         *
+     * @api
+     */
         public function getAnonymousTelemetry(
             IdeaRepository $ideaRepository,
             UserRepository $userRepository,
@@ -294,7 +305,9 @@ namespace Leantime\Domain\Reports\Services {
         /**
          * @return bool|PromiseInterface
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
@@ -339,7 +352,9 @@ namespace Leantime\Domain\Reports\Services {
         /**
          * @return false|void
          * @throws Exception
-         */
+         *
+     * @api
+     */
         public function optOutTelemetry()
         {
             $date_utc = new DateTime("now", new DateTimeZone("UTC"));
@@ -440,7 +455,9 @@ namespace Leantime\Domain\Reports\Services {
          *
          * @return array
          * @throws Exception
-         */
+         *
+     * @api
+     */
         public function getProjectStatusReport()
         {
 

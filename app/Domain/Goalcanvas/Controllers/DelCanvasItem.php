@@ -10,6 +10,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    // use Illuminate\Support\Str;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;  
 
     /**
      *
@@ -19,37 +22,39 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         /**
          * Constant that must be redefined
          */
-        protected const CANVAS_NAME = 'goal';
 
-        private mixed $canvasRepo;
+        private GoalcanvasService $goalService;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(GoalcanvasService $goalService)
         {
-            $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
-            $this->canvasRepo = app()->make($repoName);
+            $this->goalService = $goalService;
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
+
+        public function post($params): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            if (isset($_POST['del']) && isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
-                $this->canvasRepo->delCanvasItem($id);
+            $id = (int)($_GET['id']);
+            $this->goalService->deleteGoalCanvasItem($id);
 
-                $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_deleted');
-                return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
-            }
+            $this->tpl->setNotification(
+                $this->language->__('notification.element_deleted'),
+                'success',
+                'GOALcanvasitem_deleted'
+            );
+            return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas');
+        }
 
-            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvasItem');
+        public function get($params): Response
+        {
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+            $this->tpl->assign('id', $params['id']);
+            return $this->tpl->displayPartial('goalcanvas.delCanvasItem');
         }
     }
 }

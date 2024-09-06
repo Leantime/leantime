@@ -1389,8 +1389,3 @@ a.barmenu:hover {
     border-radius: 0;
 }
 
-.navbar-form .btn {
-    padding: 4px 10px;
-    font-size: var(--base-font-size);
-    text-transform: uppercase;
-}

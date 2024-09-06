@@ -4,7 +4,6 @@ namespace Leantime\Domain\Sprints\Services {
 
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
@@ -17,10 +16,11 @@ namespace Leantime\Domain\Sprints\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Sprints
     {
-        private TemplateCore $tpl;
         private LanguageCore $language;
         private ProjectRepository $projectRepository;
         private SprintRepository $sprintRepository;
@@ -28,22 +28,20 @@ namespace Leantime\Domain\Sprints\Services {
         private ReportRepository $reportRepository;
 
         /**
-         * @param TemplateCore      $tpl
          * @param LanguageCore      $language
          * @param ProjectRepository $projectRepository
          * @param SprintRepository  $sprintRepository
          * @param TicketRepository  $ticketRepository
          * @param ReportRepository  $reportRepository
-         */
+         *
+     */
         public function __construct(
-            TemplateCore $tpl,
             LanguageCore $language,
             ProjectRepository $projectRepository,
             SprintRepository $sprintRepository,
             TicketRepository $ticketRepository,
             ReportRepository $reportRepository
         ) {
-            $this->tpl = $tpl;
             $this->language = $language;
             $this->projectRepository = $projectRepository;
             $this->sprintRepository = $sprintRepository;
@@ -54,7 +52,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $id
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getSprint($id): false|Models\Sprints
         {
 
@@ -72,7 +72,9 @@ namespace Leantime\Domain\Sprints\Services {
          *
          * @param $projectId
          * @return int|bool
-         */
+         *
+     * @api
+     */
         public function getCurrentSprintId($projectId): bool|int
         {
 
@@ -95,7 +97,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -111,7 +115,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array
-         */
+         *
+     * @api
+     */
         public function getAllSprints($projectId = null): array
         {
 
@@ -128,7 +134,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $projectId
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -144,7 +152,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $params
          * @return false|object
-         */
+         *
+     * @api
+     */
         public function addSprint($params): object|false
         {
 
@@ -166,7 +176,9 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * @param $params
          * @return false|object
-         */
+         *
+     * @api
+     */
         public function editSprint($params): object|false
         {
 
@@ -189,7 +201,9 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $sprint
          * @return array|false
          * @throws \Exception
-         */
+         *
+     * @api
+     */
         public function getSprintBurndown($sprint): false|array
         {
 
@@ -283,7 +297,9 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $project
          * @return array|false
          * @throws \Exception
-         */
+         *
+     * @api
+     */
         public function getCummulativeReport($project): false|array
         {
 

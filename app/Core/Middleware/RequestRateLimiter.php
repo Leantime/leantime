@@ -76,7 +76,7 @@ class RequestRateLimiter
             $limit = $rateLimitApi;
         }
 
-        $route = Frontcontroller::getCurrentRoute();
+        $route = $request->getCurrentRoute();
 
         if ($route == "auth.login") {
             $limit = $rateLimitAuth;

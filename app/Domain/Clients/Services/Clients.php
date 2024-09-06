@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\Template as TemplateCore;
+use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
@@ -18,6 +18,7 @@ class Clients
      * @param TemplateCore      $tpl
      * @param ProjectRepository $projectRepository
      * @param ClientRepository  $clientRepository
+     *
      */
     public function __construct(
         ProjectRepository $projectRepository,
@@ -30,6 +31,8 @@ class Clients
     /**
      * @param int $userId
      * @return array
+     *
+     * @api
      */
     public function getUserClients(int $userId): array
     {
@@ -50,6 +53,8 @@ class Clients
 
     /**
      * @return array
+     *
+     * @api
      */
     public function getAll(array $searchparams = null): array
     {
@@ -64,6 +69,8 @@ class Clients
      * @access public
      *
      * @return bool returns true on success, false on failure
+     *
+     * @api
      */
     public function patch(int $id, array $params): bool
     {
@@ -77,6 +84,8 @@ class Clients
      * @access public
      *
      * @return bool                 Returns true on success, false on failure
+     *
+     * @api
      */
     public function editClient(object|array $values): bool
     {
@@ -89,6 +98,8 @@ class Clients
      * @access public
      * @param  object|array $values Object or array to be created
      * @return int|false                Returns id of new element or false
+     *
+     * @api
      */
     public function create(object|array $values): int|false
     {
@@ -101,6 +112,8 @@ class Clients
      * @access public
      * @param int $id Id of the object to be deleted
      * @return bool     Returns id of new element or false
+     *
+     * @api
      */
     public function delete(int $id): bool
     {
@@ -113,6 +126,8 @@ class Clients
      * @access public
      * @param int $id Id of the object to be retrieved
      * @return object|array|false Returns object or array. False on failure or if item cannot be found
+     *
+     * @api
      */
     public function get(int $id): object|array|false
     {

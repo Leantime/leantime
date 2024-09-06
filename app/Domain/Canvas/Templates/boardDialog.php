@@ -1,12 +1,8 @@
+@extends($layout)
+
+@section('content')
+
 <?php
-
-/**
- * modals.inc template - Generic template for create / edit / clone modals
- */
-
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
 $allCanvas = $tpl->get('allCanvas');
 $canvasTitle = $tpl->get('canvasTitle');
 $canvasName = $tpl->get('canvasName');
