@@ -191,14 +191,14 @@ class Frontcontroller
         $controllerType = $this->getControllerType();
         $actionPath = $moduleName . "\\" . $controllerType . "\\" . $actionName;
 
-        if(Cache::has("routes.".$actionPath.".".$methodName)){
-            return Cache::get("routes.".$actionPath.".".$methodName);
+        if(Cache::store("installation")->has("routes.".$actionPath.".".$methodName)){
+            return Cache::store("installation")->get("routes.".$actionPath.".".$methodName);
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
-        Cache::set("routes." . $actionPath . "." . ($classMethod == "run" ? $methodName : $classMethod), ["class" => $classPath, "method" => $classMethod]);
+        Cache::store("installation")->set("routes." . $actionPath . "." . ($classMethod == "run" ? $methodName : $classMethod), ["class" => $classPath, "method" => $classMethod]);
 
         return ["class" => $classPath, "method" => $classMethod];
     }
@@ -289,6 +289,13 @@ class Frontcontroller
         return "";
     }
 
+    /**
+     * Retrieves the method name based on the complete name of a route.
+     *
+     * @param string|null $completeName The complete name of the route. Defaults to the current route if not provided.
+     * @return string The method name. If the route name consists of two parts (e.g. "controllers.index"), the method name will be the lowercase representation of the current request method
+     *. If the route name consists of three parts (e.g. "controllers.update"), the method name will be the second part of the route name. Otherwise, an empty string is returned.
+     */
     public static function getMethodName(string $completeName = null): string
     {
         $completeName ??= currentRoute();
@@ -359,88 +366,6 @@ class Frontcontroller
     public function setResponseCode(int $responseCode): void
     {
         http_response_code($responseCode);
-    }
-
-    protected function getControllerMethod()
-    {
-
-        //Get http methods
-        $method = $this->incomingRequest;
-
-        //HEAD execution is equal to GET. Server can handle the content response cutting for us.
-        if (strtoupper($method) == "HEAD") {
-            $method = "GET";
-        }
-
-        $available_params = [
-            'controller' => $this,
-            'method' => $method,
-            'params' => $params,
-        ];
-
-        self::dispatch_event('before_init', $available_params);
-        if (method_exists($this, 'init')) {
-            app()->call([$this, 'init']);
-        }
-
-        self::dispatch_event('before_action', $available_params);
-
-        if (method_exists($this, $method)) {
-            $this->response = $this->$method($params);
-        } elseif (method_exists($this, 'run')) {
-            $this->response = $this->run();
-        } else {
-            Log::error('Method not found: ' . $method);
-            self::redirect(BASE_URL . "/errors/error501", 307);
-        }
-    }
-
-    protected function findRoute($request)
-    {
-
-
-        $this->current = $route = $this->routes->match($request);
-
-        //$route->setContainer($this->container);
-
-
-        $namespace = "Leantime\\";
-        $actionName = Str::studly(self::getActionName($completeName));
-        $moduleName = Str::studly(self::getModuleName($completeName));
-
-        $this->dispatch_event("execute_action_start", ["action" => $actionName, "module" => $moduleName]);
-
-        $controllerNs = "Domain";
-
-        $controllerType = 'Controllers';
-        if (
-            ($this->incomingRequest instanceof HtmxRequest) &&
-            $this->incomingRequest->header("is-modal") == false &&
-            $this->incomingRequest->header("hx-boosted") == false
-        ) {
-            $controllerType = 'Hxcontrollers';
-        }
-
-        $classname = $namespace . "" . $controllerNs . "\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
-
-        if (! class_exists($classname)) {
-            $classname = $namespace . "Plugins\\" . $moduleName . "\\" . $controllerType . "\\" . $actionName;
-
-            $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
-
-            $pluginEnabled = false;
-            foreach ($enabledPlugins as $key => $obj) {
-                if (strtolower($obj->foldername) !== strtolower($moduleName)) {
-                    continue;
-                }
-                $pluginEnabled = true;
-                break;
-            }
-
-            if (! $pluginEnabled || ! class_exists($classname)) {
-                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : self::redirect(BASE_URL . "/errors/error404", 307);
-            }
-        }
     }
 
 }
