@@ -11,7 +11,7 @@
         <?php echo $tpl->__("headlines.import_ldap_users") ?>
     </h4>
 
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
     <?php if ($tpl->get("confirmUsers")) { ?>
         <form class="importModal userImportModal" method="post" action="<?=BASE_URL ?>/users/import">

@@ -1,4 +1,4 @@
-{!! $tpl->displayNotification() !!}
+@displayNotification()
 
 <h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.import_ical') }}</h4>
 {!!  __('label.import_ical_content')  !!}

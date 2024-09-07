@@ -19,7 +19,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
 
     </div>

@@ -9,8 +9,6 @@ $currentSprint  = $tpl->get("currentSprint");
 
 $allTicketGroups     = $tpl->get('allTickets');
 
-echo $tpl->displayNotification();
-
 $efforts        = $tpl->get('efforts');
 $priorities     = $tpl->get('priorities');
 $statusLabels   = $tpl->get('allTicketStates');
@@ -22,12 +20,12 @@ $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 
 ?>
-
-<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
+    @displayNotification()
+    @include("tickets::includes.ticketHeader")
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    @include("tickets::includes.ticketBoardTabs")
 
     <div class="maincontentinner">
 
@@ -35,10 +33,12 @@ $size = floor(100 / $numberofColumns);
             <div class="col-md-4">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
-                $tpl->displaySubmodule('tickets-ticketFilter');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>

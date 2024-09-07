@@ -8,7 +8,7 @@ use Leantime\Core\Fileupload;
 
 <div id="fileManager">
 
-    <?php echo $tpl->displayNotification() ?>
+    @displayNotification()
 
     <h2>Upload CSV file</h2>
     <p>You can upload CSVs to import or update Tasks, Projects, Goals. <a href="https://support.leantime.io/importing-data-via-csv" target="_blank">Check our documentation</a> to learn more about the formatting and to download templates</p>

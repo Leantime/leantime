@@ -4,9 +4,7 @@ $currentLabel = $tpl->get('currentLabel');
 
 <h4 class="widgettitle title-light"><?=$tpl->__("headlines.edit_label")?></h4>
 
-<?php
-    echo $tpl->displayNotification();
-?>
+@displayNotification()
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $tpl->e($_GET['module']) ?>&label=<?php  $tpl->e($_GET['label']) ?>">
 

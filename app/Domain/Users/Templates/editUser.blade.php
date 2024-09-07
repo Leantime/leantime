@@ -6,7 +6,7 @@ $values = $tpl->get('values');
 $projects = $tpl->get('relations');
 ?>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>

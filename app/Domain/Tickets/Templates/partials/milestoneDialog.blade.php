@@ -21,7 +21,7 @@ $statusLabels = $tpl->get('statusLabels');
 
 <h4 class="widgettitle title-light"><?=$tpl->__("headline.milestone"); ?> </h4>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
 
@@ -121,10 +121,8 @@ $statusLabels = $tpl->get('statusLabels');
         ?>
     <br />
     <input type="hidden" name="comment" value="1" />
+    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/tickets/editMilestone/" . $currentMilestone->id])
 
-        <?php
-        $tpl->assign("formUrl", "/tickets/editMilestone/" . $currentMilestone->id . "");
-        $tpl->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 
 <script type="text/javascript">

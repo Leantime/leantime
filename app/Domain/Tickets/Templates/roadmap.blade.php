@@ -6,15 +6,14 @@
 $milestones = $tpl->get('milestones');
 $timelineTasks = $tpl->get("timelineTasks");
 
-echo $tpl->displayNotification();
-
 $roadmapView = session("usersettings.views.roadmap", "Month");
 ?>
-<?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
+@displayNotification()
+@include("tickets::includes.timelineHeader")
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
+    @include("tickets::includes.timelineTabs")
 
     <div class="maincontentinner">
 
@@ -22,10 +21,12 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
             <div class="col-md-4">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
-                $tpl->displaySubmodule('tickets-ticketFilter');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>

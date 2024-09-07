@@ -19,14 +19,14 @@ $size = floor(100 / $numberofColumns);
 
 ?>
 
-    <?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
+    @include("tickets::includes.portfolioHeader")
 
     <div class="maincontent">
-        <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+        @include("tickets::includes.portfolioTabs")
 
         <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <form action="" method="get" id="ticketSearch">
 

@@ -20,12 +20,7 @@ $values = $tpl->get('values');
     <div class="maincontentinner">
 
 
-        <div class="fail"><?php if ($tpl->get('info') != '') {
-            ?> <span
-                    class="info"><?php echo $tpl->displayNotification() ?></span> <?php
-                          } ?>
-
-        </div>
+        @displayNotification()
 
         <div id="loader">&nbsp;</div>
         <form action="" method="post" class="stdform">

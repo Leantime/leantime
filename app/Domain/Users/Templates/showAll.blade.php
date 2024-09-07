@@ -18,7 +18,7 @@ $roles = $tpl->get('roles');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class="row">
             <div class="col-md-6">

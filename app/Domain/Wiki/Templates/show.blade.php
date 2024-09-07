@@ -113,7 +113,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 <div class="maincontent">
 
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row">
 
@@ -238,10 +238,8 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                     <form method="post" action="<?=BASE_URL ?>/wiki/show/<?php echo $currentArticle->id; ?>#comment">
                                         <input type="hidden" name="comment" value="1" />
-                                        <?php
-                                        $tpl->assign('formUrl', BASE_URL . "/wiki/show/" . $currentArticle->id . "");
-                                        $tpl->displaySubmodule('comments-generalComment') ;
-                                        ?>
+                                        @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/wiki/show/" . $currentArticle->id ])
+
                                     </form>
                                 </div>
 

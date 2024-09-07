@@ -21,7 +21,7 @@ $users = $tpl->get('users');
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="tabbedwidget tab-primary clientTabs">
 
@@ -176,9 +176,7 @@ $users = $tpl->get('users');
 
                 <form method="post" action="<?=BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
-                    <?php
-                    $tpl->assign('formUrl', BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id']) . "");
-                    $tpl->displaySubmodule('comments-generalComment') ?>
+                    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id'])])
                 </form>
 
 

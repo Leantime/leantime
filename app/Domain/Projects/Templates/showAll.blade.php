@@ -26,7 +26,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="pull-right">
             <form action="" method="post">

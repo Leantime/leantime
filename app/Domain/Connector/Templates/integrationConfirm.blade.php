@@ -20,11 +20,11 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     </div>
 </div>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+        @include("connector::includes.importProgress")
     </div>
     <div class="maincontentinner">
         <?php

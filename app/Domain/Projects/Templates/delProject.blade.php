@@ -19,7 +19,7 @@ $project = $tpl->get('project');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <h4 class="widget widgettitle"><?php echo $tpl->__("subtitles.delete") ?></h4>
         <div class="widgetcontent">

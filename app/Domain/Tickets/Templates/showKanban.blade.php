@@ -18,11 +18,11 @@ $allTicketGroups = $tpl->get("allTickets");
 
 ?>
 
-<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
+    @include("tickets::includes.ticketHeader")
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    @include("tickets::includes.ticketBoardTabs")
 
     <div class="maincontentinner" >
 
@@ -30,10 +30,12 @@ $allTicketGroups = $tpl->get("allTickets");
             <div class="col-md-4">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
-                $tpl->displaySubmodule('tickets-ticketFilter');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>

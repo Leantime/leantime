@@ -16,7 +16,7 @@ $projects = $tpl->get('relations');
 
 <h4 class="widgettitle title-light"><i class="fa fa-key"></i> <?php echo $tpl->__('headlines.api_key'); ?></h4>
 
-<?php echo $tpl->displayNotification() ?>
+    @displayNotification()
 
 <form action="<?=BASE_URL?>/api/apiKey/<?=(int)$_GET['id'] ?>" method="post" class="stdform formModal" >
         <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />

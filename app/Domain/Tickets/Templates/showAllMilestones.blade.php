@@ -23,25 +23,26 @@ $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 
 ?>
-<?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
+    @include("tickets::includes.timelineHeader")
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
+    @include("tickets::includes.timelineTabs")
 
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row">
             <div class="col-md-6">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
-                $tpl->displaySubmodule('tickets-ticketFilter');
-
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
 

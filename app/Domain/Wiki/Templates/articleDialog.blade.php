@@ -5,12 +5,9 @@ $currentArticle = $tpl->get('article');
 $wikiHeadlines = $tpl->get("wikiHeadlines");
 ?>
 
+@displayNotification()
 
 <?php
-
-if (!isset($_GET['closeModal'])) {
-    echo $tpl->displayNotification();
-}
 
 $id = "";
 if (isset($currentArticle->id)) {

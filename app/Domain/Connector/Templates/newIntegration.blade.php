@@ -21,12 +21,12 @@ $provider = $tpl->get("provider")
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+        @include("connector::includes.importProgress")
     </div>
 
     <div class="maincontentinner center">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <img width="200" src="<?=BASE_URL?>/<?=$provider->image?>" />
         <h5 class="subtitle">New Integration</h5>

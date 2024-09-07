@@ -16,7 +16,7 @@
 </x-global::content.pageheader>
 
 <div class="maincontent">
-    {!! $tpl->displayNotification() !!}
+    @displayNotification()
 
     <div class="row">
 

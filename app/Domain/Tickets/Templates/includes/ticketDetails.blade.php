@@ -59,11 +59,7 @@ $ticketTypes = $tpl->get('ticketTypes');
         <div class="row-fluid">
         <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
             <input type="hidden" name="comment" value="1" />
-            <?php
-            $tpl->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
-
-            $tpl->displaySubmodule('comments-generalComment') ;
-            ?>
+            @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/tickets/showTicket/" . $ticket->id])
         </form>
         </div>
         <?php } ?>

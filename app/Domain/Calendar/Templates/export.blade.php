@@ -8,12 +8,7 @@ $url = $tpl->get('url');
 
 <h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> <?=$tpl->__('label.ical_export'); ?></h4>
 
-<?php
-
-echo $tpl->displayNotification();
-
-
-?>
+@displayNotification()
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/calendar/export">
 

@@ -33,10 +33,10 @@ if (isset($integrationId) && is_numeric($integrationId)) {
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+        @include("connector::includes.importProgress")
     </div>
     <div class="maincontentinner center">
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <h5 class="subtitle">Review</h5>
 

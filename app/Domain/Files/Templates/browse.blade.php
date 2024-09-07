@@ -27,15 +27,13 @@ $moduleId = session("currentProject");
 
     <div id="fileManager">
         <div class="maincontentinner">
-            <?php
-            echo $tpl->displayNotification();
-            ?>
+            @displayNotification()
             <h5 class="subtitle"><?=$tpl->__("headline.browse_files_headline"); ?></h5>
 
 
 
 
-            <?php echo $tpl->displayNotification() ?>
+            @displayNotification()
 
         <?php if ($login::userIsAtLeast($roles::$editor)) {?>
         <div class="uploadWrapper">

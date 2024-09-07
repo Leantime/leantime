@@ -21,7 +21,7 @@ $values = $tpl->get('values');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class="widget">
            <h4 class="widgettitle"><?php echo $tpl->__('subtitle.details'); ?></h4>

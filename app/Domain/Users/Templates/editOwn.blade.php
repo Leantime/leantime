@@ -10,7 +10,7 @@
 
 <div class="maincontent">
 
-    {!! $tpl->displayNotification() !!}
+    @displayNotification()
 
     <div class="row">
         <div class="col-md-8">

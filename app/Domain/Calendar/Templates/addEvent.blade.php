@@ -7,7 +7,7 @@ $values = $tpl->get('values');
 ?>
 
 
-<?php echo $tpl->displayNotification() ?>
+@displayNotification()
 
 <h4 class="widgettitle title-light"><?php echo $tpl->__('subtitles.event'); ?></h4>
 

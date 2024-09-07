@@ -30,7 +30,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
   <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
     <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
@@ -191,9 +191,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <br />
         <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
-        <?php
-        $tpl->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
-        $tpl->displaySubmodule('comments-generalComment');?>
+        @include("comments::includes.generalComment", ["formUrl" => $canvasName."canvas/editCanvasItem/" . $id])
+
     <?php } ?>
 </div>
 

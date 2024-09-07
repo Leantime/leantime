@@ -21,7 +21,7 @@ $values = $tpl->get('values');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <form action="" method="post" class="stdform">
 

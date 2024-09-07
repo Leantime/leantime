@@ -20,14 +20,14 @@ foreach ($clients as $client) {
 
 $roadmapView = session("usersettings.views.roadmap", "Month");
 ?>
-<?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
+@include("tickets::includes.portfolioHeader")
 
 <div class="maincontent">
-    <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+    @include("tickets::includes.portfolioTabs")
 
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row">
             <div class="col-md-6">

@@ -20,7 +20,7 @@ $project = $tpl->get('project');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="tabbedwidget tab-primary projectTabs">
 

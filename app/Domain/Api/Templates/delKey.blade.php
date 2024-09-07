@@ -15,7 +15,7 @@ $user = $tpl->get('user');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <h5 class="subtitle"><?php echo $tpl->__("subtitles.delete_key"); ?></h5>
 

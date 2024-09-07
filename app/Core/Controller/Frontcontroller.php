@@ -74,7 +74,7 @@ class Frontcontroller
             [$controllerName, $actionName, $method] = $this->parseRequestParts($request);
 
             //execute action
-            return $this->executeAction($this->incomingRequest->getCurrentRoute(), array());
+            return $this->executeAction($this->incomingRequest->getCurrentRoute());
 
         }catch(Exception $e) {
 
@@ -131,7 +131,7 @@ class Frontcontroller
      * @return Response
      * @throws BindingResolutionException
      */
-    private function executeAction(string $completeName, array $params = array()): Response
+    private function executeAction(string $completeName): Response
     {
         $moduleName = Str::studly(self::getModuleName($completeName));
         $actionName = Str::studly(self::getActionName($completeName));
@@ -152,6 +152,8 @@ class Frontcontroller
 
         $controller = app()->make($routeParts["class"]);
         $response = $controller->callAction($routeParts["method"], $parameters);
+
+        //Expecting a response object but can accept a string to a fragment.
         return $response instanceof Response ? $response : $controller->getResponse($response);
     }
 

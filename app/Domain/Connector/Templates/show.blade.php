@@ -15,7 +15,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
         <h5 class="subtitle">Sync Leantime with your external applications</h5>
         <p>Available Integrations</p>
 

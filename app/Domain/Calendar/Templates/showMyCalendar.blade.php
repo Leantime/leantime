@@ -20,9 +20,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 </div><!--pageheader-->
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
-<?php
-    echo $tpl->displayNotification();
-?>
+@displayNotification()
 
 <div class="maincontent">
 

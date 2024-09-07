@@ -15,7 +15,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row-fluid">
             <div class="span12">

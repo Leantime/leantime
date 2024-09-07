@@ -16,7 +16,7 @@ $canvasProgress = $tpl->get('canvasProgress');
     </div>
 </div>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <div class="maincontent">
 
@@ -182,3 +182,4 @@ $canvasProgress = $tpl->get('canvasProgress');
     }
 </script>
 
+@endsection

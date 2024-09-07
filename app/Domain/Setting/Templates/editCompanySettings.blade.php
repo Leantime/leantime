@@ -16,7 +16,7 @@ $companySettings = $tpl->get('companySettings');
 </div>
 
 <div class="maincontent">
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
     <div class="maincontentinner">
         <div class="row">
             <div class="col-md-12">

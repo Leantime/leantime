@@ -432,30 +432,6 @@ class Template
     }
 
     /**
-     * displaySubmodule - display a submodule for a given module
-     *
-     * @access public
-     * @param string $alias
-     * @return void
-     * @throws Exception
-     *
-     * @deprecated Use include
-     */
-    public function displaySubmodule(string $alias): void
-    {
-        if (! str_contains($alias, '-')) {
-            throw new Exception("Submodule alias must be in the format module-submodule");
-        }
-
-        [$module, $submodule] = explode("-", $alias);
-
-        $relative_path = $this->getTemplatePath($module, "shared.$submodule");
-
-        echo app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
-    }
-
-
-    /**
      * displayNotification - display notification
      *
      * @access public

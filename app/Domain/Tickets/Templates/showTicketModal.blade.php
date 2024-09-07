@@ -24,7 +24,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     <?php } ?>
     <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $clockedIn = $tpl->get("onTheClock");
@@ -87,17 +87,17 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
         <div id="ticketdetails">
             <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
-                <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
+                @include("tickets::includes.ticketDetails")
             </form>
         </div>
 
         <div id="files">
-            <?php $tpl->displaySubmodule('files-showAll') ?>
+            @include("files::includes.showAll")
         </div>
 
         <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
             <div id="timesheet">
-                <?php $tpl->displaySubmodule('tickets-timesheet') ?>
+                @include("tickets::includes.timesheet")
             </div>
         <?php } ?>
 

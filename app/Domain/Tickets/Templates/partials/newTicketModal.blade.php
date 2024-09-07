@@ -10,7 +10,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 <div class="min-w-[80vw]">
     <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
 
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 

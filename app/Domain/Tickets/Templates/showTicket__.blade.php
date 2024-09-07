@@ -27,7 +27,7 @@ $projectData = $tpl->get('projectData');
 
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
@@ -42,13 +42,14 @@ $projectData = $tpl->get('projectData');
 
             <div id="ticketdetails">
                 <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
-                    <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
+                    @include("tickets::includes.ticketDetails")
                 </form>
             </div>
 
             <div id="subtasks">
 
                     <?php $tpl->displaySubmodule('tickets-subTasks') ?>
+
 
             </div>
 
@@ -61,7 +62,7 @@ $projectData = $tpl->get('projectData');
 
             <?php if (session("userdata.role") != "client") { ?>
                 <div id="timesheet">
-                    <?php $tpl->displaySubmodule('tickets-timesheet') ?>
+                    @include("tickets::includes.timesheet")
                 </div>
             <?php } ?>
         </div>

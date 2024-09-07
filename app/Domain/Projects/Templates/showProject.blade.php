@@ -19,7 +19,7 @@ $state = $tpl->get('state');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
@@ -40,7 +40,7 @@ $state = $tpl->get('state');
             </ul>
 
             <div id="projectdetails">
-                <?php echo $tpl->displaySubmodule('projects-projectDetails'); ?>
+                @include("projects::includes.projectDetails")
             </div>
 
             <div id="team">

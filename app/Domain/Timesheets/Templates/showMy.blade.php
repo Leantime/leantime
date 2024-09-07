@@ -199,12 +199,7 @@ jQuery(document).ready(function(){
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php
-        echo $tpl->displayNotification();
-
-
-
-        ?>
+        @displayNotification()
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">

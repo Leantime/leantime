@@ -5,7 +5,7 @@
 <div id="fileManager">
     <div>
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class='mediamgr'>
             <div class='mediamgr_left'>

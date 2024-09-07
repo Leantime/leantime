@@ -44,11 +44,7 @@
                     <input type="hidden" name="comment" value="1" />
 
                     <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
-                    @php
-                        $formUrl = BASE_URL . '/ideas/ideaDialog/' . $id;
-                        $tpl->assign('formUrl', $formUrl);
-                        $tpl->displaySubmodule('comments-generalComment');
-                    @endphp
+                    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . '/ideas/ideaDialog/' . $id])
                 @endif
             </div>
 

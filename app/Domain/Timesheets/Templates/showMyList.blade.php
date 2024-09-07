@@ -22,9 +22,7 @@ use Leantime\Core\Support\FromFormat;
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php
-        echo $tpl->displayNotification();
-        ?>
+        @displayNotification()
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper relative">

@@ -13,7 +13,7 @@ $apiKeyValues = $tpl->get('apiKeyValues');
 
 <h4 class="widgettitle title-light"><i class="fa fa-key"></i> <?php echo $tpl->__('headlines.new_api_key'); ?></h4>
 
-<?php echo $tpl->displayNotification() ?>
+    @displayNotification()
     <?php if ($apiKeyValues !== false && isset($apiKeyValues['id'])) {?>
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
         <input type="text" id="apiKey" value="lt_<?=$apiKeyValues['user'] ?>_<?=$apiKeyValues['passwordClean']?>"  style="width:100%;"/>

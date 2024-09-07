@@ -29,7 +29,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row">
             <div class="col-lg-8">

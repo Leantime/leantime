@@ -4,7 +4,7 @@ $project = $tpl->get('project');
 
 <h4 class="widgettitle title-light"><?php echo sprintf($tpl->__('headlines.duplicate_project_x'), $project['name']); ?></h4>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <form class="formModal" method="post" action="<?=BASE_URL ?>/projects/duplicateProject/<?php echo $project['id'];?>">
 

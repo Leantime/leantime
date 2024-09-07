@@ -66,7 +66,7 @@ $projects = $tpl->get('relations');
 
 <h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> <?php echo $tpl->__('headlines.new_user'); ?></h4>
 
-<?php echo $tpl->displayNotification() ?>
+@displayNotification()
 
 <form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
     <div class="row" style="width:800px;">

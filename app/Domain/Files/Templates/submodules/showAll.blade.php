@@ -10,7 +10,7 @@ $moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">
 
-    <?php echo $tpl->displayNotification() ?>
+    @displayNotification()
 
     <div class="uploadWrapper">
 
