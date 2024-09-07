@@ -20,7 +20,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
         <div id="ticketdetails">
             <form  hx-post="<?=BASE_URL ?>/tickets/ticket/create" method="post">
-                @include("tickets::submodules.ticketDetails")
+                @include("tickets::shared.ticketDetails")
             </form>
         </div>
 
@@ -45,8 +45,6 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
-
-        jQuery(".ticketTabs select").chosen();
 
         <?php } else { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");

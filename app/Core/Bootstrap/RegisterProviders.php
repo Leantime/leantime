@@ -94,9 +94,9 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
         RateLimiter::class,
         Db::class,
         Language::class,
-        RouteServiceProvider::class,
+        //RouteServiceProvider::class,
 
-        //Frontcontroller::class,
+        Frontcontroller::class,
         Views::class,
         TemplateServiceProvider::class,
 

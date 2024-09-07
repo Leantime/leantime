@@ -25,8 +25,6 @@ class HtmxRequest extends IncomingRequest
         if (! str_starts_with($path = $this->getPathInfo(), '/hx/')) {
             return;
         }
-
-        $this->setRequestDest(substr($path, 3));
     }
 
     /**

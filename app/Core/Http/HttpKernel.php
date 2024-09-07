@@ -15,6 +15,7 @@ use Leantime\Core\Bootstrap\HandleExceptions;
 use Leantime\Core\Bootstrap\LoadEnvironmentVariables;
 use Leantime\Core\Bootstrap\RegisterFacades;
 use Leantime\Core\Bootstrap\RegisterProviders;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Middleware;
 
@@ -22,7 +23,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
 {
     use DispatchesEvents;
 
-    protected $router;
+    protected $frontcontroller;
 
     protected $app;
 
@@ -33,10 +34,10 @@ class HttpKernel extends Kernel implements HttpKernelContract
      */
     protected $requestStartedAt = null;
 
-    public function __construct(Application $app, Router $router)
+    public function __construct(Application $app, Frontcontroller $frontcontroller)
     {
         $this->app = $app;
-        $this->router = $router;
+        $this->frontcontroller = $frontcontroller;
 
 
     }
@@ -57,7 +58,6 @@ class HttpKernel extends Kernel implements HttpKernelContract
 
         $this->middleware = $this->getMiddleware($request);
         $this->bootstrappers = $this->getBootstrappers();
-        $this->syncMiddlewareToRouter();
 
         $this->requestStartedAt = \Illuminate\Support\Carbon::now();
 
@@ -98,7 +98,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
         $response = (new Pipeline($this->app))
             ->send($request)
             ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then(fn($request) => $this->router->dispatch($request));
+            ->then(fn($request) => $this->frontcontroller->dispatch($request));
 
         return $response;
     }
