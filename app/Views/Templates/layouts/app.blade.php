@@ -6,9 +6,7 @@
 </head>
 
 <body hx-ext="preload">
-    <div id="global-loader">
-        <div class="indeterminate" style=""></div>
-    </div>
+
 
     @include('global::sections.appAnnouncement')
 
@@ -33,6 +31,9 @@
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
+            <div id="global-loader">
+                <div class="indeterminate" style=""></div>
+            </div>
         </div><!-- header -->
 
 
@@ -63,7 +64,7 @@
 
     @include('global::sections.pageBottom')
     @stack('scripts')
-    @include('help::helpermodal')
+    @include('help::includes.helpermodal')
 </body>
 
 </html>

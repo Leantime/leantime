@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('projects', $projects);
 
-            return $this->tpl->displayPartial('tickets.moveTicket');
+            return $this->tpl->displayPartial('tickets::partials.moveTicket');
         }
 
         /**

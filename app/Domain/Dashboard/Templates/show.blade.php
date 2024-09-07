@@ -79,7 +79,7 @@
 
                 <br/>
 
-                @include('projects::partials.checklist', [
+                @include('projects::includes.checklist', [
                     'progressSteps' => $progressSteps,
                     'percentDone' => $percentDone
                 ])
@@ -127,7 +127,7 @@
                                             <strong>{{ $row['headline'] }}</strong>
                                         </a>
 
-                                        @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
+                                        @include("tickets::includes.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
                                 </div>
 

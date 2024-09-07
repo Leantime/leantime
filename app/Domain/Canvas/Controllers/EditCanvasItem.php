@@ -141,7 +141,7 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
+        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas::partials.canvasDialog');
     }
 
     /**
@@ -355,7 +355,7 @@ class EditCanvasItem extends Controller
             $this->tpl->assign('canvasItem', $value);
         }
         $this->tpl->assign('comments', $comments);
-        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
+        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas::partials.canvasDialog');
     }
 
     /**

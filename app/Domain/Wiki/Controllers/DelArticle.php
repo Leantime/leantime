@@ -46,7 +46,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 return Frontcontroller::redirect(BASE_URL . "/wiki/show");
             }
 
-            return $this->tpl->displayPartial('wiki.delArticle');
+            return $this->tpl->displayPartial('wiki::partials.delArticle');
         }
     }
 }

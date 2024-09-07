@@ -21,7 +21,7 @@ findActive("");
 ?>
 
 <div class="maincontentinner tabs">
-    <ul>
+    <ul hx-boost="true" hx-indicator="#global-loader">
         <li class="<?=findActive('roadmap'); ?>">
             <a href="<?=BASE_URL ?>/tickets/roadmap<?=$tpl->get('searchParams') ?>">
                 <?=$tpl->__("links.timeline") ?>

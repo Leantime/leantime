@@ -56,7 +56,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $this->tpl->assign('confirmUsers', true);
             }
 
-            return $this->tpl->displayPartial('users.importLdapDialog');
+            return $this->tpl->displayPartial('users::partials.importLdapDialog');
         }
 
         /**
@@ -98,7 +98,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
             }
 
-            return $this->tpl->displayPartial('users.importLdapDialog');
+            return $this->tpl->displayPartial('users::partials.importLdapDialog');
         }
     }
 }

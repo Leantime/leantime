@@ -51,7 +51,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
             }
 
-            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvasItem');
+            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas::partials.delCanvasItem');
         }
     }
 }

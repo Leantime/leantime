@@ -12,7 +12,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     // use Illuminate\Support\Str;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;  
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
 
     /**
      *
@@ -54,7 +54,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->tpl->assign('id', $params['id']);
-            return $this->tpl->displayPartial('goalcanvas.delCanvasItem');
+            return $this->tpl->displayPartial('goalcanvas::partials.delCanvasItem');
         }
     }
 }

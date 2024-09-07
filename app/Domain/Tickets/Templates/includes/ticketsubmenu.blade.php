@@ -16,7 +16,7 @@
             <li><a href="#/tickets/moveTicket/{{ $ticket["id"] }}" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> {{  __("links.move_todo") }}</a></li>
             <li><a href="#/tickets/delTicket/{{ $ticket["id"] }}" class="delete"><i class="fa fa-trash"></i> {{  __("links.delete_todo") }}</a></li>
             <li class="nav-header border">{{  __("subtitles.track_time") }}</li>
-            @include('tickets::partials.timerLink', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
+            @include('tickets::includes.timerLink', ['parentTicketId' => $ticket['id'], 'onTheClock' => $onTheClock])
         </ul>
     </div>
 

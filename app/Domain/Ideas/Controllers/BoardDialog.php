@@ -31,7 +31,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $data = $this->ideasService->prepareCanvasData($params['id'] ?? null);
             $this->assignTemplateVariables($data);
 
-            return $this->tpl->displayPartial('ideas.boardDialog');
+            return $this->tpl->displayPartial('ideas::partials.boardDialog');
         }
 
         public function post($params): Response
@@ -63,10 +63,10 @@ namespace Leantime\Domain\Ideas\Controllers {
             $data = $this->ideasService->prepareCanvasData();
             $this->assignTemplateVariables($data);
 
-            return $this->tpl->displayPartial('ideas.boardDialog');
+            return $this->tpl->displayPartial('ideas::partials.boardDialog');
 
             if (!isset($params['raw'])) {
-                return $this->tpl->displayPartial('ideas.boardDialog');
+                return $this->tpl->displayPartial('ideas::partials.boardDialog');
             }
         }
 

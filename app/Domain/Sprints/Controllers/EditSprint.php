@@ -59,7 +59,7 @@ namespace Leantime\Domain\Sprints\Controllers {
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
             $this->tpl->assign('sprint', $sprint);
-            return $this->tpl->displayPartial('sprints.sprintdialog');
+            return $this->tpl->displayPartial('projects::partials.sprintdialog');
         }
 
         /**
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $this->tpl->setNotification("First day and last day are required", "error");
 
                 $this->tpl->assign('sprint', (object) $params);
-                return $this->tpl->displayPartial('sprints.sprintdialog');
+                return $this->tpl->displayPartial('projects::partials.sprintdialog');
             }
 
             if (isset($_GET['id']) && $_GET['id'] > 0) {
@@ -100,7 +100,7 @@ namespace Leantime\Domain\Sprints\Controllers {
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('sprint', (object) $params);
-            return $this->tpl->displayPartial('sprints.sprintdialog');
+            return $this->tpl->displayPartial('projects::partials.sprintdialog');
         }
 
         /**

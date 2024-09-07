@@ -105,7 +105,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject(session("currentProject")));
             $this->tpl->assign('milestone', $milestone);
-            return $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets::partials.milestoneDialog');
         }
 
         /**
@@ -227,7 +227,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('milestone', (object) $params);
-            return $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets::partials.milestoneDialog');
         }
 
         /**

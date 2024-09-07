@@ -1,4 +1,4 @@
-<ul class="level-0 noGroup">
+<ul class="level-0 noGroup" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
         @if(
@@ -9,7 +9,7 @@
            )
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") ?? 0  == $project['id'] ? "active" : '' }}" >
-                @include('menu::partials.projectLink')
+                @include('menu::includes.projectLink')
                 <div class="clear"></div>
             </li>
 

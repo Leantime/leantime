@@ -18,4 +18,4 @@
 
    <i class="fa fa-caret-down" aria-hidden="true"></i>
 </a>
-@include('menu::partials.projectSelector', [])
+@include('menu::includes.projectSelectorDropdown', [])

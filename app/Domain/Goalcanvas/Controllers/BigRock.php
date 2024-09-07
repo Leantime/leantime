@@ -52,7 +52,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             $this->tpl->assign('bigRock', $bigrock);
 
-            return $this->tpl->displayPartial('goalcanvas.bigRockDialog');
+            return $this->tpl->displayPartial('goalcanvas::partials.bigRockDialog');
         }
 
         /**

@@ -118,7 +118,7 @@ class NewApiKey extends Controller
 
             $this->tpl->assign('relations', $projectRelation);
 
-            return $this->tpl->displayPartial('api.newAPIKey');
+            return $this->tpl->displayPartial('api::partials.newAPIKey');
         } else {
             return $this->tpl->displayPartial('errors.error403');
         }

@@ -210,7 +210,7 @@ class EditTime extends Controller
                     $this->tpl->assign('allTickets', $this->tickets->getAll());
                     $this->tpl->assign('kind', $this->timesheetsRepo->kind);
 
-                    return $this->tpl->displayPartial('timesheets.editTime');
+                    return $this->tpl->displayPartial('timesheets::partials.editTime');
                 } else {
                     return $this->tpl->displayPartial('errors.error403');
                 }

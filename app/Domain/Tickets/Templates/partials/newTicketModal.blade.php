@@ -20,7 +20,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
         <div id="ticketdetails">
             <form  hx-post="<?=BASE_URL ?>/tickets/ticket/create" method="post">
-                @include("tickets::shared.ticketDetails")
+                @include("tickets::includes.ticketDetails")
             </form>
         </div>
 

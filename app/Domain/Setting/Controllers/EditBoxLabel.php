@@ -81,7 +81,7 @@ namespace Leantime\Domain\Setting\Controllers {
 
                 $this->tpl->assign('currentLabel', $currentLabel);
 
-                return $this->tpl->displayPartial('setting.editBoxDialog');
+                return $this->tpl->displayPartial('projects::partials.editBoxDialog');
             } else {
                 return $this->tpl->display('errors.error403');
             }
@@ -156,7 +156,7 @@ namespace Leantime\Domain\Setting\Controllers {
             }
 
             $this->tpl->assign('currentLabel', $sanitizedString);
-            return $this->tpl->displayPartial('setting.editBoxDialog');
+            return $this->tpl->displayPartial('projects::partials.editBoxDialog');
         }
 
         /**

@@ -225,7 +225,7 @@
                                                 </div>
                                                 <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                                                    @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                                                    @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
                                                     <div class="scheduler pull-right">
                                                         @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
                                                             <i class="fa-solid fa-calendar-check infoIcon mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>

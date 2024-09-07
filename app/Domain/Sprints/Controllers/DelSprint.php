@@ -56,7 +56,7 @@ namespace Leantime\Domain\Sprints\Controllers {
                 }
 
                 $this->tpl->assign('id', $id);
-                return $this->tpl->displayPartial('sprints.delSprint');
+                return $this->tpl->displayPartial('projects::partials.delSprint');
             } else {
                 return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }

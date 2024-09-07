@@ -66,6 +66,6 @@ class ShowAll extends Controller
         $this->tpl->assign('modules', $this->filesRepo->getModules(session("userdata.id")));
         $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
         $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", session("currentProject"), session("userdata.id")));
-        return $this->tpl->displayPartial('files.showAll');
+        return $this->tpl->displayPartial('files::partials.showAll');
     }
 }

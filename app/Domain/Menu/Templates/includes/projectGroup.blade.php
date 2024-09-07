@@ -1,7 +1,7 @@
 @php
     $groupState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$parent, 'closed');
 @endphp
-<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}">
+<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
         @if(
@@ -30,7 +30,7 @@
                         @endif
                     </a>
                 @endif
-                @include('menu::partials.projectLink')
+                @include('menu::includes.projectLink')
 
                 <div class="clear"></div>
 

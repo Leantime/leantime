@@ -151,7 +151,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                         $currentCanvasId = $this->canvasRepo->updateCanvas($values);
 
                         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                        return $this->tpl->displayPartial("canvas.boardDialog");
+                        return $this->tpl->displayPartial("canvas::partials.boardDialog");
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }

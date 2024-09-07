@@ -4,7 +4,7 @@ $values = $tpl->get('values');
 
 
 <div class="pageheader">
-    <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
+    <form action="../../../../../public/index.php" method="post" class="searchbar">
         <input type="text" name="term"
                placeholder="<?php echo $tpl->__('input.placeholders.search_type_hit_enter') ?>"/>
     </form>

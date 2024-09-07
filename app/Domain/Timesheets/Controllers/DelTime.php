@@ -54,7 +54,7 @@ class DelTime extends Controller
             }
 
             $this->tpl->assign("id", $id);
-            return $this->tpl->displayPartial('timesheets.delTime');
+            return $this->tpl->displayPartial('timesheets::partials.delTime');
         } else {
             return $this->tpl->displayPartial('errors.error403');
         }

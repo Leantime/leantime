@@ -143,10 +143,10 @@ $allTicketGroups = $tpl->get("allTickets");
                                                 <div class="col-md-12">
 
 
-                                                    <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
+                                                    @include("tickets::includes.ticketsubmenu", [
                                                                                         "ticket" => $ticket,
                                                                                         "onTheClock" => $onTheClock
-                                                                                    ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
+                                                                                    ])
 
 
 

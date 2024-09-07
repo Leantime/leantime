@@ -16,7 +16,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Controller\Frontcontroller;
-    
+
 
     /**
      *
@@ -78,7 +78,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             ]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
-            return $this->tpl->displayPartial('goalcanvas.canvasDialog');
+            return $this->tpl->displayPartial('goalcanvas::partials.canvasDialog');
         }
 
         /**
@@ -111,7 +111,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             }
 
             $this->prepareView($params);
-            return $this->tpl->displayPartial('canvas.editCanvasItem');
+            return $this->tpl->displayPartial('goalcanvas::partials.editCanvasItem');
         }
 
         private function notifyOnCommentCreation($params, $commentId): void

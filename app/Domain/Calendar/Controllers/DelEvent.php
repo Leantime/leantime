@@ -45,7 +45,7 @@ class DelEvent extends Controller
      */
     public function get(array $params): Response
     {
-        return $this->tpl->displayPartial('calendar.delEvent');
+        return $this->tpl->displayPartial('calendar::partials.delEvent');
     }
 
     /**
@@ -74,7 +74,7 @@ class DelEvent extends Controller
         } else {
             $this->tpl->setNotification('notification.could_not_delete_event', 'error');
 
-            return $this->tpl->displayPartial('calendar.delEvent');
+            return $this->tpl->displayPartial('calendar::partials.delEvent');
         }
     }
 }

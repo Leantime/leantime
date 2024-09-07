@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
 
                 <small>{{ $row['projectName'] }}</small><br />
                 @if($row['dependingTicketId'] > 0)

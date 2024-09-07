@@ -55,7 +55,7 @@ namespace Leantime\Domain\Widgets\Controllers {
             $this->tpl->assign("availableWidgets", $availableWidgets);
             $this->tpl->assign("activeWidgets", $activeWidgets);
 
-            return $this->tpl->displayPartial('widgets.widgetManager');
+            return $this->tpl->displayPartial('widgets::partials.widgetManager');
         }
 
         /**

@@ -72,6 +72,6 @@ class Export extends Controller
         //Add delete handling
         $this->tpl->assign("url", $icalUrl);
 
-        return $this->tpl->displayPartial("calendar.export");
+        return $this->tpl->displayPartial("calendar::partials.export");
     }
 }

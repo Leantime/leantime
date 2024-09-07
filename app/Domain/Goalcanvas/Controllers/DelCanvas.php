@@ -62,7 +62,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 }
             }
 
-            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvas');
+            return $this->tpl->displayPartial('goalcanvas::partials.delCanvas');
         }
     }
 }

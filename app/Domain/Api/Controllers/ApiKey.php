@@ -142,7 +142,7 @@ class ApiKey extends Controller
             $this->tpl->assign('status', $this->userRepo->status);
             $this->tpl->assign('id', $id);
 
-            return $this->tpl->displayPartial('api.apiKey');
+            return $this->tpl->displayPartial('api::partials.apiKey');
         } else {
             return $this->tpl->display('errors.error403');
         }

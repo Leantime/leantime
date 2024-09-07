@@ -2,10 +2,10 @@
 
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu pull-right">
+<ul class="headmenu pull-right" hx-boost="true" hx-indicator="#global-loader">
     @dispatchEvent('insideHeadMenu')
 
-    @include('timesheets::partials.stopwatch', [
+    @include('timesheets::includes.stopwatch', [
                'progressSteps' => $onTheClock
            ])
     @if ($login::userIsAtLeast("admin"))
@@ -138,7 +138,7 @@
     <li>
         <div class="userloggedinfo">
 
-            @include("auth::partials.loginInfo")
+            @include("auth::includes.loginInfo")
 
         </div>
 
@@ -150,11 +150,11 @@
 
 </ul>
 
-<ul class="headmenu">
+<ul class="headmenu" hx-boost="true" hx-indicator="#global-loader">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
-        @include('menu::projectSelector')
+        @include('menu::includes.projectSelector')
     </li>
     <li>
         <a

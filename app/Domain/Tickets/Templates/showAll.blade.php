@@ -348,12 +348,7 @@
                                 }?>
                             </td>
                             <td>
-                                <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
-                                                                                        "ticket" => $ticket,
-                                                                                        "onTheClock" => $onTheClock
-                                                                                    ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
-
-
+                                @include("tickets::includes.ticketsubmenu", [ "ticket" => $ticket,"onTheClock" => $onTheClock])
                             </td>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>

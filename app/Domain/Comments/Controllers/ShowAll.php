@@ -67,7 +67,7 @@ namespace Leantime\Domain\Comments\Controllers {
                 }
             }
 
-            return $this->tpl->displayPartial('comments.showAll');
+            return $this->tpl->displayPartial('comments::partials.showAll');
         }
 
         /**

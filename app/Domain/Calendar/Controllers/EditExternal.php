@@ -56,7 +56,7 @@ class EditExternal extends Controller
 
             $this->tpl->assign('values', $values);
 
-            return $this->tpl->displayPartial('calendar.editExternalCalendar');
+            return $this->tpl->displayPartial('calendar::partials.editExternalCalendar');
         } else {
             return $this->tpl->display('errors.error403');
         }

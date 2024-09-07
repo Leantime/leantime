@@ -57,6 +57,6 @@ class ImportGCal extends Controller
 
         $this->tpl->assign('values', $values);
 
-        return $this->tpl->displayPartial('calendar.importGCal');
+        return $this->tpl->displayPartial('calendar::partials.importGCal');
     }
 }

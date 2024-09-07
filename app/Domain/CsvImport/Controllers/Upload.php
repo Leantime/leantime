@@ -48,7 +48,7 @@ class Upload extends Controller
      */
     public function get(): Response
     {
-        return $this->tpl->displayPartial("csvImport.upload");
+        return $this->tpl->displayPartial("csvImport::partials.upload");
     }
 
     /**

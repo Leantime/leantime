@@ -45,7 +45,7 @@ class DelExternalCalendar extends Controller
      */
     public function get(array $params): Response
     {
-        return $this->tpl->displayPartial('calendar.delExternalCal');
+        return $this->tpl->displayPartial('calendar::partials.delExternalCal');
     }
 
     /**
@@ -75,7 +75,7 @@ class DelExternalCalendar extends Controller
         } else {
             $this->tpl->setNotification('notification.could_not_delete_calendar', 'error');
 
-            return $this->tpl->displayPartial('calendar.delEvent');
+            return $this->tpl->displayPartial('calendar::partials.delEvent');
         }
     }
 }
