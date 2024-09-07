@@ -64,9 +64,6 @@ namespace Leantime\Domain\Tickets\Hxcontrollers {
             $this->timesheetService = $timesheetService;
             $this->userService = $userService;
 
-            if (!session()->exists("lastPage")) {
-                session(["lastPage" => BASE_URL . "/tickets/showKanban/"]);
-            }
         }
 
 
@@ -135,15 +132,15 @@ namespace Leantime\Domain\Tickets\Hxcontrollers {
                 $result = $this->ticketService->addTicket($params);
 
                 if (is_array($result) === false) {
-                    $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    $this->tpl->setNotification($this->tpl->__("notifications.ticket_saved"), "success");
 
                     if (isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
-                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
+                        return Frontcontroller::redirectHtmx(BASE_URL."/tickets/showTicket/" . $result . "?closeModal=1", 303, ["is-modal"=>true]);
                     } else {
-                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result);
+                        return Frontcontroller::redirectHtmx(BASE_URL."/tickets/showTicket/" . $result, 303, ["is-modal"=>true]);
                     }
                 } else {
-                    $this->tpl->setNotification($this->language->__($result["msg"]), "error");
+                    $this->tpl->setNotification($this->tpl->__($result["msg"]), "error");
 
                     $ticket = app()->makeWith(TicketModel::class, ["values"=>$params]);
                     $ticket->userLastname = session("userdata.name");

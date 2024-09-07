@@ -71,10 +71,10 @@ class Frontcontroller
 
         try {
 
-            [$controllerName, $actionName, $method] = $this->parseRequestParts($request);
+            [$moduleName, $controllerType, $controllerName, $method] = $this->parseRequestParts($request);
 
             //execute action
-            return $this->executeAction($this->incomingRequest->getCurrentRoute());
+            return $this->executeAction($moduleName.".".$controllerName.".".$method, $controllerType);
 
         }catch(Exception $e) {
 
@@ -98,11 +98,18 @@ class Frontcontroller
         $segments = $request->segments();
         $method = strtolower($this->incomingRequest->getMethod());
 
+        //First part is hx tells us this is a htmx controller request
+        $controllerType = "Controllers";
+        if($segments[0] == "hx"){
+            array_shift($segments);
+            $controllerType = "Hxcontrollers";
+        }
+
         //First segment is always module
-        $controllerName = $segments[0] ?? '';
+        $moduleName = $segments[0] ?? '';
 
         //Second is action
-        $actionName = $segments[1] ?? '';
+        $controllerName = $segments[1] ?? '';
 
         //third is either id or method
         if (isset($segments[2]) && is_numeric($segments[2])) {
@@ -115,11 +122,11 @@ class Frontcontroller
 
         $this->incomingRequest->query("u");
 
-        $this->incomingRequest->query->set('act', $controllerName . "." . $actionName . "." . $method);
-        $this->incomingRequest->setCurrentRoute($controllerName . "." . $actionName);
+        $this->incomingRequest->query->set('act', $moduleName . "." . $controllerName . "." . $method);
+        $this->incomingRequest->setCurrentRoute($moduleName . "." . $controllerName);
         $this->incomingRequest->query->set('id', $id);
 
-        return [$controllerName, $actionName, $method];
+        return [$moduleName, $controllerType, $controllerName, $method];
     }
 
     /**
@@ -131,7 +138,7 @@ class Frontcontroller
      * @return Response
      * @throws BindingResolutionException
      */
-    private function executeAction(string $completeName): Response
+    private function executeAction(string $completeName, string $controllerType = "Controllers"): Response
     {
         $moduleName = Str::studly(self::getModuleName($completeName));
         $actionName = Str::studly(self::getActionName($completeName));
@@ -139,7 +146,7 @@ class Frontcontroller
 
         $this->dispatch_event("execute_action_start", ["action" => $actionName, "module" => $moduleName]);
 
-        $routeParts = $this->getValidControllerCall($moduleName, $actionName, $methodName);
+        $routeParts = $this->getValidControllerCall($moduleName, $actionName, $methodName, $controllerType);
 
         //Setting default response code to 200, can be changed in controller
         $this->setResponseCode(200);
@@ -187,15 +194,14 @@ class Frontcontroller
      * @return array The valid controller call in the form of an associative array. The "class" key represents the class path of the controller,
      *     and the "method" key represents the method name of the controller.
      */
-    protected function getValidControllerCall(string $moduleName, string $actionName, string $methodName): array
+    protected function getValidControllerCall(string $moduleName, string $actionName, string $methodName, string $controllerType): array
     {
 
-        $controllerType = $this->getControllerType();
         $actionPath = $moduleName . "\\" . $controllerType . "\\" . $actionName;
 
-        if(Cache::store("installation")->has("routes.".$actionPath.".".$methodName)){
-            return Cache::store("installation")->get("routes.".$actionPath.".".$methodName);
-        }
+        //if(Cache::store("installation")->has("routes.".$actionPath.".".$methodName)){
+        //    return Cache::store("installation")->get("routes.".$actionPath.".".$methodName);
+        //}
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
@@ -284,7 +290,7 @@ class Frontcontroller
         //If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
             return "index";
-        } elseif (is_array($actionParts) && count($actionParts) == 2) {
+        } elseif (is_array($actionParts) && count($actionParts) >= 2) {
             return $actionParts[1];
         }
 
@@ -307,7 +313,7 @@ class Frontcontroller
         if (is_array($actionParts) && count($actionParts) == 2) {
             return strtolower(app('request')->getMethod());
         } elseif (is_array($actionParts) && count($actionParts) == 3) {
-            return $actionParts[1];
+            return $actionParts[2];
         }
 
         return "";
@@ -340,11 +346,43 @@ class Frontcontroller
      * @param int    $http_response_code
      * @return RedirectResponse
      */
-    public static function redirect(string $url, int $http_response_code = 303): RedirectResponse
+    public static function redirect(string $url, int $http_response_code = 303, $headers = []): RedirectResponse
     {
         return new RedirectResponse(
             trim(preg_replace('/\s\s+/', '', strip_tags($url))),
-            $http_response_code
+            $http_response_code,
+            $headers
+        );
+    }
+
+    /**
+     * redirect - redirects an htmx page.
+     *
+     * @param string $url
+     * @param int    $http_response_code
+     * @return RedirectResponse
+     */
+    public static function redirectHtmx(string $url, $headers = []): Response
+    {
+        //modal redirect
+        if(Str::start($url, "#")){
+            $hxCurrentUrl = app("request")->headers->get("hx-current-url");
+            $mainPageUrl = Str::before($hxCurrentUrl, "#");
+            $url = $mainPageUrl."".$url;
+        }
+
+        $headers["HX-Redirect"] = $url;
+
+        //$headers["hx-push-url"] = $url;
+        //$headers["hx-replace-url"] = $url;
+        //$headers["HX-Refresh"] = true;
+
+        //this redirect is actually handled on the client side.
+        //We'll just return an empty response with a few headers
+        return new Response(
+            "redirecting...",
+            200, //Anything else than 200 will fail.
+            $headers
         );
     }
 

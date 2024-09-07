@@ -1,5 +1,5 @@
 <div id="myProjectsHub"
-     hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+     hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsHub"
      hx-swap="outerHTML transition:true">
@@ -17,7 +17,7 @@
             </a>
 
             <ul class="dropdown-menu">
-                <li><a href="{{ BASE_URL }}/projects/showMy">{{ __("headline.all_clients") }}</a></li>
+                <li><a href="{{ BASE_URL }}/hx/projects/showMy">{{ __("headline.all_clients") }}</a></li>
                 @foreach ($clients as $key => $value)
                     @if(! empty($key))
                         <li>

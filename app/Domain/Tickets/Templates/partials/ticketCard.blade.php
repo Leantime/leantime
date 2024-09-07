@@ -6,7 +6,7 @@
 >
 
     <form
-        hx-post="{{BASE_URL}}/tickets/ticket-card/save/{{ $row['id'] }}"
+        hx-post="{{BASE_URL}}/hx/tickets/ticket-card/save/{{ $row['id'] }}"
         hx-target="#ticketbox-{{ $row['id'] }}"
         id="ticketboxForm{{ $row['id'] }}"
         hx-ext="debug"

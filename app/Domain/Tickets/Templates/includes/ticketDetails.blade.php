@@ -16,7 +16,9 @@ $ticketTypes = $tpl->get('ticketTypes');
             <div class="col-md-12">
 
                 <div class="form-group">
-                                  </div>
+                    <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input " autocomplete="off" style="width:99%;" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_todo')?>"/>
+                </div>
+
                 <div class="form-group">
 
                 </div>

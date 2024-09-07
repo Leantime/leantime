@@ -1,6 +1,6 @@
 
 
-<form hx-post="{{ BASE_URL }}/comments/comment-list/save?module={{ $module }}&moduleId={{ $moduleId }}&includeStatus={{ $includeStatus }}"
+<form hx-post="{{ BASE_URL }}/hx/comments/comment-list/save?module={{ $module }}&moduleId={{ $moduleId }}&includeStatus={{ $includeStatus }}"
       hx-target="#comments-{{ $module }}-{{ $moduleId }}">
     <div id="commentReplyBox-{{ $formHash }}-{{ $parentId }}" class="commentBox-{{ $formHash }} commentReplyBox-{{ $formHash }} commenterFields hidden mb-sm" >
         <div class="commentImage">

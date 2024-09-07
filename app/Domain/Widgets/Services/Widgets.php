@@ -53,7 +53,7 @@ class Widgets
             "id" => "welcome",
             "name" => "widgets.title.welcome",
             "description" => "widgets.descriptions.welcome",
-            "widgetUrl" => BASE_URL . "/widgets/welcome/get",
+            "widgetUrl" => BASE_URL . "/hx/widgets/welcome/get",
             "gridHeight" => 11,
             "gridWidth" => 12,
             "gridMinHeight" => 8,
@@ -71,7 +71,7 @@ class Widgets
             "id" => "todos",
             "name" => "widgets.title.my_todos",
             "description" => "widgets.descriptions.my_todos",
-            "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
+            "widgetUrl" => BASE_URL . "/hx/widgets/myToDos/get",
             "gridHeight" => 30,
             "gridWidth" => 8,
             "gridMinHeight" => 16,
@@ -95,7 +95,7 @@ class Widgets
             "gridY" => 12,
             "alwaysVisible" => false,
             "noTitle" => false,
-            "widgetUrl" => BASE_URL . "/widgets/calendar/get",
+            "widgetUrl" => BASE_URL . "/hx/widgets/calendar/get",
         ]);
 
         $this->availableWidgets["myprojects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
@@ -110,7 +110,7 @@ class Widgets
             "gridY" => 43,
             "alwaysVisible" => false,
             "noTitle" => false,
-            "widgetUrl" => BASE_URL . "/widgets/myProjects/get",
+            "widgetUrl" => BASE_URL . "/hx/widgets/myProjects/get",
         ]);
 
         $this->defaultWidgets = [

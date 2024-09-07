@@ -31,7 +31,7 @@
         @endif
 
         <div id="myProjectsHub"
-             hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+             hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
              hx-trigger="HTMX.updateProjectList from:body"
              hx-target="#myProjectsHub"
              hx-swap="outerHTML transition:true">
@@ -53,7 +53,7 @@
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"
-                                    hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
+                                    hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                     hx-target="#myProjectsHub"
                                     hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
                             </li>

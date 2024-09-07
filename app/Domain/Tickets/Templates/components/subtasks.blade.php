@@ -4,7 +4,7 @@
 
 <div
     id="ticketSubtasks"
-    hx-get="{{ BASE_URL }}/tickets/subtasks/get?ticketId={{ $ticket->id }}"
+    hx-get="{{ BASE_URL }}/hx/tickets/subtasks/get?ticketId={{ $ticket->id }}"
     hx-trigger="load"
     hx-indicator=".subtaskIndicator"
 ></div>

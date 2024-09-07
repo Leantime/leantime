@@ -25,6 +25,8 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     protected $json;
 
+    protected $pageUrl;
+
     protected $currentRoute;
 
     public static function capture()
@@ -272,5 +274,8 @@ class IncomingRequest extends \Illuminate\Http\Request
 
         return "";
     }
+
+
+
 
 }

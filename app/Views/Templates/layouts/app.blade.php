@@ -31,7 +31,7 @@
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
-            <div id="global-loader">
+            <div id="global-loader" class="full-width-loader">
                 <div class="indeterminate" style=""></div>
             </div>
         </div><!-- header -->
@@ -58,7 +58,7 @@
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->
-    <div id="modal-wrapper" hx-indicator="#global-progress-indicator">
+    <div id="modal-wrapper" hx-indicator="#global-loader">
         <x-global::content.modal id="main-page-modal" />
     </div>
 

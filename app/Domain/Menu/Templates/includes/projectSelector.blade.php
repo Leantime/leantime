@@ -1,4 +1,4 @@
-<a href="{{ BASE_URL }}/projects/showMy"
+<a
    class="dropdown-toggle bigProjectSelector {{ $menuType == "project" ? "active" : "" }}"
    data-toggle="dropdown">
 

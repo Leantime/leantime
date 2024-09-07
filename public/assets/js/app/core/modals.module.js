@@ -36,6 +36,7 @@ var getModalUrl = function () {
 
 var openPageModal = function (url) {
 
+    jQuery("#modal-wrapper #main-page-modal .modal-content-loader").removeClass("htmx-request");
     jQuery("#modal-wrapper #main-page-modal .modal-box-content").html("");
     htmx.find("#modal-wrapper #main-page-modal").showModal();
     jQuery("#modal-wrapper #main-page-modal .modal-loader").show();
@@ -54,10 +55,12 @@ var openPageModal = function (url) {
         history.pushState(null, '', "#"+url);
 
         jQuery("#modal-wrapper #main-page-modal .modal-loader").hide();
+        jQuery("#modal-wrapper #main-page-modal .modal-loader").removeClass("htmx-request");
+
 
         htmx.find("#modal-wrapper #main-page-modal").addEventListener("close", (event) => {
             removeHash();
-        })
+        });
 
     });
 
@@ -89,6 +92,7 @@ jQuery(document).ready(openHashUrlModal);
 window.addEventListener("hashchange", openHashUrlModal);
 
 window.addEventListener("closeModal", closeModal);
+
 
 export default {
     openPageModal: openPageModal,

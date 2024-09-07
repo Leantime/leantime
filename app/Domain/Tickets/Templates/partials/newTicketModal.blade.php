@@ -19,7 +19,9 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
         </ul>
 
         <div id="ticketdetails">
-            <form  hx-post="<?=BASE_URL ?>/tickets/ticket/create" method="post">
+            <form hx-post="<?=BASE_URL ?>/tickets/newTicket"
+                  hx-target="#main-page-modal .modal-box-content"
+                  hx-indicator=".modal-content-loader">
                 @include("tickets::includes.ticketDetails")
             </form>
         </div>

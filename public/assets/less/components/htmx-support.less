@@ -1,4 +1,4 @@
-#global-loader {
+.full-width-loader {
   opacity:0;
   position:fixed;
   z-index: 100;
@@ -10,7 +10,7 @@
 }
 
 
-#global-loader .indeterminate {
+.full-width-loader .indeterminate {
   width:20%;
   background:var(--element-gradient);
   width:50%;
@@ -27,19 +27,14 @@
 }
 
 
-#global-loader.htmx-request {
+.full-width-loader.htmx-request {
   display:block;
   opacity:1;
 }
 
-#global-loader.htmx-request .indeterminate {
+.full-width-loader.htmx-request .indeterminate {
   animation: progressBar 3s ease-in-out;
   animation-fill-mode: both;
-}
-
-.htmx-request #global-loader {
-  display:block;
-  opacity:1;
 }
 
 

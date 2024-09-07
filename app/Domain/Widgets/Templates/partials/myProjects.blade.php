@@ -5,7 +5,7 @@
 ])
 
 <div id="myProjectsWidget"
-     hx-get="{{BASE_URL}}/widgets/myProjects/get"
+     hx-get="{{BASE_URL}}/hx/widgets/myProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML transition:true">
