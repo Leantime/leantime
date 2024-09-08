@@ -191,8 +191,8 @@ jQuery(document).ready(function(){
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('headline.overview'); ?></h5>
-        <h1><?php echo $tpl->__('headline.my_timesheets'); ?></h1>
+        <h5>{{ __("headline.overview") }}</h5>
+        <h1>{{ __("headline.my_timesheets") }}</h1>
     </div>
 </div>
 <!-- page header -->
@@ -204,11 +204,11 @@ jQuery(document).ready(function(){
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    <?php echo $tpl->__("links.week_view") ?> <?=$tpl->__("links.view") ?>
+                    {{ __("links.week_view") }} <?=$tpl->__("links.view") ?>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active"><?php echo $tpl->__("links.week_view") ?></a></li>
-                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList" ><?php echo $tpl->__("links.list_view") ?></a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active">{{ __("links.week_view") }}</a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList" >{{ __("links.list_view") }}</a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
@@ -217,7 +217,7 @@ jQuery(document).ready(function(){
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->formatDateForUser() ?>" style="margin-top:5px;"/>
-                    <?php echo $tpl->__('label.until'); ?>
+                    {{ __("label.until") }}
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->addDays(6)->formatDateForUser() ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
@@ -426,3 +426,5 @@ jQuery(document).ready(function(){
         </form>
     </div>
 </div>
+
+@endsection

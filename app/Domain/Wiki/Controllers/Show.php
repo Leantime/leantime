@@ -172,7 +172,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
 
             if (isset($params['id'])) {
-                $comment = $this->commentService->getComments('article', $_GET['id'], 0);
+                $comment = $this->commentService->getComments('article', $params['id'], 0);
             } elseif (isset($currentArticle->id)) {
                 $comment = $this->commentService->getComments('article', $currentArticle->id, 0);
             } else {

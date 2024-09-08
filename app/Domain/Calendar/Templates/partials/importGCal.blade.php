@@ -1,10 +1,12 @@
+<x-global::content.modal.modal-buttons/>
+
 @displayNotification()
 
 <h4 class="widgettitle title-light"><i class="fa-regular fa-calendar-plus"></i> {{ __('label.import_ical') }}</h4>
 {!!  __('label.import_ical_content')  !!}
 
 
-<form action="{{ BASE_URL }}/calendar/importGCal" method="post" class="formModal">
+<x-global::content.modal.form action="{{ BASE_URL }}/calendar/importGCal">
 
     <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>
     <input type="text" id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
@@ -24,7 +26,7 @@
 
     @dispatchEvent('beforeFormClose')
 
-</form>
+</x-global::content.modal.form>
 
 <script>
     leantime.ticketsController.initSimpleColorPicker();

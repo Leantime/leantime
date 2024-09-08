@@ -1,4 +1,4 @@
-
+<x-global::content.modal.modal-buttons/>
 
 <?php
 $currentArticle = $tpl->get('article');
@@ -16,13 +16,13 @@ if (isset($currentArticle->id)) {
 
 ?>
 
-<form class="formModal" method="post" action="<?=CURRENT_URL ?>">
+<x-global::content.modal.form action="{{ CURRENT_URL }}">
 
     <div class="row">
         <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <h4 class="widgettitle title-light">
-                    <span class="fa fa-folder"></span><?php echo $tpl->__('subtitles.organization'); ?>
+                    <span class="fa fa-folder"></span>{{ __("subtitles.organization") }}
                 </h4>
                 <label>Parent</label>
                 <select name="parent" style="width:100%;">
@@ -55,8 +55,8 @@ if (isset($currentArticle->id)) {
                             <div class="row" id="milestoneSelectors">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
+                                        <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
+                                        | <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
 
                                     </div>
                                 <?php } ?>
@@ -67,7 +67,7 @@ if (isset($currentArticle->id)) {
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> " />
                                     <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                    <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
@@ -93,7 +93,7 @@ if (isset($currentArticle->id)) {
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="<?php echo $id; ?> " />
                                     <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                    <a href="javascript:void(0);"  onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
@@ -109,12 +109,12 @@ if (isset($currentArticle->id)) {
 
                             <div hx-trigger="load"
                                  hx-indicator=".htmx-indicator"
-                                 hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$currentArticle->milestoneId ?>">
+                                 hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$currentArticle->milestoneId ?>">
                                 <div class="htmx-indicator">
                                     <?=$tpl->__("label.loading_milestone") ?>
                                 </div>
                             </div>
-                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
 
                         </li>
                     <?php } ?>
@@ -155,8 +155,8 @@ if (isset($currentArticle->id)) {
                         <br />
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-                        <input type="submit" name="saveArticle" value="<?php echo $tpl->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
-                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
+                        <input type="submit" name="saveArticle" value="{{ __("buttons.save") }}" id="primaryArticleSubmitButton"/>
+                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __("buttons.save_and_close") }}"/>
 
 
 
@@ -179,7 +179,7 @@ if (isset($currentArticle->id)) {
 
 
 
-</form>
+</x-global::content.modal.form>
 
 <script>
 

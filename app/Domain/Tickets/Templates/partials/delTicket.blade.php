@@ -1,19 +1,21 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $ticket = $tpl->get("ticket");
 ?>
 
 
-<h4 class="widgettitle title-light"><?php echo $tpl->__("subtitles.delete") ?></h4>
+<h4 class="widgettitle title-light">{{ __("subtitles.delete") }}</h4>
 
 <?php if (is_object($ticket)) { ?>
-<form method="post" action="<?=BASE_URL ?>/tickets/delTicket/<?=$ticket->id?>">
-    <p><?php echo $tpl->__('text.confirm_ticket_deletion'); ?></p><br />
-    <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
+<x-global::content.modal.form action="{{ BASE_URL }}/tickets/delTicket/{{ $ticket->id }}">
+    <p>{{ __("text.confirm_ticket_deletion") }}</p><br />
+    <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
 
-        <a class="btn btn-primary" href="#/tickets/showTicket/<?php echo $ticket->id ?>"><?php echo $tpl->__('buttons.back'); ?></a>
+        <a class="btn btn-primary" href="#/tickets/showTicket/<?php echo $ticket->id ?>">{{ __("buttons.back") }}</a>
 
 
-</form>
+</x-global::content.modal.form>
 
 <?php } else { ?>
     <p>Ticket not found</p>

@@ -36,10 +36,10 @@ var getModalUrl = function () {
 
 var openPageModal = function (url) {
 
+    jQuery("#modal-wrapper #main-page-modal .modal-loader").show();
     jQuery("#modal-wrapper #main-page-modal .modal-content-loader").removeClass("htmx-request");
     jQuery("#modal-wrapper #main-page-modal .modal-box-content").html("");
     htmx.find("#modal-wrapper #main-page-modal").showModal();
-    jQuery("#modal-wrapper #main-page-modal .modal-loader").show();
 
     var baseUrl = appUrl.replace(/\/$/, '');
 
@@ -50,17 +50,12 @@ var openPageModal = function (url) {
         headers: {
             "Is-Modal": true,
         }
-    }).then(() => {
+    }).then((e) => {
 
         history.pushState(null, '', "#"+url);
 
         jQuery("#modal-wrapper #main-page-modal .modal-loader").hide();
         jQuery("#modal-wrapper #main-page-modal .modal-loader").removeClass("htmx-request");
-
-
-        htmx.find("#modal-wrapper #main-page-modal").addEventListener("close", (event) => {
-            removeHash();
-        });
 
     });
 
@@ -74,7 +69,6 @@ var openHashUrlModal = function () {
     }
 }
 
-
 /**
  * Closes a dialog.
  *
@@ -83,15 +77,18 @@ var openHashUrlModal = function () {
  * @returns {void}
  */
 var closeModal = function () {
-    jQuery("dialog").close();
+    removeHash();
+    htmx.find("#modal-wrapper #main-page-modal").close();
 }
 
+window.addEventListener("HTMX.closemodal", closeModal);
 
 //Open page url modal on page load and hash change
-jQuery(document).ready(openHashUrlModal);
 window.addEventListener("hashchange", openHashUrlModal);
 
-window.addEventListener("closeModal", closeModal);
+jQuery(document).ready(function() {
+    openHashUrlModal();
+});
 
 
 export default {

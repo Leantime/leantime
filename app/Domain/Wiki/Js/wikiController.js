@@ -35,30 +35,7 @@ export const initTree = function (id, selectedId) {
     });
 }
 
-export const wikiModal = function () {
-    var wikiModalConfig = {
-        sizes: {
-            minW: 400,
-            minH: 350
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            afterShowCont: function () {
-
-                jQuery(".formModal").nyroModal(wikiModalConfig);
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
-    };
-    jQuery(".wikiModal").nyroModal(wikiModalConfig);
-}
-
 // Make public what you want to have public, everything else is private
 export default {
     initTree: initTree,
-    wikiModal: wikiModal,
 };

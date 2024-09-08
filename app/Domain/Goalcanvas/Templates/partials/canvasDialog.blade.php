@@ -1,19 +1,11 @@
-
-    <script type="text/javascript">
-        window.onload = function() {
-            if (!window.jQuery) {
-                //It's not a modal
-                location.href = "{{ BASE_URL }}/goalcanvas/showCanvas?showModal={{ $canvasItem['id'] }}";
-            }
-        }
-    </script>
+<x-global::content.modal.modal-buttons/>
 
     <div style="width:1000px">
 
         <h1><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
             {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
 
-        <form class="formModal" method="post" action="{{ BASE_URL . "/goalcanvas/editCanvasItem/$id" }}">
+        <x-global::content.modal.form action="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}">
 
             <input type="hidden" value="{{ $currentCanvas }}" name="canvasId">
             <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box">
@@ -78,18 +70,11 @@
 
                     <br>
                     @if ($login::userIsAtLeast($roles::$editor))
-                        <input type="submit" value="{{ __('buttons.save') }}" id="primaryCanvasSubmitButton">
+                        <input type="submit" value="{{ __('buttons.save') }}">
                         <button type="submit" class="btn btn-primary" id="saveAndClose" value="closeModal"
                             onclick="leantime.goalCanvasController.setCloseModal();">{{ __('buttons.save_and_close') }}</button>
                     @endif
 
-                    @if ($id !== '')
-                        <br /><br /><br />
-                        <input type="hidden" name="comment" value="1" />
-                        <h4 class="widgettitle title-light"><span
-                                class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
-                        @include("comments::includes.generalComment", ["formUrl" => BASE_URL . '/goalcanvas/editCanvasItem/' . $id])
-                    @endif
                 </div>
 
                 <div class="col-md-4">
@@ -119,20 +104,20 @@
                                 <div class="row" id="milestoneSelectors">
                                     @if ($login::userIsAtLeast($roles::$editor))
                                         <div class="col-md-12">
-                                            <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
+                                            <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('new');">{{ __("links.create_link_milestone") }}</a>
                                             @if (count($tpl->get('milestones')) > 0)
-                                                | <a href="javascript:void(0);" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
+                                                | <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('existing');">{{ __("links.link_existing_milestone") }}</a>
                                             @endif
                                         </div>
                                     @endif
                                 </div>
                                 <div class="row" id="newMilestone" style="display:none;">
                                     <div class="col-md-12">
-                                        <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                        <input type="text" width="50%" name="newMilestone" /><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                         <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                                     </div>
                                 </div>
 
@@ -149,7 +134,7 @@
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                         <input type="button" value="{{ __("buttons.save") }}" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.goalCanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                        <input type="button" value="{{ __("buttons.cancel") }}" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                                     </div>
                                 </div>
                             </center>
@@ -173,7 +158,16 @@
                 </a>
             @endif
 
-        </form>
+        </x-global::content.modal.form>
+
+
+        @if ($id !== '')
+            <br /><br /><br />
+            <input type="hidden" name="comment" value="1" />
+            <h4 class="widgettitle title-light"><span
+                    class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
+            @include("comments::includes.generalComment", ["formUrl" => BASE_URL . '/goalcanvas/editCanvasItem/' . $id])
+        @endif
 
     </div>
 
@@ -188,15 +182,15 @@
                 showSearch: false,
                 valuesUseText: false,
                 data: [
-                        @foreach ($statusLabels as $key => $data)
+                    @foreach ($statusLabels as $key => $data)
                         @if ($data['active'])
-                    {
-                        innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
-                        text: "{{ $data['title'] }}",
-                        value: "{{ $key }}",
-                        selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
-                    },
-                    @endif
+                            {
+                                innerHTML: '<i class="fas fa-fw {{ $data['icon'] }}"></i>&nbsp;{{ $data['title'] }}',
+                                text: "{{ $data['title'] }}",
+                                value: "{{ $key }}",
+                                selected: {{ $canvasItem['status'] == $key ? 'true' : 'false' }}
+                            },
+                       @endif
                     @endforeach
                 ]
             });
@@ -224,8 +218,7 @@
 
             leantime.editorController.initSimpleEditor();
 
-            @if (!$login::userIsAtLeast($roles::$editor))
-            @endif
+
 
             @if ($login::userHasRole([$roles::$commenter]))
             leantime.commentsController.enableCommenterForms();
@@ -233,4 +226,3 @@
 
         });
     </script>
-@endsection

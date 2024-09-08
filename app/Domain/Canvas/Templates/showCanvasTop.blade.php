@@ -48,10 +48,10 @@ $tpl->assign('canvasTitle', $canvasTitle);
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                 <li><a href="#/<?=$canvasName?>canvas/boardDialog/<?php echo $tpl->get('currentCanvas');?>" class="editCanvasLink "><?=$tpl->__("links.icon.edit") ?></a></li>
             <?php } ?>
-            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $tpl->get('currentCanvas');?>"><?=$tpl->__("links.icon.export") ?></a></li>
+            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/<?php echo $tpl->get('currentCanvas');?>"><?=$tpl->__("links.icon.export") ?></a></li>
             <li><a href="javascript:window.print();"><?=$tpl->__("links.icon.print") ?></a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="#/<?=$canvasName ?>canvas/delCanvas/<?php echo $tpl->get('currentCanvas');?>" class="delete"><?php echo $tpl->__("links.icon.delete") ?></a></li>
+                <li><a href="#/{{ $canvasName }}canvas/delCanvas/<?php echo $tpl->get('currentCanvas');?>" class="delete">{{ __("links.icon.delete") }}</a></li>
             <?php } ?>
         </ul>
         </span>
@@ -92,7 +92,7 @@ $tpl->assign('canvasTitle', $canvasTitle);
             <div class="col-md-3">
 
                 <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
-                    <a href="#/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+                    <a href="#/{{ $canvasName }}canvas/editCanvasItem?type=<?php echo $elementName; ?>"
                        class="btn btn-primary" id="<?php echo $elementName; ?>"><?=$tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
                 <?php } ?>
 
@@ -112,11 +112,11 @@ $tpl->assign('canvasTitle', $canvasTitle);
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw <?=$tpl->__($statusLabels[$filter['status']]['icon']) ?>"></i> <?=$statusLabels[$filter['status']]['title'] ?> <?=$tpl->__("links.view") ?></button>
                             <?php } ?>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_status=all" <?php if ($filter['status'] == 'all') {
+                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all" <?php if ($filter['status'] == 'all') {
                                     ?>class="active" <?php
                                              } ?>><i class="fas fa-globe"></i> <?=$tpl->__("status.all") ?></a></li>
                                 <?php foreach ($statusLabels as $key => $data) { ?>
-                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_status=<?=$key ?>" <?php if ($filter['status'] == $key) {
+                                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=<?=$key ?>" <?php if ($filter['status'] == $key) {
                                             ?>class="active" <?php
                                                   } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
                                 <?php } ?>
@@ -132,11 +132,11 @@ $tpl->assign('canvasTitle', $canvasTitle);
                                 <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-fw <?=$tpl->__($relatesLabels[$filter['relates']]['icon']) ?>"></i> <?=$relatesLabels[$filter['relates']]['title'] ?> <?=$tpl->__("links.view") ?></button>
                             <?php } ?>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_relates=all" <?php if ($filter['relates'] == 'all') {
+                                <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all" <?php if ($filter['relates'] == 'all') {
                                     ?>class="active" <?php
                                              } ?>><i class="fas fa-globe"></i> <?=$tpl->__("relates.all") ?></a></li>
                                 <?php foreach ($relatesLabels as $key => $data) { ?>
-                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?filter_relates=<?=$key ?>" <?php if ($filter['relates'] == $key) {
+                                     <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=<?=$key ?>" <?php if ($filter['relates'] == $key) {
                                             ?>class="active" <?php
                                                   } ?>><i class="fas fa-fw <?=$data['icon'] ?>"></i> <?=$data['title'] ?></a></li>
                                 <?php } ?>

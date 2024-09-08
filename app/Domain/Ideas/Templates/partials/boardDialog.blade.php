@@ -1,7 +1,6 @@
-@extends($layout)
-@section('content')
+<x-global::content.modal.modal-buttons/>
 
-<form action="{{ BASE_URL }}/ideas/boardDialog{{ isset($_GET['id']) ? '/'.(int)$_GET['id'] : '' }}" method="post" class="formModal">
+<x-global::content.modal.form action="{{ BASE_URL }}/ideas/boardDialog{{ isset($_GET['id']) ? '/'.(int)$_GET['id'] : '' }}">
     <div class="modal-header">
         <h4 class="modal-title"><i class='fa fa-plus'></i> {!! __('subtitles.create_new_board') !!}</h4>
     </div>
@@ -20,6 +19,4 @@
         @endif
         <button type="button" class="btn btn-default" onclick="jQuery.nmTop().close();">{!! __('buttons.close') !!}</button>
     </div>
-</form>
-
-@endsection
+</x-global::content.modal.form>

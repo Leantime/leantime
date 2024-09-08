@@ -16,7 +16,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
+            location.href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -33,7 +33,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <?php if ($id !== '') { ?>
     <br />
     <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ __("subtitles.discussion") }}</h4>
         @include("comments::includes.generalComment", ["formUrl" => $canvasName."canvas/editCanvasComment/" . $id])
     <?php } ?>
 

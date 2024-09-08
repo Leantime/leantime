@@ -39,7 +39,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             }
 
             $this->tpl->assign("wiki", $wiki);
-            return $this->tpl->displayModal("wiki.wikiDialog");
+            return $this->tpl->displayPartial("wiki::partials.wikiDialog");
         }
 
         /**
@@ -57,7 +57,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $wiki->title = $params['title'];
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification("notification.wiki_updated_successfully", "success", "wiki_updated");
-                return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id);
+
 
             } else {
             //New
@@ -71,10 +71,12 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 if ($id) {
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success", "wiki_created");
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id . "?closeModal=1");
                 }
 
-                return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id . "");
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
         }
     }

@@ -31,16 +31,16 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function get($params): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-    
+
             return $this->tpl->display('ideas.delCanvas');
         }
 
         public function post($params): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-    
+
             $result = $this->ideaService->deleteCanvas($params);
-    
+
             if ($result) {
                 $this->tpl->setNotification(
                     $this->language->__("notification.idea_board_deleted"),
@@ -53,8 +53,11 @@ namespace Leantime\Domain\Ideas\Controllers {
                     "error"
                 );
             }
-    
-            return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
+
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 }

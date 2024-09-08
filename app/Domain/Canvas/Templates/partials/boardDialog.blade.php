@@ -8,7 +8,7 @@ $canvasTitle = $tpl->get('canvasTitle');
 $canvasName = $tpl->get('canvasName');
 ?>
 
-  <form action="<?=BASE_URL ?>/<?=$canvasName?>canvas/boardDialog<?=isset($_GET['id']) ? '/'.(int)$_GET['id'] : ''?>" method="post" class="formModal">
+  <form action="{{ BASE_URL }}/<?=$canvasName?>canvas/boardDialog<?=isset($_GET['id']) ? '/'.(int)$_GET['id'] : ''?>" method="post" class="formModal">
     <div class="modal-header">
       <h4 class="modal-title"><i class='fa fa-plus'></i> <?=$tpl->__('subtitles.create_new_board') ?></h4>
     </div>

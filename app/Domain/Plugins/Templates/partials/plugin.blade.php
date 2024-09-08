@@ -28,7 +28,7 @@
         @endif
         <div class="row mb-base">
             <div class="col flex flex-col gap-base">
-                <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
+                <x-global::elements.inlineLinks :links="$plugin->getMetadataLinks()" />
                 @if (! empty($desc = $plugin->getCardDesc()))
                     <p>{{ $desc }}</p>
                 @endif

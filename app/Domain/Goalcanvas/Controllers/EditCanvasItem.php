@@ -104,7 +104,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     $this->notifyOnItemUpdate($result['canvasItem']);
                     $canvasTypes = $this->goalService->getCanvasTypes();
                     $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully ' . ($result['isNew'] ? 'created' : 'updated'), 'success');
-                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $result['id']);
+
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
+
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }

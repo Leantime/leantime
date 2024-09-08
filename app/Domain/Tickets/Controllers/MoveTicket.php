@@ -68,7 +68,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            return FrontcontrollerCore::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 

@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Comments\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Collection;
     use Leantime\Core\Exceptions\AuthException;
     use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Core\Language as LanguageCore;
@@ -53,11 +54,11 @@ namespace Leantime\Domain\Comments\Services {
          * @param int $moduleId
          * @param int $commentOrder
          * @param int $parent
-         * @return array|false
+         * @return Collection|false
          *
          * @api
          */
-        public function getComments(string $module, int $moduleId, int $commentOrder = 0, int $parent = 0): false|array
+        public function getComments(string $module, int $moduleId, int $commentOrder = 0, int $parent = 0): false|Collection
         {
 
             if ($module == "") {
@@ -98,7 +99,7 @@ namespace Leantime\Domain\Comments\Services {
                 }
             }
 
-            return $commentsArray;
+            return collect($commentsArray);
         }
 
         /**

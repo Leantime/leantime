@@ -76,8 +76,8 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
         }
         ?>
 
-        leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL ?>/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/roadmap');
+        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
 
     <?php } ?>
 

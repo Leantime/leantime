@@ -14,19 +14,19 @@ $efforts = $tpl->get('efforts');
 
 <ul class="sortableTicketList" style="margin-bottom:120px;">
     <li class="">
-        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $tpl->__("links.quick_add_todo"); ?></a>
+        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.quick_add_todo") }}</a>
         <div class="ticketBox hideOnLoad" id="subticket_new" >
 
             <form method="post" class="form-group formModal" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . "#substasks"; ?>">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
-                <input name="headline" type="text" title="<?php echo $tpl->__("label.headline"); ?>" style="width:100%" placeholder="<?php echo $tpl->__("input.placeholders.what_are_you_working_on"); ?>" />
-                <input type="submit" value="<?php echo $tpl->__("buttons.save"); ?>" name="quickadd"  />
+                <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
+                <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
                 <input type="hidden" name="sprint" value="<?php echo session("currentSprint"); ?>" />
                 <a href="javascript:void(0);" onclick="jQuery('#subticket_new').toggle('fast'); jQuery('#subticket_new_link').toggle('fast');">
-                    <?php echo $tpl->__("links.cancel"); ?>
+                    {{ __("links.cancel") }}
                 </a>
             </form>
 
@@ -60,7 +60,7 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
+                                <li><a href="{{ BASE_URL }}/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete formModal"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
 
                             </ul>
                         </div>
@@ -74,13 +74,13 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                 <div class="col-md-9" style="padding:0 15px;">
                     <div class="row">
                         <div class="col-md-4">
-                            <?php echo $tpl->__("label.due"); ?><input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput quickDueDates" data-id="<?php echo $subticket['id'];?>" name="date" />
+                            {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="<?php echo $date ?>" class="duedates secretInput quickDueDates" data-id="<?php echo $subticket['id'];?>" name="date" />
                         </div>
                         <div class="col-md-4">
-                            <?php echo $tpl->__("label.planned_hours"); ?><input type="text" value="<?php echo $tpl->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            {{ __("label.planned_hours") }}<input type="text" value="<?php echo $tpl->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
                         <div class="col-md-4">
-                            <?php echo $tpl->__("label.estimated_hours_remaining"); ?><input type="text" value="<?php echo $tpl->e($subticket['hourRemaining']); ?>" name="hourRemaining" data-label="hourRemaining-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            {{ __("label.estimated_hours_remaining") }}<input type="text" value="<?php echo $tpl->e($subticket['hourRemaining']); ?>" name="hourRemaining" data-label="hourRemaining-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
                         </div>
                     </div>
                 </div>

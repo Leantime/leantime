@@ -153,6 +153,11 @@ namespace Leantime\Domain\Setting\Controllers {
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.label_changed_successfully"), "success");
+
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
 
             $this->tpl->assign('currentLabel', $sanitizedString);

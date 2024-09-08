@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $currentMilestone = $tpl->get('milestone');
 $milestones = $tpl->get('milestones');
@@ -8,7 +10,7 @@ $statusLabels = $tpl->get('statusLabels');
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/tickets/roadmap?showMilestoneModal=<?php echo $currentMilestone->id; ?>";
+            location.href="{{ BASE_URL }}/tickets/roadmap?showMilestoneModal=<?php echo $currentMilestone->id; ?>";
         }
     }
 </script>
@@ -23,7 +25,7 @@ $statusLabels = $tpl->get('statusLabels');
 
 @displayNotification()
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
+<x-global::content.modal.form action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}">
 
     <label><?=$tpl->__("label.milestone_title"); ?></label>
     <input type="text" name="headline" value="<?php $tpl->e($currentMilestone->headline) ?>" placeholder="<?=$tpl->__("label.milestone_title"); ?>"/><br />
@@ -49,7 +51,7 @@ $statusLabels = $tpl->get('statusLabels');
         } ?>
     </select>
 
-    <label><?php echo $tpl->__('label.todo_status'); ?></label>
+    <label>{{ __("label.todo_status") }}</label>
     <select id="status-select" name="status" class="span11"
             data-placeholder="<?php echo isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]["name"] : ''; ?>">
 
@@ -81,7 +83,7 @@ $statusLabels = $tpl->get('statusLabels');
     </select>
 
     <label><?=$tpl->__("label.owner"); ?></label>
-    <select data-placeholder="<?php echo $tpl->__('input.placeholders.filter_by_user'); ?>"
+    <select data-placeholder="{{ __("input.placeholders.filter_by_user") }}"
             name="editorId" class="user-select span11">
         <option value=""><?=$tpl->__("dropdown.not_assigned"); ?></option>
         <?php foreach ($tpl->get('users') as $userRow) { ?>
@@ -114,7 +116,7 @@ $statusLabels = $tpl->get('statusLabels');
         </div>
     </div>
 
-</form>
+</x-global::content.modal.form>
 
     <?php
     if (isset($currentMilestone->id) && $currentMilestone->id !== '') {

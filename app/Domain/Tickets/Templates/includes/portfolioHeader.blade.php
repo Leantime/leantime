@@ -18,7 +18,7 @@ $currentClientName = $tpl->get("currentClientName");
     </div>
     <div class="pagetitle">
 
-        <h1><?php echo $tpl->__("headlines.my_projects"); ?>
+        <h1>{{ __("headlines.my_projects") }}
 
 
 

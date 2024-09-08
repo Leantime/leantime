@@ -76,7 +76,7 @@ $allTicketGroups = $tpl->get("allTickets");
                             <ul class="dropdown-menu">
                                 <li><a href="#/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$tpl->__('headlines.edit_label')?></a>
                                 </li>
-                                <li><a href="<?=BASE_URL ?>/projects/showProject/<?=session("currentProject");?>#todosettings"><?=$tpl->__('links.add_remove_col')?></a></li>
+                                <li><a href="{{ BASE_URL }}/projects/showProject/<?=session("currentProject");?>#todosettings"><?=$tpl->__('links.add_remove_col')?></a></li>
                             </ul>
                         </div>
                     <?php } ?>
@@ -166,7 +166,7 @@ $allTicketGroups = $tpl->get("allTickets");
                                                     <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
 
                                                         echo $tpl->__("label.due_icon"); ?>
-                                                        <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
+                                                        <input type="text" title="{{ __("label.due") }}" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
 
                                                     <?php } ?>
                                                 </div>
@@ -368,8 +368,8 @@ $allTicketGroups = $tpl->get("allTickets");
             }
             ?>
 
-        leantime.ticketsController.openTicketModalManually("<?=BASE_URL ?>/tickets/showTicket<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/showKanban');
+        leantime.ticketsController.openTicketModalManually("{{ BASE_URL }}/tickets/showTicket<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/showKanban');
 
         <?php } ?>
 

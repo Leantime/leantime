@@ -22,7 +22,7 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
         </div>
         <div class="">
             <div class="forgotPwContainer">
-                <a href="<?=BASE_URL ?>/" class="forgotPw"><?php echo $tpl->language->__("links.back_to_login"); ?></a>
+                <a href="{{ BASE_URL }}/" class="forgotPw"><?php echo $tpl->language->__("links.back_to_login"); ?></a>
             </div>
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
             <input type="submit" name="resetPassword" value="<?php echo $tpl->language->__("buttons.reset_password"); ?>" />

@@ -40,14 +40,14 @@
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
-    <form action="<?=BASE_URL ?>/index.php?act=tickets.showAll" method="post" class="searchbar">
+    <form action="{{ BASE_URL }}/index.php?act=tickets.showAll" method="post" class="searchbar">
         <input type="text" name="term" placeholder="To search type and hit enter..." />
     </form>
 
-    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa fa-calendar"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('OVERVIEW'); ?></h5>
-        <h1><?php echo $tpl->__('ALL_GCCALS'); ?></h1>
+        <h5>{{ __("OVERVIEW") }}</h5>
+        <h1>{{ __("ALL_GCCALS") }}</h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
@@ -65,9 +65,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th><?php echo $tpl->__('NAME'); ?></th>
-                        <th><?php echo $tpl->__('URL'); ?></th>
-                        <th><?php echo $tpl->__('COLOR'); ?></th>
+                        <th>{{ __("NAME") }}</th>
+                        <th>{{ __("URL") }}</th>
+                        <th>{{ __("COLOR") }}</th>
                     </tr>
                 </thead>
 

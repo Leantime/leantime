@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $project = $tpl->get('project');
 ?>
@@ -6,7 +8,7 @@ $project = $tpl->get('project');
 
 @displayNotification()
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/projects/duplicateProject/<?php echo $project['id'];?>">
+<x-global::content.modal.form action="{{ BASE_URL }}/projects/duplicateProject/<?php echo $project['id'];?>">
 
     <label><?=$tpl->__('label.newProjectName') ?></label>
     <input type="text" name="projectName" value="<?=$tpl->__('label.copy_of')?> <?php $tpl->e($project['name'])?>" /><br />
@@ -26,7 +28,7 @@ $project = $tpl->get('project');
     <br />
     <input style="float:left; margin-right:5px;"
            type="checkbox" name="assignSameUsers" id="assignSameUsers"/>
-    <label for="assignSameUsers"><?php echo $tpl->__('label.assignSameUsers') ?></label>
+    <label for="assignSameUsers">{{ __("label.assignSameUsers") }}</label>
 
     <br />
 
@@ -39,5 +41,5 @@ $project = $tpl->get('project');
         </div>
     </div>
 
-</form>
+</x-global::content.modal.form>
 

@@ -72,37 +72,7 @@ export const initTimesheetsTable = function (groupBy) {
     });
 };
 
-export const initEditTimeModal = function () {
-    var canvasoptions = {
-        sizes: {
-            minW:  700,
-            minH: 1000,
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                if (closeModal === true) {
-                    closeModal = false;
-                    location.reload();
-                }
-            },
-            afterShowCont: function () {
-                jQuery(".editTimeModal").nyroModal(canvasoptions);
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
-    };
-
-    jQuery(".editTimeModal").nyroModal(canvasoptions);
-};
-
 // Make public what you want to have public, everything else is private
 export default {
     initTimesheetsTable: initTimesheetsTable,
-    initEditTimeModal: initEditTimeModal,
 };

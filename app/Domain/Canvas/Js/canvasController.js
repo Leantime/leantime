@@ -13,13 +13,10 @@ export const initFilterBar = function () {
     jQuery(window).bind("load", function () {
         jQuery(".loading").fadeOut();
         jQuery(".filterBar .row-fluid").css("opacity", "1");
-
-
     });
-
 };
 
-export const initUserDropdown = function () {
+export const initUserDropdown = function (canvasName) {
 
     jQuery("body").on(
         "click",
@@ -55,7 +52,7 @@ export const initUserDropdown = function () {
     );
 };
 
-export const initStatusDropdown = function () {
+export const initStatusDropdown = function (canvasName) {
 
     jQuery("body").on(
         "click",
@@ -95,7 +92,7 @@ export const initStatusDropdown = function () {
 
 };
 
-export const initRelatesDropdown = function () {
+export const initRelatesDropdown = function (canvasName) {
 
     jQuery("body").on(
         "click",
@@ -135,6 +132,22 @@ export const initRelatesDropdown = function () {
 
 };
 
+export const toggleMilestoneSelectors = function (trigger) {
+    if (trigger == 'existing') {
+        jQuery('#newMilestone, #milestoneSelectors').hide('fast');
+        jQuery('#existingMilestone').show();
+    }
+    if (trigger == 'new') {
+        jQuery('#newMilestone').show();
+        jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
+    }
+
+    if (trigger == 'hide') {
+        jQuery('#newMilestone, #existingMilestone').hide('fast');
+        jQuery('#milestoneSelectors').show('fast');
+    }
+};
+
 // Make public what you want to have public, everything else is private
 export default {
     setCanvasName: setCanvasName,
@@ -142,4 +155,5 @@ export default {
     initUserDropdown: initUserDropdown,
     initStatusDropdown: initStatusDropdown,
     initRelatesDropdown: initRelatesDropdown,
+    toggleMilestoneSelectors: toggleMilestoneSelectors
 };

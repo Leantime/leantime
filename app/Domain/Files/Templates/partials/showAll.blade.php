@@ -1,6 +1,4 @@
-@extends($layout)
-
-@section('content')
+<x-global::content.modal.modal-buttons/>
 
 <div id="fileManager">
     <div>
@@ -11,9 +9,7 @@
             <div class='mediamgr_left'>
                 <div class="mediamgr_category">
 
-                    <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
-                        echo"?modalPopUp=true";
-                                  }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+                    <x-global::content.modal.form action="{{ BASE_URL }}/files/showAll{{ isset($_GET['modalPopUp']) ? '?modalPopUp=true' : '' }}" method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -33,9 +29,9 @@
                             </div>
                         </div>
 
-                        <input type="submit" name="upload" class="button" value="<?php echo $tpl->__('UPLOAD'); ?>" />
+                        <input type="submit" name="upload" class="button" value="{{ __("UPLOAD") }}" />
 
-                    </form>
+                    </x-global::content.modal.form>
 
                 </div>
 
@@ -50,22 +46,22 @@
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                        <li><a target="_blank" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                        <li class="nav-header">{{ __("subtitles.file") }}</li>
+                                        <li><a target="_blank" href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">{{ __("links.download") }}</a></li>
 
                                         <?php
 
                                         if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                            <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                            <li><a href="{{ BASE_URL }}/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a></li>
                                         <?php  } ?>
 
                                     </ul>
                                 </div>
-                                <a class="imageLink" href="<?=BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                <a class="imageLink" href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                                     <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                        <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                     <?php else : ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                        <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
                                     <?php endif; ?>
                                     <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                                 </a>

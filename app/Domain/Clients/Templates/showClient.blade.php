@@ -12,7 +12,7 @@ $users = $tpl->get('users');
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration') ?></h5>
+        <h5>{{ __("label.administration") }}</h5>
         <h1><?php $tpl->e($values['name']); ?></h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
@@ -26,7 +26,7 @@ $users = $tpl->get('users');
         <div class="tabbedwidget tab-primary clientTabs">
 
             <ul>
-                <li><a href="#clientDetails"><?php echo $tpl->__('label.client_details'); ?></a></li>
+                <li><a href="#clientDetails">{{ __("label.client_details") }}</a></li>
                 <li><a href="#comment"><?php echo sprintf($tpl->__('tabs.discussion_with_count'), count($tpl->get('comments'))); ?></a></li>
                 <li><a href="#files"><?php echo sprintf($tpl->__('tabs.files_with_count'), count($tpl->get('files'))); ?></a></li>
             </ul>
@@ -36,31 +36,31 @@ $users = $tpl->get('users');
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> <?php echo $tpl->__('subtitle.details'); ?></h4>
+                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __("subtitle.details") }}</h4>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.client_id') ?></label>
+                                <label class=" control-label">{{ __("label.client_id") }}</label>
                                 <div class="">
                                     <input type="text" name="id" id="id" value="<?php $tpl->e($values['id']); ?>" readonly />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.name') ?></label>
+                                <label class=" control-label">{{ __("label.name") }}</label>
                                 <div class="">
                                     <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.email') ?></label>
+                                <label class=" control-label">{{ __("label.email") }}</label>
                                 <div class="">
                                     <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.url') ?></label>
+                                <label class=" control-label">{{ __("label.url") }}</label>
                                 <div class="">
                                     <input
                                             type="text" name="internet" id="internet"
@@ -69,7 +69,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.street') ?></label>
+                                <label class=" control-label">{{ __("label.street") }}</label>
                                 <div class="">
                                     <input
                                             type="text" name="street" id="street"
@@ -78,7 +78,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.zip') ?></label>
+                                <label class=" control-label">{{ __("label.zip") }}</label>
                                 <div class="">
                                     <input type="text"
                                     name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
@@ -86,7 +86,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.city') ?></label>
+                                <label class=" control-label">{{ __("label.city") }}</label>
                                 <div class="">
                                     <input type="text"
                                            name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
@@ -94,7 +94,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.state') ?></label>
+                                <label class=" control-label">{{ __("label.state") }}</label>
                                 <div class="">
                                     <input
                                             type="text" name="state" id="state"
@@ -103,7 +103,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.country') ?></label>
+                                <label class=" control-label">{{ __("label.country") }}</label>
                                 <div class="">
                                     <input
                                             type="text" name="country" id="country"
@@ -112,7 +112,7 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class=" control-label"><?php echo $tpl->__('label.phone') ?></label>
+                                <label class=" control-label">{{ __("label.phone") }}</label>
                                 <div class="">
                                     <input
                                             type="text" name="phone" id="phone"
@@ -123,7 +123,7 @@ $users = $tpl->get('users');
                         </div>
 
                         <div class="col-md-6">
-                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> <?php echo $tpl->__('subtitles.users_assigned_to_this_client') ?></h4>
+                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __("subtitles.users_assigned_to_this_client") }}</h4>
                             <a href="#/users/newUser?preSelectedClient=<?=$values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
                             <table class='table table-bordered'>
                                 <colgroup>
@@ -133,9 +133,9 @@ $users = $tpl->get('users');
                                 </colgroup>
                                 <thead>
                                 <tr>
-                                    <th><?php echo $tpl->__('label.name') ?></th>
-                                    <th><?php echo $tpl->__('label.email') ?></th>
-                                    <th><?php echo $tpl->__('label.phone') ?></th>
+                                    <th>{{ __("label.name") }}</th>
+                                    <th>{{ __("label.email") }}</th>
+                                    <th>{{ __("label.phone") }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -162,10 +162,10 @@ $users = $tpl->get('users');
                     <div class="row">
                         <div class="col-md-6">
                             <input type="submit" name="save" id="save"
-                                   value="<?php echo $tpl->__('buttons.save') ?>" class="btn btn-primary" />
+                                   value="{{ __("buttons.save") }}" class="btn btn-primary" />
                         </div>
                         <div class="col-md-6 align-right">
-                            <a href="<?=BASE_URL ?>/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete') ?></a>
+                            <a href="{{ BASE_URL }}/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a>
                         </div>
                     </div>
 
@@ -174,7 +174,7 @@ $users = $tpl->get('users');
 
             <div id='comment'>
 
-                <form method="post" action="<?=BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
+                <form method="post" action="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id'])])
                 </form>
@@ -221,21 +221,21 @@ $users = $tpl->get('users');
                                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu">
-                                                    <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                                    <li><a href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                                    <li class="nav-header">{{ __("subtitles.file") }}</li>
+                                                    <li><a href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">{{ __("links.download") }}</a></li>
 
                                                     <?php
                                                     if ($login::userIsAtLeast($roles::$admin)) { ?>
-                                                        <li><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                                        <li><a href="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a></li>
                                                     <?php  } ?>
 
                                                 </ul>
                                             </div>
-                                              <a class="cboxElement" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
+                                              <a class="cboxElement" href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
                                                   <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                                      <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
+                                                      <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
                                                   <?php else : ?>
-                                                      <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                                      <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
                                                   <?php endif; ?>
                                                 <span class="filename"><?php $tpl->e($file['realName']); ?></span>
                                               </a>

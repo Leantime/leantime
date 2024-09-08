@@ -23,17 +23,17 @@ findActive("");
 <div class="maincontentinner tabs">
     <ul hx-boost="true" hx-indicator="#global-loader">
         <li class="<?=findActive('roadmap'); ?>">
-            <a href="<?=BASE_URL ?>/tickets/roadmap<?=$tpl->get('searchParams') ?>">
+            <a href="{{ BASE_URL }}/tickets/roadmap<?=$tpl->get('searchParams') ?>">
                 <?=$tpl->__("links.timeline") ?>
             </a>
         </li>
         <li class="<?=findActive('showAllMilestones'); ?>">
-            <a href="<?=BASE_URL ?>/tickets/showAllMilestones<?=$tpl->get('searchParams') ?>">
+            <a href="{{ BASE_URL }}/tickets/showAllMilestones<?=$tpl->get('searchParams') ?>">
                 <?=$tpl->__("links.table") ?>
             </a>
         </li>
         <li class="<?=findActive('Calendar'); ?>">
-            <a href="<?=BASE_URL ?>/tickets/showProjectCalendar<?=$tpl->get('searchParams') ?>">
+            <a href="{{ BASE_URL }}/tickets/showProjectCalendar<?=$tpl->get('searchParams') ?>">
                 <?=$tpl->__("links.calendar") ?>
             </a>
         </li>

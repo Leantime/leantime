@@ -21,7 +21,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 
                 <form method="post" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . ""?>#timesheet" class="formModal">
 
-                    <label for="kind"><?php echo $tpl->__('label.timesheet_kind') ?></label>
+                    <label for="kind">{{ __("label.timesheet_kind") }}</label>
                     <span class="field">
                     <select id="kind" name="kind">
                     <?php foreach ($tpl->get('kind') as $key => $row) {
@@ -34,32 +34,32 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                     </select>
                     </span>
 
-                    <label for="timesheetdate"><?php echo $tpl->__('label.date') ?>:</label>
+                    <label for="timesheetdate">{{ __("label.date") }}:</label>
                     <input type="text" id="timesheetdate" name="date" class="dates" value="<?php echo format($values['date'])->date() ?>" /><br/>
 
-                    <label for="hours"><?php echo $tpl->__('label.hours') ?></label>
+                    <label for="hours">{{ __("label.hours") }}</label>
                     <span class="field">
                         <input type="text" id="hours" name="hours" value="<?php echo $values['hours'] ?>" size="7" class="input-small" />
                     </span>
-                    <label for="description"><?php echo $tpl->__('label.description') ?></label>
+                    <label for="description">{{ __("label.description") }}</label>
                     <span class="field">
                         <textarea rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
                     </span>
                     <input type="hidden" name="saveTimes" value="1" />
-                    <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTimes" class="button" />
+                    <input type="submit" value="{{ __("buttons.save") }}" name="saveTimes" class="button" />
 
                 </form>
 
             </div>
             <div class="col-md-6">
-                <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span><?php echo $tpl->__('subtitles.logged_hours_chart'); ?></h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span>{{ __("subtitles.logged_hours_chart") }}</h4>
 
                 <br />
                 <canvas id="canvas"></canvas>
                 <p><br />
-                    <?php echo $tpl->__('label.planned_hours'); ?>: <?php echo $ticket->planHours; ?><br />
-                    <?php echo $tpl->__('label.booked_hours') ?>: <?php echo $tpl->get('timesheetsAllHours'); ?><br />
-                    <?php echo $tpl->__('label.actual_hours_remaining') ?>: <?php echo $remainingHours; ?><br />
+                    {{ __("label.planned_hours") }}: <?php echo $ticket->planHours; ?><br />
+                    {{ __("label.booked_hours") }}: <?php echo $tpl->get('timesheetsAllHours'); ?><br />
+                    {{ __("label.actual_hours_remaining") }}: <?php echo $remainingHours; ?><br />
                 </p>
             </div>
         </div>

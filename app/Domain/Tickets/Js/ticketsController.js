@@ -148,7 +148,6 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                         },
                         on_progress_change: function (task, progress) {
 
-                            //_initModals();
                         },
                         on_view_change: function (mode) {
 

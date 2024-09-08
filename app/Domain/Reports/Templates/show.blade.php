@@ -20,7 +20,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
         <div class="row">
             <div class="col-lg-8">
                 <h5><?php $tpl->e(session("currentProjectClient") . " // " . session("currentProjectName")); ?></h5>
-                <h1><?php echo $tpl->__("headlines.reports"); ?></h1>
+                <h1>{{ __("headlines.reports") }}</h1>
             </div>
         </div>
     </div>
@@ -99,7 +99,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                 <br />
                                 <span class="pull-left">
                                 <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
-                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_list") ?>" title="<?=$tpl->__("input.placeholders.filter_by_list") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_list") ?>" title="<?=$tpl->__("input.placeholders.filter_by_list") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
                                         <option value="" ><?=$tpl->__("input.placeholders.filter_by_list") ?></option>
                                         <?php
@@ -194,7 +194,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $tpl->e($row->headline); ?></a></strong>
+                                                    <strong><a href="{{ BASE_URL }}/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $tpl->e($row->headline); ?></a></strong>
                                                 </div>
                                             </div>
                                             <div class="row">

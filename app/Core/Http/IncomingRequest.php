@@ -146,11 +146,13 @@ class IncomingRequest extends \Illuminate\Http\Request
             parse_str($this->getContent(), $patch_vars);
         }
 
+        $params = $this->query->all();
+
+        //Merge query vars wigh post or patch vars
         return match ($method) {
-            'PATCH' => $patch_vars,
-            'POST' => $this->request->all(),
-            'DELETE', 'GET' => $this->query->all(),
-            default => $this->query->all(),
+            'PATCH' => array_merge($patch_vars, $params),
+            'POST' => array_merge($this->request->all(), $params),
+            default => $params
         };
     }
 

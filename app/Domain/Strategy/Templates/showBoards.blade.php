@@ -90,7 +90,7 @@ $canvasProgress = $tpl->get('canvasProgress');
                                 <div class="col-md-12 ticketBox fixed" style="padding:10px; margin-bottom:0px;">
                                     <small><?=$tpl->__("label." . $canvas['type'])?></small><br />
                                     <h3>
-                                        <a href="<?=BASE_URL?>/<?=$canvas['type'] ?>/showCanvas/<?=$canvas['id']?>">
+                                        <a href="{{ BASE_URL }}/<?=$canvas['type'] ?>/showCanvas/<?=$canvas['id']?>">
                                             <?php $tpl->e($canvas['title'])?>
                                         </a>
                                     </h3>

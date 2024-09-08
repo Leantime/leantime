@@ -46,7 +46,11 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 'success',
                 'GOALcanvasitem_deleted'
             );
-            return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas');
+
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
 
         public function get($params): Response

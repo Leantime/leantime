@@ -1,16 +1,4 @@
-@extends($layout)
-@section('content')
-
-@php
-
-/**
-* canvasComment.inc template - Generic template for comments
-*
-*/
-
-
-
-@endphp
+<x-global::content.modal.modal-buttons/>
 
 <script type="text/javascript">
     window.onload = function() {
@@ -60,4 +48,3 @@ jQuery(document).ready(function() {
 })
 </script>
 
-@endsection

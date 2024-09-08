@@ -1,14 +1,16 @@
+<x-global::content.modal.modal-buttons/>
+
 <h4 class="widgettitle title-light">
     <i class="fa-solid fa-mountain"></i>
-    {{ empty($bigRock['title']) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock['title'] }}
+    {{ empty($bigRock->title) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock->title }}
 </h4>
 
-<form class="formModal" method="post"
-    action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
+<x-global::content.modal.form
+    action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock->id) ? $bigRock->id : '' }}">
 
     <br />
     <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title'] }}" style="width:100%;" /><br />
+    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock->title }}" style="width:100%;" /><br />
 
     <br />
     <div class="row">
@@ -20,7 +22,7 @@
         </div>
     </div>
 
-</form>
+</x-global::content.modal.form>
 
 <script>
     jQuery(document).ready(function() {

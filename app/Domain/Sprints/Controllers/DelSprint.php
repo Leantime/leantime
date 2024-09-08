@@ -30,15 +30,16 @@ namespace Leantime\Domain\Sprints\Controllers {
          *
          * @access public
          */
-        public function run()
+        public function run($params)
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
-                if (isset($_GET['id'])) {
-                    $id = (int)($_GET['id']);
+
+                if (isset($params['id'])) {
+                    $id = (int)($params['id']);
                 }
 
                 if (isset($_POST['del'])) {
@@ -48,15 +49,14 @@ namespace Leantime\Domain\Sprints\Controllers {
 
                     session(["currentSprint" => ""]);
 
-                    if (session()->exists("lastPage")) {
-                        return Frontcontroller::redirect(session("lastPage"));
-                    } else {
-                        return Frontcontroller::redirect(BASE_URL . "/tickets/showKanban");
-                    }
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
                 }
 
                 $this->tpl->assign('id', $id);
-                return $this->tpl->displayPartial('projects::partials.delSprint');
+                return $this->tpl->displayPartial('sprints::partials.delSprint');
             } else {
                 return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }

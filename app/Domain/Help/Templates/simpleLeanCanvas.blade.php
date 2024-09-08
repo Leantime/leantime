@@ -10,8 +10,8 @@ $currentSprint = $tpl->get('sprint');
             <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
             echo"</div>";?>
 
-            <h3 class="primaryColor"><?php echo $tpl->__('headlines.welcome_to_simple_research_board') ?></h3><br />
-            <?php echo $tpl->__('text.simple_lean_canvas_helper_content') ?>
+            <h3 class="primaryColor">{{ __("headlines.welcome_to_simple_research_board") }}</h3><br />
+            {{ __("text.simple_lean_canvas_helper_content") }}
             <br /><br />
         </div>
     </div>
@@ -21,8 +21,8 @@ $currentSprint = $tpl->get('sprint');
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('simpleLeanCanvas')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()">{{ __("links.close") }}</a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('simpleLeanCanvas')">{{ __("links.close_dont_show_again") }}</a>
         </div>
     </div>
 

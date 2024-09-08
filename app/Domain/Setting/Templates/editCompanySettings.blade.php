@@ -24,8 +24,8 @@ $companySettings = $tpl->get('companySettings');
                 <div class="tabbedwidget tab-primary companyTabs">
 
                     <ul>
-                        <li><a href="#details"><span class="fa fa-building"></span> <?php echo $tpl->__('tabs.details'); ?></a></li>
-                        <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> <?php echo $tpl->__('tabs.apiKeys'); ?></a></li>
+                        <li><a href="#details"><span class="fa fa-building"></span> {{ __("tabs.details") }}</a></li>
+                        <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> {{ __("tabs.apiKeys") }}</a></li>
                     </ul>
 
 
@@ -34,7 +34,7 @@ $companySettings = $tpl->get('companySettings');
 
                         <div class="row">
                             <div class="col-md-8">
-                                <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings#details" >
+                                <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details" >
 
                                     <h5 class="subtitle"><?=$tpl->__("headlines.company_settings")?></h5>
                             <p><?=$tpl->__("text.these_are_system_wide_settings")?></p>
@@ -42,7 +42,7 @@ $companySettings = $tpl->get('companySettings');
                             <input type="hidden" value="1" name="saveSettings" />
 
                             <h4 class="widgettitle title-light"><span
-                                    class="fa fa-building"></span><?php echo $tpl->__('subtitles.companydetails'); ?>
+                                    class="fa fa-building"></span>{{ __("subtitles.companydetails") }}
                             </h4>
                             <div class="row">
                                 <div class="col-md-2">
@@ -89,76 +89,76 @@ $companySettings = $tpl->get('companySettings');
                             </div>
                                     <br />
                             <h4 class="widgettitle title-light"><span
-                                    class="fa fa-cog"></span><?php echo $tpl->__('subtitles.defaults'); ?>
+                                    class="fa fa-cog"></span>{{ __("subtitles.defaults") }}
                             </h4>
                             <div class="row">
                                 <div class="col-md-2">
-                                    <label for="messageFrequency"><?php echo $tpl->__('label.messages_frequency') ?></label>
+                                    <label for="messageFrequency">{{ __("label.messages_frequency") }}</label>
                                 </div>
                                 <div class="col-md-8">
                                                     <span class='field'>
                                                         <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
-                                                            <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
+                                                            <option value="">--{{ __("label.choose_option") }}--</option>
                                                             <option
                                                                 value="300"
                                                                 <?php if ($companySettings['messageFrequency'] == "300") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.5min') ?></option>
+                                                                } ?>>{{ __("label.5min") }}</option>
                                                             <option
                                                                 value="900"
                                                                 <?php if ($companySettings['messageFrequency'] == "900") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.15min') ?></option>
+                                                                } ?>>{{ __("label.15min") }}</option>
                                                             <option
                                                                 value="1800"
                                                                 <?php if ($companySettings['messageFrequency'] == "1800") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.30min') ?></option>
+                                                                } ?>>{{ __("label.30min") }}</option>
                                                             <option
                                                                 value="3600"
                                                                 <?php if ($companySettings['messageFrequency'] == "3600") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.1h') ?></option>
+                                                                } ?>>{{ __("label.1h") }}</option>
                                                             <option
                                                                 value="10800"
                                                                 <?php if ($companySettings['messageFrequency'] == "10800") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.3h') ?></option>
+                                                                } ?>>{{ __("label.3h") }}</option>
                                                             <option
                                                                 value="36000"
                                                                 <?php if ($companySettings['messageFrequency'] == "36000") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.6h') ?></option>
+                                                                } ?>>{{ __("label.6h") }}</option>
                                                             <option
                                                                 value="43200"
                                                                 <?php if ($companySettings['messageFrequency'] == "43200") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.12h') ?></option>
+                                                                } ?>>{{ __("label.12h") }}</option>
                                                             <option
                                                                 value="86400"
                                                                 <?php if ($companySettings['messageFrequency'] == "86400") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.24h') ?></option>
+                                                                } ?>>{{ __("label.24h") }}</option>
                                                             <option
                                                                 value="172800"
                                                                 <?php if ($companySettings['messageFrequency'] == "172800") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.48h') ?></option>
+                                                                } ?>>{{ __("label.48h") }}</option>
                                                             <option
                                                                 value="604800"
                                                                 <?php if ($companySettings['messageFrequency'] == "604800") {
                                                                     echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.1w') ?></option>
+                                                                } ?>>{{ __("label.1w") }}</option>
                                                         </select> <br/>
                                                     </span>
                                 </div>
                             </div>
-                            <input type="submit" value="<?=$tpl->__("buttons.save")?>" id="saveBtn"/>
+                            <input type="submit" value="{{ __("buttons.save") }}" id="saveBtn"/>
                         </form>
                             </div>
                             <div class="col-md-4">
 
-                                <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings" >
+                                <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
                                     <h5 class="subtitle"><?=$tpl->__("headlines.logo")?></h5>
                                     <br />
@@ -195,7 +195,7 @@ $companySettings = $tpl->get('companySettings');
                                                     </div>
                                                     <p class='stdformbutton'>
                                                         <span id="save-logo" class="btn btn-primary fileupload-exists ld-ext-right">
-                                                            <span onclick="leantime.settingController.saveCroppie()"><?=$tpl->__("buttons.save")?></span>
+                                                            <span onclick="leantime.settingController.saveCroppie()">{{ __("buttons.save") }}</span>
                                                             <span class="ld ld-ring ld-spin"> </span>
                                                         </span>
 
@@ -208,7 +208,7 @@ $companySettings = $tpl->get('companySettings');
                                 </form>
                                 <hr />
                                 <?=$tpl->__("text.logo_reset")?><br /><br />
-                                <a href="<?=BASE_URL ?>/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
+                                <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
                             </div>
                         </div>
                 </div>
@@ -229,7 +229,7 @@ $companySettings = $tpl->get('companySettings');
                                         <ul class="dropdown-menu">
 
                                             <li><a href="#/api/apiKey/<?=$apiKey["id"] ?>"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                            <li><a href="<?=BASE_URL?>/api/delAPIKey/<?=$apiKey["id"] ?>" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
+                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/<?=$apiKey["id"] ?>" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
                                         </ul>
                                     </div>
                                     <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />

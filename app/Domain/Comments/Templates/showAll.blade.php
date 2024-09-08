@@ -16,20 +16,20 @@ if (str_contains($formUrl, '?delComment=')) {
 ?>
 
 <h4 class="widgettitle title-light"><span
-            class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?>
+            class="fa fa-comments"></span>{{ __("subtitles.discussion") }}
 </h4>
 
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>"
       id="commentForm">
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
        style="display:none;" id="mainToggler"><span
-                class="fa fa-plus-square"></span> <?php echo $tpl->__('links.add_new_comment') ?>
+                class="fa fa-plus-square"></span> {{ __("links.add_new_comment") }}
     </a>
 
     <div id="comment0" class="commentBox">
         <textarea rows="5" cols="50" class="tinymceSimple"
                   name="text"></textarea><br/>
-        <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>"
+        <input type="submit" value="{{ __("buttons.save") }}"
                name="comment" class="btn btn-default btn-success"
                style="margin-left: 0px;"/>
         <input type="hidden" name="comment" value="1"/>
@@ -57,21 +57,21 @@ if (str_contains($formUrl, '?delComment=')) {
                     <div style="padding-left:60px">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                            <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
+                            <span class="fa fa-reply"></span> {{ __("links.reply") }}
                         </a>
 
                         <?php if ($row['userId'] == session("userdata.id")) { ?>
                             |
                             <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
                                class="deleteComment">
-                                <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
+                                <span class="fa fa-trash"></span> {{ __("links.delete") }}
                             </a>
                         <?php } ?>
                         <div style="display:none;"
                              id="comment<?php echo $row['id']; ?>"
                              class="commentBox">
                             <br/><input type="submit"
-                                        value="<?php echo $tpl->__('links.reply') ?>"
+                                        value="{{ __("links.reply") }}"
                                         name="comment" class="btn btn-default"/>
                         </div>
                     </div>
@@ -101,7 +101,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <?php if ($comment['userId'] == session("userdata.id")) { ?>
                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                            class="deleteComment">
-                                            <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
+                                            <span class="fa fa-trash"></span> {{ __("links.delete") }}
                                         </a>
                                     <?php } ?>
                                 </div>

@@ -1,8 +1,6 @@
-@extends($layout)
 
-@section('content')
 
-    <?php
+<?php
 
 use Leantime\Domain\Comments\Repositories\Comments;
 $canvasTypes = $tpl->get('canvasTypes');
@@ -47,17 +45,17 @@ $canvasItems = $tpl->get('canvasItems');
                             &nbsp;&nbsp;&nbsp;
                             <ul class="dropdown-menu">
                                 <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
-                                <li><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
+                                <li><a href="#/{{ $canvasName }}canvas/editCanvasItem/<?php echo $row["id"];?>"
 
                                        data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
-                                <li><a href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+                                <li><a href="#/{{ $canvasName }}canvas/delCanvasItem/<?php echo $row["id"]; ?>"
                                        class="delete"
                                        data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
                             </ul>
                         <?php } ?>
                     </div>
 
-                    <h4><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+                    <h4><a href="#/{{ $canvasName }}canvas/editCanvasItem/<?=$row["id"];?>"
 
                            data="item_<?=$row['id'] ?>"><?php $tpl->e($row["description"]);?></a></h4>
 
@@ -153,7 +151,7 @@ $canvasItems = $tpl->get('canvasItems');
                         </ul>
                     </div>
                     <div class="pull-right" style="margin-right:10px;">
-                        <a href="#/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                        <a href="#/{{ $canvasName }}canvas/editCanvasComment/<?=$row['id'] ?>"
                            class="commentCountLink" data="item_<?=$row['id'] ?>"> <span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
                     </div>
                 </div>
@@ -163,7 +161,7 @@ $canvasItems = $tpl->get('canvasItems');
                 <br/>
                 <div hx-trigger="load"
                      hx-indicator=".htmx-indicator"
-                     hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row['milestoneId'] ?>">
+                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$row['milestoneId'] ?>">
 
                     <div class="htmx-indicator">
                         <?=$tpl->__("label.loading_milestone") ?>
@@ -175,7 +173,7 @@ $canvasItems = $tpl->get('canvasItems');
     <?php } ?>
   <br />
   <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-      <a href="#/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+      <a href="#/{{ $canvasName }}canvas/editCanvasItem?type=<?php echo $elementName; ?>"
          class="" id="<?php echo $elementName; ?>"
          style="padding-bottom: 10px;"><?=$tpl->__('links.add_new_canvas_item') ?></a>
   <?php } ?>

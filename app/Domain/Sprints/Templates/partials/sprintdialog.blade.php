@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $currentSprint = $tpl->get('sprint');
 ?>
@@ -13,7 +15,7 @@ if (isset($currentSprint->id)) {
 }
 ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/sprints/editSprint/<?php echo $id;?>">
+<x-global::content.modal.form action="{{ BASE_URL}}/sprints/editSprint/{{ $id }}">
 
     <label><?=$tpl->__('label.sprint_name') ?></label>
     <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="<?=$tpl->__('label.sprint_name') ?>"/><br />
@@ -51,12 +53,12 @@ if (isset($currentSprint->id)) {
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (isset($currentSprint->id) && $currentSprint->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/sprints/delSprint/<?php echo $currentSprint->id; ?>" class="delete formModal sprintModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_sprint') ?></a>
+                <a href="{{ BASE_URL }}/sprints/delSprint/<?php echo $currentSprint->id; ?>" class="delete formModal sprintModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_sprint') ?></a>
             <?php } ?>
         </div>
     </div>
 
-</form>
+</x-global::content.modal.form>
 
 <script>
     leantime.ticketsController.initSprintDates();

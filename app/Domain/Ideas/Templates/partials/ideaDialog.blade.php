@@ -1,6 +1,4 @@
-@extends($layout)
-
-@section('content')
+<x-global::content.modal.modal-buttons/>
     @php
         if (isset($canvasItem->id) && $canvasItem->id != '') {
             $id = $canvasItem->id;
@@ -16,7 +14,7 @@
         }
     </script>
 
-    <form class="formModal" method="post" action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
+    <x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
         <div class="row">
             <div class="col-md-8">
@@ -65,9 +63,9 @@
                                     @if ($login::userIsAtLeast($roles::$editor))
                                         <div class="col-md-12">
                                             <a href="javascript:void(0);"
-                                                onclick="leantime.ideasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                                onclick="leantime.canvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
                                             | <a href="javascript:void(0);"
-                                                onclick="leantime.ideasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
+                                                onclick="leantime.canvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                         </div>
                                     @endif
                                 </div>
@@ -80,7 +78,7 @@
                                             onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                             class="btn btn-primary" />
                                         <a href="javascript:void(0);"
-                                            onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
+                                            onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                         </a>
                                     </div>
@@ -103,7 +101,7 @@
                                             onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                             class="btn btn-primary" />
                                         <a href="javascript:void(0);"
-                                            onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
+                                            onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                         </a>
                                     </div>
@@ -130,7 +128,7 @@
             </div>
         </div>
 
-    </form>
+    </x-global::content.modal.form>
 
     <div class="showDialogOnLoad">
         @if ($id != '')
@@ -155,4 +153,3 @@
         })
     </script>
 
-@endsection

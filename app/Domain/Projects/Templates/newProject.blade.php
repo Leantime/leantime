@@ -11,8 +11,8 @@ $project = $tpl->get('project');
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration') ?></h5>
-        <h1><?php echo $tpl->__('headline.new_project') ?></h1>
+        <h5>{{ __("label.administration") }}</h5>
+        <h1>{{ __("headline.new_project") }}</h1>
     </div>
 
 </div><!--pageheader-->
@@ -25,7 +25,7 @@ $project = $tpl->get('project');
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><?php echo $tpl->__('tabs.projectdetails'); ?></a></li>
+                <li><a href="#projectdetails">{{ __("tabs.projectdetails") }}</a></li>
             </ul>
 
             <div id="projectdetails">
@@ -48,8 +48,8 @@ $project = $tpl->get('project');
                                 <div class="col-md-12">
                                     <br />
                                     <p>
-                                        <?php echo $tpl->__('label.accomplish'); ?>
-                                        <?php echo $tpl->__('label.describe_outcome'); ?>
+                                        {{ __("label.accomplish") }}
+                                        {{ __("label.describe_outcome") }}
                                         <br /><br />
                                     </p>
                                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
@@ -59,7 +59,7 @@ $project = $tpl->get('project');
                             <div class="padding-top">
                                 <?php if (isset($project['id']) && $project['id'] != '') : ?>
                                     <div class="pull-right padding-top">
-                                        <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
+                                        <a href="{{ BASE_URL }}/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> {{ __("buttons.delete") }}</a>
                                     </div>
                                 <?php endif; ?>
 
@@ -89,15 +89,15 @@ $project = $tpl->get('project');
 
                             <div style="margin-bottom: 30px;">
                                 <h4 class="widgettitle title-light block"><span
-                                        class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
+                                        class="fa fa-calendar"></span>{{ __("label.project_dates") }}</h4>
                                 <div>
-                                    <label><?php echo $tpl->__('label.project_start'); ?></label>
+                                    <label>{{ __("label.project_start") }}</label>
                                     <div class="">
                                         <input type="text" class="dates dateFrom" style="width:100px;" name="start" autocomplete="off"
                                                value="<?php echo $project['start']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                                     </div>
-                                    <label ><?php echo $tpl->__('label.project_end'); ?></label>
+                                    <label >{{ __("label.project_end") }}</label>
                                     <div class="">
                                         <input type="text" class="dates dateTo" style="width:100px;" name="end" autocomplete="off"
                                                value="<?php echo $project['end']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
@@ -111,7 +111,7 @@ $project = $tpl->get('project');
 
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
-                                            class="fa fa-building"></span><?php echo $tpl->__('label.client_product'); ?></h4>
+                                            class="fa fa-building"></span>{{ __("label.client_product") }}</h4>
                                     <select name="clientId" id="clientId">
 
                                         <?php foreach ($tpl->get('clients') as $row) { ?>
@@ -123,7 +123,7 @@ $project = $tpl->get('project');
 
                                     </select>
                                     <?php if ($login::userIsAtLeast("manager")) { ?>
-                                        <br /><a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
+                                        <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
                                     <?php } ?>
 
 
@@ -133,14 +133,14 @@ $project = $tpl->get('project');
                             <div style="margin-bottom: 30px;">
                                 <div class="">
                                     <h4 class="widgettitle title-light"><span
-                                            class="fa fa-lock-open"></span><?php echo $tpl->__('labels.defaultaccess'); ?></h4>
-                                    <?php echo $tpl->__('text.who_can_access'); ?>
+                                            class="fa fa-lock-open"></span>{{ __("labels.defaultaccess") }}</h4>
+                                    {{ __("text.who_can_access") }}
                                     <br /><br />
 
                                     <select name="globalProjectUserAccess" style="max-width:300px;">
-                                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $tpl->__("labels.only_chose"); ?></option>
-                                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_client"); ?></option>
-                                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_org"); ?></option>
+                                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>>{{ __("labels.only_chose") }}</option>
+                                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_client") }}</option>
+                                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_org") }}</option>
                                     </select>
 
                                 </div>

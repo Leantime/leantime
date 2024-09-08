@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Plugins\Models;
 
+use Illuminate\Support\Str;
 use Leantime\Domain\Plugins\Contracts\PluginDisplayStrategy;
 
 /**
@@ -48,6 +49,11 @@ class InstalledPlugin implements PluginDisplayStrategy
         $links = [];
 
         if (! empty($this->authors)) {
+
+            if (Str::isJson($this->authors)) {
+                $this->authors = json_decode($this->authors);
+            }
+
             $author = is_array($this->authors) ? $this->authors[0] : $this->authors;
             $links[] = [
                 'prefix' => __('text.by'),

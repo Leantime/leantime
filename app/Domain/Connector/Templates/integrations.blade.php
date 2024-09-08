@@ -10,7 +10,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.integrations"); ?></h1>
+                <h1>{{ __("headlines.integrations") }}</h1>
             </div>
         </div>
     </div>

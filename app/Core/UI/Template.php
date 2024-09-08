@@ -229,6 +229,32 @@ class Template
     }
 
     /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function htmxRefresh(): void
+    {
+        $this->headers["HX-Refresh"] = "true";
+    }
+
+    /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function closeModal(): void
+    {
+        $this->setHTMXEvent("HTMX.closemodal");
+    }
+
+    public function getHeaders() {
+        return $this->headers;
+    }
+
+    /**
      * display - display template from folder template including main layout wrapper
      *
      * @access public
@@ -265,6 +291,10 @@ class Template
         $content = $view->render();
 
         return new Response($content, $responseCode, array_merge($headers, $this->headers));
+    }
+
+    public function emptyResponse($responseCode = 200) {
+        return new Response("", $responseCode, $this->headers);
     }
 
     /**
@@ -566,6 +596,8 @@ class Template
         session(["notification" => $msg]);
         session(["notificationType" => $type]);
         session(["event_id" => $event_id]);
+
+        $this->setHTMXEvent("HTMX.ShowNotification");
     }
 
     /**

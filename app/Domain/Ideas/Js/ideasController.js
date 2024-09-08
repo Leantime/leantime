@@ -77,7 +77,6 @@ export const initMasonryWall = function () {
 
 export const initBoardControlModal = function () {
 
-
 };
 
 export const initWallImageModals = function () {
@@ -85,102 +84,6 @@ export const initWallImageModals = function () {
     jQuery('.mainIdeaContent img').each(function () {
         jQuery(this).wrap("<a href='" + jQuery(this).attr("src") + "' class='imageModal'></a>");
     });
-
-
-};
-
-export const toggleMilestoneSelectors = function (trigger) {
-    if (trigger == 'existing') {
-        jQuery('#newMilestone, #milestoneSelectors').hide('fast');
-        jQuery('#existingMilestone').show();
-        _initModals();
-    }
-    if (trigger == 'new') {
-        jQuery('#newMilestone').show();
-        jQuery('#existingMilestone, #milestoneSelectors').hide('fast');
-        _initModals();
-    }
-
-    if (trigger == 'hide') {
-        jQuery('#newMilestone, #existingMilestone').hide('fast');
-        jQuery('#milestoneSelectors').show('fast');
-    }
-};
-
-export const initUserDropdown = function () {
-
-    jQuery("body").on(
-        "click",
-        ".userDropdown .dropdown-menu a",
-        function () {
-
-            var dataValue = jQuery(this).attr("data-value").split("_");
-            var dataLabel = jQuery(this).attr('data-label');
-
-            if (dataValue.length == 3) {
-                var canvasId = dataValue[0];
-                var userId = dataValue[1];
-                var profileImageId = dataValue[2];
-
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: appUrl + '/api/ideas',
-                        data:
-                            {
-                                id : canvasId,
-                                author:userId
-                        }
-                    }
-                ).done(
-                    function () {
-                        jQuery("#userDropdownMenuLink" + canvasId + " span.text span#userImage" + canvasId + " img").attr("src", appUrl + "/api/users?profileImage=" + userId);
-
-                        jQuery.growl({message: i18n.__("short_notifications.user_updated")});
-                    }
-                );
-            }
-        }
-    );
-};
-
-export const initStatusDropdown = function () {
-
-    jQuery("body").on(
-        "click",
-        ".statusDropdown .dropdown-menu a",
-        function () {
-
-            var dataValue = jQuery(this).attr("data-value").split("_");
-            var dataLabel = jQuery(this).attr('data-label');
-
-            if (dataValue.length == 3) {
-                var canvasItemId = dataValue[0];
-                var status = dataValue[1];
-                var statusClass = dataValue[2];
-
-
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: appUrl + '/api/ideas',
-                        data:
-                            {
-                                id : canvasItemId,
-                                box:status
-                        }
-                    }
-                ).done(
-                    function () {
-                        jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
-                        jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("" + statusClass + " dropdown-toggle f-left status ");
-                        jQuery.growl({message: i18n.__("short_notifications.status_updated")});
-
-                    }
-                );
-            }
-        }
-    );
 
 };
 
@@ -276,12 +179,9 @@ export const initIdeaKanban = function (statusList) {
 
 // Make public what you want to have public, everything else is private
 export default {
-    toggleMilestoneSelectors:  toggleMilestoneSelectors,
     initMasonryWall: initMasonryWall,
     initBoardControlModal: initBoardControlModal,
     initWallImageModals: initWallImageModals,
-    initUserDropdown: initUserDropdown,
-    initStatusDropdown: initStatusDropdown,
     setKanbanHeights: setKanbanHeights,
     initIdeaKanban: initIdeaKanban
 };

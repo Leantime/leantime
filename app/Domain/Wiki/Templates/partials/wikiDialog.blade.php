@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 
 $currentWiki = $tpl->get('wiki');
@@ -15,7 +17,7 @@ if (isset($currentWiki->id)) {
 }
 ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/wikiModal/<?php echo $id;?>">
+<x-global::content.modal.form action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
 
     <label><?=$tpl->__('label.wiki_title') ?></label>
     <input type="text" name="title" id="wikiTitle" value="<?php echo $tpl->escape($currentWiki->title) ?>" placeholder="<?=$tpl->__('input.placeholders.wiki_title') ?>"/><br />
@@ -28,12 +30,12 @@ if (isset($currentWiki->id)) {
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/wiki/delWiki/<?php echo $currentWiki->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a>
+                <a href="{{ BASE_URL }}/wiki/delWiki/<?php echo $currentWiki->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a>
             <?php } ?>
         </div>
     </div>
 
-</form>
+</x-global::content.modal.form>
 
 <script>
     jQuery(document).ready(function(){

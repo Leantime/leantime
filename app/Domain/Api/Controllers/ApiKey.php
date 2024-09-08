@@ -95,6 +95,7 @@ class ApiKey extends Controller
                     );
 
                     $edit = true;
+
                 } else {
                     $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                 }
@@ -115,6 +116,11 @@ class ApiKey extends Controller
                     $this->projectsRepo->deleteAllProjectRelations($id);
                 }
                 $this->tpl->setNotification($this->language->__("notifications.key_updated"), 'success', 'apikey_updated');
+
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
 
             // Get relations to projects

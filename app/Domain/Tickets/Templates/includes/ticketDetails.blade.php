@@ -42,8 +42,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
 
-                <input type="submit" name="saveTicket" value="<?php echo $tpl->__('buttons.save'); ?>"/>
-                <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
+                <input type="submit" name="saveTicket" value="{{ __("buttons.save") }}"/>
+                <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __("buttons.save_and_close") }}"/>
             </div>
         </div>
 
@@ -51,15 +51,15 @@ $ticketTypes = $tpl->get('ticketTypes');
             <br />
             <hr />
             <?php $tpl->dispatchTplEvent("beforeSubtasks", ["ticketId" => $ticket->id]); ?>
-            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> <?php echo $tpl->__('subtitles.subtasks'); ?></h4>
+            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> {{ __("subtitles.subtasks") }}</h4>
 
 
 
         <h4 class="widgettitle title-light"><span
-                    class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
+                    class="fa-solid fa-comments"></span>{{ __("subtitles.discussion") }}</h4>
 
         <div class="row-fluid">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
+        <form method="post" action="{{ BASE_URL }}/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
             <input type="hidden" name="comment" value="1" />
             @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/tickets/showTicket/" . $ticket->id])
         </form>
@@ -89,11 +89,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label"><?php echo $tpl->__('label.related_to'); ?></label>
+                    <label class="control-label">{{ __("label.related_to") }}</label>
                     <div class="">
                         <div class="form-group">
                             <select  name="dependingTicketId"  class="span11" >
-                                <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
+                                <option value="">{{ __("label.not_related") }}</option>
                                 <?php
                                 if (is_array($tpl->get('ticketParents'))) {
                                     foreach ($tpl->get('ticketParents') as $ticketRow) {
@@ -115,7 +115,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label"><?php echo $tpl->__('label.todo_status'); ?></label>
+                    <label class="control-label">{{ __("label.todo_status") }}</label>
                     <div class="">
                         <select
                             id="status-select"
@@ -135,7 +135,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label"><?php echo $tpl->__('label.todo_type'); ?></label>
+                    <label class="control-label">{{ __("label.todo_type") }}</label>
                     <div class="">
                         <select id='type' name='type' class="span11">
                             <?php foreach ($ticketTypes as $types) {
@@ -150,10 +150,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"><?php echo $tpl->__('label.priority'); ?></label>
+                    <label class="control-label">{{ __("label.priority") }}</label>
                     <div class="">
                         <select id='priority' name='priority' class="span11">
-                            <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
+                            <option value="">{{ __("label.priority_not_defined") }}</option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
                                 echo "<option value='" . $priorityKey . "' ";
                                 if ($priorityKey == $ticket->priority) {
@@ -165,10 +165,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"><?php echo $tpl->__('label.effort'); ?></label>
+                    <label class="control-label">{{ __("label.effort") }}</label>
                     <div class="">
                         <select id='storypoints' name='storypoints' class="span11">
-                            <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
+                            <option value="">{{ __("label.effort_not_defined") }}</option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
                                 echo "<option value='" . $effortKey . "' ";
                                 if ($effortKey == $ticket->storypoints) {
@@ -190,17 +190,17 @@ $ticketTypes = $tpl->get('ticketTypes');
                        onclick="leantime.snippets.accordionToggle('tickets-organization');">
                             <i class="fa fa-angle-down"></i>
                             <span class="fa fa-folder-open"></span>
-                            <?php echo $tpl->__('subtitles.organization'); ?>
+                            {{ __("subtitles.organization") }}
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.milestone'); ?></label>
+                        <label class="control-label">{{ __("label.milestone") }}</label>
                         <div class="">
                             <div class="form-group">
                                 <select  name="milestoneid"  class="span11" >
-                                    <option value=""><?php echo $tpl->__('label.not_assigned_to_milestone'); ?></option>
+                                    <option value="">{{ __("label.not_assigned_to_milestone") }}</option>
                                     <?php foreach ($tpl->get('milestones') as $milestoneRow) {     ?>
                                         <?php echo"<option value='" . $milestoneRow->id . "'";
 
@@ -217,12 +217,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.sprint'); ?></label>
+                        <label class="control-label">{{ __("label.sprint") }}</label>
                         <div class="">
 
                             <select id="sprint-select" class="span11" name="sprint"
                                     data-placeholder="<?php echo $ticket->sprint ?>">
-                                <option value=""><?php echo $tpl->__('label.backlog'); ?></option>
+                                <option value="">{{ __("label.backlog") }}</option>
                                 <?php
                                 if ($tpl->get('sprints')) {
                                     foreach ($tpl->get('sprints') as $sprintRow) { ?>
@@ -249,13 +249,13 @@ $ticketTypes = $tpl->get('ticketTypes');
                        onclick="leantime.snippets.accordionToggle('tickets-people');">
                         <i class="fa fa-angle-down"></i>
                         <span class="fa fa-group"></span>
-                        <?php echo $tpl->__('subtitle.people'); ?>
+                        {{ __("subtitle.people") }}
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-tickets-people" style="padding-left:0">
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.author'); ?></label>
+                        <label class="control-label">{{ __("label.author") }}</label>
                         <div class="">
                             <input type="text" disabled="disabled" style="width:175px;"
                                    value="<?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?>"/>
@@ -263,12 +263,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.editor'); ?></label>
+                        <label class="control-label">{{ __("label.editor") }}</label>
                         <div class="">
 
-                            <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
+                            <select data-placeholder="{{ __("label.filter_by_user") }}" style="width:175px;"
                                     name="editorId" id="editorId" class="user-select span11">
-                                <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
+                                <option value="">{{ __("label.not_assigned_to_user") }}</option>
                                 <?php foreach ($tpl->get('users') as $userRow) { ?>
                                     <?php echo "<option value='" . $userRow["id"] . "'";
 
@@ -281,7 +281,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                 <?php } ?>
                             </select><br />
                             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session("userdata.id"); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a></small>
+                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session("userdata.id"); ?>).trigger('chosen:updated');">{{ __("label.assign_to_me") }}</a></small>
                             <?php } ?>
                         </div>
                     </div>
@@ -300,13 +300,13 @@ $ticketTypes = $tpl->get('ticketTypes');
                        onclick="leantime.snippets.accordionToggle('tickets-dates');">
                         <i class="fa fa-angle-down"></i>
                         <span class="fa fa-calendar"></span>
-                        <?php echo $tpl->__('subtitles.dates'); ?>
+                        {{ __("subtitles.dates") }}
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_tickets-dates" style="padding-left:0">
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.ticket_date'); ?></label>
+                        <label class="control-label">{{ __("label.ticket_date") }}</label>
                         <div class="">
 
                             <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
@@ -315,7 +315,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.due_date'); ?></label>
+                        <label class=" control-label">{{ __("label.due_date") }}</label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" id="deadline" autocomplete="off"
                                    value="<?=format($ticket->dateToFinish)->date(); ?>"
@@ -328,7 +328,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
+                        <label class=" control-label">{{ __("label.working_date_from") }}</label>
                         <div class="">
                             <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
                                    value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
@@ -339,7 +339,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
+                        <label class=" control-label">{{ __("label.working_date_to") }}</label>
                         <div class="">
                             <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
                                    value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
@@ -363,30 +363,30 @@ $ticketTypes = $tpl->get('ticketTypes');
                        onclick="leantime.snippets.accordionToggle('tickets-timetracking');">
                         <i class="fa fa-angle-down"></i>
                         <span class="fa-regular fa-clock"></span>
-                        <?php echo $tpl->__('subtitle.time_tracking'); ?>
+                        {{ __("subtitle.time_tracking") }}
                     </a>
                 </h5>
                 <div class="simpleAccordionContainer" id="accordion_content-tickets-timetracking" style="padding-left:0">
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.planned_hours'); ?></label>
+                        <label class=" control-label">{{ __("label.planned_hours") }}</label>
                         <div class="">
                             <input type="text" value="<?php $tpl->e($ticket->planHours); ?>" name="planHours" style="width:90px;"/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.estimated_hours_remaining'); ?></label>
+                        <label class=" control-label">{{ __("label.estimated_hours_remaining") }}</label>
                         <div class="">
                             <input type="text" value="<?php $tpl->e($ticket->hourRemaining); ?>" name="hourRemaining" style="width:90px;"/>
-                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
+                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="{{ __("tooltip.how_many_hours_remaining") }}">
                                 &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
                             </a>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.booked_hours'); ?></label>
+                        <label class=" control-label">{{ __("label.booked_hours") }}</label>
                         <div class="">
                             <input type="text" disabled="disabled"
                                    value="<?php echo $tpl->get('timesheetsAllHours'); ?>" style="width:90px;"/>
@@ -394,7 +394,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class=" control-label"><?php echo $tpl->__('label.actual_hours_remaining'); ?></label>
+                        <label class=" control-label">{{ __("label.actual_hours_remaining") }}</label>
                         <div class="">
                             <input type="text" disabled="disabled" value="<?php echo $remainingHours; ?>" style="width:90px;"/>
                         </div>

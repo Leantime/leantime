@@ -13,8 +13,8 @@ $currentSprint = $tpl->get('sprint');
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_new_ideas_jdea.svg");
                 echo"</div>";?>
-            <h3 class="primaryColor"><?php echo $tpl->__('headlines.welcome_to_organized_idea_board') ?></h3><br />
-            <p><?php echo $tpl->__('text.advanced_boards_helper_content') ?>
+            <h3 class="primaryColor">{{ __("headlines.welcome_to_organized_idea_board") }}</h3><br />
+            <p>{{ __("text.advanced_boards_helper_content") }}
             <br /><br />
         </div>
     </div>
@@ -24,8 +24,8 @@ $currentSprint = $tpl->get('sprint');
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('advancedIdeaBoards')"><?php echo $tpl->__('this.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()">{{ __("links.close") }}</a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('advancedIdeaBoards')">{{ __("this.close_dont_show_again") }}</a>
         </div>
     </div>
 

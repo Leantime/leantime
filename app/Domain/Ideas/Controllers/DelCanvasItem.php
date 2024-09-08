@@ -60,7 +60,10 @@ namespace Leantime\Domain\Ideas\Controllers {
                 );
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 

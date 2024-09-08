@@ -59,7 +59,7 @@ namespace Leantime\Domain\Sprints\Controllers {
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
             $this->tpl->assign('sprint', $sprint);
-            return $this->tpl->displayPartial('projects::partials.sprintdialog');
+            return $this->tpl->displayPartial('sprints::partials.sprintdialog');
         }
 
         /**
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $this->tpl->setNotification("First day and last day are required", "error");
 
                 $this->tpl->assign('sprint', (object) $params);
-                return $this->tpl->displayPartial('projects::partials.sprintdialog');
+                return $this->tpl->displayPartial('sprints::partials.sprintdialog');
             }
 
             if (isset($_GET['id']) && $_GET['id'] > 0) {
@@ -90,6 +90,12 @@ namespace Leantime\Domain\Sprints\Controllers {
             } else {
                 if ($this->sprintService->addSprint($params)) {
                     $this->tpl->setNotification("Sprint created successfully.", "success");
+
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
+
                 } else {
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
                 }
@@ -100,7 +106,7 @@ namespace Leantime\Domain\Sprints\Controllers {
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('sprint', (object) $params);
-            return $this->tpl->displayPartial('projects::partials.sprintdialog');
+            return $this->tpl->displayPartial('sprints::partials.sprintdialog');
         }
 
         /**

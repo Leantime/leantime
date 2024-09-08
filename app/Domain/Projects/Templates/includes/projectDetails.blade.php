@@ -28,7 +28,7 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?php echo $tpl->__('label.accomplish'); ?>
+                        {{ __("label.accomplish") }}
                         <br /><br />
                     </p>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
@@ -37,7 +37,7 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row padding-top">
                 <div class="col-md-12">
 
-                    <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
+                    <input type="submit" name="save" id="save" class="button" value="{{ __("buttons.save") }}" class="button" />
                 </div>
 
             </div>
@@ -72,9 +72,9 @@ $menuTypes = $tpl->get('menuTypes');
                 <div class="col-md-12 center">
 
                     <h4 class="widgettitle title-light"><span
-                            class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
+                            class="fa fa-picture-o"></span>{{ __("label.project_avatar") }}</h4>
 
-                    <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>&v=<?=format($project['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                    <img src='{{ BASE_URL }}/api/projects?projectAvatar=<?=$project['id']; ?>&v=<?=format($project['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                     <div id="projectAvatar">
                     </div>
 
@@ -88,21 +88,21 @@ $menuTypes = $tpl->get('menuTypes');
                                     <span class="fileupload-preview"></span>
                                 </div>
                                 <span class="btn btn-file">
-                                        <span class="fileupload-new"><?php echo $tpl->__('buttons.select_file') ?></span>
-                                        <span class='fileupload-exists'><?php echo $tpl->__('buttons.change') ?></span>
+                                        <span class="fileupload-new">{{ __("buttons.select_file") }}</span>
+                                        <span class='fileupload-exists'>{{ __("buttons.change") }}</span>
                                         <input type='file' name='file' onchange="leantime.projectsController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
                                     </span>
 
-                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.projectsController.clearCroppie()"><?php echo $tpl->__('buttons.remove') ?></a>
+                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.projectsController.clearCroppie()">{{ __("buttons.remove") }}</a>
                             </div>
 
                             <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                <span onclick="leantime.projectsController.saveCroppie()"><?php echo $tpl->__('buttons.save') ?></span>
+                                <span onclick="leantime.projectsController.saveCroppie()">{{ __("buttons.save") }}</span>
                                 <span class="ld ld-ring ld-spin"></span>
                             </span>
                         <input type="hidden" name="profileImage" value="1" />
                         <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                               value="<?php echo $tpl->__('buttons.upload'); ?>"/>
+                               value="{{ __("buttons.upload") }}"/>
 
                         </div>
                     </div>
@@ -115,16 +115,16 @@ $menuTypes = $tpl->get('menuTypes');
                 <div class="row marginBottom" style="margin-bottom: 30px;">
                     <div class="col-md-12">
                         <h4 class="widgettitle title-light"><span
-                                class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
+                                class="fa fa-calendar"></span>{{ __("label.project_dates") }}</h4>
 
 
-                        <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
+                        <label class="control-label">{{ __("label.project_start") }}</label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
                                    value="<?php echo format($project['start'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                         </div>
-                        <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
+                        <label class="control-label">{{ __("label.project_end") }}</label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
                                    value="<?php echo format($project['end'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
@@ -139,7 +139,7 @@ $menuTypes = $tpl->get('menuTypes');
 
                     <div class="col-md-12 " style="margin-bottom: 30px;">
                     <h4 class="widgettitle title-light"><span
-                            class="fa fa-building"></span><?php echo $tpl->__('label.client_product'); ?></h4>
+                            class="fa fa-building"></span>{{ __("label.client_product") }}</h4>
                     <select name="clientId" id="clientId">
 
                         <?php foreach ($tpl->get('clients') as $row) { ?>
@@ -151,7 +151,7 @@ $menuTypes = $tpl->get('menuTypes');
 
                     </select>
                     <?php if ($login::userIsAtLeast("manager")) { ?>
-                        <br /><a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
+                        <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
                     <?php } ?>
 
 
@@ -163,23 +163,23 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row marginBottom" style="margin-bottom: 30px;">
                 <div class="col-md-12">
                     <h4 class="widgettitle title-light"><span
-                            class="fa fa-wrench"></span><?php echo $tpl->__('label.settings'); ?></h4>
+                            class="fa fa-wrench"></span>{{ __("label.settings") }}</h4>
 
             <input type="hidden" name="menuType" id="menuType"
                            value="<?php echo Menu::DEFAULT_MENU; ?>">
 
                     <div class="form-group">
 
-                <label class="col-md-4 control-label" for="projectState"><?php echo $tpl->__('label.project_state'); ?></label>
+                <label class="col-md-4 control-label" for="projectState">{{ __("label.project_state") }}</label>
                 <div class="col-md-6">
                     <select name="projectState" id="projectState">
                         <option value="0" <?php if ($project['state'] == 0) {
                             ?> selected=selected
-                                          <?php } ?>><?php echo $tpl->__('label.open'); ?></option>
+                                          <?php } ?>>{{ __("label.open") }}</option>
 
                         <option value="-1" <?php if ($project['state'] == -1) {
                             ?> selected=selected
-                                           <?php } ?>><?php echo $tpl->__('label.closed'); ?></option>
+                                           <?php } ?>>{{ __("label.closed") }}</option>
 
                     </select>
                 </div>
@@ -191,14 +191,14 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row marginBottom" style="margin-bottom: 30px;">
                 <div class="col-md-12 ">
                     <h4 class="widgettitle title-light"><span
-                                class="fa fa-lock-open"></span><?php echo $tpl->__('labels.defaultaccess'); ?></h4>
-                    <?php echo $tpl->__('text.who_can_access'); ?>
+                                class="fa fa-lock-open"></span>{{ __("labels.defaultaccess") }}</h4>
+                    {{ __("text.who_can_access") }}
                     <br /><br />
 
                     <select name="globalProjectUserAccess" style="max-width:300px;">
-                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $tpl->__("labels.only_chose"); ?></option>
-                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_client"); ?></option>
-                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_org"); ?></option>
+                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>>{{ __("labels.only_chose") }}</option>
+                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_client") }}</option>
+                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_org") }}</option>
                     </select>
 
                 </div>
@@ -207,9 +207,9 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row" style="margin-bottom: 30px;">
                 <div class="col-md-12 ">
                     <h4 class="widgettitle title-light"><span
-                                class="fa fa-money-bill-alt"></span><?php echo $tpl->__('label.budgets'); ?></h4>
+                                class="fa fa-money-bill-alt"></span>{{ __("label.budgets") }}</h4>
                     <div class="form-group">
-                        <label class="col-md-4 control-label"for="hourBudget"><?php echo $tpl->__('label.hourly_budget'); ?></label>
+                        <label class="col-md-4 control-label"for="hourBudget">{{ __("label.hourly_budget") }}</label>
                         <div class="col-md-6">
                             <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="<?php $tpl->e($project['hourBudget']) ?>" />
 
@@ -217,7 +217,7 @@ $menuTypes = $tpl->get('menuTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="dollarBudget"><?php echo $tpl->__('label.budget_cost'); ?></label>
+                        <label class="col-md-4 control-label" for="dollarBudget">{{ __("label.budget_cost") }}</label>
                         <div class="col-md-6">
                             <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="<?php $tpl->e($project['dollarBudget']) ?>" />
 

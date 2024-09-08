@@ -1,4 +1,4 @@
-
+<x-global::content.modal.modal-buttons/>
 
 <?php
 $roles = $tpl->get('roles');
@@ -64,25 +64,25 @@ $projects = $tpl->get('relations');
 
 </script>
 
-<h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> <?php echo $tpl->__('headlines.new_user'); ?></h4>
+<h4 class="widgettitle title-light"><i class="fa fa-people-group"></i> {{ __("headlines.new_user") }}</h4>
 
 @displayNotification()
 
-<form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
+<x-global::content.modal.form action="{{ BASE_URL }}/users/newUser">
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 
-                <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
+                <h4 class="widgettitle title-light">{{ __("label.profile_information") }}</h4>
 
-                    <label for="firstname"><?php echo $tpl->__('label.firstname'); ?></label> <input
+                    <label for="firstname">{{ __("label.firstname") }}</label> <input
                         type="text" name="firstname" id="firstname"
                         value="<?php echo $values['firstname'] ?>" /><br />
 
-                    <label for="lastname"><?php echo $tpl->__('label.lastname'); ?></label> <input
+                    <label for="lastname">{{ __("label.lastname") }}</label> <input
                         type="text" name="lastname" id="lastname"
                         value="<?php echo $values['lastname'] ?>" /><br />
 
-            <label for="role"><?php echo $tpl->__('label.role'); ?></label>
+            <label for="role">{{ __("label.role") }}</label>
             <select name="role" id="role">
 
                 <?php foreach ($tpl->get('roles') as $key => $role) { ?>
@@ -99,10 +99,10 @@ $projects = $tpl->get('relations');
 
             </select> <br />
 
-            <label for="client"><?php echo $tpl->__('label.client') ?></label>
+            <label for="client">{{ __("label.client") }}</label>
             <select name='client' id="client">
                 <?php if ($login::userIsAtLeast("admin")) {?>
-                    <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
+                    <option value="0" selected="selected">{{ __("label.no_clients") }}</option>
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
                     <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== session("userdata.clientId")) {
@@ -118,37 +118,37 @@ $projects = $tpl->get('relations');
             <br/>
 
 
-                <h4 class="widgettitle title-light"><?php echo $tpl->__('label.contact_information'); ?></h4>
+                <h4 class="widgettitle title-light">{{ __("label.contact_information") }}</h4>
 
 
-                    <label for="user"><?php echo $tpl->__('label.email'); ?></label> <input
+                    <label for="user">{{ __("label.email") }}</label> <input
                         type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
 
-                    <label for="phone"><?php echo $tpl->__('label.phone'); ?></label> <input
+                    <label for="phone">{{ __("label.phone") }}</label> <input
                         type="text" name="phone" id="phone"
                         value="<?php echo $values['phone'] ?>" /><br />
             <br/>
 
-            <h4 class="widgettitle title-light"><?php echo $tpl->__('label.employee_information'); ?></h4>
-                <label for="jobTitle"><?php echo $tpl->__('label.jobTitle'); ?></label> <input
+            <h4 class="widgettitle title-light">{{ __("label.employee_information") }}</h4>
+                <label for="jobTitle">{{ __("label.jobTitle") }}</label> <input
                     type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
 
-                <label for="jobLevel"><?php echo $tpl->__('label.jobLevel'); ?></label> <input
+                <label for="jobLevel">{{ __("label.jobLevel") }}</label> <input
                     type="text" name="jobLevel" id="jobLevel" value="<?php echo $values['jobLevel'] ?>" /><br />
 
-                <label for="department"><?php echo $tpl->__('label.department'); ?></label> <input
+                <label for="department">{{ __("label.department") }}</label> <input
                     type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
 
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
-                        <input type="submit" name="save" id="save" value="<?php echo $tpl->__('buttons.invite_user'); ?>" class="button" />
+                        <input type="submit" name="save" id="save" value="{{ __("buttons.invite_user") }}" class="button" />
                     </p>
 
         </div>
         <div class="col-md-5">
 
-                <h4 class="widgettitle title-light"><?php echo $tpl->__('label.project_assignment'); ?></h4>
+                <h4 class="widgettitle title-light">{{ __("label.project_assignment") }}</h4>
 
                 <div class="scrollableItemList">
                     <?php
@@ -179,7 +179,7 @@ $projects = $tpl->get('relations');
                                 } ?>
                                 />
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
+                                    <img src='{{ BASE_URL }}/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
                                 </span>
 
                                 <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">
@@ -195,7 +195,7 @@ $projects = $tpl->get('relations');
 
         </div>
     </div>
-</form>
+</x-global::content.modal.form>
 
 <script>
     function accordionToggle(id) {

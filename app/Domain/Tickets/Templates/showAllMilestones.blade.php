@@ -140,7 +140,7 @@ $size = floor(100 / $numberofColumns);
                             <td>
                                 <?php if($row["type"] == "milestone"){ ?>
                                     <div hx-trigger="load"
-                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$row["id"] ?>&view=Progress">
+                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId=<?=$row["id"] ?>&view=Progress">
                                         <div class="htmx-indicator">
                                             <?=$tpl->__("label.calculating_progress") ?>
                                         </div>
@@ -232,11 +232,11 @@ $size = floor(100 / $numberofColumns);
                             </td>
 
                             <td data-order="<?php echo $row["editFrom"] ?>" >
-                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_start_date"); ?>" value="<?php echo format($row["editFrom"])->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editFrom" class=""/>
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_start_date") }}" value="<?php echo format($row["editFrom"])->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editFrom" class=""/>
                             </td>
 
                             <td data-order="<?php echo $row["editTo"] ?>" >
-                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_end_date"); ?>" value="<?php echo format($row["editTo"])->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editTo" class="" />
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_end_date") }}" value="<?php echo format($row["editTo"])->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editTo" class="" />
 
                             </td>
 
@@ -259,12 +259,12 @@ $size = floor(100 / $numberofColumns);
                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_milestone"); ?></a></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_milestone"); ?></a></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                            <li class="nav-header">{{ __("subtitles.todo") }}</li>
+                                            <li><a href="{{ BASE_URL }}/tickets/editMilestone/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> {{ __("links.edit_milestone") }}</a></li>
+                                            <li><a href="{{ BASE_URL }}/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __("links.move_milestone") }}</a></li>
+                                            <li><a href="{{ BASE_URL }}/tickets/delMilestone/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a></li>
                                             <li class="nav-header border"></li>
-                                            <li><a href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row["id"]?>"><?=$tpl->__("links.view_todos")?></a></li>
+                                            <li><a href="{{ BASE_URL }}/tickets/showAll?search=true&milestone=<?=$row["id"]?>"><?=$tpl->__("links.view_todos")?></a></li>
                                         </ul>
                                     </div>
                                 <?php } ?>

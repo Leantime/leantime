@@ -481,7 +481,7 @@
 
                                     <div hx-trigger="load"
                                          hx-indicator=".htmx-indicator"
-                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
                                         <div class="htmx-indicator">
                                                 <?=$tpl->__("label.loading_milestone") ?>
                                         </div>

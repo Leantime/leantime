@@ -1,8 +1,4 @@
-@extends($layout)
-
-@section('content')
-
-    <?php
+<?php
 $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 $formHash = md5($formUrl);
@@ -25,7 +21,7 @@ if (str_contains($formUrl, '?delComment=')) {
             </div>
             <div class="commentReply inactive">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, null, '<?=$formHash?>')">
-                    <?php echo $tpl->__('links.add_new_comment') ?>
+                    {{ __("links.add_new_comment") }}
                 </a>
             </div>
         </div>
@@ -36,7 +32,7 @@ if (str_contains($formUrl, '?delComment=')) {
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
-                <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+                <input type="submit" value="{{ __("buttons.save") }}" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
             <input type="hidden" name="father" class="commenterField" id="father-<?=$formHash ?>" value="0"/>
@@ -69,13 +65,13 @@ if (str_contains($formUrl, '?delComment=')) {
                                             <ul class="dropdown-menu">
                                                 <?php if (($row['userId'] == session("userdata.id")) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment formModal">
-                                                        <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
+                                                        <span class="fa fa-trash"></span> {{ __("links.delete") }}
                                                     </a></li>
                                                 <?php } ?>
                                                 <?php if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash?>', true)">
-                                                            <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
+                                                            <span class="fa fa-edit"></span> {{ __("label.edit") }}
                                                         </a>
                                                     </li>
                                                 <?php } ?>
@@ -96,7 +92,7 @@ if (str_contains($formUrl, '?delComment=')) {
                             <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash ?>')">
-                                    <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
+                                    <span class="fa fa-reply"></span> {{ __("links.reply") }}
                                 </a>
                             <?php } ?>
                         </div>
@@ -125,15 +121,15 @@ if (str_contains($formUrl, '?delComment=')) {
                                                 <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash ?>')">
-                                                        <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
+                                                        <span class="fa fa-reply"></span> {{ __("links.reply") }}
                                                     </a>
                                                     <?php if ($comment['userId'] == session("userdata.id")) { ?>
                                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                                            class="deleteComment formModal">
-                                                            <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
+                                                            <span class="fa fa-trash"></span> {{ __("links.delete") }}
                                                         </a>
                                                         <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, <?=$comment['id']?>, '<?=$formHash?>', true, true)">
-                                                            <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
+                                                            <span class="fa fa-edit"></span> {{ __("label.edit") }}
                                                         </a>
                                                     <?php } ?>
                                                 <?php } ?>
@@ -148,8 +144,8 @@ if (str_contains($formUrl, '?delComment=')) {
                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session("userdata.id") ?>&v=<?= format(session("userdata.modified"))->timestamp() ?>"/>
                                 </div>
                                 <div class="commentReply">
-                                    <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                    <input type="button" onclick="cancel(<?php echo $row['id']; ?>, '<?=$formHash?>')" value="<?php echo $tpl->__('links.cancel') ?>" class="btn btn-primary"/>
+                                    <input type="submit" value="{{ __("links.reply") }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
+                                    <input type="button" onclick="cancel(<?php echo $row['id']; ?>, '<?=$formHash?>')" value="{{ __("links.cancel") }}" class="btn btn-primary"/>
                                 </div>
                                 <div class="clearall"></div>
                             </div>
@@ -181,7 +177,7 @@ if (str_contains($formUrl, '?delComment=')) {
                 jQuery(`#comment-link-to-hide-on-edit-${formHash}-${id}`).hide();
                 jQuery(`#comment-image-to-hide-on-edit-${formHash}-${id}`).hide();
                 jQuery(`#edit-comment-helper-${formHash}`).val(commentId || id);
-                jQuery('#submit-reply-button').val('<?php echo $tpl->__('buttons.save') ?>');
+                jQuery('#submit-reply-button').val('{{ __("buttons.save") }}');
             }
 
             jQuery(`.commentBox-${formHash} textarea`).remove();

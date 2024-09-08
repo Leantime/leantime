@@ -15,15 +15,13 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
         <ul>
-            <li><a href="#ticketdetails"><?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
+            <li><a href="#ticketdetails">{{ __("tabs.ticketDetails") }}</a></li>
         </ul>
 
         <div id="ticketdetails">
-            <form hx-post="<?=BASE_URL ?>/tickets/newTicket"
-                  hx-target="#main-page-modal .modal-box-content"
-                  hx-indicator=".modal-content-loader">
+            <x-global::content.modal.form action="{{ BASE_URL }}/tickets/newTicket">
                 @include("tickets::includes.ticketDetails")
-            </form>
+            </x-global::content.modal.form>
         </div>
 
     </div>

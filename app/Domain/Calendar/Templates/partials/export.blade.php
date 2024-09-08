@@ -1,6 +1,4 @@
-@extends($layout)
-
-@section('content')
+<x-global::content.modal.modal-buttons/>
 
 <?php
 $url = $tpl->get('url');
@@ -10,7 +8,7 @@ $url = $tpl->get('url');
 
 @displayNotification()
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/calendar/export">
+<x-global::content.modal.form action="{{ BASE_URL }}/calendar/export">
 
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
@@ -38,12 +36,12 @@ $url = $tpl->get('url');
         </div>
         <div class="col-md-6 align-right">
             <?php  if ($url) { ?>
-                 <a href="<?=BASE_URL ?>/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.remove_access') ?></a>
+                 <a href="{{ BASE_URL }}/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.remove_access') ?></a>
             <?php } ?>
         </div>
     </div>
 
     <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
-</form>
+</x-global::content.modal.form>
 

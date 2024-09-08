@@ -38,7 +38,7 @@ $moduleId = session("currentProject");
         <?php if ($login::userIsAtLeast($roles::$editor)) {?>
         <div class="uploadWrapper">
 
-            <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $tpl->__("links.cancel"); ?></a>
+            <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">{{ __("links.cancel") }}</a>
             <div class="extra" style="margin-top:5px;"></div>
             <div class="fileUploadDrop">
                 <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
@@ -72,22 +72,22 @@ $moduleId = session("currentProject");
                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                    <li><a target="_blank" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                    <li class="nav-header">{{ __("subtitles.file") }}</li>
+                                    <li><a target="_blank" href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">{{ __("links.download") }}</a></li>
 
                                     <?php
 
                                     if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                        <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                        <li><a href="{{ BASE_URL }}/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a></li>
                                     <?php  } ?>
 
                                 </ul>
                             </div>
-                            <a class="imageLink" data-ext="<?php echo $file['extension'] ?>" href="<?=BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                            <a class="imageLink" data-ext="<?php echo $file['extension'] ?>" href="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                                 <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                    <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                    <img style='max-height: 50px; max-width: 70px;' src="{{ BASE_URL }}/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                 <?php else : ?>
-                                    <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/doc.png' />
+                                    <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/doc.png' />
                                 <?php endif; ?>
                                 <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                             </a>
@@ -197,7 +197,7 @@ $moduleId = session("currentProject");
         }
     });
     uppy.use(Uppy.XHRUpload, {
-        endpoint: '<?=BASE_URL ?>/api/files?module=project&moduleId=<?=$moduleId?>',
+        endpoint: '{{ BASE_URL }}/api/files?module=project&moduleId=<?=$moduleId?>',
         formData: true,
         fieldName: 'file',
     });
@@ -261,16 +261,16 @@ $moduleId = session("currentProject");
                                     '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
                                 '</a>' +
                                 '<ul class="dropdown-menu">' +
-                                    '<li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>' +
-                                    '<li><a target="_blank" href="<?=BASE_URL ?>/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $tpl->__("links.download")); ?></a></li>'+
+                                    '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
+                                    '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $tpl->__("links.download")); ?></a></li>'+
                                     <?php
                                     if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                        '<li><a href="<?=BASE_URL ?>/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__("links.delete")); ?></a></li>'+
+                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__("links.delete")); ?></a></li>'+
                                     <?php  } ?>
                                 '</ul>'+
                             '</div>'+
-                            '<a class="imageLink" href="<?=BASE_URL?>/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
-                                '<img style="max-height: 50px; max-width: 70px;" src="<?=BASE_URL ?>/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
+                            '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
+                                '<img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
 
                                 '<span class="filename">'+response.realName+'.</span>'+
                             '</a>'+

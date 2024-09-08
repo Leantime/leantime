@@ -10,7 +10,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.providers"); ?></h1>
+                <h1>{{ __("headlines.providers") }}</h1>
             </div>
         </div>
     </div>

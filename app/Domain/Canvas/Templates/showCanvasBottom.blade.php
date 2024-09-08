@@ -1,6 +1,3 @@
-@extends($layout)
-
-@section('content')
 
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
     <?php } else {
@@ -42,33 +39,22 @@
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.<?=$canvasName ?>CanvasController.setRowHeights();
-        leantime.canvasController.setCanvasName('<?=$canvasName ?>');
+        leantime.{{ $canvasName }}CanvasController.setRowHeights();
+        leantime.canvasController.setCanvasName('{{ $canvasName }}');
         leantime.canvasController.initFilterBar();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.canvasController.initCanvasLinks();
-            leantime.canvasController.initUserDropdown();
-            leantime.canvasController.initStatusDropdown();
-            leantime.canvasController.initRelatesDropdown();
+            leantime.canvasController.initUserDropdown('{{ $canvasName }}');
+            leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
+            leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
         <?php } else { ?>
             leantime.authController.makeInputReadonly(".maincontentinner");
-
-        <?php } ?>
-
-
-        <?php if (isset($_GET['showModal'])) {
-            if ($_GET['showModal'] == "") {
-                $modalUrl = "&type=" . array_key_first($canvasTypes);
-            } else {
-                $modalUrl = "/" . (int)$_GET['showModal'];
-            }
-            ?>
-        leantime.canvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL?>/<?=$canvasName ?>canvas/showCanvas/');
 
         <?php } ?>
 
     });
 
 </script>
+
+    @endsection

@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $ticket = $tpl->get("ticket");
 ?>
@@ -9,13 +11,13 @@ $ticket = $tpl->get("ticket");
 <?php } ?>
 
 
-    <form method="post" action="<?=BASE_URL?>/tickets/moveTicket/<?=$ticket->id ?>" class="formModal">
+    <x-global::content.modal.form action="{{ BASE_URL }}/tickets/moveTicket/<?=$ticket->id ?>">
         <h3>#<?=$ticket->id ?> - <?=$tpl->escape($ticket->headline); ?></h3> <br />
         <p>
             <?php if ($ticket->type == "milestone") {?>
-                <?php echo $tpl->__('text.moving_milestones'); ?>
+                {{ __("text.moving_milestones") }}
             <?php } else { ?>
-                <?php echo $tpl->__('text.moving'); ?>
+                {{ __("text.moving") }}
             <?php } ?>
 
             <br /><br />
@@ -39,11 +41,11 @@ $ticket = $tpl->get("ticket");
         ?>
         </select><br /><br /><br /><br />
         <br />
-        <input type="submit" value="<?php echo $tpl->__('buttons.move'); ?>" name="move" class="button" />
-        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();"><?php echo $tpl->__('buttons.back'); ?></a>
+        <input type="submit" value="{{ __("buttons.move") }}" name="move" class="button" />
+        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{{ __("buttons.back") }}</a>
         <div class="clearall"></div>
         <br />
-    </form>
+    </x-global::content.modal.form>
 
 
 <script>

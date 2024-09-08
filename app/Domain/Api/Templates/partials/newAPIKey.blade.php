@@ -1,6 +1,4 @@
-@extends($layout)
-
-@section('content')
+<x-global::content.modal.modal-buttons/>
 
 <?php
 $status = $tpl->get('status');
@@ -11,7 +9,7 @@ $apiKeyValues = $tpl->get('apiKeyValues');
 
 <div style="min-width:700px;">
 
-<h4 class="widgettitle title-light"><i class="fa fa-key"></i> <?php echo $tpl->__('headlines.new_api_key'); ?></h4>
+<h4 class="widgettitle title-light"><i class="fa fa-key"></i> {{ __("headlines.new_api_key") }}</h4>
 
     @displayNotification()
     <?php if ($apiKeyValues !== false && isset($apiKeyValues['id'])) {?>
@@ -19,22 +17,22 @@ $apiKeyValues = $tpl->get('apiKeyValues');
         <input type="text" id="apiKey" value="lt_<?=$apiKeyValues['user'] ?>_<?=$apiKeyValues['passwordClean']?>"  style="width:100%;"/>
         <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('apiKey');"><?=$tpl->__('links.copy_key') ?></button>
     <?php } else { ?>
-    <form action="<?=BASE_URL?>/api/newApiKey" method="post" class="stdform formModal" >
+    <x-global::content.modal.form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >
 
         <input type="hidden" name="save" value="1" />
 
         <div class="row" >
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light"><?php echo $tpl->__('label.basic_information'); ?></h4>
+                <h4 class="widgettitle title-light">{{ __("label.basic_information") }}</h4>
 
-                <label for="firstname"><?php echo $tpl->__('label.key_name'); ?></label><div class="clearfix"></div>
+                <label for="firstname">{{ __("label.key_name") }}</label><div class="clearfix"></div>
                     <input
                     type="text" name="firstname" id="firstname"
                     value="" /><br />
 
 
-                <label for="role"><?php echo $tpl->__('label.role'); ?></label><div class="clearfix"></div>
+                <label for="role">{{ __("label.role") }}</label><div class="clearfix"></div>
                 <select name="role" id="role">
 
                     <?php foreach ($tpl->get('roles') as $key => $role) { ?>
@@ -48,7 +46,7 @@ $apiKeyValues = $tpl->get('apiKeyValues');
 
                 </select> <br />
 
-                <label for="status"><?php echo $tpl->__('label.status'); ?></label><div class="clearfix"></div>
+                <label for="status">{{ __("label.status") }}</label><div class="clearfix"></div>
                 <select name="status" id="status">
                     <option value="a"
                         <?php if (strtolower($values['status']) == "a") {
@@ -69,13 +67,13 @@ $apiKeyValues = $tpl->get('apiKeyValues');
                     <div class="clearfix"></div>
 
                 <p class="stdformbutton">
-                    <input type="submit" name="save" id="save" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
+                    <input type="submit" name="save" id="save" value="{{ __("buttons.save") }}" class="button" />
                 </p>
 
             </div>
             <div class="col-md-6">
 
-                <h4 class="widgettitle title-light"><?php echo $tpl->__('label.project_access'); ?></h4>
+                <h4 class="widgettitle title-light">{{ __("label.project_access") }}</h4>
 
                 <div class="scrollableItemList">
                     <?php
@@ -111,7 +109,7 @@ $apiKeyValues = $tpl->get('apiKeyValues');
             </div>
         </div>
     <?php } ?>
-</form>
+</x-global::content.modal.form>
 </div>
 <script>
     jQuery(".noClickProp.dropdown-menu").on("click", function(e) {

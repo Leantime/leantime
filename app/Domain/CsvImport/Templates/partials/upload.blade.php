@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 
 use Leantime\Core\Fileupload;
@@ -62,7 +64,7 @@ use Leantime\Core\Fileupload;
         });
 
         uppy.use(Uppy.XHRUpload, {
-            endpoint: '<?=BASE_URL ?>/csvImport/upload',
+            endpoint: '{{ BASE_URL }}/csvImport/upload',
             formData: true,
             fieldName: 'file'
         });
@@ -113,7 +115,7 @@ use Leantime\Core\Fileupload;
 
             jQuery(".input-error").text('');
 
-            window.location.href = "<?=BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
+            window.location.href = "{{ BASE_URL }}/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
 
         });
 

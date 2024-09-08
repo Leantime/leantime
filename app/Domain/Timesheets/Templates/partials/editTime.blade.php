@@ -1,8 +1,6 @@
-@extends($layout)
+<x-global::content.modal.modal-buttons/>
 
-@section('content')
-
-    <?php
+<?php
 
 use Leantime\Core\Support\FromFormat;
 
@@ -54,12 +52,12 @@ $values = $tpl->get('values');
 
     @displayNotification()
 
-<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_time'); ?></h4>
-<form action="<?=BASE_URL?>/timesheets/editTime/<?=(int)$_GET['id']?>" method="post" class="editTimeModal">
+<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> {{ __("headlines.edit_time") }}</h4>
+<x-global::content.modal.form action="{{ BASE_URL }}/timesheets/editTime/{{ $id }}" method="post" class="editTimeModal">
 
 <label for="projects"><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
-    <option value="all"><?php echo $tpl->__('headline.all_projects'); ?></option>
+    <option value="all">{{ __("headline.all_projects") }}</option>
 
     <?php foreach ($tpl->get('allProjects') as $row) {
         echo'<option value="' . $row['id'] . '"';
@@ -118,9 +116,9 @@ $values = $tpl->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-            <label for="invoicedEmpl"><?php echo $tpl->__('label.invoiced') ?></label>
+            <label for="invoicedEmpl">{{ __("label.invoiced") }}</label>
 
-            <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+            {{ __("label.date") }}&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
                                                   value="<?php echo format(value: $values['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                   size="7"/><br/>
@@ -133,8 +131,8 @@ $values = $tpl->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="invoicedComp"><?php echo $tpl->__('label.invoiced_comp') ?></label>
-        <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+        <label for="invoicedComp">{{ __("label.invoiced_comp") }}</label>
+        {{ __("label.date") }}&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
                                                       value="<?php echo format(value: $values['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
@@ -147,8 +145,8 @@ $values = $tpl->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="paid"><?php echo $tpl->__('label.paid') ?></label>
-        <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+        <label for="paid">{{ __("label.paid") }}</label>
+        {{ __("label.date") }}&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
                                                           value="<?php echo format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
@@ -159,10 +157,10 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="<?=BASE_URL?>/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
-        <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
+        <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
+        <input type="submit" value="{{ __("buttons.save") }}" name="save" class="button" />
     </p>
-</form>
+</x-global::content.modal.form>
 
 
 

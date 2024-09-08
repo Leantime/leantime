@@ -112,15 +112,16 @@ class Frontcontroller
         $controllerName = $segments[1] ?? '';
 
         //third is either id or method
+        //we can say that a numeric value always represents an id
         if (isset($segments[2]) && is_numeric($segments[2])) {
             $id = $segments[2];
         }
 
+        //If not numeric, it's quite likely this is a method name
+        //But it needs to be double checked.
         if (isset($segments[2]) && !is_numeric($segments[2])) {
             $method = $segments[2];
         }
-
-        $this->incomingRequest->query("u");
 
         $this->incomingRequest->query->set('act', $moduleName . "." . $controllerName . "." . $method);
         $this->incomingRequest->setCurrentRoute($moduleName . "." . $controllerName);
@@ -261,12 +262,22 @@ class Frontcontroller
     public function getValidControllerMethod(string $controllerClass, string $method): string
     {
 
-        if (strtoupper($method) == "head") {
+        $httpMethod = Str::lower($this->incomingRequest->getMethod());
+
+        if (Str::lower($method) == "head") {
             $method = "get";
         }
 
+        //First check if the given method exists.
         if (method_exists($controllerClass, $method)) {
             return $method;
+        //Then check if the http method exists as verb
+        } else if (method_exists($controllerClass, $httpMethod)) {
+            //If this was the case our first assumption around $method was wrong and $method is actually a
+            //id/slug. Let's set id to that slug.
+            $this->incomingRequest->query->set("id", $method);
+            return $httpMethod;
+        //Just for backwards compatibility, let's also check if run exists.
         } elseif (method_exists($controllerClass, 'run')) {
             return 'run';
         }
@@ -348,6 +359,11 @@ class Frontcontroller
      */
     public static function redirect(string $url, int $http_response_code = 303, $headers = []): RedirectResponse
     {
+
+        if(app("request")->headers->get("is-modal")){
+            Frontcontroller::redirectHtmx($url, $headers);
+        }
+
         return new RedirectResponse(
             trim(preg_replace('/\s\s+/', '', strip_tags($url))),
             $http_response_code,
@@ -382,7 +398,6 @@ class Frontcontroller
         return new Response(
             "redirecting...",
             200, //Anything else than 200 will fail.
-            $headers
         );
     }
 
