@@ -348,7 +348,7 @@
                                 }?>
                             </td>
                             <td>
-                                @include("tickets::includes.ticketsubmenu", [ "ticket" => $ticket,"onTheClock" => $onTheClock])
+                                @include("tickets::includes.ticketsubmenu", [ "ticket" => $row, "onTheClock" => $onTheClock])
                             </td>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>

@@ -144,7 +144,7 @@ $allTicketGroups = $tpl->get("allTickets");
 
 
                                                     @include("tickets::includes.ticketsubmenu", [
-                                                                                        "ticket" => $ticket,
+                                                                                        "ticket" => $row,
                                                                                         "onTheClock" => $onTheClock
                                                                                     ])
 

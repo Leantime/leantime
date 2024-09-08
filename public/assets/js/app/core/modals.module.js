@@ -57,6 +57,9 @@ var openPageModal = function (url) {
         jQuery("#modal-wrapper #main-page-modal .modal-loader").hide();
         jQuery("#modal-wrapper #main-page-modal .modal-loader").removeClass("htmx-request");
 
+        htmx.find("#modal-wrapper #main-page-modal").addEventListener("close", function() {
+            removeHash();
+        });
     });
 
 }

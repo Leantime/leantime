@@ -4,6 +4,7 @@ namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
 use Illuminate\View\ViewException;
@@ -229,14 +230,18 @@ class Template
     }
 
     /**
-     * Sets the response header to trigger an htmx event
+     * Refreshes (main url page in the background)
      *
      * @param string $eventName
      * @return void
      **/
     public function htmxRefresh(): void
     {
-        $this->headers["HX-Refresh"] = "true";
+
+        $hxCurrentUrl = $this->incomingRequest->headers->get("hx-current-url");
+        $mainPageUrl = Str::before($hxCurrentUrl, "#");
+        $this->headers["HX-Location"] = $mainPageUrl;
+
     }
 
     /**
