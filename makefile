@@ -130,7 +130,7 @@ codesniffer-fix:
 get-version:
 	@echo $(VERSION)
 
-phpstan: build-dev
+phpstan:
 	./vendor/bin/phpstan analyse --memory-limit 512M
 
 update-carbon-macros:
