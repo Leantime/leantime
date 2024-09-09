@@ -1,5 +1,4 @@
 @props([
-    'options' => [],
     'labelText' => '',
     'labelRight' => '',
     'caption' => '',
@@ -8,7 +7,6 @@
     'size' => '',
     'state' => '',
     'variant' => 'single',
-    'selected' => [],
     'validationText' => '',
     'validationState' => '',
 ])
@@ -52,11 +50,7 @@
             {{ $state === 'disabled' ? 'disabled' : '' }}
             {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
         >
-            @foreach($options as $value => $label)
-                <option value="{{ $value }}" {{ in_array($value, (array)$selected) ? 'selected' : '' }}>
-                    {{ $label }}
-                </option>
-            @endforeach
+            {{ $slot }}
         </select>
 
     </div>
