@@ -1,6 +1,4 @@
-@extends($layout)
 
-@section('content')
 
     <?php
 $allCanvas = $tpl->get('allCanvas');

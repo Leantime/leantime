@@ -24,39 +24,48 @@
             <h5><?php $tpl->e(session('currentProjectClient') . ' // ' . session('currentProjectName')); ?></h5>
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                            class="fa-solid fa-ellipsis-v"></i></a>
-                    <ul class="dropdown-menu editCanvasDropdown">
+                <x-global::content.context-menu label-text="<i class='fa-solid fa-ellipsis-v'></i>" contentRole="link"
+                    position="bottom" align="start" class="headerEditDropdown btn btn-transparent">
+
+                    <x-slot:menu>
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="javascript:void(0)" class="editCanvasLink">{!! __('links.icon.edit') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                                    class="delete">{!! __('links.icon.delete') !!}</a></li>
+                            <!-- Edit Canvas Link -->
+                            <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
+                                {!! __('links.icon.edit') !!}
+                            </x-global::actions.dropdown.item>
+
+                            <!-- Delete Canvas Link -->
+                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">
+                                {!! __('links.icon.delete') !!}
+                            </x-global::actions.dropdown.item>
                         @endif
-                    </ul>
-                </span>
+                    </x-slot:menu>
+
+                </x-global::content.context-menu>
             @endif
             <h1>{!! __('headlines.idea_management') !!}
                 //
                 @if (count($allCanvas) > 0)
-                    <span class="dropdown dropdownWrapper">
-                        <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown"
-                            style="max-width:200px;">
-                            {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
-                        </a>
+                    <x-global::content.context-menu label-text="<i class='fa-solid fa-ellipsis-v'></i>" contentRole="link"
+                        position="bottom" align="start" class="headerEditDropdown btn btn-transparent">
 
-                        <ul class="dropdown-menu canvasSelector">
+                        <x-slot:menu>
                             @if ($login::userIsAtLeast($roles::$editor))
-                                <li><a href="javascript:void(0)" class="addCanvasLink">{!! __('links.icon.create_new_board') !!}</a></li>
+                                <!-- Edit Canvas Link -->
+                                <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
+                                    {!! __('links.icon.edit') !!}
+                                </x-global::actions.dropdown.item>
+
+                                <!-- Delete Canvas Link -->
+                                <x-global::actions.dropdown.item
+                                    href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">
+                                    {!! __('links.icon.delete') !!}
+                                </x-global::actions.dropdown.item>
                             @endif
-                            <li class="border"></li>
-                            @foreach ($allCanvas as $canvasRow)
-                                <li><a
-                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->title }}">{{ $canvasRow->title }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </span>
+                        </x-slot:menu>
+
+                    </x-global::content.context-menu>
                 @endif
 
             </h1>
@@ -83,14 +92,24 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <button class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"><?= $tpl->__('buttons.idea_kanban') ?>
-                                <?= $tpl->__('links.view') ?></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ BASE_URL }}/ideas/showBoards">{!! __('buttons.idea_wall') !!}</a></li>
-                                <li><a href="{{ BASE_URL }}/ideas/advancedBoards"
-                                        class="active">{!! __('buttons.idea_kanban') !!}</a></li>
-                            </ul>
+                            <x-global::actions.dropdown label-text="{!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}"
+                                contentRole="link" position="bottom" align="start" class="btn btn-default">
+
+                                <x-slot:menu>
+                                    <!-- Idea Wall Link -->
+                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/showBoards">
+                                        {!! __('buttons.idea_wall') !!}
+                                    </x-global::actions.dropdown.item>
+
+                                    <!-- Idea Kanban Link (Active) -->
+                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/advancedBoards"
+                                        class="active">
+                                        {!! __('buttons.idea_kanban') !!}
+                                    </x-global::actions.dropdown.item>
+                                </x-slot:menu>
+
+                            </x-global::actions.dropdown>
+
                         </div>
                     </div>
                 </div>
@@ -117,25 +136,32 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                            <div class="inlineDropDownContainer" style="float:right;">
-                                                                <a href="javascript:void(0);"
-                                                                    class="dropdown-toggle ticketDropDown"
-                                                                    data-toggle="dropdown">
-                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                                </a>
-                                                                &nbsp;&nbsp;&nbsp;
-                                                                <ul class="dropdown-menu">
+                                                            <x-global::content.context-menu
+                                                                label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>"
+                                                                contentRole="link" position="bottom" align="start"
+                                                                class="inlineDropDownContainer ticketDropDown"
+                                                                style="float:right;">
+
+                                                                <x-slot:menu>
+                                                                    <!-- Edit Item Header -->
                                                                     <li class="nav-header">{!! __('subtitles.edit') !!}</li>
-                                                                    <li><a href="#/ideas/ideaDialog/{{ $row->id }}"
-                                                                            class=""
-                                                                            data="item_{{ $row->id }}">{!! __('links.edit_canvas_item') !!}</a>
-                                                                    </li>
-                                                                    <li><a href="#/ideas/delCanvasItem/{{ $row->id }}"
-                                                                            class="delete"
-                                                                            data="item_{{ $row->id }}">{!! __('links.delete_canvas_item') !!}</a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
+
+                                                                    <!-- Edit Canvas Item -->
+                                                                    <x-global::actions.dropdown.item
+                                                                        href="#/ideas/ideaDialog/{{ $row->id }}"
+                                                                        data="item_{{ $row->id }}">
+                                                                        {!! __('links.edit_canvas_item') !!}
+                                                                    </x-global::actions.dropdown.item>
+
+                                                                    <!-- Delete Canvas Item -->
+                                                                    <x-global::actions.dropdown.item
+                                                                        href="#/ideas/delCanvasItem/{{ $row->id }}"
+                                                                        class="delete" data="item_{{ $row->id }}">
+                                                                        {!! __('links.delete_canvas_item') !!}
+                                                                    </x-global::actions.dropdown.item>
+                                                                </x-slot:menu>
+
+                                                            </x-global::content.context-menu>
                                                         @endif
                                                         <h4><a href="{{ BASE_URL }}/ideas/advancedBoards/#/ideas/ideaDialog/{{ $row->id }}"
                                                                 class=""

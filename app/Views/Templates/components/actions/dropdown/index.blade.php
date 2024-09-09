@@ -42,7 +42,7 @@
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
     <!-- Dropdown Button -->
     <div tabindex="0" role="button" class="{{ $buttonClass }}">
-        {{ $labelText }}
+        {!! $labelText !!}
     </div>
 
     @if ($variant === 'card')
@@ -50,7 +50,7 @@
         <div tabindex="0" class="{{ $menuClass }}">
             <div class="card-body">
                 <h3 class="card-title">{{ $cardLabel }}</h3>
-                {{ $cardContent ?? '' }}
+                {!! $cardContent ?? '' !!}
             </div>
         </div>
     @else

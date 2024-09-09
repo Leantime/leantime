@@ -1,3 +1,5 @@
+@extends($layout)
+@section('content')
 <?php
 
 /**
@@ -13,10 +15,8 @@ foreach ($__data as $var => $val) {
 $canvasName = 'retros';
 ?>
 
-<?php echo $tpl->viewFactory->make(
-    $tpl->getTemplatePath('canvas', 'showCanvasTop'),
-    array_merge($__data, ['canvasName' => 'retros'])
-)->render(); ?>
+@include('canvas::showCanvasTop', array_merge($__data, ['canvasName' => 'retros']))
+
 
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
@@ -25,23 +25,15 @@ $canvasName = 'retros';
 
                     <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 33%">
-                            <?php echo $tpl->viewFactory->make(
-                                $tpl->getTemplatePath('canvas', 'element'),
-                                array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'well'])
-                            )->render(); ?>
+                            @include('canvas::element', array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'well']))
                         </div>
                         <div class="column" style="width: 33%">
-                            <?php echo $tpl->viewFactory->make(
-                                $tpl->getTemplatePath('canvas', 'element'),
-                                array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'notwell'])
-                            )->render(); ?>
+                            @include('canvas::element', array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'notwell']))
                         </div>
                         <div class="column" style="width: 33%">
-                            <?php echo $tpl->viewFactory->make(
-                                $tpl->getTemplatePath('canvas', 'element'),
-                                array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'startdoing'])
-                            )->render(); ?>
+                            @include('canvas::element', array_merge($__data, ['canvasName' => 'retros', 'elementName' => 'startdoing']))
                         </div>
+                        
                     </div>
 
                 </div>
@@ -50,7 +42,6 @@ $canvasName = 'retros';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php echo $tpl->viewFactory->make(
-    $tpl->getTemplatePath('canvas', 'showCanvasBottom'),
-    array_merge($__data, ['canvasName' => 'retros'])
-)->render(); ?>
+    @include('canvas::showCanvasBottom', array_merge($__data, ['canvasName' => 'retros']))
+
+@endsection

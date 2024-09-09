@@ -18,38 +18,42 @@
         <div class="pagetitle">
             <h5>{{ session('currentProjectClient') ?? '' . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
-                <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                            class="fa-solid fa-ellipsis-v"></i></a>
-                    <ul class="dropdown-menu editCanvasDropdown ">
+                <x-global::content.context-menu label-text="<i class='fa-solid fa-ellipsis-v'></i>" contentRole="link"
+                    position="bottom" align="start" class="headerEditDropdown">
+
+                    <x-slot:menu>
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/ideas/boardDialog/{{ $currentCanvas }}">{!! __('links.icon.edit') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                                    class="delete">{!! __('links.icon.delete') !!}</a></li>
+                            <x-global::actions.dropdown.item href="#/ideas/boardDialog/{{ $currentCanvas }}">
+                                {!! __('links.icon.edit') !!}
+                            </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">
+                                {!! __('links.icon.delete') !!}
+                            </x-global::actions.dropdown.item>
                         @endif
-                    </ul>
-                </span>
+                    </x-slot:menu>
+
+                </x-global::content.context-menu>
             @endif
             <h1>{!! __('headlines.ideas') !!}
                 //
                 @if (count($allCanvas) > 0)
-                    <span class="dropdown dropdownWrapper">
-                        <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                            {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
-                        </a>
+                    <x-global::content.context-menu label-text="<i class='fa-solid fa-ellipsis-v'></i>" contentRole="link"
+                        position="bottom" align="start" class="headerEditDropdown">
 
-                        <ul class="dropdown-menu canvasSelector">
+                        <x-slot:menu>
                             @if ($login::userIsAtLeast($roles::$editor))
-                                <li><a href="#/ideas/boardDialog">{!! __('links.icon.create_new_board') !!}</a></li>
+                                <x-global::actions.dropdown.item href="#/ideas/boardDialog/{{ $currentCanvas }}">
+                                    {!! __('links.icon.edit') !!}
+                                </x-global::actions.dropdown.item>
+                                <x-global::actions.dropdown.item
+                                    href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}" class="delete">
+                                    {!! __('links.icon.delete') !!}
+                                </x-global::actions.dropdown.item>
                             @endif
-                            <li class="border"></li>
-                            @foreach ($allCanvas as $canvasRow)
-                                <li><a
-                                        href='{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->id }}'>{{ $canvasRow->title }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </span>
+                        </x-slot:menu>
+
+                    </x-global::content.context-menu>
                 @endif
             </h1>
         </div>
@@ -124,63 +128,84 @@
 
                                     <div class="clearfix" style="padding-bottom: 8px;"></div>
 
-                                    <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
-                                        <a class="dropdown-toggle f-left status {{ $canvasLabels[$row->box]['class'] }}"
-                                            href="javascript:void(0);" role="button"
-                                            id="statusDropdownMenuLink{{ $row->id }}" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <span class="text">{{ $canvasLabels[$row->box]['name'] }}</span>
-                                            &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu"
-                                            aria-labelledby="statusDropdownMenuLink{{ $row->id }}">
+                                    <x-global::content.context-menu
+                                        label-text="<span class='text'>{{ $canvasLabels[$row->box]['name'] }}</span> &nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>"
+                                        contentRole="link" position="bottom" align="start"
+                                        class="ticketDropdown statusDropdown show firstDropdown colorized">
+
+                                        <x-slot:menu>
+                                            <!-- Choose Status Header -->
                                             <li class="nav-header border">{!! __('dropdown.choose_status') !!}</li>
+
+                                            <!-- Status Items -->
                                             @foreach ($canvasLabels as $key => $label)
-                                                <li class='dropdown-item'>
-                                                    <a href='javascript:void(0);' class='{{ $label['class'] }}'
-                                                        data-label='{{ $label['name'] }}'
-                                                        data-value='{{ $row->id }}_{{ $key }}_{{ $label['class'] }}'
-                                                        id='ticketStatusChange{{ $row->id }}{{ $key }}'>{{ $label['name'] }}</a>
-                                                </li>
+                                                <x-global::actions.dropdown.item href="javascript:void(0);"
+                                                    class="{{ $label['class'] }}" data-label="{{ $label['name'] }}"
+                                                    data-value="{{ $row->id }}_{{ $key }}_{{ $label['class'] }}"
+                                                    id="ticketStatusChange{{ $row->id }}{{ $key }}">
+                                                    {{ $label['name'] }}
+                                                </x-global::actions.dropdown.item>
                                             @endforeach
-                                        </ul>
-                                    </div>
+                                        </x-slot:menu>
+
+                                    </x-global::content.context-menu>
+
 
                                     <div
                                         class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                        <a class="dropdown-toggle f-left" href="javascript:void(0);" role="button"
-                                            id="userDropdownMenuLink{{ $row->id }}" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <span class="text">
-                                                @if ($row->authorFirstname != '')
-                                                    <span id='userImage{{ $row->id }}'><img
-                                                            src='{{ BASE_URL }}/api/users?profileImage={{ $row->author }}'
-                                                            width='25' style='vertical-align: middle;' /></span><span
-                                                        id='user{{ $row->id }}'></span>
-                                                @else
-                                                    <span id='userImage{{ $row->id }}'><img
-                                                            src='{{ BASE_URL }}/api/users?profileImage=false'
-                                                            width='25' style='vertical-align: middle;' /></span><span
-                                                        id='user{{ $row->id }}'></span>
-                                                @endif
-                                            </span>
-                                        </a>
-                                        <ul class="dropdown-menu"
-                                            aria-labelledby="userDropdownMenuLink{{ $row->id }}">
-                                            <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
-                                            @foreach ($users as $user)
-                                                <li class='dropdown-item'>
-                                                    <a href='javascript:void(0);'
-                                                        data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
-                                                        data-value='{{ $row->id }}_{{ $user['id'] }}_{{ $user['profileId'] }}'
-                                                        id='userStatusChange{{ $row->id }}{{ $user['id'] }}'>
+                                        @php
+                                            // Determine label text based on the author details
+                                            if ($row->authorFirstname != '') {
+                                                $labelText =
+                                                    "
+                                                <span class='text'>
+                                                    <span id='userImage{$row->id}'>
+                                                        <img src='" .
+                                                    BASE_URL .
+                                                    "/api/users?profileImage={$row->author}' width='25' style='vertical-align: middle;' />
+                                                    </span>
+                                                    <span id='user{$row->id}'></span>
+                                                </span>
+                                            ";
+                                            } else {
+                                                $labelText =
+                                                    "
+                                                <span class='text'>
+                                                    <span id='userImage{$row->id}'>
+                                                        <img src='" .
+                                                    BASE_URL .
+                                                    "/api/users?profileImage=false' width='25' style='vertical-align: middle;' />
+                                                    </span>
+                                                    <span id='user{$row->id}'></span>
+                                                </span>
+                                            ";
+                                            }
+                                        @endphp
+
+                                        <x-global::content.context-menu :label-text="$labelText" contentRole="link"
+                                            position="bottom" align="start" class="f-left">
+
+                                            <x-slot:menu>
+                                                <!-- Choose User Header -->
+                                                <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
+
+                                                <!-- User Items -->
+                                                @foreach ($users as $user)
+                                                    <x-global::actions.dropdown.item href="javascript:void(0);"
+                                                        data-label="{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}"
+                                                        data-value="{{ $row->id }}_{{ $user['id'] }}_{{ $user['profileId'] }}"
+                                                        id="userStatusChange{{ $row->id }}{{ $user['id'] }}">
                                                         <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
                                                             width='25'
-                                                            style='vertical-align: middle; margin-right:5px;' />{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                                            style='vertical-align: middle; margin-right:5px;' />
+                                                        {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
+                                                    </x-global::actions.dropdown.item>
+                                                @endforeach
+                                            </x-slot:menu>
+
+                                        </x-global::content.context-menu>
+
+
                                     </div>
 
                                     <div class="pull-right" style="margin-right:10px;">
