@@ -1,10 +1,5 @@
-<div class="inlineDropDownContainer right ml-xs">
-    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-    </a>
-    <ul class="dropdown-menu">
+<x-global::actions.dropdown label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>" contentRole="link" position="bottom" align="start">
+    <x-slot:menu>
         {{ $slot }}
-    </ul>
-</div>
-
-
+    </x-slot:menu>
+</x-global::actions.dropdown>
