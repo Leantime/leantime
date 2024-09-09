@@ -98,27 +98,59 @@ $tpl->assign('canvasTitle', $canvasTitle);
 
 
             <?php } ?>
-        </h1>
-    </div>
-</div><!--pageheader-->
+            <h1><?= $tpl->__("headline.$canvasName.board") ?> //
+                <?php if (count($allCanvas) > 0) {?>
+                @php
+                    // Dynamic label content for the dropdown toggle
+                    $labelContent = e($canvasTitle) . "&nbsp;<i class='fa fa-caret-down'></i>";
+                @endphp
 
-<div class="maincontent">
-    <div class="maincontentinner">
+                <x-global::content.context-menu :label-text="$labelContent" contentRole="link" position="bottom" align="start"
+                    class="header-title-dropdown canvasSelector">
+
+                    <x-slot:menu>
+                        <!-- Create New Board (Only for Editor and Above) -->
+                        @if ($login::userIsAtLeast($roles::$editor))
+                            <x-global::actions.dropdown.item variant="link" href="#/{{ $canvasName }}canvas/boardDialog">
+                                {{ __('links.icon.create_new_board') }}
+                            </x-global::actions.dropdown.item>
+                        @endif
+
+                        <!-- Divider -->
+                        <li class="border"></li>
+
+                        <!-- Dynamic Canvas List -->
+                        @foreach ($allCanvas as $canvasRow)
+                            <x-global::actions.dropdown.item variant="link"
+                                href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/{{ $canvasRow['id'] }}">
+                                {{ $canvasRow['title'] }}
+                            </x-global::actions.dropdown.item>
+                        @endforeach
+                    </x-slot:menu>
+
+                </x-global::content.context-menu>
+
+                <?php } ?>
+            </h1>
+        </div>
+    </div><!--pageheader-->
 
 
-        <div class="row">
-            <div class="col-md-3">
+            <?php echo $tpl->displayNotification(); ?>
 
                 <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
                 <a href="#/<?= $canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="btn btn-primary"
                     id="<?php echo $elementName; ?>"><?= $tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
                 <?php } ?>
 
-            </div>
+                    <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
+                    <a href="#/<?= $canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="btn btn-primary"
+                        id="<?php echo $elementName; ?>"><?= $tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
+                    <?php } ?>
 
-            <div class="col-md-6 center">
+                </div>
 
-            </div>
+                <div class="col-md-6 center">
 
             <div class="col-md-3">
                 <div class="pull-right">
@@ -179,9 +211,9 @@ $tpl->assign('canvasTitle', $canvasTitle);
 
                     </div>
 
+                    </div>
                 </div>
+
             </div>
 
-        </div>
-
-        <div class="clearfix"></div>
+            <div class="clearfix"></div>

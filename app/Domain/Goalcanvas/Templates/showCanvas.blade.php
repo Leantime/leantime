@@ -90,23 +90,30 @@
             @endif
             <h1>{{ __('headline.goal.board') }} //
                 @if (count($allCanvas) > 0)
-                    <span class="dropdown dropdownWrapper">
-                        <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                            {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
-                        </a>
+                    <x-global::content.context-menu label-text="{{ $canvasTitle }}&nbsp;<i class='fa fa-caret-down'></i>"
+                        contentRole="link" position="bottom" align="start" class="header-title-dropdown">
 
-                        <ul class="dropdown-menu canvasSelector">
+                        <x-slot:menu>
+                            <!-- Create New Big Rock (Only for Editors and Above) -->
                             @if ($login::userIsAtLeast($roles::$editor))
-                                <li><a href="#/goalcanvas/bigRock">{{ __('links.icon.create_new_bigrock') }}</a></li>
+                                <x-global::actions.dropdown.item variant="link" href="#/goalcanvas/bigRock">
+                                    {{ __('links.icon.create_new_bigrock') }}
+                                </x-global::actions.dropdown.item>
                             @endif
+
+                            <!-- Divider -->
                             <li class="border"></li>
+
+                            <!-- List of All Canvas -->
                             @foreach ($allCanvas as $canvasRow)
-                                <li><a
-                                        href='{{ BASE_URL }} /goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $canvasRow['title'] }}</a>
-                                </li>
+                                <x-global::actions.dropdown.item variant="link"
+                                    href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">
+                                    {{ $canvasRow['title'] }}
+                                </x-global::actions.dropdown.item>
                             @endforeach
-                        </ul>
-                    </span>
+                        </x-slot:menu>
+
+                    </x-global::content.context-menu>
                 @endif
             </h1>
         </div>
