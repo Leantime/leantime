@@ -13,36 +13,65 @@ $values = $tpl->get('values');
 
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
-    <label for="description">{{ __("label.title") }}</label>
-    <input type="text" id="description" name="description" value="<?php $tpl->e($values['description']); ?>" /><br />
+    <x-global::forms.text-input
+        inputType="text"
+        id="description"
+        name="description"
+        size='md'
+        placeholder=""
+        label="{{__('label.title')}}"
+        value="$values['description']"
+    />
 
-    <div class="par">
-        <label for="dateFrom">{{ __("label.start_date") }}</label>
-        <input type="text" id="event_date_from" name="dateFrom" value="" autocomplete="off" /><br/>
-    </div>
-    <div class="par">
-        <label for="">{{ __("label.start_time") }}</label>
-        <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_from" name="timeFrom" value="" />
-           </div>
-    </div>
-    <div class="par">
-        <label for="dateTo">{{ __("label.end_date") }}</label>
-        <input type="text" id="event_date_to" name="dateTo" value="" autocomplete="off" /><br/>
-    </div>
-    <div class="par">
-        <label for="">{{ __("label.end_time") }} </label>
-        <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_to" name="timeTo" value="" />
-           </div>
-    </div>
+    <x-global::forms.text-input
+        inputType="text"
+        id="event_date_from"
+        name="dateFrom"
+        size='md'
+        placeholder=""
+        label="{{__('label.start_date')}}"
+        value=""
+    />
+
+    <x-global::forms.text-input
+        inputType="time"
+        id="event_time_from"
+        name="timeFrom"
+        placeholder=""
+        label="{{ __('label.start_time') }}"
+        value=""
+    />
+
+    <x-global::forms.text-input
+        inputType="text"
+        id="event_date_to"
+        name="dateFrom"
+        size='md'
+        placeholder=""
+        label="{{__('label.end_date')}}"
+        value=""
+    />
+
+
+    <x-global::forms.text-input
+        inputType="time"
+        id="event_time_to"
+        name="timeTo"
+        placeholder=""
+        label="{{ __('label.end_time') }}"
+        value=""
+    />
+
+
 
     <label for="allDay">{{ __("label.all_day") }}</label>
     <input type="checkbox" id="allDay" name="allDay"
     <?php if (isset($values['allDay']) === true && $values['allDay'] === true) {
         echo 'checked="checked" ';
     }?>
+
     /><br /><br />
+
 
     <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
