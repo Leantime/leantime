@@ -122,9 +122,9 @@ class Language
 
         session(["usersettings.language" => $lang]);
 
-        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !request()->isApiOrCronRequest()) {
+        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !$this->apiRequest->isApiOrCronRequest()) {
 
-            $isAPIRequest = request()->isApiOrCronRequest();
+            $isAPIRequest = $this->apiRequest->isApiOrCronRequest();
 
             EventDispatcher::add_filter_listener(
                 'leantime.core.http.httpkernel.handle.beforeSendResponse',
@@ -338,7 +338,7 @@ class Language
         return (string) $returnValue;
     }
 
-    public function get(string $index,  $default = '', $locale) {
+    public function get(string $index,  $default = '', $locale = '') {
         $contentReplacement = '';
         if(is_array($default) && count($default) > 0){
             $contentReplacement = $default[0];

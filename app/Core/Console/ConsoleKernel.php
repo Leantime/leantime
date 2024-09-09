@@ -7,22 +7,27 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Bus;
+use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Leantime\Core\Console\Application as LeantimeCli;
 
-class ConsoleKernel implements ConsoleKernelContract
+class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
     use DispatchesEvents;
 
-    protected ConsoleApplication $artisan;
+    protected $artisan;
 
     protected $commandStartedAt;
+
+    protected $bootstrappers = [];
 
     /**
      * Bootstrap the application for artisan commands.
@@ -31,13 +36,43 @@ class ConsoleKernel implements ConsoleKernelContract
      */
     public function bootstrap()
     {
-        $this->getArtisan();
-        $this->commands();
-        $this->schedule();
+
+
+        if (! $this->app->hasBeenBootstrapped()) {
+
+            $this->app->bootstrapWith($this->getBootstrappers());
+        }
+
+        $this->app->loadDeferredProviders();
+
+        if (! $this->commandsLoaded) {
+            $this->commands();
+
+            $this->commandsLoaded = true;
+        }
+
+        $this->bindSchedule();
+
     }
 
     public function getArtisan(): ConsoleApplicationContract|ConsoleApplication
     {
+
+        if (is_null($this->artisan)) {
+            $this->artisan = (new LeantimeCli($this->app, $this->events, $this->app->version()))
+                ->resolveCommands($this->commands)
+                ->setContainerCommandLoader();
+
+            if ($this->symfonyDispatcher instanceof EventDispatcher) {
+                $this->artisan->setDispatcher($this->symfonyDispatcher);
+                $this->artisan->setSignalsToDispatchEvent();
+            }
+        }
+
+        return $this->artisan;
+
+
+
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplicationContract::class);
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplication::class);
 
@@ -126,73 +161,47 @@ class ConsoleKernel implements ConsoleKernelContract
 
         $customCommands = $customPluginCommands = null;
 
+        $ltCommands = collect(glob(APP_ROOT . '/app/Command/*.php') ?? []);
 
-        session(["commands.core" => collect(glob(APP_ROOT . '/app/Command/*.php') ?? [])
-            ->filter(function ($command) use (&$customCommands) {
-                return ! Arr::has(
-                    $customCommands ??= collect(glob(APP_ROOT . '/custom/Command/*.php') ?? []),
-                    str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command)
-                );
-            })
-            ->concat($customCommands ?? [])]);
+        $commands = collect(Arr::flatten($ltCommands))
+            ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
 
-        session(["commands.plugins" => collect(glob(APP_ROOT . '/app/Plugins/*/Command/*.php') ?? [])
-            ->filter(function ($command) use (&$customPluginCommands) {
-                return ! in_array(
-                    str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command),
-                    $customPluginCommands ??= collect(glob(APP_ROOT . '/custom/Plugins/*/Command/*.php') ?? [])->toArray(),
-                );
-            })
-            ->concat($customPluginCommands ?? [])
-            // filter by active plugins
-            ->filter(fn ($command) => in_array(
-                Str::of($command)->after('Plugins/')->before('/Command')->toString(),
-                array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabledOnly: true)),
-            ))]);
 
-        $commands = collect(Arr::flatten(session("commands")))
-            ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
-
-        /**
-         * Other commands to be included
-         *
-         * @var LaravelCommand[]|SymfonyCommand[] $additionalCommands
-         **/
-        $glob = glob(APP_ROOT . '/vendor/illuminate/*/Console/*.php');
-        $laravelCommands = collect($glob)->map(function ($command) {
-            $path = Str::replace(APP_ROOT."/vendor/illuminate/", "", $command);
-            $cleanPath = ucfirst(Str::replace(['/', '.php'], ['\\', ''], $path));
-            return "Illuminate\\".$cleanPath;
-        });
-        session(["commands.laravel" => $laravelCommands]);
-
-        $additionalCommands = self::dispatch_filter('additional_commands', [
-            \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
-            \Illuminate\Console\Scheduling\ScheduleFinishCommand::class,
-            \Illuminate\Console\Scheduling\ScheduleListCommand::class,
-            \Illuminate\Console\Scheduling\ScheduleTestCommand::class,
-            \Illuminate\Console\Scheduling\ScheduleWorkCommand::class,
-            \Illuminate\Console\Scheduling\ScheduleClearCacheCommand::class,
-        ]);
-
-        $commands = collect($commands)->concat($laravelCommands);
-
-        collect($commands)->concat($additionalCommands)
+        collect($commands)
             ->each(function ($command) {
+
+                LeantimeCli::starting(function($cli) use ($command) {
+
+                    if (
+                        ! is_subclass_of($command, SymfonyCommand::class)
+                        || (new \ReflectionClass($command))->isAbstract()
+                    ) {
+                        return;
+                    }
+
+                    $command = $this->app->make($command);
+
+                    $cli->add($command);
+                });
+
+                /*
                 if (
                     ! is_subclass_of($command, SymfonyCommand::class)
                     || (new \ReflectionClass($command))->isAbstract()
                 ) {
                     return;
                 }
-
-                $command = $this->getApplication()->make($command);
+                var_dump($command);
+                $command = $this->getArtisan()->make($command);
+                var_dump("made");
 
                 if ($command instanceof LaravelCommand) {
-                    $command->setLaravel($this->getApplication());
+                    $command->setLaravel($this->getArtisan());
                 }
 
-                $this->getArtisan()->add($command);
+
+                $this->getArtisan()->add($command);*/
+
             });
 
         $commandsLoaded = true;
@@ -203,7 +212,7 @@ class ConsoleKernel implements ConsoleKernelContract
      *
      * @return void
      */
-    private function schedule()
+    protected function bindSchedule()
     {
         // Set default timezone
         config(['app.timezone' => config('defaultTimezone')]);
@@ -232,8 +241,13 @@ class ConsoleKernel implements ConsoleKernelContract
             $this->bootstrap();
 
             return $this->getArtisan()->run($input, $output);
+
         } catch (\Throwable $e) {
-            error_log($e);
+
+            dd($e);
+            $this->reportException($e);
+
+            $this->renderException($output, $e);
 
             return 1;
         }
@@ -261,7 +275,6 @@ class ConsoleKernel implements ConsoleKernelContract
      * @param  array  $parameters
      * @todo Implement
      */
-    /** @phpstan-ignore-next-line */
     public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
     {
         /** @phpstan-ignore-next-line */
@@ -322,5 +335,20 @@ class ConsoleKernel implements ConsoleKernelContract
     public function getApplication()
     {
         return app();
+    }
+
+    public function getBootstrappers(): array
+    {
+
+        $bootstrappers = [
+            \Leantime\Core\Bootstrap\LoadEnvironmentVariables::class,
+            \Leantime\Core\Bootstrap\LoadConfig::class,
+            \Leantime\Core\Bootstrap\HandleExceptions::class,
+            \Leantime\Core\Bootstrap\RegisterProviders::class,
+            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+            \Illuminate\Foundation\Bootstrap\BootProviders::class
+        ];
+
+        return self::dispatch_filter('http_bootstrappers', $bootstrappers);
     }
 }

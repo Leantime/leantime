@@ -134,14 +134,12 @@ class Auth
      */
     public function __construct(
         EnvironmentCore $config,
-        ?SessionManager $session,
         LanguageCore $language,
         SettingRepository $settingsRepo,
         AuthRepository $authRepo,
         UserRepository $userRepo
     ) {
         $this->config = $config;
-        $this->session = $session;
         $this->language = $language;
         $this->settingsRepo = $settingsRepo;
         $this->authRepo = $authRepo;
@@ -392,7 +390,7 @@ class Auth
     public function logout(): void
     {
 
-        $this->authRepo->invalidateSession($this->session->getId());
+        $this->authRepo->invalidateSession(session()->getId());
 
         $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
                     'userdata',

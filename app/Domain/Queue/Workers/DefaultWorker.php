@@ -36,7 +36,7 @@ class DefaultWorker
                     return true;
                 }
 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 error_log($e);
             }
 

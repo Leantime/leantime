@@ -26,7 +26,6 @@ package: clean build
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/config
-	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
 	touch $(TARGET_DIR)/logs/error.log
@@ -131,7 +130,7 @@ get-version:
 	@echo $(VERSION)
 
 phpstan:
-	./vendor/bin/phpstan analyse --memory-limit 512M
+	./vendor/bin/phpstan analyse --memory-limit 1024M --debug -v
 
 update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php

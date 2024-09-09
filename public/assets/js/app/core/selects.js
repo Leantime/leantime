@@ -2,6 +2,7 @@ import Choices from 'leantime.choices.js';
 import { appUrl } from './instance-info.module.js';
 
 export const initSelect = function(element, choices, enableSearch) {
+
     const select = new Choices(element, {
         choices: choices,
         editItems: false,
@@ -23,6 +24,37 @@ export const initSelect = function(element, choices, enableSearch) {
         },
         maxItemText: (maxItemCount) => {
             return `Only ${maxItemCount} values can be added`;
+        },
+        classNames: {
+            containerOuter: ['choices'],
+            containerInner: ['choices__inner'],
+            input: ['choices__input'],
+            inputCloned: ['choices__input--cloned'],
+            list: ['choices__list'],
+            listItems: ['choices__list--multiple'],
+            listSingle: ['choices__list--single'],
+            listDropdown: ['choices__list--dropdown'],
+            item: ['choices__item'],
+            itemSelectable: ['choices__item--selectable'],
+            itemDisabled: ['choices__item--disabled'],
+            itemChoice: ['choices__item--choice'],
+            description: ['choices__description'],
+            placeholder: ['choices__placeholder'],
+            group: ['choices__group'],
+            groupHeading: ['choices__heading'],
+            button: ['choices__button'],
+            activeState: ['is-active'],
+            focusState: ['is-focused'],
+            openState: ['is-open'],
+            disabledState: ['is-disabled'],
+            highlightedState: ['is-highlighted'],
+            selectedState: ['is-selected'],
+            flippedState: ['is-flipped'],
+            loadingState: ['is-loading'],
+            notice: ['choices__notice'],
+            addChoice: ['choices__item--selectable', 'add-choice'],
+            noResults: ['has-no-results'],
+            noChoices: ['has-no-choices'],
         },
     });
 

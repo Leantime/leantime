@@ -1,14 +1,17 @@
 #!/usr/bin/env php
 <?php
 
-define('ROOT', dirname(__FILE__, 2)."/public");
-define('APP_ROOT', dirname(__FILE__, 2));
+define('ROOT', __DIR__);
+define('APP_ROOT', dirname(__DIR__, 1));
 define('LEAN_CLI', true);
 
 if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
     throw new RuntimeException('Install dependencies to run this Leantime CLI.');
 }
-
 require $composer;
 
-\Leantime\Core\Bootstrap\Bootloader::getInstance()->boot();
+//Get the application once.
+//Loads everything up once and then let's the bootloader manage it
+$app = require_once APP_ROOT."/app/Core/Bootstrap/App.php";
+
+\Leantime\Core\Bootloader::getInstance()->boot($app);

@@ -19,6 +19,7 @@
           <option name="path" value="$PROJECT_DIR$/app/Plugins/Sentry/tests" />
         </Configuration>
         <Configuration>
+          <option name="namespace" value="Tests" />
           <option name="path" value="$PROJECT_DIR$/tests" />
         </Configuration>
       </list>

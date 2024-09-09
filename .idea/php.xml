@@ -26,7 +26,7 @@
     </phpcs_settings>
   </component>
   <component name="PhpExternalFormatter">
-    <option name="externalFormatter" value="PHP_CS_FIXER" />
+    <option name="externalFormatter" value="PHP_CBF" />
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
@@ -110,7 +110,6 @@
       <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/symfony/mime" />
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/vendor/symfony/process" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
@@ -272,6 +271,7 @@
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="autoload" value="$PROJECT_DIR$/vendor/autoload.php" />
+    <option name="config" value="$PROJECT_DIR$/phpstan.neon" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
   </component>

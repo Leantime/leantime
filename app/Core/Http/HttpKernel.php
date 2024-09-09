@@ -65,7 +65,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
             $request->enableHttpMethodParameterOverride();
 
             $response = $this->sendRequestThroughRouter($request);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->reportException($e);
 
             $response = $this->renderException($request, $e);

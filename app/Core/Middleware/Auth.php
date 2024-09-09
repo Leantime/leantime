@@ -83,7 +83,7 @@ class Auth
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
         if (session("userdata.twoFAEnabled") && ! session("userdata.twoFAVerified")) {
-            return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? "") ?: $next($request);
+            return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? "", $request) ?: $next($request);
         }
 
         self::dispatch_event("logged_in", ['application' => $this]);

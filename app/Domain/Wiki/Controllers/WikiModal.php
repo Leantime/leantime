@@ -51,8 +51,8 @@ namespace Leantime\Domain\Wiki\Controllers {
         {
             $wiki = app()->make(Wiki::class);
 
-            if (isset($_GET["id"])) {
-                $id = (int) $_GET["id"];
+            if (isset($params["id"])) {
+                $id = (int) $params["id"];
                 //Update
                 $wiki->title = $params['title'];
                 $this->wikiService->updateWiki($wiki, $id);
@@ -73,11 +73,13 @@ namespace Leantime\Domain\Wiki\Controllers {
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success", "wiki_created");
                 }
 
-                $this->tpl->closeModal();
-                $this->tpl->htmxRefresh();
 
-                return $this->tpl->emptyResponse();
             }
+
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 

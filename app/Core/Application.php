@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Providers\Events;
 use Leantime\Core\Providers\Logging;
@@ -102,7 +103,7 @@ class Application extends \Illuminate\Foundation\Application {
 
         $this->register(new Events($this));
         $this->register(new Logging($this));
-        $this->register(new RoutingServiceProvider($this));
+        //$this->register(new RoutingServiceProvider($this));
 
     }
 
@@ -116,8 +117,7 @@ class Application extends \Illuminate\Foundation\Application {
             'config' => [\Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
             'encrypter' => [\Illuminate\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\Encrypter::class, \Illuminate\Contracts\Encryption\StringEncrypter::class],
             'events' => [\Leantime\Core\Events\EventDispatcher::class, \Illuminate\Events\Dispatcher::class, \Illuminate\Contracts\Events\Dispatcher::class],
-
-            'request' => [IncomingRequest::class, \Illuminate\Http\Request::class, \Symfony\Component\HttpFoundation\Request::class],
+            'request' => [IncomingRequest::class, ApiRequest::class, Console\CliRequest::class, \Illuminate\Http\Request::class,  \Symfony\Component\HttpFoundation\Request::class],
             'redis' => [\Illuminate\Redis\RedisManager::class, \Illuminate\Contracts\Redis\Factory::class],
             'redis.connection' => [\Illuminate\Redis\Connections\Connection::class, \Illuminate\Contracts\Redis\Connection::class],
             'router' => [Router::class, \Illuminate\Contracts\Routing\Registrar::class, \Illuminate\Contracts\Routing\BindingRegistrar::class],

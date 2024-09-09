@@ -22,7 +22,7 @@ class RegisterFacades
         Facade::setFacadeApplication($app);
 
         $aliasArr = $app->make('config')->get('app.aliases', []);
-        $packageManifestArr = $app->make(PackageManifest::class)->aliases();
+        $packageManifestArr = $app->make(\Illuminate\Foundation\PackageManifest::class)->aliases();
 
 
         AliasLoader::getInstance($aliasArr)->register();
