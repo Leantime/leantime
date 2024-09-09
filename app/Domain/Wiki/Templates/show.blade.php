@@ -53,58 +53,63 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-book"></span></div>
-    <div class="pagetitle">
+    <div class="pageheader">
+        <div class="pageicon"><span class="fa fa-book"></span></div>
+        <div class="pagetitle">
 
-        <h5><?php $tpl->e(session("currentProjectClient")); ?></h5>
+            <h5><?php $tpl->e(session('currentProjectClient')); ?></h5>
 
-        <?php if (count($wikis) > 0) {?>
-            <span class="dropdown dropdownWrapper headerEditDropdown">
-                <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
-                <ul class="dropdown-menu editCanvasDropdown">
-                    <?php if ($login::userIsAtLeast($roles::$editor) && $currentWiki) { ?>
-                        <li><a class="inlineEdit" href="#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$tpl->__("link.edit_wiki") ?></a></li>
-                        <li><a class="delete" href="#/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a></li>
+            <?php if (count($wikis) > 0) {?>
+            <x-global::actions.dropdown class="dropdownWrapper headerEditDropdown" button-class="btn btn-transparent"
+                icon="fa-solid fa-ellipsis-v" align="start">
+                <x-slot:menu class="editCanvasDropdown">
+                    @if ($login::userIsAtLeast($roles::$editor) && $currentWiki)
+                        <x-global::actions.dropdown.item>
+                            <a class="inlineEdit"
+                                href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a>
+                        </x-global::actions.dropdown.item>
+                        <x-global::actions.dropdown.item>
+                            <a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i>
+                                {{ __('links.delete_wiki') }}</a>
+                        </x-global::actions.dropdown.item>
+                    @endif
+                </x-slot:menu>
+            </x-global::actions.dropdown>
 
-                    <?php } ?>
-                </ul>
-            </span>
-        <?php } ?>
+            <?php } ?>
 
         <h1>{{ __("headlines.documents") }}
 
-         <?php if (count($wikis) > 0) {?>
-             //
-            <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    <?php
-                    if ($currentWiki !== false) {
-                        $tpl->e($currentWiki->title);
-                    } else {
-                        $tpl->__('label.select_board');
-                    } ?>
-                    <i class="fa fa-caret-down"></i>
-                </a>
+                <?php if (count($wikis) > 0) {?>
+                //
+                <x-global::actions.dropdown class="dropdownWrapper" button-class="header-title-dropdown"
+                    icon="fa fa-caret-down" align="start">
+                    <x-slot:button-text>
+                        @if ($currentWiki !== false)
+                            {{ $currentWiki->title }}
+                        @else
+                            {{ __('label.select_board') }}
+                        @endif
+                    </x-slot:button-text>
 
-                <ul class="dropdown-menu">
+                    <x-slot:menu>
+                        <x-global::actions.dropdown.item>
+                            <a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a>
+                        </x-global::actions.dropdown.item>
+                        <li class='nav-header border'></li>
+                        @foreach ($wikis as $wiki)
+                            <x-global::actions.dropdown.item>
+                                <a href="{{ BASE_URL . '/wiki/show?setWiki=' . $wiki->id }}">{{ $wiki->title }}</a>
+                            </x-global::actions.dropdown.item>
+                        @endforeach
+                    </x-slot:menu>
+                </x-global::actions.dropdown>
 
-                    <li><a class="inlineEdit" href="#/wiki/wikiModal/"><?=$tpl->__("link.new_wiki") ?></a></li>
-                    <li class='nav-header border'></li>
-                    <?php foreach ($wikis as $wiki) {?>
-                        <li>
-                            <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$tpl->escape($wiki->title)?></a>
-                        </li>
-                    <?php } ?>
+                <?php } ?>
+            </h1>
+        </div>
 
-
-                </ul>
-            </span>
-         <?php } ?>
-        </h1>
     </div>
-
-</div>
 
 
 <div class="maincontent">
@@ -194,13 +199,13 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 <div class="tagsinput readonly">
 
                                         <?php
-                                        $tagsArray = explode(",", $currentArticle->tags);
+                                        $tagsArray = explode(',', $currentArticle->tags);
                                         if (count($tagsArray) >= 1) {
                                             echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
                                         }
 
                                         foreach ($tagsArray as $tag) {
-                                            echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
+                                            echo "<span class='tag'><span>" . $tpl->escape($tag) . '</span></span>';
                                         }
 
                                         ?>
@@ -266,7 +271,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
     </div>
 
-</div>
+    </div>
 
 <script type="text/javascript">
 
@@ -281,9 +286,8 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
         leantime.commentsController.enableCommenterForms();
         <?php }?>
 
-    });
-
-</script>
+        });
+    </script>
 
 @endsection
 

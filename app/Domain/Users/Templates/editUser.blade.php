@@ -1,5 +1,3 @@
-
-
 <?php
 $status = $tpl->get('status');
 $values = $tpl->get('values');
@@ -38,12 +36,12 @@ $projects = $tpl->get('relations');
                     <select name="role" id="role">
 
                         <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                            <option value="<?php  echo $key; ?>"
-                                <?php if ($key == $values['role']) {
-                                    ?> selected="selected" <?php
+                        <option value="<?php echo $key; ?>" <?php if ($key == $values['role']) {
+                                    ?> selected="selected"
+                            <?php
                                 } ?>>
-                                <?=$tpl->__("label.roles." . $role) ?>
-                            </option>
+                            <?= $tpl->__('label.roles.' . $role) ?>
+                        </option>
                         <?php } ?>
 
                     </select> <br />
@@ -51,40 +49,48 @@ $projects = $tpl->get('relations');
                     <label for="status">{{ __("label.status") }}</label>
                     <select name="status" id="status" class="pull-left">
 
-                        <option value="a"
-                            <?php if (strtolower($values['status']) == "a") {
+                        <option value="a" <?php if (strtolower($values['status']) == "a") {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.active") ?>
+                            <?= $tpl->__('label.active') ?>
                         </option>
 
-                        <option value="i"
-                            <?php if (strtolower($values['status']) == "i") {
+                        <option value="i" <?php if (strtolower($values['status']) == "i") {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.invited") ?>
+                            <?= $tpl->__('label.invited') ?>
                         </option>
 
-                        <option value=""
-                            <?php if (strtolower($values['status']) == "") {
+                        <option value="" <?php if (strtolower($values['status']) == "") {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.deactivated") ?>
+                            <?= $tpl->__('label.deactivated') ?>
                         </option>
 
 
                     </select>
-                        <?php if ($values['status'] == 'i') { ?>
-                        <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
-                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="{{ BASE_URL }}/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$tpl->__("label.copyinviteLink") ?></a>
-                            <div class="dropdown-menu padding-md noClickProp">
-                                <input type="text" id="inviteURL" value="{{ BASE_URL }}/auth/userInvite/<?=$values['pwReset'] ?>" />
-                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?=$tpl->__('links.copy_url') ?></button>
-                            </div>
-                            <a href="{{ BASE_URL }}/users/editUser/<?=$values['id'] ?>?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?=$tpl->__('buttons.resend_invite') ?></a>
-                        </div>
-                        <?php } ?>
-                        <div class="clearfix"></div>
+                    <?php if ($values['status'] == 'i') { ?>
+                    <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
+                        <x-global::actions.dropdown label-text="<i class='fa fa-link'></i> {!! __('label.copyinviteLink') !!}"
+                            contentRole="link" position="bottom" align="start">
+                            <x-slot:menu class="padding-md noClickProp">
+                                <x-global::actions.dropdown.item>
+                                    <input type="text" id="inviteURL"
+                                        value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
+                                    <button class="btn btn-primary"
+                                        onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</button>
+                                </x-global::actions.dropdown.item>
+                            </x-slot:menu>
+                        </x-global::actions.dropdown>
+
+                        <a href="{{ BASE_URL }}/users/editUser/{{ $values['id'] }}?resendInvite"
+                            class="btn btn-default" style="margin-left:5px;">
+                            <i class="fa fa-envelope"></i> {!! __('buttons.resend_invite') !!}
+                        </a>
+                    </div>
+
+                    <?php } ?>
+                    <div class="clearfix"></div>
 
 
 
@@ -95,12 +101,13 @@ $projects = $tpl->get('relations');
                             <option value="0" selected="selected">{{ __("label.no_clients") }}</option>
                         <?php } ?>
                         <?php foreach ($tpl->get('clients') as $client) : ?>
-                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                        <option value="<?php echo $client['id']; ?>"
+                            <?php if ($client['id'] == $values['clientId']) :
                                 ?>selected="selected"<?php
-                                           endif; ?>><?php $tpl->e($client['name']) ?></option>
+                                           endif; ?>><?php $tpl->e($client['name']); ?></option>
                         <?php endforeach; ?>
-                    </select><br/>
-                        <br/>
+                    </select><br />
+                    <br />
 
                         <h4 class="widgettitle title-light">{{ __("label.contact_information") }}</h4>
 
@@ -161,40 +168,39 @@ $projects = $tpl->get('relations');
                                     <img src='{{ BASE_URL }}/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
                                 </span>
 
-                                <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">
-                                    <small><?php $tpl->e($row['type']); ?></small><br />
-                                                            <?php $tpl->e($row['name']); ?></label>
-                                <div class="clearall"></div>
-                            </div>
-                                                    <?php $i++; ?>
+                            <label for="project_<?php echo $row['id']; ?>" style="margin-top:-11px">
+                                <small><?php $tpl->e($row['type']); ?></small><br />
+                                <?php $tpl->e($row['name']); ?></label>
+                            <div class="clearall"></div>
+                        </div>
+                        <?php $i++; ?>
                         <?php } ?>
 
                     </div>
-                    </div>
-
                 </div>
+
             </div>
         </div>
+    </div>
 </form>
 
 <script>
-
     jQuery(".noClickProp.dropdown-menu").on("click", function(e) {
         e.stopPropagation();
     });
 
     function accordionToggle(id) {
 
-        let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
+        let currentLink = jQuery("#accordion_toggle_" + id).find("i.fa");
 
-        if(currentLink.hasClass("fa-angle-right")){
+        if (currentLink.hasClass("fa-angle-right")) {
             currentLink.removeClass("fa-angle-right");
             currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
-        }else{
+            jQuery('#accordion_' + id).slideDown("fast");
+        } else {
             currentLink.removeClass("fa-angle-down");
             currentLink.addClass("fa-angle-right");
-            jQuery('#accordion_'+id).slideUp("fast");
+            jQuery('#accordion_' + id).slideUp("fast");
         }
 
     }

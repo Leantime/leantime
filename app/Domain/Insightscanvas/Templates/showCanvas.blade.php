@@ -11,10 +11,8 @@ foreach ($__data as $var => $val) {
 $canvasName = 'insights';
 ?>
 
-<?php echo $tpl->viewFactory->make(
-    $tpl->getTemplatePath('canvas', 'showCanvasTop'),
-    array_merge($__data, ['canvasName' => 'insights'])
-)->render(); ?>
+@include('canvas::showCanvasTop', array_merge($__data, ['canvasName' => 'insights']))
+
 
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
@@ -23,10 +21,7 @@ $canvasName = 'insights';
             <div class="row canvas-row" id="firstRow">
                 <?php foreach ($canvasTypes as $key => $box) { ?>
                     <div class="column" style="width:20%">
-                        <?php echo $tpl->viewFactory->make(
-                            $tpl->getTemplatePath('canvas', 'element'),
-                            array_merge($__data, ['canvasName' => 'insights', 'elementName' => $key])
-                        )->render(); ?>
+                        @include('canvas::element', array_merge($__data, ['canvasName' => 'insights', 'elementName' => $key]))
                     </div>
                 <?php } ?>
             </div>
@@ -35,7 +30,6 @@ $canvasName = 'insights';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php echo $tpl->viewFactory->make(
-    $tpl->getTemplatePath('canvas', 'showCanvasBottom'),
-    array_merge($__data, ['canvasName' => 'insights'])
-)->render(); ?>
+
+ @include('canvas::showCanvasBottom', array_merge($__data, ['canvasName' => 'insights']))
+

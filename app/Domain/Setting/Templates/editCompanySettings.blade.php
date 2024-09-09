@@ -1,19 +1,18 @@
 @extends($layout)
 
 @section('content')
+    <?php
+    $companySettings = $tpl->get('companySettings');
+    ?>
 
-<?php
-$companySettings = $tpl->get('companySettings');
-?>
+    <div class="pageheader">
 
-<div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-cogs"></span></div>
-    <div class="pagetitle">
-        <h5><?=$tpl->__("label.administration")?></h5>
-        <h1><?=$tpl->__("headlines.company_settings")?></h1>
+        <div class="pageicon"><span class="fa fa-cogs"></span></div>
+        <div class="pagetitle">
+            <h5><?= $tpl->__('label.administration') ?></h5>
+            <h1><?= $tpl->__('headlines.company_settings') ?></h1>
+        </div>
     </div>
-</div>
 
 <div class="maincontent">
     @displayNotification()
@@ -21,7 +20,7 @@ $companySettings = $tpl->get('companySettings');
         <div class="row">
             <div class="col-md-12">
 
-                <div class="tabbedwidget tab-primary companyTabs">
+                    <div class="tabbedwidget tab-primary companyTabs">
 
                     <ul>
                         <li><a href="#details"><span class="fa fa-building"></span> {{ __("tabs.details") }}</a></li>
@@ -29,17 +28,17 @@ $companySettings = $tpl->get('companySettings');
                     </ul>
 
 
-                    <div id="details">
+                        <div id="details">
 
 
                         <div class="row">
                             <div class="col-md-8">
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details" >
 
-                                    <h5 class="subtitle"><?=$tpl->__("headlines.company_settings")?></h5>
-                            <p><?=$tpl->__("text.these_are_system_wide_settings")?></p>
-                            <br />
-                            <input type="hidden" value="1" name="saveSettings" />
+                                        <h5 class="subtitle"><?= $tpl->__('headlines.company_settings') ?></h5>
+                                        <p><?= $tpl->__('text.these_are_system_wide_settings') ?></p>
+                                        <br />
+                                        <input type="hidden" value="1" name="saveSettings" />
 
                             <h4 class="widgettitle title-light"><span
                                     class="fa fa-building"></span>{{ __("subtitles.companydetails") }}
@@ -60,28 +59,31 @@ $companySettings = $tpl->get('companySettings');
                                     </select>
 
 
-                                </div>
-                            </div>
+                                            </div>
+                                        </div>
 
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label><?=$tpl->__("label.company_name")?></label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" name="name" id="companyName"  value="<?php echo $companySettings['name']; ?>" class="pull-left"/>
-                                    <small><?=$tpl->__("text.company_name_helper")?></small>
-                                </div>
-                            </div>
-                            <br />
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <label><?= $tpl->__('label.company_name') ?></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" name="name" id="companyName"
+                                                    value="<?php echo $companySettings['name']; ?>" class="pull-left" />
+                                                <small><?= $tpl->__('text.company_name_helper') ?></small>
+                                            </div>
+                                        </div>
+                                        <br />
 
-                            <?php $tpl->dispatchTplEvent('beforeTelemetrySettings'); ?>
+                                        <?php $tpl->dispatchTplEvent('beforeTelemetrySettings'); ?>
 
-                            <div class="row" id="telemetryContainer">
-                                <div class="col-md-2">
-                                    <label><?=$tpl->__("label.send_telemetry")?></label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive"  <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '';?> />
+                                        <div class="row" id="telemetryContainer">
+                                            <div class="col-md-2">
+                                                <label><?= $tpl->__('label.send_telemetry') ?></label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="checkbox" class="toggle" name="telemetryActive"
+                                                    id="telemetryActive"
+                                                    <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '' ?> />
 
                                     <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
                                     <div class="clearall"></div><br />
@@ -163,33 +165,37 @@ $companySettings = $tpl->get('companySettings');
                                     <h5 class="subtitle"><?=$tpl->__("headlines.logo")?></h5>
                                     <br />
 
-                                    <div class="row">
+                                        <div class="row">
 
-                                        <div class="col-md-12">
-                                            <?php if ($companySettings['logo'] != "") { ?>
-                                            <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
-                                            <?php } else { ?>
-                                                <?=$tpl->__("text.no_logo") ?>
-                                            <?php } ?>
-                                            <div id="logoImg" style="height:auto;">
-                                            </div>
-                                            <br />
-                                            <div class="par">
+                                            <div class="col-md-12">
+                                                <?php if ($companySettings['logo'] != "") { ?>
+                                                <img src='<?php echo $companySettings['logo']; ?>' class='logoImg' alt='Logo'
+                                                    id="previousImage" width="260" />
+                                                <?php } else { ?>
+                                                <?= $tpl->__('text.no_logo') ?>
+                                                <?php } ?>
+                                                <div id="logoImg" style="height:auto;">
+                                                </div>
+                                                <br />
+                                                <div class="par">
 
-                                                <label><?=$tpl->__("label.upload_new_logo")?></label>
+                                                    <label><?= $tpl->__('label.upload_new_logo') ?></label>
 
-                                                <div class='fileupload fileupload-new' data-provides='fileupload'>
-                                                    <input type="hidden"/>
-                                                    <div class="input-append">
-                                                        <div class="uneditable-input span3">
-                                                            <i class="fa-file fileupload-exists"></i>
-                                                            <span class="fileupload-preview"></span>
-                                                        </div>
-                                                        <span class="btn btn-default btn-file">
-                                                            <span class="fileupload-new"><?=$tpl->__("buttons.select_file")?></span>
-                                                            <span class='fileupload-exists'><?=$tpl->__("buttons.change")?></span>
-                                                            <input type='file' name='file' onchange="leantime.settingController.readURL(this)" />
-                                                        </span>
+                                                    <div class='fileupload fileupload-new' data-provides='fileupload'>
+                                                        <input type="hidden" />
+                                                        <div class="input-append">
+                                                            <div class="uneditable-input span3">
+                                                                <i class="fa-file fileupload-exists"></i>
+                                                                <span class="fileupload-preview"></span>
+                                                            </div>
+                                                            <span class="btn btn-default btn-file">
+                                                                <span
+                                                                    class="fileupload-new"><?= $tpl->__('buttons.select_file') ?></span>
+                                                                <span
+                                                                    class='fileupload-exists'><?= $tpl->__('buttons.change') ?></span>
+                                                                <input type='file' name='file'
+                                                                    onchange="leantime.settingController.readURL(this)" />
+                                                            </span>
 
                                                         <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?=$tpl->__("buttons.remove")?></a>
                                                     </div>
@@ -213,56 +219,60 @@ $companySettings = $tpl->get('companySettings');
                         </div>
                 </div>
 
-                    <div id="apiKeys">
-                        <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
-                        <br /> <br />
-                        <ul class="sortableTicketList">
+                        <div id="apiKeys">
+                            <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
+                            <br /> <br />
+                            <ul class="sortableTicketList">
 
 
-                        <?php foreach ($tpl->get('apiKeys') as $apiKey) { ?>
-                            <li>
-                                <div class="ticketBox">
-                                      <div class="inlineDropDownContainer">
-                                        <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu">
+                                <?php foreach ($tpl->get('apiKeys') as $apiKey) { ?>
+                                <li>
+                                    <div class="ticketBox">
+                                        <x-global::content.context-menu
+                                            label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>"
+                                            contentRole="link" position="bottom" align="start" class="ticketDropDown">
 
-                                            <li><a href="#/api/apiKey/<?=$apiKey["id"] ?>"><i class="fa fa-edit"></i> Edit Key</a></li>
-                                            <li><a href="{{ BASE_URL }}/api/delAPIKey/<?=$apiKey["id"] ?>" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
-                                        </ul>
-                                    </div>
-                                    <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
+                                            <!-- Menu Items -->
+                                            <x-global::actions.dropdown.item href="#/api/apiKey/{{ $apiKey['id'] }}">
+                                                <i class="fa fa-edit"></i> Edit Key
+                                            </x-global::actions.dropdown.item>
+                                            <x-global::actions.dropdown.item
+                                                href="{{ BASE_URL }}/api/delAPIKey/{{ $apiKey['id'] }}"
+                                                class="delete">
+                                                <i class="fa fa-trash"></i> Delete Key
+                                            </x-global::actions.dropdown.item>
+                                        </x-global::content.context-menu>
+
+                                        <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
                                     lt_<?=$apiKey["username"] ?>***
                                     | <?=$tpl->__("labels.created_on")?>: <?=format($apiKey["createdOn"])->date() ?> | <?=$tpl->__("labels.last_used")?>: <?= format($apiKey["lastlogin"])->date() ?>
 
-                                </div>
-                            </li>
-                        <?php } ?>
-                        </ul>
+                                    </div>
+                                </li>
+                                <?php } ?>
+                            </ul>
+
+                        </div>
 
                     </div>
-
+                </div>
             </div>
         </div>
+
+
+
+
     </div>
-</div>
 
 
+    <script>
+        jQuery(document).ready(function() {
+            jQuery(".companyTabs").tabs({
+                activate: function(event, ui) {
 
-
-</div>
-
-
-<script>
-    jQuery(document).ready(function() {
-        jQuery(".companyTabs").tabs({
-            activate: function (event, ui) {
-
-                window.location.hash = ui.newPanel.selector;
-            }
+                    window.location.hash = ui.newPanel.selector;
+                }
+            });
         });
-    });
-</script>
-
+    </script>
 @endsection
