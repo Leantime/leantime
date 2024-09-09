@@ -299,49 +299,6 @@ input[type=color] {
     margin-left:5px !important;
 }
 
-
-.dropdown-toggle.full-width-select {
-    width:100%;
-    display:block;
-
-    height: auto;
-    background-color: var(--input-background);
-    line-height: var(--form-element-line-height);
-    border: 1px solid var(--main-border-color);
-
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: 3px;
-    padding: 6px 12px;
-    color:var(--primary-font-color);
-}
-
-.dropdown-toggle.full-width-select:hover {
-    text-decoration:none;
-    background:var(--main-menu-link-hover-bg);
-    color:var(--main-menu-link-hover-color);
-}
-
-.dropdown-toggle.full-width-select .fa {
-    float: right;
-    vertical-align: bottom;
-    margin-top: 3px;
-}
-
-.board-select .dropdown-menu {
-    margin-left:15px;
-    margin-top:2px;
-}
-
-.board-select .dropdown-menu li.nav-header.border {
-    border-top: 1px solid var(--neutral);
-    border-bottom: 0px;
-    padding-top: 10px;
-}
-
-
 body input[type=text].main-title-input.main-title-input {
     border: 1px solid transparent;
     box-shadow:none;

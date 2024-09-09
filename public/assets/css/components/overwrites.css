@@ -72,7 +72,6 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
-.viewDropDown .dropdown-menu li a.active,
 .paginate_button.current:hover
 { color: var(--primary-color); }
 

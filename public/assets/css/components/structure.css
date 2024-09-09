@@ -1,11 +1,6 @@
 /***** RESET BROWSER STYLE *****/
 /*******************************/
 
-*, ::after, ::before {
-    -webkit-box-sizing: inherit;
-    box-sizing: inherit
-}
-
 .container {
     position: relative;
     margin-left: auto;

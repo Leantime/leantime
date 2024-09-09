@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectTasksOptions">
-    <TaskOptions isEnabled="true">
+    <TaskOptions isEnabled="false">
       <option name="arguments" value="mix" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
@@ -21,7 +21,7 @@
       <option name="workingDir" value="" />
       <envs />
     </TaskOptions>
-    <TaskOptions isEnabled="true">
+    <TaskOptions isEnabled="false">
       <option name="arguments" value="mix" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />

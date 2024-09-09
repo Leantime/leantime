@@ -63,15 +63,6 @@ body.loginpage {
 }
 
 
-.tabbedwidget .dropdown-menu a {
-    color: #555;
-}
-
-.tabbedwidget .dropdown-menu {
-    right: 0;
-    left: auto;
-}
-
 /* Forms */
 
 
@@ -96,15 +87,6 @@ body.loginpage {
     margin: 15px 0;
     padding: 10px 0;
     border-top: 1px dotted #ccc;
-}
-
-.dropdown-menu .checker {
-    float: left;
-    clear: both;
-}
-
-.dropdown-menu {
-    min-width: 240px;
 }
 
 /* messages */
@@ -829,11 +811,6 @@ body.loginpage {
 }
 
 
-.headtitle .dropdown-menu {
-    left: auto;
-    right: 0;
-}
-
 .headtitle .btn-group .btn .caret {
     border-top: 4px solid #fff;
 }
@@ -1157,11 +1134,6 @@ ul.list-inline li {
     text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-
-.dropdown .dropdown-menu .nav-header {
-    padding-left: 10px;
-    padding-right: 10px;
-}
 
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,

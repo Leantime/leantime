@@ -10,6 +10,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\ApiRequest;
+use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -78,24 +79,24 @@ class Language
     public Environment $config;
 
     /**
-     * @var ApiRequest $apiRequest
+     * @var IncomingRequest $request
      */
-    public ApiRequest $apiRequest;
+    public IncomingRequest $request;
 
 
     /**
      * Constructor method for initializing an instance of the class.
      *
      * @param Environment $config     The configuration environment.
-     * @param ApiRequest  $apiRequest The API request object.
+     * @param ApiRequest  $request The API request object.
      */
     public function __construct(
         Environment $config,
-        ApiRequest $apiRequest,
+        IncomingRequest $request,
     ) {
 
         $this->config = $config;
-        $this->apiRequest = $apiRequest;
+        $this->request = $request;
 
         //Get list of available languages
         $this->langlist = $this->getLanguageList();
@@ -122,9 +123,9 @@ class Language
 
         session(["usersettings.language" => $lang]);
 
-        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !$this->apiRequest->isApiOrCronRequest()) {
+        if ((!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && !$this->request->isApiOrCronRequest()) {
 
-            $isAPIRequest = $this->apiRequest->isApiOrCronRequest();
+            $isAPIRequest = $this->request->isApiOrCronRequest();
 
             EventDispatcher::add_filter_listener(
                 'leantime.core.http.httpkernel.handle.beforeSendResponse',

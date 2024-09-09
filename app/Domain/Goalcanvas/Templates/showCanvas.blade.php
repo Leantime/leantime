@@ -329,61 +329,41 @@
                                                                 // Determine the label content dynamically
                                                                 $labelContent = "<span class='text'>" . ($row['status'] != '' ? $statusLabels[$row['status']]['title'] : '') . "</span> <i class='fa fa-caret-down' aria-hidden='true'></i>";
                                                             @endphp
-                                                            
-                                                            <x-global::actions.dropdown 
+
+                                                            <x-global::actions.dropdown
                                                                 :label-text="$labelContent"
                                                                 contentRole="link"
                                                                 position="bottom"
                                                                 align="start"
                                                                 class="f-left status label-{{ $row['status'] != '' ? $statusLabels[$row['status']]['dropdown'] : '' }}"
                                                                 id="statusDropdownMenuLink{{ $row['id'] }}">
-                                                            
+
                                                                 <x-slot:menu>
                                                                     <!-- Menu Header -->
                                                                     <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
-                                                            
+
                                                                     <!-- Dynamic Status Menu Items -->
                                                                     @foreach ($statusLabels as $key => $data)
                                                                         @if ($data['active'] || true)
-                                                                            <x-global::actions.dropdown.item 
-                                                                                variant="link" 
-                                                                                href="javascript:void(0);" 
-                                                                                class="label-{{ $data['dropdown'] }}" 
-                                                                                :data-label="$data['title']" 
-                                                                                :data-value="$row['id'] . '/' . $key" 
+                                                                            <x-global::actions.dropdown.item
+                                                                                variant="link"
+                                                                                href="javascript:void(0);"
+                                                                                class="label-{{ $data['dropdown'] }}"
+                                                                                :data-label="$data['title']"
+                                                                                :data-value="$row['id'] . '/' . $key"
                                                                                 :id="'ticketStatusChange' . $row['id'] . $key">
                                                                                 {{ $data['title'] }}
                                                                             </x-global::actions.dropdown.item>
                                                                         @endif
                                                                     @endforeach
                                                                 </x-slot:menu>
-                                                            
+
                                                             </x-global::actions.dropdown>
-                                                            
+
 
                                                             </div>
                                                         @endif
 
-                                                        @if (!empty($relatesLabels))
-                                                            <div
-                                                                class="dropdown ticketDropdown relatesDropdown colorized show firstDropdown">
-                                                                <a class="dropdown-toggle f-left relates label-{{ $relatesLabels[$row['relates']]['dropdown'] }}"
-                                                                    href="javascript:void(0);" role="button"
-                                                                    id="relatesDropdownMenuLink{{ $row['id'] }}"
-                                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false">
-                                                                    <span
-                                                                        class="text">{{ $relatesLabels[$row['relates']]['title'] }}</span>
-                                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                </a>
-                                                                <ul class="dropdown-menu"
-                                                                    aria-labelledby="relatesDropdownMenuLink{{ $row['id'] }}">
-                                                                    <li class="nav-header border">
-                                                                        {{ __('dropdown.choose_relates') }}</li>
-                                                                    @foreach ($relatesLabels as $key => $data)
-                                                                        @if ($data['active'] || true)
-                                                                            <x-global::actions.dropdown.item </div>
-                                                                        @endif
 
                                                                         <div
                                                                             class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
@@ -509,7 +489,6 @@
                 <small class="align-center">{{ $disclaimer }}</small>
             @endif
 
-            {!! $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render() !!}
         </div>
     </div>
 
@@ -527,9 +506,9 @@
             leantime.canvasController.initFilterBar();
 
             @if ($login::userIsAtLeast($roles::$editor))
-                leantime.canvasController.initUserDropdown('{{ $canvasName }}');
-                leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
-                leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
+                leantime.canvasController.initUserDropdown('goalcanvas');
+                leantime.canvasController.initStatusDropdown('goalcanvas');
+                leantime.canvasController.initRelatesDropdown('goalcanvas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif

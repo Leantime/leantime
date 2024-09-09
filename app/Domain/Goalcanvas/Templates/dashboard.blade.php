@@ -476,9 +476,9 @@
             leantime.canvasController.initFilterBar();
 
             @if ($login::userIsAtLeast($roles::$editor))
-                leantime.canvasController.initUserDropdown('{{ $canvasName }}');
-                leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
-                leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
+                leantime.canvasController.initUserDropdown('goalcanvas');
+                leantime.canvasController.initStatusDropdown('goalcanvas');
+                leantime.canvasController.initRelatesDropdown('goalcanvas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif
