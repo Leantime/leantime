@@ -2,8 +2,6 @@
     'labelText' => '',
     'size' => '',
     'state' => '',
-    'checked' => '',
-    'disabledState' => ''
 ])
 
 @php
@@ -17,17 +15,13 @@
             <span class="label-text">{{$labelText}}</span>
             <input 
                 type="checkbox" 
-                {{ $checked === "checked" ? "checked='checked'" : "" }} 
                 {{ $attributes->merge(['class' => 'checkbox '.$sizeClass.' '.$stateClass]) }}
-                {{ $disabledState === 'disabled' ? 'disabled' : '' }}
             />
         </label>
     </div>
 @else
     <input 
         type="checkbox" 
-        {{ $checked === "checked" ? "checked='checked'" : "" }} 
         {{ $attributes->merge(['class' => 'checkbox '.$sizeClass.' '.$stateClass]) }}
-        {{ $disabledState === 'disabled' ? 'disabled' : '' }}
     />
 @endif
