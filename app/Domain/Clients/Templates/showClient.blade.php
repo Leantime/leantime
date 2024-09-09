@@ -7,139 +7,147 @@
     $users = $tpl->get('users');
     ?>
 
-    <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
-    <div class="pageheader">
-        <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
-        <div class="pageicon"><span class="fa fa-address-book"></span></div>
-        <div class="pagetitle">
-            <h5><?php echo $tpl->__('label.administration'); ?></h5>
-            <h1><?php $tpl->e($values['name']); ?></h1>
-        </div>
-        <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
-    </div><!--pageheader-->
-    <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<div class="pageheader">
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa fa-address-book"></span></div>
+    <div class="pagetitle">
+        <h5>{{ __("label.administration") }}</h5>
+        <h1><?php $tpl->e($values['name']); ?></h1>
+    </div>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
+</div><!--pageheader-->
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
-    <div class="maincontent">
-        <div class="maincontentinner">
-            <?php echo $tpl->displayNotification(); ?>
+<div class="maincontent">
+    <div class="maincontentinner">
+        @displayNotification()
 
             <div class="tabbedwidget tab-primary clientTabs">
 
-                <ul>
-                    <li><a href="#clientDetails"><?php echo $tpl->__('label.client_details'); ?></a></li>
-                    <li><a href="#comment"><?php echo sprintf($tpl->__('tabs.discussion_with_count'), count($tpl->get('comments'))); ?></a></li>
-                    <li><a href="#files"><?php echo sprintf($tpl->__('tabs.files_with_count'), count($tpl->get('files'))); ?></a></li>
-                </ul>
+            <ul>
+                <li><a href="#clientDetails">{{ __("label.client_details") }}</a></li>
+                <li><a href="#comment"><?php echo sprintf($tpl->__('tabs.discussion_with_count'), count($tpl->get('comments'))); ?></a></li>
+                <li><a href="#files"><?php echo sprintf($tpl->__('tabs.files_with_count'), count($tpl->get('files'))); ?></a></li>
+            </ul>
 
                 <div id='clientDetails'>
                     <form action="" method="post">
 
-                        <div class="row row-fluid">
-                            <div class="col-md-6">
-                                <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> <?php echo $tpl->__('subtitle.details'); ?>
-                                </h4>
+                    <div class="row row-fluid">
+                        <div class="col-md-6">
+                            <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> {{ __("subtitle.details") }}</h4>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.client_id'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="id" id="id" value="<?php $tpl->e($values['id']); ?>"
-                                            readonly />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.client_id") }}</label>
+                                <div class="">
+                                    <input type="text" name="id" id="id" value="<?php $tpl->e($values['id']); ?>" readonly />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.name'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.name") }}</label>
+                                <div class="">
+                                    <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.email'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.email") }}</label>
+                                <div class="">
+                                    <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.url'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="internet" id="internet" value="<?php $tpl->e($values['internet']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.url") }}</label>
+                                <div class="">
+                                    <input
+                                            type="text" name="internet" id="internet"
+                                            value="<?php $tpl->e($values['internet']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.street'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="street" id="street" value="<?php $tpl->e($values['street']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.street") }}</label>
+                                <div class="">
+                                    <input
+                                            type="text" name="street" id="street"
+                                            value="<?php $tpl->e($values['street']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.zip'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.zip") }}</label>
+                                <div class="">
+                                    <input type="text"
+                                    name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.city'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.city") }}</label>
+                                <div class="">
+                                    <input type="text"
+                                           name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.state'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="state" id="state" value="<?php $tpl->e($values['state']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.state") }}</label>
+                                <div class="">
+                                    <input
+                                            type="text" name="state" id="state"
+                                            value="<?php $tpl->e($values['state']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.country'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="country" id="country" value="<?php $tpl->e($values['country']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.country") }}</label>
+                                <div class="">
+                                    <input
+                                            type="text" name="country" id="country"
+                                            value="<?php $tpl->e($values['country']); ?>" />
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label class=" control-label"><?php echo $tpl->__('label.phone'); ?></label>
-                                    <div class="">
-                                        <input type="text" name="phone" id="phone" value="<?php $tpl->e($values['phone']); ?>" />
-                                    </div>
+                            <div class="form-group">
+                                <label class=" control-label">{{ __("label.phone") }}</label>
+                                <div class="">
+                                    <input
+                                            type="text" name="phone" id="phone"
+                                            value="<?php $tpl->e($values['phone']); ?>" />
                                 </div>
+                            </div>
 
                             </div>
 
-                            <div class="col-md-6">
-                                <h4 class="widgettitle title-light"><span class="fa fa-users"></span> <?php echo $tpl->__('subtitles.users_assigned_to_this_client'); ?>
-                                </h4>
-                                <a href="#/users/newUser?preSelectedClient=<?= $values['id'] ?>" class="btn btn-primary"><i
-                                        class='fa fa-plus'></i> <?= $tpl->__('buttons.add_user') ?> </a>
-                                <table class='table table-bordered'>
-                                    <colgroup>
-                                        <col class="con1" />
-                                        <col class="con0" />
-                                        <col class="con1" />
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th><?php echo $tpl->__('label.name'); ?></th>
-                                            <th><?php echo $tpl->__('label.email'); ?></th>
-                                            <th><?php echo $tpl->__('label.phone'); ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($tpl->get('userClients') as $user) : ?>
-                                        <tr>
-                                            <td>
-                                                <?php printf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])); ?>
-                                            </td>
-                                            <td><a href='mailto:<?php $tpl->e($user['username']); ?>'><?php $tpl->e($user['username']); ?></a></td>
-                                            <td><?php $tpl->e($user['phone']); ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
+                        <div class="col-md-6">
+                            <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __("subtitles.users_assigned_to_this_client") }}</h4>
+                            <a href="#/users/newUser?preSelectedClient=<?=$values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
+                            <table class='table table-bordered'>
+                                <colgroup>
+                                    <col class="con1" />
+                                    <col class="con0"/>
+                                    <col class="con1" />
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>{{ __("label.name") }}</th>
+                                    <th>{{ __("label.email") }}</th>
+                                    <th>{{ __("label.phone") }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($tpl->get('userClients') as $user) : ?>
+                                    <tr>
+                                        <td>
+                                        <?php printf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])); ?>
+                                        </td>
+                                        <td><a href='mailto:<?php $tpl->e($user['username']); ?>'><?php $tpl->e($user['username']); ?></a></td>
+                                        <td><?php $tpl->e($user['phone']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
 
                                         <?php if (count($tpl->get('userClients')) == 0) {
                                             echo "<tr><td colspan='3'>" . $tpl->__('text.no_users_assigned_to_this_client') . '</td></tr>';
@@ -151,28 +159,25 @@
 
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="submit" name="save" id="save" value="<?php echo $tpl->__('buttons.save'); ?>"
-                                    class="btn btn-primary" />
-                            </div>
-                            <div class="col-md-6 align-right">
-                                <a href="<?= BASE_URL ?>/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i
-                                        class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a>
-                            </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="submit" name="save" id="save"
+                                   value="{{ __("buttons.save") }}" class="btn btn-primary" />
                         </div>
+                        <div class="col-md-6 align-right">
+                            <a href="{{ BASE_URL }}/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a>
+                        </div>
+                    </div>
 
                     </form>
                 </div>
 
                 <div id='comment'>
 
-                    <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
-                        <input type="hidden" name="comment" value="1" />
-                        <?php
-                        $tpl->assign('formUrl', BASE_URL . '/clients/showClient/' . $tpl->escape($_GET['id']) . '');
-                        $tpl->displaySubmodule('comments-generalComment'); ?>
-                    </form>
+                <form method="post" action="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
+                    <input type="hidden" name="comment" value="1" />
+                    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id'])])
+                </form>
 
 
                 </div>

@@ -48,21 +48,13 @@
 
         @if ($login::userIsAtLeast($roles::$editor))
             leantime.canvasController.initCanvasLinks();
-            leantime.canvasController.initUserDropdown();
-            leantime.canvasController.initStatusDropdown();
-            leantime.canvasController.initRelatesDropdown();
-        @else
+            leantime.canvasController.initUserDropdown('{{ $canvasName }}');
+            leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
+            leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
+        <?php } else { ?>
             leantime.authController.makeInputReadonly(".maincontentinner");
         @endif
 
-        @if (isset($_GET['showModal']))
-            @php
-                $modalUrl = $_GET['showModal'] == "" ? "&type=" . array_key_first($canvasTypes) : "/" . (int)$_GET['showModal'];
-            @endphp
-            leantime.canvasController.openModalManually(
-                "{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem{{ $modalUrl }}");
-            window.history.pushState({}, document.title, '{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas/');
-        @endif
     });
 </script>
 @endsection

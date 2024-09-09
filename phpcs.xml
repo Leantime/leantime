@@ -15,6 +15,8 @@
 
     <!-- exclude our migrations directory from the violation check-->
     <exclude-pattern>*.blade.php</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+
 
     <!-- ignore warnings and display ERRORS only -->
     <arg  value="np"/>

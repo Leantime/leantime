@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('projects', $projects);
 
-            return $this->tpl->displayPartial('tickets.moveTicket');
+            return $this->tpl->displayPartial('tickets::partials.moveTicket');
         }
 
         /**
@@ -68,7 +68,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            return FrontcontrollerCore::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 

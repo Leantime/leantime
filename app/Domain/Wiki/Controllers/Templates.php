@@ -25,7 +25,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          */
         public function get($params): Response
         {
-            return $this->tpl->displayPartial("wiki.templates");
+            return $this->tpl->displayPartial("wiki::partials.templates");
         }
     }
 }

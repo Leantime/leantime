@@ -30,7 +30,7 @@
                                     <input type="radio" name="groupBy"
                                            @if($groupBy == "time") checked='checked' @endif
                                            value="time" id="groupByDate"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -44,7 +44,7 @@
                                            name="groupBy"
                                            @if($groupBy == "project") checked='checked' @endif
                                            value="project" id="groupByProject"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -60,7 +60,7 @@
                                            name="groupBy"
                                            @if($groupBy == "priority") checked='checked' @endif
                                            value="priority" id="groupByPriority"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -86,7 +86,7 @@
                                     class='active'
                                 @endif
                             ><a href=""
-                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                 hx-trigger="click"
                                 hx-target="#yourToDoContainer"
                                 hx-swap="outerHTML"
@@ -104,7 +104,7 @@
                                             class='active'
                                         @endif
                                     ><a href=""
-                                        hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                        hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                         hx-trigger="click"
                                         hx-target="#yourToDoContainer"
                                         hx-swap="outerHTML"
@@ -125,7 +125,7 @@
             <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
 
                 <form method="post"
-                      hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
+                      hx-post="{{ BASE_URL }}/hx/widgets/myToDos/addTodo"
                       hx-target="#yourToDoContainer"
                       hx-swap="outerHTML"
                       hx-indicator="#ticket_new .htmx-indicator-small"
@@ -225,7 +225,7 @@
                                                 </div>
                                                 <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                                                    @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                                                    @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
                                                     <div class="scheduler pull-right">
                                                         @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
                                                             <i class="fa-solid fa-calendar-check infoIcon mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>

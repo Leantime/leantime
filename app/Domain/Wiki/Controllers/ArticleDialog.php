@@ -65,7 +65,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
-            return $this->tpl->displayPartial("wiki.articleDialog");
+            return $this->tpl->displayPartial("wiki::partials.articleDialog");
         }
 
         /**
@@ -78,8 +78,8 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             $article = app()->make(Article::class);
 
-            if (isset($_GET["id"])) {
-                $id = $_GET["id"];
+            if (isset($params["id"])) {
+                $id = $params["id"];
                 $article = $this->wikiService->getArticle($id, session("currentProject"));
 
                 $article->title = $params['title'];
@@ -111,7 +111,9 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if ($results) {
                     $this->tpl->setNotification("notification.article_updated_successfully", "success", "article_updated");
                 }
+
             } else {
+
                 //New
                 $article->title = $params['title'];
                 $article->author = session("userdata.id");
@@ -128,11 +130,11 @@ namespace Leantime\Domain\Wiki\Controllers {
                     $this->tpl->setNotification("notification.article_created_successfully", "success", "article_created");
                 }
             }
-            if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
-            } else {
-                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id);
-            }
+
+            $this->tpl->closeModal();
+            $this->tpl->htmxRefresh();
+
+            return $this->tpl->emptyResponse();
         }
     }
 }

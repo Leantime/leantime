@@ -6,7 +6,7 @@
 >
 
     <form
-        hx-post="{{BASE_URL}}/tickets/ticket-card/save/{{ $row['id'] }}"
+        hx-post="{{BASE_URL}}/hx/tickets/ticket-card/save/{{ $row['id'] }}"
         hx-target="#ticketbox-{{ $row['id'] }}"
         id="ticketboxForm{{ $row['id'] }}"
         hx-ext="debug"
@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
 
                 <small>{{ $row['projectName'] }}</small><br />
                 @if($row['dependingTicketId'] > 0)

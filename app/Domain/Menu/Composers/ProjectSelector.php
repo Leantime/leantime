@@ -18,7 +18,7 @@ class ProjectSelector extends Composer
     Use DispatchesEvents;
 
     public static array $views = [
-        'menu::projectSelector',
+        'menu::includes.projectSelector',
     ];
 
     private MenuRepository $menuRepo;

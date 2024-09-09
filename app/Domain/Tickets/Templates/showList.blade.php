@@ -9,8 +9,6 @@ $currentSprint  = $tpl->get("currentSprint");
 
 $allTicketGroups     = $tpl->get('allTickets');
 
-echo $tpl->displayNotification();
-
 $efforts        = $tpl->get('efforts');
 $priorities     = $tpl->get('priorities');
 $statusLabels   = $tpl->get('allTicketStates');
@@ -22,12 +20,12 @@ $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 
 ?>
-
-<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
+    @displayNotification()
+    @include("tickets::includes.ticketHeader")
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    @include("tickets::includes.ticketBoardTabs")
 
     <div class="maincontentinner">
 
@@ -35,10 +33,12 @@ $size = floor(100 / $numberofColumns);
             <div class="col-md-4">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
-                $tpl->displaySubmodule('tickets-ticketFilter');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>
@@ -59,10 +59,10 @@ $size = floor(100 / $numberofColumns);
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="width: 100%;"/>
+                        <input type="text" name="headline" autofocus placeholder="{{ __("input.placeholders.create_task") }}" style="width: 100%;"/>
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-primary mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; "/>
+                        <input type="submit" class="btn btn-primary mb-m" value="{{ __("buttons.save") }}" name="saveTicket" style="vertical-align: top; "/>
                     </form>
 
 
@@ -171,3 +171,4 @@ $size = floor(100 / $numberofColumns);
     });
 
 </script>
+@endsection

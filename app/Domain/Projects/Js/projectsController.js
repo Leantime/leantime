@@ -38,30 +38,6 @@ export const initProjectTabs = function () {
     jQuery('.projectTabs').tabs();
 };
 
-export const initDuplicateProjectModal = function () {
-    var regularModelConfig = {
-        sizes: {
-            minW: 450,
-            minH: 350
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            afterShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                initDates();
-                jQuery(".duplicateProjectModal, .formModal").nyroModal(regularModelConfig);
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        }
-    };
-
-    jQuery(".duplicateProjectModal").nyroModal(regularModelConfig);
-
-};
-
 export const initProgressBar = function (percentage) {
 
     jQuery("#progressbar").progressbar({
@@ -319,7 +295,7 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                             return popUpHTML;
                         },
                         on_click: function (project) {
-                            //_initModals();
+
                         },
                         on_date_change: function (project, start, end) {
 
@@ -364,9 +340,6 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                                 );
                             }
 
-                            //updateMilestoneDates(task.id, start, end, task._index);
-                            //_initModals();
-
                         },
                         on_sort_change: function (projects) {
 
@@ -390,7 +363,6 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                         },
                         on_progress_change: function (project, progress) {
 
-                            //_initModals();
                         },
                         on_view_change: function (mode) {
 
@@ -437,7 +409,6 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                         },
                         on_progress_change: function (project, progress) {
 
-                            //_initModals();
                         },
                         on_view_change: function (mode) {
 
@@ -604,7 +575,6 @@ export default {
     initProjectTabs: initProjectTabs,
     initProgressBar: initProgressBar,
     initProjectTable: initProjectTable,
-    initDuplicateProjectModal: initDuplicateProjectModal,
     initTodoStatusSortable: initTodoStatusSortable,
     initSelectFields: initSelectFields,
     removeStatus: removeStatus,

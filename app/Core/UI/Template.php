@@ -4,8 +4,10 @@ namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
+use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
@@ -19,7 +21,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Template class - Template routing
+ * Template class
+ * Support Leantime UI with custom template roues and various UI helpers
  *
  * @package leantime
  * @subpackage core
@@ -49,20 +52,7 @@ class Template
     public string $template = '';
 
     /** @var array */
-    public array $picture = array(
-        'calendar' => 'fa-calendar',
-        'clients' => 'fa-people-group',
-        'dashboard' => 'fa-th-large',
-        'files' => 'fa-picture',
-        'leads' => 'fa-signal',
-        'messages' => 'fa-envelope',
-        'projects' => 'fa-bar-chart',
-        'setting' => 'fa-cogs',
-        'tickets' => 'fa-pushpin',
-        'timesheets' => 'fa-table',
-        'users' => 'fa-people-group',
-        'default' => 'fa-off',
-    );
+    protected array $headers = [];
 
 
     /**
@@ -106,8 +96,6 @@ class Template
         $this->setupDirectives();
         $this->setupGlobalVars();
     }
-
-
 
     /**
      * setupDirectives - setup blade directives
@@ -169,6 +157,7 @@ class Template
             'roles' => $this->roles,
             'language' => $this->language,
             'dateTimeInfoEnum' => DateTimeInfoEnum::class,
+            'tpl' => $this
         ]);
     }
 
@@ -191,77 +180,83 @@ class Template
     }
 
     /**
-     * setNotification - assign errors to the template
-     *
-     * @param string $msg
-     * @param string $type
-     * @param string $event_id as a string for further identification
-     * @return void
-     */
-    public function setNotification(string $msg, string $type, string $event_id = ''): void
-    {
-        session(["notification" => $msg]);
-        session(["notificationType" => $type]);
-        session(["event_id" => $event_id]);
-    }
-
-    /**
-     * Set a flag to indicate that confetti should be displayed.
-     * Will be displayed next time a notification is displayed
-     *
-     * @return void confetti, duh
-     */
-    public function sendConfetti()
-    {
-        session(["confettiInYourFace" => true]);
-    }
-
-    /**
-     * getTemplatePath - Find template in custom and src directories
+     * get - get assigned values
      *
      * @access public
-     * @param string $namespace The namespace the template is for.
-     * @param string $path      The path to the template.
-     * @return string Full template path or false if file does not exist
-     * @throws Exception If template not found.
+     * @param string $name
+     * @return array
      */
-    public function getTemplatePath(string $namespace, string $path): string
+    public function get(string $name): mixed
     {
-        if ($namespace == '' || $path == '') {
-            throw new Exception("Both namespace and path must be provided");
+        if (!isset($this->vars[$name])) {
+            return null;
         }
 
-        $namespace = strtolower($namespace);
-        $fullpath = self::dispatch_filter(
-            "template_path__{$namespace}_{$path}",
-            "$namespace::$path",
-            [
-                'namespace' => $namespace,
-                'path' => $path,
-            ]
-        );
-
-        if (app('view')->exists($fullpath)) {
-            return $fullpath;
-        }
-
-        throw new Exception("Template $fullpath not found");
+        return $this->vars[$name];
     }
 
     /**
-     * gives HTMX response
+     * getAll - get all assigned values
      *
-     * @param string $viewPath The blade view path.
-     * @param string $fragment The fragment key.
-     * @return Response
-     */
-    public function displayFragment(string $viewPath, string $fragment = ''): Response
+     * @return array
+     **/
+    public function getAll(): array
     {
-        $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
-        app('view')->share(['tpl' => $this]);
-        /** @var View $view */
-        $view = app('view')->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
-        return new Response($view->fragmentIf(! empty($fragment), $fragment));
+        return $this->vars ?? [];
+    }
+
+
+    /**
+     * Sets a header in the response object.
+     *
+     * @param string $key The key of the header.
+     * @param string $value The value of the header.
+     * @return void
+     */
+    public function setResponseHeader(string $key, string $value):void {
+        $this->headers[$key] = $value;
+    }
+
+    /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function setHTMXEvent(string $eventName): void
+    {
+        $this->headers['HX-Trigger'] ??= [];
+        $this->headers['HX-Trigger'][] = $eventName;
+    }
+
+    /**
+     * Refreshes (main url page in the background)
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function htmxRefresh(): void
+    {
+
+        $hxCurrentUrl = $this->incomingRequest->headers->get("hx-current-url");
+        $mainPageUrl = Str::before($hxCurrentUrl, "#");
+        $this->headers["HX-Location"] = $mainPageUrl;
+
+    }
+
+    /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function closeModal(): void
+    {
+        $this->setHTMXEvent("HTMX.closemodal");
+    }
+
+    public function getHeaders() {
+        return $this->headers;
     }
 
     /**
@@ -274,10 +269,9 @@ class Template
      * @return Response
      * @throws Exception
      */
-    public function display(string $template, string $layout = "app", int $responseCode = 200): Response
+    public function display(string $template, string $layout = "app", int $responseCode = 200, array $headers = []): Response
     {
 
-        //
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
 
@@ -285,18 +279,15 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
-        $action = $this->incomingRequest->getActionName($template);
-        $module =  $this->incomingRequest->getModuleName($template);
+        $templateParts = $this->parseViewPath($template);
 
-        $loadFile = $this->getTemplatePath($module, $action);
+        $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
 
-        $this->hookContext = "tpl.$module.$action";
-        app('view')->share(['tpl' => $this]);
+        app('view')->share([]);
 
         /** @var View $view */
         $view = app('view')->make($loadFile);
 
-        /** @todo this can be reduced to just the 'if' code after removal of php template support */
         $view->with(array_merge(
             $this->vars,
             ['layout' => $layout]
@@ -304,30 +295,11 @@ class Template
 
         $content = $view->render();
 
-        //Don't need that
-        $content = self::dispatch_filter('content', $content);
-        $content = self::dispatch_filter("content.$template", $content);
-
-        return new Response($content, $responseCode);
+        return new Response($content, $responseCode, array_merge($headers, $this->headers));
     }
 
-
-    /**
-     * Confirm the layout name based on the provided parameters.
-     *
-     * @param string $layoutName The layout name to be confirmed.
-     * @param string $template   The template name associated with the layout.
-     * @return bool|string The confirmed layout name, or false if not found.
-     */
-    protected function confirmLayoutName(string $layoutName, string $template): bool|string
-    {
-        $layout = htmlspecialchars($layoutName);
-        $layout = self::dispatch_filter("layout", $layout);
-        $layout = self::dispatch_filter("layout.$template", $layout);
-
-        $layout = $this->getTemplatePath('global', "layouts.$layout");
-
-        return $layout;
+    public function emptyResponse($responseCode = 200) {
+        return new Response("", $responseCode, $this->headers);
     }
 
     /**
@@ -372,30 +344,111 @@ class Template
     }
 
     /**
-     * get - get assigned values
+     * gives HTMX response
      *
-     * @access public
-     * @param string $name
-     * @return array
+     * @param string $viewPath The blade view path.
+     * @param string $fragment The fragment key.
+     * @return Response
      */
-    public function get(string $name): mixed
+    public function displayFragment(string $viewPath, string $fragment = ''): Response
     {
-        if (!isset($this->vars[$name])) {
-            return null;
-        }
-
-        return $this->vars[$name];
+        $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
+        app('view')->share(['tpl' => $this]);
+        /** @var View $view */
+        $view = app('view')->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
+        return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
 
     /**
-     * getAll - get all assigned values
+     * Confirm the layout name based on the provided parameters.
      *
-     * @return array
-     **/
-    public function getAll(): array
+     * @param string $layoutName The layout name to be confirmed.
+     * @param string $template   The template name associated with the layout.
+     * @return bool|string The confirmed layout name, or false if not found.
+     */
+    protected function confirmLayoutName(string $layoutName, string $template): bool|string
     {
-        return $this->vars ?? [];
+        $layout = htmlspecialchars($layoutName);
+        $layout = self::dispatch_filter("layout", $layout);
+        $layout = self::dispatch_filter("layout.$template", $layout);
+
+        $layout = $this->getTemplatePath('global', "layouts.$layout");
+
+        return $layout;
     }
+
+
+    /**
+     * Parse the view path from the given view name.
+     *
+     * @param string $viewName The name of the view.
+     * @return array An associative array containing the module and path parts of the view path.
+     * @throws ViewException If the view name cannot be parsed.
+     */
+    protected function parseViewPath(string $viewName) {
+
+        $pathParts = array(
+            "module" => "",
+            "path" => "",
+        );
+
+        //view path style
+        //module::path.name
+        if(str_contains($viewName, "::")) {
+            $parts = explode("::", $viewName);
+            $pathParts['module'] = $parts[0];
+            $pathParts['path'] = $parts[1];
+
+            return $pathParts;
+        }
+
+        //leantime path
+        //module.name
+        if(str_contains($viewName, ".")) {
+            $parts = explode(".", $viewName);
+            $pathParts['module'] = $parts[0];
+            $pathParts['path'] = $parts[1];
+
+            return $pathParts;
+        }
+
+        throw new ViewException("View name $viewName could not be parsed");
+
+    }
+
+    /**
+     * getTemplatePath - Find template in custom and src directories
+     *
+     * @access public
+     * @param string $namespace The namespace the template is for.
+     * @param string $path      The path to the template.
+     * @return string Full template path or false if file does not exist
+     * @throws Exception If template not found.
+     */
+    protected function getTemplatePath(string $namespace, string $path): string
+    {
+        if ($namespace == '' || $path == '') {
+            throw new Exception("Both namespace and path must be provided");
+        }
+
+        $namespace = strtolower($namespace);
+        $fullpath = self::dispatch_filter(
+            "template_path__{$namespace}_{$path}",
+            "$namespace::$path",
+            [
+                'namespace' => $namespace,
+                'path' => $path,
+            ]
+        );
+
+        if (app('view')->exists($fullpath)) {
+            return $fullpath;
+        }
+
+        throw new ViewException("Template $fullpath not found");
+    }
+
+
 
     /**
      * getNotification - pulls notification from the current session
@@ -411,27 +464,6 @@ class Template
         } else {
             return array('type' => "", 'msg' => "", 'event_id' => "");
         }
-    }
-
-    /**
-     * displaySubmodule - display a submodule for a given module
-     *
-     * @access public
-     * @param string $alias
-     * @return void
-     * @throws Exception
-     */
-    public function displaySubmodule(string $alias): void
-    {
-        if (! str_contains($alias, '-')) {
-            throw new Exception("Submodule alias must be in the format module-submodule");
-        }
-
-        [$module, $submodule] = explode("-", $alias);
-
-        $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
-
-        echo app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     /**
@@ -489,24 +521,6 @@ class Template
         }
 
         return $notification;
-    }
-
-    /**
-     * getToggleState - retrieves the toggle state of a submenu by name from the session
-     *
-     * @access  public
-     * @param string $name - the name of the submenu toggle
-     * @return  string - the toggle state of the submenu (either "true" or "false")
-     *
-     * @deprecated this should be in a component
-     */
-    public function getToggleState(string $name): string
-    {
-        if (session()->exists("usersettings.submenuToggle.".$name)) {
-            return session("usersettings.submenuToggle.".$name);
-        }
-
-        return false;
     }
 
     /**
@@ -575,17 +589,49 @@ class Template
     }
 
     /**
-     * redirect - redirect to a given url
+     * setNotification - assign errors to the template
      *
-     * @param  string $url
-     * @return RedirectResponse
-     *
-     * @deprecated
-     *
+     * @param string $msg
+     * @param string $type
+     * @param string $event_id as a string for further identification
+     * @return void
      */
-    public function redirect(string $url): RedirectResponse
+    public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
-        return Frontcontroller::redirect($url);
+        session(["notification" => $msg]);
+        session(["notificationType" => $type]);
+        session(["event_id" => $event_id]);
+
+        $this->setHTMXEvent("HTMX.ShowNotification");
+    }
+
+    /**
+     * getToggleState - retrieves the toggle state of a submenu by name from the session
+     *
+     * @access  public
+     * @param string $name - the name of the submenu toggle
+     * @return  string - the toggle state of the submenu (either "true" or "false")
+     *
+     * @deprecated this should be in a component
+     */
+    public function getToggleState(string $name): string
+    {
+        if (session()->exists("usersettings.submenuToggle.".$name)) {
+            return session("usersettings.submenuToggle.".$name);
+        }
+
+        return false;
+    }
+
+    /**
+     * Set a flag to indicate that confetti should be displayed.
+     * Will be displayed next time a notification is displayed
+     *
+     * @return void confetti, duh
+     */
+    public function sendConfetti()
+    {
+        session(["confettiInYourFace" => true]);
     }
 
     /**
@@ -785,25 +831,6 @@ class Template
     }
 
     /**
-     * getModulePicture - get module picture
-     *
-     * @access public
-     * @return string
-     * @throws BindingResolutionException
-     */
-    public function getModulePicture(): string
-    {
-        $module = Frontcontroller::getModuleName($this->template);
-
-        $picture = $this->picture['default'];
-        if (isset($this->picture[$module])) {
-            $picture = $this->picture[$module];
-        }
-
-        return $picture;
-    }
-
-    /**
      * patchDownloadUrlToFilenameOrAwsUrl - Replace all local files/get references in <img src=""> tags
      * by either local filenames or AWS URLs that can be accesse without being authenticated
      *
@@ -885,4 +912,19 @@ class Template
 
         return null;
     }
+
+    /**
+     * redirect - redirect to a given url
+     *
+     * @param  string $url
+     * @return RedirectResponse
+     *
+     * @deprecated
+     *
+     */
+    public function redirect(string $url): RedirectResponse
+    {
+        return Frontcontroller::redirect($url);
+    }
+
 }

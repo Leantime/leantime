@@ -26,8 +26,8 @@ $currentSprint = $tpl->get('sprint');
     <div class="row">
         <div class="col-md-12">
 
-            <a href="<?=BASE_URL?>/valuecanvas/showCanvas"  class="btn btn-primary">Create a Project Value Canvas</a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('blueprints')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+            <a href="{{ BASE_URL }}/valuecanvas/showCanvas"  class="btn btn-primary">Create a Project Value Canvas</a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('blueprints')">{{ __("links.close_dont_show_again") }}</a>
         </div>
     </div>
 

@@ -83,7 +83,7 @@
     <div class="row center">
         <div class="col-md-12">
             <p>
-                <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('goalCanvas')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+                <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('goalCanvas')">{{ __("links.close_dont_show_again") }}</a>
             </p>
         </div>
     </div>

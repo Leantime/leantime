@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Controller;
 
+use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
@@ -48,54 +49,11 @@ abstract class Controller
         self::dispatch_event('begin');
 
         // initialize
-        $this->executeActions(
-            $incomingRequest->getMethod(),
-            $incomingRequest->getRequestParams()
-        );
-
-        self::dispatch_event('end', $this);
-    }
-
-    /**
-     * Allows hooking into all controllers with events
-     *
-     * @access private
-     *
-     * @param string       $method
-     * @param object|array $params
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    private function executeActions(string $method, object|array $params): void
-    {
-
-        //HEAD execution is equal to GET. Server can handle the content response cutting for us.
-        if(strtoupper($method) == "HEAD") {
-            $method = "GET";
-        }
-
-        $available_params = [
-            'controller' => $this,
-            'method' => $method,
-            'params' => $params,
-        ];
-
-        self::dispatch_event('before_init', $available_params);
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
 
-        self::dispatch_event('before_action', $available_params);
-
-        if (method_exists($this, $method)) {
-            $this->response = $this->$method($params);
-        } elseif (method_exists($this, 'run')) {
-            $this->response = $this->run();
-        } else {
-            Log::error('Method not found: ' . $method);
-            Frontcontroller::redirect(BASE_URL . "/errors/error501", 307);
-        }
+        self::dispatch_event('end', $this);
     }
 
     /**
@@ -108,5 +66,33 @@ abstract class Controller
     public function getResponse(): Response
     {
         return $this->response;
+    }
+
+    /**
+     * Execute an action on the controller.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function callAction($method, $parameters)
+    {
+        return $this->{$method}($parameters);
+    }
+
+    /**
+     * Handle calls to missing methods on the controller.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+        throw new \BadMethodCallException(sprintf(
+            'Method %s::%s does not exist.', static::class, $method
+        ));
     }
 }

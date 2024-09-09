@@ -11,8 +11,8 @@ $values = $tpl->get('values');
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration') ?></h5>
-        <h1><?php echo $tpl->__('headline.new_client'); ?></h1>
+        <h5>{{ __("label.administration") }}</h5>
+        <h1>{{ __("headline.new_client") }}</h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
@@ -21,10 +21,10 @@ $values = $tpl->get('values');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class="widget">
-           <h4 class="widgettitle"><?php echo $tpl->__('subtitle.details'); ?></h4>
+           <h4 class="widgettitle">{{ __("subtitle.details") }}</h4>
            <div class="widgetcontent">
 
                 <form action="" method="post" class="stdform">
@@ -34,21 +34,21 @@ $values = $tpl->get('values');
                     <div class="row row-fluid">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.name') ?></label>
+                                <label class="span4 control-label">{{ __("label.name") }}</label>
                                 <div class="span6">
                                     <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.email') ?></label>
+                                <label class="span4 control-label">{{ __("label.email") }}</label>
                                 <div class="span6">
                                     <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.url') ?></label>
+                                <label class="span4 control-label">{{ __("label.url") }}</label>
                                 <div class="span6">
                                     <input
                                             type="text" name="internet" id="internet"
@@ -57,7 +57,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.street') ?></label>
+                                <label class="span4 control-label">{{ __("label.street") }}</label>
                                 <div class="span6">
                                     <input
                                             type="text" name="street" id="street"
@@ -66,7 +66,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.zip') ?></label>
+                                <label class="span4 control-label">{{ __("label.zip") }}</label>
                                 <div class="span6">
                                     <input type="text"
                                            name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
@@ -74,7 +74,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.city') ?></label>
+                                <label class="span4 control-label">{{ __("label.city") }}</label>
                                 <div class="span6">
                                     <input type="text"
                                            name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
@@ -82,7 +82,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.state') ?></label>
+                                <label class="span4 control-label">{{ __("label.state") }}</label>
                                 <div class="span6">
                                     <input
                                             type="text" name="state" id="state"
@@ -91,7 +91,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.country') ?></label>
+                                <label class="span4 control-label">{{ __("label.country") }}</label>
                                 <div class="span6">
                                     <input
                                             type="text" name="country" id="country"
@@ -100,7 +100,7 @@ $values = $tpl->get('values');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.phone') ?></label>
+                                <label class="span4 control-label">{{ __("label.phone") }}</label>
                                 <div class="span6">
                                     <input
                                             type="text" name="phone" id="phone"
@@ -113,7 +113,7 @@ $values = $tpl->get('values');
                             <div class="form-group">
                                 <div class="span4 control-label">
                                     <input type="submit" name="save" id="save"
-                                           value="<?php echo $tpl->__('buttons.save') ?>" class="btn btn-primary" />
+                                           value="{{ __("buttons.save") }}" class="btn btn-primary" />
                                 </div>
                                 <div class="span6">
 

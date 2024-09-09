@@ -27,7 +27,7 @@
                             @if (($comment->userId == session("userdata.id")) || $login::userIsAtLeast($roles::$manager))
                                 <li>
                                     <a href="javascript:void(0);" onclick="leantime.commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}', {{ $comment->id }}, true)">
-                                        <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
+                                        <span class="fa fa-edit"></span> {{ __("label.edit") }}
                                     </a>
                                 </li>
                                 <li>

@@ -24,11 +24,6 @@ namespace Leantime\Domain\Users\Services {
     {
         use DispatchesEvents;
 
-        private UserRepository $userRepo;
-        private LanguageCore $language;
-        private ProjectRepository $projectRepository;
-        private ClientRepository $clientRepo;
-        private AuthService $authService;
 
         /**
          * @param UserRepository    $userRepo
@@ -39,17 +34,12 @@ namespace Leantime\Domain\Users\Services {
          *
      */
         public function __construct(
-            UserRepository $userRepo,
-            LanguageCore $language,
-            ProjectRepository $projectRepository,
-            ClientRepository $clientRepo,
-            AuthService $authService
+            protected UserRepository $userRepo,
+            protected LanguageCore $language,
+            protected ProjectRepository $projectRepository,
+            protected ClientRepository $clientRepo,
+            protected AuthService $authService
         ) {
-            $this->userRepo = $userRepo;
-            $this->language = $language;
-            $this->projectRepository = $projectRepository;
-            $this->clientRepo = $clientRepo;
-            $this->authService = $authService;
         }
 
         //GET

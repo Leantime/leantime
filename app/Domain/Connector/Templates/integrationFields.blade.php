@@ -20,7 +20,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.connector"); ?> // <?=$provider->name ?></h1>
+                <h1>{{ __("headlines.connector") }} // <?=$provider->name ?></h1>
             </div>
         </div>
     </div>
@@ -28,13 +28,13 @@ if (isset($integrationId) && is_numeric($integrationId)) {
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+        @include("connector::includes.importProgress")
     </div>
     <div class="row">
         <div class="col-md-9">
             <div class="maincontentinner center">
 
-                <?php echo $tpl->displayNotification(); ?>
+                @displayNotification()
                 <h5 class="subtitle">Match Fields</h5>
                 <p class="mb-2">Match the fields from your source to the corresponding fields in Leantime</p><br />
 

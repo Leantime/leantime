@@ -90,6 +90,7 @@ class Bootloader
      */
     private function handleRequest(IncomingRequest $request): void
     {
+
         if (! $this->app->runningInConsole()) {
 
             /** @var HttpKernel $kernel */

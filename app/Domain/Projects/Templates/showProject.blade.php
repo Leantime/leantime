@@ -10,7 +10,7 @@ $state = $tpl->get('state');
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration') ?></h5>
+        <h5>{{ __("label.administration") }}</h5>
         <h1><?php echo sprintf($tpl->__('headline.project'), $tpl->escape($project['name'])); ?>
         </h1>
     </div>
@@ -19,32 +19,32 @@ $state = $tpl->get('state');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
         <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-            <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="btn btn-default duplicateProjectModal" data-tippy-content="<?=$tpl->__("link.duplicate_project") ?>"><i class="fa-regular fa-copy"></i> Copy</a>
-            <a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" data-tippy-content="<?=$tpl->__("link.delete_project") ?>" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
+            <a href="{{ BASE_URL }}/projects/duplicateProject/<?=$project['id']?>" class="btn btn-default duplicateProjectModal" data-tippy-content="<?=$tpl->__("link.duplicate_project") ?>"><i class="fa-regular fa-copy"></i> Copy</a>
+            <a href="{{ BASE_URL }}/projects/delProject/<?=$project['id']?>" data-tippy-content="<?=$tpl->__("link.delete_project") ?>" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
 
 
         </div>
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> <?php echo $tpl->__('tabs.projectdetails'); ?></a></li>
-                <li><a href="#team"><span class="fa fa-group"></span> <?php echo $tpl->__('tabs.team'); ?></a></li>
+                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> {{ __("tabs.projectdetails") }}</a></li>
+                <li><a href="#team"><span class="fa fa-group"></span> {{ __("tabs.team") }}</a></li>
 
-                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $tpl->__('tabs.Integrations'); ?></a></li>
-                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $tpl->__('tabs.todosettings'); ?></a></li>
+                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> {{ __("tabs.Integrations") }}</a></li>
+                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> {{ __("tabs.todosettings") }}</a></li>
                 <?php $tpl->dispatchTplEvent('projectTabsList'); ?>
             </ul>
 
             <div id="projectdetails">
-                <?php echo $tpl->displaySubmodule('projects-projectDetails'); ?>
+                @include("projects::includes.projectDetails")
             </div>
 
             <div id="team">
-                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#team">
+                <form method="post" action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#team">
                     <input type="hidden" name="saveUsers" value="1" />
 
 
@@ -181,7 +181,7 @@ $state = $tpl->get('state');
                                     <div class="col-md-4">
 
                                         <div class="userBox">
-                                            <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$tpl->__('links.create_user'); ?></a>
+                                            <a class="userEditModal" href="{{ BASE_URL }}/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$tpl->__('links.create_user'); ?></a>
                                             <div class="clearall"></div>
                                         </div>
                                     </div>
@@ -198,7 +198,7 @@ $state = $tpl->get('state');
                     </div>
                 </div>
                     <br/>
-                    <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
+                    <input type="submit" name="saveUsers" id="save" class="button" value="{{ __("buttons.save") }}" class="button" />
 
                 </form>
 
@@ -209,14 +209,14 @@ $state = $tpl->get('state');
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="<?=BASE_URL ?>/dist/images/mattermost-logoHorizontal.png" width="200" />
+                        <img src="{{ BASE_URL }}/dist/images/mattermost-logoHorizontal.png" width="200" />
                     </div>
                     <div class="col-md-5">
                         <?=$tpl->__('text.mattermost_instructions'); ?>
                     </div>
                     <div class="col-md-4">
                         <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
-                        <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                        <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->get("mattermostWebhookURL"); ?>"/>
                             <br />
                             <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="mattermostSave" />
@@ -235,7 +235,7 @@ $state = $tpl->get('state');
                     </div>
                     <div class="col-md-4">
                         <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
-                        <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                        <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->get("slackWebhookURL"); ?>"/>
                             <br />
                             <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="slackSave" />
@@ -246,7 +246,7 @@ $state = $tpl->get('state');
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="<?=BASE_URL ?>/dist/images/zulip-org-logo.png" width="200"/>
+                        <img src="{{ BASE_URL }}/dist/images/zulip-org-logo.png" width="200"/>
                     </div>
 
                     <div class="col-md-5">
@@ -254,7 +254,7 @@ $state = $tpl->get('state');
                     </div>
                     <div class="col-md-4">
 
-                        <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
+                        <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <strong><?=$tpl->__('label.base_url'); ?></strong><br />
                             <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$tpl->__('input.placeholders.zulip_url'); ?>" value="<?php echo $tpl->get("zulipHook")['zulipURL']; ?>"/>
                             <br />
@@ -299,7 +299,7 @@ $state = $tpl->get('state');
             </div>
 
             <div id="todosettings">
-                <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
+                <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
                     <ul class="sortableTicketList" id="todoStatusList">
                         <?php foreach ($tpl->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
@@ -446,7 +446,7 @@ $state = $tpl->get('state');
         jQuery("#projectdetails select").chosen();
 
         <?php if (isset($_GET['integrationSuccess'])) {?>
-            window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
+            window.history.pushState({},document.title, '{{ BASE_URL }}/projects/showProject/<?php echo (int)$project['id']; ?>');
         <?php } ?>
 
         jQuery(".dates").datepicker(

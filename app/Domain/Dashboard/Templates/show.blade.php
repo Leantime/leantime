@@ -15,8 +15,8 @@
         <h1>{!! __('headlines.project_dashboard') !!}</h1>
     </x-global::content.pageheader>
 
-    <div class="maincontent">
-        {!! $tpl->displayNotification() !!}
+<div class="maincontent">
+    @displayNotification()
 
         <div class="row">
 
@@ -74,10 +74,10 @@
 
                     <br />
 
-                    @include('projects::partials.checklist', [
-                        'progressSteps' => $progressSteps,
-                        'percentDone' => $percentDone,
-                    ])
+                @include('projects::includes.checklist', [
+                    'progressSteps' => $progressSteps,
+                    'percentDone' => $percentDone
+                ])
 
                     <br /><br />
 
@@ -126,12 +126,9 @@
                                                 <strong>{{ $row['headline'] }}</strong>
                                             </a>
 
-                                            @include('tickets::partials.ticketsubmenu', [
-                                                'ticket' => $row,
-                                                'onTheClock' => $tpl->get('onTheClock'),
-                                            ])
-                                        </div>
+                                        @include("tickets::includes.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
+                                </div>
 
                                     <div class="row">
                                         <div class="col-md-4 px-[15px] py-0">
@@ -440,12 +437,13 @@
 
                         <li class="ui-state-default" id="milestone_{!! $row->id !!}">
 
-                            <div hx-trigger="load" hx-indicator=".htmx-indicator"
-                                hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>">
-                                <div class="htmx-indicator">
-                                    <?= $tpl->__('label.loading_milestone') ?>
-                                </div>
-                            </div>
+                                    <div hx-trigger="load"
+                                         hx-indicator=".htmx-indicator"
+                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                        <div class="htmx-indicator">
+                                                <?=$tpl->__("label.loading_milestone") ?>
+                                        </div>
+                                    </div>
 
                         </li>
                     @endforeach
@@ -495,15 +493,14 @@
                 e.stopPropagation();
             });
 
-            @if ($login::userIsAtLeast($roles::$editor))
-                leantime.dashboardController.prepareHiddenDueDate();
-                leantime.ticketsController.initEffortDropdown();
-                leantime.ticketsController.initMilestoneDropdown();
-                leantime.ticketsController.initStatusDropdown();
-                leantime.usersController.initUserEditModal();
-            @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
-            @endif
+        @if ($login::userIsAtLeast($roles::$editor))
+            leantime.dashboardController.prepareHiddenDueDate();
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initMilestoneDropdown();
+            leantime.ticketsController.initStatusDropdown();
+        @else
+            leantime.authController.makeInputReadonly(".maincontentinner");
+        @endif
 
             leantime.dashboardController.initProgressChart(
                 "chart-area",

@@ -52,7 +52,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             Reactions $reactionsService,
             Reports $reportsService,
             Widgets $widgetService
-        ): void {
+        ) {
             $this->projectsService = $projectsService;
             $this->ticketsService = $ticketsService;
             $this->usersService = $usersService;

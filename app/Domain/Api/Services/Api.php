@@ -200,7 +200,7 @@ class Api
      */
     public function getCaseCorrectPathFromManifest(string $filepath): string|false
     {
-        $manifest = mix()->getManifest();
+        $manifest = mix('')->getManifest();
         $clone = array_change_key_case(collect(Arr::dot($manifest))
             ->mapWithKeys(fn ($value, $key) => [Str::of($key)->replaceFirst('./', '/')->lower()->toString() => $value])
             ->all());

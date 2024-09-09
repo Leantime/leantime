@@ -42,7 +42,7 @@ class Cache extends ServiceProvider
                 'path' => APP_ROOT . "/cache/" . app()->make(SettingsService::class)->getCompanyId(),
             ];
 
-            if (app()->make(IncomingRequest::class) instanceof CliRequest) {
+            if (app()->runningInConsole()) {
                 if (empty(app()->make(SettingsService::class)->getCompanyId())) {
                     throw new \RuntimeException('You can\'t run this CLI command until you have installed Leantime.');
                 }

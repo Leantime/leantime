@@ -8,6 +8,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use PDO;
 use PDOException;
+use phpDocumentor\Reflection\Exception;
 
 /**
  * Database Class - Very simple abstraction layer for pdo connection
@@ -63,42 +64,16 @@ class Db
         $this->host = $config->dbHost ?? "localhost";
         $this->port = $config->dbPort ?? "3306";
 
-        try {
-            $this->database = new PDO(
-                dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
-                username: $this->user,
-                password: $this->password,
-                options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
-            );
-            $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-            $this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $this->database = new PDO(
+            dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
+            username: $this->user,
+            password: $this->password,
+            options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
+        );
+        $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+        $this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        } catch (PDOException $e) {
-
-            $newline = app()->make(IncomingRequest::class) instanceof CliRequest ? "\n" : "<br />\n";
-            echo "We are currently performing important maintenance work on the systems. Leantime will be back shortly. $newline";
-            $found_errors = [];
-
-            if (!extension_loaded('PDO')) {
-                $found_errors[] = "php-PDO is required, but not installed";
-            }
-
-            if (!extension_loaded('pdo_mysql')) {
-                $found_errors[] = "php-pdo_mysql is required, but not installed";
-            }
-
-            if (! empty($found_errors)) {
-                echo "Checking common issues:$newline";
-                foreach ($found_errors as $error) {
-                    echo "- $error$newline";
-                }
-            }
-
-            throw new \Exception($e);
-
-
-        }
     }
 
     /**

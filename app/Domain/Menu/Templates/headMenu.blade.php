@@ -2,10 +2,10 @@
 
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu pull-right">
+<ul class="headmenu pull-right" hx-boost="true" hx-indicator="#global-loader">
     @dispatchEvent('insideHeadMenu')
 
-    @include('timesheets::partials.stopwatch', [
+    @include('timesheets::includes.stopwatch', [
                'progressSteps' => $onTheClock
            ])
     @if ($login::userIsAtLeast("admin"))
@@ -16,7 +16,7 @@
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
-            hx-get="{{ BASE_URL }}/notifications/news/get"
+            hx-get="{{ BASE_URL }}/hx/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-indicator"
             hx-trigger="click"
@@ -24,7 +24,7 @@
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span hx-get="{{ BASE_URL }}/hx/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
 
@@ -138,7 +138,7 @@
     <li>
         <div class="userloggedinfo">
 
-            @include("auth::partials.loginInfo")
+            @include("auth::includes.loginInfo")
 
         </div>
 
@@ -150,11 +150,11 @@
 
 </ul>
 
-<ul class="headmenu">
+<ul class="headmenu" hx-boost="true" hx-indicator="#global-loader">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
-        @include('menu::projectSelector')
+        @include('menu::includes.projectSelector')
     </li>
     <li>
         <a

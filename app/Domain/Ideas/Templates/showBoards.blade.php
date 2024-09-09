@@ -318,25 +318,12 @@
             leantime.ideasController.initWallImageModals();
 
             @if ($login::userIsAtLeast($roles::$editor))
-                leantime.ideasController.initStatusDropdown();
-                leantime.ideasController.initUserDropdown();
+                leantime.canvasController.initUserDropdown('ideas');
+                leantime.canvasController.initStatusDropdown('ideas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif
 
-            @if (isset($_GET['showIdeaModal']))
-                @php
-                    if ($_GET['showIdeaModal'] == '') {
-                        $modalUrl = '&type=idea';
-                    } else {
-                        $modalUrl = '/' . (int) $_GET['showIdeaModal'];
-                    }
-                @endphp
-
-                leantime.ideasController.openModalManually(
-                    "{{ BASE_URL }}/ideas/ideaDialog{!! $modalUrl !!}");
-                window.history.pushState({}, document.title, '{{ BASE_URL }}/ideas/showBoards');
-            @endif
         });
     </script>
 

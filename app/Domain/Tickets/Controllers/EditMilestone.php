@@ -105,7 +105,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject(session("currentProject")));
             $this->tpl->assign('milestone', $milestone);
-            return $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets::partials.milestoneDialog');
         }
 
         /**
@@ -185,10 +185,17 @@ namespace Leantime\Domain\Tickets\Controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                     }
-                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
                 }
 
-                return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             } else {
                 $result = $this->ticketService->quickAddMilestone($params);
 
@@ -215,7 +222,11 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $result);
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
+
                 } else {
                     $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                     return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/");
@@ -227,7 +238,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('milestone', (object) $params);
-            return $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets::partials.milestoneDialog');
         }
 
         /**

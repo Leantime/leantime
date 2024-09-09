@@ -7,35 +7,37 @@
     $sprints = $tpl->get('sprints');
     $searchCriteria = $tpl->get('searchCriteria');
     $currentSprint = $tpl->get('currentSprint');
-    
+
     $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
+
     $efforts = $tpl->get('efforts');
     $priorities = $tpl->get('priorities');
-    
+
     $allTicketGroups = $tpl->get('allTickets');
-    
+
     ?>
 
-    <?php $tpl->displaySubmodule('tickets-ticketHeader'); ?>
+    @include("tickets::includes.ticketHeader")
 
     <div class="maincontent">
 
-        <?php $tpl->displaySubmodule('tickets-ticketBoardTabs'); ?>
+    @include("tickets::includes.ticketBoardTabs")
 
         <div class="maincontentinner">
 
-            <div class="row">
-                <div class="col-md-4">
-                    <?php
-                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                    
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                    
-                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                    ?>
-                </div>
+         <div class="row">
+            <div class="col-md-4">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
+
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
+
+                <?php
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
+            </div>
 
                 <div class="col-md-4 center">
 
@@ -154,13 +156,10 @@
                                         <div class="col-md-12">
 
 
-                                            <?php echo app('blade.compiler')::render(
-                                                '@include("tickets::partials.ticketsubmenu", [
-                                                                                                                                                                                                                                                                                                                    "ticket" => $ticket,
-                                                                                                                                                                                                                                                                                                                    "onTheClock" => $onTheClock
-                                                                                                                                                                                                                                                                                                                ])',
-                                                ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')],
-                                            ); ?>
+                                                    @include("tickets::includes.ticketsubmenu", [
+                                                                                        "ticket" => $row,
+                                                                                        "onTheClock" => $onTheClock
+                                                                                    ])
 
 
 
@@ -184,9 +183,7 @@
                                             <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
 
                                                         echo $tpl->__("label.due_icon"); ?>
-                                            <input type="text" title="<?php echo $tpl->__('label.due'); ?>" value="<?php echo format($row['dateToFinish'])->date(); ?>"
-                                                class="duedates secretInput" style="margin-left:0px;"
-                                                data-id="<?php echo $row['id']; ?>" name="date" />
+                                                        <input type="text" title="{{ __("label.due") }}" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
 
                                             <?php } ?>
                                         </div>
@@ -381,11 +378,11 @@
                                                 <li style="padding:10px">
                                                     <div class='tagsinput readonly'>
                                                         <?php
-                                                        
+
                                                         foreach ($tagsArray as $tag) {
                                                             echo "<span class='tag'><span>" . $tpl->escape($tag) . '</span></span>';
                                                         }
-                                                        
+
                                                         ?>
                                                     </div>
                                                 </li>
@@ -448,10 +445,6 @@
                 $modalUrl = "/" . (int)$_GET['showTicketModal'];
             }
             ?>
-
-            leantime.ticketsController.openTicketModalManually(
-                "<?= BASE_URL ?>/tickets/showTicket<?php echo $modalUrl; ?>");
-            window.history.pushState({}, document.title, '<?= BASE_URL ?>/tickets/showKanban');
 
             <?php } ?>
 
@@ -522,5 +515,6 @@
 
 
 
-        });
-    </script>
+    });
+</script>
+@endsection

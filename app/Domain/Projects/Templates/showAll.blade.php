@@ -18,7 +18,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
     <div class="pagetitle">
         <h5><?php echo $tpl->__('label.administration');
         $tpl->__("") ?></h5>
-        <h1><?php echo $tpl->__('headline.all_projects') ?></h1>
+        <h1>{{ __("headline.all_projects") }}</h1>
     </div>
 
 </div><!--pageheader-->
@@ -26,7 +26,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="pull-right">
             <form action="" method="post">
@@ -37,7 +37,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
             </form>
         </div>
 
-        <a class="btn btn-primary" href="<?=BASE_URL?>/projects/newProject"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_project') ?></a>
+        <a class="btn btn-primary" href="{{ BASE_URL }}/projects/newProject"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_project') ?></a>
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 
@@ -51,12 +51,12 @@ $showClosedProjects = $tpl->get('showClosedProjects');
             </colgroup>
             <thead>
                 <tr>
-                    <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.project_type'); ?></th>
-                    <th class="head0"><?php echo $tpl->__('label.project_state'); ?></th>
-                    <th class="head0"><?php echo $tpl->__('label.hourly_budget'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.budget_cost'); ?></th>
+                    <th class="head0">{{ __("label.project_name") }}</th>
+                    <th class="head1">{{ __("label.client_product") }}</th>
+                    <th class="head1">{{ __("label.project_type") }}</th>
+                    <th class="head0">{{ __("label.project_state") }}</th>
+                    <th class="head0">{{ __("label.hourly_budget") }}</th>
+                    <th class="head1">{{ __("label.budget_cost") }}</th>
                 </tr>
             </thead>
 
@@ -66,9 +66,9 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <a class="" href="<?=BASE_URL?>/projects/showProject/<?=$row['id']?>"><?= $tpl->escape($row['name']) ?></a>
+                        <a class="" href="{{ BASE_URL }}/projects/showProject/<?=$row['id']?>"><?= $tpl->escape($row['name']) ?></a>
                     <td>
-                        <a class="" href="<?=BASE_URL?>/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
+                        <a class="" href="{{ BASE_URL }}/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
                     </td>
 
                     <td> <?=$row['type'] ?> </td>

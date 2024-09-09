@@ -15,7 +15,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
         <h5 class="subtitle">Sync Leantime with your external applications</h5>
         <p>Available Integrations</p>
 
@@ -25,7 +25,7 @@
                 <div class="col-md-3">
                     <div class="profileBox">
                         <div class="commentImage gradient">
-                            <img src="<?=BASE_URL ?>/<?=$provider->image ?>"/>
+                            <img src="{{ BASE_URL }}/<?=$provider->image ?>"/>
                         </div>
                         <span class="userName">
                             <strong><?=$provider->name ?></strong>
@@ -38,7 +38,7 @@
                         <?php if (isset($provider->button)) { ?>
                             <a href="<?=$provider->button["url"] ?>" class="btn btn-primary"><?=$provider->button["text"] ?></a>
                         <?php } else { ?>
-                            <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
+                            <a class="btn btn-primary" href="{{ BASE_URL }}/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
                         <?php } ?>
 
                         <div class="clearall"></div>

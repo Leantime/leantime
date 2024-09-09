@@ -8,24 +8,24 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
     session(["usersettings.submenuToggle.myProjectCalendarView" => "dayGridMonth"]);
 }
 
-echo $tpl->displayNotification();
-
 ?>
-
-<?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
+    @displayNotification()
+    @include("tickets::includes.timelineHeader")
 
 <div class="maincontent">
-    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
+    @include("tickets::includes.timelineTabs")
     <div class="maincontentinner">
 
         <div class="row">
             <div class="col-md-4">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
 
-                $tpl->displaySubmodule('tickets-ticketNewBtn');
-                $tpl->displaySubmodule('tickets-ticketFilter');
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
 
+                <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>
@@ -76,8 +76,8 @@ echo $tpl->displayNotification();
         }
         ?>
 
-        leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL ?>/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/roadmap');
+        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
 
     <?php } ?>
 
@@ -162,3 +162,4 @@ echo $tpl->displayNotification();
 
 
 </script>
+@endsection

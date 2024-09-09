@@ -1,38 +1,6 @@
 /***** RESET BROWSER STYLE *****/
 /*******************************/
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, font, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
-    background: transparent;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-    line-height: 1.5;
-    outline: none;
-}
-
-html {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -ms-overflow-style: scrollbar
-}
-
-body {
-    color:var(--primary-font-color);
-}
-
-*, ::after, ::before {
-    -webkit-box-sizing: inherit;
-    box-sizing: inherit
-}
-
 .container {
     position: relative;
     margin-left: auto;

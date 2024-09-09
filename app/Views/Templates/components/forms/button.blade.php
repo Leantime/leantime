@@ -1,10 +1,12 @@
 @props([
-    'label-text' => '',
-    'content-role' => 'primary',
+    'labelText' => '',
+    'contentRole' => 'primary',
     'scale' => '',
     'state' => '',
     'variant' => '',
     'tag' => 'button',
+    'icon' => '',
+    'rightIcon' => '',
     'leadingVisual' => '',
     'trailingVisual' => ''
 ])
@@ -35,26 +37,6 @@
             {{ $trailingVisual }}
         </div>
     @endif
-</{{ $tag }}>
-
-
-
-
-
-<{{ $tag }} {{ $attributes->merge(['class' => $icon || $rightIcon ? ' gap-2' : ''])->class([
-    'join-item' => $join,
-    'mr-2' => ! $join,
-    ]) }}>
-@if($icon)
-    {{ $icon }}
-@endisset
-{{ $label }}
-{{ $slot }}
-@if($rightIcon)
-    <div class="">
-        {{ $rightIcon }}
-    </div>
-@endisset
 </{{ $tag }}>
 
 

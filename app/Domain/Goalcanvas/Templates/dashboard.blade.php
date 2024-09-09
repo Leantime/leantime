@@ -427,7 +427,7 @@
 
 
 
-        {{-- 
+{{--
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
  * Required variables:
@@ -476,23 +476,14 @@
             leantime.canvasController.initFilterBar();
 
             @if ($login::userIsAtLeast($roles::$editor))
-                leantime.canvasController.initCanvasLinks();
-                leantime.canvasController.initUserDropdown();
-                leantime.canvasController.initStatusDropdown();
-                leantime.canvasController.initRelatesDropdown();
+                leantime.canvasController.initUserDropdown('goalcanvas');
+                leantime.canvasController.initStatusDropdown('goalcanvas');
+                leantime.canvasController.initRelatesDropdown('goalcanvas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif
 
-            @if (isset($_GET['showModal']))
-                @php
-                    $modalUrl = $_GET['showModal'] == '' ? '&type=' . array_key_first($canvasTypes) : '/' . (int) $_GET['showModal'];
-                @endphp
-                leantime.canvasController.openModalManually(
-                    "{{ BASE_URL }}/goalcanvas/editCanvasItem{{ $modalUrl }}");
-                window.history.pushState({}, document.title, '{{ BASE_URL }}/goalcanvas/showCanvas/');
-            @endif
-        });
-    </script>
+});
+</script>
 
 @endsection

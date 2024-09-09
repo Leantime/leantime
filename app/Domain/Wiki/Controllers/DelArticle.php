@@ -43,10 +43,13 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success", "article_deleted");
 
-                return Frontcontroller::redirect(BASE_URL . "/wiki/show");
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
 
-            return $this->tpl->displayPartial('wiki.delArticle');
+            return $this->tpl->displayPartial('wiki::partials.delArticle');
         }
     }
 }

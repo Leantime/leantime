@@ -132,7 +132,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 $this->tpl->assign('relations', $projectrelation);
 
-                return $this->tpl->displayPartial('users.newUser');
+                return $this->tpl->displayPartial('users::partials.newUser');
             } else {
                 return $this->tpl->displayPartial('errors.error403');
             }

@@ -3,47 +3,48 @@
 @section('content')
 
     <?php
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $allTickets = $tpl->get('allTickets');
-    
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
-    $allTicketGroups = $tpl->get('allTickets');
-    
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
-    $statusLabels = $tpl->get('allTicketStates');
-    
-    //All states >0 (<1 is archive)
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
-    $size = floor(100 / $numberofColumns);
-    
-    ?>
-    <?php $tpl->displaySubmodule('tickets-timelineHeader'); ?>
+$sprints        = $tpl->get("sprints");
+$searchCriteria = $tpl->get("searchCriteria");
+$currentSprint  = $tpl->get("currentSprint");
+$allTickets     = $tpl->get('allTickets');
+
+$searchCriteria = $tpl->get("searchCriteria");
+$currentSprint  = $tpl->get("currentSprint");
+$allTicketGroups     = $tpl->get('allTickets');
+
+$todoTypeIcons  = $tpl->get("ticketTypeIcons");
+
+$efforts        = $tpl->get('efforts');
+$priorities     = $tpl->get('priorities');
+$statusLabels   = $tpl->get('allTicketStates');
+
+//All states >0 (<1 is archive)
+$numberofColumns = count($tpl->get('allTicketStates')) - 1;
+$size = floor(100 / $numberofColumns);
+
+?>
+    @include("tickets::includes.timelineHeader")
 
     <div class="maincontent">
 
-        <?php $tpl->displaySubmodule('tickets-timelineTabs'); ?>
+    @include("tickets::includes.timelineTabs")
 
         <div class="maincontentinner">
 
-            <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
-            <div class="row">
-                <div class="col-md-6">
-                    <?php
-                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                    
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                    
-                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                    ?>
+        <div class="row">
+            <div class="col-md-6">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
+
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
+
+                <?php
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
 
                 </div>
 
@@ -141,12 +142,12 @@
 
                             <td>
                                 <?php if($row["type"] == "milestone"){ ?>
-                                <div hx-trigger="load"
-                                    hx-get="<?= BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?= $row['id'] ?>&view=Progress">
-                                    <div class="htmx-indicator">
-                                        <?= $tpl->__('label.calculating_progress') ?>
+                                    <div hx-trigger="load"
+                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId=<?=$row["id"] ?>&view=Progress">
+                                        <div class="htmx-indicator">
+                                            <?=$tpl->__("label.calculating_progress") ?>
+                                        </div>
                                     </div>
-                                </div>
                                 <?php } ?>
                             </td>
 
@@ -199,7 +200,7 @@
 
                             </td>
                             <?php
-                            
+
                             if (isset($statusLabels[$row['status']])) {
                                 $class = $statusLabels[$row['status']]['class'];
                                 $name = $statusLabels[$row['status']]['name'];
@@ -209,7 +210,7 @@
                                 $name = 'new';
                                 $sortKey = 0;
                             }
-                            
+
                             ?>
                             <td data-order="<?= $sortKey ?>">
                                 @php
@@ -254,7 +255,7 @@ if ($row['editorFirstname'] != '') {
         BASE_URL .
         '/api/users?profileImage=' .
         $row['editorId'] .
-        "' 
+        "'
                                                              width='25' style='vertical-align: middle; margin-right:5px;' />
                                                       </span>
                                                       <span id='user" .
@@ -269,7 +270,7 @@ if ($row['editorFirstname'] != '') {
         "'>
                                                         <img src='" .
         BASE_URL .
-        "/api/users?profileImage=false' 
+        "/api/users?profileImage=false'
                                                              width='25' style='vertical-align: middle; margin-right:5px;' />
                                                       </span>
                                                       <span id='user" .
@@ -309,18 +310,12 @@ $labelText .= "&nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>";
                                 </div>
                             </td>
 
-                            <td data-order="<?php echo $row['editFrom']; ?>">
-                                <?php echo $tpl->__('label.due_icon'); ?><input type="text" title="<?php echo $tpl->__('label.planned_start_date'); ?>"
-                                    value="<?php echo format($row['editFrom'])->date(); ?>"
-                                    class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row['id']; ?>"
-                                    data-id="<?php echo $row['id']; ?>" name="editFrom" class="" />
+                            <td data-order="<?php echo $row["editFrom"] ?>" >
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_start_date") }}" value="<?php echo format($row["editFrom"])->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editFrom" class=""/>
                             </td>
 
-                            <td data-order="<?php echo $row['editTo']; ?>">
-                                <?php echo $tpl->__('label.due_icon'); ?><input type="text" title="<?php echo $tpl->__('label.planned_end_date'); ?>"
-                                    value="<?php echo format($row['editTo'])->date(); ?>"
-                                    class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row['id']; ?>"
-                                    data-id="<?php echo $row['id']; ?>" name="editTo" class="" />
+                            <td data-order="<?php echo $row["editTo"] ?>" >
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_end_date") }}" value="<?php echo format($row["editTo"])->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editTo" class="" />
 
                             </td>
 
@@ -421,6 +416,7 @@ $labelText .= "&nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>";
 
             leantime.ticketsController.initMilestoneTable("<?= $searchCriteria['groupBy'] ?>");
 
-            <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
-        });
-    </script>
+        <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
+    });
+</script>
+@endsection

@@ -105,10 +105,6 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
-    }
-
     .fc-header {
         margin-top:50px;
     }
@@ -493,10 +489,6 @@ min-width: 1200px
         font-size: 13px;
     }
 
-    .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-        font-size: 12px;
-    }
-
 
     .header .logo {
         padding-top: 0;
@@ -805,9 +797,6 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
-    }
 
     .fc-header {
         margin-top:50px;

@@ -12,8 +12,8 @@
     <span class="animate2 bounceIn">0</span>
     <span class="animate3 bounceIn">1</span>
     <div class="errorbtns animate4 fadeInUp">
-        <a onclick="history.back()" class="btn btn-default"><?php echo $tpl->__('buttons.back') ?></a>
-        <a href="<?=BASE_URL ?>" class="btn btn-primary"><?php echo $tpl->__('links.dashboard') ?></a>
+        <a onclick="history.back()" class="btn btn-default">{{ __("buttons.back") }}</a>
+        <a href="{{ BASE_URL }}" class="btn btn-primary">{{ __("links.dashboard") }}</a>
     </div><br/><br/><br/><br/>
 
 </div>

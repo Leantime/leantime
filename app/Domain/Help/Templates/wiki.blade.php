@@ -20,7 +20,7 @@ $currentSprint = $tpl->get('sprint');
 
     <div class="row">
         <div class="col-md-12">
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('fullLeanCanvas')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('fullLeanCanvas')">{{ __("links.close_dont_show_again") }}</a>
         </div>
     </div>
 

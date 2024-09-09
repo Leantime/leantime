@@ -23,6 +23,7 @@ jobs:
       - name: Get Hash
         id: hash
         run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
+
       - name: build artifacts
         run: make package
 
@@ -34,9 +35,11 @@ jobs:
           release_version: ${{ steps.version.outputs.version }}
           config_file: .github/changelogConfig.yml
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract Repo Attributes
         id: attrs
         uses: ibnesayeed/repo-attrs@master
+
       - name: release
         uses: ncipollo/release-action@v1
         id: create_release
@@ -67,6 +70,7 @@ jobs:
             ```
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
       - name: upload zip
         uses: actions/upload-release-asset@v1
         env:
@@ -76,6 +80,7 @@ jobs:
           asset_path: ./target/Leantime-v${{ steps.version.outputs.version }}.zip
           asset_name: Leantime-v${{ steps.version.outputs.version }}.zip
           asset_content_type: application/gzip
+
       - name: upload tar
         uses: actions/upload-release-asset@v1
         env:

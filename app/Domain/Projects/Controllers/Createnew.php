@@ -69,7 +69,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->tpl->assign("projectTypes", $projectTypes);
 
 
-            return $this->tpl->displayPartial('projects.createnew');
+            return $this->tpl->displayPartial('projects::partials.createnew');
         }
     }
 

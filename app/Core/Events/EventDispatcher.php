@@ -5,6 +5,7 @@ namespace Leantime\Core\Events;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Events\QueuedClosure;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -583,7 +584,7 @@ class EventDispatcher implements Dispatcher
     //Laravel Compatibility
     public function listen($events, $listener = null)
     {
-        if ($events instanceof Closure) {
+        if ($events instanceof \Closure) {
             return collect($this->firstClosureParameterTypes($events))
                 ->each(function ($event) use ($events) {
                     $this->listen($event, $events);

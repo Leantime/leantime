@@ -69,23 +69,4 @@ class Environment extends ServiceProvider
         */
     }
 
-
-    /**
-     * @param int $debug
-     * @return void
-     */
-    private function setErrorHandler(int $debug): void
-    {
-        $incomingRequest = $this->app->make(IncomingRequest::class);
-
-        if (
-            $debug == 0
-        ) {
-            return;
-        }
-
-        Debug::enable();
-    }
-
-
 }

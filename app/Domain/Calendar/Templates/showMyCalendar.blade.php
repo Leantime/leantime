@@ -11,15 +11,16 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
-    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa fa-calendar"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('headline.calendar'); ?></h5>
-        <h1><?php echo $tpl->__('headline.my_calendar'); ?></h1>
+        <h5>{{ __("headline.calendar") }}</h5>
+        <h1>{{ __("headline.my_calendar") }}</h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
+@displayNotification()
 
 <div class="maincontent">
 
@@ -44,7 +45,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                                     <i class="fa fa-trash"></i> {!! __('links.delete_external_calendar') !!}
                                 </x-global::actions.dropdown.item>
                             </x-global::context-menu>
-                            
+
                         </div>
                         <span class="indicatorCircle" style="background:<?=$calendars['colorClass'] ?>"></span><?=$calendars['name'] ?>
 
@@ -147,7 +148,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
     foreach ($externalCalendars as $externalCalendar) { ?>
         eventSources.push(
             {
-                url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                url: '{{ BASE_URL }}/calendar/externalCal/<?=$externalCalendar['id'] ?>',
                 format: 'ics',
                 color: '<?=$externalCalendar['colorClass'] ?>',
                 editable: false,
@@ -168,3 +169,5 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
     <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>
+
+@endsection

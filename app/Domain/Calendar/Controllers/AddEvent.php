@@ -49,7 +49,7 @@ class AddEvent extends Controller
         );
 
         $this->tpl->assign('values', $values);
-        return $this->tpl->displayPartial('calendar.addEvent');
+        return $this->tpl->displayPartial('calendar::partials.addEvent');
     }
 
     /**
@@ -73,7 +73,7 @@ class AddEvent extends Controller
             $this->tpl->setNotification('notification.please_enter_title', 'error');
             $this->tpl->assign('values', $params);
 
-            return $this->tpl->displayPartial('calendar.addEvent');
+            return $this->tpl->displayPartial('calendar::partials.addEvent');
         }
     }
 }

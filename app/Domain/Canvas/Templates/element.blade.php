@@ -49,7 +49,7 @@ $canvasItems = $tpl->get('canvasItems');
                 </div>
 
 
-                <h4><a href="#/<?= $canvasName ?>canvas/editCanvasItem/<?= $row['id'] ?>"
+                 <h4><a href="#/{{ $canvasName }}canvas/editCanvasItem/<?=$row["id"];?>"
                         data="item_<?= $row['id'] ?>"><?php $tpl->e($row['description']); ?></a></h4>
 
                 <?php if ($row['conclusion'] != '') {
@@ -150,10 +150,11 @@ $canvasItems = $tpl->get('canvasItems');
             </div>
         </div>
 
-        <?php if ($row['milestoneHeadline'] != '') {?>
-        <br />
-        <div hx-trigger="load" hx-indicator=".htmx-indicator"
-            hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $row['milestoneId'] ?>">
+            <?php if ($row['milestoneHeadline'] != '') {?>
+                <br/>
+                <div hx-trigger="load"
+                     hx-indicator=".htmx-indicator"
+                     hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$row['milestoneId'] ?>">
 
             <div class="htmx-indicator">
                 <?= $tpl->__('label.loading_milestone') ?>
@@ -163,9 +164,10 @@ $canvasItems = $tpl->get('canvasItems');
     </div>
     <?php } ?>
     <?php } ?>
-    <br />
-    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-    <a href="#/<?= $canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class=""
-        id="<?php echo $elementName; ?>" style="padding-bottom: 10px;"><?= $tpl->__('links.add_new_canvas_item') ?></a>
-    <?php } ?>
+  <br />
+  <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+      <a href="#/{{ $canvasName }}canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+         class="" id="<?php echo $elementName; ?>"
+         style="padding-bottom: 10px;"><?=$tpl->__('links.add_new_canvas_item') ?></a>
+  <?php } ?>
 </div>

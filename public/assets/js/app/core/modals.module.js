@@ -2,88 +2,100 @@ import { appUrl } from './instance-info.module.js';
 import jQuery from 'jquery';
 import tippy from 'tippy.js';
 
-var setCustomModalCallback = function(callback) {
+var setCustomModalCallback = function (callback) {
     if (typeof callback === 'function') {
         window.globalModalCallback = callback;
     }
 }
 
-var openModal = function () {
-    var modalOptions = {
-        sizes: {
-            minW: 500,
-            minH: 200
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforePostSubmit: function () {
-                jQuery(".showDialogOnLoad").show();
+var checksumhUrl = function (s) {
+    return s.split("").reduce(function (a, b) {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+    }, 0);
+}
 
-                if (tinymce.editors.length>0) {
-                    jQuery(".simpleEditor").each(function() {
-                        jQuery(this).tinymce().save();
-                        jQuery(this).tinymce().remove();
-                    });
+var removeHash = function () {
+    history.pushState("", document.title, window.location.pathname
+        + window.location.search);
+}
 
-                    jQuery(".complexEditor").each(function() {
-                        jQuery(this).tinymce().save();
-                        jQuery(this).tinymce().remove();
-                    });
-                }
-            },
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-            },
-            afterShowCont: function () {
-                window.htmx.process('.nyroModalCont');
-                jQuery(".formModal, .modal").nyroModal(modalOptions);
-                tippy('[data-tippy-content]');
-            },
-            beforeClose: function () {
-                try{
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-
-                }catch(error){
-                    //Code to handle error comes here
-                    console.log("Issue pushing history");
-                }
-
-                if(typeof window.globalModalCallback === 'function') {
-                    window.globalModalCallback();
-                }else{
-                    location.reload();
-                }
-            }
-        },
-        titleFromIframe: true
-    };
+var getModalUrl = function () {
 
     var url = window.location.hash.substring(1);
-    if(url.includes("showTicket")
-        || url.includes("ideaDialog")
-        || url.includes("articleDialog")) {
-        // modalOptions.sizes.minW = 1800;
-        // modalOptions.sizes.minH = 1800;
-    }
-
     var urlParts = url.split("/");
-    if(urlParts.length>2 && urlParts[1] !== "tab") {
-        jQuery.nmManual(appUrl + "/" + url, modalOptions);
+
+    if (urlParts.length > 2 && urlParts[1] !== "tab") {
+
+        return url;
+    }
+
+    return false;
+
+}
+
+var openPageModal = function (url) {
+
+    jQuery("#modal-wrapper #main-page-modal .modal-loader").show();
+    jQuery("#modal-wrapper #main-page-modal .modal-content-loader").removeClass("htmx-request");
+    jQuery("#modal-wrapper #main-page-modal .modal-box-content").html("");
+    htmx.find("#modal-wrapper #main-page-modal").showModal();
+
+    var baseUrl = appUrl.replace(/\/$/, '');
+
+    htmx.ajax('GET', baseUrl+url, {
+        event: "trigger-modal",
+        target:'#modal-wrapper #main-page-modal .modal-box-content',
+        swap:'innerHTML',
+        headers: {
+            "Is-Modal": true,
+        }
+    }).then((e) => {
+
+        history.pushState(null, '', "#"+url);
+
+        jQuery("#modal-wrapper #main-page-modal .modal-loader").hide();
+        jQuery("#modal-wrapper #main-page-modal .modal-loader").removeClass("htmx-request");
+
+        htmx.find("#modal-wrapper #main-page-modal").addEventListener("close", function() {
+            removeHash();
+        });
+    });
+
+}
+
+var openHashUrlModal = function () {
+
+    var modalUrl = getModalUrl();
+    if (modalUrl !== false) {
+        openPageModal(modalUrl);
     }
 }
 
+/**
+ * Closes a dialog.
+ *
+ * @function closeModal
+ * @description Closes a dialog using jQuery.
+ * @returns {void}
+ */
 var closeModal = function () {
-    jQuery.nmTop().close();
+    removeHash();
+    htmx.find("#modal-wrapper #main-page-modal").close();
 }
 
-jQuery(document).ready(openModal);
-window.addEventListener("hashchange", openModal);
-window.addEventListener("closeModal", closeModal);
+window.addEventListener("HTMX.closemodal", closeModal);
+
+//Open page url modal on page load and hash change
+window.addEventListener("hashchange", openHashUrlModal);
+
+jQuery(document).ready(function() {
+    openHashUrlModal();
+});
+
 
 export default {
-    openModal: openModal,
+    openPageModal: openPageModal,
     setCustomModalCallback: setCustomModalCallback,
     closeModal: closeModal
 };
-

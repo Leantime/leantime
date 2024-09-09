@@ -43,9 +43,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                return $this->tpl->displayPartial('tickets.delMilestone');
+                return $this->tpl->displayModal('tickets.delMilestone');
             } else {
-                return $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayModal('errors.error403');
             }
         }
 
@@ -57,11 +57,11 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params): Response
         {
             if (! isset($_GET['id'], $params['del'])) {
-                return $this->tpl->displayPartial('errors.error400', responseCode: 400);
+                return $this->tpl->displayModal('errors.error400', responseCode: 400);
             }
 
             if (! Auth::userIsAtLeast(Roles::$editor)) {
-                return $this->tpl->displayPartial('errors.error403', responseCode: 403);
+                return $this->tpl->displayModal('errors.error403', responseCode: 403);
             }
 
             if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))) {
@@ -71,7 +71,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->setNotification($this->language->__($result['msg']), "error");
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-            return $this->tpl->displayPartial('tickets.delMilestone');
+            return $this->tpl->displayModal('tickets.delMilestone');
         }
     }
 }

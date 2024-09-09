@@ -81,7 +81,7 @@ namespace Leantime\Domain\Setting\Controllers {
 
                 $this->tpl->assign('currentLabel', $currentLabel);
 
-                return $this->tpl->displayPartial('setting.editBoxDialog');
+                return $this->tpl->displayPartial('projects::partials.editBoxDialog');
             } else {
                 return $this->tpl->display('errors.error403');
             }
@@ -153,10 +153,15 @@ namespace Leantime\Domain\Setting\Controllers {
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.label_changed_successfully"), "success");
+
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
 
             $this->tpl->assign('currentLabel', $sanitizedString);
-            return $this->tpl->displayPartial('setting.editBoxDialog');
+            return $this->tpl->displayPartial('projects::partials.editBoxDialog');
         }
 
         /**

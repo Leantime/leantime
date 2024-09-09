@@ -10,7 +10,7 @@ $currentSprint = $tpl->get('sprint');
                 <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_Organizing_projects_0p9a.svg");
                 echo"</div>";?><br />
             <h3 class="primaryColor"></h3><br />
-            <?php echo $tpl->__('text.show_projects_helper_content') ?>
+            {{ __("text.show_projects_helper_content") }}
             <br /><br />
         </div>
     </div>
@@ -19,8 +19,8 @@ $currentSprint = $tpl->get('sprint');
     <div class="row">
         <div class="col-md-12">
 
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showProjects')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()">{{ __("links.close") }}</a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showProjects')">{{ __("links.close_dont_show_again") }}</a>
         </div>
     </div>
 

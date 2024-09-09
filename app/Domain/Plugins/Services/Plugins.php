@@ -81,9 +81,9 @@ namespace Leantime\Domain\Plugins\Services {
          **/
         public function __construct(
             private PluginRepository $pluginRepository,
-            private EnvironmentCore $config,
             private SettingsService $settingsService,
             private UsersService $usersService,
+            private EnvironmentCore $config,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }

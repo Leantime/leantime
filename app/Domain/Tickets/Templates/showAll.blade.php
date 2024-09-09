@@ -2,38 +2,40 @@
 
 @section('content')
     <?php
-    
+
     $allTicketGroups = $tpl->get('allTickets');
-    
+
     $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
+
     $statusLabels = $tpl->get('allTicketStates');
-    
+
     //All states >0 (<1 is archive)
     $numberofColumns = count($tpl->get('allTicketStates')) - 1;
     $size = floor(100 / $numberofColumns);
-    
+
     ?>
 
-    <?php $tpl->displaySubmodule('tickets-ticketHeader'); ?>
+@include("tickets::includes.ticketHeader")
 
     <div class="maincontent">
 
-        <?php $tpl->displaySubmodule('tickets-ticketBoardTabs'); ?>
+    @include("tickets::includes.ticketBoardTabs")
 
         <div class="maincontentinner">
 
-            <div class="row">
-                <div class="col-md-4">
-                    <?php
-                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                    
-                    $tpl->displaySubmodule('tickets-ticketNewBtn');
-                    $tpl->displaySubmodule('tickets-ticketFilter');
-                    
-                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                    ?>
-                </div>
+        <div class="row">
+            <div class="col-md-4">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                ?>
+
+                @include("tickets::includes.ticketNewBtn")
+                @include("tickets::includes.ticketFilter")
+
+                <?php
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
+            </div>
 
                 <div class="col-md-4 center">
 
@@ -124,20 +126,16 @@
                                 #<?= $tpl->e($row['id']) ?>
                             </td>
 
-                            <td data-order="<?= $tpl->e($row['headline']) ?>">
-                                <?php if ($row['dependingTicketId'] > 0) { ?>
-                                <small><a
-                                        href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>"><?= $tpl->escape($row['parentHeadline']) ?></a></small>
-                                //<br />
-                                <?php } ?>
-                                <a class='ticketModal'
-                                    href="#/tickets/showTicket/<?= $tpl->e($row['id']) ?>"><?= $tpl->e($row['headline']) ?></a>
-                            </td>
+                        <td data-order="<?=$tpl->e($row['headline']); ?>">
+                            <?php if ($row['dependingTicketId'] > 0) { ?>
+                                <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //<br />
+                            <?php } ?>
+                            <a href="#/tickets/showTicket/<?=$tpl->e($row['id']); ?>"><?=$tpl->e($row['headline']); ?></a></td>
 
 
 
                             <?php
-                            
+
                             if (isset($statusLabels[$row['status']])) {
                                 $class = $statusLabels[$row['status']]['class'];
                                 $name = $statusLabels[$row['status']]['name'];
@@ -147,7 +145,7 @@
                                 $name = 'new';
                                 $sortKey = 0;
                             }
-                            
+
                             ?>
                             <td data-order="<?= $name ?>">
                                 <div class="dropdown ticketDropdown statusDropdown colorized show ">
@@ -331,7 +329,7 @@
                                 </div>
                             </td>
                             <?php
-                            
+
                             if ($row['sprint'] != '' && $row['sprint'] != 0 && $row['sprint'] != -1) {
                                 $sprintHeadline = $tpl->escape($row['sprintName']);
                             } else {
@@ -378,11 +376,11 @@
                                 <?php $tagsArray = explode(',', $row['tags']); ?>
                                 <div class='tagsinput readonly'>
                                     <?php
-                                    
+
                                     foreach ($tagsArray as $tag) {
                                         echo "<span class='tag'><span>" . $tpl->escape($tag) . '</span></span>';
                                     }
-                                    
+
                                     ?>
                                 </div>
                                 <?php } ?>
@@ -396,9 +394,8 @@
                                 $date = $date->format($tpl->__('language.dateformat'));
                             }
                             ?>
-                            <td data-order="<?= $row['dateToFinish'] ?>">
-                                <input type="text" title="<?php echo $tpl->__('label.due'); ?>" value="<?php echo $date; ?>"
-                                    class="quickDueDates secretInput" data-id="<?php echo $row['id']; ?>" name="date" />
+                            <td data-order="<?=$row['dateToFinish'] ?>" >
+                                <input type="text" title="{{ __("label.due") }}" value="<?php echo $date ?>" class="quickDueDates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                             </td>
                             <td data-order="<?= $tpl->e($row['planHours']) ?>">
                                 <input type="text" value="<?= $tpl->e($row['planHours']) ?>" name="planHours"
@@ -424,15 +421,7 @@
                                 } ?>
                             </td>
                             <td>
-                                <?php echo app('blade.compiler')::render(
-                                    '@include("tickets::partials.ticketsubmenu", [
-                                                                                                                                                                                                                                                                                        "ticket" => $ticket,
-                                                                                                                                                                                                                                                                                        "onTheClock" => $onTheClock
-                                                                                                                                                                                                                                                                                    ])',
-                                    ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock')],
-                                ); ?>
-
-
+                                @include("tickets::includes.ticketsubmenu", [ "ticket" => $row, "onTheClock" => $onTheClock])
                             </td>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                         </tr>

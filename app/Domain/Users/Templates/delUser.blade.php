@@ -7,26 +7,26 @@ $user = $tpl->get('user');
 ?>
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa fa-people-group"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration') ?></h5>
-        <h1><h1><?php echo $tpl->__('headlines.delete_user'); ?></h1></h1>
+        <h5>{{ __("label.administration") }}</h5>
+        <h1><h1>{{ __("headlines.delete_user") }}</h1></h1>
     </div>
 </div><!--pageheader-->
 
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification() ?>
+        @displayNotification()
 
-        <h4 class="widget widgettitle"><?php echo $tpl->__("subtitles.delete"); ?></h4>
+        <h4 class="widget widgettitle">{{ __("subtitles.delete") }}</h4>
         <div class="widgetcontent">
 
             <form method="post">
                 <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
-                <p><?php echo $tpl->__('text.confirm_user_deletion'); ?></p><br />
-                <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-primary" href="<?=BASE_URL ?>/users/showAll"><?php echo $tpl->__('buttons.back'); ?></a>
+                <p>{{ __("text.confirm_user_deletion") }}</p><br />
+                <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
+                <a class="btn btn-primary" href="{{ BASE_URL }}/users/showAll">{{ __("buttons.back") }}</a>
             </form>
 
 

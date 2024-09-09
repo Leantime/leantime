@@ -419,6 +419,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 "dashboard.home" => "personal",
                 "projects.showMy" => "personal",
                 "timesheets.showMy" => "personal",
+                "timesheets.showMyList" => "personal",
                 "calendar.showMyCalendar" => "personal",
                 "calendar.showMyList" => "personal",
                 "tickets.roadmapAll" => "personal",

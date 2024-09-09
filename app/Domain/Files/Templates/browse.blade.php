@@ -3,10 +3,10 @@
 @section('content')
 
     <?php
-    
+
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Core\Fileupload;
-    
+
     $module = 'project';
     $action = Frontcontroller::getActionName('');
     $maxSize = Fileupload::getMaximumFileUploadSize();
@@ -25,30 +25,27 @@
     <div class="maincontent">
 
 
-        <div id="fileManager">
-            <div class="maincontentinner">
-                <?php
-                echo $tpl->displayNotification();
-                ?>
-                <h5 class="subtitle"><?= $tpl->__('headline.browse_files_headline') ?></h5>
+    <div id="fileManager">
+        <div class="maincontentinner">
+            @displayNotification()
+            <h5 class="subtitle"><?=$tpl->__("headline.browse_files_headline"); ?></h5>
 
 
 
 
-                <?php echo $tpl->displayNotification(); ?>
+            @displayNotification()
 
                 <?php if ($login::userIsAtLeast($roles::$editor)) {?>
                 <div class="uploadWrapper">
 
-                    <a href="javascript:void(0);" id="cancelLink" class="btn btn-default"
-                        style="display:none;"><?php echo $tpl->__('links.cancel'); ?></a>
-                    <div class="extra" style="margin-top:5px;"></div>
-                    <div class="fileUploadDrop">
-                        <p><i><?= $tpl->__('text.drop_files') ?></i></p>
-                        <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
-                        <a href="javascript:void(0);" id="webcamClick"><?= $tpl->__('label.webcam') ?></a>
-                        <a href="javascript:void(0);" id="screencaptureLink"><?= $tpl->__('label.screen_recording') ?></a>
-                    </div>
+            <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">{{ __("links.cancel") }}</a>
+            <div class="extra" style="margin-top:5px;"></div>
+            <div class="fileUploadDrop">
+                <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
+                <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
+                <a href="javascript:void(0);" id="webcamClick"><?=$tpl->__("label.webcam"); ?></a>
+                <a href="javascript:void(0);" id="screencaptureLink"><?=$tpl->__("label.screen_recording"); ?></a>
+            </div>
 
                     <!-- Progress bar #1 -->
                     <div class="input-progress"></div>
@@ -96,13 +93,13 @@
                             </x-global::content.context-menu>
 
                             <a class="imageLink" data-ext="<?php echo $file['extension']; ?>"
-                                href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
+                                href="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
                                 <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;'
-                                    src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
+                                    src="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
                                     alt="" />
                                 <?php else : ?>
-                                <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/doc.png' />
+                                <img style='max-height: 50px; max-width: 70px;' src='{{ BASE_URL }}/dist/images/doc.png' />
                                 <?php endif; ?>
                                 <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension']; ?></span>
                             </a>
@@ -142,9 +139,6 @@
             let modalTypes = ["jpg", "jpeg", "png", "gif", "apng", "webp", "avif"];
             jQuery(".imageLink").each(function(i) {
                 let ext = jQuery(this).attr("data-ext");
-                if (modalTypes.includes(ext)) {
-                    jQuery(this).nyroModal();
-                }
             });
 
             //Replaces data-rel attribute to rel.
@@ -187,9 +181,6 @@
                 return false;
             });
 
-            jQuery(".deleteFile").nyroModal();
-
-
         });
     </script>
 
@@ -211,16 +202,16 @@
             });
 
             uppy.use(Uppy.FileInput, {
-                target: '.file-upload-input',
+                    target: '.file-upload-input',
                 pretty: true,
                 locale: {
-                    strings: {
-                        chooseFiles: ' Browse',
-                    }
+                        strings: {
+                            chooseFiles: ' Browse',
+                        }
                 }
             });
             uppy.use(Uppy.XHRUpload, {
-                endpoint: '<?= BASE_URL ?>/api/files?module=project&moduleId=<?= $moduleId ?>',
+                endpoint: '{{ BASE_URL }}/api/files?module=project&moduleId=<?=$moduleId?>',
                 formData: true,
                 fieldName: 'file',
             });
@@ -280,28 +271,22 @@
                     //window.location.hash = "files";
                     //window.location.reload();*/
 
-                    let html = '<li class="file-module-' + response.moduleId + '">' +
-                        '<div class="inlineDropDownContainer dropright" style="float:right;">' +
-                        '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
-                        '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
-                        '</a>' +
-                        '<ul class="dropdown-menu">' +
-                        '<li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>' +
-                        '<li><a target="_blank" href="<?= BASE_URL ?>/files/get?module=' + response.module +
-                        '&encName=' + response.encName + '&ext=' + response.extension + '&realName=' + response
-                        .realName + '"><?php echo str_replace("'", '"', $tpl->__('links.download')); ?></a></li>' +
-                        <?php
-                                    if ($login::userIsAtLeast($roles::$editor)) { ?> '<li><a href="<?= BASE_URL ?>/files/showAll?delFile=' + response
-                        .fileId +
-                        '" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__('links.delete')); ?></a></li>' +
-                        <?php  } ?> '</ul>' +
-                        '</div>' +
-                        '<a class="imageLink" href="<?= BASE_URL ?>/files/get?module=' + response.module +
-                        '&encName=' + response.encName + '&ext=' + response.extension + '&realName=' + response
-                        .realName + '">' +
-                        '<img style="max-height: 50px; max-width: 70px;" src="<?= BASE_URL ?>/files/get?module=' +
-                        response.module + '&encName=' + response.encName + '&ext=' + response.extension +
-                        '&realName=' + response.realName + '" alt="" />' +
+            let html = '<li class="file-module-' + response.moduleId + '">' +
+                            '<div class="inlineDropDownContainer dropright" style="float:right;">' +
+                                '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
+                                    '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
+                                '</a>' +
+                                '<ul class="dropdown-menu">' +
+                                    '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
+                                    '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $tpl->__("links.download")); ?></a></li>'+
+                                    <?php
+                                    if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__("links.delete")); ?></a></li>'+
+                                    <?php  } ?>
+                                '</ul>'+
+                            '</div>'+
+                            '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
+                                '<img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
 
                         '<span class="filename">' + response.realName + '.</span>' +
                         '</a>' +

@@ -52,22 +52,17 @@ $tpl->assign('canvasTitle', $canvasTitle);
         <h5><?php $tpl->e(session('currentProjectClient') . ' // ' . session('currentProjectName')); ?></h5>
         <?php if (count($allCanvas) > 0) {?>
         <span class="dropdown dropdownWrapper headerEditDropdown">
-            <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                    class="fa-solid fa-ellipsis-v"></i></a>
-            <ul class="dropdown-menu editCanvasDropdown">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="#/<?= $canvasName ?>canvas/boardDialog/<?php echo $tpl->get('currentCanvas'); ?>"
-                        class="editCanvasLink "><?= $tpl->__('links.icon.edit') ?></a></li>
-                <?php } ?>
-                <li><a
-                        href="<?= BASE_URL ?>/<?= $canvasName ?>canvas/export/<?php echo $tpl->get('currentCanvas'); ?>"><?= $tpl->__('links.icon.export') ?></a>
-                </li>
-                <li><a href="javascript:window.print();"><?= $tpl->__('links.icon.print') ?></a></li>
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="#/<?= $canvasName ?>canvas/delCanvas/<?php echo $tpl->get('currentCanvas'); ?>"
-                        class="delete"><?php echo $tpl->__('links.icon.delete'); ?></a></li>
-                <?php } ?>
-            </ul>
+        <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
+        <ul class="dropdown-menu editCanvasDropdown">
+            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                <li><a href="#/<?=$canvasName?>canvas/boardDialog/<?php echo $tpl->get('currentCanvas');?>" class="editCanvasLink "><?=$tpl->__("links.icon.edit") ?></a></li>
+            <?php } ?>
+            <li><a href="{{ BASE_URL }}/{{ $canvasName }}canvas/export/<?php echo $tpl->get('currentCanvas');?>"><?=$tpl->__("links.icon.export") ?></a></li>
+            <li><a href="javascript:window.print();"><?=$tpl->__("links.icon.print") ?></a></li>
+            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                <li><a href="#/{{ $canvasName }}canvas/delCanvas/<?php echo $tpl->get('currentCanvas');?>" class="delete">{{ __("links.icon.delete") }}</a></li>
+            <?php } ?>
+        </ul>
         </span>
         <?php } ?>
         <h1><?= $tpl->__("headline.$canvasName.board") ?> //
@@ -136,17 +131,17 @@ $tpl->assign('canvasTitle', $canvasTitle);
     </div><!--pageheader-->
 
 
-            <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
                 <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
                 <a href="#/<?= $canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="btn btn-primary"
                     id="<?php echo $elementName; ?>"><?= $tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
                 <?php } ?>
 
-                    <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
-                    <a href="#/<?= $canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>" class="btn btn-primary"
-                        id="<?php echo $elementName; ?>"><?= $tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
-                    <?php } ?>
+                <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
+                    <a href="#/{{ $canvasName }}canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+                       class="btn btn-primary" id="<?php echo $elementName; ?>"><?=$tpl->__('links.add_new_canvas_item' . $canvasName) ?></a>
+                <?php } ?>
 
                 </div>
 

@@ -4,7 +4,7 @@
 
 <div class="maincontent" id="gridBoard" style="margin-top:0px; opacity:0;">
 
-    {!! $tpl->displayNotification() !!}
+    @displayNotification()
 
     <div class="grid-stack">
 

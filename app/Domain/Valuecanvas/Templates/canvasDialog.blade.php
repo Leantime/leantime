@@ -37,7 +37,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
+            location.href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -46,9 +46,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
   <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
-    <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <x-global::content.modal.form action="{{ BASE_URL }}/{{ $canvasName }}canvas/editCanvasItem/{{ $id }}">
 
         <input type="hidden" value="<?php echo $tpl->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
@@ -121,12 +121,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if ($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $tpl->__("links.delete") ?></a>
+            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><i class='fa fa-trash-can'></i> {{ __("links.delete") }}</a>
         <?php } ?>
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             <input type="submit" value="<?=$tpl->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
+            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
 
 
         <?php } ?>
@@ -143,9 +143,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
+                                <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
                                 <?php if (count($tpl->get('milestones')) > 0) { ?>
-                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
+                                    | <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
                                 <?php } ?>
                              </div>
                             <?php } ?>
@@ -154,9 +154,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                             <div class="col-md-12">
                                 <input type="text" width="50%" name="newMilestone"></textarea><br />
                                 <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
+                                <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
                                 <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
@@ -176,9 +176,9 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                         }     ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />
-                                <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
+                                <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
                                 <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
@@ -189,15 +189,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 ?>
 
-                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
+                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="{{ $canvasName }}CanvasMilestone" >
                         <div hx-trigger="load"
                              hx-indicator=".htmx-indicator"
-                             hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$canvasItem['milestoneId'] ?>">
+                             hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$canvasItem['milestoneId'] ?>">
                             <div class="htmx-indicator">
                                 <?=$tpl->__("label.loading_milestone") ?>
                             </div>
                         </div>
-                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
 
                     </li>
             <?php } ?>
@@ -206,15 +206,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php } ?>
 
-    </form>
+    </x-global::content.modal.form>
 
     <?php if ($id !== '') { ?>
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
-        <?php
-        $tpl->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
-        $tpl->displaySubmodule('comments-generalComment');?>
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ __("subtitles.discussion") }}</h4>
+        @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/". $canvasName ."canvas/editCanvasItem/" . $id ])
+
     <?php } ?>
 </div>
 

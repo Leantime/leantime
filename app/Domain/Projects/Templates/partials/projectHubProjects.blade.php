@@ -1,5 +1,8 @@
-<div id="myProjectsHub" hx-get="{{ BASE_URL }}/projects/projectHubProjects/get"
-    hx-trigger="HTMX.updateProjectList from:body" hx-target="#myProjectsHub" hx-swap="outerHTML transition:true">
+<div id="myProjectsHub"
+     hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
+     hx-trigger="HTMX.updateProjectList from:body"
+     hx-target="#myProjectsHub"
+     hx-swap="outerHTML transition:true">
 
     @if (count($clients) > 0)
         <div class="dropdown dropdownWrapper pull-right">
@@ -13,7 +16,7 @@
 
                 <x-slot:menu>
                     <!-- All Clients Option -->
-                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/projects/showMy">
+                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/hx/projects/showMy">
                         {{ __('headline.all_clients') }}
                     </x-global::actions.dropdown.item>
 
@@ -21,7 +24,7 @@
                     @foreach ($clients as $key => $value)
                         @if (!empty($key))
                             <x-global::actions.dropdown.item href="javascript:void(0);"
-                                hx-get="{{ BASE_URL }}/projects/projectHubProjects/get?client={{ $key }}"
+                                hx-get="{{ BASE_URL }}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                 hx-target="#myProjectsHub" hx-swap="outerHTML transition:true">
                                 {{ $value['name'] }}
                             </x-global::actions.dropdown.item>
@@ -61,10 +64,7 @@
                 @foreach ($allProjects as $project)
                     @if ($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include('projects::partials.projectCard', [
-                                'project' => $project,
-                                'type' => 'detailed',
-                            ])
+                            @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -91,10 +91,7 @@
                 @foreach ($allProjects as $project)
                     @if ($project['isFavorite'] == false)
                         <div class="col-md-3">
-                            @include('projects::partials.projectCard', [
-                                'project' => $project,
-                                'type' => 'detailed',
-                            ])
+                            @include("projects::includes.projectCard", ["project" => $project, "type" => "detailed"])
                         </div>
                     @endif
                 @endforeach

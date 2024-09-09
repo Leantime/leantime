@@ -326,7 +326,8 @@
                     @endforeach
                 ];
                 leantime.ideasController.initIdeaKanban(ideaStatusList);
-                leantime.ideasController.initUserDropdown();
+                leantime.canvasController.initUserDropdown('ideas');
+
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif

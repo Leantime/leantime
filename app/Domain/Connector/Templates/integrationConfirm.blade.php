@@ -14,17 +14,17 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.connector"); ?> // <?=$provider->name ?></h1>
+                <h1>{{ __("headlines.connector") }} // <?=$provider->name ?></h1>
             </div>
         </div>
     </div>
 </div>
 
-<?php echo $tpl->displayNotification(); ?>
+@displayNotification()
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+        @include("connector::includes.importProgress")
     </div>
     <div class="maincontentinner">
         <?php

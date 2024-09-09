@@ -59,7 +59,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->tpl->assign('allClients', $this->clientRepo->getAll());
             $this->tpl->assign("project", $project);
 
-            return $this->tpl->displayPartial('projects.duplicateProject');
+            return $this->tpl->displayPartial('projects::partials.duplicateProject');
         }
 
         /**

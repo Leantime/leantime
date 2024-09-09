@@ -10,9 +10,10 @@
 
 @if ($loggedIn)
     <script>
+
         //5 min keep alive timer
         setInterval(function(){
-            jQuery.get(leantime.appUrl+'/auth/keepAlive');
+            jQuery.get(leantime.instanceInfo.appUrl+'/auth/keepAlive');
         }, 300000);
     </script>
 @endif

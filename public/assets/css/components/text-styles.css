@@ -34,11 +34,6 @@ h1 small {
 }
 
 
-.dropdown [class*="label-"]:hover {
-    background: var(--dropdown-link-hover-bg) !important;
-    color:var(--dropdown-link-hover-color) !important;
-}
-
 a .label:after,
 a .label-important:after, a .label-warning:after,
 a .label-success:after, a .label-info:after, .label-inverse:after,

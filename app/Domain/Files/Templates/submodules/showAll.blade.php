@@ -10,11 +10,11 @@ $moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">
 
-    <?php echo $tpl->displayNotification(); ?>
+    @displayNotification()
 
     <div class="uploadWrapper">
 
-        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $tpl->__('links.cancel'); ?></a>
+        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;">{{ __("links.cancel") }}</a>
         <div class="extra" style="margin-top:5px;"></div>
         <div class="fileUploadDrop">
             <p><i><?= $tpl->__('text.drop_files') ?></i></p>
@@ -53,13 +53,9 @@ $moduleId = $_GET['id'] ?? '';
                     {{ __('links.download') }}
                 </x-global::actions.dropdown.item>
 
-                <!-- Conditional Delete File Menu Item -->
-                @if ($login::userIsAtLeast($roles::$editor))
-                    <x-global::actions.dropdown.item variant="link"
-                        href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}" class="delete deleteFile">
-                        <i class="fa fa-trash"></i> {{ __('links.delete') }}
-                    </x-global::actions.dropdown.item>
-                @endif
+                                if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                    <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                <?php  } ?>
 
                 </x-global::content.context-menu>
 
@@ -108,12 +104,11 @@ $moduleId = $_GET['id'] ?? '';
 
         let modalTypes = ["jpg", "jpeg", "png", "gif", "apng", "webp", "avif"];
 
-        jQuery(".imageLink").each(function(i) {
-            let ext = jQuery(this).attr("data-ext");
-            if (modalTypes.includes(ext)) {
-                jQuery(this).nyroModal();
-            }
-        });
+            jQuery(".imageLink").each(function(i) {
+                let ext = jQuery(this).attr("data-ext");
+                if(modalTypes.includes(ext)) {
+                }
+            });
 
         //Replaces data-rel attribute to rel.
         //We use data-rel because of w3c validation issue
@@ -155,7 +150,6 @@ $moduleId = $_GET['id'] ?? '';
             return false;
         });
 
-        jQuery(".deleteFile").nyroModal();
 
 
     });
@@ -185,12 +179,12 @@ $moduleId = $_GET['id'] ?? '';
                 strings: {
                     chooseFiles: ' Browse',
                 }
-            }
-        });
-        uppy.use(Uppy.XHRUpload, {
-            endpoint: '<?= BASE_URL ?>/api/files?module=<?= $module ?>&moduleId=<?= $moduleId ?>',
-            formData: true,
-        });
+        }
+    });
+    uppy.use(Uppy.XHRUpload, {
+        endpoint: '{{ BASE_URL }}/api/files?module=<?=$module?>&moduleId=<?=$moduleId?>',
+        formData: true,
+    });
 
         uppy.use(Uppy.StatusBar, {
             target: '.input-progress',
@@ -247,28 +241,22 @@ $moduleId = $_GET['id'] ?? '';
                 //window.location.hash = "files";
                 //window.location.reload();*/
 
-                let html = '<li class="file-module-' + response.moduleId + '">' +
-                    '<div class="inlineDropDownContainer dropright" style="float:right;">' +
-                    '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
-                    '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
-                    '</a>' +
-                    '<ul class="dropdown-menu">' +
-                    '<li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>' +
-                    '<li><a target="_blank" href="<?= BASE_URL ?>/files/get?module=' + response.module +
-                    '&encName=' + response.encName + '&ext=' + response.extension + '&realName=' + response
-                    .realName + '"><?php echo str_replace("'", '"', $tpl->__('links.download')); ?></a></li>' +
-                    <?php
-                                    if ($login::userIsAtLeast($roles::$editor)) { ?> '<li><a href="<?= BASE_URL ?>/files/showAll?delFile=' + response
-                    .fileId +
-                    '" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__('links.delete')); ?></a></li>' +
-                    <?php  } ?> '</ul>' +
-                    '</div>' +
-                    '<a class="imageLink" href="<?= BASE_URL ?>/files/get?module=' + response.module +
-                    '&encName=' + response.encName + '&ext=' + response.extension + '&realName=' + response
-                    .realName + '">' +
-                    '<img style="max-height: 50px; max-width: 70px;" src="<?= BASE_URL ?>/files/get?module=' +
-                    response.module + '&encName=' + response.encName + '&ext=' + response.extension +
-                    '&realName=' + response.realName + '" alt="" />' +
+            let html = '<li class="file-module-'+response.moduleId+'">' +
+                            '<div class="inlineDropDownContainer dropright" style="float:right;">' +
+                                '<a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">' +
+                                    '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
+                                '</a>' +
+                                '<ul class="dropdown-menu">' +
+                                    '<li class="nav-header">{{ __("subtitles.file") }}</li>' +
+                                    '<li><a target="_blank" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $tpl->__("links.download")); ?></a></li>'+
+                                    <?php
+                                    if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                        '<li><a href="{{ BASE_URL }}/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__("links.delete")); ?></a></li>'+
+                                    <?php  } ?>
+                                '</ul>'+
+                            '</div>'+
+                            '<a class="imageLink" href="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'">'+
+                                '<img style="max-height: 50px; max-width: 70px;" src="{{ BASE_URL }}/files/get?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'" alt="" />'+
 
                     '<span class="filename">' + response.realName + '.</span>' +
                     '</a>' +

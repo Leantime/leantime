@@ -23,7 +23,7 @@
         || $menuType == "personal"
         || $menuType == "company")
 
-        <li class="dropdown scrollableMenu">
+        <li class="dropdown scrollableMenu" hx-boost="true" hx-indicator="#global-loader">
 
             <ul style="display:block;">
 

@@ -17,7 +17,7 @@ class Helpermodal extends Composer
     private Helper $helperService;
 
     public static array $views = [
-        'help::helpermodal',
+        'help::includes.helpermodal',
     ];
 
     /**

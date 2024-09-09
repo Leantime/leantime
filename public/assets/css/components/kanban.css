@@ -411,12 +411,6 @@ body .maincontent .priority-text-5 a:link {
     padding-top:0px;
 }
 
-.kanbanBoard .ticketDropdown a.dropdown-toggle {
-    font-size: var(--base-font-size);
-    max-width: 145px; /*min column width is 150px*/
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 
 .sortableTicketList {

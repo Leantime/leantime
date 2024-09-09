@@ -105,7 +105,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             $this->tpl->assign('canvasTypes', $canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
-            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
+            return $this->tpl->displayPartial('goalcanvas::partials.canvasComment');
         }
 
         /**
@@ -259,7 +259,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
-            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
+            return $this->tpl->displayPartial('goalcanvas::partials.canvasComment');
         }
 
         /**

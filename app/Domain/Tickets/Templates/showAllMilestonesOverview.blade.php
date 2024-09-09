@@ -6,27 +6,27 @@
     $sprints = $tpl->get('sprints');
     $searchCriteria = $tpl->get('searchCriteria');
     $currentSprint = $tpl->get('currentSprint');
-    
+
     $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
+
     $efforts = $tpl->get('efforts');
     $statusLabels = $tpl->get('allTicketStates');
     $allTickets = $tpl->get('allTickets');
-    
+
     //All states >0 (<1 is archive)
     $numberofColumns = count($tpl->get('allTicketStates')) - 1;
     $size = floor(100 / $numberofColumns);
-    
+
     ?>
 
-    <?php $tpl->displaySubmodule('tickets-portfolioHeader'); ?>
+    @include("tickets::includes.portfolioHeader")
 
     <div class="maincontent">
-        <?php $tpl->displaySubmodule('tickets-portfolioTabs'); ?>
+        @include("tickets::includes.portfolioTabs")
 
         <div class="maincontentinner">
 
-            <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
             <form action="" method="get" id="ticketSearch">
 
@@ -171,7 +171,7 @@
                         </td>
 
                         <?php
-                        
+
                         if (isset($statusLabels[$row->status])) {
                             $class = $statusLabels[$row->status]['class'];
                             $name = $statusLabels[$row->status]['name'];
@@ -179,7 +179,7 @@
                             $class = 'label-important';
                             $name = 'new';
                         }
-                        
+
                         ?>
                         <td class="dropdown-cell" data-order="<?= $name ?>">
                             @php
@@ -258,18 +258,12 @@
 
                         </td>
 
-                        <td data-order="<?php echo $row->editFrom; ?>">
-                            <?php echo $tpl->__('label.due_icon'); ?><input type="text" title="<?php echo $tpl->__('label.planned_start_date'); ?>"
-                                value="<?php echo format($row->editFrom)->date(); ?>"
-                                class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id; ?>"
-                                data-id="<?php echo $row->id; ?>" name="editFrom" class="" />
-                        </td>
+                            <td data-order="<?php echo $row->editFrom ?>" >
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_start_date") }}" value="<?php echo format($row->editFrom)->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editFrom" class=""/>
+                            </td>
 
-                        <td data-order="<?php echo $row->editTo; ?>">
-                            <?php echo $tpl->__('label.due_icon'); ?><input type="text" title="<?php echo $tpl->__('label.planned_end_date'); ?>"
-                                value="<?php echo format($row->editTo)->date(); ?>"
-                                class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id; ?>"
-                                data-id="<?php echo $row->id; ?>" name="editTo" class="" />
+                            <td data-order="<?php echo $row->editTo ?>" >
+                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_end_date") }}" value="<?php echo format($row->editTo)->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editTo" class="" />
 
                         </td>
 
@@ -357,7 +351,7 @@
 
         jQuery(document).ready(function() {});
 
-        leantime.ticketsController.initTicketSearchSubmit("<?= BASE_URL ?>/tickets/showAll");
+    leantime.ticketsController.initTicketSearchSubmit("{{ BASE_URL }}/tickets/showAll");
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initUserDropdown();
@@ -373,5 +367,7 @@
 
         leantime.ticketsController.initMilestoneTable("<?= $searchCriteria['groupBy'] ?>");
 
-        <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
-    </script>
+    <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
+
+</script>
+@endsection

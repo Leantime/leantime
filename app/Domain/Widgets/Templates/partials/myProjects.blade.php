@@ -5,7 +5,7 @@
 ])
 
 <div id="myProjectsWidget"
-     hx-get="{{BASE_URL}}/widgets/myProjects/get"
+     hx-get="{{BASE_URL}}/hx/widgets/myProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML transition:true">
@@ -36,7 +36,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -62,7 +62,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
                         </div>
 
                     @endif

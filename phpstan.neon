@@ -1,6 +1,6 @@
 parameters:
-    bootstrapFiles:
-        - public/index.php
+    #bootstrapFiles:
+    #    - public/index.php
     level: 0
     paths:
         - public/
@@ -16,11 +16,11 @@ parameters:
     scanDirectories:
         - vendor
         - config
-    ignoreErrors:
+    #ignoreErrors:
             # Rules for level 1. Templates use variables through include which are not detected by phpstan
-            -
-                messages:
-                    - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
+            #-
+            #    messages:
+            #        - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
             #        - '#Variable \$__data might not be defined\.#'
             #        - '#Constant BASE_URL not found\.#'
             #        - '#Constant CURRENT_URL not found\.#'
@@ -31,9 +31,9 @@ parameters:
             #        - app/Domain/*/Templates/*.inc.php
             #        - app/Domain/*/Templates/submodules/*.sub.php
     universalObjectCratesClasses:
-        - Leantime\Core\Environment
+        - Leantime\Core\Configuration\Environment
     earlyTerminatingMethodCalls:
-        Leantime\Core\Templates:
+        Leantime\Core\UI\Templates:
             - redirect
             - display
             - displayPartial

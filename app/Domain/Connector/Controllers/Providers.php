@@ -30,7 +30,7 @@ namespace Leantime\Domain\Connector\Controllers {
          */
         public function get($params)
         {
-            return $this->tpl->displayPartial('connectors.providers');
+            return $this->tpl->displayPartial('connectors::partials.providers');
         }
 
         /**
@@ -41,7 +41,7 @@ namespace Leantime\Domain\Connector\Controllers {
          */
         public function post($params)
         {
-            return $this->tpl->displayPartial('connectors.providers');
+            return $this->tpl->displayPartial('connectors::partials..providers');
         }
     }
 

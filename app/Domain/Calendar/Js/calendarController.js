@@ -290,31 +290,6 @@ export const initEventDatepickers = function () {
 
 };
 
-var initExportModal = function () {
-
-    var exportModalConfig = {
-        sizes: {
-            minW: 400,
-            minH: 350
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            afterShowCont: function () {
-
-                jQuery(".formModal").nyroModal(exportModalConfig);
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-
-
-        },
-        titleFromIframe: true
-    };
-    jQuery(".exportModal").nyroModal(exportModalConfig);
-
-}
 
 var initWidgetCalendar = function (element, initialView, eventSources) {
     let calendarEl = document.querySelector(element);
@@ -591,6 +566,5 @@ export default {
     initShowMyCalendar: initShowMyCalendar,
     initTicketsCalendar: initTicketsCalendar,
     initEventDatepickers: initEventDatepickers,
-    initExportModal: initExportModal,
     initWidgetCalendar: initWidgetCalendar
 };

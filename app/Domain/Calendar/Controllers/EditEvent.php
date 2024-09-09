@@ -50,7 +50,7 @@ class EditEvent extends Controller
 
         $this->tpl->assign('values', $values);
 
-        return $this->tpl->displayPartial('calendar.editEvent');
+        return $this->tpl->displayPartial('calendar::partials.editEvent');
     }
 
     /**

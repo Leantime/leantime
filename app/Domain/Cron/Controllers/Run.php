@@ -4,6 +4,7 @@ namespace Leantime\Domain\Cron\Controllers {
 
     use Illuminate\Support\Facades\Log;
     use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Events\EventDispatcher;
     use PHPMailer\PHPMailer\Exception;
@@ -57,7 +58,7 @@ namespace Leantime\Domain\Cron\Controllers {
                     });
 
                 /** @return never **/
-                (new \Leantime\Core\Console\ConsoleKernel())->call('schedule:run', [], $output);
+                app()->make(ConsoleKernel::class)->call('schedule:run', [], $output);
 
 
             });

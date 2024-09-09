@@ -74,6 +74,24 @@ namespace Leantime\Domain\Ideas\Services {
             return $ideas;
         }
 
+        private function prepareDatesForApiResponse($idea) {
+
+            if(dtHelper()->isValidDateString($idea['created'])) {
+                $idea['created'] = dtHelper()->parseDbDateTime($idea['created'])->toIso8601ZuluString();
+            }else{
+                $idea['created'] = null;
+            }
+
+            if(dtHelper()->isValidDateString($idea['modified'])) {
+                $idea['modified'] = dtHelper()->parseDbDateTime($idea['modified'])->toIso8601ZuluString();
+            }else{
+                $idea['modified'] = null;
+            }
+
+            return $idea;
+
+        }
+
         public function getCurrentCanvasId($allCanvas = null, $params = null)
         {
             if (!empty($params) && isset($params["id"])) {

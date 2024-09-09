@@ -6,6 +6,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Leantime\Core\Plugins;
 use Leantime\Core\Providers\Auth;
 use Leantime\Core\Providers\Cache;
+use Leantime\Core\Providers\ConsoleSupport;
 use Leantime\Core\Providers\Db;
 use Leantime\Core\Providers\EncryptionServiceProvider;
 use Leantime\Core\Providers\FileSystemServiceProvider;
@@ -41,7 +42,7 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
         \Illuminate\Broadcasting\BroadcastServiceProvider::class,
         \Illuminate\Bus\BusServiceProvider::class,
         \Illuminate\Cache\CacheServiceProvider::class,
-        \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        //\Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
         \Illuminate\Cookie\CookieServiceProvider::class,
         \Illuminate\Database\DatabaseServiceProvider::class,
         \Illuminate\Encryption\EncryptionServiceProvider::class,
@@ -66,7 +67,7 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
 
         Cache::class,
         //\Illuminate\Cache\CacheServiceProvider::class,
-        \Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        ConsoleSupport::class,
         \Illuminate\Cookie\CookieServiceProvider::class,
         //\Illuminate\Database\DatabaseServiceProvider::class,
         EncryptionServiceProvider::class,
@@ -94,7 +95,7 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
         RateLimiter::class,
         Db::class,
         Language::class,
-        RouteServiceProvider::class,
+        //RouteServiceProvider::class,
 
         Frontcontroller::class,
         Views::class,
@@ -104,6 +105,8 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
 
     public function bootstrap(Application $app)
     {
+
+
         foreach(self::$defaultLeantimeProviders as $provider){
             $app->register($provider);
         }

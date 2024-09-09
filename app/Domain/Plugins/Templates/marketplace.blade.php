@@ -10,7 +10,7 @@
 
     <div class="maincontent">
 
-        @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
+        @include('plugins::includes.plugintabs',  ["currentUrl" => "marketplace"])
 
        <div class="maincontentinner">
 
@@ -21,7 +21,7 @@
                 hx-indicator=".htmx-indicator, .htmx-loaded-content"
                 hx-swap="outerHTML"
            >
-                @include('plugins::partials.pluginlist', [])
+                @include('plugins::includes.pluginlist', [])
            </div>
 
        </div>

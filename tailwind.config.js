@@ -5,7 +5,7 @@ import defaultConfig from 'tailwindcss/defaultConfig'
 module.exports = {
     content: [
         './app/{Views,Domain}/**/*.{tpl,sub,inc,blade}.php',
-        './app/Core/Template.php',
+        './cache/Views/*.php',
         './app/{Views,Domain}/**/{Composers,Controllers}/**/*.php',
     ],
     prefix: '', // temporary prefix until bootstrap is removed

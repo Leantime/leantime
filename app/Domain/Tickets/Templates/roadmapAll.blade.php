@@ -20,14 +20,14 @@ foreach ($clients as $client) {
 
 $roadmapView = session("usersettings.views.roadmap", "Month");
 ?>
-<?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
+@include("tickets::includes.portfolioHeader")
 
 <div class="maincontent">
-    <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+    @include("tickets::includes.portfolioTabs")
 
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        @displayNotification()
 
         <div class="row">
             <div class="col-md-6">
@@ -107,8 +107,8 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
         }
         ?>
 
-        leantime.ticketsController.openMilestoneModalManually("<?=BASE_URL ?>/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/roadmap');
+        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
+        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
 
     <?php } ?>
 
@@ -181,3 +181,4 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
 
 
 </script>
+@endsection

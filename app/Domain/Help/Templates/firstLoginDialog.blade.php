@@ -21,7 +21,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
 <?php } ?>
 
 <?php if ($step == 2) { ?>
-    <form class="onboardingModal step2" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=3">
+    <form class="onboardingModal step2" method="post" action="{{ BASE_URL }}/help/firstLogin?step=3">
         <input type="hidden" name="step" value="2" />
         <div class="row">
             <div class="col-md-6">
@@ -49,7 +49,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
 <?php } ?>
 
 <?php if ($step == 3) { ?>
-    <form class="onboardingModal step2" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=3">
+    <form class="onboardingModal step2" method="post" action="{{ BASE_URL }}/help/firstLogin?step=3">
         <input type="hidden" name="step" value="3" />
         <div class="row">
             <div class="col-md-6">

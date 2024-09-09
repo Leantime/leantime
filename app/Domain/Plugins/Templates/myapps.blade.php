@@ -10,7 +10,7 @@
 
     <div class="maincontent">
 
-        @include('plugins::partials.plugintabs',  ["currentUrl" => "installed"])
+        @include('plugins::includes.plugintabs',  ["currentUrl" => "installed"])
 
         <div class="maincontentinner">
 

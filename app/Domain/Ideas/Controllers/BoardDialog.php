@@ -31,7 +31,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $data = $this->ideasService->prepareCanvasData($params['id'] ?? null);
             $this->assignTemplateVariables($data);
 
-            return $this->tpl->displayPartial('ideas.boardDialog');
+            return $this->tpl->displayPartial('ideas::partials.boardDialog');
         }
 
         public function post($params): Response
@@ -40,7 +40,11 @@ namespace Leantime\Domain\Ideas\Controllers {
                 $result = $this->ideasService->createNewCanvas($params);
                 if ($result['success']) {
                     $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', "board_created");
-                    return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -54,7 +58,10 @@ namespace Leantime\Domain\Ideas\Controllers {
                 $result = $this->ideasService->editCanvas($params, $currentCanvasId);
                 if ($result['success']) {
                     $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                    return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/' . $result['canvasId']);
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -63,10 +70,10 @@ namespace Leantime\Domain\Ideas\Controllers {
             $data = $this->ideasService->prepareCanvasData();
             $this->assignTemplateVariables($data);
 
-            return $this->tpl->displayPartial('ideas.boardDialog');
+            return $this->tpl->displayPartial('ideas::partials.boardDialog');
 
             if (!isset($params['raw'])) {
-                return $this->tpl->displayPartial('ideas.boardDialog');
+                return $this->tpl->displayPartial('ideas::partials.boardDialog');
             }
         }
 

@@ -106,49 +106,6 @@ export const initUserTable = function () {
 
 };
 
-export const _initModals = function () {
-
-    var userImportModalConfig = {
-        sizes: {
-            minW: 400,
-            minH: 350
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            afterShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                jQuery(".userImportModal").nyroModal(userImportModalConfig);
-            }
-        }
-    };
-
-    jQuery(".userImportModal").nyroModal(userImportModalConfig);
-}
-
-export const initUserEditModal = function () {
-
-    var userEditModal = {
-        sizes: {
-            minW: 900,
-            minH: 250
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            afterShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                jQuery(".userEditModal").nyroModal(userEditModal);
-            },
-            beforeClose: function () {
-
-                location.reload();
-            },
-        }
-    };
-
-    jQuery(".userEditModal").nyroModal(userEditModal);
-}
 
 export const checkPWStrength = function (pwField) {
 
@@ -201,7 +158,5 @@ export default {
     clearCroppie: clearCroppie,
     saveCroppie: saveCroppie,
     initUserTable: initUserTable,
-    _initModals: _initModals,
     checkPWStrength: checkPWStrength,
-    initUserEditModal: initUserEditModal
 };

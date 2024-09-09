@@ -33,7 +33,7 @@ $redirectUrl = $tpl->get('redirectUrl');
             <label for="password">Password</label>
             <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_password"); ?>" value=""/>
             <div class="forgotPwContainer">
-                <a href="<?=BASE_URL ?>/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__("links.forgot_password"); ?></a>
+                <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__("links.forgot_password"); ?></a>
             </div>
         </div>
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
@@ -53,7 +53,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
         <div class="">
             <center class="uppercase"><?php echo $tpl->language->__("label.or"); ?></center><br />
-            <a href="<?=BASE_URL ?>/oidc/login" style="width:100%;" class="btn btn-primary">
+            <a href="{{ BASE_URL }}/oidc/login" style="width:100%;" class="btn btn-primary">
             <?php echo $tpl->language->__("buttons.oidclogin"); ?>
             </a>
         </div>

@@ -7,6 +7,7 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Domain\Goalcanvas\Models\Goalcanvas;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
@@ -47,12 +48,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $bigrock = $this->goalService->getSingleCanvas($params['id']);
             } else {
 
-                $bigrock = array("id" => '', "title" => "", "prpojectId" => "", "author" => '');
+                $bigrock = app()->make(Goalcanvas::class);
             }
 
             $this->tpl->assign('bigRock', $bigrock);
 
-            return $this->tpl->displayPartial('goalcanvas.bigRockDialog');
+            return $this->tpl->displayPartial('goalcanvas::partials.bigRockDialog');
         }
 
         /**
@@ -83,7 +84,10 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                 if ($id) {
                     $this->tpl->setNotification("notification.goalboard_created_successfully", "success", "wiki_created");
-                    return Frontcontroller::redirect(BASE_URL . "/goalcanvas/bigRock/" . $id . "?closeModal=1");
+                    $this->tpl->closeModal();
+                    $this->tpl->htmxRefresh();
+
+                    return $this->tpl->emptyResponse();
                 }
 
                 return Frontcontroller::redirect(BASE_URL . "/goalcanvas/bigRock/" . $id . "");

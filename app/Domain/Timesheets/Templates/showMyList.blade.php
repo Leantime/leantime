@@ -13,8 +13,8 @@ use Leantime\Core\Support\FromFormat;
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('headline.overview'); ?></h5>
-        <h1><?php echo $tpl->__("headline.my_timesheets") ?></h1>
+        <h5>{{ __("headline.overview") }}</h5>
+        <h1>{{ __("headline.my_timesheets") }}</h1>
     </div>
 </div>
 <!-- page header -->
@@ -22,17 +22,15 @@ use Leantime\Core\Support\FromFormat;
 
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php
-        echo $tpl->displayNotification();
-        ?>
+        @displayNotification()
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__("links.filter") ?> (1)</a>
+                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{{ __("links.filter") }} (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
-                        <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?> <?php echo $tpl->__('label.date_to'); ?></label>
+                        <label for="dateFrom">{{ __("label.date_from") }} {{ __("label.date_to") }}</label>
                         <input type="text"
                                id="dateFrom"
                                class="dateFrom"
@@ -50,7 +48,7 @@ use Leantime\Core\Support\FromFormat;
                     <div class="filterBoxLeft">
                         <label for="kind"><?php echo $tpl->__("label.type")?></label>
                         <select id="kind" name="kind" onchange="submit();">
-                            <option value="all"><?php echo $tpl->__("label.all_types"); ?></option>
+                            <option value="all">{{ __("label.all_types") }}</option>
                             <?php foreach ($tpl->get('kind') as $key => $row) {
                                 echo'<option value="' . $key . '"';
                                 if ($key == $tpl->get('actKind')) {
@@ -73,8 +71,8 @@ use Leantime\Core\Support\FromFormat;
                 <div class="btn-group viewDropDown">
                     <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.list_view") ?> <?=$tpl->__("links.view") ?></button>
                     <ul class="dropdown-menu">
-                        <li><a href="<?=BASE_URL?>/timesheets/showMy" ><?=$tpl->__("links.week_view") ?></a></li>
-                        <li><a href="<?=BASE_URL?>/timesheets/showMyList" class="active"><?=$tpl->__("links.list_view") ?></a></li>
+                        <li><a href="{{ BASE_URL }}/timesheets/showMy" ><?=$tpl->__("links.week_view") ?></a></li>
+                        <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active"><?=$tpl->__("links.list_view") ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -102,19 +100,19 @@ use Leantime\Core\Support\FromFormat;
                 </colgroup>
                 <thead>
                     <tr>
-                        <th><?php echo $tpl->__('label.id'); ?></th>
-                        <th><?php echo $tpl->__('label.date'); ?></th>
-                        <th><?php echo $tpl->__('label.hours'); ?></th>
-                        <th><?php echo $tpl->__('label.plan_hours'); ?></th>
-                        <th><?php echo $tpl->__('label.difference'); ?></th>
-                        <th><?php echo $tpl->__('label.ticket'); ?></th>
-                        <th><?php echo $tpl->__('label.project'); ?></th>
-                        <th><?php echo $tpl->__('label.employee'); ?></th>
+                        <th>{{ __("label.id") }}</th>
+                        <th>{{ __("label.date") }}</th>
+                        <th>{{ __("label.hours") }}</th>
+                        <th>{{ __("label.plan_hours") }}</th>
+                        <th>{{ __("label.difference") }}</th>
+                        <th>{{ __("label.ticket") }}</th>
+                        <th>{{ __("label.project") }}</th>
+                        <th>{{ __("label.employee") }}</th>
                         <th><?php echo $tpl->__("label.type")?></th>
-                        <th><?php echo $tpl->__('label.description'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
-                        <th><?php echo $tpl->__('label.paid'); ?></th>
+                        <th>{{ __("label.description") }}</th>
+                        <th>{{ __("label.invoiced") }}</th>
+                        <th>{{ __("label.invoiced_comp") }}</th>
+                        <th>{{ __("label.paid") }}</th>
                     </tr>
 
                 </thead>
@@ -129,7 +127,7 @@ use Leantime\Core\Support\FromFormat;
                     $sum = $sum + $row['hours'];?>
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
+                            <a href="{{ BASE_URL }}/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
                         <td data-order="<?php echo format($row['workDate'])->date(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
@@ -209,3 +207,5 @@ use Leantime\Core\Support\FromFormat;
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
     });
 </script>
+
+@endsection

@@ -90,7 +90,7 @@
         foreach($externalCalendars as $externalCalendar) { ?>
             eventSources.push(
                 {
-                    url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                    url: '{{ BASE_URL }}/calendar/externalCal/<?=$externalCalendar['id'] ?>',
                     format: 'ics',
                     color: '<?=$externalCalendar['colorClass'] ?>',
                     editable: false,
