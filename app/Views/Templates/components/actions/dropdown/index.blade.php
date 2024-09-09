@@ -5,8 +5,8 @@
     'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
-    'label-text' => 'Dropdown', // Text for the dropdown button
-    'card-label' => 'Card Title!', // Text for the card title
+    'labelText' => 'Dropdown', // Text for the dropdown button
+    'cardLabel' => 'Card Title!', // Text for the card title
 ])
 
 @php
