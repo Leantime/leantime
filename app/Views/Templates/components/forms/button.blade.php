@@ -21,7 +21,7 @@
     $stateClass = $state ? 'btn-'.$state : ''
 @endphp
 
-<{{ $tag }} {{$attributes->merge(['class' => 'btn '.$typeClass.' '.$sizeClass. ' '.$stateClass])->class([
+<{{ $tag }} role="button" {{$attributes->merge(['class' => 'btn btn-sm '.$typeClass.' '.$sizeClass. ' '.$stateClass])->class([
     'join-item' => $join,
     'mr-2' => ! $join,
     ]) }}>
