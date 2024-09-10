@@ -25,15 +25,23 @@
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
                 <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i
-                            class="fa-solid fa-ellipsis-v"></i></a>
-                    <ul class="dropdown-menu editCanvasDropdown">
+                    <x-global::content.context-menu>
+                        <x-slot name="trigger">
+                            <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-v"></i>
+                            </a>
+                        </x-slot>
+
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="javascript:void(0)" class="editCanvasLink">{!! __('links.icon.edit') !!}</a></li>
-                            <li><a href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                                    class="delete">{!! __('links.icon.delete') !!}</a></li>
+                            <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
+                                {!! __('links.icon.edit') !!}
+                            </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">
+                                {!! __('links.icon.delete') !!}
+                            </x-global::actions.dropdown.item>
                         @endif
-                    </ul>
+                    </x-global::content.context-menu>
                 </span>
             @endif
             <h1>{!! __('headlines.idea_management') !!}
@@ -307,7 +315,7 @@
                     @endforeach
                 ];
                 leantime.ideasController.initIdeaKanban(ideaStatusList);
-                leantime.ideasController.initUserDropdown();
+                leantime.canvasController.initUserDropdown('ideas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif

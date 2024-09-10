@@ -218,33 +218,31 @@
 
                             <td
                                 data-order="<?= $row['storypoints'] ? $efforts['' . $row['storypoints'] . ''] ?? '?' : $tpl->__('label.story_points_unkown') ?>">
-                                <div class="dropdown ticketDropdown effortDropdown show">
-                                    <?php
-                                    // Determine the effort text to display based on the existing PHP logic
-                                    $effortText = $row['storypoints'] != '' && $row['storypoints'] > 0 ? $efforts['' . $row['storypoints']] ?? $row['storypoints'] : $tpl->__('label.story_points_unkown');
-                                    
-                                    $dropdownId = 'effortDropdownMenuLink' . $row['id'];
-                                    ?>
+                                <?php
+                                // Determine the effort text to display based on the existing PHP logic
+                                $effortText = $row['storypoints'] != '' && $row['storypoints'] > 0 ? $efforts['' . $row['storypoints']] ?? $row['storypoints'] : $tpl->__('label.story_points_unkown');
+                                
+                                $dropdownId = 'effortDropdownMenuLink' . $row['id'];
+                                ?>
 
-                                    <x-global::forms.dropdownPill class="label-default effort f-left"
-                                        id="{{ $dropdownId }}" :labelText="$effortText" type="effort" :parentId="$row['id']">
-                                        <x-slot name="buttonText">
-                                            {{ $effortText }} <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </x-slot>
+                                <x-global::forms.dropdownPill class="label-default effort f-left" id="{{ $dropdownId }}"
+                                    :labelText="$effortText" type="effort" :parentId="$row['id']">
+                                    <x-slot name="buttonText">
+                                        {{ $effortText }} <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </x-slot>
 
-                                        <x-global::actions.dropdown.item class="nav-header border">
-                                            {{ __('dropdown.how_big_todo') }}
+                                    <x-global::actions.dropdown.item class="nav-header border">
+                                        {{ __('dropdown.how_big_todo') }}
+                                    </x-global::actions.dropdown.item>
+
+                                    @foreach ($efforts as $effortKey => $effortValue)
+                                        <x-global::actions.dropdown.item href="javascript:void(0);" :data-value="$row['id'] . '_' . $effortKey"
+                                            :id="'ticketEffortChange' . $row['id'] . $effortKey">
+                                            {{ $effortValue }}
                                         </x-global::actions.dropdown.item>
+                                    @endforeach
+                                </x-global::forms.dropdownPill>
 
-                                        @foreach ($efforts as $effortKey => $effortValue)
-                                            <x-global::actions.dropdown.item href="javascript:void(0);" :data-value="$row['id'] . '_' . $effortKey"
-                                                :id="'ticketEffortChange' . $row['id'] . $effortKey">
-                                                {{ $effortValue }}
-                                            </x-global::actions.dropdown.item>
-                                        @endforeach
-                                    </x-global::forms.dropdownPill>
-
-                                </div>
                             </td>
 
                             <?php
@@ -335,7 +333,7 @@
 
                                     <x-global::actions.dropdown.item href="javascript:void(0);" :data-label="$tpl->__('label.not_assigned_to_list')"
                                         :data-value="$row['id'] . '_0'">
-                                        {{ $tpl->__('label.not_assigned_to_list') }}
+                                        {{ __('label.not_assigned_to_list') }}
                                     </x-global::actions.dropdown.item>
 
                                     @foreach ($tpl->get('sprints') as $sprint)
