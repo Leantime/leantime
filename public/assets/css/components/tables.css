@@ -50,7 +50,7 @@
 
 .dataTable th,
 .dataTable td {
-    font-size: var(--base-font-size);
+
 }
 
 .dataTables_wrapper {
@@ -196,7 +196,7 @@
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
     text-transform:none;
-    font-size: var(--base-font-size);
+
     border-top: 0;
 
     font-weight: normal;

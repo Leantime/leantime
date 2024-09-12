@@ -89,16 +89,11 @@ mix
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
-    .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
-        sourceMap: true,
-    })
-    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`, {
-        sourceMap: true,
-    })
-    .less('./public/assets/less/app.less', `public/dist/css/app.${version}.min.css`, {
-        sourceMap: true,
-    })
-    .tailwind()
+    .postCss('./public/assets/less/editor.css', `public/dist/css/editor.${version}.min.css`)
+    .postCss('./public/assets/less/app.css', `public/dist/css/app.${version}.min.css`)
+    .postCss('./public/assets/less/main.css', `public/dist/css/main.${version}.min.css`)
+
+
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .copy('./public/assets/lottie', 'public/dist/lottie')
@@ -114,6 +109,7 @@ mix
             parser: '@babel/eslint-parser',
         }
     })
+    .tailwind()
     .webpackConfig(() => {
     return {
         devtool: 'inline-source-map',

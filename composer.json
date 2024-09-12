@@ -102,6 +102,11 @@
             "macros": [
                 "Leantime\\Core\\Support\\CarbonMacros"
             ]
+        },
+        "merge-plugin": {
+            "include": [
+                "app/Plugins/*/composer.json"
+            ]
         }
     }
 }

@@ -224,16 +224,16 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function getCurrentRoute() {
 
         if($this->currentRoute == null){
-            
+
             $route = '';
             $segments = $this->segments();
             if(count($segments) > 1){
                 $route = implode(".", $segments);
             }
-    
+
             $this->currentRoute = $route;
         }
-    
+
         return $this->currentRoute;
     }
 

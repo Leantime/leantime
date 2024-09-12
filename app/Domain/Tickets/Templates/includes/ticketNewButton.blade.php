@@ -1,31 +1,9 @@
-<?php
-
-$newField = $tpl->get('newField');
-if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) { ?>
-    <div class="btn-group">
-        <?php
-    $labelText = $tpl->__("links.new_with_icon") . ' <span class="caret"></span>';
-?>
-
-<x-global::actions.dropdown
-    :labelText="html_entity_decode($labelText)"
-    class="btn btn-primary dropdown-toggle"
-    align="start"
-    contentRole="menu"
->
-    <x-slot:menu>
+@if ($login::userIsAtLeast($roles::$editor) && !empty($newField))
+    <x-globals::actions.dropdown>
         @foreach ($newField as $option)
-            <x-global::actions.dropdown.item 
-                href="{{ !empty($option['url']) ? $option['url'] : 'javascript:void(0);' }}"
-                class="{{ !empty($option['class']) ? $option['class'] : '' }}"
-            >
-                {!! !empty($option['text']) ? $tpl->__($option['text']) : '' !!}
-            </x-global::actions.dropdown.item>
+        <x-globals::actions.dropdown.item href="{{ !empty($option['url']) ? $option['url'] : '' }}">
+                {!! __($option['text']) !!}
+        </x-globals::actions.dropdown.item>
         @endforeach
-    </x-slot:menu>
-</x-global::actions.dropdown>
-
-    </div>
-
-    <?php
-}
+    </x-globals::actions.dropdown>
+@endif
