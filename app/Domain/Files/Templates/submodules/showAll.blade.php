@@ -38,39 +38,39 @@ $moduleId = $_GET['id'] ?? '';
 
             <ul id='medialist' class='listfile'>
                 <?php foreach ($tpl->get('files') as $file) {?>
-                <li class="file-module-<?php echo $file['moduleId']; ?>">
-                    <x-global::content.context-menu label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>"
-                        contentRole="link" position="right" align="start" class="inlineDropDownContainer dropright"
-                        style="float:right;">
+                    <li class="file-module-<?php echo $file['moduleId']; ?>">
+                        <x-global::content.context-menu label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>"
+                            contentRole="link" position="right" align="start" class="inlineDropDownContainer dropright"
+                            style="float:right;">
 
-                        <!-- Menu Header -->
-                <li class="nav-header">{{ __('subtitles.file') }}</li>
+                                <!-- Menu Header -->
+                                <li class="nav-header">{{ __('subtitles.file') }}</li>
 
-                <!-- Download File Menu Item -->
-                <x-global::actions.dropdown.item variant="link"
-                    href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}"
-                    target="_blank">
-                    {{ __('links.download') }}
-                </x-global::actions.dropdown.item>
+                                <!-- Download File Menu Item -->
+                                <x-global::actions.dropdown.item variant="link"
+                                    href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}"
+                                    target="_blank">
+                                    {{ __('links.download') }}
+                                </x-global::actions.dropdown.item>
 
-                                if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                 <?php  } ?>
 
-                </x-global::content.context-menu>
+                        </x-global::content.context-menu>
 
-                <a class="imageLink" data-ext="<?php echo $file['extension']; ?>"
-                    href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
-                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions') ?? [])) :  ?>
-                    <img style='max-height: 50px; max-width: 70px;'
-                        src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
-                        alt="" />
-                    <?php else : ?>
-                    <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/doc.png' />
-                    <?php endif; ?>
-                    <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension']; ?></span>
-                </a>
-                </li>
+                        <a class="imageLink" data-ext="<?php echo $file['extension']; ?>"
+                            href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
+                            <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions') ?? [])) :  ?>
+                            <img style='max-height: 50px; max-width: 70px;'
+                                src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
+                                alt="" />
+                            <?php else : ?>
+                            <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/doc.png' />
+                            <?php endif; ?>
+                            <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension']; ?></span>
+                        </a>
+                    </li>
                 <?php } ?>
 
                 <br class="clearall" />

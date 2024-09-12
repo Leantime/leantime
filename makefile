@@ -120,17 +120,17 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept build
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
-codesniffer:
-	./vendor/squizlabs/php_codesniffer/bin/phpcs app
+test-code-style:
+	./vendor/bin/pint --test
 
-codesniffer-fix:
-	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
+fix-code-style:
+	./vendor/bin/pint
 
 get-version:
 	@echo $(VERSION)
 
 phpstan:
-	./vendor/bin/phpstan analyse --memory-limit 1024M --debug -v
+	./vendor/bin/phpstan analyse -c .phpstan/phpstan.neon -v --debug --memory-limit 2G
 
 update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php

@@ -15,5 +15,8 @@ jobs:
     - name: Run Tests
       run: make build-dev
 
+    - name: Run Code Style Tests
+      run: make test-code-style
+
     - name: Run Tests
       run: make phpstan

@@ -23,9 +23,38 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     protected $currentRoute;
 
+    public $headers = [];
+
+    protected $requestUri;
+
+    public $query;
+
+    public $request;
+
+    public const HEADER_FORWARDED = parent::HEADER_FORWARDED; // When using RFC 7239
+
+    public const HEADER_X_FORWARDED_FOR = parent::HEADER_X_FORWARDED_FOR;
+
+    public const HEADER_X_FORWARDED_HOST = parent::HEADER_X_FORWARDED_HOST;
+
+    public const HEADER_X_FORWARDED_PROTO = parent::HEADER_X_FORWARDED_PROTO;
+
+    public const HEADER_X_FORWARDED_PORT = parent::HEADER_X_FORWARDED_PORT;
+
+    public const HEADER_X_FORWARDED_PREFIX = parent::HEADER_X_FORWARDED_PREFIX;
+
+    public const HEADER_X_FORWARDED_AWS_ELB = parent::HEADER_X_FORWARDED_AWS_ELB; // AWS ELB doesn't send X-Forwarded-Host
+
+    public const HEADER_X_FORWARDED_TRAEFIK = parent::HEADER_X_FORWARDED_TRAEFIK; // All "X-Forwarded-*"
+
+    public static function createFromGlobals(): static
+    {
+        return parent::createFromGlobals();
+    }
+
     public static function capture()
     {
-        static::enableHttpMethodParameterOverride();
+        parent::enableHttpMethodParameterOverride();
 
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
@@ -41,7 +70,7 @@ class IncomingRequest extends \Illuminate\Http\Request
             isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
             isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
             defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
-            default => IncomingRequest::createFromGlobals(),
+            default => parent::createFromGlobals(),
         };
 
         $request->setUrlConstants();
@@ -71,7 +100,7 @@ class IncomingRequest extends \Illuminate\Http\Request
                 define('BASE_URL', $appUrl);
 
             } else {
-                define('BASE_URL', $this->getSchemeAndHttpHost());
+                define('BASE_URL', parent::getSchemeAndHttpHost());
             }
         }
 
@@ -87,7 +116,7 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getFullUrl(): string
     {
-        return $this->getSchemeAndHttpHost().$this->getBaseUrl().$this->getPathInfo();
+        return parent::getSchemeAndHttpHost().parent::getBaseUrl().parent::getPathInfo();
     }
 
     /**
@@ -126,12 +155,12 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getRequestParams(?string $method = null): array
     {
-        $method ??= $this->getMethod();
+        $method ??= parent::method();
         $method = strtoupper($method);
         $patch_vars = [];
 
         if ($method == 'PATCH') {
-            parse_str($this->getContent(), $patch_vars);
+            parse_str(parent::getContent(), $patch_vars);
         }
 
         $params = $this->query->all();
@@ -215,7 +244,7 @@ class IncomingRequest extends \Illuminate\Http\Request
         if ($this->currentRoute == null) {
 
             $route = '';
-            $segments = $this->segments();
+            $segments = parent::segments();
             if (count($segments) > 1) {
                 $route = implode('.', $segments);
             }
