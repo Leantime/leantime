@@ -6,7 +6,6 @@ namespace Leantime\Core\Http;
 
 class HtmxRequest extends IncomingRequest
 {
-
     /**
      * Get HTMX request information
      *
@@ -24,8 +23,6 @@ class HtmxRequest extends IncomingRequest
             'triggerId' => $this->getTriggerId(),
         ];
     }
-
-
 
     /**
      * Indicates that the request is via an element using hx-boost

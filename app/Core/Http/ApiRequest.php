@@ -9,7 +9,6 @@ namespace Leantime\Core\Http;
  */
 class ApiRequest extends IncomingRequest
 {
-
     /**
      * Retrieves the Authorization header from the request.
      * The method checks multiple keys in the request headers for Authorization,
