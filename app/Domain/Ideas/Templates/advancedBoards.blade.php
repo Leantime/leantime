@@ -25,46 +25,58 @@
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
             @if (count($allCanvas) > 0)
                 <span class="dropdown dropdownWrapper headerEditDropdown">
-                    <x-global::content.context-menu>
-                        <x-slot name="trigger">
-                            <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown">
-                                <i class="fa-solid fa-ellipsis-v"></i>
-                            </a>
-                        </x-slot>
+                    @php
+                        $labelText =
+                            '<a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>';
+                    @endphp
 
+                    <x-global::content.context-menu :labelText="$labelText" align="start" contentRole="menu">
                         @if ($login::userIsAtLeast($roles::$editor))
                             <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
                                 {!! __('links.icon.edit') !!}
                             </x-global::actions.dropdown.item>
+
                             <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
                                 class="delete">
                                 {!! __('links.icon.delete') !!}
                             </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
+
                 </span>
             @endif
             <h1>{!! __('headlines.idea_management') !!}
                 //
                 @if (count($allCanvas) > 0)
-                    <x-global::actions.dropdown content-role="ghost">
-                        <x-slot name="menu">
-                            @if ($login::userIsAtLeast($roles::$editor))
-                                <x-global::actions.dropdown.item href="javascript:void(0)" class="addCanvasLink">
-                                    {!! __('links.icon.create_new_board') !!}
-                                </x-global::actions.dropdown.item>
-                            @endif
+                    <span class="dropdown dropdownWrapper">
+                        @php
+                            $labelText =
+                                '<a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" style="max-width:200px;">' .
+                                $canvasTitle .
+                                '&nbsp;<i class="fa fa-caret-down"></i></a>';
+                        @endphp
 
-                            <x-global::actions.dropdown.item class="border"></x-global::actions.dropdown.item>
+                        <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="canvasSelector" align="start"
+                            contentRole="menu">
+                            <x-slot:menu>
+                                @if ($login::userIsAtLeast($roles::$editor))
+                                    <x-global::actions.dropdown.item href="javascript:void(0)" class="addCanvasLink">
+                                        {!! __('links.icon.create_new_board') !!}
+                                    </x-global::actions.dropdown.item>
+                                @endif
 
-                            @foreach ($allCanvas as $canvasRow)
-                                <x-global::actions.dropdown.item
-                                    href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->title }}">
-                                    {{ $canvasRow->title }}
-                                </x-global::actions.dropdown.item>
-                            @endforeach
-                        </x-slot>
-                    </x-global::actions.dropdown>
+                                <li class="border"></li>
+
+                                @foreach ($allCanvas as $canvasRow)
+                                    <x-global::actions.dropdown.item
+                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->title }}">
+                                        {{ $canvasRow->title }}
+                                    </x-global::actions.dropdown.item>
+                                @endforeach
+                            </x-slot:menu>
+                        </x-global::actions.dropdown>
+
+                    </span>
                 @endif
 
             </h1>
