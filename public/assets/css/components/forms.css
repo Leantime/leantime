@@ -1,6 +1,5 @@
 
 input, button, select, textarea {
-    font-family:var(--primary-font-family);
 }
 
 input:focus,
@@ -13,10 +12,7 @@ textarea:focus {
 }
 
 form label{
-    padding-top:5px;
-    margin-bottom: 2px;
-    font-weight:bold;
-    opacity:0.8;
+
 }
 
 form .switchery {

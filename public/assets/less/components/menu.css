@@ -1,4 +1,11 @@
 /* Overrides some daisyUI classes */
+body .menu {
+    @apply text-sm;
+}
+
+.leftmenu .menu li > * {
+    @apply text-primary-content;
+}
 
 .leftmenu .menu li > *:not(ul):not(.menu-title):not(details):active,
 .leftmenu .menu li > *:not(ul):not(.menu-title):not(details).active,

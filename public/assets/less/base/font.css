@@ -13,3 +13,76 @@
   font-weight: 100 1000;
   font-style:italic;
 }
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Regular-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Regular-102a.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-BoldItalic-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-BoldItalic-102a.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Bold-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Bold-102a.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('~fonts/atkinson/Atkinson-Hyperlegible-Italic-102.ttf') format('truetype'),
+    url('~fonts/atkinson/Atkinson-Hyperlegible-Italic-102a.woff2') format('woff2');
+
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Bold_Italic.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Shantell Sans';
+    src: url('~fonts/shantell/Shantell_Sans-Informal_Regular_Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+
+
+

@@ -13,6 +13,9 @@ module.exports = {
         fontFamily: {
             sans: ['"Hanken Grotesk"', 'sans'],
             serif: ['Merriweather', 'serif'],
+            hanken: ['"Hanken Grotesk"', 'sans-serif'],
+            atkinson: ['"Atkinson Hyperlegible"', 'sans-serif'],
+            shantell: ['"Shantell Sans"', 'sans-serif'],
         },
         fontWeight: {
             thin: '100',
@@ -220,6 +223,7 @@ module.exports = {
         },
     },
     daisyui: {
+        base: true,
         themes: [{
             leantime: {
                 'fontFamily': 'Hanken Grotesk',
@@ -240,7 +244,7 @@ module.exports = {
                 'base-100' : '#ffffff',          /* Base color of page, used for blank backgrounds */
                  //'base-200' : '#e7e7e7',          /* Base color, a little darker */
                  //'base-300' : '#dedede',          /* Base color, even more darker */
-                'base-content' : '#272727',      /* Foreground content color to use on base color */
+                'base-content' : '#3f3f3f',      /* Foreground content color to use on base color */
 
                 'info' : '#0a4aa3',              /* Info */
                 'success' :  '#108e38',           /* Success */

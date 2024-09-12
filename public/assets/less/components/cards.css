@@ -1,0 +1,3 @@
+.card-compact .card-body {
+    @apply text-sm;
+}
