@@ -38,27 +38,60 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
                     <div class="btn-group dropRight">
 
                         <?php
-                            $currentView = "";
-                        if ($roadmapView == 'Day') {
-                            $currentView = $tpl->__("buttons.day");
-                        } elseif ($roadmapView == 'Week') {
-                            $currentView = $tpl->__("buttons.week");
-                        } elseif ($roadmapView == 'Month') {
-                            $currentView = $tpl->__("buttons.month");
+                        // Determine the current view label
+                        switch ($roadmapView) {
+                            case 'Day':
+                                $currentView = $tpl->__('buttons.day');
+                                break;
+                            case 'Week':
+                                $currentView = $tpl->__('buttons.week');
+                                break;
+                            case 'Month':
+                                $currentView = $tpl->__('buttons.month');
+                                break;
+                            default:
+                                $currentView = '';
                         }
-                        ?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="ganttTimeControl">
-                           <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
-                                echo "active";
-                                                                                     }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
-                                echo "active";
-                                                                                       }?>"><?=$tpl->__("buttons.week"); ?></a></li>
-                            <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
-                                echo "active";
-                                                                                        }?>"><?=$tpl->__("buttons.month"); ?></a></li>
-                        </ul>
+                    ?>
+                    
+                    <x-global::actions.dropdown 
+                        class="btn dropdown-toggle"
+                        id="ganttTimeControl"
+                        :label-text="$tpl->__('buttons.timeframe') . ': ' . $currentView"
+                        align="start"
+                        contentRole="menu"
+                    >
+                        <x-slot:trigger>
+                            {{ $tpl->__('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span> <span class="caret"></span>
+                        </x-slot:trigger>
+                    
+                        <x-slot:menu>
+                            <x-global::actions.dropdown.item 
+                                href="javascript:void(0);" 
+                                :data-value="'Day'" 
+                                class="{{ $roadmapView == 'Day' ? 'active' : '' }}"
+                            >
+                                {{ $tpl->__('buttons.day') }}
+                            </x-global::actions.dropdown.item>
+                    
+                            <x-global::actions.dropdown.item 
+                                href="javascript:void(0);" 
+                                :data-value="'Week'" 
+                                class="{{ $roadmapView == 'Week' ? 'active' : '' }}"
+                            >
+                                {{ $tpl->__('buttons.week') }}
+                            </x-global::actions.dropdown.item>
+                    
+                            <x-global::actions.dropdown.item 
+                                href="javascript:void(0);" 
+                                :data-value="'Month'" 
+                                class="{{ $roadmapView == 'Month' ? 'active' : '' }}"
+                            >
+                                {{ $tpl->__('buttons.month') }}
+                            </x-global::actions.dropdown.item>
+                        </x-slot:menu>
+                    </x-global::actions.dropdown>
+                    
                     </div>
                 </div>
 

@@ -57,12 +57,26 @@
                 <div class="col-md-12" style="padding:0 15px;">
                     @if($login::userIsAtLeast($roles::$editor))
                         <div class="inlineDropDownContainer" >
-                            <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="javascript:void(0);" hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket["id"] }}&parentTicket={{ $ticket->id }}" hx-target="#ticketSubtasks" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete_todo") }}</a></li>
-                            </ul>
+                            @php
+                            $labelText = '<a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>';
+                        @endphp
+                        
+                        <x-global::content.context-menu 
+                            :labelText="$labelText"
+                            class="ticketDropDown"
+                            align="start"
+                            contentRole="menu"
+                        >
+                            <x-global::actions.dropdown.item 
+                                href="javascript:void(0);" 
+                                hx-delete="{{ BASE_URL }}/tickets/subtasks/delete?ticketId={{ $subticket['id'] }}&parentTicket={{ $ticket->id }}" 
+                                hx-target="#ticketSubtasks" 
+                                class="delete"
+                            >
+                                <i class="fa fa-trash"></i> {{ __("links.delete_todo") }}
+                            </x-global::actions.dropdown.item>
+                        </x-global::content.context-menu>
+                        
                         </div>
                    @endif
 

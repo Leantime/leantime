@@ -7,37 +7,37 @@
     $sprints = $tpl->get('sprints');
     $searchCriteria = $tpl->get('searchCriteria');
     $currentSprint = $tpl->get('currentSprint');
-
+    
     $todoTypeIcons = $tpl->get('ticketTypeIcons');
-
+    
     $efforts = $tpl->get('efforts');
     $priorities = $tpl->get('priorities');
-
+    
     $allTicketGroups = $tpl->get('allTickets');
-
+    
     ?>
 
-    @include("tickets::includes.ticketHeader")
+    @include('tickets::includes.ticketHeader')
 
     <div class="maincontent">
 
-    @include("tickets::includes.ticketBoardTabs")
+        @include('tickets::includes.ticketBoardTabs')
 
         <div class="maincontentinner">
 
-         <div class="row">
-            <div class="col-md-4">
-                <?php
-                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                ?>
+            <div class="row">
+                <div class="col-md-4">
+                    <?php
+                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                    ?>
 
-                @include("tickets::includes.ticketNewBtn")
-                @include("tickets::includes.ticketFilter")
+                    @include('tickets::includes.ticketNewBtn')
+                    @include('tickets::includes.ticketFilter')
 
-                <?php
-                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                ?>
-            </div>
+                    <?php
+                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                    ?>
+                </div>
 
                 <div class="col-md-4 center">
 
@@ -80,11 +80,11 @@
                             <x-global::actions.dropdown.item
                                 href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}"
                                 class="editLabelModal">
-                                {{ $tpl->__('headlines.edit_label') }}
+                                {!! __('headlines.edit_label') !!}
                             </x-global::actions.dropdown.item>
                             <x-global::actions.dropdown.item
                                 href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">
-                                {{ $tpl->__('links.add_remove_col') }}
+                                {!! __('links.add_remove_col') !!}
                             </x-global::actions.dropdown.item>
                         </x-global::content.context-menu>
 
@@ -156,10 +156,10 @@
                                         <div class="col-md-12">
 
 
-                                                    @include("tickets::includes.ticketsubmenu", [
-                                                                                        "ticket" => $row,
-                                                                                        "onTheClock" => $onTheClock
-                                                                                    ])
+                                            @include('tickets::includes.ticketsubmenu', [
+                                                'ticket' => $row,
+                                                'onTheClock' => $onTheClock,
+                                            ])
 
 
 
@@ -183,7 +183,9 @@
                                             <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
 
                                                         echo $tpl->__("label.due_icon"); ?>
-                                                        <input type="text" title="{{ __("label.due") }}" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
+                                            <input type="text" title="{{ __('label.due') }}" value="<?php echo format($row['dateToFinish'])->date(); ?>"
+                                                class="duedates secretInput" style="margin-left:0px;"
+                                                data-id="<?php echo $row['id']; ?>" name="date" />
 
                                             <?php } ?>
                                         </div>
@@ -378,11 +380,11 @@
                                                 <li style="padding:10px">
                                                     <div class='tagsinput readonly'>
                                                         <?php
-
+                                                        
                                                         foreach ($tagsArray as $tag) {
                                                             echo "<span class='tag'><span>" . $tpl->escape($tag) . '</span></span>';
                                                         }
-
+                                                        
                                                         ?>
                                                     </div>
                                                 </li>
@@ -515,6 +517,6 @@
 
 
 
-    });
-</script>
+        });
+    </script>
 @endsection
