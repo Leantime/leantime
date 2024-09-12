@@ -7,21 +7,12 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Setting extends Controller
 {
     private SettingService $settingService;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     * @param SettingService $settingService
-     *
-     * @return void
      */
     public function init(SettingService $settingService): void
     {
@@ -31,11 +22,8 @@ class Setting extends Controller
     /**
      * get - handle get requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function get(array $params): Response
     {
@@ -45,11 +33,8 @@ class Setting extends Controller
     /**
      * post - Updatind User Image
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      *
      * @throws BindingResolutionException
      */
@@ -59,12 +44,12 @@ class Setting extends Controller
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
-        $_FILES['file']['name'] = "logo.png";
+        $_FILES['file']['name'] = 'logo.png';
 
         $this->settingService->setLogo($_FILES);
 
-        session(["msg" => "PICTURE_CHANGED"]);
-        session(["msgT" => "success"]);
+        session(['msg' => 'PICTURE_CHANGED']);
+        session(['msgT' => 'success']);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }
@@ -72,11 +57,8 @@ class Setting extends Controller
     /**
      * put - handle put requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function patch(array $params): Response
     {
@@ -86,11 +68,8 @@ class Setting extends Controller
     /**
      * delete - handle delete requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function delete(array $params): Response
     {

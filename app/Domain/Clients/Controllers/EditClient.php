@@ -2,7 +2,6 @@
 
 /**
  * editClient Class - Editing clients
- *
  */
 
 namespace Leantime\Domain\Clients\Controllers {
@@ -12,17 +11,12 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 
-    /**
-     *
-     */
     class EditClient extends Controller
     {
         private ClientRepository $clientRepo;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
          */
         public function init(ClientRepository $clientRepo)
         {
@@ -31,8 +25,6 @@ namespace Leantime\Domain\Clients\Controllers {
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
         public function run()
         {
@@ -41,13 +33,13 @@ namespace Leantime\Domain\Clients\Controllers {
             //Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
                 if (isset($_GET['id']) === true) {
-                    $id = (int)($_GET['id']);
+                    $id = (int) ($_GET['id']);
 
                     $row = $this->clientRepo->getClient($id);
 
                     $msgKey = '';
 
-                    $values = array(
+                    $values = [
                         'name' => $row['name'],
                         'street' => $row['street'],
                         'zip' => $row['zip'],
@@ -57,10 +49,10 @@ namespace Leantime\Domain\Clients\Controllers {
                         'phone' => $row['phone'],
                         'internet' => $row['internet'],
                         'email' => $row['email'],
-                    );
+                    ];
 
                     if (isset($_POST['save']) === true) {
-                        $values = array(
+                        $values = [
                             'name' => $_POST['name'],
                             'street' => $_POST['street'],
                             'zip' => $_POST['zip'],
@@ -70,7 +62,7 @@ namespace Leantime\Domain\Clients\Controllers {
                             'phone' => $_POST['phone'],
                             'internet' => $_POST['internet'],
                             'email' => $_POST['email'],
-                        );
+                        ];
 
                         if ($values['name'] !== '') {
                             $this->clientRepo->editClient($values, $id);

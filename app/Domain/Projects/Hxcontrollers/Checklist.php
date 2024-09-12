@@ -7,26 +7,16 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Projects\Services\Projects;
 
-/**
- *
- */
 class Checklist extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'projects::partials.checklist';
 
-    /**
-     * @var Projects
-     */
     private Projects $projectService;
 
     /**
      * Controller constructor
      *
-     * @param Projects $projectService The projects domain service.
-     * @return void
+     * @param  Projects  $projectService  The projects domain service.
      */
     public function init(Projects $projectService): void
     {
@@ -36,7 +26,6 @@ class Checklist extends HtmxController
     /**
      * Updates subtask status
      *
-     * @return void
      * @throws BindingResolutionException
      */
     public function updateSubtask(): void
@@ -48,12 +37,12 @@ class Checklist extends HtmxController
         // update project progress
         $projectProgress = $this->incomingRequest->request->all();
 
-        $this->projectService->updateProjectProgress($projectProgress, session("currentProject"));
+        $this->projectService->updateProjectProgress($projectProgress, session('currentProject'));
 
         // return view with new data
-        [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist(session("currentProject"));
-        $this->tpl->assign("progressSteps", $progressSteps);
-        $this->tpl->assign("percentDone", $percentDone);
-        $this->tpl->assign("includeTitle", false);
+        [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist(session('currentProject'));
+        $this->tpl->assign('progressSteps', $progressSteps);
+        $this->tpl->assign('percentDone', $percentDone);
+        $this->tpl->assign('includeTitle', false);
     }
 }

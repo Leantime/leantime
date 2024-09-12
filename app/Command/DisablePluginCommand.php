@@ -20,8 +20,6 @@ class DisablePluginCommand extends AbstractPluginCommand
 {
     /**
      * {@inheritdoc}
-     *
-     * @return void
      */
     protected function configure(): void
     {
@@ -30,23 +28,21 @@ class DisablePluginCommand extends AbstractPluginCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     protected function executeCommand(): int
     {
         $name = $this->input->getArgument('plugin');
         $plugin = $this->getPlugin($name);
 
-        if (!isset($plugin->id)) {
+        if (! isset($plugin->id)) {
             throw new RuntimeException(sprintf('Plugin %s is not installed', $plugin->name));
         }
 
-        if (!$plugin->enabled) {
+        if (! $plugin->enabled) {
             throw new RuntimeException(sprintf('Plugin %s is not enabled', $plugin->name));
         }
 
-        if (!$this->confirm(sprintf('Disable plugin %s', $plugin->name))) {
+        if (! $this->confirm(sprintf('Disable plugin %s', $plugin->name))) {
             return Command::SUCCESS;
         }
 

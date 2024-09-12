@@ -2,10 +2,5 @@
 
 namespace Leantime\Domain\Install\Services {
 
-    /**
-     *
-     */
-    class Install
-    {
-    }
+    class Install {}
 }

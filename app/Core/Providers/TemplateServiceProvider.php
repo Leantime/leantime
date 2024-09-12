@@ -3,7 +3,6 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Controller\Redirector;
 use Leantime\Core\UI\Template;
 
 class TemplateServiceProvider extends ServiceProvider
@@ -17,5 +16,4 @@ class TemplateServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Template::class, Template::class);
     }
-
 }

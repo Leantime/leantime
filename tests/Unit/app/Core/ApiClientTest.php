@@ -77,7 +77,7 @@ class ApiClientTest extends TestCase
 
         $config = $client->getConfig();
         $this->assertEquals('http://test.com', $config[1]['base_uri']);
-        $this->assertEquals($creds,  $config[1]['auth']);
+        $this->assertEquals($creds, $config[1]['auth']);
     }
 
     public function testNtlm(): void

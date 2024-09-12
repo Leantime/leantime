@@ -32,15 +32,13 @@ class PathManifestRepository
     /**
      * Create a new service repository instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
      */
     public function __construct(ApplicationContract $app, Filesystem $files)
     {
         $this->app = $app;
         $this->files = $files;
-        $this->manifestPath = $app->basePath()."/cache";
+        $this->manifestPath = $app->basePath().'/cache';
 
     }
 
@@ -52,8 +50,8 @@ class PathManifestRepository
     public function loadManifest(string $manifestName)
     {
 
-        if ($this->files->exists($this->manifestPath."/".$manifestName.".php")) {
-            $manifest = $this->files->getRequire($this->manifestPath."/".$manifestName.".php");
+        if ($this->files->exists($this->manifestPath.'/'.$manifestName.'.php')) {
+            $manifest = $this->files->getRequire($this->manifestPath.'/'.$manifestName.'.php');
 
             if ($manifest) {
                 return array_merge(['when' => []], $manifest[$manifestName]);
@@ -79,7 +77,7 @@ class PathManifestRepository
      * Create a fresh service manifest data structure.
      *
      * @param  array  return [$this->manifestKey => $paths];
- * @return array
+     * @return array
      */
     protected function freshManifest($manifestName, array $paths)
     {
@@ -96,17 +94,16 @@ class PathManifestRepository
      */
     public function writeManifest(string $manifestName, array $paths)
     {
-        if (! is_writable($dirname = dirname($this->manifestPath."/".$manifestName.".php"))) {
+        if (! is_writable($dirname = dirname($this->manifestPath.'/'.$manifestName.'.php'))) {
             throw new Exception("The {$dirname} directory must be present and writable.");
         }
 
         $manifest = $this->freshManifest($manifestName, $paths);
 
         $this->files->replace(
-            $this->manifestPath."/".$manifestName.".php", '<?php return '.var_export($manifest, true).';'
+            $this->manifestPath.'/'.$manifestName.'.php', '<?php return '.var_export($manifest, true).';'
         );
 
         return array_merge(['when' => []], $manifest[$manifestName]);
     }
-
 }

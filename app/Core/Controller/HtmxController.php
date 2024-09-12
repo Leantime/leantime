@@ -2,9 +2,7 @@
 
 namespace Leantime\Core\Controller;
 
-use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\UI\Template;
@@ -20,20 +18,18 @@ abstract class HtmxController
 {
     use DispatchesEvents;
 
-    /** @var Response $response */
     protected Response $response;
 
-    /** @var string $view */
     protected static string $view;
 
-    /** @var array $headers */
     protected array $headers = [];
 
     /**
      * constructor - initialize private variables
      *
-     * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param Template        $tpl             The template to be initialized.
+     * @param  IncomingRequest  $incomingRequest  The request to be initialized.
+     * @param  Template  $tpl  The template to be initialized.
+     *
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -65,8 +61,6 @@ abstract class HtmxController
     /**
      * Sets the response header to trigger an htmx event
      *
-     * @param string $eventName
-     * @return void
      **/
     public function setHTMXEvent(string $eventName): void
     {
@@ -77,7 +71,6 @@ abstract class HtmxController
     /**
      * Gets the response
      *
-     * @return Response
      **/
     public function getResponse($fragment): Response
     {
@@ -121,4 +114,3 @@ abstract class HtmxController
         ));
     }
 }
-

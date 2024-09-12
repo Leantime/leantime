@@ -10,19 +10,12 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Submenu extends Controller
 {
     private MenuRepository $menuRepos;
 
     /**
      * constructor - initialize private variables
-     *
-     * @access public
-     *
-     * @return void
      */
     public function init(MenuRepository $menu): void
     {
@@ -32,11 +25,8 @@ class Submenu extends Controller
     /**
      * get - handle get requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function get(array $params): Response
     {
@@ -46,11 +36,8 @@ class Submenu extends Controller
     /**
      * post - handle post requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function post(array $params): Response
     {
@@ -60,11 +47,8 @@ class Submenu extends Controller
     /**
      * put - handle put requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function patch(array $params): Response
     {
@@ -73,17 +57,15 @@ class Submenu extends Controller
         }
 
         $this->menuRepos->setSubmenuState($params['submenu'], $params['state']);
+
         return $this->tpl->displayJson(['status' => 'ok']);
     }
 
     /**
      * delete - handle delete requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function delete(array $params): Response
     {

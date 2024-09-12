@@ -4,7 +4,6 @@ namespace Leantime\Core\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\AliasLoader;
-use Leantime\Core\Plugins\PackageManifest;
 use Illuminate\Support\Facades\Facade;
 
 class RegisterFacades
@@ -12,7 +11,6 @@ class RegisterFacades
     /**
      * Bootstrap the given application.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return void
      */
     public function bootstrap(Application $app)
@@ -23,7 +21,6 @@ class RegisterFacades
 
         $aliasArr = $app->make('config')->get('app.aliases', []);
         $packageManifestArr = $app->make(\Illuminate\Foundation\PackageManifest::class)->aliases();
-
 
         AliasLoader::getInstance($aliasArr)->register();
     }

@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Support;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 /**
@@ -12,9 +11,6 @@ class Cast
 {
     protected array $mappings;
 
-    /**
-     * @param object|array $object
-     **/
     public function __construct(private array|object $object)
     {
         if (is_array($this->object)) {
@@ -23,10 +19,6 @@ class Cast
     }
 
     /**
-     * @param string $classDest
-     * @param array  $constructParams
-     * @param array  $mappings
-     * @return object
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      * @throws \ReflectionException
@@ -50,11 +42,13 @@ class Cast
             foreach ($reflectedConstructParams as $param) {
                 if (isset($sourceObj->{$param->getName()})) {
                     $constructParams[] = $sourceObj->{$param->getName()};
+
                     continue;
                 }
 
                 if ($param->isOptional()) {
                     $constructParams[] = $param->getDefaultValue();
+
                     continue;
                 }
 
@@ -70,6 +64,7 @@ class Cast
             if (! isset($sourceObj->$name)) {
                 if ($property->hasDefaultValue()) {
                     $returnObj->set($name, $property->getDefaultValue());
+
                     continue;
                 }
 
@@ -101,9 +96,6 @@ class Cast
     }
 
     /**
-     * @param mixed  $value
-     * @param string $simpleType
-     * @return mixed
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      **/
@@ -111,13 +103,13 @@ class Cast
     {
         if (
             is_null($castedValue = match ($simpleType) {
-            'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
-            'float' => filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE),
-            'string', 'str' => is_array($value) || (is_object($value) && ! method_exists($value, '__toString')) ? null : (string) $value,
-            'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-            'object', 'stdClass' => is_array($value) ? (object) $value : null,
-            'array' => is_object($value) || is_array($value) ? (array) $value : null,
-            default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
+                'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
+                'float' => filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE),
+                'string', 'str' => is_array($value) || (is_object($value) && ! method_exists($value, '__toString')) ? null : (string) $value,
+                'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+                'object', 'stdClass' => is_array($value) ? (object) $value : null,
+                'array' => is_object($value) || is_array($value) ? (array) $value : null,
+                default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
             })
         ) {
             throw new \RuntimeException(sprintf('Could not cast value to type %s.', $simpleType));
@@ -129,8 +121,6 @@ class Cast
     /**
      * Cast to backed enum
      *
-     * @param mixed  $value
-     * @param string $enumClass
      **/
     public static function castEnum(mixed $value, string $enumClass): mixed
     {
@@ -157,8 +147,9 @@ class Cast
     /**
      * Casts a string value into a datetime object.
      *
-     * @param string $value The value to be casted into a datetime object.
+     * @param  string  $value  The value to be casted into a datetime object.
      * @return \DateTime The datetime object.
+     *
      * @throws \InvalidArgumentException If the value is not a valid datetime string.
      **/
     public static function castDateTime(string $value)
@@ -171,13 +162,11 @@ class Cast
     }
 
     /**
-     * @param array|object $iterator
-     * @param array        $mappings
-     * @return array|object
+     * @param  array|object  $iterator
      **/
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object
     {
-        $result = is_object($iterator) ? new \stdClass() : [];
+        $result = is_object($iterator) ? new \stdClass : [];
 
         foreach ($iterator as $key => $value) {
             if (is_numeric($key)) {
@@ -210,11 +199,6 @@ class Cast
         return $result;
     }
 
-    /**
-     * @param array  $mappings
-     * @param string $propName
-     * @return array
-     **/
     protected function getMatchingMappings(array $mappings, string $propName): array
     {
         return collect($mappings)

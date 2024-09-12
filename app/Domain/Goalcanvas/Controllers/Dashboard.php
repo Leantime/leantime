@@ -7,22 +7,15 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Leantime\Core\Controller\Controller;
-
-    use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
-    use Leantime\Domain\Projects\Services\Projects;
-
     use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Dashboard extends Controller
     {
         /**
          * Constant that must be redefined
          */
-
         private Goalcanvas $goalService;
 
         /**
@@ -32,40 +25,36 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             Goalcanvas $goalService
         ) {
             $this->goalService = $goalService;
-          }
+        }
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
+        public function get($params): Response
+        {
 
-         public function get($params): Response
-         {
+            $result = $this->goalService->handleDashboardGetRequest($params);
 
-             $result = $this->goalService->handleDashboardGetRequest($params);
-     
-             $this->tpl->assign('currentCanvas', $result['currentCanvasId']);
-             $this->tpl->assign('goalStats', $result['goalAnalytics']);
-             $this->tpl->assign('canvasIcon', $result['canvasIcon']);
-             $this->tpl->assign('canvasTypes', $result['canvasTypes']);
-             $this->tpl->assign('statusLabels', $result['statusLabels']);
-             $this->tpl->assign('relatesLabels', $result['relatesLabels']);
-             $this->tpl->assign('dataLabels', $result['dataLabels']);
-             $this->tpl->assign('disclaimer', $result['disclaimer']);
-             $this->tpl->assign('allCanvas', $result['allCanvas']);
-             $this->tpl->assign('canvasItems', $result['canvasItems']);
-             $this->tpl->assign('users', $result['users']);
-     
-             return $this->tpl->display('goalcanvas.dashboard');
-         }
+            $this->tpl->assign('currentCanvas', $result['currentCanvasId']);
+            $this->tpl->assign('goalStats', $result['goalAnalytics']);
+            $this->tpl->assign('canvasIcon', $result['canvasIcon']);
+            $this->tpl->assign('canvasTypes', $result['canvasTypes']);
+            $this->tpl->assign('statusLabels', $result['statusLabels']);
+            $this->tpl->assign('relatesLabels', $result['relatesLabels']);
+            $this->tpl->assign('dataLabels', $result['dataLabels']);
+            $this->tpl->assign('disclaimer', $result['disclaimer']);
+            $this->tpl->assign('allCanvas', $result['allCanvas']);
+            $this->tpl->assign('canvasItems', $result['canvasItems']);
+            $this->tpl->assign('users', $result['users']);
 
+            return $this->tpl->display('goalcanvas.dashboard');
+        }
 
-         public function post($params): Response
-         {
+        public function post($params): Response
+        {
             $action = $_POST['action'] ?? '';
             $result = null;
-        
+
             switch ($action) {
                 case 'newCanvas':
                     try {
@@ -116,15 +105,16 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                     break;
             }
-        
+
             if ($result['success']) {
                 $this->tpl->setNotification($result['message'], 'success');
-                return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
+
+                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/showCanvas/');
             } else {
                 $this->tpl->setNotification($result['message'], 'error');
             }
-        
+
             return $this->get($params);
-         }
+        }
     }
 }

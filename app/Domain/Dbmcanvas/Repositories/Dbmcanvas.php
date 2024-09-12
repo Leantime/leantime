@@ -8,9 +8,6 @@ namespace Leantime\Domain\Dbmcanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
 
-    /**
-     *
-     */
     class Dbmcanvas extends Canvas
     {
         /**
@@ -38,13 +35,12 @@ namespace Leantime\Domain\Dbmcanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
-            'dbm_cs'  => ['icon' => 'fa-users',               'color' => '#ccffcc', 'title' => 'box.dbm.cs'],
-            'dbm_cj'  => ['icon' => 'fa-user-doctor',         'color' => '#ccffcc', 'title' => 'box.dbm.cj'],
-            'dbm_cr'  => ['icon' => 'fa-heart',               'color' => '#ccffcc', 'title' => 'box.dbm.cr'],
-            'dbm_cd'  => ['icon' => 'fa-truck',               'color' => '#ccffcc', 'title' => 'box.dbm.cd'],
+            'dbm_cs' => ['icon' => 'fa-users',               'color' => '#ccffcc', 'title' => 'box.dbm.cs'],
+            'dbm_cj' => ['icon' => 'fa-user-doctor',         'color' => '#ccffcc', 'title' => 'box.dbm.cj'],
+            'dbm_cr' => ['icon' => 'fa-heart',               'color' => '#ccffcc', 'title' => 'box.dbm.cr'],
+            'dbm_cd' => ['icon' => 'fa-truck',               'color' => '#ccffcc', 'title' => 'box.dbm.cd'],
             'dbm_ovp' => ['icon' => 'fa-money-bill-transfer', 'color' => '#ffcccc', 'title' => 'box.dbm.ovp'],
             'dbm_ops' => ['icon' => 'fa-barcode',             'color' => '#ffcccc', 'title' => 'box.dbm.ops'],
             'dbm_kad' => ['icon' => 'fa-chess',               'color' => '#ccecff', 'title' => 'box.dbm.kad'],
@@ -54,15 +50,14 @@ namespace Leantime\Domain\Dbmcanvas\Repositories {
             'dbm_krc' => ['icon' => 'fa-industry',            'color' => '#ccecff', 'title' => 'box.dbm.krc'],
             'dbm_krl' => ['icon' => 'fa-person-digging',      'color' => '#ccecff', 'title' => 'box.dbm.krl'],
             'dbm_krs' => ['icon' => 'fa-lightbulb',           'color' => '#ccecff', 'title' => 'box.dbm.krs'],
-            'dbm_fr'  => ['icon' => 'fa-sack-dollar',         'color' => '#ffffaa', 'title' => 'box.dbm.fr'],
-            'dbm_fc'  => ['icon' => 'fa-tags',                'color' => '#ffffaa', 'title' => 'box.dbm.fc'],
+            'dbm_fr' => ['icon' => 'fa-sack-dollar',         'color' => '#ffffaa', 'title' => 'box.dbm.fr'],
+            'dbm_fc' => ['icon' => 'fa-tags',                'color' => '#ffffaa', 'title' => 'box.dbm.fc'],
         ];
 
         /**
          * relatesLabels - Relates to label
          *
          * @acces public
-         * @var   array
          */
         protected array $relatesLabels = [];
     }

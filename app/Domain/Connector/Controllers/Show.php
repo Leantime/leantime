@@ -7,18 +7,12 @@ namespace Leantime\Domain\Connector\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Connector\Services;
 
-    /**
-     *
-     */
     class Show extends Controller
     {
         private Services\Providers $providerService;
 
         /**
          * constructor - initialize private variables
-         *
-         * @access public
-         *
          */
         public function init(Services\Providers $projectService)
         {
@@ -28,24 +22,18 @@ namespace Leantime\Domain\Connector\Controllers {
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
             $providers = $this->providerService->getProviders();
 
-            $this->tpl->assign("providers", $providers);
+            $this->tpl->assign('providers', $providers);
 
             return $this->tpl->display('connector.show');
         }
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {

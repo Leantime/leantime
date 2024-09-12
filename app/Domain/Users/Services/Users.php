@@ -8,78 +8,57 @@ namespace Leantime\Domain\Users\Services {
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Ramsey\Uuid\Uuid;
     use SVG\SVG;
 
     /**
-     *
-     *
      * @api
      */
     class Users
     {
         use DispatchesEvents;
 
-
-        /**
-         * @param UserRepository    $userRepo
-         * @param LanguageCore      $language
-         * @param ProjectRepository $projectRepository
-         * @param ClientRepository  $clientRepo
-         * @param AuthService       $authService
-         *
-     */
         public function __construct(
             protected UserRepository $userRepo,
             protected LanguageCore $language,
             protected ProjectRepository $projectRepository,
             protected ClientRepository $clientRepo,
             protected AuthService $authService
-        ) {
-        }
+        ) {}
 
         //GET
 
         /**
-         * @param $id
          * @return string[]|SVG
+         *
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function getProfilePicture($id): array|SVG
         {
             return $this->userRepo->getProfilePicture($id);
         }
 
-
         /**
-         * @param $values
-         * @param $id
-         * @return bool
-         *
-     * @api
-     */
+         * @api
+         */
         public function editUser($values, $id): bool
         {
 
             $results = $this->userRepo->editUser($values, $id);
-            self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
+            self::dispatch_event('editUser', ['id' => $id, 'values' => $values]);
 
             return $results;
         }
 
         /**
-         * @param bool $activeOnly
-         * @param bool $includeApi
-         * @return int
-         *
-     * @api
-     */
+         * @api
+         */
         public function getNumberOfUsers(bool $activeOnly = false, bool $includeApi = true): int
         {
             $filters = [];
@@ -96,88 +75,69 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
-         * @param false $activeOnly
-         * @return mixed
+         * @param  false  $activeOnly
          *
-     * @api
-     */
+         * @api
+         */
         public function getAll(bool $activeOnly = false): mixed
         {
-            $users =  $this->userRepo->getAll($activeOnly);
+            $users = $this->userRepo->getAll($activeOnly);
 
-            $users = self::dispatch_filter("getAll", $users);
+            $users = self::dispatch_filter('getAll', $users);
 
             return $users;
         }
 
         /**
-         * @param $id
-         * @return array|bool
-         *
-     * @api
-     */
+         * @api
+         */
         public function getUser($id): array|bool
         {
             return $this->userRepo->getUser($id);
         }
 
         /**
-         * @param $email
-         * @return array|false
-         *
-     * @api
-     */
-        public function getUserByEmail($email, $status = "a"): false|array
+         * @api
+         */
+        public function getUserByEmail($email, $status = 'a'): false|array
         {
             return $this->userRepo->getUserByEmail($email, $status);
         }
 
         /**
-         * @param $source
-         * @return array|false
-         *
-     * @api
-     */
+         * @api
+         */
         public function getAllBySource($source): false|array
         {
             return $this->userRepo->getAllBySource($source);
         }
 
-
         //POST
 
         /**
-         * @param $photo
-         * @param $id
-         * @return void
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function setProfilePicture($photo, $id): void
         {
             $this->userRepo->setPicture($photo, $id);
         }
 
         /**
-         * @param $category
-         * @param $setting
-         * @param $value
-         * @return bool
-         *
-     * @api
-     */
+         * @api
+         */
         public function updateUserSettings($category, $setting, $value): bool
         {
 
             $filteredInput = htmlspecialchars($setting);
             $filteredValue = htmlspecialchars($value);
 
-            session(["usersettings.".$category.".".$filteredInput => $filteredValue]);
+            session(['usersettings.'.$category.'.'.$filteredInput => $filteredValue]);
 
-            $serializeSettings = serialize(session("usersettings"));
+            $serializeSettings = serialize(session('usersettings'));
 
-            return $this->userRepo->patchUser(session("userdata.id"), array("settings" => $serializeSettings));
+            return $this->userRepo->patchUser(session('userdata.id'), ['settings' => $serializeSettings]);
         }
 
         /**
@@ -188,12 +148,11 @@ namespace Leantime\Domain\Users\Services {
          * Password must include at least one number.
          * Password must include at least one special character.
          *
-         * @access public
-         * @param  string $password The string to be checked
+         * @param  string  $password  The string to be checked
          * @return bool returns true if password meets requirements
          *
-     * @api
-     */
+         * @api
+         */
         public function checkPasswordStrength(string $password): bool
         {
 
@@ -205,10 +164,10 @@ namespace Leantime\Domain\Users\Services {
 
             $uppercase = preg_match('@[A-Z]@', $password);
             $lowercase = preg_match('@[a-z]@', $password);
-            $number    = preg_match('@[0-9]@', $password);
+            $number = preg_match('@[0-9]@', $password);
             $specialChars = preg_match('@[^\w]@', $password);
 
-            if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+            if (! $uppercase || ! $lowercase || ! $number || ! $specialChars || strlen($password) < 8) {
                 return false;
             } else {
                 return true;
@@ -218,22 +177,22 @@ namespace Leantime\Domain\Users\Services {
         /**
          * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
          *
-         * @access public
-         * @param array $values basic user values
+         * @param  array  $values  basic user values
          * @return bool|int returns new user id on success, false on failure
+         *
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function createUserInvite(array $values): bool|int
         {
 
             //Generate strong password
-            $tempPasswordVar =  Uuid::uuid4()->toString();
+            $tempPasswordVar = Uuid::uuid4()->toString();
             $inviteCode = Uuid::uuid4()->toString();
 
             $values['password'] = $tempPasswordVar;
-            $values['status'] = "i";
+            $values['status'] = 'i';
             $values['pwReset'] = $inviteCode;
 
             $result = $this->userRepo->addUser($values);
@@ -250,78 +209,70 @@ namespace Leantime\Domain\Users\Services {
         public function sendUserInvite(string $inviteCode, string $user)
         {
 
-
             $mailer = app()->make(MailerCore::class);
             $mailer->setContext('new_user');
 
-            $mailer->setSubject($this->language->__("email_notifications.new_user_subject"));
-            $actual_link = BASE_URL . "/auth/userInvite/" . $inviteCode;
+            $mailer->setSubject($this->language->__('email_notifications.new_user_subject'));
+            $actual_link = BASE_URL.'/auth/userInvite/'.$inviteCode;
 
             $message = sprintf(
-                $this->language->__("email_notifications.user_invite_message"),
-                session("userdata.name") ?? "Leantime",
+                $this->language->__('email_notifications.user_invite_message'),
+                session('userdata.name') ?? 'Leantime',
                 $actual_link,
                 $user
             );
 
             $mailer->setHtml($message);
 
-            $to = array($user);
+            $to = [$user];
 
-            $mailer->sendMail($to, session("userdata.name") ?? "Leantime");
+            $mailer->sendMail($to, session('userdata.name') ?? 'Leantime');
         }
-
-
 
         /**
          * addUser - simple service wrapper to create a new user
          *
          * TODO: Should accept userModel
          *
-         * @access public
-         * @param  array $values basic user values
+         * @param  array  $values  basic user values
          * @return bool|int returns new user id on success, false on failure
          *
-     * @api
-     */
+         * @api
+         */
         public function addUser(array $values): bool|int
         {
-            $values = array(
-                "firstname" => $values["firstname"] ?? '',
-                "lastname" => $values["lastname"] ?? '',
-                "phone" => $values["phone"] ?? '',
-                "user" => $values["username"] ?? $values["user"],
-                "role" => $values["role"],
-                "notifications" => $values["notifications"] ?? 1,
-                "clientId" => $values["clientId"] ?? '',
-                "password" => $values["password"],
-                "source" => $values["source"] ?? '',
-                "pwReset" => $values["pwReset"] ?? '',
-                "status" => $values["status"] ?? '',
-                "createdOn" => $values["createdOn"] ?? '',
-                "jobTitle" => $values["jobTitle"] ?? '',
-                "jobLevel" => $values["jobLevel"] ?? '',
-                "department" => $values["department"] ?? '',
-            );
+            $values = [
+                'firstname' => $values['firstname'] ?? '',
+                'lastname' => $values['lastname'] ?? '',
+                'phone' => $values['phone'] ?? '',
+                'user' => $values['username'] ?? $values['user'],
+                'role' => $values['role'],
+                'notifications' => $values['notifications'] ?? 1,
+                'clientId' => $values['clientId'] ?? '',
+                'password' => $values['password'],
+                'source' => $values['source'] ?? '',
+                'pwReset' => $values['pwReset'] ?? '',
+                'status' => $values['status'] ?? '',
+                'createdOn' => $values['createdOn'] ?? '',
+                'jobTitle' => $values['jobTitle'] ?? '',
+                'jobLevel' => $values['jobLevel'] ?? '',
+                'department' => $values['department'] ?? '',
+            ];
 
             return $this->userRepo->addUser($values);
         }
-
-
-
 
         /**
          * usernameExist - Checks if a given username (email) is already in the db
          *
          * TODO: Should accept userModel
          *
-         * @access public
-         * @param string     $username  username
-         * @param int|string $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
+         * @param  string  $username  username
+         * @param  int|string  $notUserId  optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
          * @return bool returns true or false
          *
-     * @api
-     */
+         * @api
+         */
         public function usernameExist(string $username, int|string $notUserId = ''): bool
         {
             return $this->userRepo->usernameExist($username, $notUserId);
@@ -332,17 +283,17 @@ namespace Leantime\Domain\Users\Services {
          *
          * TODO: Should return usermodel
          *
-         * @access public
-         * @param int $currentUser user who is trying to access the project
-         * @param int $projectId   project id
+         * @param  int  $currentUser  user who is trying to access the project
+         * @param  int  $projectId  project id
          * @return array returns array of users
+         *
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
         {
-            $users = array();
+            $users = [];
 
             if ($this->projectRepository->isUserAssignedToProject($currentUser, $projectId)) {
                 $project = $this->projectRepository->getProject($projectId);
@@ -378,12 +329,8 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
-         * @param $values
-         * @param $id
-         * @return void
-         *
-     * @api
-     */
+         * @api
+         */
         public function editOwn($values, $id): void
         {
             $this->userRepo->editOwn($values, $id);
@@ -392,29 +339,30 @@ namespace Leantime\Domain\Users\Services {
 
             $this->authService->setUserSession($user);
 
-            self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
+            self::dispatch_event('editUser', ['id' => $id, 'values' => $values]);
         }
 
         /**
          * Delete the user with the specified id.
          *
-         * @param int $id The id of the user to delete.
+         * @param  int  $id  The id of the user to delete.
          * @return bool True if the user was deleted successfully, false otherwise.
+         *
          * @throws \Exception If the user is not authorized to delete the user.
          *
-     * @api
-     */
+         * @api
+         */
         public function deleteUser(int $id): bool
         {
 
-            if(Auth::userIsAtLeast(Roles::$admin, true)) {
+            if (Auth::userIsAtLeast(Roles::$admin, true)) {
                 $this->userRepo->deleteUser($id);
                 $this->projectRepository->deleteAllProjectRelations($id);
+
                 return true;
             }
 
-            throw new \Exception("Not authorized");
-
+            throw new \Exception('Not authorized');
         }
     }
 }

@@ -7,20 +7,16 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
-    /**
-     *
-     */
     class Roadmap extends Controller
     {
         private ProjectRepository $projectsRepo;
+
         private SprintService $sprintService;
+
         private TicketService $ticketService;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
-         *
          */
         public function init(
             ProjectRepository $projectsRepo,
@@ -31,36 +27,31 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
 
-            session(["lastPage" => CURRENT_URL]);
-            session(["lastMilestoneView" => "timeline"]);
-            session(["lastFilterdMilestonesView" => CURRENT_URL]);
+            session(['lastPage' => CURRENT_URL]);
+            session(['lastMilestoneView' => 'timeline']);
+            session(['lastFilterdMilestonesView' => CURRENT_URL]);
         }
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
 
-            if (isset($params["type"]) === false) {
-                $params["type"] = 'milestone';
+            if (isset($params['type']) === false) {
+                $params['type'] = 'milestone';
             }
 
-            if (isset($params["showTasks"]) === true) {
-                $params["type"] = '';
-                $params["excludeType"] = '';
+            if (isset($params['showTasks']) === true) {
+                $params['type'] = '';
+                $params['excludeType'] = '';
             }
 
             //Sets the filter module to show a quick toggle for task types
-            $this->tpl->assign("enableTaskTypeToggle", true);
-            $this->tpl->assign("showTasks", $params["showTasks"] ?? 'false');
+            $this->tpl->assign('enableTaskTypeToggle', true);
+            $this->tpl->assign('showTasks', $params['showTasks'] ?? 'false');
 
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
-
-
 
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
@@ -74,9 +65,6 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
@@ -93,23 +81,13 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * put - handle put requests
-         *
-         * @access public
-         *
          */
-        public function put($params)
-        {
-        }
+        public function put($params) {}
 
         /**
          * delete - handle delete requests
-         *
-         * @access public
-         *
          */
-        public function delete($params)
-        {
-        }
+        public function delete($params) {}
     }
 
 }

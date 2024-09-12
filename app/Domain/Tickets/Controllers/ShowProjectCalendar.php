@@ -2,7 +2,6 @@
 
 /**
  * showAll Class - show My Calender
- *
  */
 
 namespace Leantime\Domain\Tickets\Controllers;
@@ -10,9 +9,6 @@ namespace Leantime\Domain\Tickets\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
-/**
- *
- */
 class ShowProjectCalendar extends Controller
 {
     private TicketService $ticketService;
@@ -24,15 +20,12 @@ class ShowProjectCalendar extends Controller
     {
         $this->ticketService = $ticketService;
 
-        session(["lastPage" => CURRENT_URL]);
-        session(["lastMilestoneView" => "calendar"]);
+        session(['lastPage' => CURRENT_URL]);
+        session(['lastMilestoneView' => 'calendar']);
     }
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
      */
     public function get($params)
     {
@@ -47,14 +40,12 @@ class ShowProjectCalendar extends Controller
 
     /**
      * post - handle post requests
-     *
-     * @access public
-     *
      */
     public function post($params)
     {
-        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
         $this->tpl->assign('milestones', $allProjectMilestones);
+
         return $this->tpl->display('tickets.roadmap');
     }
 }

@@ -7,13 +7,9 @@
 namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Symfony\Component\HttpFoundation\Response;
     use Leantime\Domain\Ideas\Services\Ideas as IdeasService;
+    use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class BoardDialog extends Controller
     {
         private IdeasService $ideasService;
@@ -39,7 +35,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($params['newCanvas'])) {
                 $result = $this->ideasService->createNewCanvas($params);
                 if ($result['success']) {
-                    $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', "board_created");
+                    $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', 'board_created');
 
                     $this->tpl->closeModal();
                     $this->tpl->htmxRefresh();
@@ -52,8 +48,8 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             if (isset($params['editCanvas'])) {
 
-                if (!empty($params['id'])) {
-                    $currentCanvasId = (int)$params['id'];
+                if (! empty($params['id'])) {
+                    $currentCanvasId = (int) $params['id'];
                 }
                 $result = $this->ideasService->editCanvas($params, $currentCanvasId);
                 if ($result['success']) {
@@ -72,23 +68,19 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             return $this->tpl->displayPartial('ideas::partials.boardDialog');
 
-            if (!isset($params['raw'])) {
+            if (! isset($params['raw'])) {
                 return $this->tpl->displayPartial('ideas::partials.boardDialog');
             }
         }
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
-
-
         private function assignTemplateVariables($data)
         {
             $this->tpl->assign('canvasTitle', $data['canvasTitle']);
             $this->tpl->assign('currentCanvas', $data['currentCanvasId']);
-            $this->tpl->assign('canvasname', "idea");
+            $this->tpl->assign('canvasname', 'idea');
             $this->tpl->assign('users', $data['users']);
         }
     }

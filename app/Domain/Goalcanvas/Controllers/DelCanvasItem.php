@@ -7,22 +7,17 @@
 namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     // use Illuminate\Support\Str;
-    use Symfony\Component\HttpFoundation\Response;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvasService;
+    use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class DelCanvasItem extends Controller
     {
         /**
          * Constant that must be redefined
          */
-
         private GoalcanvasService $goalService;
 
         /**
@@ -33,12 +28,11 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->goalService = $goalService;
         }
 
-
         public function post($params): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            $id = (int)($_GET['id']);
+            $id = (int) ($_GET['id']);
             $this->goalService->deleteGoalCanvasItem($id);
 
             $this->tpl->setNotification(
@@ -58,6 +52,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->tpl->assign('id', $params['id']);
+
             return $this->tpl->displayPartial('goalcanvas::partials.delCanvasItem');
         }
     }

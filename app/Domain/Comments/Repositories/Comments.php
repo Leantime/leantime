@@ -5,44 +5,24 @@ namespace Leantime\Domain\Comments\Repositories {
     use Leantime\Core\Db\Db as DbCore;
     use PDO;
 
-    /**
-     *
-     */
     class Comments
     {
         private DbCore $db;
 
-        /**
-         * @param DbCore $db
-         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        /**
-         * @param $module
-         * @param $moduleId
-         * @param $parent
-         * @param $orderByState
-         * @return array|false
-         */
-        /**
-         * @param $module
-         * @param $moduleId
-         * @param int      $parent
-         * @param string   $orderByState
-         * @return array|false
-         */
-        public function getComments($module, $moduleId, int $parent = 0, string $orderByState = "0"): false|array
+        public function getComments($module, $moduleId, int $parent = 0, string $orderByState = '0'): false|array
         {
-            $orderBy = "DESC";
+            $orderBy = 'DESC';
 
             if ($orderByState == 1) {
-                $orderBy = "ASC";
+                $orderBy = 'ASC';
             }
 
-            $sql = "SELECT
+            $sql = 'SELECT
 					comment.id,
 					comment.text,
 					comment.date,
@@ -70,7 +50,7 @@ namespace Leantime\Domain\Comments\Repositories {
 				LEFT JOIN zp_comment as replies ON comment.id = replies.commentParent
 				LEFT JOIN zp_user as replyUser ON replies.userId = replyUser.id
 				WHERE comment.moduleId = :moduleId AND comment.module = :module AND comment.commentParent = :parent
-				ORDER BY comment.date " . $orderBy;
+				ORDER BY comment.date '.$orderBy;
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
@@ -85,31 +65,27 @@ namespace Leantime\Domain\Comments\Repositories {
         }
 
         /**
-         * @param $module
-         * @param $moduleId
          * @return int|mixed
          */
         /**
-         * @param $module
-         * @param $moduleId
          * @return int|mixed
          */
         public function countComments($module = null, $moduleId = null): mixed
         {
-            $sql = "SELECT count(id) as count
-				FROM zp_comment as comment";
+            $sql = 'SELECT count(id) as count
+				FROM zp_comment as comment';
 
             if ($module != null || $moduleId != null) {
-                $sql .= " WHERE ";
+                $sql .= ' WHERE ';
                 if ($module != null) {
-                    $sql .= "module = :module AND ";
+                    $sql .= 'module = :module AND ';
                 }
 
                 if ($moduleId != null) {
-                    $sql .= "moduleId = :moduleId AND ";
+                    $sql .= 'moduleId = :moduleId AND ';
                 }
 
-                $sql .= "1=1";
+                $sql .= '1=1';
             }
 
             $stmn = $this->db->database->prepare($sql);
@@ -125,21 +101,14 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
+
             return $values['count'] ?? 0;
         }
 
-        /**
-         * @param $id
-         * @return array|false
-         */
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getReplies($id): false|array
         {
 
-            $sql = "SELECT
+            $sql = 'SELECT
 					comment.id,
 					comment.text,
 					comment.date,
@@ -152,7 +121,7 @@ namespace Leantime\Domain\Comments\Repositories {
 					user.modified AS userModified
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
-				WHERE commentParent = :id";
+				WHERE commentParent = :id';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -164,19 +133,15 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return array
-         */
         public function getComment($id): array
         {
 
-            $sql = "SELECT
+            $sql = 'SELECT
 					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status,
 					user.firstname, user.lastname
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
-				WHERE comment.id=:id";
+				WHERE comment.id=:id';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -188,18 +153,12 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
-
-        /**
-         * @param $values
-         * @param $module
-         * @return false|string
-         */
         public function addComment($values, $module): false|string
         {
 
-            $sql = "INSERT INTO zp_comment (
+            $sql = 'INSERT INTO zp_comment (
 			text, userId, date, moduleId, module, commentParent, status
-		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent, :status)";
+		) VALUES (:text, :userId, :date, :moduleId, :module, :commentParent, :status)';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -208,7 +167,7 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->bindValue(':commentParent', $values['commentParent'], PDO::PARAM_INT);
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-            $stmn->bindValue(':date', $values["date"], PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values['date'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
@@ -224,18 +183,10 @@ namespace Leantime\Domain\Comments\Repositories {
             }
         }
 
-        /**
-         * @param $id
-         * @return bool
-         */
-        /**
-         * @param $id
-         * @return bool
-         */
         public function deleteComment($id): bool
         {
 
-            $sql = "DELETE FROM zp_comment WHERE id = :id";
+            $sql = 'DELETE FROM zp_comment WHERE id = :id';
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -245,25 +196,16 @@ namespace Leantime\Domain\Comments\Repositories {
             return $result;
         }
 
-        /**
-         * @param $text
-         * @param $id
-         * @return bool
-         */
-        /**
-         * @param $text
-         * @param $id
-         * @return bool
-         */
         public function editComment($text, $id): bool
         {
-            $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";
+            $sql = 'UPDATE zp_comment SET text = :text WHERE id = :id';
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':text', $text, PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();
+
             return $result;
         }
 
@@ -287,33 +229,32 @@ namespace Leantime\Domain\Comments\Repositories {
                     OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
                     OR (:requesterRole = 'admin' OR :requesterRole = 'manager') ";
 
-            if (isset($projectId) && $projectId  > 0) {
-                $sql .= " AND (zp_projects.id = :projectId)";
+            if (isset($projectId) && $projectId > 0) {
+                $sql .= ' AND (zp_projects.id = :projectId)';
             }
 
-            if (isset($moduleId) && $moduleId  > 0) {
-                $sql .= " AND ( comment.moduleId = :moduleId)";
+            if (isset($moduleId) && $moduleId > 0) {
+                $sql .= ' AND ( comment.moduleId = :moduleId)';
             }
 
-            $sql .= " GROUP BY comment.id";
+            $sql .= ' GROUP BY comment.id';
 
             $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
-            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
 
-
-            if (session()->exists("userdata")) {
-                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            if (session()->exists('userdata')) {
+                $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
             }
 
-            if (isset($projectId) && $projectId  > 0) {
+            if (isset($projectId) && $projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            if (isset($moduleId) && $moduleId  > 0) {
+            if (isset($moduleId) && $moduleId > 0) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 

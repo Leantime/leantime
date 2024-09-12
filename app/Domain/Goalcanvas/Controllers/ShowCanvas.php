@@ -11,18 +11,15 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Projects\Services\Projects;
     use Symfony\Component\HttpFoundation\Response;
 
-
-    /**
-     *
-     */
     class ShowCanvas extends Controller
     {
         /**
          * Constant that must be redefined
          */
-
         private $canvasRepo;
+
         private Projects $projectService;
+
         private Goalcanvas $goalService;
 
         /**
@@ -32,30 +29,25 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $this->projectService = $projectService;
             $this->goalService = $goalService;
-            $repoName = app()->getNamespace() . "Domain\\goalcanvas\\Repositories\\goalcanvas";
+            $repoName = app()->getNamespace().'Domain\\goalcanvas\\Repositories\\goalcanvas';
             $this->canvasRepo = app()->make($repoName);
         }
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
-
-
-
         public function get($params): Response
         {
             $currentCanvasId = $this->goalService->getCurrentCanvasId($params);
             $allCanvas = $this->goalService->getAllCanvas();
 
-            $filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
-            session(["filter_status" => $filter['status']]);
-            $filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');
-            session(["filter_relates" => $filter['relates']]);
+            $filter['status'] = $_GET['filter_status'] ?? (session('filter_status') ?? 'all');
+            session(['filter_status' => $filter['status']]);
+            $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
+            session(['filter_relates' => $filter['relates']]);
 
             $this->tpl->assign('filter', $filter);
-        
+
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
             $this->tpl->assign('canvasTypes', $this->goalService->getCanvasTypes());
@@ -65,8 +57,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('disclaimer', $this->goalService->getDisclaimer());
             $this->tpl->assign('allCanvas', $allCanvas);
             $this->tpl->assign('canvasItems', $this->goalService->getCanvasItemsById($currentCanvasId));
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
-        
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
+
             return $this->tpl->display('goalcanvas.showCanvas');
         }
 
@@ -74,7 +66,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $action = $_POST['action'] ?? '';
             $result = null;
-        
+
             switch ($action) {
                 case 'newCanvas':
                     try {
@@ -125,12 +117,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                     break;
             }
-        
+
             return $this->get($params);
         }
     }
-
-
-    
 
 }

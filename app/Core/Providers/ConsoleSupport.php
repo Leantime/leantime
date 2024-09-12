@@ -3,10 +3,8 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Support\AggregateServiceProvider;
-use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
-use Illuminate\Foundation\Providers\ArtisanServiceProvider;
 use Illuminate\Foundation\Providers\ComposerServiceProvider;
+use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 
 class ConsoleSupport extends ConsoleSupportServiceProvider implements DeferrableProvider
 {

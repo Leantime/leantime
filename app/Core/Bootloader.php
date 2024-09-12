@@ -3,8 +3,6 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Application;
-use Leantime\Core\Bootstrap\Illuminate;
 use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HttpKernel;
@@ -12,9 +10,6 @@ use Leantime\Core\Http\IncomingRequest;
 
 /**
  * Bootloader
- *
- * @package leantime
- * @subpackage core
  */
 class Bootloader
 {
@@ -29,18 +24,16 @@ class Bootloader
 
     protected Application $app;
 
-
     /**
      * Get the Bootloader instance
      *
-     * @param Application $app
-     * @return Bootloader
+     * @param  Application  $app
      */
     public static function getInstance(): self
     {
 
         if (is_null(static::$instance)) {
-            static::$instance = new self();
+            static::$instance = new self;
         }
 
         return static::$instance;
@@ -48,16 +41,14 @@ class Bootloader
 
     /**
      * Constructor
-     *
      */
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     /**
      * Execute the Application lifecycle.
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     public function boot(Application $app)
@@ -76,17 +67,14 @@ class Bootloader
         //Use the right kernel for the job and handle the request.
         $this->handleRequest($request);
 
-        self::dispatch_event("end", ['bootloader' => $this]);
+        self::dispatch_event('end', ['bootloader' => $this]);
 
     }
-
 
     /**
      * Handle the request
      *
-     * @return void
      * @throws BindingResolutionException
-     *
      */
     private function handleRequest(IncomingRequest $request): void
     {
@@ -107,8 +95,8 @@ class Bootloader
             $kernel = $this->app->make(ConsoleKernel::class);
 
             $status = $kernel->handle(
-                $input = new \Symfony\Component\Console\Input\ArgvInput(),
-                new \Symfony\Component\Console\Output\ConsoleOutput()
+                $input = new \Symfony\Component\Console\Input\ArgvInput,
+                new \Symfony\Component\Console\Output\ConsoleOutput
             );
 
             $kernel->terminate($input, $status);
@@ -116,8 +104,4 @@ class Bootloader
             exit($status);
         }
     }
-
-
-
-
 }

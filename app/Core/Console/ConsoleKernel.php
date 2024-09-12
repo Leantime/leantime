@@ -6,18 +6,16 @@ use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
-use Illuminate\Foundation\Bus;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Str;
+use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
-use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Process\PhpExecutableFinder;
-use Leantime\Core\Console\Application as LeantimeCli;
 
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
@@ -36,7 +34,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      */
     public function bootstrap()
     {
-
 
         if (! $this->app->hasBeenBootstrapped()) {
 
@@ -71,8 +68,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         return $this->artisan;
 
-
-
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplicationContract::class);
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplication::class);
 
@@ -88,9 +83,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             /**
              * Run an Artisan console command by name.
              *
-             * @param  string                                                 $command
-             * @param  array                                                  $parameters
-             * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
+             * @param  string  $command
+             * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
              * @return int
              *
              * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
@@ -107,7 +101,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
                 return $this->run(
                     $input,
-                    $this->lastOutput = $outputBuffer ?: new \Symfony\Component\Console\Output\BufferedOutput()
+                    $this->lastOutput = $outputBuffer ?: new \Symfony\Component\Console\Output\BufferedOutput
                 );
             }
 
@@ -130,7 +124,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
              */
             public static function phpBinary()
             {
-                return ProcessUtils::escapeArgument((new PhpExecutableFinder())->find(false));
+                return ProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
             }
 
             /**
@@ -161,16 +155,15 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         $customCommands = $customPluginCommands = null;
 
-        $ltCommands = collect(glob(APP_ROOT . '/app/Command/*.php') ?? []);
+        $ltCommands = collect(glob(APP_ROOT.'/app/Command/*.php') ?? []);
 
         $commands = collect(Arr::flatten($ltCommands))
-            ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
-
+            ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
 
         collect($commands)
             ->each(function ($command) {
 
-                LeantimeCli::starting(function($cli) use ($command) {
+                LeantimeCli::starting(function ($cli) use ($command) {
 
                     if (
                         ! is_subclass_of($command, SymfonyCommand::class)
@@ -229,8 +222,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface        $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null $output
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
      * @return int
      */
     public function handle($input, $output = null)
@@ -256,9 +249,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string                                                 $command
-     * @param  array                                                  $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
+     * @param  string  $command
+     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
      * @return int
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -271,8 +263,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
     /**
      * Queue an Artisan console command by name.
      *
-     * @param  string $command
-     * @param  array  $parameters
+     * @param  string  $command
+     *
      * @todo Implement
      */
     public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
@@ -308,8 +300,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
     /**
      * Terminate the application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface $input
-     * @param  int                                             $status
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  int  $status
      * @return void
      */
     public function terminate($input, $status)
@@ -346,7 +338,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             \Leantime\Core\Bootstrap\HandleExceptions::class,
             \Leantime\Core\Bootstrap\RegisterProviders::class,
             \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class
+            \Illuminate\Foundation\Bootstrap\BootProviders::class,
         ];
 
         return self::dispatch_filter('http_bootstrappers', $bootstrappers);

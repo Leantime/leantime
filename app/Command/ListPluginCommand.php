@@ -22,8 +22,6 @@ final class ListPluginCommand extends AbstractPluginCommand
 {
     /**
      * {@inheritdoc}
-     *
-     * @return void
      */
     protected function configure(): void
     {
@@ -58,8 +56,6 @@ EOL);
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     protected function executeCommand(): int
     {
@@ -67,16 +63,16 @@ EOL);
 
         // Filter by “installed" if requested.
         $installed = $this->input->getOption('installed');
-        if (null !== $installed) {
-            $installed = null === $installed || filter_var($installed, FILTER_VALIDATE_BOOLEAN);
-            $plugins = array_filter($plugins, fn (InstalledPlugin $p) => !($installed xor isset($p->id)));
+        if ($installed !== null) {
+            $installed = $installed === null || filter_var($installed, FILTER_VALIDATE_BOOLEAN);
+            $plugins = array_filter($plugins, fn (InstalledPlugin $p) => ! ($installed xor isset($p->id)));
         }
 
         // Filter by “enabled" if requested.
         $enabled = $this->input->getOption('enabled');
-        if (null !== $enabled) {
-            $enabled = null === $enabled || filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
-            $plugins = array_filter($plugins, fn (InstalledPlugin $p) => !($enabled xor $p->enabled));
+        if ($enabled !== null) {
+            $enabled = $enabled === null || filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+            $plugins = array_filter($plugins, fn (InstalledPlugin $p) => ! ($enabled xor $p->enabled));
         }
 
         $orderBy = $this->input->getOption('order-by');

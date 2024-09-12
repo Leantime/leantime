@@ -11,9 +11,6 @@ namespace Leantime\Domain\Connector\Services {
     use Leantime\Domain\Users\Services\Users;
     use Ramsey\Uuid\Uuid;
 
-    /**
-     *
-     */
     class Connector
     {
         public function __construct(
@@ -24,41 +21,40 @@ namespace Leantime\Domain\Connector\Services {
             private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository,
             private Goalcanvas $goalCanvasRepo,
             private Ideas $ideaRepo,
-        ) {
-        }
+        ) {}
 
         public function getEntityFlags($entity)
         {
-            $flags = array();
-            if ($entity == "tickets") {
-                $flags[] = "If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.";
-                $flags[] = "Headline and Project are required fields.";
+            $flags = [];
+            if ($entity == 'tickets') {
+                $flags[] = 'If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.';
+                $flags[] = 'Headline and Project are required fields.';
             } else {
-                if ($entity == "projects") {
-                    $flags[] = "If there are no Assigned Users, the project will be assigned to you.";
-                    $flags[] = "If there are more than one assigned users, ensure that it is a comma separated list.";
-                    $flags[] = "If you decide to set permissions settings they have to be one of the following types: all, clients or restricted.";
-                    $flags[] = "Project Name and Client Id re required fields";
+                if ($entity == 'projects') {
+                    $flags[] = 'If there are no Assigned Users, the project will be assigned to you.';
+                    $flags[] = 'If there are more than one assigned users, ensure that it is a comma separated list.';
+                    $flags[] = 'If you decide to set permissions settings they have to be one of the following types: all, clients or restricted.';
+                    $flags[] = 'Project Name and Client Id re required fields';
                 } else {
-                    if ($entity == "users") {
+                    if ($entity == 'users') {
                         //TODO add flags for users
-                        $flags[] = "First Name, Role, Email, and Send Invite are required fields";
-                        $flags[] = "The Send Invite field should be either Yes/No or else the user will not be imported. If Send Invite is set to No the user will have to reset the password on their own.";
+                        $flags[] = 'First Name, Role, Email, and Send Invite are required fields';
+                        $flags[] = 'The Send Invite field should be either Yes/No or else the user will not be imported. If Send Invite is set to No the user will have to reset the password on their own.';
                         $flags[] = "Roles have to be one of the following values 'readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'.";
                     } else {
-                        if ($entity == "ideas") {
+                        if ($entity == 'ideas') {
                             //TODO add flags for ideas
-                            $flags[] = "Description, Data, and CanvasId are required fields.";
-                            $flags[] = "If you do not have an Author field then you will be assigned as the Author.";
+                            $flags[] = 'Description, Data, and CanvasId are required fields.';
+                            $flags[] = 'If you do not have an Author field then you will be assigned as the Author.';
                         } else {
-                            if ($entity == "goals") {
+                            if ($entity == 'goals') {
                                 //TODO add flags for goals
-                                $flags[] = "Title, CanvasId, Start Value, Current Value, and End Value are required fields";
+                                $flags[] = 'Title, CanvasId, Start Value, Current Value, and End Value are required fields';
                             } else {
-                                if ($entity == "milestones") {
+                                if ($entity == 'milestones') {
                                     //TODO add flags for milestones
-                                    $flags[] = "If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.";
-                                    $flags[] = "Headline, Edit From, Edit To and Project are required fields";
+                                    $flags[] = 'If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.';
+                                    $flags[] = 'Headline, Edit From, Edit To and Project are required fields';
                                 }
                             }
                         }
@@ -69,21 +65,20 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-
         public function getFieldMappings($postParams)
         {
-            $fields = array();
+            $fields = [];
             foreach ($postParams as $fieldmapping) {
                 // Checking if the field mapping is selected
                 if (
-                    !empty($fieldmapping)
+                    ! empty($fieldmapping)
                     && strpos($fieldmapping, '|') !== false
                 ) {
-                        $mappingParts = explode("|", $fieldmapping);
-                        $sourceField = $mappingParts[0];
-                        $leantimeField = $mappingParts[1];
+                    $mappingParts = explode('|', $fieldmapping);
+                    $sourceField = $mappingParts[0];
+                    $leantimeField = $mappingParts[1];
 
-                        $fields[] = array("sourceField" => $sourceField, "leantimeField" => $leantimeField);
+                    $fields[] = ['sourceField' => $sourceField, 'leantimeField' => $leantimeField];
                 }
             }
 
@@ -92,17 +87,17 @@ namespace Leantime\Domain\Connector\Services {
 
         public function parseValues($fields, $values, $entity)
         {
-            if ($entity == "tickets") {
+            if ($entity == 'tickets') {
                 return $this->parseTickets($fields, $values);
-            } else if ($entity == "projects") {
-                    return $this->parseProjects($fields, $values);
-            } else if ($entity == "users") {
+            } elseif ($entity == 'projects') {
+                return $this->parseProjects($fields, $values);
+            } elseif ($entity == 'users') {
                 return $this->parseUsers($fields, $values);
-            } else if ($entity == "ideas") {
+            } elseif ($entity == 'ideas') {
                 return $this->parseIdeas($fields, $values);
-            } else if ($entity == "goals") {
+            } elseif ($entity == 'goals') {
                 return $this->parseGoals($fields, $values);
-            } else if ($entity == "milestones") {
+            } elseif ($entity == 'milestones') {
                 return $this->parseMilestones($fields, $values);
             }
 
@@ -112,7 +107,7 @@ namespace Leantime\Domain\Connector\Services {
         private function parseTickets($fields, $values)
         {
             $matchingSourceField = '';
-            $flags = array();
+            $flags = [];
 
             foreach ($fields as $item) {
                 if ($item['leantimeField'] === 'editorId') {
@@ -124,38 +119,36 @@ namespace Leantime\Domain\Connector\Services {
             $headlineFlag = true;
 
             foreach ($fields as $item) {
-                if ($item['leantimeField'] === "headline") {
+                if ($item['leantimeField'] === 'headline') {
                     $headlineFlag = false;
                     break;
                 }
             }
 
             if ($headlineFlag) {
-                $flags[] = "You must have a headline column";
+                $flags[] = 'You must have a headline column';
             }
 
             if ($matchingSourceField) {
                 foreach ($values as &$row) {
                     if (strpos($row[$matchingSourceField], '@') !== false) {
                         $id = false;
-                        if(isset($row[$matchingSourceField])){
-                            $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))["id"] ?? false;
-
-
+                        if (isset($row[$matchingSourceField])) {
+                            $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))['id'] ?? false;
 
                         }
                         if ($id) {
                             $row['editorId'] = $id;
                         } else {
-                            $flags[] = $row[$matchingSourceField] . " " . "is not a valid User";
+                            $flags[] = $row[$matchingSourceField].' '.'is not a valid User';
                         }
                     } else {
-                        $flags[] = "The Author/userId column must contain only valid User emails";
+                        $flags[] = 'The Author/userId column must contain only valid User emails';
                         break;
                     }
                 }
             } else {
-                $id = session("userdata.id");
+                $id = session('userdata.id');
                 foreach ($values as &$row) {
                     $row['editorId'] = $id;
                 }
@@ -178,17 +171,16 @@ namespace Leantime\Domain\Connector\Services {
                         $allProjects,
                         $row[$matchingProjectSourceField]
                     );
-                    if (!$projectId) {
-                        $flags[] = $row[$matchingProjectSourceField] . " " . "is not a valid Project";
+                    if (! $projectId) {
+                        $flags[] = $row[$matchingProjectSourceField].' '.'is not a valid Project';
                     } else {
                         $row['projectId'] = $projectId;
                         $statusLabels = $this->ticketService->getStatusLabels($projectId);
                     }
                 }
             } else {
-                $flags[] = "You must have a column matching to a valid Project.";
+                $flags[] = 'You must have a column matching to a valid Project.';
             }
-
 
             //Status Field Mapping
             $matchingStatusField = '';
@@ -235,26 +227,26 @@ namespace Leantime\Domain\Connector\Services {
             }
             if ($matchingUsersSourceField) {
                 foreach ($values as $row) {
-                    $emails = explode(",", $row[$matchingUsersSourceField]);
-                    $users = array();
+                    $emails = explode(',', $row[$matchingUsersSourceField]);
+                    $users = [];
 
                     foreach ($emails as $email) {
                         $user = $this->userService->getUserByEmail(trim($email));
                         if ($user) {
                             $users[] = $user;
                         } else {
-                            $flags[] = $email . " is not a valid user.";
+                            $flags[] = $email.' is not a valid user.';
                         }
                     }
                     $row[$matchingUsersSourceField] = $users;
                 }
             }
 
-            if (!$matchingProjectNameSourceField) {
-                $flags[] = "You must have a column with Project Names";
+            if (! $matchingProjectNameSourceField) {
+                $flags[] = 'You must have a column with Project Names';
             }
-            if (!$matchingClientIdSourceField) {
-                $flags[] = "You must have a column with ClientId";
+            if (! $matchingClientIdSourceField) {
+                $flags[] = 'You must have a column with ClientId';
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -266,8 +258,8 @@ namespace Leantime\Domain\Connector\Services {
         {
             $matchingUsernameSourceField = '';
             $matchingRoleSourceField = '';
-            $matchingSendInviteSourceField = "";
-            $matchingFirstNameSourceField = "";
+            $matchingSendInviteSourceField = '';
+            $matchingFirstNameSourceField = '';
             $flags = [];
 
             foreach ($fields as $item) {
@@ -287,12 +279,12 @@ namespace Leantime\Domain\Connector\Services {
 
             if ($matchingSendInviteSourceField && $matchingUsernameSourceField && $matchingRoleSourceField && $matchingFirstNameSourceField) {
                 foreach ($values as &$row) {
-                    if (strtolower($row[$matchingSendInviteSourceField]) == "yes") {
+                    if (strtolower($row[$matchingSendInviteSourceField]) == 'yes') {
                         $row['sendInvite'] = true;
-                    } elseif (strtolower($row[$matchingSendInviteSourceField]) == "no") {
+                    } elseif (strtolower($row[$matchingSendInviteSourceField]) == 'no') {
                         $row['sendInvite'] = false;
                     } else {
-                        $flags[] = "The sendInvite column must contain only yes or no";
+                        $flags[] = 'The sendInvite column must contain only yes or no';
                     }
                     if (str_contains($row[$matchingUsernameSourceField], '@')) {
                         $user = $this->userService->getUserByEmail(
@@ -303,30 +295,30 @@ namespace Leantime\Domain\Connector\Services {
                             $row['id'] = $user['id'];
                         }
                     } else {
-                        $flags[] = "The Username column must contain only valid emails";
+                        $flags[] = 'The Username column must contain only valid emails';
                     }
                     $rolesKey = array_search(
                         strtolower(trim($row[$matchingRoleSourceField])),
                         Roles::getRoles()
                     );
-                    if (!$rolesKey) {
-                        $flags[] = $row[$matchingRoleSourceField] . " is not a valid role.";
+                    if (! $rolesKey) {
+                        $flags[] = $row[$matchingRoleSourceField].' is not a valid role.';
                     } else {
                         $row[$matchingRoleSourceField] = $rolesKey;
                     }
                 }
             }
-            if (!$matchingSendInviteSourceField) {
-                $flags[] = "You must have a column specifying if the user should receive an invite.";
+            if (! $matchingSendInviteSourceField) {
+                $flags[] = 'You must have a column specifying if the user should receive an invite.';
             }
-            if (!$matchingUsernameSourceField) {
-                $flags[] = "You must have a column with Emails.";
+            if (! $matchingUsernameSourceField) {
+                $flags[] = 'You must have a column with Emails.';
             }
-            if (!$matchingRoleSourceField) {
-                $flags[] = "You must have a column with Roles.";
+            if (! $matchingRoleSourceField) {
+                $flags[] = 'You must have a column with Roles.';
             }
-            if (!$matchingFirstNameSourceField) {
-                $flags[] = "You must have a column with First Names.";
+            if (! $matchingFirstNameSourceField) {
+                $flags[] = 'You must have a column with First Names.';
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -367,15 +359,15 @@ namespace Leantime\Domain\Connector\Services {
                         if ($id) {
                             $row['author'] = $id;
                         } else {
-                            $flags[] = $row[$matchingAuthorSourceField] . " " . "is not a valid User";
+                            $flags[] = $row[$matchingAuthorSourceField].' '.'is not a valid User';
                         }
                     } else {
-                        $flags[] = "The Author column must contain only valid User emails";
+                        $flags[] = 'The Author column must contain only valid User emails';
                         break;
                     }
                 }
             } else {
-                $id = session("userdata.id");
+                $id = session('userdata.id');
                 foreach ($values as &$row) {
                     $row['author'] = $id;
                 }
@@ -383,22 +375,22 @@ namespace Leantime\Domain\Connector\Services {
             if ($matchingCanvasIdSourceField) {
                 foreach ($values as &$row) {
                     if (
-                        !$this->ideaRepo->getSingleCanvas(
+                        ! $this->ideaRepo->getSingleCanvas(
                             $row[$matchingCanvasIdSourceField]
                         )
                     ) {
-                        $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                        $flags[] = $row[$matchingCanvasIdSourceField].' '.'is not a valid Canvas.';
                     }
                 }
             }
-            if (!$matchingDataSourceField) {
-                $flags[] = "You must have a column matching to Data.";
+            if (! $matchingDataSourceField) {
+                $flags[] = 'You must have a column matching to Data.';
             }
-            if (!$matchingDescriptionSourceField) {
-                $flags[] = "You must have a column matching to Description.";
+            if (! $matchingDescriptionSourceField) {
+                $flags[] = 'You must have a column matching to Description.';
             }
-            if (!$matchingCanvasIdSourceField) {
-                $flags[] = "You must have a column matching to CanvasId.";
+            if (! $matchingCanvasIdSourceField) {
+                $flags[] = 'You must have a column matching to CanvasId.';
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -437,29 +429,29 @@ namespace Leantime\Domain\Connector\Services {
             if ($matchingCanvasIdSourceField) {
                 foreach ($values as &$row) {
                     if (
-                        !$this->goalCanvasRepo->getSingleCanvas(
+                        ! $this->goalCanvasRepo->getSingleCanvas(
                             $row[$matchingCanvasIdSourceField]
                         )
                     ) {
-                        $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                        $flags[] = $row[$matchingCanvasIdSourceField].' '.'is not a valid Canvas.';
                     }
                 }
             }
 
-            if (!$matchingTitleSourceField) {
-                $flags[] = "You must have a column matching to Title.";
+            if (! $matchingTitleSourceField) {
+                $flags[] = 'You must have a column matching to Title.';
             }
-            if (!$matchingCanvasIdSourceField) {
-                $flags[] = "You must have a column matching to CanvasId.";
+            if (! $matchingCanvasIdSourceField) {
+                $flags[] = 'You must have a column matching to CanvasId.';
             }
-            if (!$matchingCurrentValueSourceField) {
-                $flags[] = "You must have a column matching to CurrentValue.";
+            if (! $matchingCurrentValueSourceField) {
+                $flags[] = 'You must have a column matching to CurrentValue.';
             }
-            if (!$matchingStartValueSourceField) {
-                $flags[] = "You must have a column matching to StartValue.";
+            if (! $matchingStartValueSourceField) {
+                $flags[] = 'You must have a column matching to StartValue.';
             }
-            if (!$matchingEndValueSourceField) {
-                $flags[] = "You must have a column matching to EndValue.";
+            if (! $matchingEndValueSourceField) {
+                $flags[] = 'You must have a column matching to EndValue.';
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -482,14 +474,14 @@ namespace Leantime\Domain\Connector\Services {
             $headlineFlag = true;
 
             foreach ($fields as $item) {
-                if ($item['leantimeField'] === "headline") {
+                if ($item['leantimeField'] === 'headline') {
                     $headlineFlag = false;
                     break;
                 }
             }
 
             if ($headlineFlag) {
-                $flags[] = "You must have a headline column";
+                $flags[] = 'You must have a headline column';
             }
 
             if ($matchingSourceField) {
@@ -501,15 +493,15 @@ namespace Leantime\Domain\Connector\Services {
                         if ($id) {
                             $row['editorId'] = $id;
                         } else {
-                            $flags[] = $row[$matchingSourceField] . " " . "is not a valid User";
+                            $flags[] = $row[$matchingSourceField].' '.'is not a valid User';
                         }
                     } else {
-                        $flags[] = "The Author/userId column must contain only valid User emails";
+                        $flags[] = 'The Author/userId column must contain only valid User emails';
                         break;
                     }
                 }
             } else {
-                $id = session("userdata.id");
+                $id = session('userdata.id');
                 foreach ($values as &$row) {
                     $row['editorId'] = $id;
                 }
@@ -533,15 +525,15 @@ namespace Leantime\Domain\Connector\Services {
                         $allProjects,
                         $row[$matchingProjectSourceField]
                     );
-                    if (!$projectId) {
-                        $flags[] = $row[$matchingProjectSourceField] . " " . "is not a valid Project";
+                    if (! $projectId) {
+                        $flags[] = $row[$matchingProjectSourceField].' '.'is not a valid Project';
                     } //
                     else {
                         $row['projectId'] = $projectId;
                     }
                 }
             } else {
-                $flags[] = "You must have a column matching to a valid Project.";
+                $flags[] = 'You must have a column matching to a valid Project.';
             }
 
             $matchingEndDateSourceField = '';
@@ -554,11 +546,11 @@ namespace Leantime\Domain\Connector\Services {
                     $matchingEndDateSourceField = $field['sourceField'];
                 }
             }
-            if (!$matchingEndDateSourceField) {
-                $flags[] = "You must have a column matching to a valid Edit To.";
+            if (! $matchingEndDateSourceField) {
+                $flags[] = 'You must have a column matching to a valid Edit To.';
             }
-            if (!$matchingStartDateSourceField) {
-                $flags[] = "You must have a column matching to a valid Edit From.";
+            if (! $matchingStartDateSourceField) {
+                $flags[] = 'You must have a column matching to a valid Edit From.';
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -569,23 +561,23 @@ namespace Leantime\Domain\Connector\Services {
         public function importValues($fields, $values, $entity)
         {
 
-            $finalMappings = array();
+            $finalMappings = [];
             foreach ($fields as $field) {
                 array_push($finalMappings, $field['sourceField']);
                 array_push($finalMappings, $field['leantimeField']);
             }
 
-            if ($entity == "tickets") {
+            if ($entity == 'tickets') {
                 return $this->importTickets($finalMappings, $values);
-            } else if ($entity == "projects") {
+            } elseif ($entity == 'projects') {
                 return $this->importProjects($finalMappings, $values);
-            } else if ($entity == "users") {
+            } elseif ($entity == 'users') {
                 return $this->importUsers($finalMappings, $values);
-            } else if ($entity == "ideas") {
+            } elseif ($entity == 'ideas') {
                 return $this->importIdeas($finalMappings, $values);
-            } else if ($entity == "goals") {
+            } elseif ($entity == 'goals') {
                 return $this->importGoals($finalMappings, $values);
-            } else if ($entity == "milestones") {
+            } elseif ($entity == 'milestones') {
                 return $this->importMilestones($finalMappings, $values);
             }
 
@@ -595,9 +587,9 @@ namespace Leantime\Domain\Connector\Services {
         private function importTickets($finalMappings, $finalValues)
         {
             foreach ($finalValues as $row) {
-                $ticket = array();
+                $ticket = [];
 
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 $ticket['editorId'] = $row['editorId'] ?? '';
@@ -605,30 +597,30 @@ namespace Leantime\Domain\Connector\Services {
                 $ticket['status'] = $row['status'] ?? 3;
                 $ticket['type'] = $row['type'] ?? 'task';
 
-                if (isset($ticket["id"]) && is_numeric($ticket["id"])) {
+                if (isset($ticket['id']) && is_numeric($ticket['id'])) {
                     $this->ticketService->updateTicket($ticket);
                 } else {
                     $this->ticketService->addTicket($ticket);
                 }
             }
-            return;
+
         }
 
         private function importProjects($finalMappings, $finalValues)
         {
-            $psettings = array('all', 'clients', 'restricted');
+            $psettings = ['all', 'clients', 'restricted'];
             foreach ($finalValues as $row) {
-                $values = array();
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                $values = [];
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     if ($finalMappings[$i + 1] == 'psettings') {
-                        if (!in_array($row[$finalMappings[$i]], $psettings)) {
+                        if (! in_array($row[$finalMappings[$i]], $psettings)) {
                             $row[$finalMappings[$i]] = 'restricted';
                         }
                     }
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                if (isset($values["id"])) {
-                    $this->projectService->editProject($values, $values["id"],);
+                if (isset($values['id'])) {
+                    $this->projectService->editProject($values, $values['id']);
                 } else {
                     $this->projectService->addProject($values);
                 }
@@ -639,14 +631,14 @@ namespace Leantime\Domain\Connector\Services {
         {
             //TODO add  users
             foreach ($finalValues as $row) {
-                $values = array();
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                $values = [];
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     if ($finalMappings[$i + 1] != 'sendInvite' || $finalMappings[$i + 1] != 'id') {
                         $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                     }
                 }
-                $values["notifications"] = 1;
-                $values['source'] = "csvImport"; //TODO: will have to change when other integrations are added
+                $values['notifications'] = 1;
+                $values['source'] = 'csvImport'; //TODO: will have to change when other integrations are added
                 if (isset($row['id']) && $row['id'] > 0) {
                     $currentUser = $this->userService->getUser($row['id']);
                     $currentUser['user'] = $values['user'];
@@ -656,12 +648,12 @@ namespace Leantime\Domain\Connector\Services {
                         }
                     }
                     $this->userService->editUser($currentUser, $row['id']);
-                } else if (isset($row['sendInvite']) && $row['sendInvite'] == true) {
+                } elseif (isset($row['sendInvite']) && $row['sendInvite'] == true) {
                     $this->userService->createUserInvite($values);
                 } else {
                     $values['status'] = 'a';
-                    if (!isset($values['password'])) {
-                        $tempPasswordVar =  Uuid::uuid4()->toString();
+                    if (! isset($values['password'])) {
+                        $tempPasswordVar = Uuid::uuid4()->toString();
                         $values['password'] = $tempPasswordVar;
                     }
                     $this->userService->addUser($values);
@@ -673,11 +665,11 @@ namespace Leantime\Domain\Connector\Services {
         {
 
             foreach ($finalValues as $row) {
-                $values = array();
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                $values = [];
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                if (isset($values["itemId"])) {
+                if (isset($values['itemId'])) {
                     $this->ideaRepo->editCanvasItem($values);
                 } else {
                     $this->ideaRepo->addCanvasItem($values);
@@ -688,15 +680,15 @@ namespace Leantime\Domain\Connector\Services {
         private function importGoals($finalMappings, $finalValues)
         {
             foreach ($finalValues as $row) {
-                $values = array();
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                $values = [];
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                $values["box"] = "goal";
-                if (!isset($values['author'])) {
-                    $values['author'] = session("userdata.id");
+                $values['box'] = 'goal';
+                if (! isset($values['author'])) {
+                    $values['author'] = session('userdata.id');
                 }
-                if (isset($values["itemId"])) {
+                if (isset($values['itemId'])) {
                     $this->goalCanvasRepo->editCanvasItem($values);
                 } else {
                     $this->goalCanvasRepo->addCanvasItem($values);
@@ -708,18 +700,18 @@ namespace Leantime\Domain\Connector\Services {
         {
             //TODO add milestones
             foreach ($finalValues as $row) {
-                $ticket = array();
+                $ticket = [];
 
-                for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
+                for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 $ticket['editorId'] = $row['editorId'];
                 $ticket['projectId'] = $row['projectId'];
-                if (!isset($ticket['status'])) {
+                if (! isset($ticket['status'])) {
                     $ticket['status'] = 3;
                 }
                 $ticket['type'] = 'milestone';
-                if (isset($ticket["id"])) {
+                if (isset($ticket['id'])) {
                     $this->ticketService->updateTicket($ticket);
                 } else {
                     $this->ticketService->addTicket($ticket);
@@ -733,9 +725,8 @@ namespace Leantime\Domain\Connector\Services {
             $serializedFields = serialize($fields);
             $serializedValues = serialize($values);
 
-            session(["serFields" => $serializedFields]);
-            session(["serValues" => $serializedValues]);
+            session(['serFields' => $serializedFields]);
+            session(['serValues' => $serializedValues]);
         }
-
     }
 }

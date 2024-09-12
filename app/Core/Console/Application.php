@@ -7,8 +7,8 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ProcessUtils;
 
-class Application extends \Illuminate\Console\Application {
-
+class Application extends \Illuminate\Console\Application
+{
     public function __construct(Container $laravel, Dispatcher $events, $version)
     {
 
@@ -28,7 +28,6 @@ class Application extends \Illuminate\Console\Application {
     protected function bootstrap()
     {
 
-
         foreach (static::$bootstrappers as $bootstrapper) {
             $bootstrapper($this);
         }
@@ -38,6 +37,4 @@ class Application extends \Illuminate\Console\Application {
     {
         return ProcessUtils::escapeArgument('bin/leantime');
     }
-
-
 }

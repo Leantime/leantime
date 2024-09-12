@@ -3,6 +3,11 @@
   <component name="BladeDebugConfiguration">
     <cachePath>$PROJECT_DIR$/cache/views</cachePath>
   </component>
+  <component name="LaravelPint">
+    <laravel_pint_settings>
+      <LaravelPintConfiguration tool_path="$PROJECT_DIR$/vendor/bin/pint" />
+    </laravel_pint_settings>
+  </component>
   <component name="MessDetectorOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
@@ -121,11 +126,7 @@
       <path value="$PROJECT_DIR$/vendor/fruitcake/php-cors" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php83" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
-      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
       <path value="$PROJECT_DIR$/vendor/carbonphp/carbon-doctrine-types" />
-      <path value="$PROJECT_DIR$/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/vendor/nunomaduro/termwind" />
       <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
       <path value="$PROJECT_DIR$/app/Plugins/CustomFields/vendor/composer" />
@@ -279,6 +280,9 @@
       <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
       <path value="$PROJECT_DIR$/vendor/illuminate/log" />
       <path value="$PROJECT_DIR$/vendor/_laravel_idea" />
+      <path value="$PROJECT_DIR$/vendor/codeat3/blade-google-material-design-icons" />
+      <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
+      <path value="$PROJECT_DIR$/vendor/laravel/pint" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

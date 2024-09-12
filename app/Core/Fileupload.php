@@ -14,16 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Fileupload class - Data filuploads
- *
- * @package    leantime
- * @subpackage core
  */
 class Fileupload
 {
     use DispatchesEvents;
 
     /**
-     * @var    string path on the server
+     * @var string path on the server
      */
     private mixed $path;
 
@@ -37,9 +34,6 @@ class Fileupload
      */
     private string $file_tmp_name;
 
-    /**
-     * @var int
-     */
     public int $file_size;
 
     /**
@@ -52,9 +46,6 @@ class Fileupload
      */
     public string $file_name;
 
-    /**
-     * @var string
-     */
     public string $error = '';
 
     /**
@@ -65,22 +56,18 @@ class Fileupload
     /**
      * @var array parts of the path
      */
-    public array $path_parts = array();
+    public array $path_parts = [];
 
     /**
      * @var Environment configuration object
      */
     public Environment $config;
 
-    /**
-     * @var S3Client|string
-     */
-    public string|S3Client $s3Client = "";
+    public string|S3Client $s3Client = '';
 
     /**
      * fileupload constructor.
      *
-     * @param Environment $config
      * @return void
      */
     public function __construct(Environment $config)
@@ -99,14 +86,14 @@ class Fileupload
             ];
 
             if (
-                !empty($this->config->s3EndPoint)
-                && $this->config->s3EndPoint != "null"
-                && $this->config->s3EndPoint != "false"
+                ! empty($this->config->s3EndPoint)
+                && $this->config->s3EndPoint != 'null'
+                && $this->config->s3EndPoint != 'false'
             ) {
                 $s3Config['endpoint'] = $this->config->s3EndPoint;
             }
 
-            if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === "true") {
+            if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === 'true') {
                 $s3Config['use_path_style_endpoint'] = true;
             }
 
@@ -128,76 +115,72 @@ class Fileupload
     /**
      * This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
      *
-     * @param string $sSize
      * @return int The value in bytes
      */
     private static function convertPHPSizeToBytes(string $sSize): int
     {
         $sSuffix = strtoupper(substr($sSize, -1));
-        if (!in_array($sSuffix, array('P','T','G','M','K'))) {
-            return (int)$sSize;
+        if (! in_array($sSuffix, ['P', 'T', 'G', 'M', 'K'])) {
+            return (int) $sSize;
         }
         $iValue = substr($sSize, 0, -1);
         switch ($sSuffix) {
             case 'P':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'T':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'G':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'M':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'K':
                 $iValue *= 1024;
                 break;
         }
-        return (int)$iValue;
+
+        return (int) $iValue;
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     public function getAbsolutePath(): string
     {
-        $path = realpath(__DIR__ . "/../../" . $this->path);
+        $path = realpath(__DIR__.'/../../'.$this->path);
         if ($path === false) {
-            throw new Exception("Path not valid");
+            throw new Exception('Path not valid');
         } else {
             return $path;
         }
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     public function getPublicFilesPath(): string
     {
-        $relative_path = self::dispatch_filter('relative_path', "/../../public/userfiles");
+        $relative_path = self::dispatch_filter('relative_path', '/../../public/userfiles');
 
-        $path = realpath(__DIR__ . $relative_path);
+        $path = realpath(__DIR__.$relative_path);
         if ($path === false) {
-            throw new Exception("Path not valid");
+            throw new Exception('Path not valid');
         } else {
             return $path;
         }
     }
 
-
     /**
      * initFile - init variables of file
      *
-     * @access public
-     * @param  $file $file from Post
+     * @param  $file  $file from Post
      */
     public function initFile($file): void
     {
@@ -210,9 +193,6 @@ class Fileupload
 
     /**
      * checkFileSize - Checks if filesize is ok
-     *
-     * @access public
-     * @return bool
      */
     public function checkFileSize(): bool
     {
@@ -225,9 +205,6 @@ class Fileupload
 
     /**
      * renameFile
-     *
-     * @param  $name
-     * @return bool
      */
     public function renameFile($name): bool
     {
@@ -240,7 +217,7 @@ class Fileupload
         $this->file_name = $name;
 
         if (isset($this->path_parts['extension'])) {
-            $this->file_name .= '.' . $this->path_parts['extension'];
+            $this->file_name .= '.'.$this->path_parts['extension'];
         }
 
         return true;
@@ -248,9 +225,6 @@ class Fileupload
 
     /**
      * upload - move file from tmp-folder to S3
-     *
-     * @access public
-     * @return bool
      */
     public function upload(): bool
     {
@@ -265,9 +239,6 @@ class Fileupload
 
     /**
      * uploadPublic - move file from tmp-folder to public folder
-     *
-     * @access public
-     * @return string|false
      */
     public function uploadPublic(): false|string
     {
@@ -279,26 +250,28 @@ class Fileupload
                     return false;
                 }
 
-                $file = fopen($this->file_tmp_name, "rb");
+                $file = fopen($this->file_tmp_name, 'rb');
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
-                $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
+                $fileName = implode('/', array_filter([$this->config->s3FolderName, $this->file_name]));
 
-                $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "public-read");
+                $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, 'public-read');
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
             } catch (S3Exception $e) {
                 report($e);
+
                 return false;
             }
         } else {
             try {
-                if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath() . "/" . $this->file_name)) {
-                    return "/userfiles/" . $this->file_name;
+                if (move_uploaded_file($this->file_tmp_name, $this->getPublicFilesPath().'/'.$this->file_name)) {
+                    return '/userfiles/'.$this->file_name;
                 }
             } catch (Exception $e) {
                 report($e);
+
                 return false;
             }
         }
@@ -308,9 +281,6 @@ class Fileupload
 
     /**
      * uploadToS3 - move file from tmp-folder to S3
-     *
-     * @access private
-     * @return bool
      */
     private function uploadToS3(): bool
     {
@@ -321,38 +291,35 @@ class Fileupload
 
         try {
             // Upload data.
-            $file = fopen($this->file_tmp_name, "rb");
+            $file = fopen($this->file_tmp_name, 'rb');
             // implode all non-empty elements to allow s3FolderName to be empty.
             // otherwise you will get an error as the key starts with a slash
-            $fileName = implode('/', array_filter(array($this->config->s3FolderName, $this->file_name)));
+            $fileName = implode('/', array_filter([$this->config->s3FolderName, $this->file_name]));
 
-            $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
+            $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, 'authenticated-read');
 
             return true;
         } catch (S3Exception $e) {
             report($e);
+
             return false;
         } catch (RequestException $e) {
             report($e);
+
             return false;
         }
     }
 
-    /**
-     * @return bool
-     */
-    /**
-     * @return bool
-     */
     private function uploadLocal(): bool
     {
 
         try {
-            if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath() . "/" . $this->file_name)) {
+            if (move_uploaded_file($this->file_tmp_name, $this->getAbsolutePath().'/'.$this->file_name)) {
                 return true;
             }
         } catch (Exception $e) {
             report($e);
+
             return false;
         }
 
@@ -361,32 +328,28 @@ class Fileupload
 
     /**
      * displayImageFile - display image file
-     *
-     * @param string $imageName
-     * @param string $fullPath
-     * @return Response
      */
     public function displayImageFile(string $imageName, string $fullPath = ''): Response
     {
-        $mimes = array(
+        $mimes = [
             'jpg' => 'image/jpg',
             'jpeg' => 'image/jpg',
             'gif' => 'image/gif',
             'png' => 'image/png',
             'svg' => 'image/svg+xml',
-        );
+        ];
 
-        $responseFailure = new Response(file_get_contents(ROOT . '/dist/images/doc.png'));
-        $sLastModified = filemtime(ROOT . '/dist/images/doc.png');
+        $responseFailure = new Response(file_get_contents(ROOT.'/dist/images/doc.png'));
+        $sLastModified = filemtime(ROOT.'/dist/images/doc.png');
         $responseFailure->headers->set('Content-Type', 'image/png');
-        $responseFailure->headers->set("Cache-Control", 'max-age=86400');
-        $responseFailure->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
+        $responseFailure->headers->set('Cache-Control', 'max-age=86400');
+        $responseFailure->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', $sLastModified).' GMT');
 
         if ($this->config->useS3 && $fullPath == '') {
             try {
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
-                $fileName = implode('/', array_filter(array($this->config->s3FolderName, $imageName)));
+                $fileName = implode('/', array_filter([$this->config->s3FolderName, $imageName]));
                 $result = $this->s3Client->getObject([
                     'Bucket' => $this->config->s3Bucket,
                     'Key' => $fileName,
@@ -400,7 +363,7 @@ class Fileupload
                         'Pragma' => 'public',
                         'Cache-Control' => 'max-age=86400',
                         'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
-                        'Content-disposition' => 'inline; filename="' . $imageName . '";',
+                        'Content-disposition' => 'inline; filename="'.$imageName.'";',
                     ] as $header => $value
                 ) {
                     $response->headers->set($header, $value);
@@ -413,8 +376,8 @@ class Fileupload
         }
 
         if ($fullPath == '') {
-            $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
-            $fullPath = $path . "/" . $imageName;
+            $path = realpath(APP_ROOT.'/'.$this->config->userFilePath.'/');
+            $fullPath = $path.'/'.$imageName;
         }
 
         if (! file_exists(realpath($fullPath))) {
@@ -422,13 +385,11 @@ class Fileupload
         }
 
         $path_parts = pathinfo($fullPath);
-        $ext = $path_parts["extension"];
+        $ext = $path_parts['extension'];
 
         if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'svg'])) {
             throw new HttpResponseException($responseFailure);
         }
-
-
 
         $sLastModified = filemtime($fullPath);
         $sEtag = md5_file($fullPath);
@@ -436,14 +397,14 @@ class Fileupload
         $sFileSize = filesize($fullPath);
 
         $oStreamResponse = new BinaryFileResponse($fullPath);
-        $oStreamResponse->headers->set("Content-Type", $mimes[$ext]);
+        $oStreamResponse->headers->set('Content-Type', $mimes[$ext]);
         //$oStreamResponse->headers->set("Content-Length", $sFileSize);
         //$oStreamResponse->headers->set("ETag", $sEtag);
 
         if (app()->make(Environment::class)->debug == false) {
-            $oStreamResponse->headers->set("Pragma", 'public');
-            $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
-            $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
+            $oStreamResponse->headers->set('Pragma', 'public');
+            $oStreamResponse->headers->set('Cache-Control', 'max-age=86400');
+            $oStreamResponse->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', $sLastModified).' GMT');
         }
         //$oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
 

@@ -15,6 +15,4 @@ class Db extends ServiceProvider
     {
         $this->app->singleton(\Leantime\Core\Db\Db::class, \Leantime\Core\Db\Db::class);
     }
-
-
 }

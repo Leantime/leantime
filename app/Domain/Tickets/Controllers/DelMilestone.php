@@ -10,17 +10,10 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class DelMilestone extends Controller
     {
         private TicketService $ticketService;
 
-        /**
-         * @param TicketService $ticketService
-         * @return void
-         */
         public function init(TicketService $ticketService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
@@ -28,9 +21,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->ticketService = $ticketService;
         }
 
-
         /**
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get(): Response
@@ -39,10 +30,11 @@ namespace Leantime\Domain\Tickets\Controllers {
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
                 if (isset($_GET['id'])) {
-                    $id = (int)($_GET['id']);
+                    $id = (int) ($_GET['id']);
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
                 return $this->tpl->displayModal('tickets.delMilestone');
             } else {
                 return $this->tpl->displayModal('errors.error403');
@@ -50,8 +42,6 @@ namespace Leantime\Domain\Tickets\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -64,13 +54,15 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->displayModal('errors.error403', responseCode: 403);
             }
 
-            if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))) {
-                $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
-                return Frontcontroller::redirect(BASE_URL . "/tickets/roadmap");
+            if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {
+                $this->tpl->setNotification($this->language->__('notification.milestone_deleted'), 'success');
+
+                return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');
             }
 
-            $this->tpl->setNotification($this->language->__($result['msg']), "error");
+            $this->tpl->setNotification($this->language->__($result['msg']), 'error');
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
             return $this->tpl->displayModal('tickets.delMilestone');
         }
     }

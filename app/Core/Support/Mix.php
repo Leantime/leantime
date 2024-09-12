@@ -18,7 +18,7 @@ class Mix
         //     Cache::store('installation')->put('manifest://' . $manifestDir, json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true), 60 * 60 * 24 * 7);
         // }
         // $this->manifest[$manifestDir] = Cache::store('installation')->get('manifest://' . $manifestDir);
-        $this->manifest[$manifestDir = APP_ROOT . '/public/dist'] = json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true);
+        $this->manifest[$manifestDir = APP_ROOT.'/public/dist'] = json_decode(file_get_contents("$manifestDir/mix-manifest.json"), true);
 
         /**
          * WARNING: All files in the manifest directories will be exposed to public queries!
@@ -38,7 +38,7 @@ class Mix
             //     continue;
             // }
 
-            if (! file_exists($manifestPath = $manifestDirectory . '/mix-manifest.json')) {
+            if (! file_exists($manifestPath = $manifestDirectory.'/mix-manifest.json')) {
                 continue;
             }
 
@@ -58,7 +58,7 @@ class Mix
 
     public function __invoke(string $path, string $manifestDirectory = ''): string
     {
-        $manifestDirectory = Str::start('/', $manifestDirectory ?: APP_ROOT . '/public/dist');
+        $manifestDirectory = Str::start('/', $manifestDirectory ?: APP_ROOT.'/public/dist');
         $path = Str::start($path, '/');
 
         if (! isset($this->manifest[$manifestDirectory])) {
@@ -74,9 +74,9 @@ class Mix
 
     private function preparePath(string $path, string $manifestDirectory): string
     {
-        if (str_starts_with($manifestDirectory, APP_ROOT . '/app')) {
+        if (str_starts_with($manifestDirectory, APP_ROOT.'/app')) {
             $urlPrefix = Str::of($manifestDirectory)
-                ->replace(APP_ROOT . '/app', '')
+                ->replace(APP_ROOT.'/app', '')
                 ->ltrim('/')
                 ->explode('/')
                 ->map(fn ($pathPart) => Str::slug($pathPart))
@@ -88,13 +88,13 @@ class Mix
                 ->toString();
         } else {
             $urlPrefix = Str::of($manifestDirectory)
-                ->replace(APP_ROOT . '/public', '')
+                ->replace(APP_ROOT.'/public', '')
                 ->start('/public')
                 ->rtrim('/')
                 ->toString();
         }
 
-        return $urlPrefix . Str::start($path, '/');
+        return $urlPrefix.Str::start($path, '/');
     }
 
     public function getManifest(): array
