@@ -49,15 +49,14 @@
                 //
                 @if (count($allCanvas) > 0)
                     <span class="dropdown dropdownWrapper">
-                        @php
-                            $labelText =
-                                '<a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown" style="max-width:200px;">' .
-                                $canvasTitle .
-                                '&nbsp;<i class="fa fa-caret-down"></i></a>';
-                        @endphp
-
                         <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="canvasSelector" align="start"
-                            contentRole="menu">
+                            contentRole="ghost">
+                            <x-slot:labelText>
+                                <a href="javascript:void(0);" class="dropdown-toggle header-title-dropdown"
+                                    data-toggle="dropdown" style="max-width:200px;">
+                                    {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
+                                </a>
+                            </x-slot:labelText>
                             <x-slot:menu>
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     <x-global::actions.dropdown.item href="javascript:void(0)" class="addCanvasLink">
@@ -103,23 +102,25 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown class="btn btn-default dropdown-toggle" align="start" contentRole="menu">
+                            <x-global::actions.dropdown class="btn btn-default dropdown-toggle" align="start"
+                                contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>
-                            
+
                                 <x-slot:menu>
                                     <!-- Dropdown Items -->
                                     <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/showBoards">
                                         {!! __('buttons.idea_wall') !!}
                                     </x-global::actions.dropdown.item>
-                            
-                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/advancedBoards" class="active">
+
+                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/advancedBoards"
+                                        class="active">
                                         {!! __('buttons.idea_kanban') !!}
                                     </x-global::actions.dropdown.item>
                                 </x-slot:menu>
                             </x-global::actions.dropdown>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -148,15 +149,7 @@
                                                         @if ($login::userIsAtLeast($roles::$editor))
                                                             <div class="inlineDropDownContainer" style="float:right;">
                                                                 <x-global::content.context-menu>
-                                                                    <x-slot name="trigger">
-                                                                        <a href="javascript:void(0);"
-                                                                            class="dropdown-toggle ticketDropDown">
-                                                                            <i class="fa fa-ellipsis-v"
-                                                                                aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </x-slot>
-
-                                                                    <x-global::actions.dropdown.item class="nav-header">
+                                                                    <x-global::actions.dropdown.item class="header">
                                                                         {!! __('subtitles.edit') !!}
                                                                     </x-global::actions.dropdown.item>
                                                                     <x-global::actions.dropdown.item
@@ -170,7 +163,6 @@
                                                                         {!! __('links.delete_canvas_item') !!}
                                                                     </x-global::actions.dropdown.item>
                                                                 </x-global::content.context-menu>
-
                                                             </div>
                                                         @endif
                                                         <h4><a href="{{ BASE_URL }}/ideas/advancedBoards/#/ideas/ideaDialog/{{ $row->id }}"
@@ -188,47 +180,57 @@
                                                         <div
                                                             class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                                                             @php
-                                                            // Determine the image URL based on whether the author has a first name
-                                                            $userImageUrl = $row->authorFirstname != ''
-                                                                ? BASE_URL . '/api/users?profileImage=' . $row->author
-                                                                : BASE_URL . '/api/users?profileImage=false';
-                                                        
-                                                            // Define the label text for the dropdown trigger
-                                                            $labelText = '<span class="text">
-                                                                            <span id="userImage' . $row->id . '">
-                                                                                <img src="' . $userImageUrl . '" width="25" style="vertical-align: middle;" />
-                                                                            </span>
-                                                                            <span id="user' . $row->id . '"></span>
-                                                                         </span>';
-                                                        @endphp
-                                                        
-                                                        <x-global::actions.dropdown 
-                                                            :labelText="html_entity_decode($labelText)"
-                                                            class="f-left"
-                                                            align="start"
-                                                            contentRole="menu"
-                                                        >
-                                                            <x-slot:menu>
-                                                                <!-- Dropdown Header -->
-                                                                <x-global::actions.dropdown.item variant="nav-header-border">
-                                                                    {!! __('dropdown.choose_user') !!}
-                                                                </x-global::actions.dropdown.item>
-                                                        
-                                                                <!-- Dynamic User Items -->
-                                                                @foreach ($users as $user)
-                                                                    <x-global::actions.dropdown.item 
-                                                                        href="javascript:void(0);" 
-                                                                        :data-label="sprintf(__('text.full_name'), $user['firstname'], $user['lastname'])"
-                                                                        :data-value="$row->id . '_' . $user['id'] . '_' . $user['profileId']"
-                                                                        id="userStatusChange{{ $row->id . $user['id'] }}"
-                                                                    >
-                                                                        <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;" />
-                                                                        {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
+                                                                $userImageUrl =
+                                                                    $row->authorFirstname != ''
+                                                                        ? BASE_URL .
+                                                                            '/api/users?profileImage=' .
+                                                                            $row->author
+                                                                        : BASE_URL . '/api/users?profileImage=false';
+                                                            @endphp
+
+                                                            <x-global::actions.dropdown class="f-left" align="start"
+                                                                contentRole="menu">
+                                                                <!-- Dropdown Trigger -->
+                                                                <x-slot:labelText>
+                                                                    <span class="text">
+                                                                        <span id="userImage{{ $row->id }}">
+                                                                            <img src="{{ $userImageUrl }}" width="25"
+                                                                                style="vertical-align: middle;" />
+                                                                        </span>
+                                                                        <span id="user{{ $row->id }}"></span>
+                                                                    </span>
+                                                                </x-slot:labelText>
+
+                                                                <!-- Menu Slot -->
+                                                                <x-slot:menu>
+                                                                    <!-- Dropdown Header -->
+                                                                    <x-global::actions.dropdown.item
+                                                                        variant="header-border">
+                                                                        {!! __('dropdown.choose_user') !!}
                                                                     </x-global::actions.dropdown.item>
-                                                                @endforeach
-                                                            </x-slot:menu>
-                                                        </x-global::actions.dropdown>
-                                                        
+
+                                                                    <!-- Dynamic User Items -->
+                                                                    @foreach ($users as $user)
+                                                                        <x-global::actions.dropdown.item
+                                                                            href="javascript:void(0);" :data-label="sprintf(
+                                                                                __('text.full_name'),
+                                                                                $user['firstname'],
+                                                                                $user['lastname'],
+                                                                            )"
+                                                                            :data-value="$row->id .
+                                                                                '_' .
+                                                                                $user['id'] .
+                                                                                '_' .
+                                                                                $user['profileId']"
+                                                                            id="userStatusChange{{ $row->id . $user['id'] }}">
+                                                                            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}"
+                                                                                width="25"
+                                                                                style="vertical-align: middle; margin-right:5px;" />
+                                                                            {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
+                                                                        </x-global::actions.dropdown.item>
+                                                                    @endforeach
+                                                                </x-slot:menu>
+                                                            </x-global::actions.dropdown>
                                                         </div>
                                                         <div class="pull-right" style="margin-right:10px;">
                                                             <a href="#/ideas/ideaDialog/{{ $row->id }}"
@@ -306,7 +308,7 @@
                         <form action="" method="post">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal"
-                                    aripa-hidden="true">&times;</button>
+                                    aria-hidden="true">&times;</button>
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">

@@ -9,12 +9,12 @@
         </a>
     </li>
 
-@elseif ($variant === 'nav-header')
+@elseif ($variant === 'header')
     <li class="nav-header">
         {!! $slot !!}
     </li>
 
-@elseif ($variant === 'nav-header-border')
+@elseif ($variant === 'header-border')
     <li class="nav-header border">
         {!! $slot !!}
     </li>

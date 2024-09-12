@@ -121,7 +121,7 @@
                                         <div class="inlineDropDownContainer" style="float:right;">
                                             <x-global::content.context-menu>
                                                 <!-- Dropdown Header -->
-                                                <x-global::actions.dropdown.item variant="nav-header">
+                                                <x-global::actions.dropdown.item variant="header">
                                                     {!! __('subtitles.edit') !!}
                                                 </x-global::actions.dropdown.item>
 
@@ -167,7 +167,7 @@
                                             <!-- Menu Slot -->
                                             <x-slot:menu>
                                                 <!-- Dropdown Header -->
-                                                <x-global::actions.dropdown.item variant="nav-header-border">
+                                                <x-global::actions.dropdown.item variant="header-border">
                                                     {!! __('dropdown.choose_status') !!}
                                                 </x-global::actions.dropdown.item>
 
@@ -209,7 +209,7 @@
                                             <!-- Menu Slot -->
                                             <x-slot:menu>
                                                 <!-- Dropdown Header -->
-                                                <x-global::actions.dropdown.item variant="nav-header-border">
+                                                <x-global::actions.dropdown.item variant="header-border">
                                                     {!! __('dropdown.choose_user') !!}
                                                 </x-global::actions.dropdown.item>
 

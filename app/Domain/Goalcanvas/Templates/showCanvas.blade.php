@@ -145,87 +145,73 @@
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
-                                @php
-                                    if ($filter['status'] == 'all') {
-                                        $labelText =
-                                            '<i class="fas fa-filter"></i> ' .
-                                            __('status.all') .
-                                            ' ' .
-                                            __('links.view');
-                                    } else {
-                                        $labelText =
-                                            '<i class="fas fa-fw ' .
-                                            __($statusLabels[$filter['status']]['icon']) .
-                                            '"></i> ' .
-                                            $statusLabels[$filter['status']]['title'] .
-                                            ' ' .
-                                            __('links.view');
-                                    }
-                                @endphp
-
-                                <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="btn dropdown-toggle" align="start"
-                                    contentRole="menu">
-                                    <x-slot:menu>
-                                        <!-- "All" Status Option -->
-                                        <x-global::actions.dropdown.item
-                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all"
-                                            class="{{ $filter['status'] == 'all' ? 'active' : '' }}">
-                                            <i class="fas fa-globe"></i> {{ __('status.all') }}
+                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="menu">
+                                <!-- Dropdown Trigger -->
+                                <x-slot:labelText>
+                                    @if ($filter['status'] == 'all')
+                                        <i class="fas fa-filter"></i> {!! __('status.all') !!} {!! __('links.view') !!}
+                                    @else
+                                        <i class="fas fa-fw {!! __($statusLabels[$filter['status']]['icon']) !!}"></i> 
+                                        {!! $statusLabels[$filter['status']]['title'] !!} {!! __('links.view') !!}
+                                    @endif
+                                </x-slot:labelText>
+                            
+                                <!-- Menu Slot -->
+                                <x-slot:menu>
+                                    <!-- "All" Status Option -->
+                                    <x-global::actions.dropdown.item 
+                                        href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all"
+                                        class="{{ $filter['status'] == 'all' ? 'active' : '' }}">
+                                        <i class="fas fa-globe"></i> {{ __('status.all') }}
+                                    </x-global::actions.dropdown.item>
+                            
+                                    <!-- Dynamic Status Options -->
+                                    @foreach ($statusLabels as $key => $data)
+                                        <x-global::actions.dropdown.item 
+                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
+                                            class="{{ $filter['status'] == $key ? 'active' : '' }}">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
                                         </x-global::actions.dropdown.item>
-
-                                        <!-- Dynamic Status Options -->
-                                        @foreach ($statusLabels as $key => $data)
-                                            <x-global::actions.dropdown.item
-                                                href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
-                                                class="{{ $filter['status'] == $key ? 'active' : '' }}">
-                                                <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                            </x-global::actions.dropdown.item>
-                                        @endforeach
-                                    </x-slot:menu>
-                                </x-global::actions.dropdown>
+                                    @endforeach
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                            
                             @endif
                         </div>
 
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                                @php
-                                    // Determine the label content dynamically
-                                    $labelContent =
-                                        $filter['relates'] == 'all'
-                                            ? "<i class='fas fa-fw fa-globe'></i> " .
-                                                __('relates.all') .
-                                                ' ' .
-                                                __('links.view')
-                                            : "<i class='fas fa-fw " .
-                                                __($relatesLabels[$filter['relates']]['icon']) .
-                                                "'></i> " .
-                                                $relatesLabels[$filter['relates']]['title'] .
-                                                ' ' .
-                                                __('links.view');
-                                @endphp
-
-                                <x-global::actions.dropdown :label-text="$labelContent" contentRole="link" position="bottom"
-                                    align="start" class="btn dropdown-toggle">
-
-                                    <x-slot:menu>
-                                        <!-- 'All' Filter Option -->
+                            <x-global::actions.dropdown contentRole="link" position="bottom" align="start" class="btn dropdown-toggle">
+                                <!-- Dropdown Trigger -->
+                                <x-slot:labelText>
+                                    @if ($filter['relates'] == 'all')
+                                        <i class="fas fa-fw fa-globe"></i> {!! __('relates.all') !!} {!! __('links.view') !!}
+                                    @else
+                                        <i class="fas fa-fw {!! __($relatesLabels[$filter['relates']]['icon']) !!}"></i> 
+                                        {!! $relatesLabels[$filter['relates']]['title'] !!} {!! __('links.view') !!}
+                                    @endif
+                                </x-slot:labelText>
+                            
+                                <!-- Menu Slot -->
+                                <x-slot:menu>
+                                    <!-- 'All' Filter Option -->
+                                    <x-global::actions.dropdown.item variant="link"
+                                        href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all"
+                                        :class="$filter['relates'] == 'all' ? 'active' : ''">
+                                        <i class="fas fa-globe"></i> {!! __('relates.all') !!}
+                                    </x-global::actions.dropdown.item>
+                            
+                                    <!-- Dynamic Relates Options -->
+                                    @foreach ($relatesLabels as $key => $data)
                                         <x-global::actions.dropdown.item variant="link"
-                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all"
-                                            :class="$filter['relates'] == 'all' ? 'active' : ''">
-                                            <i class="fas fa-globe"></i> {{ __('relates.all') }}
+                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
+                                            :class="$filter['relates'] == $key ? 'active' : ''">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
                                         </x-global::actions.dropdown.item>
-
-                                        <!-- Dynamic Relates Options -->
-                                        @foreach ($relatesLabels as $key => $data)
-                                            <x-global::actions.dropdown.item variant="link"
-                                                href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
-                                                :class="$filter['relates'] == $key ? 'active' : ''">
-                                                <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                            </x-global::actions.dropdown.item>
-                                        @endforeach
-                                    </x-slot:menu>
-
-                                </x-global::actions.dropdown>
+                                    @endforeach
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                            
                             @endif
                         </div>
                     </div>
