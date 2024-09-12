@@ -18,17 +18,20 @@ use Leantime\Domain\Users\Services\Users as UserService;
 
 class ProjectCardProgress extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'projects::partials.projectCardProgressBar';
 
     private ProjectService $projectsService;
+
     private TicketService $ticketsService;
+
     private UserService $usersService;
+
     private TimesheetService $timesheetsService;
+
     private ReportService $reportsService;
+
     private SettingRepository $settingRepo;
+
     private CalendarRepository $calendarRepo;
 
     private Clients $clientRepo;
@@ -42,7 +45,7 @@ class ProjectCardProgress extends HtmxController
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param  \Leantime\Domain\Projects\Services\Projects  $projectService  The projects domain service.
      * @return void
      */
     public function init(
@@ -70,18 +73,18 @@ class ProjectCardProgress extends HtmxController
         $this->menuService = $menuService;
         $this->reactionService = $reactionService;
 
-
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
-    public function getProgress() {
+    public function getProgress()
+    {
 
         $projectId = $_GET['pId'];
 
-        $project = array("id" => $projectId);
+        $project = ['id' => $projectId];
 
         $project['progress'] = $this->projectsService->getProjectProgress($project['id']);
-        $projectComment = $this->commentsService->getComments("project", $project['id']);
+        $projectComment = $this->commentsService->getComments('project', $project['id']);
         $project['team'] = $this->projectsService->getUsersAssignedToProject($project['id']);
 
         if ($projectComment && $projectComment->count() >= 1) {
@@ -92,13 +95,13 @@ class ProjectCardProgress extends HtmxController
             $project['status'] = '';
         }
 
-        $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
+        $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
 
-        $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+        $currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());
 
-        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
-        $this->tpl->assign("currentUrlPath", $currentUrlPath);
-        $this->tpl->assign("project", $project);
-        $this->tpl->assign("type", "full");
+        $this->tpl->assign('projectTypeAvatars', $projectTypeAvatars);
+        $this->tpl->assign('currentUrlPath', $currentUrlPath);
+        $this->tpl->assign('project', $project);
+        $this->tpl->assign('type', 'full');
     }
 }

@@ -8,41 +8,39 @@ use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
 
-class EmailWorker {
-
-
+class EmailWorker
+{
     public function __construct(
         private Users $userRepo,
         private Setting $settingsRepo,
         private Mailer $mailer,
         private Queue $queue,
         private Language $language
-    ) {
-    }
+    ) {}
 
-    public function handleQueue($messages) {
+    public function handleQueue($messages)
+    {
 
-
-        $allMessagesToSend = array();
+        $allMessagesToSend = [];
         $n = 0;
         foreach ($messages as $message) {
             $n++;
             $currentUserId = $message['userId'];
 
             //Don't send messages older than 2 weeks.
-            $fromTz = new \DateTimeZone("UTC");
-            $messageDate = \DateTime::createFromFormat("Y-m-d H:i:s", $message['thedate'], $fromTz);
+            $fromTz = new \DateTimeZone('UTC');
+            $messageDate = \DateTime::createFromFormat('Y-m-d H:i:s', $message['thedate'], $fromTz);
 
-            $today = new \DateTime(datetime:'now', timezone: $fromTz);
+            $today = new \DateTime(datetime: 'now', timezone: $fromTz);
 
-            if($messageDate->diff($today)->days <= 14) {
+            if ($messageDate->diff($today)->days <= 14) {
 
-                $allMessagesToSend[$currentUserId][$message['msghash']] = array(
+                $allMessagesToSend[$currentUserId][$message['msghash']] = [
                     'thedate' => $message['thedate'],
                     'subject' => $message['subject'],
                     'message' => $message['message'],
                     'projectId' => $message['projectId'],
-                );
+                ];
 
             }
             // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
@@ -61,7 +59,7 @@ class EmailWorker {
             $recipient = $theuser['username'];
 
             // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails
-            $lastMessageDate = strtotime($this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".lastMessageDate"));
+            $lastMessageDate = strtotime($this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.lastMessageDate'));
             $nowDate = time();
 
             // echo for DEBUG PURPOSE
@@ -69,11 +67,11 @@ class EmailWorker {
             $timeSince = abs($nowDate - $lastMessageDate);
 
             //Get company message frequency default
-            $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+            $messageFrequency = $this->settingsRepo->getSetting('companysettings.messageFrequency');
 
             //Check if user has frequency set
             if (empty($messageFrequency)) {
-                $messageFrequency = $this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".messageFrequency");
+                $messageFrequency = $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.messageFrequency');
             }
 
             // Last security to avoid flooding people.
@@ -100,12 +98,12 @@ class EmailWorker {
                 reset($messageToSendToUser);
                 $this->mailer->setSubject(current($messageToSendToUser)['subject']);
             } else {
-                $this->mailer->setSubject($this->language->__("email_notifications.latest_updates_subject"));
+                $this->mailer->setSubject($this->language->__('email_notifications.latest_updates_subject'));
             }
             $this->mailer->setHtml($formattedHTML);
-            $to = array($recipient);
+            $to = [$recipient];
 
-            $this->mailer->sendMail($to, "Leantime System");
+            $this->mailer->sendMail($to, 'Leantime System');
 
             // Delete the corresponding messages from the queue when the mail is sent
             // TODO here : only delete these if the send was successful
@@ -116,27 +114,23 @@ class EmailWorker {
 
             // Store the last time a mail was sent to $recipient email
             $thedate = date('Y-m-d H:i:s');
-            $this->settingsRepo->saveSetting("usersettings." . $theuser['id'] . ".lastMessageDate", $thedate);
+            $this->settingsRepo->saveSetting('usersettings.'.$theuser['id'].'.lastMessageDate', $thedate);
         }
     }
 
     // Fake template to be replaced by something better
     // TODO : Rework email templating system
-    /**
-     * @param $messageToSendToUser
-     * @return string
-     */
     private function doFormatMail($messageToSendToUser): string
     {
-        $outputHTML = $this->language->__('text.here_are_news') . "<br/>\n";
+        $outputHTML = $this->language->__('text.here_are_news')."<br/>\n";
         foreach ($messageToSendToUser as $chunk) {
-            $outputHTML .= "<div style=\"border-top: 1px solid #ddd; margin: 3px; padding: 3px;\">";
-            $outputHTML .= "<div style=\"margin: 0px; padding: 0px; float : right\">" . $chunk['thedate'] . "</div>";
-            $outputHTML .= "<div><p><em>" . $chunk['subject'] . "</em></p>";
-            $outputHTML .= $chunk['message'] . "</div>";
-            $outputHTML .= "</div>";
+            $outputHTML .= '<div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;">';
+            $outputHTML .= '<div style="margin: 0px; padding: 0px; float : right">'.$chunk['thedate'].'</div>';
+            $outputHTML .= '<div><p><em>'.$chunk['subject'].'</em></p>';
+            $outputHTML .= $chunk['message'].'</div>';
+            $outputHTML .= '</div>';
         }
+
         return $outputHTML;
     }
-
 }

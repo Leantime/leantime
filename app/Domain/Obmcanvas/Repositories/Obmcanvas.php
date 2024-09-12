@@ -8,9 +8,6 @@ namespace Leantime\Domain\Obmcanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
 
-    /**
-     *
-     */
     class Obmcanvas extends Canvas
     {
         /**
@@ -38,7 +35,6 @@ namespace Leantime\Domain\Obmcanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
             'obm_kp' => ['icon' => 'fa-ring',                'title' => 'box.obm.kp'],
@@ -56,7 +52,6 @@ namespace Leantime\Domain\Obmcanvas\Repositories {
          * relatesLabels - Relates to label
          *
          * @acces public
-         * @var   array
          */
         protected array $relatesLabels = [];
     }

@@ -8,9 +8,6 @@ namespace Leantime\Domain\Retroscanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
 
-    /**
-     *
-     */
     class Retroscanvas extends Canvas
     {
         /**
@@ -30,11 +27,10 @@ namespace Leantime\Domain\Retroscanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
-            'well'       => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
-            'notwell'    => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
+            'well' => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
+            'notwell' => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
             'startdoing' => ['icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing'],
         ];
 
@@ -42,7 +38,6 @@ namespace Leantime\Domain\Retroscanvas\Repositories {
          * dataLabels - Data labels (may be extended)
          *
          * @acces protected
-         * @var   array
          */
         protected array $dataLabels = [
             1 => ['title' => 'label.description', 'field' => 'conclusion',  'active' => true],
@@ -54,10 +49,8 @@ namespace Leantime\Domain\Retroscanvas\Repositories {
          * statusLabels - Status labels (may be extended)
          *
          * @acces protected
-         * @var   array
          */
         protected array $statusLabels = [];
-
 
         protected array $relatesLabels = [];
     }

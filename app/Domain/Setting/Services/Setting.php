@@ -8,16 +8,10 @@ namespace Leantime\Domain\Setting\Services {
     use Ramsey\Uuid\Uuid;
 
     /**
-     *
-     *
      * @api
      */
     class Setting
     {
-        /**
-         * @param SettingRepository $settingsRepo
-         *
-     */
         public function __construct(
             public SettingRepository $settingsRepo,
         ) {
@@ -25,12 +19,10 @@ namespace Leantime\Domain\Setting\Services {
         }
 
         /**
-         * @param $file
-         * @return bool
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function setLogo($file): bool
         {
 
@@ -38,19 +30,19 @@ namespace Leantime\Domain\Setting\Services {
 
             $upload->initFile($file['file']);
 
-            $newname = md5(session("userdata.id") . time());
+            $newname = md5(session('userdata.id').time());
             $upload->renameFile($newname);
 
             if ($upload->error == '') {
                 $url = $upload->uploadPublic();
 
                 if ($url !== false) {
-                    $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
+                    $this->settingsRepo->saveSetting('companysettings.logoPath', $url);
 
                     if (str_starts_with($url, 'http')) {
-                        session(["companysettings.logoPath" => $url]);
+                        session(['companysettings.logoPath' => $url]);
                     } else {
-                        session(["companysettings.logoPath" => BASE_URL . $url]);
+                        session(['companysettings.logoPath' => BASE_URL.$url]);
                     }
 
                     return true;
@@ -61,62 +53,50 @@ namespace Leantime\Domain\Setting\Services {
         }
 
         /**
-         * @return void
-         *
-     * @api
-     */
+         * @api
+         */
         public function resetLogo(): void
         {
 
-            $this->settingsRepo->deleteSetting("companysettings.logoPath");
-            session()->forget("companysettings.logoPath");
-            session(["companysettings.logoPath" => ""]);
+            $this->settingsRepo->deleteSetting('companysettings.logoPath');
+            session()->forget('companysettings.logoPath');
+            session(['companysettings.logoPath' => '']);
         }
 
         /**
-         * @param $key
-         * @param $value
-         * @return bool
-         *
-     * @api
-     */
+         * @api
+         */
         public function saveSetting($key, $value): bool
         {
             return $this->settingsRepo->saveSetting($key, $value);
         }
 
         /**
-         * @param $key
          * @return false|mixed
          *
-     * @api
-     */
+         * @api
+         */
         /**
-         * @param $key
          * @return false|mixed
          *
-     * @api
-     */
+         * @api
+         */
         public function getSetting($key): mixed
         {
             return $this->settingsRepo->getSetting($key);
         }
 
         /**
-         * @return SettingRepository
-         *
-     * @api
-     */
+         * @api
+         */
         public function getSettingsRepo(): SettingRepository
         {
             return $this->settingsRepo;
         }
 
         /**
-         * @param SettingRepository $settingsRepo
-         *
-     * @api
-     */
+         * @api
+         */
         public function setSettingsRepo(SettingRepository $settingsRepo): void
         {
             $this->settingsRepo = $settingsRepo;
@@ -125,7 +105,6 @@ namespace Leantime\Domain\Setting\Services {
         /**
          * Gets the company id (Sets if it's not set)
          *
-         * @return string
          **/
         public function getCompanyId(): string
         {

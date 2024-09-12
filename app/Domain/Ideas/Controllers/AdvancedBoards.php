@@ -3,26 +3,22 @@
 namespace Leantime\Domain\Ideas\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Core\Controller\Frontcontroller;
-use Symfony\Component\HttpFoundation\Response;
+use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Ideas\Services\Ideas as IdeaService;
-
-/**
- *
- */
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdvancedBoards extends Controller
 {
     private ProjectService $projectService;
+
     private IdeaRepository $ideaRepo;
+
     private IdeaService $ideaService;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
      */
     public function init(
         IdeaRepository $ideaRepo,
@@ -32,38 +28,35 @@ class AdvancedBoards extends Controller
         $this->projectService = $projectService;
         $this->ideaService = new IdeaService($ideaRepo);
 
-        session(["lastPage" => CURRENT_URL]);
-        session(["lastIdeaView" => "kanban"]);
+        session(['lastPage' => CURRENT_URL]);
+        session(['lastIdeaView' => 'kanban']);
     }
-
-
 
     public function get($params): Response
     {
-        
-        $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
 
+        $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
 
-        if (session()->exists("currentIdeaCanvas")) {
-            $currentCanvasId = session("currentIdeaCanvas");
+        if (session()->exists('currentIdeaCanvas')) {
+            $currentCanvasId = session('currentIdeaCanvas');
         } else {
             $currentCanvasId = -1;
-            session(["currentIdeaCanvas" => ""]);
+            session(['currentIdeaCanvas' => '']);
         }
 
-        if (count($allCanvas) > 0 && session("currentIdeaCanvas") == '') {
+        if (count($allCanvas) > 0 && session('currentIdeaCanvas') == '') {
             $currentCanvasId = $allCanvas[0]->id;
-            session(["currentIdeaCanvas" => $currentCanvasId]);
+            session(['currentIdeaCanvas' => $currentCanvasId]);
         }
 
-        if (isset($params["id"]) === true) {
-            $currentCanvasId = (int)$params["id"];
-            session(["currentIdeaCanvas" => $currentCanvasId]);
+        if (isset($params['id']) === true) {
+            $currentCanvasId = (int) $params['id'];
+            session(['currentIdeaCanvas' => $currentCanvasId]);
         }
 
-        if (isset($params["searchCanvas"]) === true) {
-            $currentCanvasId = (int)$params["searchCanvas"];
-            session(["currentIdeaCanvas" => $currentCanvasId]);
+        if (isset($params['searchCanvas']) === true) {
+            $currentCanvasId = (int) $params['searchCanvas'];
+            session(['currentIdeaCanvas' => $currentCanvasId]);
         }
 
         $this->prepareViewData($currentCanvasId, $allCanvas);
@@ -76,26 +69,28 @@ class AdvancedBoards extends Controller
 
     public function post($params): Response
     {
-        if (isset($params["searchCanvas"])) {
-            $currentCanvasId = (int)$params["searchCanvas"];
-            session(["currentIdeaCanvas" => $currentCanvasId]);
+        if (isset($params['searchCanvas'])) {
+            $currentCanvasId = (int) $params['searchCanvas'];
+            session(['currentIdeaCanvas' => $currentCanvasId]);
         }
 
-        if (isset($params["newCanvas"])) {
+        if (isset($params['newCanvas'])) {
             $result = $this->ideaService->createNewCanvas($params);
             if ($result['success']) {
-                $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', "ideaboard_created");
-                return Frontcontroller::redirect(BASE_URL . "/ideas/advancedBoards/");
+                $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', 'ideaboard_created');
+
+                return Frontcontroller::redirect(BASE_URL.'/ideas/advancedBoards/');
             } else {
                 $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
             }
         }
 
-        if (isset($params["editCanvas"]) && $currentCanvasId > 0) {
+        if (isset($params['editCanvas']) && $currentCanvasId > 0) {
             $result = $this->ideaService->editCanvas($params, $currentCanvasId);
             if ($result['success']) {
-                $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "ideaboard_edited");
-                return Frontcontroller::redirect(BASE_URL . "/ideas/advancedBoards/");
+                $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success', 'ideaboard_edited');
+
+                return Frontcontroller::redirect(BASE_URL.'/ideas/advancedBoards/');
             } else {
                 $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
             }
@@ -108,23 +103,19 @@ class AdvancedBoards extends Controller
         // }
     }
 
-
     private function prepareViewData($currentCanvasId, $allCanvas = null)
     {
         if ($allCanvas === null) {
-            $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
+            $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
         }
-        
 
         $this->tpl->assign('currentCanvas', $currentCanvasId);
-        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
+        $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
         $this->tpl->assign('allCanvas', $allCanvas);
         $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
         $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
     }
     /**
      * run - display template and edit data
-     *
-     * @access public
      */
 }

@@ -24,12 +24,33 @@
 
                 <x-global::content.card variation="content">
                     <x-slot:card-context-buttons>
+
+                        <x-global::forms.button
+                            shape="circle"
+                            content-role="tertiary"
+                            data-tippy-content="{{ __('label.favorite_tooltip') }}"
+                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')"
+                            class="{{ $isFavorite ? 'btn-active' : '' }}">
+                            <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                        </x-global::forms.button>
+
+                        <x-global::forms.button
+                            shape="circle"
+                            content-role="tertiary"
+                            data-tippy-content="{{ __('label.copy_url_tooltip') }}"
+                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')">
+                            <i class='fa fa-link'></i>
+                        </x-global::forms.button>
+
                         @if ($login::userIsAtLeast($roles::$admin))
-                            <x-global::actions.dropdown label-text="<i class='fa fa-ellipsis'></i>" content-role="secondary"
+                            <x-global::actions.dropdown content-role="tertiary"
                                                         position="bottom" align="start" class=""
                                                         button-shape="circle"
                                                         data-tippy-content="{{ __('label.edit_project') }}"
                                                         href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}">
+                                <x-slot:label-text>
+                                    <i class='fa fa-ellipsis-v'></i>
+                                </x-slot:label-text>
 
                                 <x-slot:menu>
                                     <!-- Edit Project Menu Item -->
@@ -48,23 +69,6 @@
                             </x-global::actions.dropdown>
 
                         @endif
-
-                        <x-global::forms.button
-                            shape="circle"
-                            content-role="secondary"
-                            data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')">
-                            <i class='fa fa-link'></i>
-                        </x-global::forms.button>
-
-                        <x-global::forms.button
-                            shape="circle"
-                            content-role="secondary"
-                            data-tippy-content="{{ __('label.favorite_tooltip') }}"
-                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')"
-                            class="{{ $isFavorite ? 'btn-active' : '' }}">
-                            <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
-                        </x-global::forms.button>
 
                     </x-slot:card-context-buttons>
 
@@ -93,7 +97,7 @@
 
                 <x-global::content.card variation="content">
                     <x-slot:card-context-buttons>
-                        <x-global::forms.button href="#/tickets/newTicket" content-role="ghost">
+                        <x-global::forms.button href="#/tickets/newTicket" content-role="tertiary">
                             <i class="fa fa-plus"></i> Create To-Do
                         </x-global::forms.button>
                     </x-slot:card-context-buttons>

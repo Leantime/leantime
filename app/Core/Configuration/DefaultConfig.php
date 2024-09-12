@@ -3,25 +3,23 @@
 namespace Leantime\Core\Configuration;
 
 use Leantime\Core\Support\Attributes\LaravelConfig;
+
 /**
  * Default Configuration Class
- *
- * @package    leantime
- * @subpackage core
  */
 class DefaultConfig
 {
-    # General =====================================================================================
+    // General =====================================================================================
     /**
      * @var string Name of your site, can be changed later
      */
-    #[LaravelConfig("app.name")]
+    #[LaravelConfig('app.name')]
     public string $sitename = 'Leantime';
 
     /**
      * @var string Default language
      */
-    #[LaravelConfig("app.locale")]
+    #[LaravelConfig('app.locale')]
     public string $language = 'en-US';
 
     /**
@@ -37,7 +35,7 @@ class DefaultConfig
     /**
      * @var string Base URL, trailing slash not needed
      */
-    #[LaravelConfig("app.url")]
+    #[LaravelConfig('app.url')]
     public string $appUrl = '';
 
     /**
@@ -63,7 +61,7 @@ class DefaultConfig
     /**
      * @var string Default timezone
      */
-    #[LaravelConfig("app.timezone")]
+    #[LaravelConfig('app.timezone')]
     public string $defaultTimezone = 'America/Los_Angeles';
 
     /**
@@ -74,7 +72,7 @@ class DefaultConfig
     /**
      * @var bool|int Debug flag
      */
-    #[LaravelConfig("app.debug")]
+    #[LaravelConfig('app.debug')]
     public int|bool $debug = 0;
 
     /**
@@ -85,13 +83,13 @@ class DefaultConfig
     /**
      * @var environment
      */
-    #[LaravelConfig("app.env")]
+    #[LaravelConfig('app.env')]
     public string $env = 'production';
 
     /**
      * @var string Log Path
      */
-    public string $logPath = APP_ROOT . '/logs/error.log';
+    public string $logPath = APP_ROOT.'/logs/error.log';
 
     /**
      * @var bool Whether or not to enable the Poor Man's Cron fallback
@@ -103,8 +101,7 @@ class DefaultConfig
      */
     public bool $disableLoginForm = false;
 
-
-    # Database ====================================================================================
+    // Database ====================================================================================
     /**
      * @var string Database host
      */
@@ -130,8 +127,7 @@ class DefaultConfig
      */
     public string $dbPort = '3306';
 
-
-    # Fileupload ==================================================================================
+    // Fileupload ==================================================================================
     /**
      * @var string Local relative path to store uploaded files (if not using S3)
      */
@@ -142,8 +138,7 @@ class DefaultConfig
      */
     public string $dbBackupPath = 'userfiles/';
 
-
-    # S3 configuration ============================================================================
+    // S3 configuration ============================================================================
     /**
      * @var bool Set to true if you want to use S3 instead of local files
      */
@@ -181,16 +176,16 @@ class DefaultConfig
 
     /**
      * @var string|null S3 EndPoint S3 Compatible
+     *
      * @see https://sfo2.digitaloceanspaces.com
      */
     public ?string $s3EndPoint = null;
 
-
-    # Sessions ====================================================================================
+    // Sessions ====================================================================================
     /**
      * @var string Salting sessions. Replace with a strong password
      */
-    #[LaravelConfig("app.key")]
+    #[LaravelConfig('app.key')]
     public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
@@ -198,8 +193,7 @@ class DefaultConfig
      */
     public int $sessionExpiration = 28800;
 
-
-    # Email =======================================================================================
+    // Email =======================================================================================
     /**
      * @var string Return email address
      */
@@ -250,8 +244,7 @@ class DefaultConfig
      */
     public int $smtpPort = 587;
 
-
-    # ldap default settings (can be changed in company settings) ==================================
+    // ldap default settings (can be changed in company settings) ==================================
     /**
      * @var bool Set to true if you want to use LDAP
      */
@@ -318,8 +311,7 @@ class DefaultConfig
 
     /**
      * @var bool Create users
-     * Create user if not exists
-     *
+     *           Create user if not exists
      */
     public bool $ldapCreateUser = false;
 
@@ -354,13 +346,12 @@ class DefaultConfig
         }';
     //Default Leantime Role on creation. (set to editor)
 
-
     /**
      * @var int Default Leantime Role on creation. (set to editor)
      */
     public int $ldapDefaultRoleKey = 20;
 
-    # Plugin Settings ==============================================================================
+    // Plugin Settings ==============================================================================
     /**
      * @var string Comma separated list of plugins that will always be loaded
      */
@@ -371,7 +362,7 @@ class DefaultConfig
      **/
     public string $marketplaceUrl = 'https://marketplace.leantime.io/';
 
-    # OIDC Settings ================================================================================
+    // OIDC Settings ================================================================================
     /**
      * @var bool Set to true if you want to use OIDC
      */
@@ -431,7 +422,6 @@ class DefaultConfig
      * @var bool create user
      *
      * Create user if not exists
-     *
      */
     public bool $oidcCreateUser = false;
 
@@ -439,7 +429,6 @@ class DefaultConfig
      * @var string OIDC
      *
      * Default Role for new users
-     *
      */
     public int $oidcDefaultRole = 20;
 
@@ -478,8 +467,7 @@ class DefaultConfig
      */
     public string $oidcFieldDepartment = '';
 
-
-    # Redis Settings ===============================================================================
+    // Redis Settings ===============================================================================
     /**
      * @var bool Set to true if you want to use Redis
      */
@@ -515,7 +503,7 @@ class DefaultConfig
      */
     public string $redisPrefix = 'ltRedis';
 
-    # Security/Rate Limiting Settings ===============================================================================
+    // Security/Rate Limiting Settings ===============================================================================
     /**
      * @var string trusted Proxies
      */

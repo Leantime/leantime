@@ -13,26 +13,16 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * environment - class To handle environment variables
- *
- * @package    leantime
- * @subpackage core
  */
 class Environment extends Repository implements ArrayAccess, ConfigContract
 {
-    # Config Files ===============================================================================
+    // Config Files ===============================================================================
 
-
-    /**
-     * @var ?object
-     */
     public ?object $yaml;
 
-    /**
-     * @var Config|null
-     */
     public ?Config $phpConfig;
 
-    # Config ======================================================================================
+    // Config ======================================================================================
     /**
      * @var array The Config
      */
@@ -40,6 +30,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * @var array list of legacy mappings
+     *
      * @todo warn about key changes after deprecating config/configuration.php
      * @todo remove this after removing support for config/configuration.php
      */
@@ -74,7 +65,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * environment constructor.
-     * @param DefaultConfig $defaultConfiguration
+     *
      * @throws Exception
      */
     public function __construct(DefaultConfig $defaultConfiguration)
@@ -82,21 +73,21 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
         /* PHP */
         $this->phpConfig = null;
-        if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
+        if (file_exists($phpConfigFile = APP_ROOT.'/config/configuration.php')) {
 
             require_once $phpConfigFile;
 
             if (! class_exists(Config::class)) {
-                throw new Exception("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
+                throw new Exception('We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.');
             }
 
-            $this->phpConfig = new Config();
+            $this->phpConfig = new Config;
         }
 
         /* YAML */
         $this->yaml = null;
-        if (file_exists(APP_ROOT . "/config/config.yaml")) {
-            $this->yaml = Yaml::parseFile(APP_ROOT . "/config/config.yaml");
+        if (file_exists(APP_ROOT.'/config/config.yaml')) {
+            $this->yaml = Yaml::parseFile(APP_ROOT.'/config/config.yaml');
         }
 
         $defaultConfigurationProperties = get_class_vars($defaultConfiguration::class);
@@ -107,7 +98,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
             $type = $type == 'NULL' ? 'string' : $type;
 
             $this->config[$propertyName] = $this->environmentHelper(
-                envVar: self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_' . Str::of($propertyName)->snake()->upper()->toString(),
+                envVar: self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_'.Str::of($propertyName)->snake()->upper()->toString(),
                 default: $defaultConfigurationProperties[$propertyName],
                 dataType: $type,
             );
@@ -119,10 +110,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * getBool - get a boolean value from the environment
-     *
-     * @param string $envVar
-     * @param bool   $default
-     * @return bool
      */
     private function getBool(string $envVar, bool $default): bool
     {
@@ -131,10 +118,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * getString - get a string value from the environment
-     *
-     * @param string $envVar
-     * @param string $default
-     * @return string
      */
     private function getString(string $envVar, string $default = ''): string
     {
@@ -143,13 +126,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * environmentHelper - helper function to get a value from the environment
-     *
-     * @param string $envVar
-     * @param mixed  $default
-     * @param string $dataType
-     * @return mixed
      */
-    private function environmentHelper(string $envVar, mixed $default, string $dataType = "string"): mixed
+    private function environmentHelper(string $envVar, mixed $default, string $dataType = 'string'): mixed
     {
         /**
          * Basically, here, we are doing the fetch order of
@@ -163,18 +141,13 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
-            "string" => $found,
-            "boolean" => $found == "true",
-            "number" => intval($found),
+            'string' => $found,
+            'boolean' => $found == 'true',
+            'number' => intval($found),
             default => $found,
         };
     }
 
-    /**
-     * @param string $envVar
-     * @param mixed  $currentValue
-     * @return mixed
-     */
     private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
     {
 
@@ -189,10 +162,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * tryGetFromEnvironment - try to get a value from the environment
-     *
-     * @param string $envVar
-     * @param mixed  $currentValue
-     * @return mixed
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
     {
@@ -202,16 +171,13 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * tryGetFromYaml - try to get a value from the yaml file
-     *
-     * @param string $envVar
-     * @param mixed  $currentValue
-     * @return mixed
      */
     private function tryGetFromYaml(string $envVar, mixed $currentValue): mixed
     {
 
         if ($this->yaml) {
             $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
+
             return $this->yaml[$key] ?? $currentValue;
         }
 
@@ -221,8 +187,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration value exists.
      *
-     * @param  string $key
-     * @return bool
+     * @param  string  $key
      */
     public function has($key): bool
     {
@@ -232,9 +197,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Get the specified configuration value.
      *
-     * @param  array|string $key
-     * @param  mixed        $default
-     * @return mixed
+     * @param  array|string  $key
+     * @param  mixed  $default
      */
     public function get($key, $default = null): mixed
     {
@@ -252,8 +216,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Get many configuration values.
      *
-     * @param array $keys
-     * @return array
+     * @param  array  $keys
      */
     public function getMany($keys): array
     {
@@ -273,9 +236,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Set a given configuration value.
      *
-     * @param  array|string $key
-     * @param  mixed        $value
-     * @return void
+     * @param  array|string  $key
+     * @param  mixed  $value
      */
     public function set($key, $value = null): void
     {
@@ -290,9 +252,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Prepend a value onto an array configuration value.
      *
-     * @param  string $key
+     * @param  string  $key
      * @param  mixed  $value
-     * @return void
      */
     public function prepend($key, $value): void
     {
@@ -306,9 +267,8 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Push a value onto an array configuration value.
      *
-     * @param  string $key
+     * @param  string  $key
      * @param  mixed  $value
-     * @return void
      */
     public function push($key, $value): void
     {
@@ -321,8 +281,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * Get all of the configuration items for the application.
-     *
-     * @return array
      */
     public function all(): array
     {
@@ -332,8 +290,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration option exists.
      *
-     * @param  string $key
-     * @return bool
+     * @param  string  $key
      */
     public function offsetExists($key): bool
     {
@@ -343,8 +300,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Get a configuration option.
      *
-     * @param  string $key
-     * @return mixed
+     * @param  string  $key
      */
     public function offsetGet($key): mixed
     {
@@ -354,9 +310,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Set a configuration option.
      *
-     * @param  string $key
-     * @param  mixed  $value
-     * @return void
+     * @param  string  $key
      */
     public function offsetSet($key, mixed $value): void
     {
@@ -366,8 +320,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     /**
      * Unset a configuration option.
      *
-     * @param  string $key
-     * @return void
+     * @param  string  $key
      */
     public function offsetUnset($key): void
     {
@@ -376,9 +329,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * Dynamically access the configuration using object syntax.
-     *
-     * @param string $key
-     * @return mixed
      */
     public function __get(string $key): mixed
     {
@@ -387,11 +337,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * Dynamically set the configuration using object syntax.
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return void
      */
     public function __set(string $key, mixed $value): void
     {
@@ -400,10 +345,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * Dynamically check if a configuration option is set using object syntax.
-     *
-     * @param string $key
-     *
-     * @return bool
      */
     public function __isset(string $key): bool
     {
@@ -412,10 +353,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
     /**
      * Dynamically unset a configuration option using object syntax.
-     *
-     * @param string $key
-     *
-     * @return void
      */
     public function __unset(string $key): void
     {

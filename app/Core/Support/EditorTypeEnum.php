@@ -9,21 +9,19 @@ namespace Leantime\Core\Support;
  */
 enum EditorTypeEnum: string
 {
-
     /**
      * Shows a simplified editor used for comments
      */
-    case Simple = "tinymceSimple";
+    case Simple = 'tinymceSimple';
 
     /**
      * Shows a more complex editor for entity descriptions
      */
-    case Complex = "tinymceComplex";
+    case Complex = 'tinymceComplex';
 
     /**
      * Shows the full editor with all featuers
      */
-    case Notes = "tinymceNotes";
-
+    case Notes = 'tinymceNotes';
 
 }

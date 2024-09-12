@@ -16,30 +16,27 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Widgets\Services\Widgets;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Home extends Controller
     {
         private ProjectService $projectsService;
+
         private TicketService $ticketsService;
+
         private UserService $usersService;
+
         private TimesheetService $timesheetsService;
+
         private SettingRepository $settingRepo;
+
         private CalendarRepository $calendarRepo;
 
         private Reactions $reactionsService;
+
         private Reports $reportService;
 
         private Widgets $widgetService;
 
         /**
-         * @param ProjectService     $projectsService
-         * @param TicketService      $ticketsService
-         * @param UserService        $usersService
-         * @param TimesheetService   $timesheetsService
-         * @param SettingRepository  $settingRepo
-         * @param CalendarRepository $calendarRepo
          * @return void
          */
         public function init(
@@ -63,58 +60,55 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reportService = $reportsService;
             $this->widgetService = $widgetService;
 
-            session(["lastPage" => BASE_URL . "/dashboard/home"]);
+            session(['lastPage' => BASE_URL.'/dashboard/home']);
         }
 
         /**
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get(): Response
         {
 
             //Debug uncomment to reset dashboard
-            if(isset($_GET['resetDashboard']) === true){
-                $this->widgetService->resetDashboard(session("userdata.id"));
+            if (isset($_GET['resetDashboard']) === true) {
+                $this->widgetService->resetDashboard(session('userdata.id'));
             }
-            $dashboardGrid = $this->widgetService->getActiveWidgets(session("userdata.id"));
-            $this->tpl->assign("dashboardGrid", $dashboardGrid);
+            $dashboardGrid = $this->widgetService->getActiveWidgets(session('userdata.id'));
+            $this->tpl->assign('dashboardGrid', $dashboardGrid);
 
-            $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
-            $this->tpl->assign("completedOnboarding", $completedOnboarding);
-
+            $completedOnboarding = $this->settingRepo->getSetting('companysettings.completedOnboarding');
+            $this->tpl->assign('completedOnboarding', $completedOnboarding);
 
             //Fallback in case telemetry does not get executed as part of the cron job
-/*            try {
+            /*            try {
 
 
-               $reportService = app()->make(Reports::class);
-               $promise = $reportService->sendAnonymousTelemetry();
-                if($promise !== false){
-                    $promise->wait();
-                }
+                           $reportService = app()->make(Reports::class);
+                           $promise = $reportService->sendAnonymousTelemetry();
+                            if($promise !== false){
+                                $promise->wait();
+                            }
 
-            }catch(\Exception $e){
-                report($e);
-            }*/
+                        }catch(\Exception $e){
+                            report($e);
+                        }*/
 
             return $this->tpl->display('dashboard.home');
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
         {
 
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
-                $this->settingRepo->saveSetting("usersettings." . session("userdata.id") . ".dashboardGrid", serialize($params['data']));
-                return new Response();
+                $this->settingRepo->saveSetting('usersettings.'.session('userdata.id').'.dashboardGrid', serialize($params['data']));
+
+                return new Response;
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/dashboard/home");
+            return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
         }
     }
 }

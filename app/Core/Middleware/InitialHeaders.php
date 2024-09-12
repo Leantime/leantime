@@ -14,7 +14,8 @@ class InitialHeaders
     /**
      * Set up the initial headers
      *
-     * @param \Closure(IncomingRequest): Response $next
+     * @param  \Closure(IncomingRequest): Response  $next
+     *
      * @throws BindingResolutionException
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
@@ -33,18 +34,18 @@ class InitialHeaders
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];
         $cspParts = self::dispatch_filter('cspParts', $cspParts);
-        $csp = implode(";", $cspParts);
+        $csp = implode(';', $cspParts);
 
         foreach (
             self::dispatch_filter('headers', [
-            'X-Frame-Options' => 'SAMEORIGIN',
-            'X-XSS-Protection' => '1; mode=block',
-            'X-Content-Type-Options' => 'nosniff',
-            'Referrer-Policy', 'same-origin',
-            'Access-Control-Allow-Origin' => BASE_URL,
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Content-Security-Policy' => $csp,
+                'X-Frame-Options' => 'SAMEORIGIN',
+                'X-XSS-Protection' => '1; mode=block',
+                'X-Content-Type-Options' => 'nosniff',
+                'Referrer-Policy', 'same-origin',
+                'Access-Control-Allow-Origin' => BASE_URL,
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Content-Security-Policy' => $csp,
             ]) as $key => $value
         ) {
             if ($response->headers->has($key)) {

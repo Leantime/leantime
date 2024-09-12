@@ -2,18 +2,14 @@
 
 namespace Leantime\Core;
 
-
 use Illuminate\Container\Container;
-use Illuminate\Events\EventServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Mix;
 use Illuminate\Foundation\PackageManifest;
 use Illuminate\Foundation\ProviderRepository;
-use Illuminate\Log\LogServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Support\Collection;
-use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\ApiRequest;
@@ -26,21 +22,21 @@ use Leantime\Core\Providers\Logging;
  *
  * Represents an application.
  */
-class Application extends \Illuminate\Foundation\Application {
-
+class Application extends \Illuminate\Foundation\Application
+{
     use DispatchesEvents;
 
     /**
      * Constructor for the class.
      *
-     * @param string $basePath The base path for the application.
-     *
+     * @param  string  $basePath  The base path for the application.
      * @return void
      */
-    public function __construct($basePath = null) {
+    public function __construct($basePath = null)
+    {
 
         $this->publicPath = 'public/';
-        $this->namespace = "Leantime\\";
+        $this->namespace = 'Leantime\\';
 
         if ($basePath) {
             $this->setBasePath($basePath);
@@ -50,20 +46,20 @@ class Application extends \Illuminate\Foundation\Application {
         //Cache files are in root in Leantime not in bootstrap
         //Env vars are not available in config
 
-        putenv ("APP_EVENTS_CACHE=cache/events.php");
-        putenv ("APP_CONFIG_CACHE=cache/config.php");
-        putenv ("APP_ROUTES_CACHE=cache/routes.php");
-        putenv ("APP_SERVICES_CACHE=cache/services.php");
-        putenv ("APP_PACKAGES_CACHE=cache/packages.php");
+        putenv('APP_EVENTS_CACHE=cache/events.php');
+        putenv('APP_CONFIG_CACHE=cache/config.php');
+        putenv('APP_ROUTES_CACHE=cache/routes.php');
+        putenv('APP_SERVICES_CACHE=cache/services.php');
+        putenv('APP_PACKAGES_CACHE=cache/packages.php');
 
         //Our folder structure is different and we shall not bow to the bourgeoisie
-        $this->useAppPath($this->basePath."/app/Core/");
-        $this->useConfigPath($this->basePath."/config/");
-        $this->useEnvironmentPath($this->basePath."/config/");
-        $this->useBootstrapPath($this->basePath."/app/Core/Bootstrap/");
-        $this->usePublicPath($this->basePath."/Public/");
-        $this->useStoragePath($this->basePath."/userfiles");
-        $this->useLangPath($this->basePath."/app/Language");
+        $this->useAppPath($this->basePath.'/app/Core/');
+        $this->useConfigPath($this->basePath.'/config/');
+        $this->useEnvironmentPath($this->basePath.'/config/');
+        $this->useBootstrapPath($this->basePath.'/app/Core/Bootstrap/');
+        $this->usePublicPath($this->basePath.'/Public/');
+        $this->useStoragePath($this->basePath.'/userfiles');
+        $this->useLangPath($this->basePath.'/app/Language');
 
         $this->registerBaseBindings();
         $this->registerBaseServiceProviders();
@@ -87,7 +83,6 @@ class Application extends \Illuminate\Foundation\Application {
         ));
 
     }
-
 
     /**
      * Register the base service providers.
@@ -148,15 +143,16 @@ class Application extends \Illuminate\Foundation\Application {
         EventDispatcher::discoverListeners();
 
         //Calling the first event
-        self::dispatch_event("beforeBootingServiceProviders");
+        self::dispatch_event('beforeBootingServiceProviders');
 
         parent::boot();
 
-        self::dispatch_event("afterBootingServiceProviders");
+        self::dispatch_event('afterBootingServiceProviders');
 
     }
 
-    public function registerConfiguredProviders() {
+    public function registerConfiguredProviders()
+    {
 
         $providers = Collection::make($this->make('config')->get('app.providers'))
             ->partition(fn ($provider) => str_starts_with($provider, 'Leantime\\'));
@@ -168,7 +164,8 @@ class Application extends \Illuminate\Foundation\Application {
 
     }
 
-    public function getNamespace(){
-       return $this->namespace;
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 }

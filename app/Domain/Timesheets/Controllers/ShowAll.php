@@ -12,23 +12,16 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowAll extends Controller
 {
     private ProjectService $projectService;
+
     private ClientService $clientService;
+
     private TimesheetService $timesheetsService;
 
     /**
      * init - initialize private variables
-     *
-     * @param ProjectService   $projectService
-     * @param TimesheetService $timesheetsService
-     * @param ClientService    $clientService
-     *
-     * @return void
      */
     public function init(
         ProjectService $projectService,
@@ -43,7 +36,6 @@ class ShowAll extends Controller
     /**
      * run - display template and edit data
      *
-     * @return Response
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -52,7 +44,7 @@ class ShowAll extends Controller
         //Only admins and employees
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-        session(["lastPage" => BASE_URL . "/timesheets/showAll"]);
+        session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
         if (isset($_POST['saveInvoice']) === true) {
             $invEmpl = [];
@@ -78,22 +70,22 @@ class ShowAll extends Controller
         $kind = 'all';
         $userId = null;
 
-        if (!empty($_POST['kind'])) {
+        if (! empty($_POST['kind'])) {
             $kind = strip_tags($_POST['kind']);
         }
 
-        if (!empty($_POST['userId'])) {
+        if (! empty($_POST['userId'])) {
             $userId = intval(strip_tags($_POST['userId']));
         }
 
         $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
-        if (!empty($_POST['dateFrom'])) {
+        if (! empty($_POST['dateFrom'])) {
             $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
 
         $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
-        if (!empty($_POST['dateTo'])) {
-            $dateTo =  dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+        if (! empty($_POST['dateTo'])) {
+            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         if (isset($_POST['invEmpl'])) {
@@ -130,13 +122,13 @@ class ShowAll extends Controller
             $paidCheck = '0';
         }
 
-        $projectFilter = "";
-        if (!empty($_POST['project'])) {
+        $projectFilter = '';
+        if (! empty($_POST['project'])) {
             $projectFilter = strip_tags($_POST['project']);
         }
 
         $clientId = -1;
-        if (!empty($_POST['clientId'])) {
+        if (! empty($_POST['clientId'])) {
             $clientId = strip_tags($_POST['clientId']);
         }
 
@@ -160,7 +152,7 @@ class ShowAll extends Controller
         $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
             $dateFrom,
             $dateTo,
-            (int)$projectFilter,
+            (int) $projectFilter,
             $kind,
             $userId,
             $invEmplCheck,

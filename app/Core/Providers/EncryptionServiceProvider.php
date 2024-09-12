@@ -2,10 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Laravel\SerializableClosure\SerializableClosure;
-
 class EncryptionServiceProvider extends \Illuminate\Encryption\EncryptionServiceProvider
 {
     /**
@@ -29,20 +25,20 @@ class EncryptionServiceProvider extends \Illuminate\Encryption\EncryptionService
 
         $this->app->singleton('encrypter', function ($app) {
 
-            $configKey =  $app['config']->sessionPassword;
+            $configKey = $app['config']->sessionPassword;
 
             if (strlen($configKey) > 32) {
                 $configKey = substr($configKey, 0, 32);
             }
 
             if (strlen($configKey) < 32) {
-                $configKey =  str_pad($configKey, 32, "x", STR_PAD_BOTH);
+                $configKey = str_pad($configKey, 32, 'x', STR_PAD_BOTH);
             }
 
             $app['config']['app_key'] = $configKey;
             $app['config']['key'] = $configKey;
 
-            return new \Illuminate\Encryption\Encrypter($configKey, "AES-256-CBC");
+            return new \Illuminate\Encryption\Encrypter($configKey, 'AES-256-CBC');
         });
     }
 }

@@ -13,19 +13,11 @@ class Footer extends Composer
 
     protected AppSettings $settings;
 
-    /**
-     * @param AppSettings $settings
-     *
-     * @return void
-     */
     public function init(AppSettings $settings): void
     {
         $this->settings = $settings;
     }
 
-    /**
-     * @return array
-     */
     public function with(): array
     {
         return [

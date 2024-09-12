@@ -4,10 +4,7 @@ namespace Leantime\Core\Providers;
 
 use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Configuration\AppSettings;
-use Leantime\Core\Console\CliRequest;
 use Leantime\Core\Events\EventDispatcher;
-use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 class Cache extends ServiceProvider
@@ -29,17 +26,16 @@ class Cache extends ServiceProvider
 
             //installation cache is per server
             app('config')['cache.stores.installation'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
+                'driver' => ! empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
-                'path' => APP_ROOT . '/cache/installation',
+                'path' => APP_ROOT.'/cache/installation',
             ];
 
             //Instance is per company id
-            $instanceStore = fn () =>
-            app('config')['cache.stores.instance'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
+            $instanceStore = fn () => app('config')['cache.stores.instance'] = [
+                'driver' => ! empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
-                'path' => APP_ROOT . "/cache/" . app()->make(SettingsService::class)->getCompanyId(),
+                'path' => APP_ROOT.'/cache/'.app()->make(SettingsService::class)->getCompanyId(),
             ];
 
             if (app()->runningInConsole()) {
@@ -53,7 +49,7 @@ class Cache extends ServiceProvider
                 EventDispatcher::add_event_listener(
                     'leantime.core.middleware.installed.handle.after_install',
                     function () use ($instanceStore) {
-                        if (! session("isInstalled")) {
+                        if (! session('isInstalled')) {
                             return;
                         }
                         $instanceStore();
@@ -68,13 +64,11 @@ class Cache extends ServiceProvider
             return $cacheManager;
         });
 
-
         $this->app->singleton('cache.store', fn () => app('cache')->driver());
         $this->app->singleton('cache.psr6', fn () => new \Symfony\Component\Cache\Adapter\Psr16Adapter(app('cache.store')));
-        $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
+        $this->app->singleton('memcached.connector', fn () => new MemcachedConnector);
 
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
 
     }
-
 }

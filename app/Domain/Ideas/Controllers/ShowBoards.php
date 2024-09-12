@@ -4,30 +4,21 @@ namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Ideas\Services\Ideas as IdeasService;
-
-    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Auth\Services\Auth;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ShowBoards extends Controller
     {
         private IdeaRepository $ideaRepo;
+
         private ProjectService $projectService;
 
         private IdeasService $ideasService;
 
-
         /**
          * init - initialize private variables
-         *
-         * @access private
          */
         public function init(IdeaRepository $ideaRepo, ProjectService $projectService, IdeasService $ideasService)
         {
@@ -35,18 +26,19 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->projectService = $projectService;
             $this->ideasService = $ideasService;
 
-            session(["lastPage" => CURRENT_URL]);
-            session(["lastIdeaView" => "board"]);
+            session(['lastPage' => CURRENT_URL]);
+            session(['lastIdeaView' => 'board']);
         }
 
-        public function get($params):Response {
+        public function get($params): Response
+        {
             $result = $this->ideasService->handleShowBoardGetRequest($params);
             $this->assignTemplateVariables($result);
+
             return $this->tpl->display('ideas.showBoards');
         }
 
-
-        public function post($params):Response
+        public function post($params): Response
         {
             $result = $this->ideasService->handleShowboardPostRequest($params);
             if (isset($result['notification'])) {
@@ -68,10 +60,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
-
         private function assignTemplateVariables($result)
         {
             $this->tpl->assign('currentCanvas', $result['currentCanvasId']);

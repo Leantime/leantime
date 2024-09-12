@@ -15,18 +15,13 @@ class Header extends Composer
     ];
 
     private Environment $config;
+
     private Theme $themeCore;
+
     private AppSettings $appSettings;
+
     private Setting $settingsRepo;
 
-    /**
-     * @param Setting     $settingsRepo
-     * @param Environment $config
-     * @param AppSettings $appSettings
-     * @param Theme       $themeCore
-     *
-     * @return void
-     */
     public function init(
         Setting $settingsRepo,
         Environment $config,
@@ -39,9 +34,6 @@ class Header extends Composer
         $this->themeCore = $themeCore;
     }
 
-    /**
-     * @return array
-     */
     public function with(): array
     {
         $theme = $this->themeCore->getActive();
@@ -50,17 +42,17 @@ class Header extends Composer
         $themeFont = $this->themeCore->getFont();
         $sitename = '';
         // Set colors to use
-        if (! session()->exists("companysettings.sitename")) {
-            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+        if (! session()->exists('companysettings.sitename')) {
+            $sitename = $this->settingsRepo->getSetting('companysettings.sitename');
             if ($sitename !== false) {
-                session(["companysettings.sitename" => $sitename]);
+                session(['companysettings.sitename' => $sitename]);
             } else {
-                session(["companysettings.sitename" => $this->config->sitename]);
+                session(['companysettings.sitename' => $this->config->sitename]);
             }
         }
 
         return [
-            'sitename' => session("companysettings.sitename") ?? '',
+            'sitename' => session('companysettings.sitename') ?? '',
             'primaryColor' => $this->themeCore->getPrimaryColor(),
             'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',

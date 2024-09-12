@@ -13,9 +13,6 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 
-    /**
-     *
-     */
     class BoardDialog extends Controller
     {
         /**
@@ -24,6 +21,7 @@ namespace Leantime\Domain\Canvas\Controllers {
         protected const CANVAS_NAME = '??';
 
         private ProjectService $projectService;
+
         private object $canvasRepo;
 
         /**
@@ -32,53 +30,51 @@ namespace Leantime\Domain\Canvas\Controllers {
         public function init(ProjectService $projectService)
         {
             $this->projectService = $projectService;
-            $canvasName = Str::studly(static::CANVAS_NAME) . 'canvas';
-            $repoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+            $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
+            $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
             $this->canvasRepo = app()->make($repoName);
         }
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
         public function run()
         {
 
-            $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
+            $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
             $currentCanvasId = '';
             $canvasTitle = '';
 
             if (isset($_GET['id']) === true) {
-                $currentCanvasId = (int)$_GET['id'];
+                $currentCanvasId = (int) $_GET['id'];
                 $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
-                $canvasTitle = $singleCanvas[0]["title"] ?? "";
-                session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
+                $canvasTitle = $singleCanvas[0]['title'] ?? '';
+                session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
             }
 
             // Add Canvas
             if (isset($_POST['newCanvas'])) {
-                if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                    if (!$this->canvasRepo->existCanvas(session("currentProject"), $_POST['canvastitle'])) {
+                if (isset($_POST['canvastitle']) && ! empty($_POST['canvastitle'])) {
+                    if (! $this->canvasRepo->existCanvas(session('currentProject'), $_POST['canvastitle'])) {
                         $values = [
                             'title' => $_POST['canvastitle'],
-                            'author' => session("userdata.id"),
-                            'projectId' => session("currentProject"),
+                            'author' => session('userdata.id'),
+                            'projectId' => session('currentProject'),
                         ];
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
-                        $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
+                        $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
                         $mailer = app()->make(MailerCore::class);
                         $this->projectService = app()->make(ProjectService::class);
-                        $users = $this->projectService->getUsersToNotify(session("currentProject"));
+                        $users = $this->projectService->getUsersToNotify(session('currentProject'));
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
 
                         $actual_link = CURRENT_URL;
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_created_message'),
-                            session("userdata.name"),
-                            "<a href='" . $actual_link . "'>" . $values['title'] . '</a>'
+                            session('userdata.name'),
+                            "<a href='".$actual_link."'>".$values['title'].'</a>'
                         );
                         $mailer->setHtml($message);
 
@@ -88,13 +84,14 @@ namespace Leantime\Domain\Canvas\Controllers {
                             $users,
                             $message,
                             $this->language->__('notification.board_created'),
-                            session("currentProject")
+                            session('currentProject')
                         );
 
-                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
+                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME.'board_created');
 
-                        session(['current' . strtoupper(static::CANVAS_NAME) . 'Canvas' => $currentCanvasId]);
-                        return Frontcontroller::redirect(BASE_URL . '/'.static::CANVAS_NAME.'canvas/boardDialog/'.$currentCanvasId);
+                        session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $currentCanvasId]);
+
+                        return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/boardDialog/'.$currentCanvasId);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }
@@ -105,13 +102,14 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             // Edit Canvas
             if (isset($_POST['editCanvas']) && $currentCanvasId > 0) {
-                if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                    if (!$this->canvasRepo->existCanvas(session("currentProject"), $_POST['canvastitle'])) {
-                        $values = array('title' => $_POST['canvastitle'], 'id' => $currentCanvasId);
+                if (isset($_POST['canvastitle']) && ! empty($_POST['canvastitle'])) {
+                    if (! $this->canvasRepo->existCanvas(session('currentProject'), $_POST['canvastitle'])) {
+                        $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];
                         $currentCanvasId = $this->canvasRepo->updateCanvas($values);
 
                         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                        return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/boardDialog/'.$values['id']);
+
+                        return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/boardDialog/'.$values['id']);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }
@@ -122,14 +120,11 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasName', static::CANVAS_NAME);
-            $this->tpl->assign('canvasTitle',$canvasTitle);
+            $this->tpl->assign('canvasTitle', $canvasTitle);
 
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
-
-
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
-
-            if (!isset($_GET['raw'])) {
+            if (! isset($_GET['raw'])) {
                 return $this->tpl->displayPartial('canvas.boardDialog');
             }
         }

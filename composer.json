@@ -55,12 +55,6 @@
         "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
 
-        "symfony/http-foundation": "^6.3",
-        "symfony/error-handler": "^6.3",
-        "symfony/yaml": "^5.4",
-        "symfony/console": "^6.3",
-        "symfony/cache": "^6.3",
-
         "nikic/php-parser": "^4.17",
         "nesbot/carbon": "^2.72",
         "spatie/icalendar-generator": "^2.6",
@@ -69,7 +63,8 @@
         "metasyntactical/composer-plugin-license-check": "^2.1",
 
         "predis/predis": "^2.2",
-        "sentry/sentry-laravel": "^4.8"
+        "sentry/sentry-laravel": "^4.8",
+        "codeat3/blade-google-material-design-icons": "^1.19"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
@@ -81,7 +76,8 @@
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10",
-        "leantime/leantime-documentor": "@dev"
+        "leantime/leantime-documentor": "@dev",
+        "laravel/pint": "^1.17"
     },
     "autoload": {
         "psr-4": {

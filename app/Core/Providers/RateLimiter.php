@@ -15,7 +15,7 @@ class RateLimiter extends ServiceProvider
     public function register()
     {
         $this->app->singleton(\Illuminate\Cache\RateLimiter::class, function ($app) {
-            return new \Illuminate\Cache\RateLimiter(Cache::store("installation"));
+            return new \Illuminate\Cache\RateLimiter(Cache::store('installation'));
         });
     }
 }

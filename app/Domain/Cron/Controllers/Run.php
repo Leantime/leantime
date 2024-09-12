@@ -10,17 +10,12 @@ namespace Leantime\Domain\Cron\Controllers {
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Run extends Controller
     {
         private Environment $config;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
          */
         public function init(Environment $config)
         {
@@ -30,14 +25,14 @@ namespace Leantime\Domain\Cron\Controllers {
         /**
          * The Poor Man's Cron Endpoint
          *
-         * @return Response
          * @throws Exception
          */
         public function run(): Response
         {
             if (! $this->config->poorMansCron) {
-                Log::info("Poor Mans Cron is turned off");
-                return new Response();
+                Log::info('Poor Mans Cron is turned off');
+
+                return new Response;
             }
 
             EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
@@ -46,24 +41,23 @@ namespace Leantime\Domain\Cron\Controllers {
                 // Removes script execution limit
                 set_time_limit(0);
 
-                $output = new \Symfony\Component\Console\Output\BufferedOutput();
+                $output = new \Symfony\Component\Console\Output\BufferedOutput;
 
-                    register_shutdown_function(function () use ($output) {
-                        if ($this->config->debug) {
+                register_shutdown_function(function () use ($output) {
+                    if ($this->config->debug) {
 
-                            Log::info("Command Output: " . $output->fetch());
-                            Log::info("Cron run finished");
+                        Log::info('Command Output: '.$output->fetch());
+                        Log::info('Cron run finished');
 
-                        }
-                    });
+                    }
+                });
 
                 /** @return never **/
                 app()->make(ConsoleKernel::class)->call('schedule:run', [], $output);
 
-
             });
 
-            return tap(new Response(), function ($response) {
+            return tap(new Response, function ($response) {
                 $response->headers->set('Content-Length', '0');
                 $response->headers->set('Connection', 'close');
             });

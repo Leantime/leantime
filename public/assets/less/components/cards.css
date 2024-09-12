@@ -1,3 +1,7 @@
+.card {
+    @apply border-base-200;
+}
+
 .card-compact .card-body {
     @apply text-sm;
 }

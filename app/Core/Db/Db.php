@@ -3,18 +3,11 @@
 namespace Leantime\Core\Db;
 
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Console\CliRequest;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\IncomingRequest;
 use PDO;
-use PDOException;
-use phpDocumentor\Reflection\Exception;
 
 /**
  * Database Class - Very simple abstraction layer for pdo connection
- *
- * @package    leantime
- * @subpackage core
  */
 class Db
 {
@@ -53,7 +46,6 @@ class Db
     /**
      * __construct - connect to database and select db
      *
-     * @param Environment $config
      * @return void
      */
     public function __construct(Environment $config)
@@ -61,8 +53,8 @@ class Db
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;
         $this->databaseName = $config->dbDatabase;
-        $this->host = $config->dbHost ?? "localhost";
-        $this->port = $config->dbPort ?? "3306";
+        $this->host = $config->dbHost ?? 'localhost';
+        $this->port = $config->dbPort ?? '3306';
 
         $this->database = new PDO(
             dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
@@ -82,18 +74,14 @@ class Db
      *
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
-     *
-     * @param string $name
-     * @param int    $count
-     * @return string
      */
     public static function arrayToPdoBindingString(string $name, int $count): string
     {
-        $bindingStatement = "";
+        $bindingStatement = '';
         for ($i = 0; $i < $count; $i++) {
-            $bindingStatement .= ":" . $name . $i;
+            $bindingStatement .= ':'.$name.$i;
             if ($i != $count - 1) {
-                $bindingStatement .= ",";
+                $bindingStatement .= ',';
             }
         }
 
@@ -103,13 +91,9 @@ class Db
     /**
      * Sanitizes a string to only contain letters, numbers and underscore.
      * Used for patch statements with variable column keys values
-     *
-     *
-     * @param string $string
-     * @return string
      */
     public static function sanitizeToColumnString(string $string): string
     {
-        return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $string);
     }
 }

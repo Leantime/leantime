@@ -7,8 +7,8 @@ namespace Leantime\Core\Support;
  *
  * An enumeration class representing various formats for date and time values.
  */
-enum DateTimeInfoEnum {
-
+enum DateTimeInfoEnum
+{
     /**
      * Displays date with content:
      * Written On DATE at TIME

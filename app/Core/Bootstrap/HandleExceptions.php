@@ -2,22 +2,11 @@
 
 namespace Leantime\Core\Bootstrap;
 
-use ErrorException;
-use Exception;
-use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Log\LogManager;
-use Illuminate\Support\Env;
 use Leantime\Core\Application;
-use Monolog\Handler\NullHandler;
-use PHPUnit\Runner\ErrorHandler;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\ErrorHandler\Debug;
-use Symfony\Component\ErrorHandler\Error\FatalError;
-use Throwable;
 
 class HandleExceptions extends \Illuminate\Foundation\Bootstrap\HandleExceptions
 {
-
     /**
      * The application instance.
      *
@@ -28,12 +17,11 @@ class HandleExceptions extends \Illuminate\Foundation\Bootstrap\HandleExceptions
     /**
      * Bootstrap the given application.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return void
      */
     public function bootstrap(\Illuminate\Contracts\Foundation\Application $app)
     {
-        if($app['config']->get("debug")) {
+        if ($app['config']->get('debug')) {
 
             Debug::enable();
             config(['debug_blacklist' => [
@@ -58,9 +46,7 @@ class HandleExceptions extends \Illuminate\Foundation\Bootstrap\HandleExceptions
             ]]);
         }
 
-       parent::bootstrap($app);
+        parent::bootstrap($app);
 
     }
-
-
 }

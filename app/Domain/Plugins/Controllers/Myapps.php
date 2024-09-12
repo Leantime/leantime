@@ -10,17 +10,10 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Plugins\Services\Plugins as PluginService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Myapps extends Controller
     {
         private PluginService $pluginService;
 
-        /**
-         * @param PluginService $pluginService
-         * @return void
-         */
         public function init(PluginService $pluginService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
@@ -28,7 +21,6 @@ namespace Leantime\Domain\Plugins\Controllers {
         }
 
         /**
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get(): Response
@@ -40,32 +32,31 @@ namespace Leantime\Domain\Plugins\Controllers {
 
                 try {
                     $notification = $this->pluginService->{"{$varName}Plugin"}($_GET[$varName])
-                        ? ["notification.plugin_{$varName}_success", "success"]
-                        : ["notification.plugin_{$varName}_error", "error"];
+                        ? ["notification.plugin_{$varName}_success", 'success']
+                        : ["notification.plugin_{$varName}_error", 'error'];
 
                     $this->tpl->setNotification(...$notification);
-                    return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
+
+                    return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
                 } catch (\Exception $e) {
-                    $this->tpl->setNotification($e->getMessage(), "error");
-                    return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
+                    $this->tpl->setNotification($e->getMessage(), 'error');
+
+                    return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
                 }
             }
 
             $newPlugins = $this->pluginService->discoverNewPlugins();
             $installedPlugins = $this->pluginService->getAllPlugins();
 
-            $this->tpl->assign("newPlugins", $newPlugins);
-            $this->tpl->assign("installedPlugins", $installedPlugins);
-            return $this->tpl->display("plugins.myapps");
+            $this->tpl->assign('newPlugins', $newPlugins);
+            $this->tpl->assign('installedPlugins', $installedPlugins);
+
+            return $this->tpl->display('plugins.myapps');
         }
 
-        /**
-         * @param $params
-         * @return Response
-         */
         public function post($params): Response
         {
-            return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
+            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
         }
     }
 }
