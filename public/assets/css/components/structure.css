@@ -377,7 +377,6 @@
 
 .leftpanel {
     width: 240px;
-    color: #fff;
     float: left;
     clear: both;
     background:var(--left-panel-bg);
@@ -387,8 +386,8 @@
     display: flex;
     flex-direction: column;
     top:70px;
-    margin-top:20px;
-    left:10px;
+    margin-top:5px;
+    left:0px;
     border-radius: var(--box-radius-large);
 
     overflow:hidden;

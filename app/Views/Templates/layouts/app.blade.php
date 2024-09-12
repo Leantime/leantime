@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body hx-ext="preload">
+<body hx-ext="preload" data-theme="leantime">
 
 
     @include('global::sections.appAnnouncement')

@@ -8,7 +8,8 @@
     'icon' => '',
     'rightIcon' => '',
     'leadingVisual' => '',
-    'trailingVisual' => ''
+    'trailingVisual' => '',
+    'shape' => ''
 ])
 
 @aware([
@@ -16,14 +17,29 @@
 ])
 
 @php
-    $typeClass = ($contentRole == 'secondary' || $contentRole == 'tertiary') ? 'btn-outline' : ''.' btn-'.$contentRole;
+
+    switch($contentRole){
+        case 'secondary':
+            $typeClass = 'btn-secondary shadow-md border-primary text-primary hover:bg-primary/20 ';
+            break;
+        case 'tertiary':
+        case 'ghost':
+            $typeClass = 'btn-ghost text-primary hover:bg-primary/20 ';
+            break;
+        case 'link':
+            $typeClass = 'btn-link text-primary hover:bg-primary/20 ';
+            break;
+        default:
+            $typeClass = 'btn-primary shadow-md border-primary hover:bg-primary ';
+    }
     $sizeClass = $scale ? 'btn-'.$scale : '';
-    $stateClass = $state ? 'btn-'.$state : ''
+    $stateClass = $state ? 'btn-'.$state : '';
+    $shapeClass = $shape ? 'btn-'.$shape : '';
 @endphp
 
-<{{ $tag }} role="button" {{$attributes->merge(['class' => 'btn btn-sm '.$typeClass.' '.$sizeClass. ' '.$stateClass])->class([
+<{{ $tag }} role="button" {{$attributes->merge(['class' => 'btn btn-sm active:shadow-inner '. $typeClass.' '.$sizeClass. ' '.$stateClass. ' '.$shapeClass])->class([
     'join-item' => $join,
-    'mr-2' => ! $join,
+    'mr-1' => ! $join,
     ]) }}>
     @if($leadingVisual)
         <div class="h-6 w-6">

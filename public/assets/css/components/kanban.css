@@ -362,7 +362,7 @@ body .maincontent .priority-text-5 a:link {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
     padding: 10px 15px;
-    font-size: var(--base-font-size);
+
     line-height:17px;
     font-weight: bold;
     border-bottom-width:3px;
@@ -407,7 +407,7 @@ body .maincontent .priority-text-5 a:link {
     border-bottom: 1px solid var(--neutral);
     color: var(--kanban-col-title-color);
     padding: 10px 10px;
-    font-size: var(--base-font-size);
+
     padding-top:0px;
 }
 

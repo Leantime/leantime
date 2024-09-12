@@ -1,0 +1,7 @@
+.btn-link {
+@apply no-underline;
+}
+
+.btn-ghost {
+@apply text-primary;
+}

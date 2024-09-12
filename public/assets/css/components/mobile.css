@@ -24,7 +24,7 @@ min-width: 1200px
     }
 
     .mainwrapper.menuclosed .bigProjectSelector .fa {
-        font-size:var(--base-font-size);
+
         line-height: 50px;
     }
 

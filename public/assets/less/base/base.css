@@ -1,0 +1,12 @@
+html,
+body {
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+body {
+    @apply text-sm;
+}
+
+a {
+  @apply font-normal;
+}

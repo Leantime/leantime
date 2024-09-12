@@ -1,0 +1,64 @@
+@import "../css/libs/prism.css";
+
+@import "../css/libs/croppie.css";
+@import "../css/libs/loading.css";
+@import "../css/libs/loading-btn.css";
+
+@import "../css/libs/bootstrap.min.css";
+
+@import "../css/libs/jquery.ui.css";
+
+@import "../css/libs/jquery.growl.css";
+
+@import "../css/libs/jquery.tagsinput.css";
+@import "../css/libs/jquery.chosen.css";
+@import "../css/libs/fullcalendar.css";
+@import "../css/libs/atkinson.css";
+@import "../css/libs/shantell.css";
+@import "../css/libs/fontawesome-free/css/all.css";
+@import "../css/libs/fontawesome-free/css/v4-shims.css";
+
+@import "../css/libs/jquery.simple-color-picker.css";
+@import "../css/libs/frappe_theme.css";
+@import "../css/libs/jquery.chosen.css";
+@import "../css/libs/shepherd-theme-arrows.css";
+
+@import "../css/libs/uppy/style.css";
+@import "../css/libs/uppy/dashboard.css";
+
+@import "../css/libs/tippy.js/tippy.css";
+
+
+
+@import "../css/libs/iconpicker/css/fontawesome-iconpicker.css";
+
+
+@import "../../../node_modules/gridstack/dist/gridstack.min.css";
+@import "../../../node_modules/gridstack/dist/gridstack-extra.min.css";
+
+@import "../../../node_modules/leantime.choices.js/public/assets/styles/choices.css";
+
+@import "../../../node_modules/flatpickr/dist/flatpickr.css";
+
+
+/* Components */
+@import "../css/components/structure.css";
+@import "../css/components/dropdowns.css";
+@import "../css/components/kanban.css";
+@import "../css/components/tables.css";
+@import "../css/components/masonwall.css";
+@import "../css/components/wysiwyg-overrides.css";
+@import "../css/components/forms.css";
+@import "../css/components/gantt-overwrites.css";
+@import "../css/components/tree-overwrites.css";
+@import "../css/components/nav.css";
+@import "../css/components/comments.css";
+@import "../css/components/style.default.css";
+@import "../css/components/tabs.css";
+@import "../css/components/text-styles.css";
+@import "../css/components/progressbars.css";
+@import "../css/components/mediamanager.css";
+@import "../css/components/tourBoxes.css";
+@import "../css/components/mobile.css";
+@import "../css/components/print.css";
+@import "../css/components/overwrites.css";

@@ -7,6 +7,7 @@
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
     'cardLabel' => 'Card Title!', // Text for the card title
+    'buttonShape' => ''
 ])
 
 @php
@@ -42,7 +43,7 @@
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
     <!-- Dropdown Button -->
 
-    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole">
+    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape">
         {!! $labelText !!}
     </x-global::forms.button>
 

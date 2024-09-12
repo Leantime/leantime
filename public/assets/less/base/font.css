@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf') format("woff2 supports variations"),
+  url('fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf') format("woff2-variations");
+  font-weight: 100 1000;
+  font-style:normal;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('fonts/Hanken_Grotesk/HankenGrotesk-Italic-VariableFont_wght.ttf') format("ttf supports variations"),
+  url('fonts/Hanken_Grotesk/HankenGrotesk-Italic-VariableFont_wght.ttf') format("ttf-variations");
+  font-weight: 100 1000;
+  font-style:italic;
+}

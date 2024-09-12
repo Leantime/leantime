@@ -254,7 +254,7 @@ div.growl div.growl-closer {
     background:var(--secondary-background);
     color:var(--primary-font-color);
     padding:20px;
-    font-size:var(--base-font-size);
+
     width:250px;
     opacity:1;
     border-radius:var(--box-radius);
@@ -265,7 +265,7 @@ div.growl div.growl-closer {
 
 div.growl growl-close {
     color:var(--primary-font-color);
-    font-size:var(--base-font-size);
+
 }
 
 div.growl.growl-default,
@@ -288,7 +288,7 @@ div.growl .growl-title {
 }
 
 div.growl .growl-message {
-    font-size: var(--base-font-size);
+
     line-height: 18px;
     font-family: var(--primary-font-family);
 }

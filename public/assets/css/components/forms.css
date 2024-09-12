@@ -95,7 +95,6 @@ body div.tagsinput {
 }
 
 body div.tagsinput input {
-    font-size:var(--base-font-size);
     color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
@@ -181,7 +180,6 @@ textarea:-ms-input-placeholder{
 input, select,
 textarea, button {
     outline: none;
-    font-size: var(--base-font-size);
 
 }
 
@@ -306,18 +304,6 @@ body input[type=text].main-title-input.main-title-input {
     margin-bottom:5px;
 }
 
-
-
-div.border {
-    border:1px solid var(--main-border-color);
-    border-radius: var(--box-radius);
-    padding:10px;
-}
-
-body select {
-    max-witdh:206px;
-}
-
 input.secretInput {
     border:0px;
     background:none;
@@ -387,7 +373,6 @@ input.secretInput:active {
     background:var(--main-action-bg);
     color:var(--main-action-color);
     border:1px solid var(--main-action-bg);
-    font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
     padding: var(--input-padding);
     line-height: var(--form-element-line-height);
@@ -770,7 +755,6 @@ body .croppie-container {
 .stdform label.error {
     float: none;
     display: block;
-    font-size: var(--base-font-size);
     color: var(--dark-red);
     text-align: left;
     padding: 0;
@@ -782,7 +766,6 @@ body .croppie-container {
 }
 
 .stdform small.desc {
-    font-size: var(--base-font-size);
     color: #999;
     font-style: italic;
     display: block;
@@ -826,7 +809,6 @@ body .croppie-container {
 }
 
 .stdform2 label small {
-    font-size: var(--base-font-size);
     color: #999;
     display: block;
     font-weight: normal;
@@ -886,7 +868,7 @@ body .croppie-container {
 
 .counter {
     display: block;
-    font-size: var(--base-font-size);
+
 }
 
 .warning {
@@ -1172,7 +1154,7 @@ div.tagsinput span.tag {
     min-height: 19px;
     height: 31px;
     line-height: 1;
-    font-size:var(--base-font-size);
+
 }
 
 .choices__inner.show-border,
@@ -1419,7 +1401,7 @@ div.tagsinput span.tag {
 }
 
 .flatpickr-calendar {
-    font-size: var(--base-font-size);
+
     background:var(--secondary-background);
     box-shadow: var(--regular-shadow);
     border-radius: var(--box-radius);
