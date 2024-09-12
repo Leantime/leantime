@@ -56,7 +56,6 @@ class Auth
         $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
         $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
 
-        $routeTest = $request->getCurrentRoute();
         if ($request->getCurrentRoute() == $route) {
             return false;
         }
