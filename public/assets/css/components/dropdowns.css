@@ -15,7 +15,6 @@
 
 .dropdown-menu > li > a,
 .bigMenu ul li a{
-    font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0;
     padding: 5px 10px;

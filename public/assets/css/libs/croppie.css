@@ -240,7 +240,6 @@ background: #ccc;
 	display: inline-block;
 	font-style: normal;
 	font-weight: 900;
-	font-size: 22px;
 }
 .cr-rotate-l i:before {
 	content: '↺';

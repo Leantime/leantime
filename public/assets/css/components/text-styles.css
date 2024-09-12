@@ -1,20 +1,8 @@
 label, input, textarea, select, button {
-    font-size: var(--base-font-size);
 }
 
-h1, h2, h3, h4, h5 {
-    font-weight: normal;
-    line-height: normal;
-}
-
-h1 { font-size:var(--font-size-xxl);}
-h2 { font-size:var(--font-size-xl);}
-h3 { font-size:var(--font-size-xl); font-weight:bold;}
-h4 { font-size:var(--base-font-size); font-weight:bold;}
-h5 { font-size:var(--base-font-size); font-weight:bold;}
 
 h1 small {
-    font-size: var(--font-size-s);
     color:var(--primary-font-color);
 }
 
@@ -101,13 +89,13 @@ a .label.feature-label:after {
 
 
 .subtitle {
-    font-size: var(--base-font-size);
+
     color: #999;
     margin-bottom: 5px;
 }
 
 .subtitle2 {
-    font-size: var(--base-font-size);
+
     text-transform: uppercase;
     color: var(--primary-font-color);
     margin-bottom: 5px;

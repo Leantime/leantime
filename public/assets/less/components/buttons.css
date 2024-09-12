@@ -1,0 +1,12 @@
+body .btn,
+body .btn-sm {
+    @apply text-sm font-medium;
+}
+
+.btn-link {
+@apply no-underline;
+}
+
+.btn-ghost {
+@apply text-primary;
+}

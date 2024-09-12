@@ -7,6 +7,7 @@
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
     'cardLabel' => 'Card Title!', // Text for the card title
+    'buttonShape' => ''
 ])
 
 @php
@@ -23,7 +24,7 @@
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
         'card' => 'card card-compact bg-primary text-primary-content w-64 p-2 shadow', // Card variant class
-        default => 'dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
+        default => 'menu dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
     };
 
     // Determine the dropdown position class
@@ -41,9 +42,10 @@
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
     <!-- Dropdown Button -->
-    <div tabindex="0" role="button" class="{{ $buttonClass }}">
+
+    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape">
         {!! $labelText !!}
-    </div>
+    </x-global::forms.button>
 
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
@@ -56,7 +58,7 @@
     @else
         <!-- Regular Dropdown Menu -->
         <ul tabindex="0" class="{{ $menuClass }}">
-            {{ $menu }}
+            {!! $menu !!}
         </ul>
     @endif
 </div>

@@ -46,7 +46,6 @@
     border-radius:var(--box-radius);
     width:100%;
     padding:10px;
-    font-size:var(--base-font-size);
 }
 
 .commentContent.statusUpdate {

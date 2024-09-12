@@ -176,7 +176,7 @@ a.barmenu:hover {
 
 
 .bigProjectSelector i.fa {
-    font-size: var(--base-font-size);
+
     position: absolute;
     top: 25px;
     right: 10px;
@@ -211,7 +211,7 @@ a.barmenu:hover {
 }
 
 .headmenu .projectselector  li.intro .sub {
-    font-size: var(--base-font-size);
+
     color: var(--secondary-font-color);
 }
 
@@ -234,7 +234,7 @@ a.barmenu:hover {
 .headmenu .projectselector  li.nav-header {
     display: block;
     padding: 3px 15px;
-    font-size: var(--base-font-size);
+
     font-weight: bold;
     line-height: 20px;
     color: var(--secondary-font-color);
@@ -365,7 +365,7 @@ a.barmenu:hover {
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
     display: block;
-    font-size: var(--base-font-size);
+
     padding: 10px 15px 10px 15px;
     color: var(--nav-link-color);
     border-radius:var(--box-radius-large);
@@ -474,7 +474,7 @@ a.barmenu:hover {
 .headmenu > li {
     display: inline-block;
     float: left;
-    font-size: var(--base-font-size);
+
     position: relative;
     height: 50px;
 }
@@ -521,16 +521,6 @@ a.barmenu:hover {
 
 .headmenu > li > a:hover .headmenu-label, .headmenu > li.open > a .headmenu-label {
     opacity: 1;
-}
-
-.head-icon {
-    background-repeat: no-repeat;
-}
-
-.headmenu > li > a .head-icon {
-    font-size: var(--base-font-size);
-    line-height: 50px;
-    padding-right:0;
 }
 
 .headmenu > li > a:hover .head-icon, .headmenu > li.open a .head-icon {
@@ -581,7 +571,7 @@ a.barmenu:hover {
 }
 
 .leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector i.fa {
-    font-size: var(--base-font-size);
+
     padding-left: 0;
     float: none;
     margin-top: 0;
@@ -622,7 +612,7 @@ a.barmenu:hover {
 
 .projectselector  li a{
     color:var(--primary-font-color);
-    font-size: var(--base-font-size);
+
     margin: 0;
     padding: 10px 20px;
 }
@@ -690,7 +680,7 @@ a.barmenu:hover {
 
 .projectselector ul.selectorList li.nav-header {
     border-color:transparent;
-    font-size: var(--base-font-size);
+
     text-transform: none;
     padding:5px 0 5px 15px;
     display:block;
@@ -890,7 +880,7 @@ a.barmenu:hover {
 }
 
 .userloggedinfo .userinfo small {
-    font-size: var(--base-font-size);
+
     opacity: 0.6;
     color: var(--nav-link-color);
     font-style: italic;
@@ -991,7 +981,7 @@ a.barmenu:hover {
 }
 
 .notificationDropdown .dropdown-menu li .notificationTitle {
-    font-size:var(--base-font-size);
+
     display:block;
 }
 
@@ -1010,7 +1000,7 @@ a.barmenu:hover {
 
 .userloggedinfo ul li,
 .appsDropdown ul li{
-    font-size: var(--base-font-size);
+
     line-height: normal;
     margin-bottom: 1px;
 }
@@ -1125,7 +1115,7 @@ a.barmenu:hover {
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span{
-    font-size: var(--base-font-size);
+
 }
 
 .mainwrapper.menuclosed .bigProjectSelector i.fa {
@@ -1324,7 +1314,7 @@ a.barmenu:hover {
 
 .navbar .nav > li > a {
     padding: 11px 15px;
-    font-size: var(--base-font-size);
+
     font-weight: normal;
     text-transform: uppercase;
 }
