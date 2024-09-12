@@ -106,7 +106,7 @@ if (! function_exists('view')) {
      */
     function view($view = null, $data = [], $mergeData = [])
     {
-        $factory = app(ViewFactory::class);
+        $factory = app(\Illuminate\View\Factory::class);
 
         if (func_num_args() === 0) {
             return $factory;
@@ -379,13 +379,13 @@ if (! function_exists('redirect')) {
     /**
      * Get an instance of the redirector.
      *
-     * @param  string|null  $to
+     * @param  string|null  $url
      * @param  int  $status
      * @param  array  $headers
      * @param  bool|null  $secure
      * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
-    function redirect($to = null, $status = 302, $headers = [], $secure = null)
+    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
     {
         return new RedirectResponse(
             trim(preg_replace('/\s\s+/', '', strip_tags($url))),

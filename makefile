@@ -130,7 +130,7 @@ get-version:
 	@echo $(VERSION)
 
 phpstan:
-	./vendor/bin/phpstan analyse --memory-limit 2G --debug -v
+	./vendor/bin/phpstan analyse -c .phpstan/phpstan.neon -v --debug --memory-limit 2G
 
 update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php

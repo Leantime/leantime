@@ -51,7 +51,7 @@
             leantime.canvasController.initUserDropdown('{{ $canvasName }}');
             leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
             leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
-        <?php } else { ?>
+        @elseif
             leantime.authController.makeInputReadonly(".maincontentinner");
         @endif
 

@@ -1,22 +1,22 @@
 parameters:
-    #bootstrapFiles:
-    #    - public/index.php
+    bootstrapFiles:
+        - bootstrap.php
     level: 0
+    inferPrivatePropertyTypeFromConstructor: true
     paths:
-        - public/
-        - app/Command
-        - app/Core
-        - app/Domain
-        - app/Plugins
-        - app/Views
-        - bin/
+        - ../public
+        - ../app
+        - ../bin
     excludePaths:
-        - app/Plugins/*/vendor/*
-        - app/Plugins/*
+        - ../app/Plugins/*/vendor/*
+        - ../app/Plugins/*
     scanDirectories:
-        - vendor
-        - config
-    #ignoreErrors:
+        - ../vendor
+        - ../config
+    ignoreErrors:
+            - '#Call to an undefined static method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            - '#Access to undefined constant Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            - '#Call to an undefined static method Carbon\\CarbonImmutable::[a-zA-Z0-9\\_]()#'
             # Rules for level 1. Templates use variables through include which are not detected by phpstan
             #-
             #    messages:

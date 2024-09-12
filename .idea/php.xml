@@ -31,7 +31,7 @@
     </phpcs_settings>
   </component>
   <component name="PhpExternalFormatter">
-    <option name="externalFormatter" value="PHP_CBF" />
+    <option name="externalFormatter" value="LARAVEL_PINT" />
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
@@ -283,8 +283,10 @@
       <path value="$PROJECT_DIR$/vendor/codeat3/blade-google-material-design-icons" />
       <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
       <path value="$PROJECT_DIR$/vendor/laravel/pint" />
-      <path value="$PROJECT_DIR$/vendor/larastan/larastan" />
-      <path value="$PROJECT_DIR$/vendor/phpmyadmin/sql-parser" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/vendor/psr/cache" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

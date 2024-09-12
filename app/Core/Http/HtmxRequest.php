@@ -6,23 +6,6 @@ namespace Leantime\Core\Http;
 
 class HtmxRequest extends IncomingRequest
 {
-    /**
-     * @param  array  $query  The GET parameters
-     * @param  array  $request  The POST parameters
-     * @param  array  $attributes  The request attributes (parameters parsed from the PATH_INFO, ...)
-     * @param  array  $cookies  The COOKIE parameters
-     * @param  array  $files  The FILES parameters
-     * @param  array  $server  The SERVER parameters
-     * @param  string|resource|null  $content  The raw body data
-     */
-    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
-    {
-        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
-
-        if (! str_starts_with($path = $this->getPathInfo(), '/hx/')) {
-            return;
-        }
-    }
 
     /**
      * Get HTMX request information
@@ -41,6 +24,8 @@ class HtmxRequest extends IncomingRequest
             'triggerId' => $this->getTriggerId(),
         ];
     }
+
+
 
     /**
      * Indicates that the request is via an element using hx-boost
