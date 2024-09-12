@@ -10,19 +10,12 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ArticleDialog extends Controller
     {
         private WikiService $wikiService;
+
         private TicketService $ticketService;
 
-        /**
-         * @param WikiService   $wikiService
-         * @param TicketService $ticketService
-         * @return void
-         */
         public function init(WikiService $wikiService, TicketService $ticketService): void
         {
             $this->wikiService = $wikiService;
@@ -30,47 +23,45 @@ namespace Leantime\Domain\Wiki\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get($params): Response
         {
 
             $article = app()->make(Article::class);
-            $article->data = "far fa-file-alt";
+            $article->data = 'far fa-file-alt';
 
             if (isset($params['id'])) {
-                $article = $this->wikiService->getArticle($params['id'], session("currentProject"));
+                $article = $this->wikiService->getArticle($params['id'], session('currentProject'));
             }
 
             //Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
-                $article->milestoneId = "";
+                $article->milestoneId = '';
                 $results = $this->wikiService->updateArticle($article);
 
                 if ($results) {
-                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success", "articlemilestone_unlinked");
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success', 'articlemilestone_unlinked');
+
+                    return Frontcontroller::redirect(BASE_URL.'/wiki/articleDialog/'.$article->id);
                 }
             }
 
-            if (session("currentWiki") != '') {
-                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
+            if (session('currentWiki') != '') {
+                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session('currentWiki'), session('userdata.id'));
             } else {
-                $wikiHeadlines = array();
+                $wikiHeadlines = [];
             }
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
-            $this->tpl->assign("article", $article);
-            return $this->tpl->displayPartial("wiki::partials.articleDialog");
+            $this->tpl->assign('wikiHeadlines', $wikiHeadlines);
+            $this->tpl->assign('article', $article);
+
+            return $this->tpl->displayPartial('wiki::partials.articleDialog');
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -78,9 +69,9 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             $article = app()->make(Article::class);
 
-            if (isset($params["id"])) {
-                $id = $params["id"];
-                $article = $this->wikiService->getArticle($id, session("currentProject"));
+            if (isset($params['id'])) {
+                $id = $params['id'];
+                $article = $this->wikiService->getArticle($id, session('currentProject'));
 
                 $article->title = $params['title'];
 
@@ -93,9 +84,9 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                     $params['headline'] = $params['newMilestone'];
-                    $params['tags'] = "#ccc";
-                    $params['editFrom'] = date("Y-m-d");
-                    $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
+                    $params['tags'] = '#ccc';
+                    $params['editFrom'] = date('Y-m-d');
+                    $params['editTo'] = date('Y-m-d', strtotime('+1 week'));
                     $milestoneId = $this->ticketService->quickAddMilestone($params);
                     if ($milestoneId !== false) {
                         $article->milestoneId = $milestoneId;
@@ -109,15 +100,15 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $results = $this->wikiService->updateArticle($article);
 
                 if ($results) {
-                    $this->tpl->setNotification("notification.article_updated_successfully", "success", "article_updated");
+                    $this->tpl->setNotification('notification.article_updated_successfully', 'success', 'article_updated');
                 }
 
             } else {
 
                 //New
                 $article->title = $params['title'];
-                $article->author = session("userdata.id");
-                $article->canvasId = session("currentWiki");
+                $article->author = session('userdata.id');
+                $article->canvasId = session('currentWiki');
                 $article->data = $params['articleIcon'];
                 $article->tags = $params['tags'];
                 $article->status = $params['status'];
@@ -127,7 +118,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $id = $this->wikiService->createArticle($article);
 
                 if ($id) {
-                    $this->tpl->setNotification("notification.article_created_successfully", "success", "article_created");
+                    $this->tpl->setNotification('notification.article_created_successfully', 'success', 'article_created');
                 }
             }
 

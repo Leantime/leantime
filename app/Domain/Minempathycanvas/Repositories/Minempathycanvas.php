@@ -8,9 +8,6 @@ namespace Leantime\Domain\Minempathycanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
 
-    /**
-     *
-     */
     class Minempathycanvas extends Canvas
     {
         /**
@@ -30,7 +27,6 @@ namespace Leantime\Domain\Minempathycanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
             'minempathy_who' => ['icon' => '', 'title' => 'box.minempathy.who'],
@@ -44,19 +40,17 @@ namespace Leantime\Domain\Minempathycanvas\Repositories {
          * dataLabels - Data labels (may be extended)
          *
          * @acces protected
-         * @var   array
          */
         protected array $dataLabels = [
-        1 => ['title' => 'label.description',  'field' => 'conclusion',  'active' => true],
-                                        2 => ['title' => 'label.data',               'field' => 'data',        'active' => true],
-                                        3 => ['title' => 'label.assumptions',   'field' => 'assumptions', 'active' => true],
-                                        ];
+            1 => ['title' => 'label.description',  'field' => 'conclusion',  'active' => true],
+            2 => ['title' => 'label.data',               'field' => 'data',        'active' => true],
+            3 => ['title' => 'label.assumptions',   'field' => 'assumptions', 'active' => true],
+        ];
 
         /**
          * relatesLabels - Relates to label
          *
          * @acces public
-         * @var   array
          */
         protected array $relatesLabels = [];
     }

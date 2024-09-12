@@ -32,9 +32,10 @@ class FileSystemServiceProvider extends ServiceProvider
 
     }
 
-    public function prepareConfig() {
+    public function prepareConfig()
+    {
 
-        if($this->app['config']['filesystem'] === null) {
+        if ($this->app['config']['filesystem'] === null) {
 
             $this->app['config']['filesystem'] = [
                 'default' => 'local',
@@ -60,18 +61,17 @@ class FileSystemServiceProvider extends ServiceProvider
                         'url' => $this->app['config']['s3EndPoint'],
 
                         // Optional cache settings, available with any storage driver
-                        'cache'       => [
+                        'cache' => [
                             'driver' => 'laravel',
                         ],
                     ],
                     'null' => [
                         'driver' => 'null',
                     ],
-                ]
+                ],
             ];
 
         }
-
 
     }
 
@@ -126,7 +126,7 @@ class FileSystemServiceProvider extends ServiceProvider
     protected function getDefaultDriver()
     {
 
-        $this->app['config']['filesystems.default'] = "local";
+        $this->app['config']['filesystems.default'] = 'local';
 
         return $this->app['config']['filesystems.default'];
     }

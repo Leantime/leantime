@@ -4,44 +4,28 @@ namespace Leantime\Domain\Ideas\Repositories {
 
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Domain\Tickets\Repositories\Tickets;
     use Leantime\Domain\Ideas\Models\Ideas as IdeasModel;
-
+    use Leantime\Domain\Tickets\Repositories\Tickets;
     use PDO;
 
-    /**
-     *
-     */
     class Ideas
     {
-        /**
-         * @access public
-         * @var    object|null
-         */
         public ?object $result = null;
 
-        /**
-         * @access public
-         * @var    object|null
-         */
         public ?object $tickets = null;
 
-        /**
-         * @access private
-         * @var    DbCore|null
-         */
         private ?DbCore $db = null;
 
-        public array $canvasTypes = array(
-            "idea" => "status.ideation",
-            "research" => "status.discovery",
-            "prototype" => "status.delivering",
-            "validation" => "status.inreview",
-            "implemented" => "status.accepted",
-            "deferred" => "status.deferred",
-        );
+        public array $canvasTypes = [
+            'idea' => 'status.ideation',
+            'research' => 'status.discovery',
+            'prototype' => 'status.delivering',
+            'validation' => 'status.inreview',
+            'implemented' => 'status.accepted',
+            'deferred' => 'status.deferred',
+        ];
 
-        public array $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
+        public array $statusClasses = ['idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', 'deferred' => 'label-default'];
 
         private LanguageCore $language;
 
@@ -50,7 +34,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         /**
          * __construct - get db connection
          *
-         * @access public
          * @return void
          */
         public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo)
@@ -61,7 +44,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
         /**
-         * @param $canvasId
          * @return array|false
          */
         public function getSingleCanvas($canvasId): IdeasModel|false
@@ -88,7 +70,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             $value = $stmn->fetch();
             $stmn->closeCursor();
 
-
             return $value ?: false;
         }
 
@@ -97,48 +78,47 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         public function getCanvasLabels(): mixed
         {
-            if (session()->exists("projectsettings.idealabels")) {
-                return session("projectsettings.idealabels");
+            if (session()->exists('projectsettings.idealabels')) {
+                return session('projectsettings.idealabels');
             } else {
-                $sql = "SELECT
+                $sql = 'SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
-				LIMIT 1";
+				LIMIT 1';
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings." . session("currentProject") . ".idealabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', 'projectsettings.'.session('currentProject').'.idealabels', PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
 
-                $labels = array();
+                $labels = [];
 
                 //preseed state labels with default values
                 foreach ($this->canvasTypes as $key => $label) {
-                    $labels[$key] = array(
-                        "name" => $this->language->__($label),
-                        "class" => $this->statusClasses[$key],
-                    );
+                    $labels[$key] = [
+                        'name' => $this->language->__($label),
+                        'class' => $this->statusClasses[$key],
+                    ];
                 }
 
                 if ($values !== false) {
                     foreach (unserialize($values['value']) as $key => $label) {
-                        $labels[$key] = array(
-                            "name" => $label,
-                            "class" => $this->statusClasses[$key],
-                        );
+                        $labels[$key] = [
+                            'name' => $label,
+                            'class' => $this->statusClasses[$key],
+                        ];
                     }
                 }
 
-                session(["projectsettings.idealabels" => $labels]);
+                session(['projectsettings.idealabels' => $labels]);
 
                 return $labels;
             }
         }
 
         /**
-         * @param $projectId
          * @return array|false
          */
         public function getAllCanvas($projectId)
@@ -169,20 +149,16 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return void
-         */
         public function deleteCanvas($id): void
         {
 
-            $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
+            $query = 'DELETE FROM zp_canvas_items WHERE canvasId = :id';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->execute();
 
-            $query = "DELETE FROM zp_canvas WHERE id = :id LIMIT 1";
+            $query = 'DELETE FROM zp_canvas WHERE id = :id LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
@@ -191,10 +167,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $values
-         * @return false|string
-         */
         public function addCanvas($values): false|string
         {
 
@@ -218,7 +190,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
 
-
             $stmn->execute();
 
             $stmn->closeCursor();
@@ -226,16 +197,12 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        /**
-         * @param $values
-         * @return mixed
-         */
         public function updateCanvas($values): mixed
         {
 
-            $query = "UPDATE zp_canvas SET
+            $query = 'UPDATE zp_canvas SET
 						title = :title
-				WHERE id = :id";
+				WHERE id = :id';
 
             $stmn = $this->db->{'database'}->prepare($query);
 
@@ -249,13 +216,9 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $result;
         }
 
-        /**
-         * @param $values
-         * @return void
-         */
         public function editCanvasItem($values): void
         {
-            $sql = "UPDATE zp_canvas_items SET
+            $sql = 'UPDATE zp_canvas_items SET
 					description = :description,
 					assumptions =		:assumptions,
 					data =			:data,
@@ -264,7 +227,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 					status =			:status,
 					milestoneId =			:milestoneId,
 					tags = :tags
-					WHERE id = :id LIMIT 1	";
+					WHERE id = :id LIMIT 1	';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -277,32 +240,26 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
             $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
 
-
             $stmn->execute();
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patchCanvasItem($id, $params): bool
         {
 
-            $sql = "UPDATE zp_canvas_items SET ";
+            $sql = 'UPDATE zp_canvas_items SET ';
 
             foreach ($params as $key => $value) {
-                $sql .= "" . DbCore::sanitizeToColumnString($key) . "=:" . DbCore::sanitizeToColumnString($key) . ", ";
+                $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
             }
 
-            $sql .= "id=:id WHERE id=:id LIMIT 1";
+            $sql .= 'id=:id WHERE id=:id LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             foreach ($params as $key => $value) {
-                $stmn->bindValue(':' . DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+                $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
@@ -311,23 +268,19 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $return;
         }
 
-        /**
-         * @param $sortingArray
-         * @return bool
-         */
         public function updateIdeaSorting($sortingArray): bool
         {
 
-            $sql = "INSERT INTO zp_canvas_items (id, sortindex) VALUES ";
+            $sql = 'INSERT INTO zp_canvas_items (id, sortindex) VALUES ';
 
-            $sqlPrep = array();
+            $sqlPrep = [];
             foreach ($sortingArray as $idea) {
-                $sqlPrep[] = "(" . (int)$idea['id'] . ", " . (int)$idea['sortIndex'] . ")";
+                $sqlPrep[] = '('.(int) $idea['id'].', '.(int) $idea['sortIndex'].')';
             }
 
-            $sql .= implode(",", $sqlPrep);
+            $sql .= implode(',', $sqlPrep);
 
-            $sql .= " ON DUPLICATE KEY UPDATE sortindex = VALUES(sortindex)";
+            $sql .= ' ON DUPLICATE KEY UPDATE sortindex = VALUES(sortindex)';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -337,14 +290,10 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $return;
         }
 
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getCanvasItemsById($id): false|array
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
 
             $sql = "SELECT
 						zp_canvas_items.id,
@@ -389,16 +338,12 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         */
         public function getSingleCanvasItem($id): mixed
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
 
-            $sql = "SELECT
+            $sql = 'SELECT
 						zp_canvas_items.id,
 						zp_canvas_items.description,
 						zp_canvas_items.assumptions,
@@ -423,7 +368,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
 				WHERE zp_canvas_items.id = :id
-				";
+				';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -436,14 +381,10 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $value;
         }
 
-        /**
-         * @param $values
-         * @return false|string
-         */
         public function addCanvasItem($values): false|string
         {
 
-            $query = "INSERT INTO zp_canvas_items (
+            $query = 'INSERT INTO zp_canvas_items (
 						description,
 						assumptions,
 						data,
@@ -467,7 +408,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 						:canvasId,
 						:status,
 						:milestoneId
-				)";
+				)';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -475,11 +416,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':box', $values['box'] ?? "idea", PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'] ?? session("userdata.id"), PDO::PARAM_INT);
+            $stmn->bindValue(':box', $values['box'] ?? 'idea', PDO::PARAM_STR);
+            $stmn->bindValue(':author', $values['author'] ?? session('userdata.id'), PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -488,14 +429,9 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $id;
         }
 
-
-        /**
-         * @param $id
-         * @return void
-         */
         public function delCanvasItem($id): void
         {
-            $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
+            $query = 'DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -506,19 +442,13 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->closeCursor();
         }
 
-
-        /**
-         * @param $ideaId
-         * @param $status
-         * @return bool
-         */
         public function updateIdeaStatus($ideaId, $status): bool
         {
 
-            $query = "UPDATE zp_canvas_items SET
+            $query = 'UPDATE zp_canvas_items SET
 					    box = :status
 					  WHERE id = :id LIMIT 1
-                ";
+                ';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':status', $status, PDO::PARAM_STR);
@@ -532,7 +462,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
         /**
-         * @param $projectId
          * @return int|mixed
          */
         public function getNumberOfIdeas($projectId = null): mixed
@@ -545,13 +474,13 @@ namespace Leantime\Domain\Ideas\Repositories {
 				LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
 				WHERE canvasBoard.type = 'idea'  ";
 
-            if (!is_null($projectId)) {
-                $sql .= " AND canvasBoard.projectId = :projectId";
+            if (! is_null($projectId)) {
+                $sql .= ' AND canvasBoard.projectId = :projectId';
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if (!is_null($projectId)) {
+            if (! is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -567,7 +496,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
         /**
-         * @param $projectId
          * @return int|mixed
          */
         public function getNumberOfBoards($projectId = null): mixed
@@ -580,13 +508,13 @@ namespace Leantime\Domain\Ideas\Repositories {
                   WHERE zp_canvas.type = 'idea'
                 ";
 
-            if (!is_null($projectId)) {
-                $sql .= " WHERE zp_canvas.projectId = :projectId";
+            if (! is_null($projectId)) {
+                $sql .= ' WHERE zp_canvas.projectId = :projectId';
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if (!is_null($projectId)) {
+            if (! is_null($projectId)) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -601,22 +529,15 @@ namespace Leantime\Domain\Ideas\Repositories {
             return 0;
         }
 
-        /**
-         * @param $params
-         * @return bool
-         */
         public function bulkUpdateIdeaStatus($params): bool
         {
-
-
 
             //Jquery sortable serializes the array for kanban in format
             //statusKey: item[]=X&item[]=X2...,
             //statusKey2: item[]=X&item[]=X2...,
             //This represents status & kanban sorting
             foreach ($params as $status => $ideaList) {
-                $ideas = explode("&", $ideaList);
-
+                $ideas = explode('&', $ideaList);
 
                 if (is_array($ideas) === true && count($ideas) > 0) {
                     foreach ($ideas as $key => $ideaString) {
@@ -662,31 +583,30 @@ namespace Leantime\Domain\Ideas\Repositories {
                 )
                 ";
 
-            if (isset($projectId) && $projectId  > 0) {
-                $sql .= " AND (zp_canvas.projectId = :projectId)";
+            if (isset($projectId) && $projectId > 0) {
+                $sql .= ' AND (zp_canvas.projectId = :projectId)';
             }
 
-            if (isset($boardId) && $boardId  > 0) {
-                $sql .= " AND (zp_canvas.id = :boardId)";
+            if (isset($boardId) && $boardId > 0) {
+                $sql .= ' AND (zp_canvas.id = :boardId)';
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
-            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
 
-            if (session()->exists("userdata")) {
-                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            if (session()->exists('userdata')) {
+                $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
             }
 
-
-            if (isset($projectId) && $projectId  > 0) {
+            if (isset($projectId) && $projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            if (isset($boardId) && $boardId  > 0) {
+            if (isset($boardId) && $boardId > 0) {
                 $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
             }
 

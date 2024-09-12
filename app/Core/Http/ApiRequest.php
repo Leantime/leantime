@@ -6,18 +6,17 @@ namespace Leantime\Core\Http;
  * Class ApiRequest
  *
  * Represents an API request.
- *
  */
 class ApiRequest extends IncomingRequest
 {
     /**
-     * @param array                $query      The GET parameters
-     * @param array                $request    The POST parameters
-     * @param array                $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
-     * @param array                $cookies    The COOKIE parameters
-     * @param array                $files      The FILES parameters
-     * @param array                $server     The SERVER parameters
-     * @param string|resource|null $content    The raw body data
+     * @param  array  $query  The GET parameters
+     * @param  array  $request  The POST parameters
+     * @param  array  $attributes  The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param  array  $cookies  The COOKIE parameters
+     * @param  array  $files  The FILES parameters
+     * @param  array  $server  The SERVER parameters
+     * @param  string|resource|null  $content  The raw body data
      */
     public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
@@ -84,7 +83,7 @@ class ApiRequest extends IncomingRequest
     {
         $headers = $this->getAuthorizationHeader();
         // HEADER: Get the access token from the header
-        if (!empty($headers)) {
+        if (! empty($headers)) {
             if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                 return $matches[1];
             }
@@ -100,6 +99,6 @@ class ApiRequest extends IncomingRequest
      */
     public function isApiRequest(): bool
     {
-        return str_starts_with($_SERVER['REQUEST_URI'], "/api/jsonrpc");
+        return str_starts_with($_SERVER['REQUEST_URI'], '/api/jsonrpc');
     }
 }

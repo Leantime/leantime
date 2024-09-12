@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 
 class Plugins extends ServiceProvider

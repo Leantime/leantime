@@ -7,24 +7,24 @@ $project_files = new RecursiveIteratorIterator(
 );
 
 // The path to the 'app' directory.
-$app_path = $projectRootDirectory . '/app';
+$app_path = $projectRootDirectory.'/app';
 
 $dispatched_events = [];
 $listeners = [];
 
 foreach ($project_files as $file) {
-    if (!$file->isFile()) {
+    if (! $file->isFile()) {
         continue;
     }
 
     $relative_path = str_replace([$app_path, '.php'], ['', ''], $file->getRealPath());
-    $context = 'leantime' . strtolower(str_replace('/', '.', $relative_path));
+    $context = 'leantime'.strtolower(str_replace('/', '.', $relative_path));
 
     $source_code = file_get_contents($file->getRealPath());
 
     if (preg_match_all('/dispatch_(event|filter)\(\s*[\'"](.+?)[\'"]\s*[),]/', $source_code, $matches)) {
-        $events = array_map(function($eventName) use ($context){
-            return $context . '.' . strtolower($eventName);
+        $events = array_map(function ($eventName) use ($context) {
+            return $context.'.'.strtolower($eventName);
         }, $matches[2]);
 
         $dispatched_events = array_merge($dispatched_events, $events);

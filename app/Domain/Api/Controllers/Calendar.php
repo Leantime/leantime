@@ -17,12 +17,6 @@ class Calendar extends Controller
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     * @param CalendarService $calendarSvc
-     *
-     * @return void
      */
     public function init(CalendarService $calendarSvc): void
     {
@@ -31,10 +25,6 @@ class Calendar extends Controller
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @return Response
      */
     public function get(): Response
     {
@@ -43,12 +33,6 @@ class Calendar extends Controller
 
     /**
      * post - handle post requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function post(array $params): Response
     {
@@ -57,12 +41,6 @@ class Calendar extends Controller
 
     /**
      * patch - handle patch requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
@@ -83,11 +61,6 @@ class Calendar extends Controller
 
     /**
      * delete - handle delete requests
-     *
-     * @access public
-     * @param array $params
-     *
-     * @return Response
      */
     public function delete(array $params): Response
     {

@@ -232,7 +232,6 @@ class CliServices extends ServiceProvider implements DeferrableProvider
     /**
      * Register the given commands.
      *
-     * @param  array  $commands
      * @return void
      */
     protected function registerCommands(array $commands)

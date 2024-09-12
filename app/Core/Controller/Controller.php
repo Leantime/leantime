@@ -2,9 +2,7 @@
 
 namespace Leantime\Core\Controller;
 
-use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -13,27 +11,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller Class - Base class For all controllers
- *
- * @package    leantime
- * @subpackage core
  */
 abstract class Controller
 {
     use DispatchesEvents;
 
-    /**
-     * @var Response
-     */
     protected Response $response;
 
     /**
      * constructor - initialize private variables
      *
-     * @access public
      *
-     * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param Template        $tpl             The template to be initialized.
-     * @param Language        $language        The language to be initialized.
+     * @param  IncomingRequest  $incomingRequest  The request to be initialized.
+     * @param  Template  $tpl  The template to be initialized.
+     * @param  Language  $language  The language to be initialized.
+     *
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -59,7 +51,6 @@ abstract class Controller
     /**
      * getResponse - returns the response
      *
-     * @access public
      *
      * @return Response The response object.
      */

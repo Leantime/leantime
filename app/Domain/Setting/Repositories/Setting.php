@@ -6,22 +6,16 @@ namespace Leantime\Domain\Setting\Repositories {
     use Leantime\Core\Db\Db as DbCore;
     use PDO;
 
-    /**
-     *
-     */
     class Setting
     {
         private DbCore $db;
 
-        public array $applications = array(
+        public array $applications = [
             'general' => 'General',
-        );
+        ];
 
         /**
          * __construct - neu db connection
-         *
-         * @access public
-         * @param DbCore $db
          */
         public function __construct(DbCore $db)
         {
@@ -29,7 +23,6 @@ namespace Leantime\Domain\Setting\Repositories {
         }
 
         /**
-         * @param $type
          * @return false|mixed
          */
         public function getSetting($type): mixed
@@ -38,10 +31,10 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
             }
 
-            $sql = "SELECT
+            $sql = 'SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
-				LIMIT 1";
+				LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
@@ -52,6 +45,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 $stmn->closeCursor();
             } catch (Exception $e) {
                 report($e);
+
                 return false;
             }
 
@@ -59,15 +53,10 @@ namespace Leantime\Domain\Setting\Repositories {
                 return $values['value'];
             }
 
-                //TODO: This needs to return null or throw an exception if the setting doesn't exist.
-                return false;
+            //TODO: This needs to return null or throw an exception if the setting doesn't exist.
+            return false;
         }
 
-        /**
-         * @param $type
-         * @param $value
-         * @return bool
-         */
         public function saveSetting($type, $value): bool
         {
 
@@ -75,9 +64,9 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
             }
 
-            $sql = "INSERT INTO zp_settings (`key`, `value`)
+            $sql = 'INSERT INTO zp_settings (`key`, `value`)
 				VALUES (:key, :value) ON DUPLICATE KEY UPDATE
-				  `value` = :valueUpdate";
+				  `value` = :valueUpdate';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
@@ -90,18 +79,10 @@ namespace Leantime\Domain\Setting\Repositories {
             return $return;
         }
 
-        /**
-         * @param $type
-         * @return void
-         */
-        /**
-         * @param $type
-         * @return void
-         */
         public function deleteSetting($type): void
         {
 
-            $sql = "DELETE FROM zp_settings WHERE `key` = :key LIMIT 1";
+            $sql = 'DELETE FROM zp_settings WHERE `key` = :key LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
@@ -112,14 +93,11 @@ namespace Leantime\Domain\Setting\Repositories {
 
         /**
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
-         *
-         * @access public
-         * @return bool
          */
         public function checkIfInstalled(): bool
         {
 
-            if (session()->exists("isInstalled") && session("isInstalled")) {
+            if (session()->exists('isInstalled') && session('isInstalled')) {
                 return true;
             }
 
@@ -130,22 +108,25 @@ namespace Leantime\Domain\Setting\Repositories {
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                if (!count($values)) {
-                    session(["isInstalled" => false]);
+                if (! count($values)) {
+                    session(['isInstalled' => false]);
+
                     return false;
                 }
 
-                $stmn = $this->db->database->prepare("SELECT COUNT(*) FROM zp_user");
+                $stmn = $this->db->database->prepare('SELECT COUNT(*) FROM zp_user');
 
                 $stmn->execute();
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                session(["isInstalled" => true]);
+                session(['isInstalled' => true]);
+
                 return true;
             } catch (Exception $e) {
                 report($e);
-                session(["isInstalled" => false]);
+                session(['isInstalled' => false]);
+
                 return false;
             }
         }

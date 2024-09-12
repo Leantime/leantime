@@ -17,11 +17,11 @@ class Logging extends ServiceProvider
 
         $this->app->singleton('log', function ($app) {
 
-            if(!file_exists(APP_ROOT . '/logs/leantime.log')) {
-                touch(APP_ROOT . '/logs/leantime.log');
+            if (! file_exists(APP_ROOT.'/logs/leantime.log')) {
+                touch(APP_ROOT.'/logs/leantime.log');
             }
 
-                $app['config']['logging'] = [
+            $app['config']['logging'] = [
                 'channels' => [
                     'stack' => [
                         'driver' => 'stack',
@@ -30,12 +30,12 @@ class Logging extends ServiceProvider
                     ],
                     'single' => [
                         'driver' => 'single',
-                        'path' => !empty($app['config']['logPath']) ? $app['config']['logPath'] : APP_ROOT . '/logs/leantime.log',
+                        'path' => ! empty($app['config']['logPath']) ? $app['config']['logPath'] : APP_ROOT.'/logs/leantime.log',
                         'permission' => 0664,
                     ],
                     'deprecations' => [
                         'driver' => 'single',
-                        'path' => APP_ROOT . '/logs/deprecation-warnings.log',
+                        'path' => APP_ROOT.'/logs/deprecation-warnings.log',
                     ],
                 ],
                 'default' => 'single',

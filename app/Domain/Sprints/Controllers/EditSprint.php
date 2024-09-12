@@ -9,9 +9,6 @@ namespace Leantime\Domain\Sprints\Controllers {
     use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 
-    /**
-     *
-     */
     class EditSprint extends Controller
     {
         private SprintService $sprintService;
@@ -20,15 +17,11 @@ namespace Leantime\Domain\Sprints\Controllers {
 
         /**
          * constructor - initialize private variables
-         *
-         * @access public
-         *
          */
         public function init(
             SprintService $sprintService,
             Projects $projectService,
-    )
-        {
+        ) {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->sprintService = $sprintService;
@@ -37,9 +30,6 @@ namespace Leantime\Domain\Sprints\Controllers {
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
@@ -48,48 +38,47 @@ namespace Leantime\Domain\Sprints\Controllers {
             } else {
                 $sprint = app()->make(SprintModel::class);
 
-                $startDate =  dtHelper()->userNow();
-                $endDate =  dtHelper()->userNow()->addDays(13);
+                $startDate = dtHelper()->userNow();
+                $endDate = dtHelper()->userNow()->addDays(13);
 
                 $sprint->startDate = $startDate;
                 $sprint->endDate = $endDate;
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"), 'open');
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
             $this->tpl->assign('sprint', $sprint);
+
             return $this->tpl->displayPartial('sprints::partials.sprintdialog');
         }
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
             //If ID is set its an update
 
             if ($params['startDate'] == '' || $params['endDate'] == '') {
-                $this->tpl->setNotification("First day and last day are required", "error");
+                $this->tpl->setNotification('First day and last day are required', 'error');
 
                 $this->tpl->assign('sprint', (object) $params);
+
                 return $this->tpl->displayPartial('sprints::partials.sprintdialog');
             }
 
             if (isset($_GET['id']) && $_GET['id'] > 0) {
-                $params['id'] = (int)$_GET['id'];
+                $params['id'] = (int) $_GET['id'];
 
                 if ($this->sprintService->editSprint($params)) {
-                    $this->tpl->setNotification("Sprint edited successfully", "success");
+                    $this->tpl->setNotification('Sprint edited successfully', 'success');
                 } else {
-                    $this->tpl->setNotification("There was a problem saving the sprint", "error");
+                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
                 }
             } else {
                 if ($this->sprintService->addSprint($params)) {
-                    $this->tpl->setNotification("Sprint created successfully.", "success");
+                    $this->tpl->setNotification('Sprint created successfully.', 'success');
 
                     $this->tpl->closeModal();
                     $this->tpl->htmxRefresh();
@@ -97,36 +86,27 @@ namespace Leantime\Domain\Sprints\Controllers {
                     return $this->tpl->emptyResponse();
 
                 } else {
-                    $this->tpl->setNotification("There was a problem saving the sprint", "error");
+                    $this->tpl->setNotification('There was a problem saving the sprint', 'error');
                 }
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"), 'open');
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('sprint', (object) $params);
+
             return $this->tpl->displayPartial('sprints::partials.sprintdialog');
         }
 
         /**
          * put - handle put requests
-         *
-         * @access public
-         *
          */
-        public function put($params)
-        {
-        }
+        public function put($params) {}
 
         /**
          * delete - handle delete requests
-         *
-         * @access public
-         *
          */
-        public function delete($params)
-        {
-        }
+        public function delete($params) {}
     }
 }

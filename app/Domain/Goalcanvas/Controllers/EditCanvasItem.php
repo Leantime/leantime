@@ -8,32 +8,26 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller\Controller;
-    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+    use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Controller\Frontcontroller;
 
-
-    /**
-     *
-     */
     class EditCanvasItem extends Controller
     {
         private TicketService $ticketService;
+
         private ProjectService $projectService;
+
         private GoalcanvaService $goalService;
 
         /**
-         * @param GoalcanvaRepository $canvasRepo
-         * @param CommentRepository   $commentsRepo
-         * @param TicketService       $ticketService
-         * @param ProjectService      $projectService
-         * @param GoalcanvaService    $goalService
-         * @return void
+         * @param  GoalcanvaRepository  $canvasRepo
+         * @param  CommentRepository  $commentsRepo
          */
         public function init(
 
@@ -48,8 +42,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws \Exception
          */
         public function get($params): Response
@@ -60,7 +52,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 return $this->tpl->displayPartial('errors.error404');
             }
 
-            $this->tpl->assign('id', $result['canvasItem']['id'] ?? "");
+            $this->tpl->assign('id', $result['canvasItem']['id'] ?? '');
             $this->tpl->assign('canvasId', $result['canvasItem']['canvasId']);
             $this->tpl->assign('comments', $result['comments']);
             $this->tpl->assign('numComments', $result['numComments']);
@@ -72,9 +64,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('dataLabels', $result['dataLabels']);
 
             $allProjectMilestones = $this->ticketService->getAllMilestones([
-                "sprint" => '',
-                "type" => "milestone",
-                "currentProject" => session("currentProject")
+                'sprint' => '',
+                'type' => 'milestone',
+                'currentProject' => session('currentProject'),
             ]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
@@ -82,8 +74,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -93,7 +83,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 if ($commentId) {
                     $this->notifyOnCommentCreation($params, $commentId);
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
-                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
+
+                    return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.$_GET['id']);
                 }
             }
 
@@ -103,7 +94,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 if ($result) {
                     $this->notifyOnItemUpdate($result['canvasItem']);
                     $canvasTypes = $this->goalService->getCanvasTypes();
-                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully ' . ($result['isNew'] ? 'created' : 'updated'), 'success');
+                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully '.($result['isNew'] ? 'created' : 'updated'), 'success');
 
                     $this->tpl->closeModal();
                     $this->tpl->htmxRefresh();
@@ -116,6 +107,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             }
 
             $this->prepareView($params);
+
             return $this->tpl->displayPartial('goalcanvas::partials.editCanvasItem');
         }
 
@@ -123,17 +115,17 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                "url" => BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$_GET['id'],
-                "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
+                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $_GET['id'],
+                'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = array_merge($params, ['id' => $commentId]);
             $notification->module = 'goalcanvas';
-            $notification->projectId = session("currentProject");
+            $notification->projectId = session('currentProject');
             $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
-            $notification->authorId = session("userdata.id");
+            $notification->authorId = session('userdata.id');
             $notification->message = sprintf(
                 $this->language->__('email_notifications.canvas_item__comment_created_message'),
-                session("userdata.name")
+                session('userdata.name')
             );
 
             $this->projectService->notifyProjectUsers($notification);
@@ -143,17 +135,17 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                "url" => BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$canvasItem['id'],
-                "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
+                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['id'],
+                'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = $canvasItem;
             $notification->module = 'goalcanvas';
-            $notification->projectId = session("currentProject");
+            $notification->projectId = session('currentProject');
             $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
-            $notification->authorId = session("userdata.id");
+            $notification->authorId = session('userdata.id');
             $notification->message = sprintf(
                 $this->language->__('email_notifications.canvas_item_update_message'),
-                session("userdata.name"),
+                session('userdata.name'),
                 $canvasItem['description']
             );
 

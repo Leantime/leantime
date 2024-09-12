@@ -2,8 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core;
 
@@ -44,8 +42,5 @@ class Events extends ServiceProvider
 
     }
 
-    public function boot()
-    {
-
-    }
+    public function boot() {}
 }

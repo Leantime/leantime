@@ -7,23 +7,14 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Sessions extends Controller
 {
     private UserService $userService;
+
     private MenuRepository $menu;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     * @param UserService    $userService
-     * @param MenuRepository $menu
-     *
-     * @return void
      */
     public function init(UserService $userService, MenuRepository $menu): void
     {
@@ -32,11 +23,7 @@ class Sessions extends Controller
     }
 
     /**
-     * @access public
-     *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function get(array $params): Response
     {
@@ -46,11 +33,8 @@ class Sessions extends Controller
     /**
      * post - handle post requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function post(array $params): Response
     {
@@ -60,22 +44,21 @@ class Sessions extends Controller
     /**
      * put - Special handling for settings
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function patch(array $params): Response
     {
         if (isset($params['tourActive'])) {
-            session(["tourActive" => filter_var($params['tourActive'], FILTER_SANITIZE_NUMBER_INT)]);
+            session(['tourActive' => filter_var($params['tourActive'], FILTER_SANITIZE_NUMBER_INT)]);
+
             return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         if (isset($params['menuState'])) {
-            session(["menuState" => htmlentities($params['menuState'])]);
-            $this->menu->setSubmenuState("mainMenu", $params['menuState']);
+            session(['menuState' => htmlentities($params['menuState'])]);
+            $this->menu->setSubmenuState('mainMenu', $params['menuState']);
+
             return $this->tpl->displayJson(['status' => 'ok']);
         }
 
@@ -85,11 +68,8 @@ class Sessions extends Controller
     /**
      * delete - handle delete requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function delete(array $params): Response
     {

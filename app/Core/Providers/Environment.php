@@ -5,13 +5,11 @@ namespace Leantime\Core\Providers;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core\Bootstrap\HandleExceptions;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\ErrorHandler\Debug;
 
 class Environment extends ServiceProvider
 {
-
-    Use DispatchesEvents;
+    use DispatchesEvents;
 
     /**
      * Register any application services.
@@ -25,8 +23,8 @@ class Environment extends ServiceProvider
 
     }
 
-    public function boot() {
-
+    public function boot()
+    {
 
         /*
         $config = $this->app->make(\Leantime\Core\Configuration\Environment::class);
@@ -68,5 +66,4 @@ class Environment extends ServiceProvider
         self::dispatch_event('config_initialized');
         */
     }
-
 }

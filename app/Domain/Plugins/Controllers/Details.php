@@ -10,23 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Details extends Controller
 {
-    /**
-     * @var PluginService
-     */
     private PluginService $pluginService;
 
-    /**
-     * @param PluginService $pluginService
-     * @return void
-     */
     public function init(PluginService $pluginService): void
     {
         $this->pluginService = $pluginService;
     }
 
-    /**
-     * @return Response
-     */
     public function get(): Response
     {
 

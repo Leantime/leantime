@@ -12,9 +12,9 @@ class MissingParameterException extends Exception
      *
      * @link https://php.net/manual/en/exception.construct.php
      *
-     * @param string         $message  [optional] The Exception message to throw.
-     * @param Throwable|null $previous [optional] The previous throwable used for the exception chaining.
-     * @param int            $code     [optional] The Exception code.
+     * @param  string  $message  [optional] The Exception message to throw.
+     * @param  Throwable|null  $previous  [optional] The previous throwable used for the exception chaining.
+     * @param  int  $code  [optional] The Exception code.
      */
     public function __construct(string $message = '', int $code = 422)
     {

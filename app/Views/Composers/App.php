@@ -19,36 +19,29 @@ class App extends Composer
 
     private Menu $menuRepo;
 
-    /**
-     * @param Menu $menuRepo
-     *
-     * @return void
-     */
     public function init(Menu $menuRepo): void
     {
         $this->menuRepo = $menuRepo;
     }
 
     /**
-     * @return array
-     *
      * @throws BindingResolutionException
      */
     public function with(): array
     {
         // These needs to live in the main app since the menu open or closed changes the entire html layout
-        if (session()->exists("userdata")) {
-            session(["menuState" => $this->menuRepo->getSubmenuState('mainMenu') ?: 'open']);
+        if (session()->exists('userdata')) {
+            session(['menuState' => $this->menuRepo->getSubmenuState('mainMenu') ?: 'open']);
         }
 
-        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), 'project');
 
         $announcement = null;
-        $announcement = self::dispatch_filter("appAnnouncement", $announcement);
+        $announcement = self::dispatch_filter('appAnnouncement', $announcement);
 
         return [
-            "section" => $menuType,
-            "appAnnouncement" => $announcement,
+            'section' => $menuType,
+            'appAnnouncement' => $announcement,
         ];
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Support\Page\Acceptance;
 
-use Tests\Support\Page\Acceptance\Install;
 use Codeception\Util\Fixtures;
 
 class Login

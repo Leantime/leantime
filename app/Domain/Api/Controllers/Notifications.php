@@ -6,22 +6,12 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Notifications extends Controller
 {
     public NotificationService $notificationService;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     *
-     * @param NotificationService $notificationService
-     *
-     * @return void
      */
     public function init(NotificationService $notificationService): void
     {
@@ -30,12 +20,6 @@ class Notifications extends Controller
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -47,11 +31,8 @@ class Notifications extends Controller
     /**
      * post - handle post requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function post(array $params): Response
     {
@@ -60,30 +41,21 @@ class Notifications extends Controller
 
     /**
      * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
-        if (isset($params['action']) && $params['action'] == "read") {
-            $this->notificationService->markNotificationRead($params['id'], session("userdata.id"));
+        if (isset($params['action']) && $params['action'] == 'read') {
+            $this->notificationService->markNotificationRead($params['id'], session('userdata.id'));
         }
 
-        return new Response();
+        return new Response;
     }
 
     /**
      * delete - handle delete requests
      *
-     * @access public
      *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
+     * @param  array  $params  parameters or body of the request
      */
     public function delete(array $params): Response
     {

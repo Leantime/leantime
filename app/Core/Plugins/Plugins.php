@@ -7,9 +7,6 @@ use Leantime\Core\Events\DispatchesEvents;
 
 /**
  * Plugins class
- *
- * @package    leantime
- * @subpackage core
  */
 class Plugins
 {
@@ -17,15 +14,13 @@ class Plugins
 
     /**
      * Enabled plugins
-     *
-     * @var    array
      */
     private array $enabledPlugins = [];
 
     /**
      * constructor
      *
-     * @param \Leantime\Core\Configuration\Environment $config
+     * @param  \Leantime\Core\Configuration\Environment  $config
      * @return void
      */
     public function __construct(Configuration\Environment $config)
@@ -43,12 +38,6 @@ class Plugins
 
     /**
      * Makes all plugin keys lowercase for easy comparisons
-     *
-     * @access private
-     *
-     * @param array $plugins
-     *
-     * @return array
      */
     private function standardize_plugin_keys(array $plugins): array
     {
@@ -66,10 +55,6 @@ class Plugins
 
     /**
      * Gets all plugin enabled/disabled settings
-     *
-     * @access public
-     *
-     * @return array
      */
     public function getEnabledPlugins(): array
     {
@@ -78,12 +63,6 @@ class Plugins
 
     /**
      * Checks to see if a plugin is enabled
-     *
-     * @access public
-     *
-     * @param string $plugin_name
-     *
-     * @return bool
      */
     public function isPluginEnabled(string $plugin_name): bool
     {

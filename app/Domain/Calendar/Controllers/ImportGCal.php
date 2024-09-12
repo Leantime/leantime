@@ -17,10 +17,6 @@ class ImportGCal extends Controller
 
     /**
      * init - initialize private variables
-     *
-     * @param CalendarRepository $calendarRepo
-     *
-     * @return void
      */
     public function init(CalendarRepository $calendarRepo): void
     {
@@ -29,27 +25,23 @@ class ImportGCal extends Controller
 
     /**
      * run - display template and edit data
-     *
-     * @access public
-     *
-     * @return Response
      */
     public function run(): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        $values = array(
+        $values = [
             'url' => '',
             'name' => '',
             'colorClass' => '',
-        );
+        ];
 
         if (isset($_POST['name']) === true) {
-            $values = array(
+            $values = [
                 'url' => ($_POST['url']),
                 'name' => ($_POST['name']),
                 'colorClass' => ($_POST['colorClass']),
-            );
+            ];
 
             $this->calendarRepo->addGUrl($values);
             $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');

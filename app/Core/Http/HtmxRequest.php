@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace Leantime\Core\Http;
 
-/**
- *
- */
 class HtmxRequest extends IncomingRequest
 {
     /**
-     * @param array                $query      The GET parameters
-     * @param array                $request    The POST parameters
-     * @param array                $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
-     * @param array                $cookies    The COOKIE parameters
-     * @param array                $files      The FILES parameters
-     * @param array                $server     The SERVER parameters
-     * @param string|resource|null $content    The raw body data
+     * @param  array  $query  The GET parameters
+     * @param  array  $request  The POST parameters
+     * @param  array  $attributes  The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param  array  $cookies  The COOKIE parameters
+     * @param  array  $files  The FILES parameters
+     * @param  array  $server  The SERVER parameters
+     * @param  string|resource|null  $content  The raw body data
      */
     public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
@@ -47,8 +44,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * Indicates that the request is via an element using hx-boost
-     *
-     * @return bool
      */
     public function isBoosted(): bool
     {
@@ -60,8 +55,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * The Current URL of the browser when the htmx request was made.
-     *
-     * @return string
      */
     public function getReferrer(): string
     {
@@ -70,8 +63,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * Indicates if the request is for history restoration after a miss in the local history cache
-     *
-     * @return bool
      */
     public function isHistoryRestoreRequest(): bool
     {
@@ -83,8 +74,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * The user response to an hx-prompt.
-     *
-     * @return string
      */
     public function getPromptResponse(): string
     {
@@ -93,8 +82,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * The id of the target element if it exists.
-     *
-     * @return string
      */
     public function getTarget(): string
     {
@@ -103,8 +90,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * The name of the triggered element if it exists.
-     *
-     * @return string
      */
     public function getTriggerName(): string
     {
@@ -113,8 +98,6 @@ class HtmxRequest extends IncomingRequest
 
     /**
      * The id of the triggered element if it exists.
-     *
-     * @return string
      */
     public function getTriggerId(): string
     {

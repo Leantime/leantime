@@ -5,33 +5,16 @@ namespace Leantime\Domain\Audit\Repositories;
 use Leantime\Core\Db\Db as DbCore;
 use PDO;
 
-/**
- *
- */
 class Audit
 {
     private DbCore $db;
 
-    /**
-     * @param DbCore $db
-     */
     public function __construct(DbCore $db)
     {
         $this->db = $db;
     }
 
-    /**
-     * @param string $action
-     * @param string $values
-     * @param string $entity
-     * @param int    $entityId
-     * @param int    $userId
-     * @param int    $projectId
-     * @param string $thedate
-     *
-     * @return void
-     */
-    public function storeEvent(string $action = "ping", string $values = "", string $entity = "", int $entityId = 0, int $userId = 0, int $projectId = 0, string $thedate = ''): void
+    public function storeEvent(string $action = 'ping', string $values = '', string $entity = '', int $entityId = 0, int $userId = 0, int $projectId = 0, string $thedate = ''): void
     {
 
         if ($thedate == '') {
@@ -56,8 +39,6 @@ class Audit
     }
 
     /**
-     * @param string $action
-     *
      * @return mixed|null
      */
     public function getLastEvent(string $action = ''): mixed
@@ -87,11 +68,6 @@ class Audit
         return null;
     }
 
-    /**
-     * @param int $ageDays
-     *
-     * @return void
-     */
     public function pruneEvents(int $ageDays = 30): void
     {
         $sql = 'DELETE FROM zp_audit WHERE DATE(`date`) < CURDATE() - INTERVAL :age DAY';

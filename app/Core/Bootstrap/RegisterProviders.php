@@ -3,7 +3,6 @@
 namespace Leantime\Core\Bootstrap;
 
 use Illuminate\Contracts\Foundation\Application;
-use Leantime\Core\Plugins;
 use Leantime\Core\Providers\Auth;
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Providers\ConsoleSupport;
@@ -35,8 +34,6 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
      */
     protected static $bootstrapProviderPath;
 
-
-
     protected static $laravelProviders = [
         \Illuminate\Auth\AuthServiceProvider::class,
         \Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -59,8 +56,9 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
         \Illuminate\Session\SessionServiceProvider::class,
         \Illuminate\Translation\TranslationServiceProvider::class,
         \Illuminate\Validation\ValidationServiceProvider::class,
-        \Illuminate\View\ViewServiceProvider::class
+        \Illuminate\View\ViewServiceProvider::class,
     ];
+
     protected static $defaultLeantimeProviders = [
         //\Illuminate\Broadcasting\BroadcastServiceProvider::class,
         //\Illuminate\Bus\BusServiceProvider::class,
@@ -106,8 +104,7 @@ class RegisterProviders extends \Illuminate\Foundation\Bootstrap\RegisterProvide
     public function bootstrap(Application $app)
     {
 
-
-        foreach(self::$defaultLeantimeProviders as $provider){
+        foreach (self::$defaultLeantimeProviders as $provider) {
             $app->register($provider);
         }
 

@@ -3,18 +3,12 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Foundation\Bootstrap\LoadConfig;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
 use Leantime\Core\Application;
-use Leantime\Core\Bootstrap\BootProviders;
-use Leantime\Core\Bootstrap\HandleExceptions;
-use Leantime\Core\Bootstrap\LoadEnvironmentVariables;
-use Leantime\Core\Bootstrap\RegisterFacades;
-use Leantime\Core\Bootstrap\RegisterProviders;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Middleware;
@@ -39,17 +33,16 @@ class HttpKernel extends Kernel implements HttpKernelContract
         $this->app = $app;
         $this->frontcontroller = $frontcontroller;
 
-
     }
 
     /**
      * Handle the incoming request.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request The incoming request.
-     * @return \Symfony\Component\HttpFoundation\Response  The response.
+     * @param  \Symfony\Component\HttpFoundation\Request  $request  The incoming request.
+     * @return \Symfony\Component\HttpFoundation\Response The response.
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
-     * @throws \Throwable  If an error occurs and it is not caught.
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException If an HTTP response exception occurs.
+     * @throws \Throwable If an error occurs and it is not caught.
      *
      * @Overrid
      */
@@ -81,8 +74,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
     /**
      * Send the request through the router.
      *
-     * @param mixed $request The request object.
-     *
+     * @param  mixed  $request  The request object.
      * @return mixed The response object.
      *
      * @Override
@@ -98,7 +90,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
         $response = (new Pipeline($this->app))
             ->send($request)
             ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then(fn($request) => $this->frontcontroller->dispatch($request));
+            ->then(fn ($request) => $this->frontcontroller->dispatch($request));
 
         return $response;
     }
@@ -106,9 +98,8 @@ class HttpKernel extends Kernel implements HttpKernelContract
     /**
      * Terminate the request.
      *
-     * @param mixed $request  The request object.
-     * @param mixed $response The response object.
-     *
+     * @param  mixed  $request  The request object.
+     * @param  mixed  $response  The response object.
      * @return void
      */
     public function terminate($request, $response)
@@ -139,11 +130,8 @@ class HttpKernel extends Kernel implements HttpKernelContract
         $this->requestStartedAt = null;
     }
 
-
-
     /**
      * Get the application middleware
-     * @return array
      **/
     public function getMiddleware(IncomingRequest $request): array
     {
@@ -163,8 +151,8 @@ class HttpKernel extends Kernel implements HttpKernelContract
             $middleware[] = Middleware\Auth::class;
         }
 
-         $middleware[] = Middleware\Localization::class;
-         $middleware[] = Middleware\CurrentProject::class;
+        $middleware[] = Middleware\Localization::class;
+        $middleware[] = Middleware\CurrentProject::class;
 
         return self::dispatch_filter('http_middleware', $middleware);
     }
@@ -178,10 +166,9 @@ class HttpKernel extends Kernel implements HttpKernelContract
             \Leantime\Core\Bootstrap\HandleExceptions::class,
             \Leantime\Core\Bootstrap\RegisterProviders::class,
             \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class
+            \Illuminate\Foundation\Bootstrap\BootProviders::class,
         ];
 
         return self::dispatch_filter('http_bootstrappers', $bootstrappers);
     }
-
 }

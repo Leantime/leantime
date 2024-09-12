@@ -11,22 +11,20 @@ namespace Leantime\Domain\Setting\Controllers {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
-    /**
-     *
-     */
     class EditBoxLabel extends Controller
     {
         private TicketRepository $ticketsRepo;
+
         private SettingRepository $settingsRepo;
+
         private LeancanvaRepository $canvasRepo;
+
         private RetroscanvaRepository $retroRepo;
+
         private IdeaRepository $ideaRepo;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
-         *
          */
         public function init(
             TicketRepository $ticketsRepo,
@@ -46,36 +44,33 @@ namespace Leantime\Domain\Setting\Controllers {
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
 
             if (Auth::userIsAtLeast(Roles::$manager)) {
-                $currentLabel = "";
+                $currentLabel = '';
 
                 if (isset($params['module']) && isset($params['label'])) {
                     //Move to settings service
-                    if ($params['module'] == "ticketlabels") {
+                    if ($params['module'] == 'ticketlabels') {
                         $stateLabels = $this->ticketsRepo->getStateLabels();
-                        $currentLabel = $stateLabels[$params['label']]["name"];
+                        $currentLabel = $stateLabels[$params['label']]['name'];
                     }
 
-                    if ($params['module'] == "retrolabels") {
+                    if ($params['module'] == 'retrolabels') {
                         $stateLabels = $this->retroRepo->getCanvasLabels();
                         $currentLabel = $stateLabels[$params['label']];
                     }
 
-                    if ($params['module'] == "researchlabels") {
+                    if ($params['module'] == 'researchlabels') {
                         $stateLabels = $this->canvasRepo->getCanvasLabels();
                         $currentLabel = $stateLabels[$params['label']];
                     }
 
-                    if ($params['module'] == "idealabels") {
+                    if ($params['module'] == 'idealabels') {
                         $stateLabels = $this->ideaRepo->getCanvasLabels();
-                        $currentLabel = $stateLabels[$params['label']]["name"];
+                        $currentLabel = $stateLabels[$params['label']]['name'];
                     }
                 }
 
@@ -89,9 +84,6 @@ namespace Leantime\Domain\Setting\Controllers {
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
@@ -101,7 +93,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $sanitizedString = strip_tags($params['newLabel']);
 
                 //Move to settings service
-                if ($_GET['module'] == "ticketlabels") {
+                if ($_GET['module'] == 'ticketlabels') {
                     $currentStateLabels = $this->ticketsRepo->getStateLabels();
 
                     $statusKey = filter_var($_GET['label'], FILTER_SANITIZE_NUMBER_INT);
@@ -109,50 +101,50 @@ namespace Leantime\Domain\Setting\Controllers {
                     if (isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])) {
                         $currentStateLabels[$statusKey]['name'] = $sanitizedString;
 
-                        session()->forget("projectsettings.ticketlabels");
+                        session()->forget('projectsettings.ticketlabels');
                         $this->settingsRepo->saveSetting(
-                            "projectsettings." . session("currentProject") . ".ticketlabels",
+                            'projectsettings.'.session('currentProject').'.ticketlabels',
                             serialize($currentStateLabels)
                         );
                     }
                 }
 
-                if ($_GET['module'] == "retrolabels") {
+                if ($_GET['module'] == 'retrolabels') {
                     $stateLabels = $this->retroRepo->getCanvasLabels();
                     $stateLabels[$_GET['label']] = $sanitizedString;
-                    session()->forget("projectsettings.retrolabels");
+                    session()->forget('projectsettings.retrolabels');
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . session("currentProject") . ".retrolabels",
+                        'projectsettings.'.session('currentProject').'.retrolabels',
                         serialize($stateLabels)
                     );
                 }
 
-                if ($_GET['module'] == "researchlabels") {
+                if ($_GET['module'] == 'researchlabels') {
                     $stateLabels = $this->canvasRepo->getCanvasLabels();
                     $stateLabels[$_GET['label']] = $sanitizedString;
-                    session()->forget("projectsettings.researchlabels");
+                    session()->forget('projectsettings.researchlabels');
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . session("currentProject") . ".researchlabels",
+                        'projectsettings.'.session('currentProject').'.researchlabels',
                         serialize($stateLabels)
                     );
                 }
 
-                if ($_GET['module'] == "idealabels") {
+                if ($_GET['module'] == 'idealabels') {
                     $stateLabels = $this->ideaRepo->getCanvasLabels();
-                    $newStateLabels = array();
+                    $newStateLabels = [];
                     foreach ($stateLabels as $key => $label) {
-                        $newStateLabels[$key] = $label["name"];
+                        $newStateLabels[$key] = $label['name'];
                     }
                     $newStateLabels[$_GET['label']] = $sanitizedString;
 
-                    session()->forget("projectsettings.idealabels");
+                    session()->forget('projectsettings.idealabels');
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . session("currentProject") . ".idealabels",
+                        'projectsettings.'.session('currentProject').'.idealabels',
                         serialize($newStateLabels)
                     );
                 }
 
-                $this->tpl->setNotification($this->language->__("notifications.label_changed_successfully"), "success");
+                $this->tpl->setNotification($this->language->__('notifications.label_changed_successfully'), 'success');
 
                 $this->tpl->closeModal();
                 $this->tpl->htmxRefresh();
@@ -161,27 +153,18 @@ namespace Leantime\Domain\Setting\Controllers {
             }
 
             $this->tpl->assign('currentLabel', $sanitizedString);
+
             return $this->tpl->displayPartial('projects::partials.editBoxDialog');
         }
 
         /**
          * put - handle put requests
-         *
-         * @access public
-         *
          */
-        public function put($params)
-        {
-        }
+        public function put($params) {}
 
         /**
          * delete - handle delete requests
-         *
-         * @access public
-         *
          */
-        public function delete($params)
-        {
-        }
+        public function delete($params) {}
     }
 }

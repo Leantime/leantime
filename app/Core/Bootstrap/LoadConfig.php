@@ -13,17 +13,17 @@ use Symfony\Component\Finder\Finder;
 
 class LoadConfig extends LoadConfiguration
 {
-
     protected $ignoreFiles = [
-        "configuration.sample.php",
-        "configuration.php"
+        'configuration.sample.php',
+        'configuration.php',
     ];
 
-    public function bootstrap(Application $app){
+    public function bootstrap(Application $app)
+    {
 
         parent::bootstrap($app);
 
-        $app->extend('config', function(Repository $laravelConfig) use ($app) {
+        $app->extend('config', function (Repository $laravelConfig) use ($app) {
 
             $leantimeConfig = $app->make(Environment::class);
 
@@ -34,18 +34,16 @@ class LoadConfig extends LoadConfiguration
             //Re-aranging and setting some of the laravel defaults
             $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
 
-
             return $finalConfig;
         });
-
 
     }
 
     /**
      * Loads configuration files into the repository.
      *
-     * @param Application $app The application instance.
-     * @param RepositoryContract $repository The repository contract.
+     * @param  Application  $app  The application instance.
+     * @param  RepositoryContract  $repository  The repository contract.
      * @return void
      */
     protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
@@ -62,11 +60,9 @@ class LoadConfig extends LoadConfiguration
         }
     }
 
-
     /**
      * Get Laravel configs
      *
-     * @param  Application  $app
      * @return array
      */
     protected function getConfigurationFiles(Application $app)
@@ -80,7 +76,7 @@ class LoadConfig extends LoadConfiguration
             $directory = $this->getNestedDirectory($file, $configPath);
 
             //Ignore leantime configs when loading laravel configs
-            if(!in_array($file->getFilename(), $this->ignoreFiles)) {
+            if (! in_array($file->getFilename(), $this->ignoreFiles)) {
                 $files[$directory.basename($file->getRealPath(), '.php')] = $file->getRealPath();
             }
         }
@@ -90,25 +86,26 @@ class LoadConfig extends LoadConfiguration
         return $files;
     }
 
-    protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig) {
+    protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig)
+    {
 
         $reflectionClass = new \ReflectionClass(DefaultConfig::class);
         $properties = $reflectionClass->getProperties();
 
-        foreach($properties as $configVar) {
+        foreach ($properties as $configVar) {
             $attributes = $configVar->getAttributes(LaravelConfig::class);
 
-            if(isset($attributes[0])){
+            if (isset($attributes[0])) {
                 $laravelConfigKey = $attributes[0]->newInstance()->config;
                 $leantimeConfig->set($laravelConfigKey, $laravelConfig->get($configVar->name));
             }
         }
 
         return $leantimeConfig;
-/*
-        if(!isset($laravelItems['app'])){
-            $laravelItems['app'] = [];
-        }*/
+        /*
+                if(!isset($laravelItems['app'])){
+                    $laravelItems['app'] = [];
+                }*/
 
         //$laravelItems['app']['name'] = $leantimeItems
 

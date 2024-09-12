@@ -4,17 +4,11 @@ namespace Leantime\Core\Support;
 
 class Build
 {
-    /**
-     * @param object $object
-     **/
-    public function __construct(private object $object)
-    {
-    }
+    public function __construct(private object $object) {}
 
     /**
-     * @param string $key   The property name
-     * @param mixed  $value The property value or a callable to set the nested property value
-     * @return self
+     * @param  string  $key  The property name
+     * @param  mixed  $value  The property value or a callable to set the nested property value
      **/
     public function set(string $key, mixed $value): self
     {
@@ -25,21 +19,18 @@ class Build
 
         if (is_callable($value)) {
             // Apply closure to a new builder for the nested element (object or array)
-            $nestedElement = is_array($currentElement) ? ($currentElement[$lastKey] ?? []) : ($currentElement->$lastKey ?? new \stdClass());
+            $nestedElement = is_array($currentElement) ? ($currentElement[$lastKey] ?? []) : ($currentElement->$lastKey ?? new \stdClass);
             $value(build($nestedElement));
             $this->setValue($currentElement, $lastKey, $nestedElement);
+
             return $this;
         }
 
         $this->setValue($currentElement, $lastKey, $value);
+
         return $this;
     }
 
-    /**
-     * @param string   $key
-     * @param callable $configurator
-     * @return self
-     **/
     public function tap(string $key, callable $configurator): self
     {
         $keys = explode('.', $key);
@@ -47,13 +38,13 @@ class Build
         $currentElement = &$this->object;
         $this->handleDotNotation($currentElement, $keys);
         $configurator($currentElement->$lastKey ?? $currentElement[$lastKey]);
+
         return $this;
     }
 
     /**
-     * @param string $method
-     * @param array  $params
-     * @return mixed
+     * @param  string  $method
+     * @param  array  $params
      **/
     public function __call($method, $params): mixed
     {
@@ -77,8 +68,8 @@ class Build
             foreach ([$property, lcfirst($property)] as $propName) {
                 if (
                     in_array(true, [
-                    is_object($currentElement) && ! property_exists($currentElement, $propName),
-                    is_array($currentElement) && ! isset($currentElement[$propName]),
+                        is_object($currentElement) && ! property_exists($currentElement, $propName),
+                        is_array($currentElement) && ! isset($currentElement[$propName]),
                     ])
                 ) {
                     continue;
@@ -98,16 +89,11 @@ class Build
             }
         }
 
-        $property = join('.', $properties);
+        $property = implode('.', $properties);
 
         return $this->{$baseMethod}($property, ...$params);
     }
 
-    /**
-     * @param mixed $currentElement
-     * @param array $keys
-     * @return void
-     **/
     private function handleDotNotation(mixed &$currentElement, array $keys): void
     {
         foreach ($keys as $nestedKey) {
@@ -124,37 +110,28 @@ class Build
                     throw new \Exception('This property doesn\'t support dynamic property setting');
                 }
 
-                $this->setValue($currentElement, $nestedKey, is_array($currentElement) ? [] : new \stdClass());
+                $this->setValue($currentElement, $nestedKey, is_array($currentElement) ? [] : new \stdClass);
             }
         }
     }
 
-    /**
-     * @param object|array $property
-     * @param string       $key
-     * @param mixed        $value
-     * @return void
-     **/
     private function setValue(object|array &$property, string $key, mixed $value): void
     {
         if (is_array($property)) {
             $property[$key] = $value;
+
             return;
         }
 
-        if (method_exists($property, 'set' . ucfirst($key))) {
-            $property->{'set' . ucfirst($key)}($value);
-        } elseif (method_exists($this->object, 'set' . $key)) {
-            $property->{'set' . $key}($value);
+        if (method_exists($property, 'set'.ucfirst($key))) {
+            $property->{'set'.ucfirst($key)}($value);
+        } elseif (method_exists($this->object, 'set'.$key)) {
+            $property->{'set'.$key}($value);
         } else {
             $property->$key = $value;
         }
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     **/
     public function get(string $key = ''): mixed
     {
         if ($key === '') {
@@ -165,16 +142,14 @@ class Build
         $lastKey = array_pop($keys);
         $currentElement = &$this->object;
         $this->handleDotNotation($currentElement, $keys);
+
         return $currentElement->$lastKey ?? $currentElement[$lastKey] ?? null;
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     **/
     public function getAndTap(string $key = '', ?callable $callback = null): mixed
     {
         $result = $this->get($key);
+
         return tap($result, $callback);
     }
 }

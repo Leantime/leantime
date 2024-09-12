@@ -7,19 +7,10 @@ use Leantime\Core\Language;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
-/**
- *
- */
 class Milestones extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'tickets::partials.milestoneCard';
 
-    /**
-     * @var Tickets
-     */
     private Tickets $ticketService;
 
     private Language $language;
@@ -27,8 +18,7 @@ class Milestones extends HtmxController
     /**
      * Controller constructor
      *
-     * @param Timesheets $timesheetService
-     * @return void
+     * @param  Timesheets  $timesheetService
      */
     public function init(Tickets $ticketService, Language $language): void
     {
@@ -36,30 +26,30 @@ class Milestones extends HtmxController
         $this->language = $language;
     }
 
-    public function progress() {
+    public function progress()
+    {
 
         $getParams = $_GET;
 
-        $milestone = $this->ticketService->getTicket($getParams["milestoneId"]);
-        $percentDone = $this->ticketService->getMilestoneProgress($getParams["milestoneId"]);
+        $milestone = $this->ticketService->getTicket($getParams['milestoneId']);
+        $percentDone = $this->ticketService->getMilestoneProgress($getParams['milestoneId']);
 
         $this->tpl->assign('milestone', $milestone);
         $this->tpl->assign('percentDone', $percentDone);
 
-        return "progress";
+        return 'progress';
     }
 
-    public function showCard() {
+    public function showCard()
+    {
 
         $getParams = $_GET;
 
-        $milestone = $this->ticketService->getTicket($getParams["milestoneId"]);
-        $percentDone = $this->ticketService->getMilestoneProgress($getParams["milestoneId"]);
+        $milestone = $this->ticketService->getTicket($getParams['milestoneId']);
+        $percentDone = $this->ticketService->getMilestoneProgress($getParams['milestoneId']);
 
         $this->tpl->assign('percentDone', $percentDone);
         $this->tpl->assign('milestone', $milestone);
 
     }
-
-
 }

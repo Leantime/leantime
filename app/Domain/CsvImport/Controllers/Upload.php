@@ -19,17 +19,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Upload extends Controller
 {
-    /**
-     * @var CsvImportService
-     */
     private CsvImportService $providerService;
 
     /**
      * constructor - initialize private variables
-     *
-     * @access public
-     * @param  CsvImportService $providerService
-     * @return void
      */
     public function init(CsvImportService $providerService): void
     {
@@ -41,22 +34,17 @@ class Upload extends Controller
     /**
      * get - display upload form
      *
-     * @access public
-     * @return Response
      * @throws \Exception
      * @throws \Exception
      */
     public function get(): Response
     {
-        return $this->tpl->displayPartial("csvImport::partials.upload");
+        return $this->tpl->displayPartial('csvImport::partials.upload');
     }
 
     /**
      * post - process uploaded file
      *
-     * @access public
-     * @param array $params
-     * @return Response
      * @throws BindingResolutionException
      * @throws Exception
      */
@@ -69,27 +57,27 @@ class Upload extends Controller
         try {
             $records = Statement::create()->process($csv);
         } catch (Exception $e) {
-            return $this->tpl->displayJson(json_encode(array("error" => $e->getMessage())), 500);
+            return $this->tpl->displayJson(json_encode(['error' => $e->getMessage()]), 500);
         }
 
         $header = $records->getHeader();  //returns the CSV header record
         $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
 
-        $rows = array();
+        $rows = [];
         foreach ($records as $offset => $record) {
             $rows[] = $record;
         }
 
         $integration = app()->make(Integration::class);
-        $integration->fields = implode(",", $header);
+        $integration->fields = implode(',', $header);
 
         //Temporarily store results in meta
 
-        session(["csv_records" => iterator_to_array($records)]);
+        session(['csv_records' => iterator_to_array($records)]);
 
         $integrationService = app()->make(Integrations::class);
         $id = $integrationService->create($integration);
 
-        return $this->tpl->displayJson(json_encode(array("id" => $id)));
+        return $this->tpl->displayJson(json_encode(['id' => $id]));
     }
 }

@@ -6,9 +6,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Fluent;
 use Illuminate\View\View;
 
-/**
- *
- */
 abstract class Composer
 {
     /**
@@ -20,30 +17,26 @@ abstract class Composer
 
     /**
      * Current view
-     *
-     * @var View
      */
     protected View $view;
 
     /**
      * Current view data
-     *
-     * @var Fluent
      */
     protected Fluent $data;
 
     /**
      * Compose the view before rendering.
      *
-     * @param View $view
-     * @return void
+     * @param  View  $view
+     *
      * @throws BindingResolutionException
      */
     public function compose(array $parameters): void
     {
 
-        $this->view =  $parameters[0];
-        $this->data = new Fluent( $this->view->getData());
+        $this->view = $parameters[0];
+        $this->data = new Fluent($this->view->getData());
 
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
@@ -54,8 +47,6 @@ abstract class Composer
 
     /**
      * Data to be merged and passed to the view before rendering.
-     *
-     * @return array
      */
     protected function merge(): array
     {
@@ -67,8 +58,6 @@ abstract class Composer
 
     /**
      * Data to be passed to view before rendering
-     *
-     * @return array
      */
     protected function with(): array
     {
