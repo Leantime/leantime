@@ -103,14 +103,23 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <button class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown"><?= $tpl->__('buttons.idea_kanban') ?>
-                                <?= $tpl->__('links.view') ?></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ BASE_URL }}/ideas/showBoards">{!! __('buttons.idea_wall') !!}</a></li>
-                                <li><a href="{{ BASE_URL }}/ideas/advancedBoards"
-                                        class="active">{!! __('buttons.idea_kanban') !!}</a></li>
-                            </ul>
+                            <x-global::actions.dropdown class="btn btn-default dropdown-toggle" align="start" contentRole="menu">
+                                <x-slot:labelText>
+                                    {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
+                                </x-slot:labelText>
+                            
+                                <x-slot:menu>
+                                    <!-- Dropdown Items -->
+                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/showBoards">
+                                        {!! __('buttons.idea_wall') !!}
+                                    </x-global::actions.dropdown.item>
+                            
+                                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/advancedBoards" class="active">
+                                        {!! __('buttons.idea_kanban') !!}
+                                    </x-global::actions.dropdown.item>
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                            
                         </div>
                     </div>
                 </div>
@@ -178,42 +187,48 @@
                                                         <div class="clearfix" style="padding-bottom: 8px;"></div>
                                                         <div
                                                             class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                            <a class="dropdown-toggle f-left" href="javascript:void(0);"
-                                                                role="button" id="userDropdownMenuLink{{ $row->id }}"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                <span class="text">
-                                                                    @if ($row->authorFirstname != '')
-                                                                        <span id="userImage{{ $row->id }}"><img
-                                                                                src="{{ BASE_URL }}/api/users?profileImage={{ $row->author }}"
-                                                                                width="25"
-                                                                                style="vertical-align: middle;" /></span><span
-                                                                            id="user{{ $row->id }}"></span>
-                                                                    @else
-                                                                        <span id="userImage{{ $row->id }}"><img
-                                                                                src="{{ BASE_URL }}/api/users?profileImage=false"
-                                                                                width="25"
-                                                                                style="vertical-align: middle;" /></span><span
-                                                                            id="user{{ $row->id }}"></span>
-                                                                    @endif
-                                                                </span>
-                                                            </a>
-                                                            <ul class="dropdown-menu"
-                                                                aria-labelledby="userDropdownMenuLink{{ $row->id }}">
-                                                                <li class="nav-header border">{!! __('dropdown.choose_user') !!}</li>
+                                                            @php
+                                                            // Determine the image URL based on whether the author has a first name
+                                                            $userImageUrl = $row->authorFirstname != ''
+                                                                ? BASE_URL . '/api/users?profileImage=' . $row->author
+                                                                : BASE_URL . '/api/users?profileImage=false';
+                                                        
+                                                            // Define the label text for the dropdown trigger
+                                                            $labelText = '<span class="text">
+                                                                            <span id="userImage' . $row->id . '">
+                                                                                <img src="' . $userImageUrl . '" width="25" style="vertical-align: middle;" />
+                                                                            </span>
+                                                                            <span id="user' . $row->id . '"></span>
+                                                                         </span>';
+                                                        @endphp
+                                                        
+                                                        <x-global::actions.dropdown 
+                                                            :labelText="html_entity_decode($labelText)"
+                                                            class="f-left"
+                                                            align="start"
+                                                            contentRole="menu"
+                                                        >
+                                                            <x-slot:menu>
+                                                                <!-- Dropdown Header -->
+                                                                <x-global::actions.dropdown.item variant="nav-header-border">
+                                                                    {!! __('dropdown.choose_user') !!}
+                                                                </x-global::actions.dropdown.item>
+                                                        
+                                                                <!-- Dynamic User Items -->
                                                                 @foreach ($users as $user)
-                                                                    <li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);'
-                                                                            data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
-                                                                            data-value='{{ $row->id }}_{{ $user['id'] }}_{{ $user['profileId'] }}'
-                                                                            id='userStatusChange{{ $row->id }}{{ $user['id'] }}'>
-                                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
-                                                                                width='25'
-                                                                                style='vertical-align: middle; margin-right:5px;' />{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                                                                        </a>
-                                                                    </li>
+                                                                    <x-global::actions.dropdown.item 
+                                                                        href="javascript:void(0);" 
+                                                                        :data-label="sprintf(__('text.full_name'), $user['firstname'], $user['lastname'])"
+                                                                        :data-value="$row->id . '_' . $user['id'] . '_' . $user['profileId']"
+                                                                        id="userStatusChange{{ $row->id . $user['id'] }}"
+                                                                    >
+                                                                        <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" width="25" style="vertical-align: middle; margin-right:5px;" />
+                                                                        {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
+                                                                    </x-global::actions.dropdown.item>
                                                                 @endforeach
-                                                            </ul>
+                                                            </x-slot:menu>
+                                                        </x-global::actions.dropdown>
+                                                        
                                                         </div>
                                                         <div class="pull-right" style="margin-right:10px;">
                                                             <a href="#/ideas/ideaDialog/{{ $row->id }}"
@@ -291,7 +306,7 @@
                         <form action="" method="post">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
+                                    aripa-hidden="true">&times;</button>
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
