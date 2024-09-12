@@ -77,7 +77,8 @@
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10",
         "leantime/leantime-documentor": "@dev",
-        "laravel/pint": "^1.17"
+        "laravel/pint": "^1.17",
+        "larastan/larastan": "^2.0"
     },
     "autoload": {
         "psr-4": {
