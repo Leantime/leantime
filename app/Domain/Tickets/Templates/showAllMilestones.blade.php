@@ -1,50 +1,49 @@
 @extends($layout)
 
 @section('content')
-
     <?php
-$sprints        = $tpl->get("sprints");
-$searchCriteria = $tpl->get("searchCriteria");
-$currentSprint  = $tpl->get("currentSprint");
-$allTickets     = $tpl->get('allTickets');
-
-$searchCriteria = $tpl->get("searchCriteria");
-$currentSprint  = $tpl->get("currentSprint");
-$allTicketGroups     = $tpl->get('allTickets');
-
-$todoTypeIcons  = $tpl->get("ticketTypeIcons");
-
-$efforts        = $tpl->get('efforts');
-$priorities     = $tpl->get('priorities');
-$statusLabels   = $tpl->get('allTicketStates');
-
-//All states >0 (<1 is archive)
-$numberofColumns = count($tpl->get('allTicketStates')) - 1;
-$size = floor(100 / $numberofColumns);
-
-?>
-    @include("tickets::includes.timelineHeader")
+    $sprints = $tpl->get('sprints');
+    $searchCriteria = $tpl->get('searchCriteria');
+    $currentSprint = $tpl->get('currentSprint');
+    $allTickets = $tpl->get('allTickets');
+    
+    $searchCriteria = $tpl->get('searchCriteria');
+    $currentSprint = $tpl->get('currentSprint');
+    $allTicketGroups = $tpl->get('allTickets');
+    
+    $todoTypeIcons = $tpl->get('ticketTypeIcons');
+    
+    $efforts = $tpl->get('efforts');
+    $priorities = $tpl->get('priorities');
+    $statusLabels = $tpl->get('allTicketStates');
+    
+    //All states >0 (<1 is archive)
+    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
+    $size = floor(100 / $numberofColumns);
+    
+    ?>
+    @include('tickets::includes.timelineHeader')
 
     <div class="maincontent">
 
-    @include("tickets::includes.timelineTabs")
+        @include('tickets::includes.timelineTabs')
 
         <div class="maincontentinner">
 
-        @displayNotification()
+            @displayNotification()
 
-        <div class="row">
-            <div class="col-md-6">
-                <?php
-                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                ?>
+            <div class="row">
+                <div class="col-md-6">
+                    <?php
+                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                    ?>
 
-                @include("tickets::includes.ticketNewBtn")
-                @include("tickets::includes.ticketFilter")
+                    @include('tickets::includes.ticketNewBtn')
+                    @include('tickets::includes.ticketFilter')
 
-                <?php
-                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                ?>
+                    <?php
+                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                    ?>
 
                 </div>
 
@@ -142,45 +141,42 @@ $size = floor(100 / $numberofColumns);
 
                             <td>
                                 <?php if($row["type"] == "milestone"){ ?>
-                                    <div hx-trigger="load"
-                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId=<?=$row["id"] ?>&view=Progress">
-                                        <div class="htmx-indicator">
-                                            <?=$tpl->__("label.calculating_progress") ?>
-                                        </div>
+                                <div hx-trigger="load"
+                                    hx-get="{{ BASE_URL }}/hx/tickets/milestones/progress?milestoneId=<?= $row['id'] ?>&view=Progress">
+                                    <div class="htmx-indicator">
+                                        <?= $tpl->__('label.calculating_progress') ?>
                                     </div>
+                                </div>
                                 <?php } ?>
                             </td>
 
                             <?php
-                            if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
-                                $milestoneHeadline = $tpl->escape($row['milestoneHeadline']);
-                            } else {
-                                $milestoneHeadline = $tpl->__('label.no_milestone');
-                            } ?>
+                            $milestoneHeadline = $row['milestoneid'] != '' && $row['milestoneid'] != 0 ? $tpl->escape($row['milestoneHeadline']) : $tpl->__('label.no_milestone');
+                            
+                            $milestoneColor = $tpl->escape($row['milestoneColor']);
+                            $dropdownId = 'milestoneDropdownMenuLink' . $row['id'];
+                            $noMilestoneLabel = $tpl->__('label.no_milestone');
+                            ?>
 
-                            <td data-order="<?= $milestoneHeadline ?>">
-                                @php
-                                    // Determine the label text for the dropdown
-                                    $labelText =
-                                        "<span class='text'>" .
-                                        $milestoneHeadline .
-                                        "</span> <i class='fa fa-caret-down' aria-hidden='true'></i>";
-                                @endphp
+                            <td data-order="{{ $milestoneHeadline }}">
+                                <x-global::forms.dropdownPill
+                                    class="ticketDropdown milestoneDropdown colorized show label-default milestone"
+                                    id="{{ $dropdownId }}" :style="'background-color:' . $milestoneColor" :labelText="$milestoneHeadline" type="milestone"
+                                    :parentId="$row['id']">
+                                    <x-slot name="buttonText">
+                                        {{ $milestoneHeadline }} <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </x-slot>
 
-                                <!-- Use the determined label text in the dropdown component -->
-                                <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
-                                    align="start" style="background-color:{{ $tpl->escape($row['milestoneColor']) }};">
-
-                                    <!-- Menu Header -->
-                                    <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-
-                                    <!-- No Milestone Option -->
-                                    <x-global::actions.dropdown.item href="javascript:void(0);"
-                                        style="background-color:#b0b0b0" :data-label="__('label.no_milestone')" :data-value="$row['id'] . '_0_#b0b0b0'">
-                                        {{ __('label.no_milestone') }}
+                                    <x-global::actions.dropdown.item class="nav-header border">
+                                        {{ __('dropdown.choose_milestone') }}
                                     </x-global::actions.dropdown.item>
 
-                                    <!-- Dynamic Milestone Options -->
+                                    <x-global::actions.dropdown.item href="javascript:void(0);" :data-label="$noMilestoneLabel"
+                                        :data-value="$row['id'] . '_0_#b0b0b0'" style="background-color:#b0b0b0"
+                                        id="milestoneChange{{ $row['id'] }}0">
+                                        {{ $noMilestoneLabel }}
+                                    </x-global::actions.dropdown.item>
+
                                     @foreach ($tpl->get('milestones') as $milestone)
                                         @if ($milestone->id != $row['id'])
                                             <x-global::actions.dropdown.item href="javascript:void(0);" :data-label="$tpl->escape($milestone->headline)"
@@ -188,134 +184,103 @@ $size = floor(100 / $numberofColumns);
                                                     '_' .
                                                     $milestone->id .
                                                     '_' .
-                                                    $tpl->escape($milestone->tags)"
-                                                id="ticketMilestoneChange{{ $row['id'] . $milestone->id }}"
-                                                style="background-color:{{ $tpl->escape($milestone->tags) }};">
+                                                    $tpl->escape($milestone->tags)" :id="'ticketMilestoneChange' . $row['id'] . $milestone->id" :style="'background-color:' . $tpl->escape($milestone->tags)">
                                                 {{ $tpl->escape($milestone->headline) }}
                                             </x-global::actions.dropdown.item>
                                         @endif
                                     @endforeach
-
-                                </x-global::content.context-menu>
-
+                                </x-global::forms.dropdownPill>
                             </td>
-                            <?php
 
+                            <?php
                             if (isset($statusLabels[$row['status']])) {
                                 $class = $statusLabels[$row['status']]['class'];
                                 $name = $statusLabels[$row['status']]['name'];
                                 $sortKey = $statusLabels[$row['status']]['sortKey'];
+                                $selectedKey = $row['status']; // Set the selected key for the dropdown
                             } else {
                                 $class = 'label-important';
                                 $name = 'new';
                                 $sortKey = 0;
+                                $selectedKey = null; // No selected status
                             }
-
                             ?>
-                            <td data-order="<?= $sortKey ?>">
-                                @php
-                                    // Determine the label text for the dropdown
-                                    $labelText =
-                                        "<span class='text'>" .
-                                        $name .
-                                        "</span> <i class='fa fa-caret-down' aria-hidden='true'></i>";
-                                @endphp
 
-                                <!-- Use the determined label text in the dropdown component -->
-                                <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
-                                    align="start" class="status {{ $class }}">
+                            <td data-order="{{ $sortKey }}">
+                                <x-global::forms.dropdownPill
+                                    class="ticketDropdown statusDropdown colorized show {{ $class }}"
+                                    id="statusDropdownMenuLink{{ $row['id'] }}" :labelText="$name" type="status"
+                                    :parentId="$row['id']" :selectedKey="$selectedKey" :options="$statusLabels">
+                                    <x-slot name="buttonText">
+                                        {{ $name }} <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </x-slot>
 
-                                    <!-- Menu Header -->
-                                    <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
+                                    <x-global::actions.dropdown.item class="nav-header border">
+                                        {{ __('dropdown.choose_status') }}
+                                    </x-global::actions.dropdown.item>
 
-                                    <!-- Dynamic Status Options -->
                                     @foreach ($statusLabels as $key => $label)
-                                        <x-global::actions.dropdown.item href="javascript:void(0);" :class="$label['class']"
-                                            :data-label="$tpl->escape($label['name'])" :data-value="$row['id'] . '_' . $key . '_' . $label['class']"
-                                            id="ticketStatusChange{{ $row['id'] . $key }}">
+                                        <x-global::actions.dropdown.item href="javascript:void(0);"
+                                            class="{{ $label['class'] }}" :data-label="$tpl->escape($label['name'])" :data-value="$row['id'] . '_' . $key . '_' . $label['class']"
+                                            :id="'ticketStatusChange' . $row['id'] . $key">
                                             {{ $tpl->escape($label['name']) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-
-                                </x-global::content.context-menu>
-
+                                </x-global::forms.dropdownPill>
                             </td>
+
+                            <?php
+                            if ($row['editorFirstname'] != '') {
+                                $userText = "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . '/api/users?profileImage=' . $row['editorId'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row['id'] . "'> " . $tpl->escape($row['editorFirstname']) . '</span>';
+                            } else {
+                                $userText = "<span id='userImage" . $row['id'] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row['id'] . "'>" . $tpl->__('dropdown.not_assigned') . '</span>';
+                            }
+                            
+                            $dropdownId = 'userDropdownMenuLink' . $row['id'];
+                            $notAssignedLabel = $tpl->__('dropdown.not_assigned');
+                            ?>
 
                             <td
-                                data-order="<?= $row['editorFirstname'] != '' ? $tpl->escape($row['editorFirstname']) : $tpl->__('dropdown.not_assigned') ?>">
-                                <div class="dropdown ticketDropdown userDropdown noBg show ">
-                                    @php
-                                        // Determine the label text with user's image and name
-if ($row['editorFirstname'] != '') {
-    $labelText =
-        "<span id='userImage" .
-        $row['id'] .
-        "'>
-                                                        <img src='" .
-        BASE_URL .
-        '/api/users?profileImage=' .
-        $row['editorId'] .
-        "'
-                                                             width='25' style='vertical-align: middle; margin-right:5px;' />
-                                                      </span>
-                                                      <span id='user" .
-        $row['id'] .
-        "'>" .
-        $tpl->escape($row['editorFirstname']) .
-        '</span>';
-} else {
-    $labelText =
-        "<span id='userImage" .
-        $row['id'] .
-        "'>
-                                                        <img src='" .
-        BASE_URL .
-        "/api/users?profileImage=false'
-                                                             width='25' style='vertical-align: middle; margin-right:5px;' />
-                                                      </span>
-                                                      <span id='user" .
-        $row['id'] .
-        "'>" .
-        $tpl->__('dropdown.not_assigned') .
-        '</span>';
-}
+                                data-order="{{ $row['editorFirstname'] != '' ? $tpl->escape($row['editorFirstname']) : $tpl->__('dropdown.not_assigned') }}">
+                                <x-global::forms.dropdownPill class="ticketDropdown userDropdown noBg show"
+                                    id="{{ $dropdownId }}" :labelText="html_entity_decode($userText)" type="user" :parentId="$row['id']">
+                                    <x-slot name="buttonText">
+                                        {!! $userText !!} <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </x-slot>
 
-// Append the dropdown caret icon to the label text
-$labelText .= "&nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>";
-                                    @endphp
+                                    <x-global::actions.dropdown.item class="nav-header border">
+                                        {{ __('dropdown.choose_user') }}
+                                    </x-global::actions.dropdown.item>
 
-                                    <!-- Use the context-menu Blade component -->
-                                    <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
-                                        align="start" class="user-dropdown">
-
-                                        <!-- Menu Header -->
-                                        <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
-
-                                        <!-- Dynamic User Options -->
-                                        @foreach ($tpl->get('users') as $user)
-                                            <x-global::actions.dropdown.item href="javascript:void(0);" :data-label="sprintf(
-                                                __('text.full_name'),
-                                                $tpl->escape($user['firstname']),
-                                                $tpl->escape($user['lastname']),
-                                            )"
-                                                :data-value="$row['id'] . '_' . $user['id'] . '_' . $user['profileId']" id="userStatusChange{{ $row['id'] . $user['id'] }}">
-                                                <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}"
-                                                    width="25" style="vertical-align: middle; margin-right:5px;" />
-                                                {{ sprintf(__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
-                                            </x-global::actions.dropdown.item>
-                                        @endforeach
-
-                                    </x-global::content.context-menu>
-
-                                </div>
+                                    @foreach ($tpl->get('users') as $user)
+                                        <x-global::actions.dropdown.item href="javascript:void(0);" :data-label="sprintf(
+                                            $tpl->__('text.full_name'),
+                                            $tpl->escape($user['firstname']),
+                                            $tpl->escape($user['lastname']),
+                                        )"
+                                            :data-value="$row['id'] . '_' . $user['id'] . '_' . $user['profileId']" :id="'userStatusChange' . $row['id'] . $user['id']">
+                                            <img src="{{ BASE_URL . '/api/users?profileImage=' . $user['id'] }}"
+                                                width="25" style="vertical-align: middle; margin-right:5px;" />
+                                            {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
+                                        </x-global::actions.dropdown.item>
+                                    @endforeach
+                                </x-global::forms.dropdownPill>
                             </td>
 
-                            <td data-order="<?php echo $row["editFrom"] ?>" >
-                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_start_date") }}" value="<?php echo format($row["editFrom"])->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editFrom" class=""/>
+
+
+                            <td data-order="<?php echo $row['editFrom']; ?>">
+                                {{ __('label.due_icon') }}<input type="text"
+                                    title="{{ __('label.planned_start_date') }}" value="<?php echo format($row['editFrom'])->date(); ?>"
+                                    class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row['id']; ?>"
+                                    data-id="<?php echo $row['id']; ?>" name="editFrom" class="" />
                             </td>
 
-                            <td data-order="<?php echo $row["editTo"] ?>" >
-                                {{ __("label.due_icon") }}<input type="text" title="{{ __("label.planned_end_date") }}" value="<?php echo format($row["editTo"])->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row["id"];?>" data-id="<?php echo $row["id"];?>" name="editTo" class="" />
+                            <td data-order="<?php echo $row['editTo']; ?>">
+                                {{ __('label.due_icon') }}<input type="text" title="{{ __('label.planned_end_date') }}"
+                                    value="<?php echo format($row['editTo'])->date(); ?>"
+                                    class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row['id']; ?>"
+                                    data-id="<?php echo $row['id']; ?>" name="editTo" class="" />
 
                             </td>
 
@@ -416,7 +381,7 @@ $labelText .= "&nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>";
 
             leantime.ticketsController.initMilestoneTable("<?= $searchCriteria['groupBy'] ?>");
 
-        <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
-    });
-</script>
+            <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
+        });
+    </script>
 @endsection

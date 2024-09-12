@@ -6,7 +6,8 @@
     'options' => [],
     'extraClass' => '',
     'linkStyle' => '',
-    'submit' => "false"
+    'submit' => "false",
+    'labelText'=> '',
 ])
 
 <div {{ $attributes->merge([ 'class' => '' ]) }} >
@@ -19,6 +20,8 @@
                     @else
                         {{ $options[$selectedKey] }}
                     @endif
+                @elseif(!empty($labelText))
+                    {!! $labelText !!}
                 @else
                     {{ __("label.".$type."_unknown") }}
                 @endif
