@@ -1,0 +1,6 @@
+{
+    "exclude": [
+        "cache/",
+        "userfiles/"
+    ]
+}

@@ -2,21 +2,16 @@
 
 namespace Leantime\Core\Console;
 
-use Illuminate\Support\Carbon;
-use Leantime\Core\Console\Application as LeantimeCli;
 use Illuminate\Console\Command;
-use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
-use Illuminate\Support\ProcessUtils;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
@@ -28,16 +23,15 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
     protected $commandStartedAt;
 
-    protected $bootstrappers =  [
-            \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-            \Leantime\Core\Bootstrap\LoadConfig::class,
-            \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Leantime\Core\Bootstrap\SetRequestForConsole::class,
-            \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class
-        ];
-
+    protected $bootstrappers = [
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Leantime\Core\Bootstrap\LoadConfig::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Leantime\Core\Bootstrap\SetRequestForConsole::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
 
     /**
      * Schedule tasks to be executed.
@@ -47,7 +41,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
     protected function defineConsoleSchedule()
     {
         // Set default timezone
-        $this->app['config']->set(['app.timezone' =>  $this->app['config']->get('defaultTimezone')]);
+        $this->app['config']->set(['app.timezone' => $this->app['config']->get('defaultTimezone')]);
         $this->app->singleton(Schedule::class, function ($app) {
             $schedule = tap(new Schedule($app['config']['defaultTimezone']))
                 ->useCache($app['config']['cache.default']);
@@ -77,6 +71,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             $this->bootstrap();
             $cli = $this->getArtisan();
             $output = $cli->run($input, $output);
+
             return $output;
 
         } catch (\Throwable $e) {
@@ -129,7 +124,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
-
     public function bootstrap()
     {
 
@@ -150,8 +144,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
     }
 
-
-
     public function getArtisan()
     {
 
@@ -169,7 +161,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return $this->artisan;
     }
 
-
     /**
      * Get the bootstrap classes for the application.
      *
@@ -180,11 +171,8 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return self::dispatch_filter('http_bootstrappers', $this->bootstrappers);
     }
 
-
     protected function schedule(Schedule $schedule)
     {
         //
     }
-
-
 }

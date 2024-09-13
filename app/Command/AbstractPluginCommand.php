@@ -2,9 +2,9 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Services\Plugins;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +15,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 abstract class AbstractPluginCommand extends Command
 {
-
     protected SymfonyStyle $io;
 
     /**

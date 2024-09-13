@@ -2,9 +2,9 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Symfony\Component\String\u;

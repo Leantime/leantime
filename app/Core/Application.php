@@ -173,8 +173,8 @@ class Application extends \Illuminate\Foundation\Application
     public function storagePath($path = '')
     {
 
-        if(Str::startsWith($path, "framework/")) {
-            $path = Str::replaceFirst("framework/", "", $path);
+        if (Str::startsWith($path, 'framework/')) {
+            $path = Str::replaceFirst('framework/', '', $path);
         }
 
         if (isset($_ENV['LARAVEL_STORAGE_PATH'])) {
@@ -187,7 +187,4 @@ class Application extends \Illuminate\Foundation\Application
 
         return $this->joinPaths($this->storagePath ?: $this->basePath('storage'), $path);
     }
-
-
-
 }

@@ -2,7 +2,6 @@
 
 namespace Leantime\Core;
 
-use Illuminate\Console\OutputStyle;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;

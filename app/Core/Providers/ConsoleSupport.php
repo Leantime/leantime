@@ -3,8 +3,6 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\MigrationServiceProvider;
-use Illuminate\Foundation\Providers\ArtisanServiceProvider;
 use Illuminate\Foundation\Providers\ComposerServiceProvider;
 use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
 
@@ -19,5 +17,4 @@ class ConsoleSupport extends ConsoleSupportServiceProvider implements Deferrable
         CliServices::class,
         ComposerServiceProvider::class,
     ];
-
 }

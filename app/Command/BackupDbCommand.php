@@ -2,10 +2,10 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;

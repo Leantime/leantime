@@ -37,8 +37,8 @@ class Frontcontroller
      */
     private array $validStatusCodes = ['100', '101', '200', '201', '202', '203', '204', '205', '206', '300', '301', '302', '303', '304', '305', '306', '307', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '413', '414', '415', '416', '417', '500', '501', '502', '503', '504', '505'];
 
+    protected $defaultRoute = 'dashboard.home';
 
-    protected $defaultRoute = "dashboard.home";
     /**
      * __construct - Set the rootpath of the server
      *
@@ -87,8 +87,8 @@ class Frontcontroller
         $segments = $request->segments();
         $method = strtolower($this->incomingRequest->getMethod());
 
-        if(count($segments) == 0){
-            $segments = explode(".", $this->defaultRoute);
+        if (count($segments) == 0) {
+            $segments = explode('.', $this->defaultRoute);
         }
 
         //First part is hx tells us this is a htmx controller request
@@ -99,7 +99,7 @@ class Frontcontroller
         }
 
         //If only one segment part was given the url is mean to be an index placeholder
-        if(count($segments) == 1){
+        if (count($segments) == 1) {
             $segments[] = 'index';
         }
 

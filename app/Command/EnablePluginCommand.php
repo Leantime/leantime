@@ -2,8 +2,8 @@
 
 namespace Leantime\Command;
 
-use Symfony\Component\Console\Attribute\AsCommand;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 

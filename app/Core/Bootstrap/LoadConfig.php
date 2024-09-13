@@ -55,7 +55,6 @@ class LoadConfig extends LoadConfiguration
             //as part of the file loader. Laravel config vars were already added.
             $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
 
-
             return $finalConfig;
         });
 
@@ -139,29 +138,30 @@ class LoadConfig extends LoadConfiguration
     {
 
         $app['config']['debug_blacklist'] = [
-                '_ENV' => [
-                    'LEAN_EMAIL_SMTP_PASSWORD',
-                    'LEAN_DB_PASSWORD',
-                    'LEAN_SESSION_PASSWORD',
-                    'LEAN_OIDC_CLIEND_SECRET',
-                    'LEAN_S3_SECRET',
-                ],
+            '_ENV' => [
+                'LEAN_EMAIL_SMTP_PASSWORD',
+                'LEAN_DB_PASSWORD',
+                'LEAN_SESSION_PASSWORD',
+                'LEAN_OIDC_CLIEND_SECRET',
+                'LEAN_S3_SECRET',
+            ],
 
-                '_SERVER' => [
-                    'LEAN_EMAIL_SMTP_PASSWORD',
-                    'LEAN_DB_PASSWORD',
-                    'LEAN_SESSION_PASSWORD',
-                    'LEAN_OIDC_CLIEND_SECRET',
-                    'LEAN_S3_SECRET',
-                ],
-                '_POST' => [
-                    'password',
-                ],
-            ];
+            '_SERVER' => [
+                'LEAN_EMAIL_SMTP_PASSWORD',
+                'LEAN_DB_PASSWORD',
+                'LEAN_SESSION_PASSWORD',
+                'LEAN_OIDC_CLIEND_SECRET',
+                'LEAN_S3_SECRET',
+            ],
+            '_POST' => [
+                'password',
+            ],
+        ];
 
     }
 
-    protected function setLeantimeProviders(Application $app) {
+    protected function setLeantimeProviders(Application $app)
+    {
 
         $providerList = [ //\Illuminate\Broadcasting\BroadcastServiceProvider::class,
             //\Illuminate\Bus\BusServiceProvider::class,
@@ -200,11 +200,10 @@ class LoadConfig extends LoadConfiguration
 
             Frontcontroller::class,
             Views::class,
-            TemplateServiceProvider::class
+            TemplateServiceProvider::class,
         ];
 
         $app['config']->set('app.providers', $providerList);
 
     }
-
 }
