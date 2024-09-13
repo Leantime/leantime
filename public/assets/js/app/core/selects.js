@@ -1,11 +1,10 @@
 import Choices from "leantime.choices.js";
 import { appUrl } from "./instance-info.module.js";
 
-export const initSelect = function (element, choices, enableSearch) {
+export const initSelect = function (element, enableSearch) {
   const select = new Choices(element, {
-    choices: choices,
     editItems: false,
-    addChoices: choices,
+    addChoices: false,
     addItems: true,
     allowHTML: true,
     searchEnabled: enableSearch,
@@ -89,18 +88,13 @@ export const initSelect = function (element, choices, enableSearch) {
   );
 };
 
-export const initTags = function (
-  element,
-  choices,
-  enableSearch,
-  autoCompleteTags
-) {
-  let choiceList = choices.split(",");
+export const initTags = function (element, enableSearch, autoCompleteTags) {
+  // let choiceList = choices.split(",");
   const select = new Choices(element, {
     editItems: false,
     addItems: true,
     allowHTML: true,
-    addChoices: choiceList,
+    addChoices: true,
     searchEnabled: enableSearch,
     duplicateItemsAllowed: false,
     addItemText: (value) => {
