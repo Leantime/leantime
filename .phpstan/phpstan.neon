@@ -14,9 +14,9 @@ parameters:
         - ../vendor
         - ../config
     ignoreErrors:
-            - '#Call to an undefined static method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
-            - '#Access to undefined constant Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
-            - '#Call to an undefined static method Carbon\\CarbonImmutable::[a-zA-Z0-9\\_]()#'
+            #- '#Call to an undefined static method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            #- '#Access to undefined constant Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            #- '#Call to an undefined static method Carbon\\CarbonImmutable::[a-zA-Z0-9\\_]()#'
             # Rules for level 1. Templates use variables through include which are not detected by phpstan
             #-
             #    messages:
