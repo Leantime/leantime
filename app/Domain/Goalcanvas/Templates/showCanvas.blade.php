@@ -145,75 +145,73 @@
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
-                                @if ($filter['status'] == 'all')
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="menu">
+                                <!-- Dropdown Trigger -->
+                                <x-slot:labelText>
+                                    @if ($filter['status'] == 'all')
                                         <i class="fas fa-filter"></i> {!! __('status.all') !!} {!! __('links.view') !!}
-                                    </button>
-                                @else
-                                    <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fas fa-fw {{ __($statusLabels[$filter['status']]['icon']) }}"></i>
-                                        {{ $statusLabels[$filter['status']]['title'] }} {{ __('links.view') }}
-                                    </button>
-                                @endif
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all"
-                                            @if ($filter['status'] == 'all') class="active" @endif>
-                                            <i class="fas fa-globe"></i> {{ __('status.all') }}
-                                        </a>
-                                    </li>
+                                    @else
+                                        <i class="fas fa-fw {!! __($statusLabels[$filter['status']]['icon']) !!}"></i> 
+                                        {!! $statusLabels[$filter['status']]['title'] !!} {!! __('links.view') !!}
+                                    @endif
+                                </x-slot:labelText>
+                            
+                                <!-- Menu Slot -->
+                                <x-slot:menu>
+                                    <!-- "All" Status Option -->
+                                    <x-global::actions.dropdown.item 
+                                        href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all"
+                                        class="{{ $filter['status'] == 'all' ? 'active' : '' }}">
+                                        <i class="fas fa-globe"></i> {{ __('status.all') }}
+                                    </x-global::actions.dropdown.item>
+                            
+                                    <!-- Dynamic Status Options -->
                                     @foreach ($statusLabels as $key => $data)
-                                        <li>
-                                            <a href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
-                                                @if ($filter['status'] == $key) class="active" @endif>
-                                                <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                            </a>
-                                        </li>
+                                        <x-global::actions.dropdown.item 
+                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
+                                            class="{{ $filter['status'] == $key ? 'active' : '' }}">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
+                                        </x-global::actions.dropdown.item>
                                     @endforeach
-                                </ul>
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                            
                             @endif
                         </div>
 
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                                @php
-                                    // Determine the label content dynamically
-                                    $labelContent =
-                                        $filter['relates'] == 'all'
-                                            ? "<i class='fas fa-fw fa-globe'></i> " .
-                                                __('relates.all') .
-                                                ' ' .
-                                                __('links.view')
-                                            : "<i class='fas fa-fw " .
-                                                __($relatesLabels[$filter['relates']]['icon']) .
-                                                "'></i> " .
-                                                $relatesLabels[$filter['relates']]['title'] .
-                                                ' ' .
-                                                __('links.view');
-                                @endphp
-
-                                <x-global::actions.dropdown :label-text="$labelContent" contentRole="link" position="bottom"
-                                    align="start" class="btn dropdown-toggle">
-
-                                    <x-slot:menu>
-                                        <!-- 'All' Filter Option -->
+                            <x-global::actions.dropdown contentRole="link" position="bottom" align="start" class="btn dropdown-toggle">
+                                <!-- Dropdown Trigger -->
+                                <x-slot:labelText>
+                                    @if ($filter['relates'] == 'all')
+                                        <i class="fas fa-fw fa-globe"></i> {!! __('relates.all') !!} {!! __('links.view') !!}
+                                    @else
+                                        <i class="fas fa-fw {!! __($relatesLabels[$filter['relates']]['icon']) !!}"></i> 
+                                        {!! $relatesLabels[$filter['relates']]['title'] !!} {!! __('links.view') !!}
+                                    @endif
+                                </x-slot:labelText>
+                            
+                                <!-- Menu Slot -->
+                                <x-slot:menu>
+                                    <!-- 'All' Filter Option -->
+                                    <x-global::actions.dropdown.item variant="link"
+                                        href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all"
+                                        :class="$filter['relates'] == 'all' ? 'active' : ''">
+                                        <i class="fas fa-globe"></i> {!! __('relates.all') !!}
+                                    </x-global::actions.dropdown.item>
+                            
+                                    <!-- Dynamic Relates Options -->
+                                    @foreach ($relatesLabels as $key => $data)
                                         <x-global::actions.dropdown.item variant="link"
-                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates=all"
-                                            :class="$filter['relates'] == 'all' ? 'active' : ''">
-                                            <i class="fas fa-globe"></i> {{ __('relates.all') }}
+                                            href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
+                                            :class="$filter['relates'] == $key ? 'active' : ''">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
                                         </x-global::actions.dropdown.item>
-
-                                        <!-- Dynamic Relates Options -->
-                                        @foreach ($relatesLabels as $key => $data)
-                                            <x-global::actions.dropdown.item variant="link"
-                                                href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_relates={{ $key }}"
-                                                :class="$filter['relates'] == $key ? 'active' : ''">
-                                                <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                            </x-global::actions.dropdown.item>
-                                        @endforeach
-                                    </x-slot:menu>
-
-                                </x-global::actions.dropdown>
+                                    @endforeach
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                            
                             @endif
                         </div>
                     </div>
@@ -255,8 +253,10 @@
 
                                                                     <x-slot:menu>
                                                                         <!-- Menu Header -->
-                                                                        <li class="nav-header">{{ __('subtitles.edit') }}
-                                                                        </li>
+                                                                        <x-global::actions.dropdown.item variant="nav-header">
+                                                                            {{ __('subtitles.edit') }}
+                                                                        </x-global::actions.dropdown.item>
+                                                                        
 
                                                                         <!-- Edit Canvas Item -->
                                                                         <x-global::actions.dropdown.item variant="link"
@@ -346,8 +346,10 @@
 
                                                                     <x-slot:menu>
                                                                         <!-- Menu Header -->
-                                                                        <li class="nav-header border">
-                                                                            {{ __('dropdown.choose_status') }}</li>
+                                                                        <x-global::actions.dropdown.item variant="nav-header-border">
+                                                                            {{ __('dropdown.choose_status') }}
+                                                                        </x-global::actions.dropdown.item>
+                                                                        
 
                                                                         <!-- Dynamic Status Menu Items -->
                                                                         @foreach ($statusLabels as $key => $data)
@@ -375,47 +377,58 @@
 
                                                         <div
                                                             class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                            <a class="dropdown-toggle f-left" href="javascript:void(0);"
-                                                                role="button"
-                                                                id="userDropdownMenuLink{{ $row['id'] }}"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                <span class="text">
-                                                                    @if ($row['authorFirstname'] != '')
-                                                                        <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='{{ BASE_URL }} /api/users?profileImage={{ $row['author'] }}'
-                                                                                width='25'
-                                                                                style='vertical-align: middle;' />
-                                                                        </span>
-                                                                        <span id='user{{ $row['id'] }}'></span>
-                                                                    @else
-                                                                        <span id='userImage{{ $row['id'] }}'>
-                                                                            <img src='{{ BASE_URL }} /api/users?profileImage=false'
-                                                                                width='25'
-                                                                                style='vertical-align: middle;' />
-                                                                        </span>
-                                                                        <span id='user{{ $row['id'] }}'></span>
-                                                                    @endif
-                                                                </span>
-                                                            </a>
-                                                            <ul class="dropdown-menu"
-                                                                aria-labelledby="userDropdownMenuLink{{ $row['id'] }}">
-                                                                <li class="nav-header border">
-                                                                    {{ __('dropdown.choose_user') }}</li>
-                                                                @foreach ($users as $user)
-                                                                    <li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);'
-                                                                            data-label='{{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}'
-                                                                            data-value='{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}'
-                                                                            id='userStatusChange{{ $row['id'] . $user['id'] }}'>
-                                                                            <img src='{{ BASE_URL }} /api/users?profileImage={{ $user['id'] }}'
-                                                                                width='25'
-                                                                                style='vertical-align: middle; margin-right:5px;' />
+                                                            @php
+                                                                $userImageUrl =
+                                                                    $row['authorFirstname'] != ''
+                                                                        ? BASE_URL .
+                                                                            '/api/users?profileImage=' .
+                                                                            $row['author']
+                                                                        : BASE_URL . '/api/users?profileImage=false';
+                                                                $labelText =
+                                                                    '<span class="text">
+                                                                            <span id="userImage' .
+                                                                    $row['id'] .
+                                                                    '">
+                                                                                <img src="' .
+                                                                    $userImageUrl .
+                                                                    '" width="25" style="vertical-align: middle;" />
+                                                                            </span>
+                                                                            <span id="user' .
+                                                                    $row['id'] .
+                                                                    '"></span>
+                                                                         </span>';
+                                                            @endphp
+
+                                                            <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="f-left"
+                                                                align="start" contentRole="menu">
+                                                                <x-slot:menu>
+                                                                    <x-global::actions.dropdown.item variant="nav-header-border">
+                                                                        {{ __('dropdown.choose_user') }}
+                                                                    </x-global::actions.dropdown.item>
+                                                                    
+
+                                                                    @foreach ($users as $user)
+                                                                        <x-global::actions.dropdown.item
+                                                                            href="javascript:void(0);" :data-label="sprintf(
+                                                                                __('text.full_name'),
+                                                                                $user['firstname'],
+                                                                                $user['lastname'],
+                                                                            )"
+                                                                            :data-value="$row['id'] .
+                                                                                '_' .
+                                                                                $user['id'] .
+                                                                                '_' .
+                                                                                $user['profileId']"
+                                                                            id="userStatusChange{{ $row['id'] . $user['id'] }}">
+                                                                            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}"
+                                                                                width="25"
+                                                                                style="vertical-align: middle; margin-right:5px;" />
                                                                             {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                                                                        </a>
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
+                                                                        </x-global::actions.dropdown.item>
+                                                                    @endforeach
+                                                                </x-slot:menu>
+                                                            </x-global::actions.dropdown>
+
                                                         </div>
 
                                                         <div class="right" style="margin-right:10px;">
