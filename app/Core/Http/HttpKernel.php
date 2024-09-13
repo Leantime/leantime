@@ -32,7 +32,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
     {
         $this->app = $app;
         $this->frontcontroller = $frontcontroller;
-
+        $this->bootstrappers = $this->getBootstrappers();
     }
 
     /**
@@ -50,7 +50,6 @@ class HttpKernel extends Kernel implements HttpKernelContract
     {
 
         $this->middleware = $this->getMiddleware($request);
-        $this->bootstrappers = $this->getBootstrappers();
 
         $this->requestStartedAt = \Illuminate\Support\Carbon::now();
 
