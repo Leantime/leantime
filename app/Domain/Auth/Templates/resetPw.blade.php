@@ -46,3 +46,6 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
 <script>
     leantime.usersController.checkPWStrength('password');
 </script>
+
+
+@endsection

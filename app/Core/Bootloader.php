@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Console\OutputStyle;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
@@ -76,7 +77,7 @@ class Bootloader
      *
      * @throws BindingResolutionException
      */
-    private function handleRequest(IncomingRequest $request): void
+    private function handleRequest($request): void
     {
 
         if (! $this->app->runningInConsole()) {

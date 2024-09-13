@@ -79,7 +79,7 @@
 
         "predis/predis": "^2.2",
         "sentry/sentry-laravel": "^4.8",
-        "codeat3/blade-google-material-design-icons": "^1.19"
+        "laravel/octane": "^2.5"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",

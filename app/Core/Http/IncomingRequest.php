@@ -245,7 +245,7 @@ class IncomingRequest extends \Illuminate\Http\Request
 
             $route = '';
             $segments = parent::segments();
-            if (count($segments) > 1) {
+            if (count($segments) > 0) {
                 $route = implode('.', $segments);
             }
 

@@ -4,7 +4,7 @@ namespace Leantime\Command;
 
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Symfony\Component\String\u;

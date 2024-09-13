@@ -31,3 +31,5 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
     </form>
     <?php $tpl->dispatchTplEvent('beforeRegcontentClose'); ?>
 </div>
+
+@endsection

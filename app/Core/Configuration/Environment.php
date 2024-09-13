@@ -284,7 +284,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
      */
     public function all(): array
     {
-        return $this->items;
+        return $this->config;
     }
 
     /**

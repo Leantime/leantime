@@ -10,6 +10,7 @@ use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Http\ApiRequest;
@@ -53,7 +54,7 @@ class Application extends \Illuminate\Foundation\Application
         putenv('APP_PACKAGES_CACHE=cache/packages.php');
 
         //Our folder structure is different and we shall not bow to the bourgeoisie
-        $this->useAppPath($this->basePath.'/app/Core/');
+        $this->useAppPath($this->basePath.'/app/');
         $this->useConfigPath($this->basePath.'/config/');
         $this->useEnvironmentPath($this->basePath.'/config/');
         $this->useBootstrapPath($this->basePath.'/app/Core/Bootstrap/');
@@ -155,7 +156,7 @@ class Application extends \Illuminate\Foundation\Application
     {
 
         $providers = Collection::make($this->make('config')->get('app.providers'))
-            ->partition(fn ($provider) => str_starts_with($provider, 'Leantime\\'));
+            ->partition(fn ($provider) => str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Leantime\\'));
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
@@ -168,4 +169,25 @@ class Application extends \Illuminate\Foundation\Application
     {
         return $this->namespace;
     }
+
+    public function storagePath($path = '')
+    {
+
+        if(Str::startsWith($path, "framework/")) {
+            $path = Str::replaceFirst("framework/", "", $path);
+        }
+
+        if (isset($_ENV['LARAVEL_STORAGE_PATH'])) {
+            return $this->joinPaths($this->storagePath ?: $_ENV['LARAVEL_STORAGE_PATH'], $path);
+        }
+
+        if (isset($_SERVER['LARAVEL_STORAGE_PATH'])) {
+            return $this->joinPaths($this->storagePath ?: $_SERVER['LARAVEL_STORAGE_PATH'], $path);
+        }
+
+        return $this->joinPaths($this->storagePath ?: $this->basePath('storage'), $path);
+    }
+
+
+
 }

@@ -7,7 +7,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

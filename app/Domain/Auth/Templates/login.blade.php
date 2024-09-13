@@ -60,3 +60,5 @@ $redirectUrl = $tpl->get('redirectUrl');
     <?php } ?>
     <?php $tpl->dispatchTplEvent('beforeRegcontentClose'); ?>
 </div>
+
+@endsection

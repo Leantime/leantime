@@ -27,6 +27,10 @@
 @import "../css/libs/tippy.js/tippy.css";
 
 
+@import "../../../node_modules/leantime.choices.js/public/assets/styles/choices.css";
+
+@import "../css/libs/tippy.js/tippy.css";
+
 
 @import "../css/libs/iconpicker/css/fontawesome-iconpicker.css";
 

@@ -12,6 +12,6 @@ if (! file_exists($composer = APP_ROOT.'/vendor/autoload.php')) {
 }
 require $composer;
 
-$app = require_once APP_ROOT.'/app/Core/Bootstrap/App.php';
+$app = require_once APP_ROOT . '/app/Core/Bootstrap/app.php';
 
 $app->make(HttpKernel::class)->bootstrap();

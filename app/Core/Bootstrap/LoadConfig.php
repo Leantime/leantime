@@ -8,6 +8,19 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Providers\Auth;
+use Leantime\Core\Providers\Cache;
+use Leantime\Core\Providers\ConsoleSupport;
+use Leantime\Core\Providers\Db;
+use Leantime\Core\Providers\EncryptionServiceProvider;
+use Leantime\Core\Providers\FileSystemServiceProvider;
+use Leantime\Core\Providers\Frontcontroller;
+use Leantime\Core\Providers\Language;
+use Leantime\Core\Providers\RateLimiter;
+use Leantime\Core\Providers\Redis;
+use Leantime\Core\Providers\Session;
+use Leantime\Core\Providers\TemplateServiceProvider;
+use Leantime\Core\Providers\Views;
 use Leantime\Core\Support\Attributes\LaravelConfig;
 use Symfony\Component\Finder\Finder;
 
@@ -20,19 +33,28 @@ class LoadConfig extends LoadConfiguration
 
     public function bootstrap(Application $app)
     {
-
         parent::bootstrap($app);
 
+        //Set a few Leantime config defaults
+        $this->setLeantimeDebugConfig($app);
+
+        $this->setLeantimeProviders($app);
+
+        //Now extend config with laravel configs if they exist
         $app->extend('config', function (Repository $laravelConfig) use ($app) {
 
             $leantimeConfig = $app->make(Environment::class);
 
+            //Add all laravel configs to leantime config
             foreach ($laravelConfig->all() as $key => $value) {
                 $leantimeConfig->set($key, $value);
             }
 
-            //Re-aranging and setting some of the laravel defaults
+            //At this point we have the leantime config and loaded laravel configs
+            //Re-aranging and setting some of the laravel defaults that were not set
+            //as part of the file loader. Laravel config vars were already added.
             $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
+
 
             return $finalConfig;
         });
@@ -92,22 +114,97 @@ class LoadConfig extends LoadConfiguration
         $reflectionClass = new \ReflectionClass(DefaultConfig::class);
         $properties = $reflectionClass->getProperties();
 
+        //Parsing through all the leantime config options.
+        //Default tracks a mapping via attributes
         foreach ($properties as $configVar) {
             $attributes = $configVar->getAttributes(LaravelConfig::class);
 
             if (isset($attributes[0])) {
+
                 $laravelConfigKey = $attributes[0]->newInstance()->config;
-                $leantimeConfig->set($laravelConfigKey, $laravelConfig->get($configVar->name));
+                $defaultConfigkey = $configVar->name;
+
+                //set laravel config.
+                //Leantime env file has priority and can override previously defined laravel configs
+                $leantimeConfig->set($laravelConfigKey, $leantimeConfig->get($defaultConfigkey));
+
             }
         }
 
         return $leantimeConfig;
-        /*
-                if(!isset($laravelItems['app'])){
-                    $laravelItems['app'] = [];
-                }*/
-
-        //$laravelItems['app']['name'] = $leantimeItems
 
     }
+
+    protected function setLeantimeDebugConfig(Application $app)
+    {
+
+        $app['config']['debug_blacklist'] = [
+                '_ENV' => [
+                    'LEAN_EMAIL_SMTP_PASSWORD',
+                    'LEAN_DB_PASSWORD',
+                    'LEAN_SESSION_PASSWORD',
+                    'LEAN_OIDC_CLIEND_SECRET',
+                    'LEAN_S3_SECRET',
+                ],
+
+                '_SERVER' => [
+                    'LEAN_EMAIL_SMTP_PASSWORD',
+                    'LEAN_DB_PASSWORD',
+                    'LEAN_SESSION_PASSWORD',
+                    'LEAN_OIDC_CLIEND_SECRET',
+                    'LEAN_S3_SECRET',
+                ],
+                '_POST' => [
+                    'password',
+                ],
+            ];
+
+    }
+
+    protected function setLeantimeProviders(Application $app) {
+
+        $providerList = [ //\Illuminate\Broadcasting\BroadcastServiceProvider::class,
+            //\Illuminate\Bus\BusServiceProvider::class,
+
+            Cache::class,
+            //\Illuminate\Cache\CacheServiceProvider::class,
+            ConsoleSupport::class,
+            \Illuminate\Cookie\CookieServiceProvider::class,
+            //\Illuminate\Database\DatabaseServiceProvider::class,
+            EncryptionServiceProvider::class,
+            FileSystemServiceProvider::class,
+
+            \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+            \Illuminate\Hashing\HashServiceProvider::class,
+            //\Illuminate\Mail\MailServiceProvider::class,
+            \Illuminate\Notifications\NotificationServiceProvider::class,
+            \Illuminate\Pagination\PaginationServiceProvider::class,
+            //\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+            \Illuminate\Pipeline\PipelineServiceProvider::class,
+            //\Illuminate\Queue\QueueServiceProvider::class,
+
+            Redis::class,
+            Session::class,
+
+            //\Illuminate\Redis\RedisServiceProvider::class,
+            //\Illuminate\Session\SessionServiceProvider::class,
+            //\Illuminate\Translation\TranslationServiceProvider::class,
+            \Illuminate\Validation\ValidationServiceProvider::class,
+            //\Illuminate\View\ViewServiceProvider::class,
+
+            Auth::class,
+            RateLimiter::class,
+            Db::class,
+            Language::class,
+            //RouteServiceProvider::class,
+
+            Frontcontroller::class,
+            Views::class,
+            TemplateServiceProvider::class
+        ];
+
+        $app['config']->set('app.providers', $providerList);
+
+    }
+
 }

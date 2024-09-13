@@ -17,6 +17,12 @@ class Session extends ServiceProvider
 
         $this->app->singleton(\Illuminate\Session\SessionManager::class, function () {
 
+            if (defined('BASE_URL')) {
+                $url = is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null;
+            } else {
+                $url = app('config')['app.url'];
+            }
+
             app('config')['session'] = [
                 'driver' => ! empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
                 'lifetime' => app('config')->sessionExpiration,
@@ -31,7 +37,7 @@ class Session extends ServiceProvider
                 'lottery' => [2, 100],
                 'cookie' => 'ltid',
                 'path' => '/',
-                'domain' => is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null,
+                'domain' => $url,
                 'secure' => true,
                 'http_only' => true,
                 'same_site' => 'Lax',
