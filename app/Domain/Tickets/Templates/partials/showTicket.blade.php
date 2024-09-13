@@ -60,7 +60,7 @@
             </div>
         </div>
     
-        <x-global::forms.select 
+        {{-- <x-global::forms.select 
             id="select-test"
             name="select-test"
             labelText="Select an option"
@@ -76,7 +76,7 @@
                 <x-global::forms.select.select-option value="1">Option 1</x-global::forms.select.select-option>
                 <x-global::forms.select.select-option value="2">Option 2</x-global::forms.select.select-option>
                 <x-global::forms.select.select-option value="3">Option 3</x-global::forms.select.select-option>
-        </x-global::forms.select>
+        </x-global::forms.select> --}}
 
         <label class="pl-m pb-sm">📄 Details</label>
         <div class="viewDescription mce-content-body">
