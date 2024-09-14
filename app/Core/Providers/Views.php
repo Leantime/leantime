@@ -250,15 +250,13 @@ class Views extends ViewServiceProvider
         $appComposerClasses = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
             ->concat(glob(APP_ROOT.'/app/Domain/*/Composers/*.php'));
 
-        $pluginComposerClasses = collect(
-            $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins()
-        )
+        $enabledPlugins = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
+        $pluginComposerClasses = collect($enabledPlugins)
             ->map(fn ($plugin) => glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php'))
             ->flatten();
 
         $composerList = $appComposerClasses
             ->concat($pluginComposerClasses)
-            ->filter(fn ($composerClass) => ! $testers->contains($composerClass))
             ->map(fn ($filepath) => Str::of($filepath)
                 ->replace([APP_ROOT.'/app/', '.php'], ['', '', ''])
                 ->replace('/', '\\')
@@ -287,14 +285,15 @@ class Views extends ViewServiceProvider
     private function discoverViewPaths()
     {
         $domainPaths = collect(glob($this->app->basePath().'/app/Domain/*'))
-            ->mapWithKeys(function($path) {
-                if(is_dir($path . "/Templates")){
-                    return  [
+            ->mapWithKeys(function ($path) {
+                if (is_dir($path.'/Templates')) {
+                    return [
                         $basename = strtolower(basename($path)) => [
                             "$path/Templates",
-                        ]
+                        ],
                     ];
                 }
+
                 return [];
             });
 
