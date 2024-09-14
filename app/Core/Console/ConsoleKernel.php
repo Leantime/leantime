@@ -2,141 +2,86 @@
 
 namespace Leantime\Core\Console;
 
-use Illuminate\Console\Command as LaravelCommand;
+use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
-use Illuminate\Support\ProcessUtils;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
-use Symfony\Component\Console\Application as ConsoleApplication;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
     use DispatchesEvents;
 
+    protected $app;
+
     protected $artisan;
 
     protected $commandStartedAt;
 
-    protected $bootstrappers = [];
+    protected $bootstrappers = [
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Leantime\Core\Bootstrap\LoadConfig::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Leantime\Core\Bootstrap\SetRequestForConsole::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
 
     /**
-     * Bootstrap the application for artisan commands.
+     * Schedule tasks to be executed.
      *
      * @return void
      */
-    public function bootstrap()
+    /*protected function defineConsoleSchedule()
     {
+        // Set default timezone
+        $this->app['config']->set(['app.timezone' => $this->app['config']->get('defaultTimezone')]);
+        $this->app->singleton(Schedule::class, function ($app) {
+            $schedule = tap(new Schedule($app['config']['defaultTimezone']))
+                ->useCache($app['config']['cache.default']);
 
-        if (! $this->app->hasBeenBootstrapped()) {
+            self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
 
-            $this->app->bootstrapWith($this->getBootstrappers());
-        }
-
-        $this->app->loadDeferredProviders();
-
-        if (! $this->commandsLoaded) {
-            $this->commands();
-
-            $this->commandsLoaded = true;
-        }
-
-        $this->bindSchedule();
-
-    }
-
-    public function getArtisan(): ConsoleApplicationContract|ConsoleApplication
-    {
-
-        if (is_null($this->artisan)) {
-            $this->artisan = (new LeantimeCli($this->app, $this->events, $this->app->version()))
-                ->resolveCommands($this->commands)
-                ->setContainerCommandLoader();
-
-            if ($this->symfonyDispatcher instanceof EventDispatcher) {
-                $this->artisan->setDispatcher($this->symfonyDispatcher);
-                $this->artisan->setSignalsToDispatchEvent();
-            }
-        }
-
-        return $this->artisan;
-
-        app()->alias(\Illuminate\Console\Application::class, ConsoleApplicationContract::class);
-        app()->alias(\Illuminate\Console\Application::class, ConsoleApplication::class);
-
-        return $this->artisan ??= app()->instance(\Illuminate\Console\Application::class, new class extends ConsoleApplication implements ConsoleApplicationContract
-        {
-            /**
-             * The output from the previous command.
-             *
-             * @var \Symfony\Component\Console\Output\BufferedOutput
-             */
-            protected $lastOutput;
-
-            /**
-             * Run an Artisan console command by name.
-             *
-             * @param  string  $command
-             * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
-             * @return int
-             *
-             * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
-             */
-            public function call($command, array $parameters = [], $outputBuffer = null)
-            {
-                $command = class_exists($command) ? app()->make($command)->getName() : $command;
-                array_unshift($parameters, $command);
-                $input = new \Symfony\Component\Console\Input\ArrayInput($parameters);
-
-                if (! $this->has($command)) {
-                    throw new \Symfony\Component\Console\Exception\CommandNotFoundException(sprintf('The command "%s" does not exist.', $command));
-                }
-
-                return $this->run(
-                    $input,
-                    $this->lastOutput = $outputBuffer ?: new \Symfony\Component\Console\Output\BufferedOutput
-                );
-            }
-
-            /**
-             * Get the output for the last run command.
-             *
-             * @return string
-             */
-            public function output()
-            {
-                return $this->lastOutput && method_exists($this->lastOutput, 'fetch')
-                    ? $this->lastOutput->fetch()
-                    : '';
-            }
-
-            /**
-             * Determine the proper PHP executable.
-             *
-             * @return string
-             */
-            public static function phpBinary()
-            {
-                return ProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
-            }
-
-            /**
-             * Determine the proper Artisan executable.
-             *
-             * @return string
-             */
-            public static function artisanBinary()
-            {
-                return ProcessUtils::escapeArgument('bin/leantime');
-            }
+            return $schedule;
         });
+    }*/
+
+    /**
+     * Handle an incoming console command.
+     *
+     * @return int
+     */
+    public function handle($input, $output = null)
+    {
+
+        $this->commandStartedAt = Carbon::now();
+
+        try {
+
+            if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
+                $this->bootstrapWithoutBootingProviders();
+            }
+
+            $this->bootstrap();
+            $cli = $this->getArtisan();
+            $output = $cli->run($input, $output);
+
+            return $output;
+
+        } catch (\Throwable $e) {
+
+            $this->reportException($e);
+
+            $this->renderException($output, $e);
+
+            return 1;
+        }
     }
 
     /**
@@ -153,111 +98,17 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             return;
         }
 
-        $customCommands = $customPluginCommands = null;
+        //$customCommands = $customPluginCommands = null;
 
-        $ltCommands = collect(glob(APP_ROOT.'/app/Command/*.php') ?? []);
+        //$ltCommands = collect(glob(APP_ROOT.'/app/Command/*.php') ?? []);
 
-        $commands = collect(Arr::flatten($ltCommands))
+        /*$commands = collect(Arr::flatten($ltCommands))
             ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
+        */
 
-        collect($commands)
-            ->each(function ($command) {
-
-                LeantimeCli::starting(function ($cli) use ($command) {
-
-                    if (
-                        ! is_subclass_of($command, SymfonyCommand::class)
-                        || (new \ReflectionClass($command))->isAbstract()
-                    ) {
-                        return;
-                    }
-
-                    $command = $this->app->make($command);
-
-                    $cli->add($command);
-                });
-
-                /*
-                if (
-                    ! is_subclass_of($command, SymfonyCommand::class)
-                    || (new \ReflectionClass($command))->isAbstract()
-                ) {
-                    return;
-                }
-                var_dump($command);
-                $command = $this->getArtisan()->make($command);
-                var_dump("made");
-
-                if ($command instanceof LaravelCommand) {
-                    $command->setLaravel($this->getArtisan());
-                }
-
-
-                $this->getArtisan()->add($command);*/
-
-            });
+        $this->load(APP_ROOT.'/app/Command/');
 
         $commandsLoaded = true;
-    }
-
-    /**
-     * Schedule tasks to be executed.
-     *
-     * @return void
-     */
-    protected function bindSchedule()
-    {
-        // Set default timezone
-        config(['app.timezone' => config('defaultTimezone')]);
-        app()->singleton(Schedule::class, function ($app) {
-            $schedule = tap(new Schedule($app['config']['defaultTimezone']))
-                ->useCache($app['config']['cache.default']);
-
-            self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
-
-            return $schedule;
-        });
-    }
-
-    /**
-     * Handle an incoming console command.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
-     * @return int
-     */
-    public function handle($input, $output = null)
-    {
-        $this->commandStartedAt = microtime(true);
-
-        try {
-            $this->bootstrap();
-
-            return $this->getArtisan()->run($input, $output);
-
-        } catch (\Throwable $e) {
-
-            dd($e);
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        }
-    }
-
-    /**
-     * Run an Artisan console command by name.
-     *
-     * @param  string  $command
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
-     * @return int
-     */
-    public function call($command, array $parameters = [], $outputBuffer = null)
-    {
-        $this->bootstrap();
-
-        return $this->getArtisan()->call($command, $parameters, $outputBuffer);
     }
 
     /**
@@ -273,74 +124,55 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
+    public function bootstrap()
+    {
+
+        if (! $this->app->hasBeenBootstrapped()) {
+
+            $this->app->bootstrapWith($this->bootstrappers());
+        }
+
+        $this->app->loadDeferredProviders();
+
+        if (! $this->commandsLoaded) {
+            $this->commands();
+
+            $this->commandsLoaded = true;
+        }
+
+        //$this->bindSchedule();
+
+    }
+
+    public function getArtisan()
+    {
+
+        if (is_null($this->artisan)) {
+            $this->artisan = (new LeantimeCli($this->app, $this->events, $this->app->version()))
+                ->resolveCommands($this->commands)
+                ->setContainerCommandLoader();
+
+            if ($this->symfonyDispatcher instanceof EventDispatcher) {
+                $this->artisan->setDispatcher($this->symfonyDispatcher);
+                $this->artisan->setSignalsToDispatchEvent();
+            }
+        }
+
+        return $this->artisan;
+    }
+
     /**
-     * Get all of the commands registered with the console.
+     * Get the bootstrap classes for the application.
      *
      * @return array
      */
-    public function all()
+    protected function bootstrappers()
     {
-        $this->bootstrap();
-
-        return $this->getArtisan()->all();
+        return self::dispatch_filter('http_bootstrappers', $this->bootstrappers);
     }
 
-    /**
-     * Get the output for the last run command.
-     *
-     * @return string
-     */
-    public function output()
+    protected function schedule(Schedule $schedule)
     {
-        $this->bootstrap();
-
-        return $this->getArtisan()->output();
-    }
-
-    /**
-     * Terminate the application.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
-     * @return void
-     */
-    public function terminate($input, $status)
-    {
-        if (method_exists($this->getApplication(), 'terminate')) {
-            $this->getApplication()->terminate();
-        }
-
-        if (is_null($this->commandStartedAt)) {
-            return;
-        }
-
-        self::dispatch_event('command', ['input' => $input, 'status' => $status]);
-
-        $this->commandStartedAt = null;
-    }
-
-    /**
-     * Get the application instance.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    public function getApplication()
-    {
-        return app();
-    }
-
-    public function getBootstrappers(): array
-    {
-
-        $bootstrappers = [
-            \Leantime\Core\Bootstrap\LoadEnvironmentVariables::class,
-            \Leantime\Core\Bootstrap\LoadConfig::class,
-            \Leantime\Core\Bootstrap\HandleExceptions::class,
-            \Leantime\Core\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class,
-        ];
-
-        return self::dispatch_filter('http_bootstrappers', $bootstrappers);
+        //
     }
 }

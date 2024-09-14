@@ -2,9 +2,9 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
 use Leantime\Domain\Plugins\Services\Plugins;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,8 +15,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 abstract class AbstractPluginCommand extends Command
 {
-    protected InputInterface $input;
-
     protected SymfonyStyle $io;
 
     /**
@@ -49,7 +47,7 @@ abstract class AbstractPluginCommand extends Command
     /**
      * Asks a confirmation question.
      */
-    protected function confirm(string $question): bool
+    public function confirm($question, $default = false): bool
     {
         return $this->io->confirm($question, ! $this->input->isInteractive());
     }

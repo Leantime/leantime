@@ -247,9 +247,6 @@ class Views extends ViewServiceProvider
 
     private function discoverComposerPaths()
     {
-        $customComposerClasses = collect(glob(APP_ROOT.'/custom/Views/Composers/*.php'))
-            ->concat(glob(APP_ROOT.'/custom/Domain/*/Composers/*.php'));
-
         $appComposerClasses = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
             ->concat(glob(APP_ROOT.'/app/Domain/*/Composers/*.php'));
 
@@ -259,22 +256,17 @@ class Views extends ViewServiceProvider
             ->map(fn ($plugin) => glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php'))
             ->flatten();
 
-        $testers = $customComposerClasses->map(fn ($path) => str_replace('/custom/', '/app/', $path));
-
-        $stockComposerClasses = $appComposerClasses
+        $composerList = $appComposerClasses
             ->concat($pluginComposerClasses)
-            ->filter(fn ($composerClass) => ! $testers->contains($composerClass));
-
-        $storeComposers = $customComposerClasses
-            ->concat($stockComposerClasses)
+            ->filter(fn ($composerClass) => ! $testers->contains($composerClass))
             ->map(fn ($filepath) => Str::of($filepath)
-                ->replace([APP_ROOT.'/app/', APP_ROOT.'/custom/', '.php'], ['', '', ''])
+                ->replace([APP_ROOT.'/app/', '.php'], ['', '', ''])
                 ->replace('/', '\\')
                 ->start($this->app->getNamespace())
                 ->toString())
             ->all();
 
-        return $storeComposers;
+        return $composerList;
     }
 
     public function getViewPaths()
@@ -295,12 +287,16 @@ class Views extends ViewServiceProvider
     private function discoverViewPaths()
     {
         $domainPaths = collect(glob($this->app->basePath().'/app/Domain/*'))
-            ->mapWithKeys(fn ($path) => [
-                $basename = strtolower(basename($path)) => [
-                    APP_ROOT.'/custom/Domain/'.$basename.'/Templates',
-                    "$path/Templates",
-                ],
-            ]);
+            ->mapWithKeys(function($path) {
+                if(is_dir($path . "/Templates")){
+                    return  [
+                        $basename = strtolower(basename($path)) => [
+                            "$path/Templates",
+                        ]
+                    ];
+                }
+                return [];
+            });
 
         $plugins = collect($this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
 

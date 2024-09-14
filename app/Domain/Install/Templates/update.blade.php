@@ -15,3 +15,5 @@
         <p><input type="submit" name="updateAction" class="btn btn-primary" value="<?=$tpl->language->__("buttons.update_now")?>" onClick="this.form.submit(); this.disabled=true; this.value='Updating…'; "/></p>
     </form>
 </div>
+
+@endsection

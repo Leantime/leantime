@@ -110,3 +110,5 @@ $user = $tpl->get("user");
 <script>
     leantime.usersController.checkPWStrength('password');
 </script>
+
+@endsection

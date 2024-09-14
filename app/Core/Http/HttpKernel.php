@@ -21,6 +21,15 @@ class HttpKernel extends Kernel implements HttpKernelContract
 
     protected $app;
 
+    protected $bootstrappers = [
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Leantime\Core\Bootstrap\LoadConfig::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ];
+
     /**
      * The timestamp when the request started.
      *
@@ -32,7 +41,6 @@ class HttpKernel extends Kernel implements HttpKernelContract
     {
         $this->app = $app;
         $this->frontcontroller = $frontcontroller;
-        $this->bootstrappers = $this->getBootstrappers();
     }
 
     /**
@@ -58,6 +66,7 @@ class HttpKernel extends Kernel implements HttpKernelContract
 
             $response = $this->sendRequestThroughRouter($request);
         } catch (\Throwable $e) {
+
             $this->reportException($e);
 
             $response = $this->renderException($request, $e);
@@ -156,18 +165,13 @@ class HttpKernel extends Kernel implements HttpKernelContract
         return self::dispatch_filter('http_middleware', $middleware);
     }
 
-    public function getBootstrappers(): array
+    /**
+     * Get the bootstrap classes for the application.
+     *
+     * @return array
+     */
+    protected function bootstrappers()
     {
-
-        $bootstrappers = [
-            \Leantime\Core\Bootstrap\LoadEnvironmentVariables::class,
-            \Leantime\Core\Bootstrap\LoadConfig::class,
-            \Leantime\Core\Bootstrap\HandleExceptions::class,
-            \Leantime\Core\Bootstrap\RegisterProviders::class,
-            \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-            \Illuminate\Foundation\Bootstrap\BootProviders::class,
-        ];
-
-        return self::dispatch_filter('http_bootstrappers', $bootstrappers);
+        return self::dispatch_filter('http_bootstrappers', $this->bootstrappers);
     }
 }

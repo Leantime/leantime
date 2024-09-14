@@ -15,7 +15,7 @@
     },
     "authors": [
         {
-            "name": "Marcel",
+            "name": "Marcel Folaron",
             "email": "marcel@leantime.io"
         }
     ],
@@ -70,7 +70,7 @@
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "predis/predis": "^2.2",
         "sentry/sentry-laravel": "^4.8",
-        "codeat3/blade-google-material-design-icons": "^1.19"
+        "laravel/octane": "^2.5"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
@@ -130,7 +130,6 @@
     "autoload": {
         "psr-4": {
             "Leantime\\": [
-                "custom/",
                 "app/"
             ],
             "": "app/"
@@ -142,7 +141,6 @@
     "autoload-dev": {
         "psr-4": {
             "Leantime\\": [
-                "custom/",
                 "app/"
             ],
             "": "app/"

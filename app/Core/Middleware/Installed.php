@@ -28,7 +28,7 @@ class Installed
         if (! $session_says && ! $config_says) {
             $this->setUninstalled();
 
-            if (! $response = $this->redirectToInstall()) {
+            if (! $response = $this->redirectToInstall($request)) {
                 return $next($request);
             }
 
@@ -38,7 +38,7 @@ class Installed
         if ($session_says && ! $config_says) {
             $this->setUninstalled();
 
-            if (! $response = $this->redirectToInstall()) {
+            if (! $response = $this->redirectToInstall($request)) {
                 return $next($request);
             }
 
@@ -85,13 +85,14 @@ class Installed
      *
      * @throws BindingResolutionException
      */
-    private function redirectToInstall(): Response|false
+    private function redirectToInstall(IncomingRequest $request): Response|false
     {
         $frontController = app()->make(Frontcontroller::class);
 
         $allowedRoutes = ['install', 'install.update', 'api.i18n'];
         $allowedRoutes = self::dispatch_filter('allowedRoutes', $allowedRoutes);
-        if (in_array($frontController::getCurrentRoute(), $allowedRoutes)) {
+        $route = $request->getCurrentRoute();
+        if (in_array($request->getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 

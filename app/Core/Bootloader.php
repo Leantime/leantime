@@ -64,6 +64,7 @@ class Bootloader
         //Capture the request and instantiate the correct type
         $request = IncomingRequest::capture();
 
+
         //Use the right kernel for the job and handle the request.
         $this->handleRequest($request);
 
@@ -76,7 +77,7 @@ class Bootloader
      *
      * @throws BindingResolutionException
      */
-    private function handleRequest(IncomingRequest $request): void
+    private function handleRequest($request): void
     {
 
         if (! $this->app->runningInConsole()) {

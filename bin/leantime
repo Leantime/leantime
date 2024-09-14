@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use Leantime\Core\Console\ConsoleKernel;
+
 define('ROOT', __DIR__);
 define('APP_ROOT', dirname(__DIR__, 1));
 define('LEAN_CLI', true);
@@ -12,6 +14,15 @@ require $composer;
 
 //Get the application once.
 //Loads everything up once and then let's the bootloader manage it
-$app = require_once APP_ROOT."/app/Core/Bootstrap/App.php";
+$app = require_once APP_ROOT."/bootstrap/app.php";
 
-\Leantime\Core\Bootloader::getInstance()->boot($app);
+$kernel = $app->make(ConsoleKernel::class);
+
+$status = $kernel->handle(
+        $input = new \Symfony\Component\Console\Input\ArgvInput,
+        new \Symfony\Component\Console\Output\ConsoleOutput
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);

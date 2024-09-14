@@ -121,10 +121,10 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
 test-code-style:
-	./vendor/bin/pint --test
+	./vendor/bin/pint --test --config .pint/pint.json
 
 fix-code-style:
-	./vendor/bin/pint
+	./vendor/bin/pint --config .pint/pint.json
 
 get-version:
 	@echo $(VERSION)

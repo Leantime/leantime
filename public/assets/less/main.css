@@ -1,4 +1,5 @@
 @import "../../../node_modules/leantime.choices.js/public/assets/styles/choices.css";
+
 @import "../css/libs/prism.css";
 
 @import "../css/libs/croppie.css";
@@ -26,6 +27,10 @@
 @import "../css/libs/uppy/dashboard.css";
 
 @import "../css/libs/tippy.js/tippy.css";
+
+
+@import "../css/libs/tippy.js/tippy.css";
+
 
 @import "../css/libs/iconpicker/css/fontawesome-iconpicker.css";
 
