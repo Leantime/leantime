@@ -2,7 +2,6 @@
     'labelText' => '',
     'labelRight' => '',
     'caption' => '',
-    'captionState' => '', 
     'leadingVisual' => '',
     'size' => '',
     'state' => '',
