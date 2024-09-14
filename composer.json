@@ -5,8 +5,7 @@
     "type": "project",
     "config": {
         "platform-check": false,
-        "platform": {
-        },
+        "platform": {},
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "metasyntactical/composer-plugin-license-check": true,
@@ -27,30 +26,24 @@
         }
     ],
     "require": {
-        "php": "^8.1.13",
         "ext-ldap": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
         "ext-fileinfo": "*",
-
         "guzzlehttp/guzzle": "^7.9.2",
         "aws/aws-sdk-php": "^3.314",
         "phpmailer/phpmailer": "6.6.0",
         "robthree/twofactorauth": "1.8.2",
         "endroid/qr-code": "3.9.7",
         "league/html-to-markdown": "5.1",
-
         "ramsey/uuid": "^4.3",
         "htmlawed/htmlawed": "1.2.6",
         "vlucas/phpdotenv": "^5.5",
-
         "lasserafn/php-initial-avatar-generator": "^4.2",
         "guzzlehttp/oauth-subscriber": "^0.6.0",
         "kamermans/guzzle-oauth2-subscriber": "^1.0",
         "league/csv": "^9.8",
-
         "dragonmantank/cron-expression": "^3.3",
-
         "laravel/framework": "^v10.48",
         "filp/whoops": "^2.14",
         "vedmant/laravel-feed-reader": "^1.6",
@@ -74,9 +67,7 @@
         "nesbot/carbon": "^2.72",
         "spatie/icalendar-generator": "^2.6",
         "carbon-cli/carbon-cli": "^1.2",
-
         "metasyntactical/composer-plugin-license-check": "^2.1",
-
         "predis/predis": "^2.2",
         "sentry/sentry-laravel": "^4.8",
         "codeat3/blade-google-material-design-icons": "^1.19"
@@ -91,7 +82,6 @@
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10",
-        "leantime/leantime-documentor": "@dev",
         "laravel/pint": "^1.17",
         "symfony/http-client": "^6.2.4",
         "symfony/psr-http-message-bridge": "^2.0"
@@ -139,8 +129,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Leantime\\": ["custom/", "app/"],
-            "":  "app/"
+            "Leantime\\": [
+                "custom/",
+                "app/"
+            ],
+            "": "app/"
         },
         "files": [
             "app/helpers.php"
@@ -148,8 +141,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Leantime\\": ["custom/", "app/"],
-            "":  "app/"
+            "Leantime\\": [
+                "custom/",
+                "app/"
+            ],
+            "": "app/"
         },
         "files": [
             "app/helpers.php"
