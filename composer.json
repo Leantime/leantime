@@ -15,7 +15,7 @@
     },
     "authors": [
         {
-            "name": "Marcel",
+            "name": "Marcel Folaron",
             "email": "marcel@leantime.io"
         }
     ],
@@ -130,7 +130,6 @@
     "autoload": {
         "psr-4": {
             "Leantime\\": [
-                "custom/",
                 "app/"
             ],
             "": "app/"
@@ -142,7 +141,6 @@
     "autoload-dev": {
         "psr-4": {
             "Leantime\\": [
-                "custom/",
                 "app/"
             ],
             "": "app/"
