@@ -39,6 +39,11 @@ $app->singleton(
     Leantime\Core\Exceptions\ExceptionHandler::class,
 );
 
+$app->singleton(
+    Illuminate\Http\Request::class,
+    \Leantime\Core\Http\IncomingRequest::class,
+);
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

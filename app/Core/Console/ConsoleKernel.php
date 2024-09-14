@@ -38,7 +38,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      *
      * @return void
      */
-    protected function defineConsoleSchedule()
+    /*protected function defineConsoleSchedule()
     {
         // Set default timezone
         $this->app['config']->set(['app.timezone' => $this->app['config']->get('defaultTimezone')]);
@@ -50,7 +50,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
             return $schedule;
         });
-    }
+    }*/
 
     /**
      * Handle an incoming console command.

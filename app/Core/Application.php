@@ -54,11 +54,11 @@ class Application extends \Illuminate\Foundation\Application
         putenv('APP_PACKAGES_CACHE=cache/packages.php');
 
         //Our folder structure is different and we shall not bow to the bourgeoisie
-        $this->useAppPath($this->basePath.'/app/');
-        $this->useConfigPath($this->basePath.'/config/');
-        $this->useEnvironmentPath($this->basePath.'/config/');
-        $this->useBootstrapPath($this->basePath.'/app/Core/Bootstrap/');
-        $this->usePublicPath($this->basePath.'/Public/');
+        $this->useAppPath($this->basePath.'/app');
+        $this->useConfigPath($this->basePath.'/config');
+        $this->useEnvironmentPath($this->basePath.'/config');
+        $this->useBootstrapPath($this->basePath.'/app/Core/Bootstrap');
+        $this->usePublicPath($this->basePath.'/public');
         $this->useStoragePath($this->basePath.'/userfiles');
         $this->useLangPath($this->basePath.'/app/Language');
 
@@ -124,7 +124,6 @@ class Application extends \Illuminate\Foundation\Application
             }
         }
 
-        //$this->alias(self::class, Application::class);
         //$this->alias(DispatchesEvents::class, 'events');
         //$this->alias(Environment::class, 'config');
     }
