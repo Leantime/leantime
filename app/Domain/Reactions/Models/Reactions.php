@@ -59,7 +59,7 @@ class Reactions
 
     public static function getReactions(): mixed
     {
-        return self::dispatch_filter('available_reactions', self::$reactionTypes);
+        return self::dispatchFilter('available_reactions', self::$reactionTypes);
     }
 
     /**
@@ -70,7 +70,7 @@ class Reactions
      */
     public static function getReactionsByType(string $type): mixed
     {
-        $reactions = self::dispatch_filter('available_reactions', self::$reactionTypes);
+        $reactions = self::dispatchFilter('available_reactions', self::$reactionTypes);
 
         return $reactions[$type] ?? false;
     }

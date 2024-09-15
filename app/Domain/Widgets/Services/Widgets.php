@@ -108,8 +108,8 @@ class Widgets
             'todos' => $this->availableWidgets['todos'],
         ];
 
-        $this->availableWidgets = self::dispatch_filter('availableWidgets', $this->availableWidgets);
-        $this->defaultWidgets = self::dispatch_filter('defaultWidgets', $this->defaultWidgets, ['availableWidgets' => $this->availableWidgets]);
+        $this->availableWidgets = self::dispatchFilter('availableWidgets', $this->availableWidgets);
+        $this->defaultWidgets = self::dispatchFilter('defaultWidgets', $this->defaultWidgets, ['availableWidgets' => $this->availableWidgets]);
     }
 
     /**
@@ -121,7 +121,7 @@ class Widgets
      */
     public function getAll(): array
     {
-        return DispatchesEvents::dispatch_filter('availableWidgets', $this->availableWidgets);
+        return DispatchesEvents::dispatchFilter('availableWidgets', $this->availableWidgets);
     }
 
     /**

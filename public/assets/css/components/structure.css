@@ -402,7 +402,6 @@
     width: 100%;
     box-shadow: var(--large-shadow);
     backdrop-filter: var(--glass-blur);
-    background:var(--header-bg-color);
 
 }
 

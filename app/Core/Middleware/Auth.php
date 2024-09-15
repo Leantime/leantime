@@ -37,7 +37,7 @@ class Auth
         private AuthService $authService,
         private ProjectsService $projectsService,
     ) {
-        $this->publicActions = self::dispatch_filter('publicActions', $this->publicActions, ['bootloader' => $this]);
+        $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
     }
 
     /**
@@ -78,7 +78,7 @@ class Auth
             return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
         }
 
-        self::dispatch_event('logged_in', ['application' => $this]);
+        self::dispatchEvent('logged_in', ['application' => $this]);
 
         return $next($request);
     }

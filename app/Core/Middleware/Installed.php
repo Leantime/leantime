@@ -49,7 +49,7 @@ class Installed
             $this->setInstalled();
         }
 
-        self::dispatch_event('after_install');
+        self::dispatchEvent('after_install');
 
         $route = $request->getCurrentRoute();
 
@@ -90,14 +90,14 @@ class Installed
         $frontController = app()->make(Frontcontroller::class);
 
         $allowedRoutes = ['install', 'install.update', 'api.i18n'];
-        $allowedRoutes = self::dispatch_filter('allowedRoutes', $allowedRoutes);
+        $allowedRoutes = self::dispatchFilter('allowedRoutes', $allowedRoutes);
         $route = $request->getCurrentRoute();
         if (in_array($request->getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 
         $route = BASE_URL.'/install';
-        $route = self::dispatch_filter('redirectroute', $route);
+        $route = self::dispatchFilter('redirectroute', $route);
 
         return $frontController::redirect($route);
     }

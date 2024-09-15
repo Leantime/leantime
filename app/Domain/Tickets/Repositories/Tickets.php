@@ -1499,7 +1499,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
                 //send status update event
                 if ($key == 'status') {
-                    static::dispatch_event('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
+                    static::dispatchEvent('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
                 }
             }
 
@@ -1608,7 +1608,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
             }
 
-            static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
+            static::dispatchEvent('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
 
             return $stmn->execute();
 

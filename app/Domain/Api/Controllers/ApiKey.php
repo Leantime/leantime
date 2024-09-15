@@ -32,7 +32,7 @@ class ApiKey extends Controller
      */
     public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void
     {
-        self::dispatch_event('api_key_init', $this);
+        self::dispatchEvent('api_key_init', $this);
 
         $this->projectsRepo = $projectsRepo;
         $this->userRepo = $userRepo;

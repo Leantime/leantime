@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Container\Container;
 use Illuminate\Redis\RedisManager;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,7 +22,6 @@ class Redis extends ServiceProvider
          *  then fileStore
          */
         $this->app->singleton(RedisManager::class, function ($app) {
-
             app('config')['redis'] = [
                 'client' => 'predis',
                 'options' => [
@@ -52,7 +52,8 @@ class Redis extends ServiceProvider
 
         });
 
-        $this->app->bind('redis.connection', function ($app) {
+        $this->app->bind('redis.connection', function () {
+            $app = Container::getInstance();
             return $app['redis']->connection();
         });
 

@@ -37,7 +37,7 @@ class NewApiKey extends Controller
         ApiService $APIService
     ): void {
 
-        self::dispatch_event('api_key_init', $this);
+        self::dispatchEvent('api_key_init', $this);
 
         $this->userRepo = $userRepo;
         $this->projectsRepo = $projectsRepo;

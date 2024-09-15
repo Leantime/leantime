@@ -41,7 +41,7 @@ abstract class HtmxController
         public Template $tpl,
 
     ) {
-        self::dispatch_event('begin');
+        self::dispatchEvent('begin');
 
         $this->incomingRequest = $incomingRequest;
         $this->tpl = $tpl;
@@ -56,7 +56,7 @@ abstract class HtmxController
             throw new LogicException('HTMX Controllers must include the "$view" static property');
         }
 
-        self::dispatch_event('end', $this);
+        self::dispatchEvent('end', $this);
     }
 
     /**

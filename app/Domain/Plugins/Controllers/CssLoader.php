@@ -20,7 +20,7 @@ namespace Leantime\Domain\Plugins\Controllers {
 
         public function get(): Response
         {
-            $cssFiles = self::dispatch_filter('pluginCss', []);
+            $cssFiles = self::dispatchFilter('pluginCss', []);
             $cssStrs = collect($cssFiles)
                 ->filter(fn ($file) => file_exists(APP_ROOT."/plugins/$file"))
                 ->map(fn ($file) => file_get_contents(APP_ROOT."/plugins/$file"))

@@ -35,7 +35,7 @@ class Helper
     public function __construct()
     {
 
-        $this->availableModals = self::dispatch_filter('addHelperModal', $this->availableModals);
+        $this->availableModals = self::dispatchFilter('addHelperModal', $this->availableModals);
     }
 
     /**
@@ -78,7 +78,7 @@ class Helper
         ];
 
         //make array of onboarding steps.
-        $steps = self::dispatch_filter('filterSteps', $steps);
+        $steps = self::dispatchFilter('filterSteps', $steps);
 
         return $steps;
     }

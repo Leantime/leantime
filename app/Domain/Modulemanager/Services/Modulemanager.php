@@ -79,7 +79,7 @@ namespace Leantime\Domain\Modulemanager\Services {
                 $available = true;
             }
 
-            $available = static::dispatch_filter('moduleAvailability', $available, ['module' => $module]);
+            $available = static::dispatchFilter('moduleAvailability', $available, ['module' => $module]);
 
             return $available;
         }

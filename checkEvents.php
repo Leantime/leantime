@@ -22,7 +22,7 @@ foreach ($project_files as $file) {
 
     $source_code = file_get_contents($file->getRealPath());
 
-    if (preg_match_all('/dispatch_(event|filter)\(\s*[\'"](.+?)[\'"]\s*[),]/', $source_code, $matches)) {
+    if (preg_match_all('/dispatch(Event|Filter)\(\s*[\'"](.+?)[\'"]\s*[),]/', $source_code, $matches)) {
         $events = array_map(function ($eventName) use ($context) {
             return $context.'.'.strtolower($eventName);
         }, $matches[2]);
@@ -30,7 +30,7 @@ foreach ($project_files as $file) {
         $dispatched_events = array_merge($dispatched_events, $events);
     }
 
-    if (preg_match_all('/add_(event|filter)_listener\(\s*[\'"](.+?)[\'"]\s*[),]/', $source_code, $matches)) {
+    if (preg_match_all('/add(Event|Filter)Listener\(\s*[\'"](.+?)[\'"]\s*[),]/', $source_code, $matches)) {
         $listeners = array_merge($listeners, array_map('strtolower', $matches[2]));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\ServiceProvider;
@@ -97,11 +98,13 @@ class FileSystemServiceProvider extends ServiceProvider
 
         $this->registerManager();
 
-        $this->app->singleton('filesystem.disk', function ($app) {
+        $this->app->singleton('filesystem.disk', function () {
+            $app = Container::getInstance();
             return $app['filesystem']->disk($this->getDefaultDriver());
         });
 
-        $this->app->singleton('filesystem.cloud', function ($app) {
+        $this->app->singleton('filesystem.cloud', function () {
+            $app = Container::getInstance();
             return $app['filesystem']->disk($this->getCloudDriver());
         });
     }
@@ -113,7 +116,8 @@ class FileSystemServiceProvider extends ServiceProvider
      */
     protected function registerManager()
     {
-        $this->app->singleton('filesystem', function ($app) {
+        $this->app->singleton('filesystem', function () {
+            $app = Container::getInstance();
             return new FilesystemManager($app);
         });
     }

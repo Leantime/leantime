@@ -167,7 +167,7 @@ class Fileupload
      */
     public function getPublicFilesPath(): string
     {
-        $relative_path = self::dispatch_filter('relative_path', '/../../public/userfiles');
+        $relative_path = self::dispatchFilter('relative_path', '/../../public/userfiles');
 
         $path = realpath(__DIR__.$relative_path);
         if ($path === false) {

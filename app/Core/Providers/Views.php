@@ -30,7 +30,7 @@ class Views extends ViewServiceProvider
     public function register()
     {
 
-        $this->app['config']->set('view.compiled', $this->app->basePath().'/cache/views/');
+        $this->app['config']->set('view.compiled', storage_path('framework/views'));
         $this->app['config']->set('view.cache', true);
         $this->app['config']->set('view.compiled_extension', 'php');
 
@@ -134,7 +134,7 @@ class Views extends ViewServiceProvider
         $this->app->singleton('blade.compiler', function ($app) {
             $compiler = new BladeCompiler(
                 $app['files'],
-                $app->basePath().'/cache/views',
+                $app['config']['view.compiled'],
                 $app->basePath(),
                 $app['config']->get('view.cache', true),
                 $app['config']->get('view.compiled_extension', 'php'),
@@ -228,8 +228,6 @@ class Views extends ViewServiceProvider
         });
     }
 
-    public function boot() {}
-
     public function getComposerPaths()
     {
         $pathRepo = app()->make(PathManifestRepository::class);
@@ -266,6 +264,8 @@ class Views extends ViewServiceProvider
 
         return $composerList;
     }
+
+    public function boot() {}
 
     public function getViewPaths()
     {

@@ -35,7 +35,7 @@ namespace Leantime\Domain\Cron\Controllers {
                 return new Response;
             }
 
-            EventDispatcher::add_event_listener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
+            EventDispatcher::addEventListener('leantime.core.http.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
                 // Removes script execution limit

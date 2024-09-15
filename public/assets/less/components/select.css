@@ -1,2 +1,9 @@
-@import "/node_modules/leantime.choices.js/public/assets/styles/base.css";
 @import "/node_modules/leantime.choices.js/public/assets/styles/choices.css";
+
+.choices {
+    @apply select;
+}
+
+.choices__input {
+    @apply input;
+}

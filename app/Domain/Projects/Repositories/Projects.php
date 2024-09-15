@@ -706,7 +706,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event('editProject', ['values' => $values, 'oldProject' => $oldProject]);
+            static::dispatchEvent('editProject', ['values' => $values, 'oldProject' => $oldProject]);
         }
 
         /**
@@ -1074,7 +1074,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
+            static::dispatchEvent('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
         }
 
         public function patch($id, $params): bool
@@ -1187,10 +1187,14 @@ namespace Leantime\Domain\Projects\Repositories {
                 $initialsClass->name($value['name']);
                 $imagename = $initialsClass->getInitials();
 
-                if (! file_exists($filename = APP_ROOT.'/cache/avatars/'.$imagename.'.svg')) {
+                if (! file_exists($filename = APP_ROOT.'/userfiles/avatars/'.$imagename.'.svg')) {
                     $image = $avatar->name($value['name'])->generateSvg();
 
-                    if (! is_writable(APP_ROOT.'/cache/avatars/')) {
+                    if(!is_dir(APP_ROOT.'/userfiles/avatars')) {
+                        mkdir(APP_ROOT.'/userfiles/avatars');
+                    }
+
+                    if (! is_writable(APP_ROOT.'/userfiles/avatars/')) {
                         return $image;
                     }
 

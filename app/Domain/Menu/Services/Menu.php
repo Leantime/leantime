@@ -158,7 +158,7 @@ class Menu
             'program' => 'fa fa-layer-group',
         ];
 
-        return self::dispatch_filter('projectTypeAvatars', $projectTypeAvatars);
+        return self::dispatchFilter('projectTypeAvatars', $projectTypeAvatars);
     }
 
     public function getProjectSelectorGroupingOptions(): array
@@ -171,6 +171,6 @@ class Menu
                 'none' => 'No Grouping',
             ];
 
-        return self::dispatch_filter('projectSelectorGrouping', $projectSelectGrouping);
+        return self::dispatchFilter('projectSelectorGrouping', $projectSelectGrouping);
     }
 }

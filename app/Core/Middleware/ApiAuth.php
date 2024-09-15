@@ -27,7 +27,7 @@ class ApiAuth
             return $next($request);
         }
 
-        self::dispatch_event('before_api_request', ['application' => app()]);
+        self::dispatchEvent('before_api_request', ['application' => app()]);
 
         $apiKey = $request->getAPIKey();
         $apiUser = app()->make(ApiService::class)->getAPIKeyUser($apiKey);

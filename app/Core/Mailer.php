@@ -62,7 +62,7 @@ class Mailer
             $this->emailDomain = 'no-reply@'.$host;
         }
 
-        $this->emailDomain = self::dispatch_filter('fromEmail', $this->emailDomain, $this);
+        $this->emailDomain = self::dispatchFilter('fromEmail', $this->emailDomain, $this);
 
         //PHPMailer
         $this->mailAgent = new PHPMailer(false);
@@ -187,9 +187,9 @@ class Mailer
         $filteredValue = null;
         foreach ($hooks as $hook) {
             if ($type == 'filter') {
-                $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
+                $filteredValue = self::dispatchFilter($hook, $payload, $additional_params);
             } elseif ($type == 'event') {
-                self::dispatch_event($hook, $payload);
+                self::dispatchEvent($hook, $payload);
             }
         }
 

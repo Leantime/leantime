@@ -29,6 +29,7 @@
     "flatpickr": "^4.6.13",
     "fullcalendar": "^6.1.11",
     "gridstack": "^10.1.2",
+    "htmx-ext-ajax-header": "^2.0.1",
     "htmx-ext-head-support": "^2.0.2",
     "htmx-ext-preload": "^2.0.1",
     "htmx.org": "^2.0.1",

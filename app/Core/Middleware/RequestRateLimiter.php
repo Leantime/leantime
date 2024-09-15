@@ -84,7 +84,7 @@ class RequestRateLimiter
             $key = $key.'.loginAttempts';
         }
 
-        $key = self::dispatch_filter(
+        $key = self::dispatchFilter(
             'rateLimitKey',
             $key,
             [
@@ -92,7 +92,7 @@ class RequestRateLimiter
             ],
         );
 
-        $limit = self::dispatch_filter(
+        $limit = self::dispatchFilter(
             'rateLimit',
             $limit,
             [

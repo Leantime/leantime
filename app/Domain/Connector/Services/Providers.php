@@ -24,7 +24,7 @@ namespace Leantime\Domain\Connector\Services {
             $this->providers[$provider->id] = $provider;
 
             //providerId => provider
-            $this->providers = self::dispatch_filter('providerList', $this->providers);
+            $this->providers = self::dispatchFilter('providerList', $this->providers);
         }
 
         public function getProviders(): array

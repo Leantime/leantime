@@ -167,7 +167,7 @@ class Auth
      */
     public function login(string $username, string $password): bool
     {
-        self::dispatch_event('beforeLoginCheck', ['username' => $username, 'password' => $password]);
+        self::dispatchEvent('beforeLoginCheck', ['username' => $username, 'password' => $password]);
 
         // different identity providers can live here
         // they all need to
@@ -256,12 +256,12 @@ class Auth
         if ($user !== false && is_array($user)) {
             $this->setUserSession($user);
 
-            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return true;
         } else {
             $this->logFailedLogin($username);
-            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return false;
         }
@@ -294,7 +294,7 @@ class Auth
             'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
         ];
 
-        $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
+        $currentUser = self::dispatchFilter('user_session_vars', $currentUser);
 
         session(['userdata' => $currentUser]);
 
@@ -350,7 +350,7 @@ class Auth
 
         $this->authRepo->invalidateSession(session()->getId());
 
-        $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
+        $sessionsToDestroy = self::dispatchFilter('sessions_vars_to_destroy', [
             'userdata',
             'template',
             'subdomainData',
@@ -366,7 +366,7 @@ class Auth
             session()->forget($key);
         }
 
-        self::dispatch_event('afterSessionDestroy', ['authService' => app()->make(self::class)]);
+        self::dispatchEvent('afterSessionDestroy', ['authService' => app()->make(self::class)]);
 
     }
 

@@ -63,7 +63,7 @@ class Environment extends ServiceProvider
         $exceptionsHandler->bootstrap($this->app);
 
 
-        self::dispatch_event('config_initialized');
+        self::dispatchEvent('config_initialized');
         */
     }
 }

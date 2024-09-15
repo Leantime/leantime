@@ -152,7 +152,7 @@ class Template
          *
          * @var mixed $value The current value of the variable.
          */
-        $value = self::dispatch_filter("var.$name", $value);
+        $value = self::dispatchFilter("var.$name", $value);
 
         $this->vars[$name] = $value;
     }
@@ -238,8 +238,8 @@ class Template
     public function display(string $template, string $layout = 'app', int $responseCode = 200, array $headers = []): Response
     {
 
-        $template = self::dispatch_filter('template', $template);
-        $template = self::dispatch_filter("template.$template", $template);
+        $template = self::dispatchFilter('template', $template);
+        $template = self::dispatchFilter("template.$template", $template);
 
         $this->template = $template;
 
@@ -336,8 +336,8 @@ class Template
     protected function confirmLayoutName(string $layoutName, string $template): bool|string
     {
         $layout = htmlspecialchars($layoutName);
-        $layout = self::dispatch_filter('layout', $layout);
-        $layout = self::dispatch_filter("layout.$template", $layout);
+        $layout = self::dispatchFilter('layout', $layout);
+        $layout = self::dispatchFilter("layout.$template", $layout);
 
         $layout = $this->getTemplatePath('global', "layouts.$layout");
 
@@ -399,7 +399,7 @@ class Template
         }
 
         $namespace = strtolower($namespace);
-        $fullpath = self::dispatch_filter(
+        $fullpath = self::dispatchFilter(
             "template_path__{$namespace}_{$path}",
             "$namespace::$path",
             [
@@ -441,12 +441,12 @@ class Template
         $language = $this->language;
         $message_id = $note['msg'];
 
-        $message = self::dispatch_filter(
+        $message = self::dispatchFilter(
             'message',
             $language->__($message_id),
             $note
         );
-        $message = self::dispatch_filter(
+        $message = self::dispatchFilter(
             "message_{$message_id}",
             $message,
             $note
@@ -461,7 +461,7 @@ class Template
                 ]
             );
 
-            self::dispatch_event('notification_displayed', $note);
+            self::dispatchEvent('notification_displayed', $note);
 
             session(['notification' => '']);
             session(['notificationType' => '']);
@@ -498,12 +498,12 @@ class Template
         $language = $this->language;
         $message_id = $note['msg'];
 
-        $message = self::dispatch_filter(
+        $message = self::dispatchFilter(
             'message',
             $language->__($message_id),
             $note
         );
-        $message = self::dispatch_filter(
+        $message = self::dispatchFilter(
             "message_{$message_id}",
             $message,
             $note
@@ -523,7 +523,7 @@ class Template
                 deleteCachedView: true
             );
 
-            self::dispatch_event('notification_displayed', $note);
+            self::dispatchEvent('notification_displayed', $note);
 
             session(['notification' => '']);
             session(['notificationType' => '']);
@@ -826,10 +826,10 @@ class Template
         }
 
         if ($type == 'filter') {
-            return self::dispatch_filter($hookName, $payload, $available_params, $this->hookContext);
+            return self::dispatchFilter($hookName, $payload, $available_params, $this->hookContext);
         }
 
-        self::dispatch_event($hookName, $payload, $this->hookContext);
+        self::dispatchEvent($hookName, $payload, $this->hookContext);
 
         return null;
     }

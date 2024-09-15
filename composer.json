@@ -69,8 +69,7 @@
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "predis/predis": "^2.2",
-        "sentry/sentry-laravel": "^4.8",
-        "laravel/octane": "^2.5"
+        "sentry/sentry-laravel": "^4.8"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
@@ -84,7 +83,8 @@
         "phpstan/phpstan": "^1.10",
         "laravel/pint": "^1.17",
         "symfony/http-client": "^6.2.4",
-        "symfony/psr-http-message-bridge": "^2.0"
+        "symfony/psr-http-message-bridge": "^2.0",
+        "barryvdh/laravel-debugbar": "^3.13"
     },
     "provide": {
         "psr/container-implementation": "1.1|2.0",

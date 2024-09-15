@@ -46,7 +46,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             $schedule = tap(new Schedule($app['config']['defaultTimezone']))
                 ->useCache($app['config']['cache.default']);
 
-            self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
+            self::dispatchEvent('cron', ['schedule' => $schedule], 'schedule');
 
             return $schedule;
         });
@@ -168,7 +168,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      */
     protected function bootstrappers()
     {
-        return self::dispatch_filter('http_bootstrappers', $this->bootstrappers);
+        return $this->bootstrappers;
     }
 
     protected function schedule(Schedule $schedule)

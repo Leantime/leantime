@@ -18,7 +18,7 @@ class InitialHeaders
      *
      * @throws BindingResolutionException
      **/
-    public function handle(IncomingRequest $request, Closure $next): Response
+    public function handle($request, Closure $next): Response
     {
 
         $response = $next($request);
@@ -29,15 +29,15 @@ class InitialHeaders
             "base-uri 'self';",
             "script-src 'self' 'unsafe-inline' unpkg.com",
             "font-src 'self'  data:",
-            "img-src 'self' *.leantime.io *.amazonaws.com data: blob:",
+            "img-src * 'self' *.leantime.io *.amazonaws.com data: blob:",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];
-        $cspParts = self::dispatch_filter('cspParts', $cspParts);
+        $cspParts = self::dispatchFilter('cspParts', $cspParts);
         $csp = implode(';', $cspParts);
 
         foreach (
-            self::dispatch_filter('headers', [
+            self::dispatchFilter('headers', [
                 'X-Frame-Options' => 'SAMEORIGIN',
                 'X-XSS-Protection' => '1; mode=block',
                 'X-Content-Type-Options' => 'nosniff',

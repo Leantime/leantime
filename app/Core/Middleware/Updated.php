@@ -58,13 +58,13 @@ class Updated
         $frontController = app()->make(Frontcontroller::class);
 
         $allowedRoutes = ['install', 'install.update', 'api.i18n'];
-        $allowedRoutes = self::dispatch_filter('allowedRoutes', $allowedRoutes);
+        $allowedRoutes = self::dispatchFilter('allowedRoutes', $allowedRoutes);
         if (in_array($frontController::getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 
         $route = BASE_URL.'/install/update';
-        $route = self::dispatch_filter('redirectroute', $route);
+        $route = self::dispatchFilter('redirectroute', $route);
 
         return $frontController::redirect($route);
     }

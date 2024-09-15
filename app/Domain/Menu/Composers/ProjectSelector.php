@@ -80,7 +80,7 @@ class ProjectSelector extends Composer
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
         $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
 
-        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
+        $newProjectUrl = self::dispatchFilter('startSomething', '#/projects/createnew');
 
         return [
             'currentClient' => $currentClient,

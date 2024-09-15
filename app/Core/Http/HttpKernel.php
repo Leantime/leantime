@@ -2,24 +2,12 @@
 
 namespace Leantime\Core\Http;
 
-use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
-use Illuminate\Pipeline\Pipeline;
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Facade;
-use Leantime\Core\Application;
-use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Middleware;
+use Leantime\Core\Middleware\Auth;
 
-class HttpKernel extends Kernel implements HttpKernelContract
+
+class HttpKernel extends Kernel
 {
-    use DispatchesEvents;
-
-    protected $frontcontroller;
-
-    protected $app;
 
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -31,147 +19,69 @@ class HttpKernel extends Kernel implements HttpKernelContract
     ];
 
     /**
-     * The timestamp when the request started.
+     * The application's global HTTP middleware stack.
      *
-     * @var null|int
+     * These middleware are run during every request to your application.
+     *
+     * @var array<int, class-string|string>
      */
-    protected $requestStartedAt = null;
+    protected $middleware = [
+        // \App\Http\Middleware\TrustHosts::class,
+        \Leantime\Core\Middleware\TrustProxies::class,
+        \Leantime\Core\Middleware\SetCacheHeaders::class,
+        \Leantime\Core\Middleware\InitialHeaders::class,
+        \Leantime\Core\Middleware\StartSession::class,
+        \Leantime\Core\Middleware\Installed::class,
+        \Leantime\Core\Middleware\Updated::class,
+        \Leantime\Core\Middleware\RequestRateLimiter::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \Leantime\Core\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Barryvdh\Debugbar\Middleware\InjectDebugbar::class
 
-    public function __construct(Application $app, Frontcontroller $frontcontroller)
-    {
-        $this->app = $app;
-        $this->frontcontroller = $frontcontroller;
-    }
+    ];
 
     /**
-     * Handle the incoming request.
+     * The application's route middleware groups.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request  The incoming request.
-     * @return \Symfony\Component\HttpFoundation\Response The response.
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException If an HTTP response exception occurs.
-     * @throws \Throwable If an error occurs and it is not caught.
-     *
-     * @Overrid
+     * @var array<string, array<int, class-string|string>>
      */
-    public function handle($request)
-    {
-
-        $this->middleware = $this->getMiddleware($request);
-
-        $this->requestStartedAt = \Illuminate\Support\Carbon::now();
-
-        try {
-            $request->enableHttpMethodParameterOverride();
-
-            $response = $this->sendRequestThroughRouter($request);
-        } catch (\Throwable $e) {
-
-            $this->reportException($e);
-
-            $response = $this->renderException($request, $e);
-        }
-
-        //Execute event with request handled, in case some laravel listener is listening
-        self::dispatch(new RequestHandled($request, $response));
-
-        //filter response
-        return self::dispatch_filter('beforeSendResponse', $response);
-    }
+    protected $middlewareGroups = [
+        'web' => [
+            \Leantime\Core\Middleware\Auth::class,
+            \Leantime\Core\Middleware\Localization::class,
+            \Leantime\Core\Middleware\CurrentProject::class,
+        ],
+        'api' => [
+            \Leantime\Core\Middleware\ApiAuth::class
+        ],
+        'hx' => [
+            \Leantime\Core\Middleware\Auth::class,
+            \Leantime\Core\Middleware\Localization::class,
+            \Leantime\Core\Middleware\CurrentProject::class,
+        ],
+    ];
 
     /**
-     * Send the request through the router.
+     * The application's middleware aliases.
      *
-     * @param  mixed  $request  The request object.
-     * @return mixed The response object.
+     * Aliases may be used instead of class names to conveniently assign middleware to routes and groups.
      *
-     * @Override
+     * @var array<string, class-string|string>
      */
-    protected function sendRequestThroughRouter($request)
-    {
-        $this->app->instance('request', $request);
+    protected $middlewareAliases = [
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        'signed' => \App\Http\Middleware\ValidateSignature::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+    ];
 
-        Facade::clearResolvedInstance('request');
-
-        $this->bootstrap();
-
-        $response = (new Pipeline($this->app))
-            ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then(fn ($request) => $this->frontcontroller->dispatch($request));
-
-        return $response;
-    }
-
-    /**
-     * Terminate the request.
-     *
-     * @param  mixed  $request  The request object.
-     * @param  mixed  $response  The response object.
-     * @return void
-     */
-    public function terminate($request, $response)
-    {
-
-        if (method_exists($this->app, 'terminate')) {
-            $this->app->terminate();
-        }
-
-        if (is_null($this->requestStartedAt)) {
-            return;
-        }
-
-        foreach ($this->getMiddleware($request) as $middleware) {
-            if (
-                ! is_string($middleware)
-                || ! class_exists($middleware)
-                || ! method_exists($middleware, 'terminate')
-            ) {
-                continue;
-            }
-
-            $this->app->make($middleware)->terminate($request, $response);
-        }
-
-        self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
-
-        $this->requestStartedAt = null;
-    }
-
-    /**
-     * Get the application middleware
-     **/
-    public function getMiddleware(IncomingRequest $request): array
-    {
-
-        $middleware = [
-            Middleware\TrustProxies::class,
-            Middleware\InitialHeaders::class,
-            Middleware\StartSession::class,
-            Middleware\Installed::class,
-            Middleware\Updated::class,
-            Middleware\RequestRateLimiter::class,
-        ];
-
-        if ($request instanceof ApiRequest) {
-            $middleware[] = Middleware\ApiAuth::class;
-        } else {
-            $middleware[] = Middleware\Auth::class;
-        }
-
-        $middleware[] = Middleware\Localization::class;
-        $middleware[] = Middleware\CurrentProject::class;
-
-        return self::dispatch_filter('http_middleware', $middleware);
-    }
-
-    /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return self::dispatch_filter('http_bootstrappers', $this->bootstrappers);
-    }
 }

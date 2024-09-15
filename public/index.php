@@ -1,17 +1,9 @@
 <?php
 
-define('RESTRICTED', true);
-define('ROOT', __DIR__);
-define('APP_ROOT', dirname(__DIR__, 1));
-define('LEAN_CLI', false);
-
-if (! file_exists($composer = APP_ROOT.'/vendor/autoload.php')) {
-    throw new RuntimeException('Please run "composer install".');
-}
-require $composer;
+require __DIR__.'/../vendor/autoload.php';
 
 //Get the application once.
 //Loads everything up once and then let's the bootloader manage it
-$app = require_once APP_ROOT.'/bootstrap/app.php';
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
 \Leantime\Core\Bootloader::getInstance()->boot($app);

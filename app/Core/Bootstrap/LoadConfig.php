@@ -8,21 +8,8 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Providers\Auth;
 use Leantime\Core\Providers\Cache;
-use Leantime\Core\Providers\ConsoleSupport;
-use Leantime\Core\Providers\Db;
-use Leantime\Core\Providers\EncryptionServiceProvider;
-use Leantime\Core\Providers\FileSystemServiceProvider;
-use Leantime\Core\Providers\Frontcontroller;
-use Leantime\Core\Providers\Language;
-use Leantime\Core\Providers\RateLimiter;
-use Leantime\Core\Providers\Redis;
-use Leantime\Core\Providers\Session;
-use Leantime\Core\Providers\TemplateServiceProvider;
-use Leantime\Core\Providers\Views;
 use Leantime\Core\Support\Attributes\LaravelConfig;
-use Symfony\Component\Finder\Finder;
 
 class LoadConfig extends LoadConfiguration
 {
@@ -33,30 +20,57 @@ class LoadConfig extends LoadConfiguration
 
     public function bootstrap(Application $app)
     {
-        parent::bootstrap($app);
+        $items = [];
 
-        //Set a few Leantime config defaults
-        $this->setLeantimeDebugConfig($app);
+        // First we will see if we have a cache configuration file. If we do, we'll load
+        // the configuration items from that file so that it is very quick. Otherwise
+        // we will need to spin through every configuration file and load them all.
+        if (file_exists($cached = $app->getCachedConfigPath())) {
+            $items = require $cached;
 
-        $this->setLeantimeProviders($app);
+            $loadedFromCache = true;
+        }
 
-        //Now extend config with laravel configs if they exist
-        $app->extend('config', function (Repository $laravelConfig) use ($app) {
+        // Next we will spin through all of the configuration files in the configuration
+        // directory and load each one into the repository. This will make all of the
+        // options available to the developer for use in various parts of this app.
+        $app->instance('config', $config = new Environment($items));
 
-            $leantimeConfig = $app->make(Environment::class);
+        if (! isset($loadedFromCache)) {
+            $this->loadConfigurationFiles($app, $config);
 
-            //Add all laravel configs to leantime config
-            foreach ($laravelConfig->all() as $key => $value) {
-                $leantimeConfig->set($key, $value);
-            }
+            //Now extend config with laravel configs if they exist
+            $app->extend('config', function (Repository $laravelConfig) use ($app) {
 
-            //At this point we have the leantime config and loaded laravel configs
-            //Re-aranging and setting some of the laravel defaults that were not set
-            //as part of the file loader. Laravel config vars were already added.
-            $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
+                $leantimeConfig = $app->make(Environment::class);
 
-            return $finalConfig;
-        });
+                //Add all laravel configs to leantime config
+                foreach ($laravelConfig->all() as $key => $value) {
+                    $leantimeConfig->set($key, $value);
+                }
+
+                //At this point we have the leantime config and loaded laravel configs
+                //Re-aranging and setting some of the laravel defaults that were not set
+                //as part of the file loader. Laravel config vars were already added.
+                $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
+
+                //Additional adjustments
+                $finalConfig->set('APP_DEBUG', $finalConfig->get('debug') ? true : false);
+
+                return $finalConfig;
+            });
+        }
+
+        $config = $app['config'];
+
+        // Finally, we will set the application's environment based on the configuration
+        // values that were loaded. We will pass a callback which will be used to get
+        // the environment in a web context where an "--env" switch is not present.
+        $app->detectEnvironment(fn () => $config->get('app.env', 'production'));
+
+        date_default_timezone_set($config->get('app.timezone', 'UTC'));
+
+        mb_internal_encoding('UTF-8');
 
     }
 
@@ -69,42 +83,10 @@ class LoadConfig extends LoadConfiguration
      */
     protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
     {
-        $files = $this->getConfigurationFiles($app);
-
-        //We are allowing laravel configuration files in addition to our main config.
-        //However they are optional. Laravel requires app config to be set, so we're
-        //pretending it exists.
-        //This override removes the check for $file['app']
-
-        foreach ($files as $key => $path) {
-            $repository->set($key, require $path);
+        $laravelConfig = require APP_ROOT.'/app/Core/Configuration/laravelConfig.php';
+        foreach ($laravelConfig as $key => $configArea) {
+            $repository->set($key, $configArea);
         }
-    }
-
-    /**
-     * Get Laravel configs
-     *
-     * @return array
-     */
-    protected function getConfigurationFiles(Application $app)
-    {
-
-        $files = [];
-
-        $configPath = realpath($app->configPath());
-
-        foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
-            $directory = $this->getNestedDirectory($file, $configPath);
-
-            //Ignore leantime configs when loading laravel configs
-            if (! in_array($file->getFilename(), $this->ignoreFiles)) {
-                $files[$directory.basename($file->getRealPath(), '.php')] = $file->getRealPath();
-            }
-        }
-
-        ksort($files, SORT_NATURAL);
-
-        return $files;
     }
 
     protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig)
@@ -131,79 +113,6 @@ class LoadConfig extends LoadConfiguration
         }
 
         return $leantimeConfig;
-
-    }
-
-    protected function setLeantimeDebugConfig(Application $app)
-    {
-
-        $app['config']['debug_blacklist'] = [
-            '_ENV' => [
-                'LEAN_EMAIL_SMTP_PASSWORD',
-                'LEAN_DB_PASSWORD',
-                'LEAN_SESSION_PASSWORD',
-                'LEAN_OIDC_CLIEND_SECRET',
-                'LEAN_S3_SECRET',
-            ],
-
-            '_SERVER' => [
-                'LEAN_EMAIL_SMTP_PASSWORD',
-                'LEAN_DB_PASSWORD',
-                'LEAN_SESSION_PASSWORD',
-                'LEAN_OIDC_CLIEND_SECRET',
-                'LEAN_S3_SECRET',
-            ],
-            '_POST' => [
-                'password',
-            ],
-        ];
-
-    }
-
-    protected function setLeantimeProviders(Application $app)
-    {
-
-        $providerList = [ //\Illuminate\Broadcasting\BroadcastServiceProvider::class,
-            //\Illuminate\Bus\BusServiceProvider::class,
-
-            Cache::class,
-            //\Illuminate\Cache\CacheServiceProvider::class,
-            ConsoleSupport::class,
-            \Illuminate\Cookie\CookieServiceProvider::class,
-            //\Illuminate\Database\DatabaseServiceProvider::class,
-            EncryptionServiceProvider::class,
-            FileSystemServiceProvider::class,
-
-            \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-            \Illuminate\Hashing\HashServiceProvider::class,
-            //\Illuminate\Mail\MailServiceProvider::class,
-            \Illuminate\Notifications\NotificationServiceProvider::class,
-            \Illuminate\Pagination\PaginationServiceProvider::class,
-            //\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-            \Illuminate\Pipeline\PipelineServiceProvider::class,
-            //\Illuminate\Queue\QueueServiceProvider::class,
-
-            Redis::class,
-            Session::class,
-
-            //\Illuminate\Redis\RedisServiceProvider::class,
-            //\Illuminate\Session\SessionServiceProvider::class,
-            //\Illuminate\Translation\TranslationServiceProvider::class,
-            \Illuminate\Validation\ValidationServiceProvider::class,
-            //\Illuminate\View\ViewServiceProvider::class,
-
-            Auth::class,
-            RateLimiter::class,
-            Db::class,
-            Language::class,
-            //RouteServiceProvider::class,
-
-            Frontcontroller::class,
-            Views::class,
-            TemplateServiceProvider::class,
-        ];
-
-        $app['config']->set('app.providers', $providerList);
 
     }
 }

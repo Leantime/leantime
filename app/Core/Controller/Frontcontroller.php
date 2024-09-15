@@ -45,7 +45,9 @@ class Frontcontroller
      * @param  IncomingRequest  $incomingRequest
      * @return void
      */
-    public function __construct() {}
+    public function __construct(IncomingRequest $request) {
+        $this->incomingRequest = $request;
+    }
 
     /**
      * run - executes the action depending on Request or firstAction
@@ -62,6 +64,18 @@ class Frontcontroller
         try {
 
             [$moduleName, $controllerType, $controllerName, $method] = $this->parseRequestParts($request);
+
+            $this->dispatchEvent('execute_action_start', ['action' => $actionName, 'module' => $moduleName]);
+
+            $routeParts = $this->getValidControllerCall($moduleName, $controllerName, $methodName, $controllerType);
+
+            //Setting default response code to 200, can be changed in controller
+            $this->setResponseCode(200);
+
+            $this->lastAction = $completeName;
+
+            $this->dispatchEvent('execute_action_end', ['action' => $actionName, 'module' => $moduleName]);
+
 
             //execute action
             return $this->executeAction($moduleName.'.'.$controllerName.'.'.$method, $controllerType);
@@ -136,31 +150,18 @@ class Frontcontroller
      *
      * @throws BindingResolutionException
      */
-    private function executeAction(string $completeName, string $controllerType = 'Controllers'): Response
+    public function executeAction(string $controller, string $method): Response
     {
-        $moduleName = Str::studly(self::getModuleName($completeName));
-        $actionName = Str::studly(self::getActionName($completeName));
-        $methodName = strtolower(self::getMethodName($completeName));
-
-        $this->dispatch_event('execute_action_start', ['action' => $actionName, 'module' => $moduleName]);
-
-        $routeParts = $this->getValidControllerCall($moduleName, $actionName, $methodName, $controllerType);
-
-        //Setting default response code to 200, can be changed in controller
-        $this->setResponseCode(200);
 
         $parameters = $this->incomingRequest->getRequestParams();
 
-        $this->lastAction = $completeName;
-
-        $this->dispatch_event('execute_action_end', ['action' => $actionName, 'module' => $moduleName]);
-
-        $controller = app()->make($routeParts['class']);
-        $response = $controller->callAction($routeParts['method'], $parameters);
+        $controller = app()->make($controller);
+        $response = $controller->callAction($method, $parameters);
 
         //Expecting a response object but can accept a string to a fragment.
         return $response instanceof Response ? $response : $controller->getResponse($response);
     }
+
 
     /**
      * Retrieves the type of controller based on the incoming request.
@@ -191,19 +192,23 @@ class Frontcontroller
      * @return array The valid controller call in the form of an associative array. The "class" key represents the class path of the controller,
      *               and the "method" key represents the method name of the controller.
      */
-    protected function getValidControllerCall(string $moduleName, string $actionName, string $methodName, string $controllerType): array
+    public function getValidControllerCall(string $moduleName, string $actionName, string $methodName, string $controllerType): array
     {
 
+        $moduleName = Str::studly($moduleName);
+        $actionName = Str::studly($actionName);
+        $methodName = Str::lower($methodName);
+        $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
         $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
 
-        //if(Cache::store("installation")->has("routes.".$actionPath.".".$methodName)){
-        //    return Cache::store("installation")->get("routes.".$actionPath.".".$methodName);
-        //}
+        if(Cache::store("installation")->has("routes.".$routepath.".".$methodName)){
+            return Cache::store("installation")->get("routes.".$routepath.".".$methodName);
+        }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
-        Cache::store('installation')->set('routes.'.$actionPath.'.'.($classMethod == 'run' ? $methodName : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
+        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodName : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
 
         return ['class' => $classPath, 'method' => $classMethod];
     }
@@ -309,7 +314,9 @@ class Frontcontroller
      * @param  string|null  $completeName  The complete name of the route. Defaults to the current route if not provided.
      * @return string The method name. If the route name consists of two parts (e.g. "controllers.index"), the method name will be the lowercase representation of the current request method
      *. If the route name consists of three parts (e.g. "controllers.update"), the method name will be the second part of the route name. Otherwise, an empty string is returned.
-     */
+     *
+     * @deprecated
+     **/
     public static function getMethodName(?string $completeName = null): string
     {
         $completeName ??= currentRoute();

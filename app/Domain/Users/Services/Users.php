@@ -51,7 +51,7 @@ namespace Leantime\Domain\Users\Services {
         {
 
             $results = $this->userRepo->editUser($values, $id);
-            self::dispatch_event('editUser', ['id' => $id, 'values' => $values]);
+            self::dispatchEvent('editUser', ['id' => $id, 'values' => $values]);
 
             return $results;
         }
@@ -83,7 +83,7 @@ namespace Leantime\Domain\Users\Services {
         {
             $users = $this->userRepo->getAll($activeOnly);
 
-            $users = self::dispatch_filter('getAll', $users);
+            $users = self::dispatchFilter('getAll', $users);
 
             return $users;
         }
@@ -339,7 +339,7 @@ namespace Leantime\Domain\Users\Services {
 
             $this->authService->setUserSession($user);
 
-            self::dispatch_event('editUser', ['id' => $id, 'values' => $values]);
+            self::dispatchEvent('editUser', ['id' => $id, 'values' => $values]);
         }
 
         /**

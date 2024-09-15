@@ -2018,7 +2018,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
 
-            $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
+            $tickets = self::dispatchFilter('myTodoWidgetTasks', $tickets);
 
             return [
                 'tickets' => $tickets,

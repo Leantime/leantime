@@ -48,8 +48,10 @@ class Db
      *
      * @return void
      */
-    public function __construct(Environment $config)
+    public function __construct()
     {
+
+        $config = app('config');
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;
         $this->databaseName = $config->dbDatabase;

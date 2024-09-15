@@ -38,7 +38,7 @@ class PathManifestRepository
     {
         $this->app = $app;
         $this->files = $files;
-        $this->manifestPath = $app->basePath().'/cache';
+        $this->manifestPath = storage_path('framework');
 
     }
 

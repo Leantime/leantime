@@ -37,7 +37,7 @@ class App extends Composer
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), 'project');
 
         $announcement = null;
-        $announcement = self::dispatch_filter('appAnnouncement', $announcement);
+        $announcement = self::dispatchFilter('appAnnouncement', $announcement);
 
         return [
             'section' => $menuType,

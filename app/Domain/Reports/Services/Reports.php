@@ -175,7 +175,7 @@ namespace Leantime\Domain\Reports\Services {
             //Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
-            self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
+            self::dispatchEvent('beforeTelemetrySend', ['companyId' => $companyId]);
 
             $companyLang = $this->settings->getSetting('companysettings.language');
             if ($companyLang != '' && $companyLang !== false) {
@@ -267,7 +267,7 @@ namespace Leantime\Domain\Reports\Services {
 
             ];
 
-            $telemetry = self::dispatch_filter('beforeReturnTelemetry', $telemetry);
+            $telemetry = self::dispatchFilter('beforeReturnTelemetry', $telemetry);
 
             return $telemetry;
         }

@@ -581,7 +581,7 @@ class Timesheets extends Repository
              hours = hours + :hours,
              description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
 
-        $query = self::dispatch_filter('sql', $query);
+        $query = self::dispatchFilter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
@@ -737,7 +737,7 @@ class Timesheets extends Repository
             ) ON DUPLICATE KEY UPDATE
                  hours = :hours';
 
-        $query = self::dispatch_filter('sql', $query);
+        $query = self::dispatchFilter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
@@ -828,7 +828,7 @@ class Timesheets extends Repository
                 AND TO_DAYS(workDate) = TO_DAYS(:date)
                 LIMIT 1';
 
-        $query = self::dispatch_filter('sql', $query);
+        $query = self::dispatchFilter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 

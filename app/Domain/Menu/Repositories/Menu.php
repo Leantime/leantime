@@ -217,7 +217,7 @@ namespace Leantime\Domain\Menu\Repositories {
                     }
 
                     $filter = $filter.'.'.$menuItem['id'];
-                    $menuItem['submenu'] = self::dispatch_filter(
+                    $menuItem['submenu'] = self::dispatchFilter(
                         hook: $filter,
                         payload: $this->buildMenuStructure($menuItem['submenu'], $filter),
                         function: 'getMenuStructure'
@@ -240,7 +240,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $menuCollection = collect($this->menuStructures)->map(
                 function ($menu) use ($filter) {
-                    return self::dispatch_filter(
+                    return self::dispatchFilter(
                         $filter,
                         $this->buildMenuStructure($menu, $filter),
                         'getMenuStructure'
@@ -248,7 +248,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 }
             )->all();
 
-            $this->menuStructures = self::dispatch_filter(
+            $this->menuStructures = self::dispatchFilter(
                 'menuStructures',
                 $menuCollection,
                 ['menuType' => $menuType]
@@ -420,7 +420,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 'llamadorian.statusCollector' => 'personal',
             ];
 
-            $sections = self::dispatch_filter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);
+            $sections = self::dispatchFilter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);
 
             if (isset($sections[$currentRoute])) {
                 return $sections[$currentRoute];

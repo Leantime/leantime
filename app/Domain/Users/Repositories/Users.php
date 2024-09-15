@@ -637,10 +637,14 @@ namespace Leantime\Domain\Users\Repositories {
                 $initialsClass->name($name);
                 $imagename = $initialsClass->getInitials();
 
-                if (! file_exists($filename = APP_ROOT.'/cache/avatars/user-'.$imagename.'.svg')) {
+                if (! file_exists($filename = APP_ROOT.'/userfiles/avatars/user-'.$imagename.'.svg')) {
                     $image = $avatar->name($name)->generateSvg();
 
-                    if (! is_writable(APP_ROOT.'/cache/avatars/')) {
+                    if(!is_dir(APP_ROOT.'/userfiles/avatars')) {
+                        mkdir(APP_ROOT.'/userfiles/avatars');
+                    }
+
+                    if (! is_writable(APP_ROOT.'/userfiles/avatars/')) {
                         return $image;
                     }
 

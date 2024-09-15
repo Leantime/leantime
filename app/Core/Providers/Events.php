@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core;
 
@@ -24,14 +25,15 @@ class Events extends ServiceProvider
             //Core\Events\EventDispatcher::discover_listeners();
 
             /*
+
             foreach ($this->subscribe as $subscriber) {
                 Event::subscribe($subscriber);
             }
 
             foreach ($this->observers as $model => $observers) {
                 $model::observe($observers);
-            }
-            */
+            }*/
+
         });
 
         /*

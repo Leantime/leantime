@@ -3,7 +3,7 @@
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\EventDispatcher;
 
-EventDispatcher::add_filter_listener('leantime.core.template.*.welcomeText', function ($welcomeText) {
+EventDispatcher::addFilterListener('leantime.core.template.*.welcomeText', function ($welcomeText) {
 
     $language = app()->make(Leantime\Core\Language::class);
 

@@ -396,7 +396,7 @@
                     </x-slot:card-title>
 
                     <div class="flex flex-row justify-center items-center">
-                        <div class="radial-progress text-primary bg-base-100/50 border-base-300 border-4 align-center shadow-md"
+                        <div class="radial-progress before:drop-shadow-[0_0px_15px_rgba(0,0,0,0.5)] text-primary bg-base-100/50 border-base-300 border-4 align-center shadow-md"
                              style="--value:70;  --size:10rem; --thickness: 1rem;"
                              role="progressbar">
                              {{ round($projectProgress['percent']) }}%

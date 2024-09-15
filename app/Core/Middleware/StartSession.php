@@ -56,7 +56,7 @@ class StartSession
 
         $session = $this->getSession($request);
 
-        self::dispatch_event('session_initialized');
+        self::dispatchEvent('session_initialized');
 
         return $this->handleRequestWhileBlocking($request, $session, $next);
     }

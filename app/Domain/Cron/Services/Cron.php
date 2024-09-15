@@ -67,7 +67,7 @@ namespace Leantime\Domain\Cron\Services {
             }
 
             //Process other events
-            self::dispatch_event('addJobToBeginning', $lastEvent);
+            self::dispatchEvent('addJobToBeginning', $lastEvent);
 
             //Process Telemetry Start
             $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
@@ -90,7 +90,7 @@ namespace Leantime\Domain\Cron\Services {
             $this->auditRepo->pruneEvents();
 
             //Process other events
-            self::dispatch_event('addJobToEnd', $lastEvent);
+            self::dispatchEvent('addJobToEnd', $lastEvent);
 
             return true;
         }

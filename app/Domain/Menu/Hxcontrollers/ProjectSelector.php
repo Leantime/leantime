@@ -102,7 +102,7 @@ class ProjectSelector extends HtmxController
             ];
         }
 
-        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
+        $newProjectUrl = self::dispatchFilter('startSomething', '#/projects/createnew');
 
         $this->tpl->assign('currentClient', $currentClient);
         $this->tpl->assign('module', FrontcontrollerCore::getModuleName());

@@ -39,14 +39,14 @@ abstract class Controller
         /** @var Language */
         protected Language $language,
     ) {
-        self::dispatch_event('begin');
+        self::dispatchEvent('begin');
 
         // initialize
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
 
-        self::dispatch_event('end', $this);
+        self::dispatchEvent('end', $this);
     }
 
     /**

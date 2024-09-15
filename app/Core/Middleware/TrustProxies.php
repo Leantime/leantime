@@ -47,7 +47,7 @@ class TrustProxies
             $config->trustedProxies = '127.0.0.1,REMOTE_ADDR';
         }
 
-        $this->proxies = self::dispatch_filter(
+        $this->proxies = self::dispatchFilter(
             'trustedProxies',
             explode(',', $config->trustedProxies),
             ['bootloader' => $this]

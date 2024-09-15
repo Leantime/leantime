@@ -8,7 +8,7 @@ use Leantime\Core\Events\EventDispatcher;
 class EventsTest extends Unit
 {
     /**
-     * This test will check the dispatch_event method of the EventDispatcher class.
+     * This test will check the dispatchEvent method of the EventDispatcher class.
      * It will dispatch an event and assert if it is added to the available_hooks array.
      */
     public function testDispatchEvent()
@@ -18,7 +18,7 @@ class EventsTest extends Unit
         $context = 'testContext';
 
         // Dispatch event
-        EventDispatcher::dispatch_event($eventName, $payload, $context);
+        EventDispatcher::dispatchEvent($eventName, $payload, $context);
 
         // Get all available hooks
         $available_hooks = EventDispatcher::get_available_hooks();
@@ -38,7 +38,7 @@ class EventsTest extends Unit
         $context = 'testContext';
         $eventListeners = [$listenerName => [$payload]];
 
-        EventDispatcher::add_event_listener($listenerName, function () {}, 10);
+        EventDispatcher::addEventListener($listenerName, function () {}, 10);
         // Test that the event listener has been found
         $this->assertEquals([$payload], EventDispatcher::findEventListeners($listenerName, $eventListeners));
     }
@@ -54,10 +54,10 @@ class EventsTest extends Unit
         $filterName = 'filter.test.name';
 
         // Add an event listener
-        EventDispatcher::add_event_listener($eventName, function () {}, 10);
+        EventDispatcher::addEventListener($eventName, function () {}, 10);
 
         // Add a filter listener
-        EventDispatcher::add_filter_listener($filterName, function () {}, 10);
+        EventDispatcher::addFilterListener($filterName, function () {}, 10);
 
         // Get registries
         $registries = EventDispatcher::get_registries();

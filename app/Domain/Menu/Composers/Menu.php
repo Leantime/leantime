@@ -102,7 +102,7 @@ class Menu extends Composer
             ];
         }
 
-        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
+        $newProjectUrl = self::dispatchFilter('startSomething', '#/projects/createnew');
 
         return [
             'currentClient' => $currentClient,

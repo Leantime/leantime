@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Configuration\AppSettings;
@@ -403,10 +404,33 @@ if (! function_exists('currentRoute')) {
      * @param  array  $headers
      * @param  bool|null  $secure
      */
+
     function currentRoute()
     {
 
         return app('request')->getCurrentRoute();
 
     }
+}
+
+if (! function_exists('get_domain_key')) {
+
+    /**
+     * Gets a unique instance key determined by domain
+     *
+     */
+    function get_domain_key()
+    {
+
+        //Now that we know where the instance is bing called from
+        //Let's add a domain level cache.
+        $domainCacheName = 'localhost';
+        if (! app()->runningInConsole()) {
+            $domainCacheName = md5(Str::slug(app('request')->host().app('request')['key']));
+        }
+
+        return $domainCacheName;
+
+    }
+
 }

@@ -91,13 +91,10 @@ class Language
      * @param  Environment  $config  The configuration environment.
      * @param  ApiRequest  $request  The API request object.
      */
-    public function __construct(
-        Environment $config,
-        IncomingRequest $request,
-    ) {
+    public function __construct() {
 
-        $this->config = $config;
-        $this->request = $request;
+        $this->config = app('config');
+        $this->request = app('request');
 
         //Get list of available languages
         $this->langlist = $this->getLanguageList();
@@ -127,7 +124,7 @@ class Language
 
             $isAPIRequest = $this->request->isApiOrCronRequest();
 
-            EventDispatcher::add_filter_listener(
+            EventDispatcher::addFilterListener(
                 'leantime.core.http.httpkernel.handle.beforeSendResponse',
                 fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                     Cookie::create('language')
@@ -197,7 +194,7 @@ class Language
     {
         if (Cache::store('installation')->has('cache.language_resources_'.$this->language) && $this->config->debug == 0) {
 
-            $this->ini_array = self::dispatch_filter(
+            $this->ini_array = self::dispatchFilter(
                 'language_resources',
                 Cache::store('installation')->get('cache.language_resources_'.$this->language),
                 [
@@ -217,7 +214,7 @@ class Language
 
         $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
-        foreach ($languageFiles = self::dispatch_filter('language_files', [
+        foreach ($languageFiles = self::dispatchFilter('language_files', [
             // Complement english with english customization
             static::CUSTOM_LANG_FOLDER.'en-US.ini' => false,
 
@@ -230,7 +227,7 @@ class Language
             $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $language_file, $isForeign);
         }
 
-        $this->ini_array = self::dispatch_filter(
+        $this->ini_array = self::dispatchFilter(
             'language_resources',
             $mainLanguageArray,
             [
@@ -308,7 +305,7 @@ class Language
             );
         }
 
-        $parsedLangList = self::dispatch_filter('languages', $langlist);
+        $parsedLangList = self::dispatchFilter('languages', $langlist);
         Cache::store('installation')->set('cache.langlist', $parsedLangList);
 
         return $parsedLangList;

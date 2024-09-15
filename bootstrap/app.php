@@ -1,5 +1,25 @@
 <?php
 
+use Leantime\Core\Console\ConsoleKernel;
+use Leantime\Core\Http\HttpKernel;
+
+! defined('ROOT') ? define('ROOT', __DIR__.'/../public') : '';
+! defined('APP_ROOT') ? define('APP_ROOT', dirname(__DIR__, 1)) : '';
+
+/*
+|--------------------------------------------------------------------------
+| Check If The Application Is Under Maintenance
+|--------------------------------------------------------------------------
+|
+| If the application is in maintenance / demo mode via the "down" command
+| we will load this file so that any pre-rendered content can be shown
+| instead of starting the framework, which could cause an exception.
+|
+*/
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -28,6 +48,7 @@ $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     Leantime\Core\Http\HttpKernel::class
 );
+
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,

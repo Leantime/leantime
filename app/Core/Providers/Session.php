@@ -2,8 +2,12 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\SessionManager;
 use Illuminate\Session\SymfonySessionDecorator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class Session extends ServiceProvider
 {
@@ -15,41 +19,46 @@ class Session extends ServiceProvider
     public function register()
     {
 
-        $this->app->singleton(\Illuminate\Session\SessionManager::class, function () {
+        $this->app->singleton('session', function ($app) {
 
-            if (defined('BASE_URL')) {
-                $url = is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null;
-            } else {
-                $url = app('config')['app.url'];
+            if(! is_dir(storage_path('framework/sessions/'.get_domain_key()))) {
+                mkdir(storage_path('framework/sessions/'.get_domain_key()));
             }
 
-            app('config')['session'] = [
-                'driver' => ! empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
-                'lifetime' => app('config')->sessionExpiration,
-                'connection' => ! empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'session' : null,
-                'expire_on_close' => false,
-                'encrypt' => true,
-                'files' => APP_ROOT.'/cache/sessions',
-                'store' => 'installation',
-                'block_store' => 'installation',
-                'block_lock_seconds' => 10,
-                'block_wait_seconds' => 10,
-                'lottery' => [2, 100],
-                'cookie' => 'ltid',
-                'path' => '/',
-                'domain' => $url,
-                'secure' => true,
-                'http_only' => true,
-                'same_site' => 'Lax',
-            ];
+            app('config')->set('session.files', storage_path('framework/sessions/'.get_domain_key()));
 
-            $sessionManager = new \Illuminate\Session\SessionManager(app());
+            if(empty(app('config')['useRedis']) && (bool) app('config')['useRedis'] === true){
+                app('config')->set('session.driver', 'redis');
+            }
+
+            //Now that we know where the instance is bing called from
+            //Let's add a domain level cache.
+            $domain = 'localhost';
+            if (! $app->runningInConsole()) {
+                $domain = $app['request']->getFullUrl();
+            }
+
+            //Most of this is set in the config but some things aren't clear until we get here.
+
+            $sessionManager = new \Illuminate\Session\SessionManager($app);
 
             return $sessionManager;
         });
 
-        $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
-        $this->app->singleton('session.store', fn () => app('session')->driver());
+        $this->app->singleton('session.store', function ($app) {
+            // First, we will create the session manager which is responsible for the
+            // creation of the various session drivers when they are needed by the
+            // application instance, and will resolve them on a lazy load basis.
+            return $app->make('session')->driver();
+        });
+
+        $this->app->singleton(StartSession::class, function ($app) {
+
+            return new StartSession($app->make(SessionManager::class), function () use ($app) {
+                return $app->make(CacheFactory::class);
+            });
+        });
+
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
 
     }

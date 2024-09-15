@@ -173,7 +173,7 @@ class UserInvite extends Controller
 
             session()->forget('tempPassword');
 
-            self::dispatch_event('userSignUpSuccess', ['user' => $userInvite]);
+            self::dispatchEvent('userSignUpSuccess', ['user' => $userInvite]);
 
             if ($loggedIn) {
                 return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/show');

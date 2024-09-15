@@ -68,7 +68,7 @@ class Bootloader
         //Use the right kernel for the job and handle the request.
         $this->handleRequest($request);
 
-        self::dispatch_event('end', ['bootloader' => $this]);
+        self::dispatchEvent('end', ['bootloader' => $this]);
 
     }
 

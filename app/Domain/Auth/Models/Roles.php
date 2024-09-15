@@ -38,7 +38,7 @@ class Roles
      */
     private static function getFilteredRoles(): mixed
     {
-        return self::dispatch_filter('available_roles', self::$roleKeys);
+        return self::dispatchFilter('available_roles', self::$roleKeys);
     }
 
     /**

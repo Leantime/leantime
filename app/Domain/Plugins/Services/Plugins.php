@@ -129,7 +129,7 @@ namespace Leantime\Domain\Plugins\Services {
              *
              * @api
              */
-            $allPlugins = static::dispatch_filter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
+            $allPlugins = static::dispatchFilter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
 
             return $allPlugins;
         }
@@ -163,7 +163,7 @@ namespace Leantime\Domain\Plugins\Services {
         {
 
             if (session()->exists('enabledPlugins')) {
-                $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
+                $enabledPlugins = static::dispatchFilter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
 
                 return $enabledPlugins;
             }
@@ -177,7 +177,7 @@ namespace Leantime\Domain\Plugins\Services {
              *
              * @api
              */
-            $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
+            $enabledPlugins = static::dispatchFilter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
 
             return $enabledPlugins;
         }

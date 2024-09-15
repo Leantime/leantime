@@ -6,7 +6,6 @@ use ArrayAccess;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as ConfigContract;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Config\Config;
 use Symfony\Component\Yaml\Yaml;
@@ -18,15 +17,9 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 {
     // Config Files ===============================================================================
 
-    public ?object $yaml;
+    private ?object $yaml;
 
-    public ?Config $phpConfig;
-
-    // Config ======================================================================================
-    /**
-     * @var array The Config
-     */
-    public array $config = [];
+    private ?Config $phpConfig;
 
     /**
      * @var array list of legacy mappings
@@ -68,8 +61,15 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
      *
      * @throws Exception
      */
-    public function __construct(DefaultConfig $defaultConfiguration)
+    public function __construct(array $items = [])
     {
+        if (! empty($items) && is_array($items)) {
+            $this->items = $items;
+
+            return $this;
+        }
+
+        $defaultConfiguration = new DefaultConfig;
 
         /* PHP */
         $this->phpConfig = null;
@@ -97,14 +97,12 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
             $type = gettype($defaultConfigurationProperties[$propertyName]);
             $type = $type == 'NULL' ? 'string' : $type;
 
-            $this->config[$propertyName] = $this->environmentHelper(
+            $this->set($propertyName, $this->environmentHelper(
                 envVar: self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_'.Str::of($propertyName)->snake()->upper()->toString(),
                 default: $defaultConfigurationProperties[$propertyName],
                 dataType: $type,
-            );
+            ));
         }
-
-        $end = microtime(true);
 
     }
 
@@ -182,149 +180,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
         }
 
         return null;
-    }
-
-    /**
-     * Determine if the given configuration value exists.
-     *
-     * @param  string  $key
-     */
-    public function has($key): bool
-    {
-        return Arr::has($this->config, $key);
-    }
-
-    /**
-     * Get the specified configuration value.
-     *
-     * @param  array|string  $key
-     * @param  mixed  $default
-     */
-    public function get($key, $default = null): mixed
-    {
-        if (is_array($key)) {
-            return $this->getMany($key);
-        }
-
-        return Arr::get(
-            $this->config,
-            $key,
-            $default
-        );
-    }
-
-    /**
-     * Get many configuration values.
-     *
-     * @param  array  $keys
-     */
-    public function getMany($keys): array
-    {
-        $config = [];
-
-        foreach ($keys as $key => $default) {
-            if (is_numeric($key)) {
-                [$key, $default] = [$default, null];
-            }
-
-            $config[$key] = $this->get($key, $default);
-        }
-
-        return $config;
-    }
-
-    /**
-     * Set a given configuration value.
-     *
-     * @param  array|string  $key
-     * @param  mixed  $value
-     */
-    public function set($key, $value = null): void
-    {
-        $keys = is_array($key) ? $key : [$key => $value];
-
-        foreach ($keys as $key => $value) {
-            Arr::set($this->config, $key, $value);
-        }
-
-    }
-
-    /**
-     * Prepend a value onto an array configuration value.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     */
-    public function prepend($key, $value): void
-    {
-        $array = $this->get($key, []);
-
-        array_unshift($array, $value);
-
-        $this->set($key, $array);
-    }
-
-    /**
-     * Push a value onto an array configuration value.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     */
-    public function push($key, $value): void
-    {
-        $array = $this->get($key, []);
-
-        $array[] = $value;
-
-        $this->set($key, $array);
-    }
-
-    /**
-     * Get all of the configuration items for the application.
-     */
-    public function all(): array
-    {
-        return $this->config;
-    }
-
-    /**
-     * Determine if the given configuration option exists.
-     *
-     * @param  string  $key
-     */
-    public function offsetExists($key): bool
-    {
-        return $this->has($key);
-    }
-
-    /**
-     * Get a configuration option.
-     *
-     * @param  string  $key
-     */
-    public function offsetGet($key): mixed
-    {
-        return $this->get($key);
-    }
-
-    /**
-     * Set a configuration option.
-     *
-     * @param  string  $key
-     */
-    public function offsetSet($key, mixed $value): void
-    {
-        $this->set($key, $value);
-    }
-
-    /**
-     * Unset a configuration option.
-     *
-     * @param  string  $key
-     */
-    public function offsetUnset($key): void
-    {
-        $this->set($key, null);
     }
 
     /**

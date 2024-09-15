@@ -25,7 +25,7 @@ class Mix
          *
          * @var string[] $manifestDirectories
          **/
-        $manifestDirectories = self::dispatch_filter('mix_manifest_directories', []);
+        $manifestDirectories = self::dispatchFilter('mix_manifest_directories', []);
 
         if (empty($manifestDirectories) || ! is_array($manifestDirectories)) {
             return;

@@ -74,7 +74,7 @@ namespace Leantime\Domain\Projects\Services {
 
             $types = ['project' => 'label.project'];
 
-            $filtered = static::dispatch_filter('filterProjectType', $types);
+            $filtered = static::dispatchFilter('filterProjectType', $types);
 
             //Strategy & Program are protected types
             if (isset($filtered['strategy'])) {
@@ -230,7 +230,7 @@ namespace Leantime\Domain\Projects\Services {
         {
 
             //Filter notifications
-            $notification = EventCore::dispatch_filter('notificationFilter', $notification);
+            $notification = EventCore::dispatchFilter('notificationFilter', $notification);
 
             //Email
             $users = $this->getUsersToNotify($notification->projectId);
@@ -315,7 +315,7 @@ namespace Leantime\Domain\Projects\Services {
                 );
             }
 
-            EventCore::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
+            EventCore::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
         }
 
         /**
@@ -423,12 +423,12 @@ namespace Leantime\Domain\Projects\Services {
                 clientId: (int) $clientId,
                 accessStatus: 'assigned'
             );
-            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+            $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
             //Build project hierarchy
             $projectsClean = $this->cleanParentRelationship($projects);
             $projectHierarchy = $this->findMyChildren(0, $projectsClean);
-            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
+            $projectHierarchy = self::dispatchFilter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
 
             //Get favorite projects
             $favorites = [];
@@ -437,7 +437,7 @@ namespace Leantime\Domain\Projects\Services {
                     $favorites[] = $project;
                 }
             }
-            $favorites = self::dispatch_filter('afterPopulatingProjectFavorites', $favorites, ['projects' => $projects]);
+            $favorites = self::dispatchFilter('afterPopulatingProjectFavorites', $favorites, ['projects' => $projects]);
 
             return [
                 'allAssignedProjects' => $projects,
@@ -459,12 +459,12 @@ namespace Leantime\Domain\Projects\Services {
                 clientId: (int) $clientId,
                 accessStatus: 'all'
             );
-            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+            $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
             //Build project hierarchy
             $projectsClean = $this->cleanParentRelationship($projects);
             $projectHierarchy = $this->findMyChildren(0, $projectsClean);
-            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
+            $projectHierarchy = self::dispatchFilter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
 
             $clients = $this->getClientsFromProjectList($projects);
 
@@ -496,7 +496,7 @@ namespace Leantime\Domain\Projects\Services {
                 clientId: null,
                 accessStatus: 'all'
             );
-            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+            $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
             $clients = $this->getClientsFromProjectList($projects);
 
@@ -714,7 +714,7 @@ namespace Leantime\Domain\Projects\Services {
 
                     session()->forget('projectsettings');
 
-                    self::dispatch_event('projects.setCurrentProject', $project);
+                    self::dispatchEvent('projects.setCurrentProject', $project);
 
                     return true;
                 } else {
@@ -1184,7 +1184,7 @@ namespace Leantime\Domain\Projects\Services {
         public function getProjectAvatar($id): mixed
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
-            $avatar = self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
+            $avatar = self::dispatchFilter('afterGettingAvatar', $avatar, ['projectId' => $id]);
 
             return $avatar;
         }

@@ -7,7 +7,7 @@ use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Users\Services\Users as UsersService;
 
-EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedule.cron', function ($params) {
+EventDispatcher::addEventListener('leantime.core.console.consolekernel.schedule.cron', function ($params) {
     if (get_class($params['schedule']) !== Schedule::class) {
         return;
     }

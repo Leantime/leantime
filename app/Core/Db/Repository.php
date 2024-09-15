@@ -62,7 +62,7 @@ abstract class Repository
              */
             public function prepare(string $sql, array $args = []): void
             {
-                $sql = $this->caller_class::dispatch_filter(
+                $sql = $this->caller_class::dispatchFilter(
                     'sql',
                     $sql,
                     $this->getArgs(['prepareArgs' => $args]),
@@ -81,7 +81,7 @@ abstract class Repository
              */
             public function bindValue(string $needle, mixed $replace, int $type = PDO::PARAM_STR): void
             {
-                $replace = $this->caller_class::dispatch_filter(
+                $replace = $this->caller_class::dispatchFilter(
                     'binding.'.str_replace(':', '', $needle),
                     $replace,
                     $this->getArgs(),
@@ -120,7 +120,7 @@ abstract class Repository
                     $args = array_merge($args, $additions);
                 }
 
-                $this->caller_class::dispatch_filter('args', $args, [], 5);
+                $this->caller_class::dispatchFilter('args', $args, [], 5);
 
                 return $args;
             }
@@ -138,10 +138,10 @@ abstract class Repository
                     throw new \Error('Method does not exist');
                 }
 
-                $this->caller_class::dispatch_event('beforeExecute', $this->getArgs(), 4);
+                $this->caller_class::dispatchEvent('beforeExecute', $this->getArgs(), 4);
 
-                $this->stmn = $this->caller_class::dispatch_filter('stmn', $this->stmn, $this->getArgs(), 4);
-                $method = $this->caller_class::dispatch_filter('method', $method, $this->getArgs(), 4);
+                $this->stmn = $this->caller_class::dispatchFilter('stmn', $this->stmn, $this->getArgs(), 4);
+                $method = $this->caller_class::dispatchFilter('method', $method, $this->getArgs(), 4);
 
                 $values = $this->stmn->execute();
 
@@ -151,9 +151,9 @@ abstract class Repository
 
                 $this->stmn->closeCursor();
 
-                $this->caller_class::dispatch_event('afterExecute', $this->getArgs(), 4);
+                $this->caller_class::dispatchEvent('afterExecute', $this->getArgs(), 4);
 
-                return $this->caller_class::dispatch_filter('return', $values, $this->getArgs(), 4);
+                return $this->caller_class::dispatchFilter('return', $values, $this->getArgs(), 4);
             }
         };
     }

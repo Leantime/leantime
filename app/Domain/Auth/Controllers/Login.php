@@ -36,7 +36,7 @@ class Login extends Controller
      */
     public function get(array $params): Response
     {
-        self::dispatch_event('beforeAuth', $params);
+        self::dispatchEvent('beforeAuth', $params);
 
         $redirectUrl = BASE_URL.'/dashboard/home';
 
@@ -85,7 +85,7 @@ class Login extends Controller
             $username = filter_var($_POST['username'], FILTER_SANITIZE_EMAIL);
             $password = $_POST['password'];
 
-            self::dispatch_event('beforeAuthServiceCall', ['post' => $_POST]);
+            self::dispatchEvent('beforeAuthServiceCall', ['post' => $_POST]);
 
             //If login successful redirect to the correct url to avoid post on reload
             if ($this->authService->login($username, $password) === true) {
@@ -93,7 +93,7 @@ class Login extends Controller
                     return FrontcontrollerCore::redirect(BASE_URL.'/auth/twoFA');
                 }
 
-                self::dispatch_event('afterAuthServiceCall', ['post' => $_POST]);
+                self::dispatchEvent('afterAuthServiceCall', ['post' => $_POST]);
 
                 return FrontcontrollerCore::redirect($redirectUrl);
             } else {

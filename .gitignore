@@ -118,3 +118,7 @@ config/.env
 
 # Local Dev Files
 .dev/docker-compose.local.yaml
+
+/caddy
+frankenphp
+frankenphp-worker.php
