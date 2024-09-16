@@ -223,7 +223,7 @@
 }
 .choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
     position: relative;
-    @apply rounded-btn px-4 py-2 text-start transition duration-200 ease-out;
+    @apply rounded-btn px-2 py-1 text-start transition duration-200 ease-out;
 }
 
 [dir=rtl] .choices__list--dropdown .choices__item, [dir=rtl] .choices__list[aria-expanded] .choices__item {
