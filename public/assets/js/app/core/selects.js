@@ -10,7 +10,7 @@ export const initSelect = function (element, enableSearch) {
     searchEnabled: enableSearch,
     duplicateItemsAllowed: false,
 
-    renderSelectedChoices: "auto",
+    renderSelectedChoices: "always",
     loadingText: "Loading...",
     noResultsText: "No results found",
     noChoicesText: "No choices to choose from",

@@ -4,7 +4,6 @@ input, button, select, textarea {
 
 input:focus,
 button:focus,
-select:focus,
 textarea:focus {
     outline:none;
     /* TODO: Figure out good focus outline */
@@ -19,8 +18,8 @@ form .switchery {
     margin-top:5px;
 }
 
-tox-edit-area,
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+tox-edit-area, textarea,
+input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="color"], .uneditable-input {
     height: auto;
     background-color: var(--secondary-background);
     line-height: var(--form-element-line-height);
@@ -129,22 +128,11 @@ div.tagsinput span.tag a {
     border: 0px solid var(--primary-color);
 }
 
-select {
-    min-height:30px;
-}
 
-::selection {
-    background: var(--accent1);
-    color: var(--main-action-color);
-    text-shadow: none;
-}
+
+
 
 /* Safari */
-::-moz-selection {
-    background: var(--accent1);
-    color: var(--main-action-color);
-    text-shadow: none;
-}
 
 /* Firefox */
 input:-moz-placeholder,
@@ -173,11 +161,7 @@ textarea:-ms-input-placeholder{
 }
 
 
-input, select,
-textarea, button {
-    outline: none;
 
-}
 
 .assign-container {
     height: 205px;
@@ -215,10 +199,7 @@ textarea, button {
 
 
 
-select,
-.row-fluid [class*="span"] select {
-    min-height: 35px;
-}
+
 
 .row-fluid.marginBottom,
 .row.marginBottom{
@@ -230,18 +211,13 @@ select,
 }
 
 
-.filterBar select {
-    height: auto;
-    line-height: var(--form-element-line-height);
-}
+
 
 .filterBoxLeft input[type="text"] {
     margin-right:10px;
 }
 
-.chosen-choices {
 
-}
 
 
 input[type=color] {
@@ -1132,130 +1108,6 @@ div.tagsinput span.tag {
 
 
 /* Choices.js select boxes */
-
-.choices__inner,
-.choices .choices__inner,
-.choices[data-type*=select-one] .choices__inner {
-    height: auto;
-    background-color: var(--secondary-background);
-    border: 1px solid transparent;
-    box-shadow: none;
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
-    min-height: 19px;
-    height: 31px;
-    line-height: 1;
-
-}
-
-.choices__inner.show-border,
-.choices .choices__inner.show-border,
-.choices[data-type*=select-one] .choices__inner.show-border,
-.choices__inner:hover,
-.choices .choices__inner:hover,
-.choices[data-type*=select-one] .choices__inner:hover {
-    border-color:var(--main-border-color);
-    box-shadow: var(--input-shadow);
-}
-
-.choices__inner .choices__list--single {
-    padding: 0px 16px 0px 0px;
-}
-
-.is-focused .choices__inner,
-.is-open .choices__inner {
-    border-color:var(--main-border-color);
-    border-top-left-radius:var(--input-radius);
-    border-top-right-radius:var(--input-radius);
-    border-bottom-left-radius:var(--input-radius);
-    border-bottom-right-radius:var(--input-radius);
-}
-
-.choices.is-open {
-    margin-bottom:6px;
-}
-
-.choices .choices__input {
-    display: block;
-    width: 100%;
-    border-radius:0px;
-    padding: var(--input-padding);
-    border:0px;
-    border-bottom: 1px solid var(--main-border-color);
-    background-color: var(--secondary-background);
-}
-
-.tags .choices__input {
-    display:inline;
-    witdth:auto;
-    border:0px;
-    background-color:transparent;
-    box-shadow:none;
-    padding: 0;
-    margin: 0;
-    line-height: var(--form-element-line-height);
-    height: 21px;
-    min-height:21px;
-}
-
-.choices__list--dropdown,
-.choices__list[aria-expanded],
-.is-open .choices__list--dropdown,
-.is-open .choices__list[aria-expanded] {
-    background:var(--secondary-background);
-    border-color:var(--main-border-color);
-    border-radius:var(--box-radius);
-    box-shadow:var(--regular-shadow);
-    word-break: normal;
-    text-wrap: nowrap;
-    width:max-content;
-    margin-top:5px;
-    z-index:var(--zlayer-2);
-}
-
-.choices__list--dropdown .choices__item--selectable.is-highlighted,
-.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    background-color:var(--dropdown-link-hover-bg);
-}
-
-.choices__list--multiple .choices__item {
-    background-color: var(--main-action-bg);
-    border: 1px solid var(--main-action-bg);
-    color:var(--main-action-color);
-    padding: 0px 10px;
-    font-size:var(--font-size-m);
-    margin:0px;
-    margin-top: -1px;
-    margin-right:5px;
-    line-height: 19px;
-}
-
-.choices[data-type*=select-multiple] .choices__button,
-.choices[data-type*=text] .choices__button {
-    border-top-right-radius:var(--input-radius);
-    border-bottom-right-radius:var(--input-radius);
-    border-left: 1px solid var(--secondary-background);
-}
-
-.choices[data-type*=select-multiple] .choices__button:hover,
-.choices[data-type*=text] .choices__button:hover {
-    background-color:rgba(0,0,0,0.2);
-    color:var(--primary-font-color);
-}
-
-.choices__list--single .choices__item {
-    line-height: var(--form-element-line-height);
-    height:  var(--form-element-line-height);
-}
-
-.choices[data-type*=select-one]::after {
-    border-color:var(--primary-font-color) transparent transparent transparent;
-}
 
 
 /* Date Pickers */

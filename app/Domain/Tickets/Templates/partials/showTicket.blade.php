@@ -35,6 +35,19 @@
 
         <div class="row">
             <div class="col-md-2">
+                <label class="pl-m pt-xs">🚨 test</label>
+            </div>
+            <div class="col-md-5">
+               <select class="select select-bordered select-sm w-full max-w-xs">
+                   <option>test 1</option>
+                   <option>test 2</option>
+                   <option>test 3</option>
+               </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
                 <label class="pl-m pt-xs">🚨 {{ __('label.priority') }}</label>
             </div>
             <div class="col-md-5">
@@ -59,8 +72,8 @@
                 <x-global::dates.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish"/>
             </div>
         </div>
-    
-        {{-- <x-global::forms.select 
+
+        {{-- <x-global::forms.select
             id="select-test"
             name="select-test"
             labelText="Select an option"
