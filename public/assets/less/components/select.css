@@ -1,29 +1,32 @@
-.choices {
 
-}/* ===============================
+.select {
+    @apply shadow-md select-bordered select-sm w-full max-w-xs;
+}
+
+
+
+/* ===============================
 =            Choices            =
 =============================== */
 .choices {
-    @apply select select-bordered select-sm w-full max-w-xs;
+    @apply select;
     overflow: hidden;
 
-    &.is_focused {
+    &.is-focused {
         box-shadow: none;
         @apply border-base-content/20 outline-base-content/20 outline outline-2 outline-offset-2;
     }
 }
 .choices:focus {
-    outline: none;
 }
 .choices:last-child {
     margin-bottom: 0;
 }
 .choices.is-open {
-    @apply border-r
     overflow: visible;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-bottom:0;
+    border-bottom-width: 0;
 }
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
@@ -150,7 +153,7 @@
     @apply bg-primary text-primary-content p-1 px-2 text-xs mr-1;
     display: inline-block;
     vertical-align: middle;
-    border-radius: 20px;
+    border-radius: 1rem;
     word-break: break-all;
     box-sizing: border-box;
 }
@@ -174,10 +177,11 @@
 
 .choices__list--dropdown, .choices__list[aria-expanded] {
 
-    @apply dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow border-base-content/20;
+    @apply dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-md select-bordered;
     border-top-left-radius:0;
     border-top-right-radius:0;
-
+    border-width: 1px;
+    border-top-width: 0;
     text-wrap: balance;
     visibility: hidden;
     word-break: break-all;
@@ -272,8 +276,6 @@
 }
 
 .choices__heading {
-    font-weight: 600;
-    font-size: 12px;
     padding: 10px;
     border-bottom: 1px solid #f7f7f7;
     color: gray;
