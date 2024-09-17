@@ -87,9 +87,9 @@ var closeModal = function () {
 window.addEventListener("HTMX.closemodal", closeModal);
 
 //Open page url modal on page load and hash change
-window.addEventListener("hashchange", openHashUrlModal);
 
 jQuery(document).ready(function() {
+    window.addEventListener("hashchange", openHashUrlModal);
     openHashUrlModal();
 });
 
