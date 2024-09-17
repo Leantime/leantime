@@ -104,7 +104,34 @@
             </x-slot:contents>
         </x-global::content.tabs>
     </div>
-</div>
+
+        {{-- CALL navigations/tabs component --}}
+        {{-- <div class="col-md-5" style="border-radius:10px; padding:0px;">
+            <x-global::navigations.tabs>
+                <x-slot:contents>
+                    <x-global::navigations.tabs.content name="connections" ariaLabel="Connections" :active="true">
+                        Connections
+                    </x-global::navigations.tabs.content>
+                    
+                    <x-global::navigations.tabs.content name="discussion" ariaLabel="Discussion">
+                        <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
+                    </x-global::navigations.tabs.content>
+            
+                    <x-global::navigations.tabs.content name="subtask" ariaLabel="Subtasks">
+                        <x-tickets::subtasks :ticket="$ticket" />
+                    </x-global::navigations.tabs.content>
+            
+                    <x-global::navigations.tabs.content name="files" ariaLabel="Files">
+                        <x-tickets::subtasks :ticket="$ticket" />
+                    </x-global::navigations.tabs.content>
+                </x-slot:contents>
+            </x-global::navigations.tabs>
+        </div> --}}
+
+
+
+        
+{{-- classExtra="p-sm" --}}
 
 <script>
 
