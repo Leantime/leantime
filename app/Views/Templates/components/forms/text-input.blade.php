@@ -18,47 +18,37 @@
 @endphp
 
 <div class='par relative w-full max-w-xs'>
-    @if($labelText || $labelRight)
-        <div class="flex justify-between">
-            @if($labelText)
-                <label for="{{ $attributes->get('id') }}">
-                    <span class="label-text">{{ $labelText }}</span>
-                </label>
-            @endif
-            @if($labelRight)
-                <label>
-                    <span class="label-text-alt">{{ $labelRight }}</span>
-                </label>
-            @endif
-        </div>
-    @endif
+    <x-global::forms.label-row>
+        @if($labelText)
+            <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
+        @endif
+        @if($labelRight)
+            <x-slot:label-right> {!! $labelRight !!}</x-slot:label-right>
+        @endif
+    </x-global::forms.label-row>
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
     @endif
 
     <div class="relative">
-        @if($leadingVisual)
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                {{ $leadingVisual }}
-            </span>
-        @endif
 
-        <input
-            {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}}
+        <x-global::elements.leadingVisual>
+            {{ $leadingVisual }}
+        </x-global::elements.leadingVisual>
+
+        <input {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}}
         />
 
-        @if($trailingVisual)
-            <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                {{ $trailingVisual }}
-            </span>
-        @endif
+        <x-global::elements.trailingVisual>
+            {{ $trailingVisual }}
+        </x-global::elements.trailingVisual>
     </div>
 
     @if($validationText)
-        <div class="mt-1 overflow-hidden transition-all duration-300 ease-in-out max-h-0">
-            <p class="text-sm {{ $validationClass }}">{{ $validationText }}</p>
-        </div>
+        <x-global::forms.label-row class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
+            <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
+        </x-global::forms.label-row>
     @endif
 
 </div>

@@ -1,28 +1,38 @@
 import Choices from "choices.js"
 import { appUrl } from "./instance-info.module.js";
+import {decode} from 'html-entities';
 
 
 function getOptions(selectElement) {
     const items = [];
 
-    Array.from(selectElement.nextElementSibling.children).forEach((option) => {
-        console.log(option);
-        items.push({
-            value: option.attributes.value,
-            label: option.innerHTML,
-            selected: option.hasAttribute('selected'),
-            disabled: option.hasAttribute('disabled'),
+    if (jQuery(selectElement).children()) {
+
+        jQuery(selectElement).children().each(function(option) {
+
+            var optionClone = jQuery(this).clone();
+            items.push({
+                value: optionClone.val(),
+                label: decode(optionClone.html()),
+                selected: optionClone.attr("selected"),
+                disabled: optionClone.attr("disabled"),
+            });
+
+            jQuery(this).remove();
+
         });
-    })
+
+    }
 
     return items;
 }
 
 export const initSelect = function (element, enableSearch) {
+
   const select = new Choices(element, {
     editItems: false,
     addChoices: false,
-    addItems: true,
+    addItems: false,
     allowHTML: true,
     searchEnabled: enableSearch,
     duplicateItemsAllowed: false,
@@ -46,7 +56,6 @@ export const initSelect = function (element, enableSearch) {
         input: ["choices__input"],
         inputCloned: [
             "choices__input--cloned",
-
         ],
         list: ["choices__list"],
         listItems: ["choices__list--multiple"],
@@ -80,11 +89,6 @@ export const initSelect = function (element, enableSearch) {
     "addItem",
     function (event) {
       // do something creative here...
-      console.log(event.detail.id);
-      console.log(event.detail.value);
-      console.log(event.detail.label);
-      console.log(event.detail.customProperties);
-      console.log(event.detail.groupValue);
     },
     false
   );
@@ -93,11 +97,6 @@ export const initSelect = function (element, enableSearch) {
     "addChoice",
     function (event) {
       // do something creative here...
-      console.log(event.detail.id);
-      console.log(event.detail.value);
-      console.log(event.detail.label);
-      console.log(event.detail.customProperties);
-      console.log(event.detail.groupValue);
     },
     false
   );
@@ -185,11 +184,6 @@ export const initTags = function (element, enableSearch, autoCompleteTags) {
     "addItem",
     function (event) {
       // do something creative here...
-      console.log(event.detail.id);
-      console.log(event.detail.value);
-      console.log(event.detail.label);
-      console.log(event.detail.customProperties);
-      console.log(event.detail.groupValue);
     },
     false
   );
@@ -198,11 +192,6 @@ export const initTags = function (element, enableSearch, autoCompleteTags) {
     "addChoice",
     function (event) {
       // do something creative here...
-      console.log(event.detail.id);
-      console.log(event.detail.value);
-      console.log(event.detail.label);
-      console.log(event.detail.customProperties);
-      console.log(event.detail.groupValue);
     },
     false
   );
