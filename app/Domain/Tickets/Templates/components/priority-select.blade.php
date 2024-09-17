@@ -1,4 +1,11 @@
 <x-global::forms.select id='priority2' name='priority2' search="false">
+    <x-slot:label-text>
+        {!!  __('label.priority') !!}
+    </x-slot:label-text>
+    <x-slot:validation-text>
+
+    </x-slot:validation-text>
+
     <x-global::forms.select.option
         :value="''">
         {{  __('label.priority_not_defined') }}
@@ -7,7 +14,9 @@
         <x-global::forms.select.option
             :value="strtolower($priorityKey)"
             :selected="strtolower($priorityKey) == strtolower( $ticket->priority ?? '') ? 'true' : 'false'">
-            <span class="priority-text-{{ $priorityKey }} "><i class="fa fa-flag size-sm pr-xs"></i> {{ $priorityValue }}</span>
+            <span class="priority-text-{{ $priorityKey }} ">
+                <i class="fa fa-flag size-sm pr-xs"></i> {{ $priorityValue }}
+            </span>
         </x-global::forms.select.option>
     @endforeach
 </x-global::forms.select>

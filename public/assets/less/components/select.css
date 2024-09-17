@@ -1,6 +1,6 @@
 
 .select {
-    @apply shadow-md select-bordered select-sm w-full max-w-xs;
+    @apply input-shadow select-bordered select-sm w-full max-w-xs;
 }
 
 
@@ -9,7 +9,7 @@
 =            Choices            =
 =============================== */
 .choices {
-    @apply select;
+    @apply select relative;
     overflow: hidden;
 
     &.is-focused {
@@ -17,6 +17,11 @@
         @apply border-base-content/20 outline-base-content/20 outline outline-2 outline-offset-2;
     }
 }
+
+.tags .choices {
+    min-width: 13rem;
+}
+
 .choices:focus {
 }
 .choices:last-child {

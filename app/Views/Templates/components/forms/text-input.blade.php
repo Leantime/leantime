@@ -6,9 +6,9 @@
     'state' => '',
     'leadingVisual' => '',
     'trailingVisual' => '',
-    'caption' => '', 
+    'caption' => '',
     'validationText' => '',
-    'validationState' => '', 
+    'validationState' => '',
 ])
 
 @php
@@ -44,8 +44,8 @@
             </span>
         @endif
 
-        <input 
-            {{$attributes->merge(['class' => 'input input-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}}
+        <input
+            {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}}
         />
 
         @if($trailingVisual)
@@ -60,5 +60,5 @@
             <p class="text-sm {{ $validationClass }}">{{ $validationText }}</p>
         </div>
     @endif
-    
+
 </div>

@@ -16,7 +16,6 @@ use Leantime\Core\Providers\TemplateServiceProvider;
 use Leantime\Core\Providers\Views;
 
 return [
-
     'app' => [
         'providers' => [
             /*

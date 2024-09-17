@@ -1,0 +1,3 @@
+.label-text {
+    @apply text-sm py-1;
+}

@@ -1,5 +1,22 @@
-import Choices from "leantime.choices.js";
+import Choices from "choices.js"
 import { appUrl } from "./instance-info.module.js";
+
+
+function getOptions(selectElement) {
+    const items = [];
+
+    Array.from(selectElement.nextElementSibling.children).forEach((option) => {
+        console.log(option);
+        items.push({
+            value: option.attributes.value,
+            label: option.innerHTML,
+            selected: option.hasAttribute('selected'),
+            disabled: option.hasAttribute('disabled'),
+        });
+    })
+
+    return items;
+}
 
 export const initSelect = function (element, enableSearch) {
   const select = new Choices(element, {
@@ -9,7 +26,7 @@ export const initSelect = function (element, enableSearch) {
     allowHTML: true,
     searchEnabled: enableSearch,
     duplicateItemsAllowed: false,
-
+    choices: getOptions(element),
     renderSelectedChoices: "always",
     loadingText: "Loading...",
     noResultsText: "No results found",
