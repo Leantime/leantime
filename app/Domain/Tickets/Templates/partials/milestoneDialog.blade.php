@@ -109,8 +109,12 @@ $statusLabels = $tpl->get('statusLabels');
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$tpl->__("buttons.save"); ?>" class="btn btn-primary"/>
-        </div>
+        <x-global::forms.button 
+            type="submit"
+            class="btn btn-primary">
+            {{ __('buttons.save') }}
+        </x-global::forms.button>
+                </div>
         <div class="col-md-6 align-right padding-top-sm">
 
         </div>
