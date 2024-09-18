@@ -3,6 +3,7 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -49,8 +50,11 @@ class Auth
      */
     public function redirectWithOrigin(string $route, string $origin, IncomingRequest $request): false|RedirectResponse
     {
-        $destination = BASE_URL.'/'.ltrim(str_replace('.', '/', $route), '/');
-        $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $origin]) : '';
+
+        $uri = ltrim(str_replace('.', '/', $route), '/');
+        $destination = BASE_URL.'/'.$uri;
+        $originClean = Str::replaceStart("/", "", $origin);
+        $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $originClean]) : '';
 
         if ($request->getCurrentRoute() == $route) {
             return false;

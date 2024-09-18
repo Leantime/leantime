@@ -31,4 +31,6 @@
             tippy('[data-tippy-content]');
         </script>
     @endfragment
+
+
 </div>

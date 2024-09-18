@@ -2,9 +2,6 @@
 
 @section('content')
 
-<?php
-?>
-
 <div class="errortitle">
 
     <h4 class="animate0 fadeInUp">{{ __("headlines.system_error") }}</h4>
@@ -17,3 +14,5 @@
     </div><br/><br/><br/><br/>
 
 </div>
+
+@endsection

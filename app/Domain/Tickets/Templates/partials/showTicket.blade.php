@@ -33,36 +33,9 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-2">
-                <label class="pl-m pt-xs">🚨 test</label>
-            </div>
-            <div class="col-md-5">
-               <select class="select select-bordered select-sm w-full max-w-xs">
-                   <option>test 1</option>
-                   <option>test 2</option>
-                   <option>test 3</option>
-               </select>
-            </div>
-        </div>
+        <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" />
 
-        <div class="row">
-            <div class="col-md-2">
-                <label class="pl-m pt-xs">🚨 {{ __('label.priority') }}</label>
-            </div>
-            <div class="col-md-5">
-                <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" />
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-2">
-                <label class="pl-m pt-xs">👕  {{ __('label.effort')  }}</label>
-            </div>
-            <div class="col-md-5">
-                <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
-            </div>
-        </div>
+        <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
 
         <div class="row pb-xl">
             <div class="col-md-2">
@@ -133,7 +106,34 @@
             </x-slot:contents>
         </x-global::content.tabs>
     </div>
-</div>
+
+        {{-- CALL navigations/tabs component --}}
+        {{-- <div class="col-md-5" style="border-radius:10px; padding:0px;">
+            <x-global::navigations.tabs>
+                <x-slot:contents>
+                    <x-global::navigations.tabs.content name="connections" ariaLabel="Connections" :active="true">
+                        Connections
+                    </x-global::navigations.tabs.content>
+                    
+                    <x-global::navigations.tabs.content name="discussion" ariaLabel="Discussion">
+                        <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
+                    </x-global::navigations.tabs.content>
+            
+                    <x-global::navigations.tabs.content name="subtask" ariaLabel="Subtasks">
+                        <x-tickets::subtasks :ticket="$ticket" />
+                    </x-global::navigations.tabs.content>
+            
+                    <x-global::navigations.tabs.content name="files" ariaLabel="Files">
+                        <x-tickets::subtasks :ticket="$ticket" />
+                    </x-global::navigations.tabs.content>
+                </x-slot:contents>
+            </x-global::navigations.tabs>
+        </div> --}}
+
+
+
+        
+{{-- classExtra="p-sm" --}}
 
 <script>
 

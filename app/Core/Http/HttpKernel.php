@@ -3,12 +3,9 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Foundation\Http\Kernel;
-use Leantime\Core\Middleware\Auth;
-
 
 class HttpKernel extends Kernel
 {
-
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
         \Leantime\Core\Bootstrap\LoadConfig::class,
@@ -38,8 +35,7 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \Barryvdh\Debugbar\Middleware\InjectDebugbar::class
-
+        \Barryvdh\Debugbar\Middleware\InjectDebugbar::class,
     ];
 
     /**
@@ -54,7 +50,7 @@ class HttpKernel extends Kernel
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
         'api' => [
-            \Leantime\Core\Middleware\ApiAuth::class
+            \Leantime\Core\Middleware\ApiAuth::class,
         ],
         'hx' => [
             \Leantime\Core\Middleware\Auth::class,
@@ -83,5 +79,4 @@ class HttpKernel extends Kernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
-
 }

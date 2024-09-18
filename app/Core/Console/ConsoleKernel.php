@@ -9,6 +9,7 @@ use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -32,25 +33,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
-
-    /**
-     * Schedule tasks to be executed.
-     *
-     * @return void
-     */
-    /*protected function defineConsoleSchedule()
-    {
-        // Set default timezone
-        $this->app['config']->set(['app.timezone' => $this->app['config']->get('defaultTimezone')]);
-        $this->app->singleton(Schedule::class, function ($app) {
-            $schedule = tap(new Schedule($app['config']['defaultTimezone']))
-                ->useCache($app['config']['cache.default']);
-
-            self::dispatchEvent('cron', ['schedule' => $schedule], 'schedule');
-
-            return $schedule;
-        });
-    }*/
 
     /**
      * Handle an incoming console command.
