@@ -37,14 +37,14 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                 <?php foreach ($tpl->get('externalCalendars') as $calendars) { ?>
                     <li>
                         <div class="inlineDropDownContainer" style="float:right;">
-                            <x-global::context-menu label-text="<i class='fa fa-ellipsis-h' aria-hidden='true'></i>" contentRole="link" position="bottom" align="start">
+                            <x-global::content.context-menu label-text="<i class='fa fa-ellipsis-h' aria-hidden='true'></i>" contentRole="link" position="bottom" align="start">
                                 <x-global::actions.dropdown.item variant="link" href="#/calendar/editExternal/{{ $calendars['id'] }}">
                                     <i class="fa-solid fa-pen-to-square"></i> {!! __('links.edit_calendar') !!}
                                 </x-global::actions.dropdown.item>
                                 <x-global::actions.dropdown.item variant="link" href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete">
                                     <i class="fa fa-trash"></i> {!! __('links.delete_external_calendar') !!}
                                 </x-global::actions.dropdown.item>
-                            </x-global::context-menu>
+                            </x-global::content.context-menu>
 
                         </div>
                         <span class="indicatorCircle" style="background:<?=$calendars['colorClass'] ?>"></span><?=$calendars['name'] ?>
