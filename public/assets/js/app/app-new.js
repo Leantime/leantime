@@ -16,12 +16,12 @@ require('htmx-ext-head-support');
 import jQuery from 'jquery';
 jQuery.noConflict();
 window.jQuery = jQuery;
+
 import 'jquery-ui-dist/jquery-ui';
-// INFO: May be unnecessary now
-import 'jquery-ui-touch-punch/jquery.ui.touch-punch';
+
 // TODO: Replace this dependency with https://github.com/leantime/choices
 import 'chosen-js/chosen.jquery';
-import 'js/libs/jquery.form';
+
 // TODO: Replace this dependency with https://github.com/leantime/choices
 import 'js/libs/jquery.tagsinput.min';
 import 'croppie/croppie';
@@ -32,23 +32,14 @@ import 'js/libs/bootstrap-dropdown';
 import '@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker';
 import 'js/libs/simple-color-picker-master/jquery.simple-color-picker';
 
-/*
- * Moment.js
- * TODO: Remove this dependency in favor of Luxon
- */
 import moment from 'moment';
 window.moment = moment;
-
-/* Confetti */
-import confetti from 'canvas-confetti';
-window.confetti = confetti;
 
 /*
  * Uppy
  * TODO: Replace with node module (probably upgrade to version 4)
  */
 import 'js/libs/uppy/uppy';
-
 
 /* isotope */
 import Isotope from 'isotope-layout';
@@ -63,6 +54,7 @@ window.LeaderLine = LeaderLine;
 import tippy from 'tippy.js';
 window.tippy = tippy;
 
+
 /* Datatables */
 import 'datatables.net';
 import 'datatables.net-rowgroup';
@@ -72,26 +64,24 @@ import 'datatables.net-buttons';
 /* Chart.js */
 import 'chartjs-adapter-luxon';
 
-/* SlimSelect */
-import SlimSelect from 'js/libs/slimselect';
-window.SlimSelect = SlimSelect;
 
 /* Core */
-import modals from './core/modals.module';
-import dateController from './core/dateController.module';
-import dateHelper from './core/dateHelper.module';
-import editorController from './core/editors.module';
-import getLatestGrowl from './core/getLatestGrowl.module';
-import handleAsyncResponse from './core/handleAsyncResponse.module';
-import instanceInfo from './core/instance-info.module';
+import modals from './core/modals.module.mjs';
 
-import onDocumentReady from './core/on-document-ready.module';
-import replaceSVGColors from './core/replaceSVGColors.module';
+import dateHelper from './core/dateHelper.module.mjs';
+import editorController from './core/editors.module';
+import getLatestGrowl from './core/getLatestGrowl.module.mjs';
+import handleAsyncResponse from './core/handleAsyncResponse.module.mjs';
+import instanceInfo from './core/instance-info.module.mjs';
+
+import onDocumentReady from './core/on-document-ready.module.mjs';
+import replaceSVGColors from './core/replaceSVGColors.module.mjs';
 import snippets from './core/snippets.module';
-import selects from './core/selects';
+
+import selects from './core/selects.module';
+import datePickers from './core/datePickers.module.mjs';
 
 addToGlobalScope({
-    dateController: dateController,
     dateHelper: dateHelper,
     editorController: editorController,
     getLatestGrowl: getLatestGrowl,
@@ -100,7 +90,8 @@ addToGlobalScope({
     modals: modals,
     replaceSVGColors: replaceSVGColors,
     snippets: snippets,
-    selects: selects,
+    selects:selects,
+    datePickers:datePickers
 });
 
 jQuery(document).ready(onDocumentReady);

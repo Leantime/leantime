@@ -63,12 +63,11 @@
 
 
 <script type="module">
-    import datePickersModule from "/assets/js/app/core/datePickers.module.js";
 
-    datePickersModule.initDateTimePicker("#datepickerDropDown-{{ $dateName }}");
+    leantime.datePickers.initDateTimePicker("#datepickerDropDown-{{ $dateName }}");
 
     @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
-        datePickersModule.toggleTime('#datepickerDropDown-{{ $dateName }}', '.timeToggleButton-{{ $dateName }}');
+        leantime.datePickers.toggleTime('#datepickerDropDown-{{ $dateName }}', '.timeToggleButton-{{ $dateName }}');
     @endif
 
 </script>

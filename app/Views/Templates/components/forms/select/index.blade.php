@@ -45,11 +45,12 @@
         @endif
 
         <select
-            {{$attributes->merge(['class' => 'select select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '')])}}
+
+            {{$attributes->merge(['class' => 'leantime-select select select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '')])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
             {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
         >
-            {!! $slot !!}
+            {{ $slot }}
         </select>
 
     </div>
@@ -62,8 +63,8 @@
 
 </div>
 
-
 <script>
+
     @if ($variant === 'tags')
         leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }});
     @else

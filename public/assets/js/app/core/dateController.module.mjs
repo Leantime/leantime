@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
 import i18n from 'i18n';
-import { getFormatFromSettings } from './dateHelper.module';
+import { getFormatFromSettings } from './dateHelper.module.mjs';
 import { DateTime } from 'luxon';
 import flatpickr from 'flatpickr';
 

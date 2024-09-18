@@ -1,5 +1,5 @@
 import jQuery from 'jquery';
-import { appUrl } from 'js/app/core/instance-info.module.js';
+import { appUrl } from 'js/app/core/instance-info.module.mjs';
 
 export const updateUserModalSettings = function (module) {
     jQuery.ajax(

@@ -1,4 +1,4 @@
-import { appUrl, theme, colorScheme, version } from './instance-info.module.js';
+import { appUrl, theme, colorScheme, version } from './instance-info.module.mjs';
 import i18n from 'i18n';
 import jQuery from 'jquery';
 

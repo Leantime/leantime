@@ -1,7 +1,7 @@
 <x-global::content.modal.modal-buttons>
 
         @if(isset($ticket->date))
-            <x-global::dates.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
+            <x-global::content.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
         @endif
         @if ($ticket->id != '')
             <x-global::content.modal.header-button variant="delete" href="#/tickets/delTicket/{{  $ticket->id }}"/>
@@ -37,14 +37,17 @@
 
         <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
 
-        <div class="row pb-xl">
-            <div class="col-md-2">
-                <label class="pl-m pt-xs">📅  {{ __('label.dates') }}</label>
-            </div>
-            <div class="col-md-5">
-                <x-global::dates.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish"/>
-            </div>
-        </div>
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1"/>
+
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test2"/>
+
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test3"/>
+
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test4"/>
+
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test5"/>
+
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test6"/>
 
         {{-- <x-global::forms.select
             id="select-test"
@@ -77,6 +80,8 @@
 
 
     </div>
+
+    {{--
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::content.tabs class="">
             <x-slot:headings class="sticky top-0 !bg-[--secondary-background]">
@@ -106,49 +111,52 @@
             </x-slot:contents>
         </x-global::content.tabs>
     </div>
+    -- }}
 
         {{-- CALL navigations/tabs component --}}
-        {{-- <div class="col-md-5" style="border-radius:10px; padding:0px;">
+     <div class="col-md-5" >
             <x-global::navigations.tabs>
                 <x-slot:contents>
                     <x-global::navigations.tabs.content name="connections" ariaLabel="Connections" :active="true">
-                        Connections
+                        test 0
                     </x-global::navigations.tabs.content>
-                    
+
                     <x-global::navigations.tabs.content name="discussion" ariaLabel="Discussion">
-                        <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
+                       test 1
                     </x-global::navigations.tabs.content>
-            
+
                     <x-global::navigations.tabs.content name="subtask" ariaLabel="Subtasks">
-                        <x-tickets::subtasks :ticket="$ticket" />
+                       test 2
                     </x-global::navigations.tabs.content>
-            
+
                     <x-global::navigations.tabs.content name="files" ariaLabel="Files">
-                        <x-tickets::subtasks :ticket="$ticket" />
+                       test 3
                     </x-global::navigations.tabs.content>
                 </x-slot:contents>
             </x-global::navigations.tabs>
-        </div> --}}
+        </div>
+
+</div>
 
 
 
-        
 {{-- classExtra="p-sm" --}}
 
 <script>
 
     jQuery(document).ready(function(){
 
-        leantime.ticketsController.initTagsInput();
+        //leantime.ticketsController.initTagsInput();
 
         //Set accordion states
         //All accordions start open
-        leantime.editorController.initComplexEditor();
-        tinymce.activeEditor.hide()
+        //leantime.editorController.initComplexEditor();
+        //tinymce.activeEditor.hide()
     });
 
-    leantime.editorController.initComplexEditor();
+    //leantime.editorController.initComplexEditor();
 
+    /*
     jQuery(".viewDescription").click(function(e){
 
         if(!jQuery(e.target).is("a")) {
@@ -156,11 +164,11 @@
             jQuery(this).hide();
             jQuery('#descriptionEditor').show('fast',
                 function() {
-                    tinymce.activeEditor.show();
+                    //tinymce.activeEditor.show();
                 }
             );
         }
-    });
+    });*/
 
     Prism.highlightAll();
 

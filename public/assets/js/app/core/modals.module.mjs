@@ -1,4 +1,4 @@
-import { appUrl } from './instance-info.module.js';
+import { appUrl } from './instance-info.module.mjs';
 import jQuery from 'jquery';
 import tippy from 'tippy.js';
 

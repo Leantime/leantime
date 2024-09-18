@@ -1,4 +1,5 @@
-import { appUrl } from "./instance-info.module.js";
+import { appUrl } from "./instance-info.module.mjs";
+import {getFormatFromSettings} from "./dateHelper.module.mjs";
 import jQuery from 'jquery';
 
 
@@ -7,7 +8,7 @@ import jQuery from 'jquery';
 
         return {
             numberOfMonths: 1,
-            dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+            dateFormat: getFormatFromSettings("dateformat", "jquery"),
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
             dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -28,7 +29,7 @@ import jQuery from 'jquery';
     function getDate( element )
     {
 
-        var dateFormat =  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery");
+        var dateFormat =  getFormatFromSettings("dateformat", "jquery");
         var date;
 
         try {
@@ -92,7 +93,7 @@ export const initDatePicker = function (element, callback) {
         inline: true,
         allowInvalidPreload: true,
         altInput: true,
-        altFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr"),
+        altFormat: getFormatFromSettings("dateformat", "flatpickr"),
         dateFormat:  "Y-m-d H:i:s",
         shorthandCurrentMonth: true,
         "locale": {
@@ -115,7 +116,7 @@ export const initDatePicker = function (element, callback) {
 
             console.log(instance);
 
-            let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
+            let userDateFormat = getFormatFromSettings("dateformat", "luxon");
 
             let formattedDate = luxon.DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userDateFormat);
 
@@ -125,7 +126,7 @@ export const initDatePicker = function (element, callback) {
             jQuery(instance.element).parent().parent().find(".dateField").text(formattedDate);
 
             if(instance.config.enableTime) {
-                let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
+                let userTimeFormat = getFormatFromSettings("timeformat", "luxon");
                 let formattedTime = luxon.DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userTimeFormat);
                 jQuery(instance.element).parent().parent().find(".timeField").text(formattedTime);
             }
@@ -143,17 +144,16 @@ export const toggleTime = function (datePickerElement, toggleElement) {
     if(datepickerInstance.config.enableTime) {
         datepickerInstance.destroy();
         dateTimePickerConfig.enableTime = false;
-        dateTimePickerConfig.altFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr");
+        dateTimePickerConfig.altFormat = getFormatFromSettings("dateformat", "flatpickr");
         datepickerInstance = jQuery(datePickerElement).flatpickr(dateTimePickerConfig);
         jQuery(toggleElement).removeClass("active");
     }else{
         datepickerInstance.destroy();
         dateTimePickerConfig.enableTime = true;
-        dateTimePickerConfig.altFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "flatpickr") + " | " + leantime.dateHelper.getFormatFromSettings("timeformat", "flatpickr");
+        dateTimePickerConfig.altFormat = getFormatFromSettings("dateformat", "flatpickr") + " | " + getFormatFromSettings("timeformat", "flatpickr");
         datepickerInstance = jQuery(datePickerElement).flatpickr(dateTimePickerConfig);
         jQuery(toggleElement).addClass("active");
     }
-
 
 }
 
