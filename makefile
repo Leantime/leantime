@@ -136,7 +136,7 @@ update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php
 
 clear-cache:
-php ./bin/leantime
+	php ./bin/leantime
 
 .PHONY: install-deps build package clean run-dev
 

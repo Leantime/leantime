@@ -129,7 +129,7 @@
                 </x-slot:contents>
             </x-global::navigations.tabs>
         </div> --}}
-
+</div>
 
 
         
