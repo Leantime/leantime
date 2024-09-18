@@ -1,6 +1,7 @@
 import Choices from "choices.js"
-import { appUrl } from "./instance-info.module.js";
+import { appUrl } from "./instance-info.module.mjs";
 import {decode} from 'html-entities';
+import jQuery from 'jquery';
 
 
 function getOptions(selectElement) {
@@ -199,5 +200,5 @@ export const initTags = function (element, enableSearch, autoCompleteTags) {
 
 export default {
   initSelect: initSelect,
-  initTags: initTags,
+  initTags: initSelect
 };

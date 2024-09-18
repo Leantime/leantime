@@ -33,9 +33,7 @@ export const hideAndKeepHidden = function (module) {
 };
 
 export const startProjectDashboardTour = function () {
-    if (jQuery.nmTop()) {
-        jQuery.nmTop().close();
-    }
+
 
     updateUserModalSettings("projectDashboard")
 
@@ -429,12 +427,7 @@ export const firstLoginModal = function () {
             }
         };
 
-        jQuery(".onboardingModal").nyroModal(onboardingModal);
 
-        jQuery.nmManual(
-            appUrl + "/help/firstLogin",
-            onboardingModal
-        );
     });
 };
 

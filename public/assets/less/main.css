@@ -30,6 +30,8 @@
 @import "../../../node_modules/gridstack/dist/gridstack.min.css";
 @import "../../../node_modules/gridstack/dist/gridstack-extra.min.css";
 
+@import "../../../node_modules/flatpickr/dist/flatpickr.css";
+
 /* Components */
 @import "../css/components/structure.css";
 @import "../css/components/dropdowns.css";

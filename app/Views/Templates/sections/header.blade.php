@@ -21,24 +21,19 @@
 <link rel="stylesheet" href="{!! BASE_URL !!}/dist/css/main.{!! $version !!}.min.css"/>
 
 @dispatchEvent('afterLinkTags')
-<!---->
-<!-- <script type="text/javascript">var leantime = leantime || {};</script> -->
 
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
-<!-- app -->
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.{{ app('config')->debug ? 'js' : 'min.js' }}"></script>
+<script src="{!! BASE_URL !!}/dist/js/manifest.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/vendor.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
+
+
 
 @dispatchEvent('afterMainScriptTag')
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
 
 @dispatchEvent('afterScriptLibTags')
-
-<!--
-//For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords($frontController->getModuleName()) }}/Js/{{ $frontController->getModuleName() }}Controller.js"></script>
--->
 
 <!-- theme & custom -->
 @foreach ($themeScripts as $script)

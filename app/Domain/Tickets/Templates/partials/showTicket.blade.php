@@ -1,7 +1,7 @@
 <x-global::content.modal.modal-buttons>
 
         @if(isset($ticket->date))
-            <x-global::dates.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
+            <x-global::content.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
         @endif
         @if ($ticket->id != '')
             <x-global::content.modal.header-button variant="delete" href="#/tickets/delTicket/{{  $ticket->id }}"/>
@@ -37,14 +37,9 @@
 
         <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
 
-        <div class="row pb-xl">
-            <div class="col-md-2">
-                <label class="pl-m pt-xs">📅  {{ __('label.dates') }}</label>
-            </div>
-            <div class="col-md-5">
-                <x-global::dates.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish"/>
-            </div>
-        </div>
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1">
+            <x-slot:label-text>Due Date</x-slot:label-text>
+        </x-global::forms.datepicker>
 
         {{-- <x-global::forms.select
             id="select-test"
@@ -106,8 +101,8 @@
 
             </x-slot:contents>
         </x-global::content.tabs>
-
-    </div> --}}
+    </div>
+    -- }}
 
 
     {{-- NEW - Calls navigations/tabs component --}}
@@ -117,15 +112,15 @@
                 <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm" :checked="true">
                     Connections
                 </x-global::navigations.tabs.content>
-                
+
                 <x-global::navigations.tabs.content id="discussion" ariaLabel="Discussion" classExtra="p-sm">
                     <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
                 </x-global::navigations.tabs.content>
-        
+
                 <x-global::navigations.tabs.content id="subtask" ariaLabel="Subtasks" classExtra="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
                 </x-global::navigations.tabs.content>
-        
+
                 <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
                 </x-global::navigations.tabs.content>
@@ -133,21 +128,22 @@
         </x-global::navigations.tabs>
     </div>
 </div>
-        
+
 <script>
 
     jQuery(document).ready(function(){
 
-        leantime.ticketsController.initTagsInput();
+        //leantime.ticketsController.initTagsInput();
 
         //Set accordion states
         //All accordions start open
-        leantime.editorController.initComplexEditor();
-        tinymce.activeEditor.hide()
+        //leantime.editorController.initComplexEditor();
+        //tinymce.activeEditor.hide()
     });
 
-    leantime.editorController.initComplexEditor();
+    //leantime.editorController.initComplexEditor();
 
+    /*
     jQuery(".viewDescription").click(function(e){
 
         if(!jQuery(e.target).is("a")) {
@@ -155,11 +151,11 @@
             jQuery(this).hide();
             jQuery('#descriptionEditor').show('fast',
                 function() {
-                    tinymce.activeEditor.show();
+                    //tinymce.activeEditor.show();
                 }
             );
         }
-    });
+    });*/
 
     Prism.highlightAll();
 
