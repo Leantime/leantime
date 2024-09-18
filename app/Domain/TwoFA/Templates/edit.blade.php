@@ -38,8 +38,9 @@
                                 <input type="hidden" name="secret" value="<?php echo $tpl->get("secret"); ?>" />
                                 <br/>
                                 <p class='stdformbutton'>
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __("buttons.save") }}" class="button"/>
+                                    <x-global::forms.button type="submit" name="save" id="save" class="button">
+                                        {{ __('buttons.save') }}
+                                    </x-global::forms.button>                                    
                                 </p>
                             </form>
                         <?php } else { ?>
@@ -47,9 +48,14 @@
                                 <h5>{{ __("text.twoFA_already_enabled") }}</h5>
                                 <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                                 <p class='stdformbutton'>
-                                    <input type="submit" name="disable" id="disable"
-                                           value="{{ __("buttons.remove") }}" class="button"/>
-                                    <a href="{{ BASE_URL }}/users/editOwn" class="btn">{{ __("buttons.back") }}</a>
+                                    <x-global::forms.button type="submit" name="disable" id="disable" class="button">
+                                        {{ __('buttons.remove') }}
+                                    </x-global::forms.button>
+                                    
+                                    <x-global::forms.button tag="a" href="{{ BASE_URL }}/users/editOwn">
+                                        {{ __('buttons.back') }}
+                                    </x-global::forms.button>
+                                    
                                 </p>
                             </form>
                         <?php } ?>

@@ -198,8 +198,10 @@ $state = $tpl->get('state');
                     </div>
                 </div>
                     <br/>
-                    <input type="submit" name="saveUsers" id="save" class="button" value="{{ __("buttons.save") }}" class="button" />
-
+                    <x-global::forms.button type="submit" name="saveUsers" id="save" class="button">
+                        {{ __('buttons.save') }}
+                    </x-global::forms.button>
+                    
                 </form>
 
             </div>
@@ -219,8 +221,10 @@ $state = $tpl->get('state');
                         <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->get("mattermostWebhookURL"); ?>"/>
                             <br />
-                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="mattermostSave" />
-                        </form>
+                            <x-global::forms.button type="submit" name="mattermostSave">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>
+                                                    </form>
                     </div>
                 </div>
                 <br />
@@ -270,7 +274,9 @@ $state = $tpl->get('state');
                             <strong><?=$tpl->__('label.topic'); ?></strong><br />
                             <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipTopic']; ?>"/>
                             <br />
-                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="zulipSave" />
+                            <x-global::forms.button type="submit" name="zulipSave">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>
                         </form>
                     </div>
                 </div>
@@ -291,7 +297,9 @@ $state = $tpl->get('state');
                             <?php for ($i = 1; 3 >= $i; $i++) : ?>
                             <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->get('discordWebhookURL' . $i); ?>"/><br/>
                             <?php endfor; ?>
-                            <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="discordSave"/>
+                            <x-global::forms.button type="submit" name="discordSave">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>
                         </form>
                     </div>
                 </div>

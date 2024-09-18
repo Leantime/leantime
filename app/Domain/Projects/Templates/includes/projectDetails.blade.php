@@ -36,8 +36,10 @@ $menuTypes = $tpl->get('menuTypes');
             </div>
             <div class="row padding-top">
                 <div class="col-md-12">
-
-                    <input type="submit" name="save" id="save" class="button" value="{{ __("buttons.save") }}" class="button" />
+                    <x-global::forms.button type="submit" name="save" id="save" class="button">
+                        {{ __('buttons.save') }}
+                    </x-global::forms.button>
+                    
                 </div>
 
             </div>
@@ -101,8 +103,10 @@ $menuTypes = $tpl->get('menuTypes');
                                 <span class="ld ld-ring ld-spin"></span>
                             </span>
                         <input type="hidden" name="profileImage" value="1" />
-                        <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                               value="{{ __("buttons.upload") }}"/>
+                        <x-global::forms.button type="submit" name="savePic" id="picSubmit" class="hidden">
+                            {{ __('buttons.upload') }}
+                        </x-global::forms.button>
+                        
 
                         </div>
                     </div>

@@ -155,8 +155,10 @@
                                                     </span>
                                 </div>
                             </div>
-                            <input type="submit" value="{{ __("buttons.save") }}" id="saveBtn"/>
-                        </form>
+                            <x-global::forms.button type="submit" id="saveBtn">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>
+                            </form>
                             </div>
                             <div class="col-md-4">
 

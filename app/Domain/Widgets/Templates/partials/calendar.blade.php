@@ -10,17 +10,17 @@
     <div class="fc-toolbar">
         <div class="fc-left pull-left">
             <div class="fc-button-group pull-left">
-                <button class="btn btn-default fc-today-button fc-button fc-state-default fc-corner-left pull-left
-       fc-corner-right fc-state-disabled">Today</button>
-
-                <button class="btn btn-link fc-prev-button fc-button fc-state-default fc-corner-left pull-left"
-                        type="button">
+                <x-global::forms.button type="button" content-role="ghost">
+                    Today
+                </x-global::forms.button>
+                
+                <x-global::forms.button type="button" content-role="link">
                     <i class="fa fa-chevron-left"></i>
-                </button>
-                <button class="btn btn-link fc-next-button fc-button fc-state-default fc-corner-
-      right pull-left" type="button">
+                </x-global::forms.button>
+                
+                <x-global::forms.button type="button" content-role="link">
                     <i class="fa fa-chevron-right"></i>
-                </button>
+                </x-global::forms.button>
             </div>
 
         </div>

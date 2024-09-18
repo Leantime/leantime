@@ -288,11 +288,14 @@
 
                                 <div class="commentReply">
                                     <textarea rows="5" cols="50" class="tinymceSimple w-full" name="text"></textarea>
-                                    <input type="submit" value="{{ __('buttons.save') }}" name="comment"
-                                           class="btn btn-primary btn-success ml-0" />
-                                    <a href="javascript:void(0);"
-                                       onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
-                                       class="leading-[50px]">{{ __('links.cancel') }}</a>
+                                    <x-global::forms.button type="submit" name="comment" class="btn-success ml-0">
+                                        {{ __('buttons.save') }}
+                                    </x-global::forms.button>
+                                    
+                                    <x-global::forms.button tag="a" href="javascript:void(0);" onclick="leantime.commentsController.toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();" content-role="secondary" class="leading-[50px]">
+                                        {{ __('links.cancel') }}
+                                    </x-global::forms.button>
+                                    
                                     <input type="hidden" name="comment" value="1" />
                                     <input type="hidden" name="father" id="father" value="0" />
                                 </div>

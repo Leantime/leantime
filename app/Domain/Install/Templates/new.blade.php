@@ -24,7 +24,11 @@
         <input type="text" name="company" class="form-control" placeholder="<?=$tpl->language->__("label.company_name");?>" value=""/>
         <br /><br />
         <input type="hidden" name="install" value="Install" />
-        <p><input type="submit" name="installAction" class="btn btn-primary" value="<?=$tpl->language->__("buttons.install");?>" onClick="this.form.submit(); this.disabled=true; this.value='<?=$tpl->language->__("buttons.install");?>'; "/></p>
+        <p>
+            <x-global::forms.button type="submit" name="installAction" onClick="this.form.submit(); this.disabled=true; this.value='{{ __('buttons.install') }}';">
+                {{ __('buttons.install') }}
+            </x-global::forms.button>
+        </p>
     </form>
 
 </div>

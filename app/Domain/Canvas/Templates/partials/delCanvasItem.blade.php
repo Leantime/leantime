@@ -11,6 +11,11 @@ $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 
 <form method="post" action="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/<?=$id ?>">
     <p>{{ __("text.confirm_board_item_deletion") }}</p><br />
-    <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas">{{ __("buttons.back") }}</a>
+    <x-global::forms.button type="submit" name="del" class="button">
+        {{ __('buttons.yes_delete') }}
+    </x-global::forms.button>
+    
+    <x-global::forms.button tag="a" href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas" class="btn btn-secondary">
+        {{ __('buttons.back') }}
+    </x-global::forms.button>
 </form>
