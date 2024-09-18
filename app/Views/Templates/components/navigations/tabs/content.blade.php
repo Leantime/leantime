@@ -1,14 +1,16 @@
 @props([
-    'name', 
+    'id', 
     'ariaLabel',
-    'active' => false,
-    'classExtra' => ''
+    'classExtra' => '',
+    'checked' => ''
 ])
 
-<input type="radio" name="{{ $name }}" id="{{ $name }}" role="tab" class="tab" aria-label="{{ $ariaLabel }}" {{ $active ? 'checked' : '' }} />
+@aware(['name'])
+
+<input type="radio" name="{{ $name }}" id="{{ $id }}" role="tab" class="tab" aria-label="{{ $ariaLabel }}" {{ $checked ? 'checked="checked"' : '' }} />
 <div 
     role="tabpanel" 
-    {{ $attributes->merge(['id' => $name, 'class' => 'tab-content ' . $classExtra]) }}
+    {{ $attributes->merge(['id' => $id, 'class' => 'tab-content ' . $classExtra]) }}
 >
     {{ $slot }}
 </div>
