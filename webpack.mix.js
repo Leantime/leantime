@@ -53,7 +53,8 @@ mix
     .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.js`)
     .extract([
         'jquery',
-        'htmx',
+        'jquery-ui',
+        'htmx.org',
         'tippy.js',
         'moment',
         'luxon',
@@ -172,12 +173,18 @@ mix
                     // },
                 ],
             },
-            // optimization: {
-            //     runtimeChunk: 'single',
-            //     splitChunks: {
-            //         chunks: 'all',
-            //     },
-            // }
+            optimization: {
+                //  runtimeChunk: 'single',
+                // splitChunks: {
+                //     cacheGroups: {
+                //         vendor: {
+                //             test: /[\\/]node_modules[\\/]/,
+                //             name: 'vendor',
+                //             chunks: 'all'
+                //         },
+                //     }
+                // },
+             }
         //     entry: {
         //         index: {
         //             import: path.resolve('public/assets/js/app', 'app-new.js'),

@@ -13,7 +13,6 @@ require('htmx-ext-head-support');
 
 
 /* jQuery */
-import jQuery from 'jquery';
 jQuery.noConflict();
 window.jQuery = jQuery;
 

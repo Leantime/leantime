@@ -26,7 +26,7 @@
 
 <script src="{!! BASE_URL !!}/dist/js/manifest.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/vendor.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
 
 
 
