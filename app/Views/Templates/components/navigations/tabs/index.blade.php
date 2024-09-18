@@ -1,15 +1,15 @@
 @props([
+    'name',
     'contents',
     'variant' => '',
-    'tabsSize' => '',
-    'name' => '',
+    'size' => ''
 ])
 
-@php
+@php 
     $variantClass = $variant ? 'tabs-'.$variant : '';
-    $sizeClass = $tabsSize && $tabsSize !== 'md' ? 'tabs-'.$tabsSize : '';
+    $sizeClass = $size && $size !== 'md' ? 'tabs-'.$size : '';
 @endphp
 
-<div role="tablist" {{ $attributes->merge(['class' => 'tabs tabs-bordered '.$variantClass.' '.$sizeClass]) }}>
-    {{ $contents }}
+<div role="tablist" {{ $attributes->merge(['class' => 'tabs '.$variantClass.' '.$sizeClass]) }}>
+    {{ $contents->withAttributes(['name' => $name]) }}
 </div>
