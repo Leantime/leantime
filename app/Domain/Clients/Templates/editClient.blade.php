@@ -61,9 +61,9 @@ $values = $tpl->get('values');
                     type="text" name="phone" id="phone"
                     value="<?php echo $values['phone'] ?>" /><br />
 
-                <input type="submit" name="save" id="save"
-                    value="{{ __("SAVE") }}" class="button" />
-
+                    <x-global::forms.button type="submit" name="save" id="save">
+                        {{ __('SAVE') }}
+                    </x-global::forms.button>
                 </div>
             </div>
 

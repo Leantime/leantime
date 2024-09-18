@@ -1,4 +1,4 @@
-<x-global::content.modal.modal-buttons/>
+<x-global::content.modal.modal-buttons />
 
 @displayNotification()
 
@@ -44,7 +44,9 @@
     <br />
     <a href="#/calendar/delEvent/{{ $values['id'] }}"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete')?></a>
     <input type="hidden" value="1" name="save" />
-    <input type="submit" name="saveEvent" id="save" value="{{ __("buttons.save") }}" class="button" />
+    <x-global::forms.button type="submit" name="saveEvent" id="save" class="button">
+        {{ __('buttons.save') }}
+    </x-global::forms.button>
 
     <div class="clear"></div>
 

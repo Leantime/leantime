@@ -37,14 +37,14 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                 <?php foreach ($tpl->get('externalCalendars') as $calendars) { ?>
                     <li>
                         <div class="inlineDropDownContainer" style="float:right;">
-                            <x-global::context-menu label-text="<i class='fa fa-ellipsis-h' aria-hidden='true'></i>" contentRole="link" position="bottom" align="start">
+                            <x-global::content.context-menu label-text="<i class='fa fa-ellipsis-h' aria-hidden='true'></i>" contentRole="link" position="bottom" align="start">
                                 <x-global::actions.dropdown.item variant="link" href="#/calendar/editExternal/{{ $calendars['id'] }}">
                                     <i class="fa-solid fa-pen-to-square"></i> {!! __('links.edit_calendar') !!}
                                 </x-global::actions.dropdown.item>
                                 <x-global::actions.dropdown.item variant="link" href="#/calendar/delExternalCalendar/{{ $calendars['id'] }}" class="delete">
                                     <i class="fa fa-trash"></i> {!! __('links.delete_external_calendar') !!}
                                 </x-global::actions.dropdown.item>
-                            </x-global::context-menu>
+                            </x-global::content.context-menu>
 
                         </div>
                         <span class="indicatorCircle" style="background:<?=$calendars['colorClass'] ?>"></span><?=$calendars['name'] ?>
@@ -70,14 +70,18 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                     </div>
                     <div class="col-md-4">
                         <a href="#/calendar/export" class="btn btn-default right">Export</a>
-                        <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
+                        <x-global::forms.button type="button" class="fc-next-button right" style="margin-right:5px;" content-role="secondary">
                             <span class="fc-icon fc-icon-chevron-right"></span>
-                        </button>
-                        <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
+                        </x-global::forms.button>
+                        
+                        <x-global::forms.button type="button" class="fc-prev-button right" style="margin-right:5px;" content-role="secondary">
                             <span class="fc-icon fc-icon-chevron-left"></span>
-                        </button>
-
-                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                        </x-global::forms.button>
+                        
+                        <x-global::forms.button type="button" class="fc-today-button right" style="margin-right:5px;" content-role="secondary">
+                            today
+                        </x-global::forms.button>
+                        
 
 
                         <select id="my-select" style="margin-right:5px;" class="right">

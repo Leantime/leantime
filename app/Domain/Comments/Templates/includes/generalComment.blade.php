@@ -34,8 +34,10 @@ if (str_contains($formUrl, '?delComment=')) {
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
-                <input type="submit" value="{{ __("buttons.save") }}" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
-            </div>
+                <x-global::forms.button type="submit" name="comment" class="btn btn-success" style="margin-left: 0px;">
+                    {{ __('buttons.save') }}
+                </x-global::forms.button>
+             </div>
             <input type="hidden" name="comment" class="commenterField" value="1" />
             <input type="hidden" name="father" class="commenterField" id="father-<?= $formHash ?>" value="0" />
             <input type="hidden" name="edit-comment-helper" class="commenterField"
@@ -153,9 +155,14 @@ if (str_contains($formUrl, '?delComment=')) {
                                         src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id') ?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
                                 </div>
                                 <div class="commentReply">
-                                    <input type="submit" value="{{ __("links.reply") }}" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                    <input type="button" onclick="cancel(<?php echo $row['id']; ?>, '<?=$formHash?>')" value="{{ __("links.cancel") }}" class="btn btn-primary"/>
-                                </div>
+                                    <x-global::forms.button type="submit" name="comment" id="submit-reply-button">
+                                        {{ __('links.reply') }}
+                                    </x-global::forms.button>
+                                    
+                                    <x-global::forms.button type="button" onclick="cancel({{ $row['id'] }}, '{{ $formHash }}')">
+                                        {{ __('links.cancel') }}
+                                    </x-global::forms.button>
+                                 </div>
                                 <div class="clearall"></div>
                             </div>
                         </div>

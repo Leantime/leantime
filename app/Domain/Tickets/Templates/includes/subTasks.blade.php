@@ -21,7 +21,9 @@ $efforts = $tpl->get('efforts');
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <input name="headline" type="text" title="{{ __("label.headline") }}" style="width:100%" placeholder="{{ __("input.placeholders.what_are_you_working_on") }}" />
-                <input type="submit" value="{{ __("buttons.save") }}" name="quickadd"  />
+                <x-global::forms.button type="submit"name="quickadd">
+                    {{ __('buttons.save') }}
+                </x-global::forms.button>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
                 <input type="hidden" name="sprint" value="<?php echo session("currentSprint"); ?>" />
@@ -90,7 +92,7 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                     <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);"
-                                role="button" id="effortDropdownMenuLink<?= $subticket['id'] ?>" data-toggle="dropdown"
+                                role="  q1AWSEDRFGBHNJMKL;'" id="effortDropdownMenuLink<?= $subticket['id'] ?>" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                                 <span class="text"><?php
                                 if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0) {

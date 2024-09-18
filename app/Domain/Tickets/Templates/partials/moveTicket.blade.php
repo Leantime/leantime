@@ -41,8 +41,13 @@ $ticket = $tpl->get("ticket");
         ?>
         </select><br /><br /><br /><br />
         <br />
-        <input type="submit" value="{{ __("buttons.move") }}" name="move" class="button" />
-        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{{ __("buttons.back") }}</a>
+        <x-global::forms.button 
+        type="submit"
+        name="move"
+        class="button">
+        {{ __('buttons.move') }}
+    </x-global::forms.button>
+            <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{{ __("buttons.back") }}</a>
         <div class="clearall"></div>
         <br />
     </x-global::content.modal.form>

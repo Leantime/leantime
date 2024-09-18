@@ -142,7 +142,9 @@ $projects = $tpl->get('relations');
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />
-                        <input type="submit" name="save" id="save" value="{{ __("buttons.invite_user") }}" class="button" />
+                        <x-global::forms.button type="submit" name="save" id="save" class="button">
+                            {{ __('buttons.invite_user') }}
+                        </x-global::forms.button>
                     </p>
 
         </div>

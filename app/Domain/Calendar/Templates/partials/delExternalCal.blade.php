@@ -10,8 +10,14 @@ $id = (int) $_GET['id'];
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
     <p>{{ __("text.confirm_calendar_deletion") }}</p><br />
     <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-    <button type="submit"  class="btn btn-primary" id="saveAndClose" value="closeModal"><?=$tpl->__("buttons.yes_delete") ?></button>
-    <a class="btn btn-primary" href="{{ BASE_URL }}/calendar/showMyCalendar">{{ __("buttons.back") }}</a>
+    <x-global::forms.button type="submit" id="saveAndClose" value="closeModal">
+        {{ __('buttons.yes_delete') }}
+    </x-global::forms.button>
+    
+    <x-global::forms.button tag="a" href="{{ BASE_URL }}/calendar/showMyCalendar">
+        {{ __('buttons.back') }}
+    </x-global::forms.button>
+    
     <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 </x-global::content.modal.form>
 

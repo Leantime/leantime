@@ -157,8 +157,14 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="{{ BASE_URL }}/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
-        <input type="submit" value="{{ __("buttons.save") }}" name="save" class="button" />
+     <x-global::forms.button tag="a" href="{{ BASE_URL }}/timesheets/delTime/{{ $_GET['id'] }}" class="delete editTimeModal pull-right">
+        {!! $tpl->__('links.delete') !!}
+    </x-global::forms.button>
+    
+    <x-global::forms.button type="submit" name="save" class="button">
+        {{ __('buttons.save') }}
+    </x-global::forms.button>
+    
     </p>
 </x-global::content.modal.form>
 
