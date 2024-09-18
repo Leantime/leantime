@@ -1,0 +1,8 @@
+.input-shadow {
+    @apply shadow-md;
+}
+
+.input,
+.select {
+
+}

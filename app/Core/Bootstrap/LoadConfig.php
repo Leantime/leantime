@@ -18,6 +18,15 @@ class LoadConfig extends LoadConfiguration
         'configuration.php',
     ];
 
+    /**
+     * Bootstrap the application.
+     *
+     * This method initializes the application by loading the configuration files and
+     * setting up the environment.
+     *
+     * @param  Application  $app  The application instance.
+     * @return void
+     */
     public function bootstrap(Application $app)
     {
         $items = [];
@@ -57,6 +66,11 @@ class LoadConfig extends LoadConfiguration
                 //Additional adjustments
                 $finalConfig->set('APP_DEBUG', $finalConfig->get('debug') ? true : false);
 
+                if ($finalConfig->get('app.url') == '') {
+                    $url = defined('BASE_URL') ? BASE_URL : 'http://localhost';
+                    $finalConfig->set('app.url', $url);
+                }
+
                 return $finalConfig;
             });
         }
@@ -75,10 +89,12 @@ class LoadConfig extends LoadConfiguration
     }
 
     /**
-     * Loads configuration files into the repository.
+     * Load the configuration files.
+     *
+     * This method loads the Laravel configuration files and sets them into the given repository.
      *
      * @param  Application  $app  The application instance.
-     * @param  RepositoryContract  $repository  The repository contract.
+     * @param  RepositoryContract  $repository  The repository where the configuration files will be set.
      * @return void
      */
     protected function loadConfigurationFiles(Application $app, RepositoryContract $repository)
@@ -89,6 +105,13 @@ class LoadConfig extends LoadConfiguration
         }
     }
 
+    /**
+     * Maps Leantime configuration options to Laravel configuration options.
+     *
+     * @param  LaravelConfig  $laravelConfig  The Laravel configuration object to map to.
+     * @param  LeantimeConfig  $leantimeConfig  The Leantime configuration object to map from.
+     * @return LeantimeConfig The updated Leantime configuration object with mapped values.
+     */
     protected function mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig)
     {
 
@@ -108,11 +131,11 @@ class LoadConfig extends LoadConfiguration
                 //set laravel config.
                 //Leantime env file has priority and can override previously defined laravel configs
                 $leantimeConfig->set($laravelConfigKey, $leantimeConfig->get($defaultConfigkey));
-
             }
         }
 
         return $leantimeConfig;
-
     }
+
+    public function configValidation() {}
 }

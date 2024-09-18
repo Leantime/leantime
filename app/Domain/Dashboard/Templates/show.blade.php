@@ -14,8 +14,6 @@
         <h1>{!! __('headlines.project_dashboard') !!}</h1>
     </x-global::content.pageheader>
 
-    @displayNotification()
-
     <div class="maincontent">
 
         <div class="row">

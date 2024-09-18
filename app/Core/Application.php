@@ -98,6 +98,8 @@ class Application extends \Illuminate\Foundation\Application
         $this->register(new LogServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
 
+        //Todo: Add event and see if that works here.
+
     }
 
     public function registerLeantimeAliases()
@@ -124,13 +126,14 @@ class Application extends \Illuminate\Foundation\Application
             }
         }
 
-
+        $this->alias(Application::class, \Illuminate\Contracts\Foundation\Application::class);
 
         //$this->alias(DispatchesEvents::class, 'events');
         //$this->alias(Environment::class, 'config');
     }
 
     //Boot with Leantime event dispatcher
+
 
     /**
      * Boot the application.

@@ -242,7 +242,7 @@ class Frontcontroller
         }
 
         if (! $pluginEnabled || ! class_exists($classname)) {
-            throw new RouteNotFoundException('Could not find controller class');
+            return self::redirect(BASE_URL."/errors/error404");
         }
 
         return $classname;
@@ -285,7 +285,7 @@ class Frontcontroller
             return 'run';
         }
 
-        throw new RouteNotFoundException('Cannot find a valid method for this route');
+        return self::redirect(BASE_URL."/errors/error404");
     }
 
     /**

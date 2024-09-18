@@ -1290,17 +1290,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     border-width: 2px;
 }
 
-.label {
-    -moz-border-radius: var(--box-radius-small);
-    -webkit-border-radius: var(--box-radius-small);
-    border-radius:  var(--box-radius-small);
-    font-size: var(--font-size-xs);
-    text-shadow: none;
-    font-weight: normal;
-    text-transform: uppercase;
-    padding: 2px 5px;
-}
-
 .badge {
     font-size: 10px;
     text-shadow: none;
