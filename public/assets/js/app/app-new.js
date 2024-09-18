@@ -74,7 +74,7 @@ window.SlimSelect = SlimSelect;
 
 /* Core */
 import modals from './core/modals.module';
-import dateController from './core/dateController.module';
+import datePickers from './core/dateController.module';
 import dateHelper from './core/dateHelper.module';
 import editorController from './core/editors.module';
 import getLatestGrowl from './core/getLatestGrowl.module';
@@ -84,10 +84,9 @@ import instanceInfo from './core/instance-info.module';
 import onDocumentReady from './core/on-document-ready.module';
 import replaceSVGColors from './core/replaceSVGColors.module';
 import snippets from './core/snippets.module';
-import selects from './core/selects';
+import selects from './core/selects.module.mjs';
 
 addToGlobalScope({
-    dateController: dateController,
     dateHelper: dateHelper,
     editorController: editorController,
     getLatestGrowl: getLatestGrowl,
@@ -97,6 +96,7 @@ addToGlobalScope({
     replaceSVGColors: replaceSVGColors,
     snippets: snippets,
     selects: selects,
+    datePickers: datePickers
 });
 
 jQuery(document).ready(onDocumentReady);

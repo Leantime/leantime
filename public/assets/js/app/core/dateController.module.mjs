@@ -118,12 +118,12 @@ let dateTimePickerConfig = {
         if(formattedDate == "Invalid DateTime")
             formattedDate = i18n.__("language.anytime");
 
-        jQuery(instance.element).parent().parent().find(".dateField").text(formattedDate);
+        jQuery(instance.element).parents(".date-dropdown").find(".dateField").text(formattedDate);
 
         if(instance.config.enableTime) {
             let userTimeFormat = getFormatFromSettings("timeformat", "luxon");
             let formattedTime = DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userTimeFormat);
-            jQuery(instance.element).parent().parent().find(".timeField").text(formattedTime);
+            jQuery(instance.element).parents(".date-dropdown").find(".dateField").text(formattedTime);
         }
     }
 };

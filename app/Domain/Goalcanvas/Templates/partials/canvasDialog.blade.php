@@ -70,10 +70,14 @@
 
                 <br>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <input type="submit" value="{{ __('buttons.save') }}">
-                    <x-global::button labelText="{{ __('buttons.save_and_close') }}" contentRole="primary"
-                        id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();" tag="button"
-                        value="closeModal" />
+                    <div class="align-right">
+                        <x-global::forms.button  contentRole="primary"
+                            id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();" tag="button"
+                                             value="closeModal" >
+                        <x-slot:label-text>
+                            {{ __('buttons.save_and_close') }}
+                        </x-slot:label-text></x-global::forms.button>
+                    </div>
                 @endif
 
             </div>

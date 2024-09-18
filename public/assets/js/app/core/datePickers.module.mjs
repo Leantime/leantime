@@ -1,6 +1,8 @@
 import { appUrl } from "./instance-info.module.mjs";
 import {getFormatFromSettings} from "./dateHelper.module.mjs";
 import jQuery from 'jquery';
+import { DateTime } from 'luxon';
+import flatpickr from 'flatpickr';
 
 
     function getBaseDatePickerConfig(callback)
@@ -113,7 +115,6 @@ export const initDatePicker = function (element, callback) {
             time_24hr: !leantime.i18n.__("language.timeformat").includes("A"),
         },
         onChange: function(selectedDates, dateStr, instance) {
-
             console.log(instance);
 
             let userDateFormat = getFormatFromSettings("dateformat", "luxon");

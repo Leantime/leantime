@@ -37,17 +37,9 @@
 
         <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
 
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1"/>
-
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test2"/>
-
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test3"/>
-
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test4"/>
-
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test5"/>
-
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test6"/>
+        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1">
+            <x-slot:label-text>Due Date</x-slot:label-text>
+        </x-global::forms.datepicker>
 
         {{-- <x-global::forms.select
             id="select-test"

@@ -25,15 +25,17 @@
         <span class="label-text">{{ $caption }}</span>
     @endif
 
-    <x-global::actions.dropdown variant="card" content-role="ghost">
-        <x-slot:label-text>
-            Date Button
-            @if(empty($value))
-                <span class="dateField">{{ $noDateLabel }}</span>
-                <span class="timeField"></span>
+    <x-global::actions.dropdown variant="card" content-role="ghost" class="date-dropdown">
+        <x-slot:label-text class="font-normal">
+            <div class="h-6 w-6">
+                <i class="fa fa-calendar"></i>
+            </div>
+            @if(empty($value) || ! dtHelper()->isValidDateString($value))
+                <span class="dateField font-normal">{{ $noDateLabel }}</span>
+                <span class="timeField font-normal"></span>
             @else
-                <span class="dateField">{{ format($value)->date() }}</span>
-                <span class="timeField">
+                <span class="dateField font-normal">{{ format($value)->date() }}</span>
+                <span class="timeField font-normal">
                         @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
                             {{ format($value)->time() }}
                     @endif
@@ -58,11 +60,9 @@
             <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
         </x-global::forms.label-row>
     @endif
-
 </div>
 
-
-<script type="module">
+<script>
 
     leantime.datePickers.initDateTimePicker("#datepickerDropDown-{{ $dateName }}");
 
