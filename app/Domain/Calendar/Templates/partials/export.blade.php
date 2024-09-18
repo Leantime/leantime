@@ -31,7 +31,10 @@ $url = $tpl->get('url');
 
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
-            <br /><input type="submit" value="<?=$tpl->__('buttons.generate_ical_url') ?>"/>
+            <br />
+            <x-global::forms.button type="submit">
+                {{ __('buttons.generate_ical_url') }}
+            </x-global::forms.button>
 
         </div>
         <div class="col-md-6 align-right">
@@ -44,4 +47,3 @@ $url = $tpl->get('url');
     <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
 </x-global::content.modal.form>
-
