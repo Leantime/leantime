@@ -28,6 +28,8 @@ class SetRequestForConsole
             ]);
         }
 
+        //IMPORTANT: We can't use the native laravel bootstrapper for this because they inject Illuminate\Http\Request
+        //And we need CliRequest
         $app->instance('request', CliRequest::create(
             $uri, 'GET', [], [], [], $server
         ));

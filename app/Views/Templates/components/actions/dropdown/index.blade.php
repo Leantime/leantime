@@ -23,7 +23,7 @@
 
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
-        'card' => 'card card-compact bg-primary text-primary-content w-64 p-2 shadow', // Card variant class
+        'card' => 'card dropdown-content  card-compact text-primary-content w-64 p-2 shadow', // Card variant class
         default => 'menu dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
     };
 
@@ -51,7 +51,10 @@
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $menuClass }}">
             <div class="card-body">
-                <h3 class="card-title">{{ $cardLabel }}</h3>
+                @if($cardLabel)
+                    <h3 class="card-title">{{ $cardLabel }}</h3>
+                @endif
+
                 {!! $cardContent ?? '' !!}
             </div>
         </div>

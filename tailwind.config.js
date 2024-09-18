@@ -251,7 +251,10 @@ module.exports = {
                 'warning' :  '#f2a20d',           /* Warning */
                 'error' :  '#aa0909',             /* Error */
 
+                'text-sm': '0.938rem',
+
                 "--rounded-box": '1.5rem', // border radius rounded-box utility class, used in card and other large boxes
+                "--rounded-input": '0.25rem',
                 "--rounded-btn": '1rem', // border radius rounded-btn utility class, used in buttons and similar element
                 "--rounded-badge": '3.0rem', // border radius rounded-badge utility class, used in badges and similar
                 "--animation-btn": "0.25s", // duration of animation when you click on button
