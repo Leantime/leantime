@@ -133,8 +133,10 @@
             <div class="row">
                 <div class="col-md-3">
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <a href="#/goalcanvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
-                            id="{{ $elementName }}">{!! __('links.add_new_canvas_itemgoal') !!}</a>
+                        <x-global::forms.button href="#/goalcanvas/editCanvasItem?type={{ $elementName }}"
+                            id="{{ $elementName }}">
+                            {!! __('links.add_new_canvas_itemgoal') !!}
+                        </x-global::forms.button>
                     @endif
                 </div>
 
@@ -432,10 +434,13 @@
                                                         </div>
 
                                                         <div class="right" style="margin-right:10px;">
-                                                            <a href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
-                                                                class="commentCountLink"
-                                                                data="item_{{ $row['id'] }}"><span
-                                                                    class="fas fa-comments"></span></a>
+                                                            <x-global::forms.button
+                                                            tag="a"
+                                                            href="#/goalcanvas/editCanvasComment/{{ $row['id'] }}"
+                                                            class="commentCountLink"
+                                                            data="item_{{ $row['id'] }}">
+                                                            <span class="fas fa-comments"></span>
+                                                        </x-global::forms.button>
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
 
@@ -494,9 +499,12 @@
 
                     @if ($login::userIsAtLeast($roles::$editor))
                         <br /><br />
-                        <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
+                        <x-global::forms.button
+                            tag="a"
+                            href="javascript:void(0)"
+                            class="addCanvasLink btn btn-primary">
                             {{ __('links.icon.create_new_board') }}
-                        </a>
+                        </x-global::forms.button>     
                     @endif
                 </div>
             @endif
