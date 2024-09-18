@@ -66,7 +66,9 @@ if (isset($currentArticle->id)) {
                                     <textarea name="newMilestone"></textarea><br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> " />
-                                    <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                    <x-global::forms.button type="button" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary">
+                                        {{ __('buttons.save') }}
+                                    </x-global::forms.button>
                                     <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
@@ -92,7 +94,9 @@ if (isset($currentArticle->id)) {
                                     </select>
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="<?php echo $id; ?> " />
-                                    <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                    <x-global::forms.button type="button" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary">
+                                        Save
+                                    </x-global::forms.button>
                                     <a href="javascript:void(0);"  onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
@@ -130,14 +134,14 @@ if (isset($currentArticle->id)) {
 
 
             <div class="btn-group inlineDropDownContainerLeft">
-                <button data-selected="graduation-cap" type="button"
-                        class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
-                        data-toggle="dropdown">
+                <x-global::forms.button type="button" data-selected="graduation-cap"
+                    class="icp icp-dd btn btn-default dropdown-toggle iconpicker-container titleIconPicker"
+                    data-toggle="dropdown">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
                     </span>
                     <span class="caret"></span>
-                </button>
+                </x-global::forms.button>
                 <div class="dropdown-menu"></div>
             </div>
             <input type="hidden" class="articleIcon" value="<?=$currentArticle->data ?>" name="articleIcon"/>

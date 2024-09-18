@@ -112,8 +112,10 @@ $values = $tpl->get('values');
 
                             <div class="form-group">
                                 <div class="span4 control-label">
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __("buttons.save") }}" class="btn btn-primary" />
+                                    <x-global::forms.button type="submit" name="save" id="save">
+                                        {{ __('buttons.save') }}
+                                    </x-global::forms.button>
+                                    
                                 </div>
                                 <div class="span6">
 

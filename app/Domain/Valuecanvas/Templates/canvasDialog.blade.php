@@ -125,9 +125,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <input type="submit" value="<?=$tpl->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
-
+            <x-global::forms.button type="submit" id="primaryCanvasSubmitButton">
+                {{ __('buttons.save') }}
+            </x-global::forms.button>
+            
+            <x-global::forms.button type="submit" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();">
+                {{ __('buttons.save_and_close') }}
+            </x-global::forms.button>
+            
 
         <?php } ?>
 
@@ -155,9 +160,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="text" width="50%" name="newMilestone"></textarea><br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
-                                <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                            </div>
+                                <x-global::forms.button type="button" onclick="jQuery('#primaryCanvasSubmitButton').click()">
+                                    {!! __('buttons.save') !!}
+                                </x-global::forms.button>
+                                
+                                <x-global::forms.button type="button" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')">
+                                    {!! __('buttons.cancel') !!}
+                                </x-global::forms.button>                            </div>
                         </div>
 
                         <div class="row" id="existingMilestone" style="display:none;">
@@ -177,9 +186,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
-                                <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                            </div>
+                                <x-global::forms.button type="button" onclick="jQuery('#primaryCanvasSubmitButton').click()">
+                                    {!! $tpl->__("buttons.save") !!}
+                                </x-global::forms.button>
+                                
+                                <x-global::forms.button type="button" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')">
+                                    {!! $tpl->__("buttons.cancel") !!}
+                                </x-global::forms.button>                            </div>
                         </div>
 
                 </li>

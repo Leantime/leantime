@@ -25,9 +25,14 @@ $user = $tpl->get('user');
             <form method="post">
                 <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                 <p>{{ __("text.confirm_user_deletion") }}</p><br />
-                <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
-                <a class="btn btn-primary" href="{{ BASE_URL }}/users/showAll">{{ __("buttons.back") }}</a>
-            </form>
+                <x-global::forms.button type="submit" name="del" class="button">
+                    {{ __('buttons.yes_delete') }}
+                </x-global::forms.button>
+                
+                <x-global::forms.button tag="a" href="{{ BASE_URL }}/users/showAll">
+                    {{ __('buttons.back') }}
+                </x-global::forms.button>
+                            </form>
 
 
         </div>

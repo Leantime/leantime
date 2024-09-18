@@ -8,7 +8,13 @@ $ticket = $tpl->get("ticket");
 
 <x-global::content.modal.form action="{{ BASE_URL }}/tickets/delMilestone/{{ $ticket->id }}">
     <p>{{ __("text.confirm_milestone_deletion") }}</p><br />
-    <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ BASE_URL }}/tickets/roadmap/">{{ __("buttons.back") }}</a>
+    <x-global::forms.button type="submit" name="del" class="button">
+        {{ __('buttons.yes_delete') }}
+    </x-global::forms.button>
+    
+    <x-global::forms.button tag="a" href="{{ BASE_URL }}/tickets/roadmap/" content-role="secondary">
+        {{ __('buttons.back') }}
+    </x-global::forms.button>
+    
 </x-global::content.modal.form>
 

@@ -290,8 +290,14 @@
                     <div class="modal-content">
                         <form action="" method="post">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
+                            <x-global::forms.button 
+                                type="button" 
+                                class="close" 
+                                data-dismiss="modal" 
+                                aria-hidden="true">
+                                &times;
+                            </x-global::forms.button>
+                            
                                 <h4 class="modal-title">{!! __('headlines.start_new_idea_board') !!}</h4>
                             </div>
                             <div class="modal-body">
@@ -300,8 +306,14 @@
                                     style="width:90%" />
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{!! __('buttons.close') !!}</button>
+                            <x-global::forms.button 
+                                type="button" 
+                                class="btn btn-default"
+                                data-dismiss="modal"
+                                content-role="secondary">
+                                {!! __('buttons.close') !!}
+                            </x-global::forms.button>
+                            
                                 <input type="submit" class="btn btn-default" value="{!! __(' buttons.create_board') !!}"
                                     name="newCanvas" />
                             </div>
@@ -315,8 +327,14 @@
                     <div class="modal-content">
                         <form action="" method="post">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
+                            <x-global::forms.button 
+                                type="button" 
+                                class="close" 
+                                data-dismiss="modal" 
+                                aria-hidden="true">
+                                &times;
+                            </x-global::forms.button>
+                            
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
@@ -325,10 +343,21 @@
                                     style="width:90%" />
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">{!! __('buttons.close') !!}</button>
-                                <input type="submit" class="btn btn-default" value="{!! __(' buttons.save') !!}"
-                                    name="editCanvas" />
+                            <x-global::forms.button 
+                                type="button" 
+                                class="btn btn-default"
+                                data-dismiss="modal"
+                                content-role="secondary">
+                                {!! __('buttons.close') !!}
+                            </x-global::forms.button>
+                            
+                            <x-global::forms.button 
+                                type="submit" 
+                                class="btn btn-default" 
+                                name="editCanvas">
+                                {!! __('buttons.save') !!}
+                            </x-global::forms.button>
+                            
                             </div>
                         </form>
                     </div>

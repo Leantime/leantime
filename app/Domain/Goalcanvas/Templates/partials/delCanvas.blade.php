@@ -7,6 +7,12 @@
         <input type="hidden" name="csrf_token" value="{{ $csrf_token }}">
     @endif
     <p>{{ __('text.confirm_board_deletion') }}</p><br />
-    <input type="submit" value="{{ __('buttons.yes_delete') }}" name="del" class="button" />
-    <a class="btn btn-secondary" href="{{ BASE_URL."/goalcanvas/showCanvas" }}">{{ __('buttons.back') }}</a>
+    <x-global::forms.button content-role="primary" type="submit" name="del">
+        {{ __('buttons.yes_delete') }}
+    </x-global::forms.button>
+
+    <x-global::forms.button content-role="secondary" tag="a" href="{{ BASE_URL . '/goalcanvas/showCanvas' }}">
+        {{ __('buttons.back') }}
+    </x-global::forms.button>
+
 </x-global::content.modal.form>

@@ -12,7 +12,11 @@
     <p><?php echo $tpl->language->__("text.new_db_version"); ?></p><br />
     <form action="{{ BASE_URL }}/install/update" method="post" class="registrationForm">
         <input type="hidden" name="updateDB" value="1" />
-        <p><input type="submit" name="updateAction" class="btn btn-primary" value="<?=$tpl->language->__("buttons.update_now")?>" onClick="this.form.submit(); this.disabled=true; this.value='Updating…'; "/></p>
+        <p>
+            <x-global::forms.button type="submit" name="updateAction" onClick="this.form.submit(); this.disabled=true; this.value='Updating…';">
+                {{ __('buttons.update_now') }}
+            </x-global::forms.button>
+                    </p>
     </form>
 </div>
 
