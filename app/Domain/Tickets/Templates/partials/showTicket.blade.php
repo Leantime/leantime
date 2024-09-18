@@ -106,7 +106,9 @@
 
             </x-slot:contents>
         </x-global::content.tabs>
+
     </div> --}}
+
 
     {{-- NEW - Calls navigations/tabs component --}}
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
