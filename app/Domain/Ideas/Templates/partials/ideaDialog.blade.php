@@ -32,9 +32,20 @@
 
                 <textarea rows="3" cols="10" name="data" class="complexEditor" placeholder="">{!! htmlentities($canvasItem->data) !!}</textarea><br />
 
-                <input type="submit" value="{!! __('buttons.save') !!}" id="primaryCanvasSubmitButton" />
-                <button class="btn btn-primary" type="submit" value="closeModal"
-                    id="saveAndClose">{!! __('buttons.save_and_close') !!}</button>
+                <x-global::forms.button 
+                    type="submit" 
+                    id="primaryCanvasSubmitButton">
+                    {!! __('buttons.save') !!}
+                 </x-global::forms.button>
+            
+                <x-global::forms.button 
+                    type="submit" 
+                    class="btn btn-primary" 
+                    value="closeModal"
+                    id="saveAndClose">
+                    {!! __('buttons.save_and_close') !!}
+                </x-global::forms.button>
+            
 
                 @if ($id !== '')
                     <br />
@@ -74,13 +85,20 @@
                                         <textarea name="newMilestone"></textarea><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{!! __('buttons.save') !!}"
-                                            onclick="jQuery('#primaryCanvasSubmitButton').click()"
-                                            class="btn btn-primary" />
-                                        <a href="javascript:void(0);"
+                                        <x-global::forms.button 
+                                            type="button" 
+                                            onclick="jQuery('#primaryCanvasSubmitButton').click()" 
+                                            class="btn btn-primary">
+                                            {!! __('buttons.save') !!}
+                                        </x-global::forms.button>
+                                    
+                                        <x-global::forms.button 
+                                            tag="a"
+                                            href="javascript:void(0);" 
                                             onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
-                                        </a>
+                                         </x-global::forms.button>
+                                    
                                     </div>
                                 </div>
 
@@ -97,13 +115,20 @@
                                         </select>
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
-                                        <input type="button" value="{!! __('buttons.save') !!}"
-                                            onclick="jQuery('#primaryCanvasSubmitButton').click()"
-                                            class="btn btn-primary" />
-                                        <a href="javascript:void(0);"
+                                        <x-global::forms.button 
+                                            type="button" 
+                                            onclick="jQuery('#primaryCanvasSubmitButton').click()" 
+                                            class="btn btn-primary">
+                                            {!! __('buttons.save') !!}
+                                        </x-global::forms.button>
+                                    
+                                        <x-global::forms.button 
+                                            tag="a" 
+                                            href="javascript:void(0);" 
                                             onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
-                                        </a>
+                                        </x-global::forms.button>
+                                    
                                     </div>
                                 </div>
                             </li>
