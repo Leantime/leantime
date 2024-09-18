@@ -77,9 +77,10 @@ $projects = $tpl->get('relations');
                                 <x-global::actions.dropdown.item>
                                     <input type="text" id="inviteURL"
                                         value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                    <button class="btn btn-primary"
-                                        onclick="leantime.snippets.copyUrl('inviteURL');">{{ __('links.copy_url') }}</button>
-                                </x-global::actions.dropdown.item>
+                                        <x-global::forms.button type="button" onclick="leantime.snippets.copyUrl('inviteURL')">
+                                            {{ __('links.copy_url') }}
+                                        </x-global::forms.button>
+                                                                        </x-global::actions.dropdown.item>
                             </x-slot:menu>
                         </x-global::actions.dropdown>
 
@@ -132,8 +133,10 @@ $projects = $tpl->get('relations');
 
 
                     <p class="stdformbutton">
-                        <input type="submit" name="save" id="save" value="{{ __("buttons.save") }}" class="button" />
-                    </p>
+                        <x-global::forms.button type="submit" name="save" id="save" class="button">
+                            {{ __('buttons.save') }}
+                        </x-global::forms.button>
+                                            </p>
                     </div>
                 </div>
                 <div class="col-md-5">

@@ -62,18 +62,30 @@ use Leantime\Core\Support\FromFormat;
                     </div>
                     <div class="filterBoxLeft">
                         <label>&nbsp;</label>
-                        <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
+                        <x-global::forms.button type="submit" class="reload">
+                            {{ __('buttons.search') }}
+                        </x-global::forms.button>
                     </div>
                     <div class="clearall"></div>
                 </div>
             </div>
             <div class="pull-right">
                 <div class="btn-group viewDropDown">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.list_view") ?> <?=$tpl->__("links.view") ?></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ BASE_URL }}/timesheets/showMy" ><?=$tpl->__("links.week_view") ?></a></li>
-                        <li><a href="{{ BASE_URL }}/timesheets/showMyList" class="active"><?=$tpl->__("links.list_view") ?></a></li>
-                    </ul>
+                    <x-global::actions.dropdown content-role="secondary">
+                        <x-slot:label-text>
+                            {!! __('links.list_view') !!} {!! __('links.view') !!} <span class="caret"></span>
+                        </x-slot:label-text>
+                    
+                        <x-slot:menu>
+                            <x-global::actions.dropdown.item tag="a" href="{{ BASE_URL }}/timesheets/showMy">
+                                {!! __('links.week_view') !!}
+                            </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item tag="a" href="{{ BASE_URL }}/timesheets/showMyList" class="active">
+                                {!! __('links.list_view') !!}
+                            </x-global::actions.dropdown.item>
+                        </x-slot:menu>
+                    </x-global::actions.dropdown>
+                    
                 </div>
             </div>
 

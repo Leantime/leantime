@@ -99,8 +99,10 @@ $user = $tpl->get("user");
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
-
+            <x-global::forms.button type="submit" name="createAccount">
+                {{ __('buttons.next') }}
+            </x-global::forms.button>
+            
         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
     </form>

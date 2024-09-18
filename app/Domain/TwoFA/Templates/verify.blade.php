@@ -26,8 +26,10 @@ $redirectUrl = $tpl->get("redirectUrl");
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/auth/logout" class="forgotPw"><?php echo $tpl->language->__("menu.sign_out"); ?></a>
             </div>
-            <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>"
-                   class="btn btn-primary"/>
+            <x-global::forms.button type="submit" name="login">
+                {{ __('buttons.login') }}
+            </x-global::forms.button>
+            
         </div>
     </form>
 </div>

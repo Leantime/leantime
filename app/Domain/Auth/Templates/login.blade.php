@@ -38,8 +38,10 @@ $redirectUrl = $tpl->get('redirectUrl');
         </div>
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
         <div class="">
-            <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>" class="btn btn-primary"/>
-        </div>
+            <x-global::forms.button type="submit" name="login">
+                {{ __('buttons.login') }}
+            </x-global::forms.button>
+         </div>
         <div>
         </div>
             <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>

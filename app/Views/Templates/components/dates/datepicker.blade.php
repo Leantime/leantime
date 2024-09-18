@@ -21,15 +21,22 @@
     </a>
     <div class="datetime-dropdown dropdown-menu">
 
-        <button type="button" class="btn btn-default float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
+        <x-global::forms.button type="button" content-role="ghost" class="float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
             <i class="fa fa-clock"></i>
-        </button>
+        </x-global::forms.button>
+        
         <div class="clearall"></div>
         <input type="date" id="datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
         <hr class="mt-xs"/>
-        <button type="button" class="btn btn-default float-right" onclick="jQuery(body).click()" >Close</button>
-        <button type="button" class="btn btn-default float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();" >Clear</button>
-    </div>
+        
+        <x-global::forms.button type="button" content-role="ghost" class="float-right" onclick="jQuery(body).click()">
+            Close
+        </x-global::forms.button>
+        
+        <x-global::forms.button type="button" content-role="ghost" class="float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();">
+            Clear
+        </x-global::forms.button>
+     </div>
 </div>
 
 <script>

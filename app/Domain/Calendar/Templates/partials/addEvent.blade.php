@@ -77,8 +77,10 @@ $values = $tpl->get('values');
 
     <p class="stdformbutton">
         <input type="hidden" value="1" name="save" />
-        <input type="submit" name="saveEvent" id="saveEvent" value="{{ __("buttons.save") }}" class="button" />
-    </p>
+        <x-global::forms.button type="submit" name="saveEvent" id="saveEvent" class="button">
+            {{ __('buttons.save') }}
+        </x-global::forms.button>
+     </p>
 
     <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 

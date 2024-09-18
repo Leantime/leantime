@@ -15,8 +15,10 @@
     <br />
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
-        </div>
+            <x-global::forms.button type="submit" id="saveBtn">
+                {{ __('buttons.save') }}
+            </x-global::forms.button>
+         </div>
         <div class="col-md-6 align-right padding-top-sm">
 
         </div>

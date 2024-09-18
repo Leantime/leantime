@@ -31,9 +31,15 @@ $client = $tpl->get('client');
                 <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
                 <p>{{ __("text.confirm_client_deletion") }}<br /></p>
-                <input type="submit" value="{{ __("buttons.yes_delete") }}" name="del" class="button" />
-                <a class="btn btn-primary" href="/clients/showClient/<?php echo $client['id'] ?>">{{ __("buttons.back") }}</a>
-
+                <x-global::forms.button type="submit" name="del" class="button">
+                    {{ __('buttons.yes_delete') }}
+                </x-global::forms.button>
+                
+                <x-global::forms.button tag="a" href="/clients/showClient/{{ $client['id'] }}" class="btn btn-primary">
+                    {{ __('buttons.back') }}
+                </x-global::forms.button>
+                
+                
                 <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
             </form>

@@ -203,13 +203,21 @@ jQuery(document).ready(function(){
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">
-                    {{ __("links.week_view") }} <?=$tpl->__("links.view") ?>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active">{{ __("links.week_view") }}</a></li>
-                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList" >{{ __("links.list_view") }}</a></li>
-                </ul>
+                <x-global::actions.dropdown contentRole="secondary">
+                    <x-slot:label-text>
+                        {!! __('links.week_view') !!} {!! $tpl->__('links.view') !!} <span class="caret"></span>
+                    </x-slot:label-text>
+                
+                    <x-slot:menu>
+                        <x-global::actions.dropdown.item tag="a" href="{{ BASE_URL }}/timesheets/showMy" class="active">
+                            {!! __('links.week_view') !!}
+                        </x-global::actions.dropdown.item>
+                        <x-global::actions.dropdown.item tag="a" href="{{ BASE_URL }}/timesheets/showMyList">
+                            {!! __('links.list_view') !!}
+                        </x-global::actions.dropdown.item>
+                    </x-slot:menu>
+                </x-global::actions.dropdown>
+                
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 

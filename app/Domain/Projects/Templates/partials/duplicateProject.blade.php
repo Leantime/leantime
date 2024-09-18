@@ -34,7 +34,9 @@ $project = $tpl->get('project');
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$tpl->__('buttons.duplicate') ?>"/>
+            <x-global::forms.button type="submit">
+                {{ __('buttons.duplicate') }}
+            </x-global::forms.button>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
 
