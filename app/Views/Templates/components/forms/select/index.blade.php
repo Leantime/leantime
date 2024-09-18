@@ -22,21 +22,16 @@
 @endphp
 
 
-<div class='relative w-full max-w-xs'>
-    @if($labelText || $labelRight)
-        <div class="flex justify-between items-center">
-            @if($labelText)
-                <label for="{{ $attributes->get('id') }}">
-                    <span class="label-text">{{ $labelText }}</span>
-                </label>
-            @endif
-            @if($labelRight)
-                <label>
-                    <span class="label-text-alt">{{ $labelRight }}</span>
-                </label>
-            @endif
-        </div>
-    @endif
+<div class='form-control relative w-full max-w-xs'>
+
+    <x-global::forms.label-row>
+        @if($labelText)
+            <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
+        @endif
+        @if($labelRight)
+            <x-slot:label-right> {!! $labelRight !!}</x-slot:label-right>
+        @endif
+    </x-global::forms.label-row>
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
@@ -49,30 +44,29 @@
             </span>
         @endif
 
-        <select  
-            {{$attributes->merge(['class' => 'select select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '')])}}
+        <select
+            {{$attributes->merge(['class' => 'select select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '')])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
             {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
         >
-            {{ $slot }}
+            {!! $slot !!}
         </select>
 
     </div>
 
-
     @if($validationText)
-        <div class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
-            <p class="text-sm {{ $validationClass }}">{{ $validationText }}</p>
-        </div>
+        <x-global::forms.label-row class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
+            <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
+        </x-global::forms.label-row>
     @endif
 
 </div>
 
 
 <script>
-    @if ($variant === 'tags') 
+    @if ($variant === 'tags')
         leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }});
-    @else 
+    @else
         leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }});
     @endif
 </script>

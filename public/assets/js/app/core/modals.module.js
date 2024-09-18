@@ -60,6 +60,7 @@ var openPageModal = function (url) {
         htmx.find("#modal-wrapper #main-page-modal").addEventListener("close", function() {
             removeHash();
         });
+
     });
 
 }

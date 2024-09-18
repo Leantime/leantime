@@ -97,8 +97,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
     /**
      * Dispatches a filter to manipulate a variable somewhere
      *
-     *
-     *
      * @throws BindingResolutionException
      */
     public function dispatchFilter(
@@ -333,13 +331,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         $filteredPayload = null;
 
         $registry = collect($registry)->sortBy('priority');
-
-        //sort matches by priority
-        /*usort($registry, fn ($a, $b) => match (true) {
-            $a['priority'] > $b['priority'] => 1,
-            $a['priority'] == $b['priority'] => 0,
-            default => -1,
-        });*/
 
         foreach ($registry as $index => $listener) {
 
