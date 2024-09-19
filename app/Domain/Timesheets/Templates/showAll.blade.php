@@ -132,35 +132,38 @@
                         </select>
                     </td>
                     <td>
-                        <input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
-                            <?php
-                            if ($tpl->get('invEmpl') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.invoiced') }}"
+                            labelPosition="right"
+                            name="invEmpl"
+                            id="invEmpl"
+                            value="on"
+                            :checked="$tpl->get('invEmpl') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="invEmpl">{{ __("label.invoiced") }}</label>
                     </td>
                     <td>
-                        <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
-                            <?php
-                            if ($tpl->get('invComp') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.invoiced_comp') }}"
+                            labelPosition="right"
+                            name="invComp"
+                            id="invComp"
+                            value="on"
+                            :checked="$tpl->get('invComp') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="invEmpl">{{ __("label.invoiced_comp") }}</label>
                     </td>
 
                     <td>
-                        <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
-                            <?php
-                            if ($tpl->get('paid') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.paid') }}"
+                            labelPosition="right"
+                            name="paid"
+                            id="paid"
+                            value="on"
+                            :checked="$tpl->get('paid') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="paid">{{ __("label.paid") }}</label>
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
