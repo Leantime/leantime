@@ -183,8 +183,15 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
 
         <?php if(isset($taskToggle) && $taskToggle === true){ ?>
             <div class="" style="float:right; margin-left:5px; ">
-                <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" <?=($tpl->get('showTasks') === "true") ? 'checked="checked"' : ''; ?> style="margin-right:5px;" />
-                <label style="text-wrap: nowrap; float:right;">Show Tasks</label>
+                <x-global::forms.checkbox
+                    labelText="Show Tasks"
+                    name="showTasks"
+                    value="true"
+                    :checked="($tpl->get('showTasks') === 'true')"
+                    id="taskTypeToggle"
+                    class="toggle"
+                    onchange="jQuery('#ticketSearch').submit();"
+                />
             </div>
         <?php } ?>
 
