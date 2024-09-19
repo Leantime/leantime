@@ -16,20 +16,17 @@ leantime.modals = (function () {
             autoSizable: true,
             callbacks: {
                 beforePostSubmit: function () {
+
                     jQuery(".showDialogOnLoad").show();
 
                     if(tinymce.editors.length>0) {
-
-                        jQuery(".simpleEditor").each(function() {
-                            jQuery(this).tinymce().save();
-                            jQuery(this).tinymce().remove();
-                        });
-
-                        jQuery(".complexEditor").each(function() {
-                            jQuery(this).tinymce().save();
-                            jQuery(this).tinymce().remove();
+                        tinymce.editors.forEach(function(editor) {
+                            editor.save();
+                            editor.destroy();
+                            editor.remove();
                         });
                     }
+
                 },
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();

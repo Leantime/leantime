@@ -71,7 +71,7 @@ class Details extends HtmxController
             return 'plugin-installation';
         }
 
-        if ($this->pluginService->isPluginEnabled($pluginModel->identifier)) {
+        if ($this->pluginService->isEnabled($pluginModel->identifier)) {
             $this->tpl->assign('formNotification', __('marketplace.updated'));
             return 'plugin-installation';
         }

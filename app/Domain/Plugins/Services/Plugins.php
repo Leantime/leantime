@@ -152,7 +152,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
      * @api
      */
-        public function isPluginEnabled($pluginFolder): bool
+        public function isEnabled($pluginFolder): bool
         {
             $plugins = $this->getEnabledPlugins();
 

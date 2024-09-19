@@ -264,6 +264,12 @@ namespace Leantime\Domain\Menu\Repositories {
                 $menuType = self::DEFAULT_MENU;
             }
 
+            $this->menuStructures = self::dispatch_filter(
+                'menuStructures',
+                $this->menuStructures,
+                ['menuType' => $menuType]
+            );
+
             //If menu structure cannot be found, don't return anything
             if(! isset($this->menuStructures[$menuType])) {
                 return [];
@@ -279,11 +285,7 @@ namespace Leantime\Domain\Menu\Repositories {
                         ['menuType' => $menuType]
                     );
 
-            $this->menuStructures = self::dispatch_filter(
-                'menuStructures',
-                $menuCollection,
-                ['menuType' => $menuType]
-            );
+
 
             $menuStructure = $this->menuStructures[$menuType];
 

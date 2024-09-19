@@ -266,9 +266,7 @@ foreach ($allCanvas as $canvasRow) {
                                                         </div>
 
                                                         <div class="right" style="margin-right:10px;">
-                                                            <a href="{{ BASE_URL }}/goalcanvas/editCanvasComment/{{ $row['id'] }}" class="goalCanvasModal" data="item_{{ $row['id'] }}" @if($nbcomments == 0) style="color: grey;" @endif>
-                                                                <span class="fas fa-comments"></span>
-                                                            </a>
+                                                            <span class="fas fa-comments"></span>
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
                                                     </div>
@@ -298,7 +296,7 @@ foreach ($allCanvas as $canvasRow) {
 
 
 
-{{-- 
+{{--
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
  * Required variables:
@@ -315,7 +313,7 @@ foreach ($allCanvas as $canvasRow) {
         </div>
         <h3>{{ __("headlines.goal.analysis") }}</h3>
         <br>{!! __("text.goal.helper_content") !!}
-        
+
         @if ($login::userIsAtLeast($roles::$editor))
             <br><br>
             <a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
@@ -355,7 +353,7 @@ jQuery(document).ready(function() {
 
     @if (isset($_GET['showModal']))
         @php
-            $modalUrl = $_GET['showModal'] == "" 
+            $modalUrl = $_GET['showModal'] == ""
                 ? "&type=" . array_key_first($canvasTypes)
                 : "/" . (int)$_GET['showModal'];
         @endphp

@@ -121,4 +121,22 @@ class MenuRepositoryTest extends Unit
         $this->assertFalse(isset($fullMenuStructure[15]['submenu'][20]), "menu item was not removed");
 
     }
+
+    public function testInjectNewProjectMenuType()
+    {
+
+        \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures", function($menuStructure){
+
+            $testStructure = ["item" => "myNewMenu"];
+            $menuStructure["testType"] = $testStructure;
+
+            return $menuStructure;
+
+        }, 10);
+
+        $fullMenuStructure = $this->menu->getMenuStructure('testType');
+        $this->assertIsArray($fullMenuStructure);
+        $this->assertEquals("muNewMenu", $fullMenuStructure["item"]);
+
+    }
 }

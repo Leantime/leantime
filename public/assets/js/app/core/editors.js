@@ -147,11 +147,6 @@ leantime.editorController = (function () {
                 });
             }
 
-            //&& !editor.plugins.autosave.hasDraft()
-            if (editor.getContent() === '' ) {
-                editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
-            }
-
         });
 
         //and remove it on focus
