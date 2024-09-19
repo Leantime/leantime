@@ -255,9 +255,13 @@
     ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                                         <?php } else { ?>
                                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
-                            value="<?php echo $row['id']; ?>" /> <?php
-                                            } ?><?php
+                                                <x-global::forms.checkbox
+                                                    name="invoicedEmpl[]"
+                                                    :value="$row['id']"
+                                                    class="invoicedEmpl"
+                                                />
+                                            <?php} ?>
+                                        <?php
                                         } ?></td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
                             echo format($row['invoicedCompDate'])->date();
@@ -267,7 +271,11 @@
                                 <?php echo format($row['invoicedCompDate'])->date(); ?>
                             <?php } else { ?>
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
+                                    <x-global::forms.checkbox
+                                        name="invoicedComp[]"
+                                        :value="$row['id']"
+                                        class="invoicedComp"
+                                    />
                                 <?php } ?>
                             <?php } ?>
                         </td>
@@ -279,7 +287,11 @@
                                 <?php echo format($row['paidDate'])->date(); ?>
                             <?php } else { ?>
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                    <input type="checkbox" name="paid[]" class="paid" value="<?php echo $row['id']; ?>" />
+                                    <x-global::forms.checkbox
+                                        name="paid[]"
+                                        :value="$row['id']"
+                                        class="paid"
+                                    />
                                 <?php } ?>
                             <?php } ?>
                         </td>
@@ -298,16 +310,29 @@
                         </td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?></td>
-                            <?php } ?>
-                        <td>
-                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllEmpl"
+                                />
                             <?php } ?>
                         </td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllComp"
+                                />
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllPaid"
+                                />
                             <?php } ?>
                         </td>
                     </tr>
