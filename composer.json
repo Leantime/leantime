@@ -96,7 +96,8 @@
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10",
         "leantime/leantime-documentor": "@dev",
-        "phpstan/extension-installer": "^1.4"
+        "phpstan/extension-installer": "^1.4",
+        "codeception/stub": "^4.1"
     },
     "autoload": {
         "psr-4": {

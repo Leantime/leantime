@@ -39,7 +39,6 @@
     "moment": "^2.29.4",
     "packery": "^2.1.2",
     "shepherd.js": "^11.2.0",
-    "tailwind": "^4.0.0",
     "tinymce": "5.10.9",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",

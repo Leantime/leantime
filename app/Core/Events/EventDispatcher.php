@@ -184,7 +184,8 @@ class EventDispatcher implements Dispatcher
             return;
         }
 
-        if(!config('debug')) {
+        if((bool)config('debug') === false) {
+
             $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
                 return EventDispatcher::getDomainPaths();
             });
@@ -199,6 +200,7 @@ class EventDispatcher implements Dispatcher
             }
         }
 
+        //Call system plugins (defined via config)
         if (
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)
