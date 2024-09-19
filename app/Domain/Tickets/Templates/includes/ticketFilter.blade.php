@@ -185,6 +185,7 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
             <div class="" style="float:right; margin-left:5px; ">
                 <x-global::forms.checkbox
                     labelText="Show Tasks"
+                    labelPosition="right"
                     name="showTasks"
                     value="true"
                     :checked="($tpl->get('showTasks') === 'true')"
