@@ -8,11 +8,22 @@
 
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
-    <label for="description">{{ __("label.title") }}</label>
-    <input type="text" id="description" name="description" value="<?php $tpl->e($values['description']); ?>" /><br />
+    <x-global::forms.text-input 
+        type="text" 
+        id="description" 
+        name="description" 
+        labelText="{{ __('label.title') }}" 
+        value="{{ $tpl->escape($values['description']) }}" 
+    />
 
-    <label for="dateFrom">{{ __("label.start_date") }}</label>
-    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo format($values['dateFrom'])->date(); ?>" />
+    <x-global::forms.text-input 
+        type="text" 
+        id="event_date_from" 
+        name="dateFrom" 
+        labelText="{{ __('label.start_date') }}" 
+        value="{{ format($values['dateFrom'])->date() }}" 
+        autocomplete="off" 
+    />
 
     <div class="par">
         <label> {{ __("label.start_time") }}</label>

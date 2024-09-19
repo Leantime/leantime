@@ -21,33 +21,47 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
+                        <x-global::forms.text-input 
+                            type="text" 
+                            name="name" 
+                            id="name" 
+                            value="{{ $tpl->escape($project['name']) }}" 
+                            placeholder="{{ $tpl->__('input.placeholders.enter_title_of_project') }}" 
+                            class="w-[99%] main-title-input" 
+                        />
                     </div>
                 </div>
             </div>
+        
             <div class="row">
                 <div class="col-md-12">
                     <p>
                         {{ __("label.accomplish") }}
                         <br /><br />
                     </p>
-                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
+                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50">
+                        {{ htmlentities($project['details']) }}
+                    </textarea>
                 </div>
             </div>
+        
             <div class="row padding-top">
                 <div class="col-md-12">
-
-                    <input type="submit" name="save" id="save" class="button" value="{{ __("buttons.save") }}" class="button" />
+                    <x-global::forms.button 
+                        type="submit" 
+                        name="save" 
+                        id="save" 
+                        class="button"
+                    >
+                        {{ __("buttons.save") }}
+                    </x-global::forms.button>
                 </div>
-
             </div>
         </div>
+        
         <div class="col-md-4">
 
             <div class="row marginBottom">
-
-
-
                 <?php if ($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1) {?>
                 <div class="col-md-12 center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
@@ -208,21 +222,28 @@ $menuTypes = $tpl->get('menuTypes');
                 <div class="col-md-12 ">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-money-bill-alt"></span>{{ __("label.budgets") }}</h4>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label"for="hourBudget">{{ __("label.hourly_budget") }}</label>
-                        <div class="col-md-6">
-                            <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="<?php $tpl->e($project['hourBudget']) ?>" />
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="dollarBudget">{{ __("label.budget_cost") }}</label>
-                        <div class="col-md-6">
-                            <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="<?php $tpl->e($project['dollarBudget']) ?>" />
-
-                        </div>
-                    </div>
+                                <div class="form-group">
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="hourBudget" 
+                                        id="hourBudget" 
+                                        value="{{ $tpl->escape($project['hourBudget']) }}" 
+                                        labelText="{{ __('label.hourly_budget') }}" 
+                                        class="input-large col-md-6" 
+                                    />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="dollarBudget" 
+                                        id="dollarBudget" 
+                                        value="{{ $tpl->escape($project['dollarBudget']) }}" 
+                                        labelText="{{ __('label.budget_cost') }}" 
+                                        class="input-large col-md-6" 
+                                    />
+                                </div>
+                                
 
                 </div>
             </div>

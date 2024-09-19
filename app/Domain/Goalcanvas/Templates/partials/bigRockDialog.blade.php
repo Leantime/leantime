@@ -9,14 +9,15 @@
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock->id) ? $bigRock->id : '' }}">
 
     <br />
-    <label>{{ __('label.goal_description') }}</label>
-    <input type="text" name="title" id="wikiTitle" value="{{ $bigRock->title }}" style="width:100%;" /><br />
+    <x-global::forms.text-input type="text" name="title" id="wikiTitle" value="{{ $bigRock->title }}" labelText="{{ __('label.goal_description') }}" variant='title'/><br />
 
     <br />
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="{{ __('buttons.save') }}" id="saveBtn" />
-        </div>
+            <x-global::forms.button type="submit" id="saveBtn">
+                {{ __('buttons.save') }}
+            </x-global::forms.button>
+         </div>
         <div class="col-md-6 align-right padding-top-sm">
 
         </div>

@@ -10,8 +10,14 @@ $project = $tpl->get('project');
 
 <x-global::content.modal.form action="{{ BASE_URL }}/projects/duplicateProject/<?php echo $project['id'];?>">
 
-    <label><?=$tpl->__('label.newProjectName') ?></label>
-    <input type="text" name="projectName" value="<?=$tpl->__('label.copy_of')?> <?php $tpl->e($project['name'])?>" /><br />
+<x-global::forms.text-input 
+    type="text" 
+    name="projectName" 
+    value="{{ $tpl->__('label.copy_of') }} {{ $tpl->escape($project['name']) }}" 
+    labelText="{{ $tpl->__('label.newProjectName') }}" 
+    variant="title" 
+/>
+<br />
 
     <label><?=$tpl->__('label.planned_start_date') ?></label>
     <input type="text" name="startDate" class="projectDateFrom" value="<?php echo format(date("Y-m-d"))->date()?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />

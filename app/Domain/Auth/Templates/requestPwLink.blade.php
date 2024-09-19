@@ -18,7 +18,12 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
         <?php echo $tpl->displayInlineNotification(); ?>
         <p><?php echo $tpl->language->__("text.enter_email_address_to_reset"); ?><br /><br /></p>
         <div class="">
-            <input type="text" name="username" id="username" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_email"); ?>" />
+            <x-global::forms.text-input 
+                type="text" 
+                name="username" 
+                id="username" 
+                placeholder="{{ $tpl->language->__('input.placeholders.enter_email') }}" 
+            />
         </div>
         <div class="">
             <div class="forgotPwContainer">

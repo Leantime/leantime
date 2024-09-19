@@ -38,8 +38,16 @@ $project = $tpl->get('project');
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
-                                    </div>
+                                        <x-global::forms.text-input 
+                                        type="text" 
+                                        name="name" 
+                                        id="name" 
+                                        value="{{ $tpl->escape($project['name']) }}" 
+                                        placeholder="{{ $tpl->__('input.placeholders.enter_title_of_project') }}" 
+                                        variant="title" 
+                                        class="w-[99%]" 
+                                    />
+                                                                        </div>
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
 
                                 </div>

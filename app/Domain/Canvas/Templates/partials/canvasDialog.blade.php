@@ -38,82 +38,99 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-        <label><?=$tpl->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php $tpl->e($canvasItem['description']) ?>" style="width:100%" /><br />
-
-        <?php if (!empty($statusLabels)) { ?>
-            <label><?=$tpl->__("label.status") ?></label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
-        <?php } else { ?>
-            <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
-                $hiddenStatusLabels
-            ) ?>" />
-        <?php } ?>
-
-        <?php if (!empty($relatesLabels)) { ?>
-            <label><?=$tpl->__("label.relates") ?></label>
-            <select name="relates"  style="width: 50%" id="relatesCanvas">
-            </select><br />
-        <?php } else { ?>
-            <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
-                $hiddenRelatesLabels
-            ) ?>" />
-        <?php } ?>
-
-        <?php if ($dataLabels[1]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[1]['title']) ?></label>
-            <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[2]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[2]['title']) ?></label>
-            <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[3]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[3]['title']) ?></label>
-            <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
-        <?php } ?>
-
-
-        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
-        <input type="hidden" name="changeItem" value="1" />
-
-        <?php if ($id != '') {?>
-            <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right"><i class='fa fa-trash-can'></i> {{ __("links.delete") }}</a>
-        <?php } ?>
-
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <input type="submit" value="<?=$tpl->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
-
-        <?php } ?>
-
+        <x-global::forms.text-input 
+        type="text" 
+        name="description" 
+        value="{{ $tpl->escape($canvasItem['description']) }}" 
+        labelText="{{ $tpl->__('label.description') }}" 
+        class="w-full" 
+    />
+    
+    @if (!empty($statusLabels))
+        <label for="statusCanvas">{{ $tpl->__('label.status') }}</label>
+        <select name="status" style="width: 50%" id="statusCanvas">
+            @foreach ($statusLabels as $key => $label)
+                <option value="{{ $key }}" {{ $canvasItem['status'] == $key ? 'selected' : '' }}>
+                    {{ $tpl->__($label) }}
+                </option>
+            @endforeach
+        </select>
+        <br /><br />
+    @else
+        <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
+    @endif
+    
+    @if (!empty($relatesLabels))
+        <label for="relatesCanvas">{{ $tpl->__('label.relates') }}</label>
+        <select name="relates" style="width: 50%" id="relatesCanvas">
+            @foreach ($relatesLabels as $key => $label)
+                <option value="{{ $key }}" {{ $canvasItem['relates'] == $key ? 'selected' : '' }}>
+                    {{ $tpl->__($label) }}
+                </option>
+            @endforeach
+        </select>
+        <br />
+    @else
+        <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
+    @endif
+    
+    {{-- Data Labels Handling --}}
+    @foreach ([1, 2, 3] as $index)
+        @if ($dataLabels[$index]['active'])
+            @if (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'int')
+                <x-global::forms.text-input 
+                    type="number" 
+                    name="{{ $dataLabels[$index]['field'] }}" 
+                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}" 
+                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}" 
+                    class="w-full" 
+                />
+            @elseif (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'string')
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="{{ $dataLabels[$index]['field'] }}" 
+                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}" 
+                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}" 
+                    class="w-full" 
+                />
+            @else
+                <label for="{{ $dataLabels[$index]['field'] }}">{{ $tpl->__($dataLabels[$index]['title']) }}</label>
+                <textarea name="{{ $dataLabels[$index]['field'] }}" rows="3" cols="10" class="modalTextArea tinymceSimple w-full">
+                    {{ $canvasItem[$dataLabels[$index]['field']] }}
+                </textarea>
+                <br />
+            @endif
+        @else
+            <input type="hidden" name="{{ $dataLabels[$index]['field'] }}" value="" />
+        @endif
+    @endforeach
+    
+    <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}" />
+    <input type="hidden" name="changeItem" value="1" />
+    
+    @if ($id != '')
+        <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right">
+            <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
+        </a>
+    @endif
+    
+    @if ($login::userIsAtLeast($roles::$editor))
+        <x-global::forms.button 
+            type="submit" 
+            id="primaryCanvasSubmitButton"
+        >
+            {{ $tpl->__("buttons.save") }}
+        </x-global::forms.button>
+    
+        <x-global::forms.button 
+            type="submit" 
+            id="saveAndClose" 
+            onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();"
+        >
+            {{ $tpl->__("buttons.save_and_close") }}
+        </x-global::forms.button>
+    @endif
+    
         <?php if ($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fa fa-link"></span> <?=$tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>

@@ -25,11 +25,20 @@
                 <input type="hidden" name="milestoneId" value="{{ $canvasItem->milestoneId }}" />
                 <input type="hidden" name="changeItem" value="1" />
 
-                <input type="text" name="description" class="main-title-input" style="width:99%;"
-                    value="{{ $canvasItem->description }}" placeholder="{!! __('input.placeholders.short_name') !!}" /><br />
-
-                <input type="text" value="{{ $canvasItem->tags }}" name="tags" id="tags" />
-
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="description" 
+                    value="{{ $canvasItem->description }}" 
+                    labelText="{{ __('input.placeholders.short_name') }}" 
+                    class="main-title-input" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="tags" 
+                    id="tags" 
+                    value="{{ $canvasItem->tags }}" 
+                />
                 <textarea rows="3" cols="10" name="data" class="complexEditor" placeholder="">{!! htmlentities($canvasItem->data) !!}</textarea><br />
 
                 <input type="submit" value="{!! __('buttons.save') !!}" id="primaryCanvasSubmitButton" />

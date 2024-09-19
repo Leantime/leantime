@@ -26,23 +26,45 @@ $redirectUrl = $tpl->get('redirectUrl');
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
 
         <div class="">
-            <label for="username">Email</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $tpl->language->__($tpl->get("inputPlaceholder")); ?>" value=""/>
+            <x-global::forms.text-input 
+                type="text" 
+                name="username" 
+                id="username" 
+                labelText="Email" 
+                placeholder="{{ $tpl->language->__($tpl->get('inputPlaceholder')) }}" 
+                class="form-control" 
+                value="" 
+            />
         </div>
+        
         <div class="">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_password"); ?>" value=""/>
+            <x-global::forms.text-input 
+                type="password" 
+                name="password" 
+                id="password" 
+                labelText="Password" 
+                placeholder="{{ $tpl->language->__('input.placeholders.enter_password') }}" 
+                class="form-control" 
+                value="" 
+            />
+            
             <div class="forgotPwContainer">
-                <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__("links.forgot_password"); ?></a>
+                <a href="{{ BASE_URL }}/auth/resetPw" class="forgotPw">
+                    {{ $tpl->language->__('links.forgot_password') }}
+                </a>
             </div>
         </div>
-            <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
+        
+        <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
+        
         <div class="">
-            <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>" class="btn btn-primary"/>
+            <x-global::forms.button type="submit" content-role="primary" name="login">
+                {{ $tpl->language->__('buttons.login') }}
+            </x-global::forms.button>
         </div>
-        <div>
-        </div>
-            <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
+        
+
+        <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
     </form>
     <?php } else {

@@ -29,41 +29,86 @@ $values = $tpl->get('values');
             <h4 class="widgettitle">{{ __("OVERVIEW") }}</h4>
             <div class="widgetcontent">
 
-                <label for="name">{{ __("NAME") }}</label>
-                <input type="text" name="name" id="name" value="<?php echo $values['name'] ?>" /><br />
-
-                <label for="email">{{ __("EMAIL") }}</label>
-                <input type="text" name="email" id="email" value="<?php echo $values['email'] ?>" /><br />
-
-                <label for="internet">{{ __("URL") }}</label> <input
-                    type="text" name="internet" id="internet"
-                    value="<?php echo $values['internet'] ?>" /><br />
-
-                <label for="street">{{ __("STREET") }}</label> <input
-                    type="text" name="street" id="street"
-                    value="<?php echo $values['street'] ?>" /><br />
-
-                <label for="zip">{{ __("ZIP") }}</label> <input type="text"
-                    name="zip" id="zip" value="<?php echo $values['zip'] ?>" /><br />
-
-                <label for="city">{{ __("CITY") }}</label> <input type="text"
-                    name="city" id="city" value="<?php echo $values['city'] ?>" /><br />
-
-                <label for="state">{{ __("STATE") }}</label> <input
-                    type="text" name="state" id="state"
-                    value="<?php echo $values['state'] ?>" /><br />
-
-                <label for="country">{{ __("COUNTRY") }}</label> <input
-                    type="text" name="country" id="country"
-                    value="<?php echo $values['country'] ?>" /><br />
-
-                <label for="phone">{{ __("PHONE") }}</label> <input
-                    type="text" name="phone" id="phone"
-                    value="<?php echo $values['phone'] ?>" /><br />
-
-                <input type="submit" name="save" id="save"
-                    value="{{ __("SAVE") }}" class="button" />
-
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="name" 
+                    id="name" 
+                    value="{{ $values['name'] }}" 
+                    labelText="{{ __('NAME') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="email" 
+                    id="email" 
+                    value="{{ $values['email'] }}" 
+                    labelText="{{ __('EMAIL') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="internet" 
+                    id="internet" 
+                    value="{{ $values['internet'] }}" 
+                    labelText="{{ __('URL') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="street" 
+                    id="street" 
+                    value="{{ $values['street'] }}" 
+                    labelText="{{ __('STREET') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="zip" 
+                    id="zip" 
+                    value="{{ $values['zip'] }}" 
+                    labelText="{{ __('ZIP') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="city" 
+                    id="city" 
+                    value="{{ $values['city'] }}" 
+                    labelText="{{ __('CITY') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="state" 
+                    id="state" 
+                    value="{{ $values['state'] }}" 
+                    labelText="{{ __('STATE') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="country" 
+                    id="country" 
+                    value="{{ $values['country'] }}" 
+                    labelText="{{ __('COUNTRY') }}" 
+                />
+                
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="phone" 
+                    id="phone" 
+                    value="{{ $values['phone'] }}" 
+                    labelText="{{ __('PHONE') }}" 
+                />
+                
+                <x-global::forms.button 
+                    type="submit" 
+                    name="save" 
+                    id="save" 
+                    content-role="primary"
+                >
+                    {{ __('SAVE') }}
+                </x-global::forms.button>
                 </div>
             </div>
 

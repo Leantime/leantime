@@ -19,10 +19,17 @@
         <input type="password" name="password" class="form-control" placeholder="<?=$tpl->language->__("label.password");?>" />
         <br /><br />
         <h3 class="subtitle"><?=$tpl->language->__("subtitles.user_info");?></h3>
-        <input type="text" name="firstname" class="form-control" placeholder="<?=$tpl->language->__("label.firstname");?>" value=""/><br />
-        <input type="text" name="lastname" class="form-control" placeholder="<?=$tpl->language->__("label.lastname");?>" value=""/>
-        <input type="text" name="company" class="form-control" placeholder="<?=$tpl->language->__("label.company_name");?>" value=""/>
-        <br /><br />
+        <x-global::forms.text-input 
+        type="text" 
+        id="projectName" 
+        name="projectname" 
+        value="" 
+        placeholder="" 
+        variant="title" 
+        class="w-full" 
+    />
+    <br />
+            <br /><br />
         <input type="hidden" name="install" value="Install" />
         <p><input type="submit" name="installAction" class="btn btn-primary" value="<?=$tpl->language->__("buttons.install");?>" onClick="this.form.submit(); this.disabled=true; this.value='<?=$tpl->language->__("buttons.install");?>'; "/></p>
     </form>
