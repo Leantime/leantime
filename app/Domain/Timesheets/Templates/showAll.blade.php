@@ -260,8 +260,8 @@
                                                     :value="$row['id']"
                                                     class="invoicedEmpl"
                                                 />
-                                            <?php} ?>
-                                        <?php
+                                 <?php
+                                            } ?><?php
                                         } ?></td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
                             echo format($row['invoicedCompDate'])->date();
@@ -341,5 +341,6 @@
         </form>
     </div>
 </div>
+
 
 @endsection
