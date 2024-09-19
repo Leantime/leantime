@@ -76,14 +76,41 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                 <div class="col-md-9" style="padding:0 15px;">
                     <div class="row">
                         <div class="col-md-4">
-                            {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="<?php echo $date ?>" class="duedates secretInput quickDueDates" data-id="<?php echo $subticket['id'];?>" name="date" />
+                            {{ __("label.due") }}
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="date" 
+                                value="{!! $date !!}" 
+                                title="{{ __('label.due') }}" 
+                                class="duedates secretInput quickDueDates" 
+                                data-id="{!! $subticket['id'] !!}" 
+                            />
                         </div>
+                        
                         <div class="col-md-4">
-                            {{ __("label.planned_hours") }}<input type="text" value="<?php echo $tpl->e($subticket['planHours']); ?>" name="planHours" data-label="planHours-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            {{ __("label.planned_hours") }}
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="planHours" 
+                                value="{!! $tpl->escape($subticket['planHours']) !!}" 
+                                data-label="planHours-{!! $subticket['id'] !!}" 
+                                class="small-input secretInput asyncInputUpdate" 
+                                style="width: 40px;" 
+                            />
                         </div>
+                        
                         <div class="col-md-4">
-                            {{ __("label.estimated_hours_remaining") }}<input type="text" value="<?php echo $tpl->e($subticket['hourRemaining']); ?>" name="hourRemaining" data-label="hourRemaining-<?=$subticket['id']?>" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            {{ __("label.estimated_hours_remaining") }}
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="hourRemaining" 
+                                value="{!! $tpl->escape($subticket['hourRemaining']) !!}" 
+                                data-label="hourRemaining-{!! $subticket['id'] !!}" 
+                                class="small-input secretInput asyncInputUpdate" 
+                                style="width: 40px;" 
+                            />
                         </div>
+                        
                     </div>
                 </div>
                 <div class="col-md-3" style="padding-top:3px;">

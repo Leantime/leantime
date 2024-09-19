@@ -17,17 +17,37 @@ $redirectUrl = $tpl->get("redirectUrl");
 
         <?php echo $tpl->displayInlineNotification(); ?>
 
-        <div class="">
-            <input type="text" name="twoFA_code" id="twoFA_code" class="form-control"
-                   placeholder="<?php echo $tpl->language->__("label.twoFACode"); ?>"
-                   value="" autofocus/>
+        <div>
+            <x-global::forms.text-input 
+                type="text" 
+                name="twoFA_code" 
+                id="twoFA_code" 
+                class="form-control" 
+                placeholder="{!! $tpl->language->__('label.twoFACode') !!}" 
+                value="" 
+                autofocus 
+            />
         </div>
-        <div class="">
+        
+        <div>
             <div class="forgotPwContainer">
-                <a href="{{ BASE_URL }}/auth/logout" class="forgotPw"><?php echo $tpl->language->__("menu.sign_out"); ?></a>
+                <x-global::forms.button 
+                    tag="a"
+                    href="{{ BASE_URL }}/auth/logout"
+                    class="forgotPw"
+                >
+                    {!! $tpl->language->__('menu.sign_out') !!}
+                </x-global::forms.button>
             </div>
-            <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>"
-                   class="btn btn-primary"/>
+        
+            <x-global::forms.button 
+                type="submit" 
+                name="login"
+                class="btn btn-primary"
+            >
+                {!! $tpl->language->__('buttons.login') !!}
+            </x-global::forms.button>
         </div>
+        
     </form>
 </div>

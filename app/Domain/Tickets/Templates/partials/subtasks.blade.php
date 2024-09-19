@@ -91,11 +91,27 @@
                                 {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
                         </div>
                         <div class="col-md-4">
-                                {{ __("label.planned_hours") }}<input type="text" value="{{ $subticket['planHours'] }}" name="planHours" data-label="planHours-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="planHours" 
+                                value="{{ $subticket['planHours'] }}" 
+                                data-label="planHours-{{ $subticket['id'] }}" 
+                                class="small-input secretInput asyncInputUpdate w-[40px]" 
+                                labelText="{{ __('label.planned_hours') }}" 
+                            />
                         </div>
+                        
                         <div class="col-md-4">
-                                {{ __("label.estimated_hours_remaining") }}<input type="text" value="{{ $subticket['hourRemaining'] }}" name="hourRemaining" data-label="hourRemaining-{{ $subticket['id'] }}" class="small-input secretInput asyncInputUpdate" style="width:40px"/>
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="hourRemaining" 
+                                value="{{ $subticket['hourRemaining'] }}" 
+                                data-label="hourRemaining-{{ $subticket['id'] }}" 
+                                class="small-input secretInput asyncInputUpdate w-[40px]" 
+                                labelText="{{ __('label.estimated_hours_remaining') }}" 
+                            />
                         </div>
+                        
                     </div>
                 </div>
                 <div class="col-md-3" style="padding-top:3px;" >

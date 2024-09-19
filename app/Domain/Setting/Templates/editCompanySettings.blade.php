@@ -67,8 +67,14 @@
                                                 <label><?= $tpl->__('label.company_name') ?></label>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="text" name="name" id="companyName"
-                                                    value="<?php echo $companySettings['name']; ?>" class="pull-left" />
+                                                <x-global::forms.text-input 
+                                                    type="text" 
+                                                    name="name" 
+                                                    id="companyName" 
+                                                    value="{!! $companySettings['name'] !!}" 
+                                                    class="pull-left" 
+                                                />
+                                            
                                                 <small><?= $tpl->__('text.company_name_helper') ?></small>
                                             </div>
                                         </div>

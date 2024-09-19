@@ -32,15 +32,26 @@
                                 <h5>2. {{ __("text.twoFA_verify_code") }}</h5>
                                 <p>
                                     <span>{{ __("label.twoFACode_short") }}:</span>
-                                    <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
-                                </p>
-
-                                <input type="hidden" name="secret" value="<?php echo $tpl->get("secret"); ?>" />
-                                <br/>
-                                <p class='stdformbutton'>
-                                    <input type="submit" name="save" id="save"
-                                           value="{{ __("buttons.save") }}" class="button"/>
-                                </p>
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="twoFACode" 
+                                        id="twoFACode" 
+                                        class="input" 
+                                    />
+                                    <br />
+                                    
+                                    <input type="hidden" name="secret" value="{{ $tpl->get('secret') }}" />
+                                    <br />
+                                    
+                                    <p class="stdformbutton">
+                                        <x-global::forms.button 
+                                            type="submit" 
+                                            name="save" 
+                                            id="save"
+                                        >
+                                            {{ __("buttons.save") }}
+                                        </x-global::forms.button>
+                                    </p>                                    
                             </form>
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
