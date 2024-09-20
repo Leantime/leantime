@@ -31,11 +31,13 @@
            </div>
     </div>
 
-    <label for="allDay">{{ __("label.all_day") }}</label>
-    <input type="checkbox" id="allDay" name="allDay"
-    <?php if ($values['allDay'] === 'true') {
-        echo 'checked="checked" ';
-    }?>
+
+    <x-global::forms.checkbox
+        name="allDay"
+        id="allDay"
+        :checked="$values['allDay']"
+        labelText="{{ __('label.all_day') }}"
+        labelPosition="left"
     />
 
     <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
