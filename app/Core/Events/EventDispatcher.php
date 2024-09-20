@@ -2,14 +2,17 @@
 
 namespace Leantime\Core\Events;
 
+use Illuminate\Cache\Events\CacheEvent;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Events\QueuedClosure;
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 /**
  * EventDispatcher class - Handles all events and filters
@@ -92,33 +95,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         foreach ((array) $events as $event) {
             $this->addEventListener($event, $listener);
         }
-    }
-
-    /**
-     * Dispatches a filter to manipulate a variable somewhere
-     *
-     * @throws BindingResolutionException
-     */
-    public function dispatchFilter(
-        string $filtername,
-        mixed $payload = '',
-        mixed $available_params = [],
-        mixed $context = ''
-    ): mixed {
-        $filtername = "$context.$filtername";
-
-        if (! in_array($filtername, $this->available_hooks['filters'])) {
-            $this->available_hooks['filters'][] = $filtername;
-        }
-
-        $matchedEvents = $this->findEventListeners($filtername, $this->filterRegistry);
-        if (count($matchedEvents) == 0) {
-            return $payload;
-        }
-
-        $available_params = $this->defineParams($available_params);
-
-        return $this->executeHandlers($matchedEvents, 'filters', $filtername, $payload, $available_params);
     }
 
     /**
@@ -321,92 +297,172 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
     private function executeHandlers(
         array $registry,
         string $registryType,
-        string $hookName,
+        mixed $hookName,
         mixed $payload,
-        array|object $available_params = [],
+        array|object $additionalParams = [],
         bool $halt = false,
         bool $isWild = false
     ): mixed {
 
         $isEvent = $registryType == 'events';
-        $filteredPayload = null;
+
+        $eventPayload = [
+            $payload,
+            $hookName,
+            $additionalParams,
+        ];
+
+        if(!is_array($payload)) {
+            $payload = [
+                $payload,
+                $hookName,
+                $additionalParams,
+            ];
+        }
 
         $registry = collect($registry)->sortBy('priority');
 
         foreach ($registry as $index => $listener) {
 
-            $handler = $this->makeListener($listener['handler'], $listener['isWild'] ?? false);
+            $handler = $listener['handler'];
 
-            // class with handle function
-            if (is_object($handler) && method_exists($handler, 'handle')) {
-                if ($isEvent) {
-                    $handler->handle($payload);
+            //Regular event
+            if ($isEvent) {
 
-                    continue;
-                }
+                //Some odd events
+//                if(is_array($eventPayload[0])){
+//
+//                    if( collect($eventPayload[0])->first() instanceof MessageLogged) {
+//                        $eventPayload[0] = $eventPayload[0][0];
+//                    }
+//
+//                    if( collect($eventPayload[0])->first() instanceof CacheEvent) {
+//                        $eventPayload[0] = $eventPayload[0][0];
+//                    }
+//
+//                    if( collect($eventPayload[0])->first() instanceof ViewEvent) {
+//                        $eventPayload[0] = $eventPayload[0][0];
+//                    }
+//
+//                }
 
-                $filteredPayload = $handler->handle(
-                    $index == 0 ? $payload : $filteredPayload,
-                    $available_params
-                );
+                $handler(event: $hookName, payload: $eventPayload[0]);
 
-                continue;
-            }
-
-            // anonymous functions
-            if (is_callable($handler)) {
-                if ($isEvent) {
-                    $handler($hookName, $payload);
-
-                    continue;
-                }
-
-                $filteredPayload = $handler(
-                    $index == 0 ? $payload : $filteredPayload,
-                    $available_params
-                );
 
                 continue;
             }
 
-            if (
-                in_array(true, [
-                    // function name as string
-                    is_string($handler) && function_exists($handler),
-                    // class instance with method name
-                    is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
-                    // class name with method name
-                    is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
-                ])
-            ) {
-                if ($isEvent) {
-                    call_user_func_array($handler, [$payload]);
+            //Filter event
+            //Filters carry the filterload in the available params array
+            $eventPayload['payload'] = $handler(event: $hookName, payload: $eventPayload);
 
-                    continue;
-                }
-
-                $filteredPayload = call_user_func_array(
-                    $handler,
-                    [
-                        $index == 0 ? $payload : $filteredPayload,
-                        $available_params,
-                    ]
-                );
-
-                continue;
-            }
-
-            if ($index == 0) {
-                $filteredPayload = $payload;
-            }
         }
 
         if (! $isEvent) {
-            return $filteredPayload;
+            return $eventPayload['payload'];
         }
 
         return null;
+
+        // class with handle function
+        // An actual object was passed into the listener
+        //            if (is_object($handler) && method_exists($handler, 'handle')) {
+        //
+        //                //Regular event
+        //                if ($isEvent) {
+        //                    $handler->handle($eventPayload);
+        //                    continue;
+        //                }
+        //
+        //                //Filter event
+        //                $eventPayload["payload"] =  $handler->handle($eventPayload);
+        //                continue;
+        //            }
+        //
+        //            // anonymous functions was passed into listener
+        //            if (is_callable($handler)) {
+        //
+        //                $filteredPayload = $this->handleAnonListeners($isEvent, $handler, $eventName, $filteredPayload, $additionalParameters);
+        //
+        //                continue;
+        //            }
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //            if (
+        //                in_array(true, [
+        //                    // function name as string
+        //                    is_string($handler) && function_exists($handler),
+        //                    // class instance with method name
+        //                    is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
+        //                    // class name with method name
+        //                    is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
+        //                ])
+        //            ) {
+        //                if ($isEvent) {
+        //                    call_user_func_array($handler, [$payload]);
+        //
+        //                    continue;
+        //                }
+        //
+        //                $filteredPayload = handleAnonListeners(
+        //                    $handler,
+        //                    [
+        //                        $index == 0 ? $payload : $filteredPayload,
+        //                        $available_params,
+        //                    ]
+        //                );
+        //
+        //                continue;
+        //            }
+        //        }
+
     }
+
+    //    protected function handleClassListeners($isEvent, $handler, $eventName, $payload, $additionalParameters)
+    //    {
+    //
+    //        $eventPayload = [
+    //            'eventName' => $eventName,
+    //            'payload' => $payload,
+    //            'availableParams' => $additionalParameters,
+    //        ];
+    //
+    //        //Is a regular event:
+    //        if ($isEvent) {
+    //            return $handler->handle($eventPayload);
+    //        }
+    //
+    //        //Is a filter event:
+    //        return $handler->handle($eventPayload);
+    //    }
+
+    //    protected function handleAnonListeners($isEvent, $handler, $eventName, $payload, $additionalParameters)
+    //    {
+    //
+    //        $eventPayload = [
+    //            'eventName' => $eventName,
+    //            'payload' => $payload,
+    //            'availableParams' => $additionalParameters,
+    //        ];
+    //
+    //        //Is a regular event:
+    //        if ($isEvent) {
+    //            return $handler(event: $eventName, payload: $eventPayload);
+    //
+    //        }
+    //
+    //        return $handler(event: $eventName, payload: $eventPayload
+    //        );
+    //    }
+
+    //    protected function handleStringListeners($isEvent, $handler, $eventName, $payload, $additionalParameters) {}
 
     public function getEventRegistry(): array
     {
@@ -588,7 +644,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             $eventName = "$context.$eventName";
         }
 
-        $this->dispatch($eventName, $payload);
+        $this->dispatch($eventName, [$payload]);
 
         //        if (! in_array($eventName, self::$available_hooks['events'])) {
         //            self::$available_hooks['events'][] = $eventName;
@@ -602,6 +658,33 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         //        $payload = self::defineParams($payload);
         //
         //        self::executeHandlers($matchedEvents, 'events', $eventName, $payload);
+    }
+
+    /**
+     * Dispatches a filter to manipulate a variable somewhere
+     *
+     * @throws BindingResolutionException
+     */
+    public function dispatchFilter(
+        string $filtername,
+        mixed $payload = '',
+        mixed $available_params = [],
+        mixed $context = ''
+    ): mixed {
+        $filtername = "$context.$filtername";
+
+        if (! in_array($filtername, $this->available_hooks['filters'])) {
+            $this->available_hooks['filters'][] = $filtername;
+        }
+
+        $matchedEvents = $this->findEventListeners($filtername, $this->filterRegistry);
+        if (count($matchedEvents) == 0) {
+            return $payload;
+        }
+
+        $available_params = $this->defineParams($available_params);
+
+        return $this->executeHandlers($matchedEvents, 'filters', $filtername, $payload, $available_params);
     }
 
     /**
@@ -657,7 +740,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
     public function getListeners($eventName)
     {
         $listeners = $this->findEventListeners($eventName, $this->getEventRegistry());
-        $list = array_map(fn($item) => $item['handler'], $listeners);
+        $list = array_map(fn ($item) => $item['handler'], $listeners);
 
         return $list;
     }
@@ -689,11 +772,19 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             ]);
 
             if (preg_match("/^$pattern$/", $eventName)) {
+
+                foreach($value as &$listener) {
+                    $listener['handler'] =  $this->makeListener($listener['handler'], $listener['isWild'] ?? false);
+                }
+                //$value['handler'] = $this->makeListener($value['handler'], $value['isWild']);
+
                 $matches = array_merge($matches, $value);
             }
         }
 
-        return $matches;
+        return class_exists($eventName, false)
+            ? $this->addInterfaceListeners($eventName, $matches)
+            : $matches;
     }
 
     /**

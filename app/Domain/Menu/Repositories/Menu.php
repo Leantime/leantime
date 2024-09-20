@@ -226,7 +226,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
                 $filter = $filter . '.' . $menuItem['id'];
 
-                return self::dispatch_filter(
+                return self::dispatchFilter(
                     hook: $filter,
                     payload:  $menuItem['submenu'],
                     function: 'getMenuStructure'
@@ -250,7 +250,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 $menuType = self::DEFAULT_MENU;
             }
 
-            $this->menuStructures = self::dispatch_filter(
+            $this->menuStructures = self::dispatchFilter(
                 'menuStructures',
                 $this->menuStructures,
                 ['menuType' => $menuType]
@@ -264,7 +264,7 @@ namespace Leantime\Domain\Menu\Repositories {
             $language = $this->language;
             $filter = "menuStructures.$menuType";
 
-            $this->menuStructures[$menuType] = self::dispatch_filter(
+            $this->menuStructures[$menuType] = self::dispatchFilter(
                         $filter,
                         $this->menuStructures[$menuType],
                         ['menuType' => $menuType]

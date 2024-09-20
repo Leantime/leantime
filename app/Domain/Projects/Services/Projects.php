@@ -785,7 +785,7 @@ class Projects
 
                 session()->forget('projectsettings');
 
-                self::dispatchEvent('projects.setCurrentProject', $project);
+                self::dispatchEvent('projects.setCurrentProject', [$project]);
 
                 return true;
             } else {
