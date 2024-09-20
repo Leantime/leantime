@@ -334,7 +334,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
         foreach ($registry as $index => $listener) {
 
-            $handler = $this->makeListener($listener['handler'], $listener['isWild']);
+            $handler = $this->makeListener($listener['handler'], $listener['isWild'] ?? false);
 
             // class with handle function
             if (is_object($handler) && method_exists($handler, 'handle')) {
