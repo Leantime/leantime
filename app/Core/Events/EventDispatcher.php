@@ -147,6 +147,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             }
         }
 
+        //Call system plugins (defined via config)
         if (
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)

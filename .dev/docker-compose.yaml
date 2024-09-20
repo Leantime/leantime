@@ -13,13 +13,12 @@ services:
   leantime-dev:
     build: .
     ports:
-      - "8888:8080"
-      - "8443:443"
+      - "8001:8080" #Using ports that are hopefully available. format is: 80XX
+      - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     volumes:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
-     # - ".env:/var/www/html/config/.env"
     environment:
       LEAN_DB_HOST: 'db'
       LEAN_DB_USER: 'leantime'

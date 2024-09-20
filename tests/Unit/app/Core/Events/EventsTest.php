@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\app\Core;
+namespace Unit\app\Core\Events;
 
 use Codeception\Test\Unit;
 use Leantime\Core\Events\EventDispatcher;

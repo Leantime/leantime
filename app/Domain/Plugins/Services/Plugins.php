@@ -5,6 +5,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Http\Client\RequestException;
+    use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
@@ -127,9 +128,8 @@ namespace Leantime\Domain\Plugins\Services {
              *
              * @var array $allPlugins
              *
-             * @api
              */
-            $allPlugins = static::dispatchFilter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
+            $allPlugins = self::dispatchFilter("beforeReturnAllPlugins", $installedPluginsById, array("enabledOnly" => $enabledOnly));
 
             return $allPlugins;
         }
@@ -139,7 +139,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @api
          */
-        public function isPluginEnabled($pluginFolder): bool
+        public function isEnabled($pluginFolder): bool
         {
             $plugins = $this->getEnabledPlugins();
 
@@ -162,24 +162,25 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            if (session()->exists('enabledPlugins')) {
+            if (Cache::store("installation")->has("enabledPlugins")) {
                 $enabledPlugins = static::dispatchFilter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
 
                 return $enabledPlugins;
             }
 
-            session(['enabledPlugins' => $this->getAllPlugins(enabledOnly: true)]);
+            Cache::store("installation")->set("enabledPlugins", $this->getAllPlugins(enabledOnly: true));
 
             /**
              * Filters session array of enabled plugins before returning
              *
              * @var array $enabledPlugins
              *
-             * @api
              */
-            $enabledPlugins = static::dispatchFilter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
+            return self::dispatchFilter(
+                hook: "beforeReturnCachedPlugins",
+                payload: Cache::store("installation")->get("enabledPlugins"),
+                available_params: array("enabledOnly" => true));
 
-            return $enabledPlugins;
         }
 
         /**
@@ -191,7 +192,6 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function discoverNewPlugins(): array
         {
-
             $this->clearCache();
 
             $installedPluginNames = array_map(fn ($plugin) => $plugin->foldername, $this->getAllPlugins());
@@ -249,7 +249,6 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function installPlugin($pluginFolder): false|string
         {
-
             $this->clearCache();
 
             $pluginFolder = Str::studly($pluginFolder);
@@ -279,6 +278,9 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
+         * @param int $id
+         * @return bool
+         *
          * @api
          */
         public function enablePlugin(int $id): bool
@@ -297,6 +299,7 @@ namespace Leantime\Domain\Plugins\Services {
                 $signature = $phar->getSignature();
 
                 $response = Http::withoutVerifying()->get("$this->marketplaceUrl", [
+                    'wp-api' => 'software-api',
                     'request' => 'activation',
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
@@ -304,6 +307,8 @@ namespace Leantime\Domain\Plugins\Services {
                     'phar_hash' => $signature,
                     'user_count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
                 ]);
+
+                $content = $response->body();
 
                 if (! $response->ok()) {
                     return false;
@@ -356,6 +361,7 @@ namespace Leantime\Domain\Plugins\Services {
         public function removePlugin(int $id): bool
         {
             $this->clearCache();
+
             /** @var PluginModel|false $plugin */
             $plugin = $this->pluginRepository->getPlugin($id);
 
@@ -452,7 +458,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             $data = $response->json();
 
-            return build(new MarketplacePlugin)
+            return build(new MarketplacePlugin())
                 ->set('identifier', $identifier ?? '')
                 ->set('name', $data['name'] ?? '')
                 ->set('icon', $data['icon'] ?? '')
@@ -560,7 +566,7 @@ namespace Leantime\Domain\Plugins\Services {
             $numberOfUsers = $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false);
             $instanceId = $this->settingsService->getCompanyId();
 
-            $response = Http::get($this->marketplaceUrl, [
+            $response = Http::withoutVerifying()->get($this->marketplaceUrl, [
                 'wp-api' => 'software-api',
                 'request' => 'check',
                 'product_id' => $plugin->id,
@@ -579,10 +585,12 @@ namespace Leantime\Domain\Plugins\Services {
         public function clearCache()
         {
 
-            session()->forget('commands.plugins');
-            session()->forget('enabledPlugins');
-            session()->forget('template_paths');
-            session()->forget('composers');
+            Cache::store('installation')->forget("domainEvents");
+            Cache::store('installation')->forget("commands");
+            Cache::store('installation')->forget("enabledPlugins");
+
+            session()->forget("template_paths");
+            session()->forget("composers");
         }
     }
 }

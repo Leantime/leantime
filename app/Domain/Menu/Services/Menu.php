@@ -20,20 +20,6 @@ class Menu
 {
     use DispatchesEvents;
 
-    private TemplateCore $tpl;
-
-    private LanguageCore $language;
-
-    private EnvironmentCore $config;
-
-    private ProjectRepository $projectRepository;
-
-    private TicketRepository $ticketRepository;
-
-    private TimesheetRepository $timesheetsRepo;
-
-    private SettingRepository $settingsRepo;
-
     private ProjectService $projectService;
 
     private TimesheetService $timesheetService;
@@ -44,27 +30,23 @@ class Menu
 
     private Setting $settingSvc;
 
+    /**
+     * @param TimesheetRepository $timesheetsRepo
+     * @param SettingRepository   $settingsRepo
+     * @param ProjectService      $projectService
+     * @param TimesheetService    $timesheetService
+     * @param SprintService       $sprintService
+     * @param Users               $userService
+     * @param Setting             $settingSvc
+     */
     public function __construct(
-        TemplateCore $tpl,
-        LanguageCore $language,
-        EnvironmentCore $config,
-        ProjectRepository $projectRepository,
-        TicketRepository $ticketRepository,
-        TimesheetRepository $timesheetsRepo,
-        SettingRepository $settingsRepo,
         ProjectService $projectService,
         TimesheetService $timesheetService,
         SprintService $sprintService,
         Users $userService,
         Setting $settingSvc
     ) {
-        $this->tpl = $tpl;
-        $this->language = $language;
-        $this->config = $config;
-        $this->projectRepository = $projectRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->timesheetsRepo = $timesheetsRepo;
-        $this->settingsRepo = $settingsRepo;
+
         $this->projectService = $projectService;
         $this->timesheetService = $timesheetService;
         $this->sprintService = $sprintService;
