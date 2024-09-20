@@ -13,14 +13,14 @@
 @if ($labelText)
         <label class="cursor-pointer label">
             @if ($labelPosition === 'left')
-                <span class="label-text">{{$labelText}}</span>
+                <span class="label-text mr-1">{{$labelText}}</span>
             @endif
             <input 
                 type="checkbox" 
                 {{ $attributes->merge(['class' => 'checkbox '.$sizeClass.' '.$stateClass]) }}
             />
             @if ($labelPosition === 'right')
-                <span class="label-text">{{$labelText}}</span>
+                <span class="label-text ml-1">{{$labelText}}</span>
             @endif
         </label>
 @else
