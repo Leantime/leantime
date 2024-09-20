@@ -1,5 +1,5 @@
 import jQuery from "jquery";
-import { appUrl } from './instance-info.module.js';
+import { appUrl } from './instance-info.module.mjs';
 import 'js/libs/jquery.growl';
 
 export default function (evt) {

@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
 import i18n from 'i18n';
-import { appUrl } from 'js/app/core/instance-info.module.js';
+import { appUrl } from 'js/app/core/instance-info.module.mjs';
 
 
 

@@ -180,8 +180,9 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="submit" name="save" id="save"
-                                   value="{{ __("buttons.save") }}" class="btn btn-primary" />
+                            <x-global::forms.button type="submit" name="save" id="save">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>                            
                         </div>
                         <div class="col-md-6 align-right">
                             <a href="{{ BASE_URL }}/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a>
@@ -226,8 +227,10 @@
                                 </div>
                             </div>
 
-                            <input type="submit" name="upload" class="button"
-                                value="<?= $tpl->__('buttons.upload') ?>" />
+                            <x-global::forms.button type="submit" name="upload" class="button">
+                                {{ __('buttons.upload') }}
+                            </x-global::forms.button>
+                            
 
                         </form>
                     </div>

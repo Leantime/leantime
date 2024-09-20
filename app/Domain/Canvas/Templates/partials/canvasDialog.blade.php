@@ -38,14 +38,14 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-        <x-global::forms.text-input 
-        type="text" 
-        name="description" 
-        value="{{ $tpl->escape($canvasItem['description']) }}" 
-        labelText="{{ $tpl->__('label.description') }}" 
-        class="w-full" 
+        <x-global::forms.text-input
+        type="text"
+        name="description"
+        value="{{ $tpl->escape($canvasItem['description']) }}"
+        labelText="{{ $tpl->__('label.description') }}"
+        class="w-full"
     />
-    
+
     @if (!empty($statusLabels))
         <label for="statusCanvas">{{ $tpl->__('label.status') }}</label>
         <select name="status" style="width: 50%" id="statusCanvas">
@@ -59,7 +59,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     @else
         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
     @endif
-    
+
     @if (!empty($relatesLabels))
         <label for="relatesCanvas">{{ $tpl->__('label.relates') }}</label>
         <select name="relates" style="width: 50%" id="relatesCanvas">
@@ -73,25 +73,25 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     @else
         <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
     @endif
-    
+
     {{-- Data Labels Handling --}}
     @foreach ([1, 2, 3] as $index)
         @if ($dataLabels[$index]['active'])
             @if (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'int')
-                <x-global::forms.text-input 
-                    type="number" 
-                    name="{{ $dataLabels[$index]['field'] }}" 
-                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}" 
-                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}" 
-                    class="w-full" 
+                <x-global::forms.text-input
+                    type="number"
+                    name="{{ $dataLabels[$index]['field'] }}"
+                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}"
+                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}"
+                    class="w-full"
                 />
             @elseif (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'string')
-                <x-global::forms.text-input 
-                    type="text" 
-                    name="{{ $dataLabels[$index]['field'] }}" 
-                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}" 
-                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}" 
-                    class="w-full" 
+                <x-global::forms.text-input
+                    type="text"
+                    name="{{ $dataLabels[$index]['field'] }}"
+                    value="{{ $canvasItem[$dataLabels[$index]['field']] }}"
+                    labelText="{{ $tpl->__($dataLabels[$index]['title']) }}"
+                    class="w-full"
                 />
             @else
                 <label for="{{ $dataLabels[$index]['field'] }}">{{ $tpl->__($dataLabels[$index]['title']) }}</label>
@@ -104,33 +104,33 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <input type="hidden" name="{{ $dataLabels[$index]['field'] }}" value="" />
         @endif
     @endforeach
-    
+
     <input type="hidden" name="milestoneId" value="{{ $canvasItem['milestoneId'] }}" />
     <input type="hidden" name="changeItem" value="1" />
-    
+
     @if ($id != '')
         <a href="{{ BASE_URL }}/{{ $canvasName }}canvas/delCanvasItem/{{ $id }}" class="{{ $canvasName }}CanvasModal delete right">
             <i class='fa fa-trash-can'></i> {{ __('links.delete') }}
         </a>
     @endif
-    
+
     @if ($login::userIsAtLeast($roles::$editor))
-        <x-global::forms.button 
-            type="submit" 
+        <x-global::forms.button
+            type="submit"
             id="primaryCanvasSubmitButton"
         >
             {{ $tpl->__("buttons.save") }}
         </x-global::forms.button>
-    
-        <x-global::forms.button 
-            type="submit" 
-            id="saveAndClose" 
+
+        <x-global::forms.button
+            type="submit"
+            id="saveAndClose"
             onclick="leantime.{{ $canvasName }}CanvasController.setCloseModal();"
         >
             {{ $tpl->__("buttons.save_and_close") }}
         </x-global::forms.button>
     @endif
-    
+
         <?php if ($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fa fa-link"></span> <?=$tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
@@ -155,8 +155,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="text" width="50%" name="newMilestone"></textarea><br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
-                                <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <x-global::forms.button type="button" onclick="jQuery('#primaryCanvasSubmitButton').click()">
+                                    {{ __('buttons.save') }}
+                                </x-global::forms.button>
+
+                                <x-global::forms.button type="button" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')">
+                                    {{ __('buttons.cancel') }}
+                                </x-global::forms.button>
                             </div>
                         </div>
 

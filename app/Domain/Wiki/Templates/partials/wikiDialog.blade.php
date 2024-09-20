@@ -34,7 +34,9 @@ if (isset($currentWiki->id)) {
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$tpl->__('buttons.save') ?>" id="saveBtn"/>
+            <x-global::forms.button type="submit" id="saveBtn">
+                {{ __('buttons.save') }}
+            </x-global::forms.button>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (isset($currentWiki->id) && $currentWiki->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>

@@ -50,7 +50,7 @@
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
                             labelText="{{ __('label.current_value') }}" variant="compact"
-                            @if ($canvasItem['setting'] == 'linkAndReport') readonly 
+                            @if ($canvasItem['setting'] == 'linkAndReport') readonly
                                 data-tippy-content="Current value calculated from child goals" @endif />
 
                     </div>

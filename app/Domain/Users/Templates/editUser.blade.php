@@ -75,16 +75,16 @@ $projects = $tpl->get('relations');
                             contentRole="link" position="bottom" align="start">
                             <x-slot:menu class="padding-md noClickProp">
                                 <x-global::actions.dropdown.item>
-                                    <x-global::forms.text-input 
-                                    type="text" 
-                                    id="inviteURL" 
-                                    value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" 
+                                    <x-global::forms.text-input
+                                    type="text"
+                                    id="inviteURL"
+                                    value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"
                                     class="w-full"
                                 />
-                                
-                                <x-global::forms.button 
-                                    type="button" 
-                                    class="btn btn-primary" 
+
+                                <x-global::forms.button
+                                    type="button"
+                                    class="btn btn-primary"
                                     onclick="leantime.snippets.copyUrl('inviteURL');"
                                 >
                                     {{ __('links.copy_url') }}
@@ -142,8 +142,10 @@ $projects = $tpl->get('relations');
 
 
                     <p class="stdformbutton">
-                        <input type="submit" name="save" id="save" value="{{ __("buttons.save") }}" class="button" />
-                    </p>
+                        <x-global::forms.button type="submit" name="save" id="save" class="button">
+                            {{ __('buttons.save') }}
+                        </x-global::forms.button>
+                                            </p>
                     </div>
                 </div>
                 <div class="col-md-5">

@@ -29,9 +29,10 @@ if (str_contains($formUrl, '?delComment=')) {
     <div id="comment0" class="commentBox">
         <textarea rows="5" cols="50" class="tinymceSimple"
                   name="text"></textarea><br/>
-        <input type="submit" value="{{ __("buttons.save") }}"
-               name="comment" class="btn btn-default btn-success"
-               style="margin-left: 0px;"/>
+                <x-global::forms.button type="submit" name="comment" class="btn btn-default btn-success" style="margin-left: 0px;">
+                    {{ __('buttons.save') }}
+                </x-global::forms.button>
+                
         <input type="hidden" name="comment" value="1"/>
         <input type="hidden" name="father" id="father" value="0"/>
         <br/>

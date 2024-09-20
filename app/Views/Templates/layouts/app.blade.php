@@ -7,7 +7,6 @@
 
 <body hx-ext="preload" data-theme="leantime">
 
-
     @include('global::sections.appAnnouncement')
 
     <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
@@ -35,8 +34,6 @@
                 <div class="indeterminate" style=""></div>
             </div>
         </div><!-- header -->
-
-
 
         <div class="" style="position: relative">
             <div class="leftpanel">

@@ -1,6 +1,6 @@
 import jQuery from "jquery";
 import { saveLogo } from './settingService';
-import { appUrl } from 'js/app/core/instance-info.module.js'
+import { appUrl } from 'js/app/core/instance-info.module.mjs'
 
 let _uploadResult;
 

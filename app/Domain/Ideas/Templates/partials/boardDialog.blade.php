@@ -5,15 +5,15 @@
         <h4 class="modal-title"><i class='fa fa-plus'></i> {!! __('subtitles.create_new_board') !!}</h4>
     </div>
     <div class="modal-body">
-        <x-global::forms.text-input 
-        type="text" 
-        name="canvastitle" 
-        value="{{ $canvasTitle }}" 
-        labelText="{{ __('label.title_new') }}" 
-        placeholder="{{ __('input.placeholders.enter_title_for_board') }}" 
-        variant="title" 
+        <x-global::forms.text-input
+        type="text"
+        name="canvastitle"
+        value="{{ $canvasTitle }}"
+        labelText="{{ __('label.title_new') }}"
+        placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
+        variant="title"
     />
-    
+
     </div>
     <div class="modal-footer">
         @if(isset($_GET['id']))

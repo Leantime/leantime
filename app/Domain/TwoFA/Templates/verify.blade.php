@@ -18,20 +18,20 @@ $redirectUrl = $tpl->get("redirectUrl");
         <?php echo $tpl->displayInlineNotification(); ?>
 
         <div>
-            <x-global::forms.text-input 
-                type="text" 
-                name="twoFA_code" 
-                id="twoFA_code" 
-                class="form-control" 
-                placeholder="{!! $tpl->language->__('label.twoFACode') !!}" 
-                value="" 
-                autofocus 
+            <x-global::forms.text-input
+                type="text"
+                name="twoFA_code"
+                id="twoFA_code"
+                class="form-control"
+                placeholder="{!! $tpl->language->__('label.twoFACode') !!}"
+                value=""
+                autofocus
             />
         </div>
-        
+
         <div>
             <div class="forgotPwContainer">
-                <x-global::forms.button 
+                <x-global::forms.button
                     tag="a"
                     href="{{ BASE_URL }}/auth/logout"
                     class="forgotPw"
@@ -39,15 +39,15 @@ $redirectUrl = $tpl->get("redirectUrl");
                     {!! $tpl->language->__('menu.sign_out') !!}
                 </x-global::forms.button>
             </div>
-        
-            <x-global::forms.button 
-                type="submit" 
+
+            <x-global::forms.button
+                type="submit"
                 name="login"
                 class="btn btn-primary"
             >
                 {!! $tpl->language->__('buttons.login') !!}
             </x-global::forms.button>
         </div>
-        
+
     </form>
 </div>

@@ -68,7 +68,13 @@ $size = floor(100 / $numberofColumns);
                         />
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-primary mb-m" value="{{ __("buttons.save") }}" name="saveTicket" style="vertical-align: top; "/>
+                        <x-global::forms.button 
+                        type="submit"
+                        class="mb-m"
+                        name="saveTicket"
+                        style="vertical-align: top;">
+                        {{ __('buttons.save') }}
+                        </x-global::forms.button>
                     </form>
 
 

@@ -51,6 +51,15 @@ mix
     // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.js`)
+    .extract([
+        'jquery',
+        'jquery-ui',
+        'htmx.org',
+        'tippy.js',
+        'moment',
+        'luxon',
+        'canvas-confetti'
+    ])
     .minify(`./public/dist/js/compiled-app.${version}.js`)
     .combine([
         "./node_modules/tinymce/tinymce.js",
@@ -111,41 +120,108 @@ mix
     })
     .tailwind()
     .webpackConfig(() => {
-    return {
-        devtool: 'inline-source-map',
-        resolve: {
-            alias: {
-                'images': path.resolve(__dirname, 'public/assets/images'),
-                'js': path.resolve(__dirname, 'public/assets/js'),
-                'css': path.resolve(__dirname, 'public/assets/css'),
-                'fonts': path.resolve(__dirname, 'public/assets/fonts'),
-                'domain': path.resolve(__dirname, 'app/Domain'),
-            }
-        },
-        externals: {
-            i18n: 'window.leantime.i18n',
-        },
-        plugins: [
-            new webpack.DefinePlugin({
-                i18n: 'window.leantime.i18n',
-            }),
-            new webpack.ProvidePlugin({
-                jQuery: 'jquery',
-            }),
-        ],
-        module: {
-            rules: [
-                {
-                    test: path.resolve(__dirname, 'node_modules/leader-line/'),
-                    use: [{
-                        loader: 'skeleton-loader',
-                        options: { procedure: content => `${content}export default LeaderLine;` }
-                    }]
+        return {
+            // entry: {
+            //     selects: './public/assets/js/app/core/selects.module.mjs',
+            //     datePickers: './public/assets/js/app/core/datePickers.module.mjs',
+            // },
+            // output: {
+            //     filename: '[name].js',
+            //     chunkFilename: '[name].chunk.js',
+            //     path: path.resolve('public/dist'),
+            //     clean: true,
+            // },
+            resolve: {
+                alias: {
+                    'images': path.resolve(__dirname, 'public/assets/images'),
+                    'js': path.resolve(__dirname, 'public/assets/js'),
+                    'css': path.resolve(__dirname, 'public/assets/css'),
+                    'fonts': path.resolve(__dirname, 'public/assets/fonts'),
+                    'domain': path.resolve(__dirname, 'app/Domain'),
                 },
+                extensions: [".*",".wasm",".mjs",".js",".jsx",".json",".*"]
+            },
+            externals: {
+                i18n: 'window.leantime.i18n',
+            },
+            plugins: [
+                new webpack.DefinePlugin({
+                    i18n: 'window.leantime.i18n',
+                }),
+                new webpack.ProvidePlugin({
+                    jQuery: 'jquery',
+                }),
             ],
-        },
-    }})
-    .sourceMaps()
+            module: {
+                rules: [
+                    {
+                        test: path.resolve(__dirname, 'node_modules/leader-line/'),
+                        use: [{
+                            loader: 'skeleton-loader',
+                            options: { procedure: content => `${content}export default LeaderLine;` }
+                        }]
+                    },
+                    // {
+                    //     test: /\.mjs$/,
+                    //     exclude: /node_modules/,
+                    //     use: {
+                    //         loader: 'babel-loader',
+                    //         options: {
+                    //             presets: ['@babel/preset-env']
+                    //         }
+                    //     }
+                    // },
+                ],
+            },
+            optimization: {
+                //  runtimeChunk: 'single',
+                // splitChunks: {
+                //     cacheGroups: {
+                //         vendor: {
+                //             test: /[\\/]node_modules[\\/]/,
+                //             name: 'vendor',
+                //             chunks: 'all'
+                //         },
+                //     }
+                // },
+             }
+        //     entry: {
+        //         index: {
+        //             import: path.resolve('public/assets/js/app', 'app-new.js'),
+        //         },
+        //         selects: {
+        //             import: path.resolve('public/assets/js/app/core', 'selects.module.mjs'),
+        //             dependOn: 'index',
+        //         },
+        //         datePickers: {
+        //             import: path.resolve('public/assets/js/app/core', 'datePickers.module.mjs'),
+        //             dependOn: 'index',
+        //         },
+        //     },
+        //     output: {
+        //         filename: '[name].bundle.js',
+        //         chunkFilename: '[name].chunk.js',
+        //         path: path.resolve('public/dist/js'),
+        //         clean: true,
+        //     },
+        //     optimization: {
+        //         runtimeChunk: 'single',
+        //         splitChunks: {
+        //             chunks: 'all',
+        //         },
+        //         // splitChunks: {
+        //         //     cacheGroups: {
+        //         //         vendor: {
+        //         //             test: /[\\/]node_modules[\\/]/,
+        //         //             name: 'vendor',
+        //         //             chunks: 'all'
+        //         //         },
+        //         //     }
+        //         // },
+        //     },
+        //
+         }
+    })
     .babelConfig({
         sourceType: 'unambiguous',
         presets: ['@babel/preset-env']

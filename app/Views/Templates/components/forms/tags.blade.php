@@ -13,5 +13,5 @@
 </div>
 
 <script>
-    leantime.selects.initTags('.input-tags-field-{{ $formHash }}', '{{ $value }}',  {{ $search }}, {{ $autocompleteTags }});
+
 </script>

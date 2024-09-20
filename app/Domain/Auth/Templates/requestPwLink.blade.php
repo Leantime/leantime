@@ -30,8 +30,10 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
                 <a href="{{ BASE_URL }}/" class="forgotPw"><?php echo $tpl->language->__("links.back_to_login"); ?></a>
             </div>
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <input type="submit" name="resetPassword" value="<?php echo $tpl->language->__("buttons.reset_password"); ?>" />
-        </div>
+            <x-global::forms.button type="submit" name="resetPassword">
+                {{ __('buttons.reset_password') }}
+            </x-global::forms.button>
+         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
     </form>
     <?php $tpl->dispatchTplEvent('beforeRegcontentClose'); ?>

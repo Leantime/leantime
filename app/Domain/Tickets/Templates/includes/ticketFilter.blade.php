@@ -25,7 +25,7 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
             <?php /*Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance */ ?>
         </a><?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {
             ?><div class="btn-group viewDropDown">
-<button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.group_by") ?>">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.group_by") ?>">
                 <span class="fa-solid fa-diagram-project"></span> Group By
                 <?php if ($searchCriteria["groupBy"] != 'all' && $searchCriteria["groupBy"] != '') { ?>
                     <span class="badge badge-primary">1</span>
@@ -183,8 +183,16 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
 
         <?php if(isset($taskToggle) && $taskToggle === true){ ?>
             <div class="" style="float:right; margin-left:5px; ">
-                <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" <?=($tpl->get('showTasks') === "true") ? 'checked="checked"' : ''; ?> style="margin-right:5px;" />
-                <label style="text-wrap: nowrap; float:right;">Show Tasks</label>
+                <x-global::forms.checkbox
+                    labelText="Show Tasks"
+                    labelPosition="right"
+                    name="showTasks"
+                    value="true"
+                    :checked="($tpl->get('showTasks') === 'true')"
+                    id="taskTypeToggle"
+                    class="toggle"
+                    onchange="jQuery('#ticketSearch').submit();"
+                />
             </div>
         <?php } ?>
 

@@ -1,6 +1,5 @@
 @extends($layout)
 @section('content')
-
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-trash"></span></div>
     <div class="pagetitle">
@@ -14,12 +13,17 @@
         <h4 class="widget widgettitle">{!! __("subtitles.delete") !!}</h4>
         <div class="widgetcontent">
             <form method="post" action="{{ BASE_URL }}/ideas/delCanvas/{{ $_GET['id'] }}">
-                <p>{!! __("text.are_you_sure_delete_idea_board") !!}</p>
-                <input type="submit" value="{!! __("buttons.yes_delete") !!}" name="del" class="button" />
-                <a class="btn btn-secondary" href="{{ BASE_URL }}/ideas/showBoards">{!! __("buttons.back") !!}</a>
-            </form>
+                    <p>{!! __('text.are_you_sure_delete_idea_board') !!}</p>
+                    <x-global::forms.button type="submit" name="del" class="button">
+                        {!! __('buttons.yes_delete') !!}
+                    </x-global::forms.button>
+
+                    <x-global::forms.button tag="a" href="{{ BASE_URL }}/ideas/showBoards"
+                        class="btn btn-secondary" content-role="secondary">
+                        {!! __('buttons.back') !!}
+                    </x-global::forms.button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
 @endsection

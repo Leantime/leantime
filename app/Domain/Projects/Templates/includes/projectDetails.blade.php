@@ -21,18 +21,18 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <x-global::forms.text-input 
-                            type="text" 
-                            name="name" 
-                            id="name" 
-                            value="{{ $tpl->escape($project['name']) }}" 
-                            placeholder="{{ $tpl->__('input.placeholders.enter_title_of_project') }}" 
-                            class="w-[99%] main-title-input" 
+                        <x-global::forms.text-input
+                            type="text"
+                            name="name"
+                            id="name"
+                            value="{{ $tpl->escape($project['name']) }}"
+                            placeholder="{{ $tpl->__('input.placeholders.enter_title_of_project') }}"
+                            class="w-[99%] main-title-input"
                         />
                     </div>
                 </div>
             </div>
-        
+
             <div class="row">
                 <div class="col-md-12">
                     <p>
@@ -44,13 +44,13 @@ $menuTypes = $tpl->get('menuTypes');
                     </textarea>
                 </div>
             </div>
-        
+
             <div class="row padding-top">
                 <div class="col-md-12">
-                    <x-global::forms.button 
-                        type="submit" 
-                        name="save" 
-                        id="save" 
+                    <x-global::forms.button
+                        type="submit"
+                        name="save"
+                        id="save"
                         class="button"
                     >
                         {{ __("buttons.save") }}
@@ -58,7 +58,7 @@ $menuTypes = $tpl->get('menuTypes');
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
 
             <div class="row marginBottom">
@@ -115,8 +115,10 @@ $menuTypes = $tpl->get('menuTypes');
                                 <span class="ld ld-ring ld-spin"></span>
                             </span>
                         <input type="hidden" name="profileImage" value="1" />
-                        <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                               value="{{ __("buttons.upload") }}"/>
+                        <x-global::forms.button type="submit" name="savePic" id="picSubmit" class="hidden">
+                            {{ __('buttons.upload') }}
+                        </x-global::forms.button>
+
 
                         </div>
                     </div>
@@ -223,27 +225,27 @@ $menuTypes = $tpl->get('menuTypes');
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-money-bill-alt"></span>{{ __("label.budgets") }}</h4>
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="hourBudget" 
-                                        id="hourBudget" 
-                                        value="{{ $tpl->escape($project['hourBudget']) }}" 
-                                        labelText="{{ __('label.hourly_budget') }}" 
-                                        class="input-large col-md-6" 
+                                    <x-global::forms.text-input
+                                        type="text"
+                                        name="hourBudget"
+                                        id="hourBudget"
+                                        value="{{ $tpl->escape($project['hourBudget']) }}"
+                                        labelText="{{ __('label.hourly_budget') }}"
+                                        class="input-large col-md-6"
                                     />
                                 </div>
-                                
+
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="dollarBudget" 
-                                        id="dollarBudget" 
-                                        value="{{ $tpl->escape($project['dollarBudget']) }}" 
-                                        labelText="{{ __('label.budget_cost') }}" 
-                                        class="input-large col-md-6" 
+                                    <x-global::forms.text-input
+                                        type="text"
+                                        name="dollarBudget"
+                                        id="dollarBudget"
+                                        value="{{ $tpl->escape($project['dollarBudget']) }}"
+                                        labelText="{{ __('label.budget_cost') }}"
+                                        class="input-large col-md-6"
                                     />
                                 </div>
-                                
+
 
                 </div>
             </div>
