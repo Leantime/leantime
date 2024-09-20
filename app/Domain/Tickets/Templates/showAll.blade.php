@@ -373,16 +373,26 @@
                                 <input type="text" title="<?php echo $tpl->__('label.due'); ?>" value="<?php echo $date; ?>"
                                     class="quickDueDates secretInput" data-id="<?php echo $row['id']; ?>" name="date" />
                             </td>
-                            <td data-order="<?= $tpl->e($row['planHours']) ?>">
-                                <input type="text" value="<?= $tpl->e($row['planHours']) ?>" name="planHours"
-                                    class="small-input secretInput"
-                                    onchange="leantime.ticketsController.updatePlannedHours(this, '<?= $row['id'] ?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
+                            <td data-order="{{ $tpl->escape($row['planHours']) }}">
+                                <x-global::forms.text-input 
+                                    type="text" 
+                                    name="planHours" 
+                                    value="{{ $tpl->escape($row['planHours']) }}" 
+                                    class="small-input secretInput" 
+                                    onchange="leantime.ticketsController.updatePlannedHours(this, '{{ $row['id'] }}'); jQuery(this).parent().attr('data-order', jQuery(this).val());"
+                                />
                             </td>
-                            <td data-order="<?= $tpl->e($row['hourRemaining']) ?>">
-                                <input type="text" value="<?= $tpl->e($row['hourRemaining']) ?>" name="remainingHours"
-                                    class="small-input secretInput"
-                                    onchange="leantime.ticketsController.updateRemainingHours(this, '<?= $row['id'] ?>');" />
+                            
+                            <td data-order="{{ $tpl->escape($row['hourRemaining']) }}">
+                                <x-global::forms.text-input 
+                                    type="text" 
+                                    name="remainingHours" 
+                                    value="{{ $tpl->escape($row['hourRemaining']) }}" 
+                                    class="small-input secretInput" 
+                                    onchange="leantime.ticketsController.updateRemainingHours(this, '{{ $row['id'] }}');"
+                                />
                             </td>
+                            
 
                             <td data-order="<?php if ($row['bookedHours'] === null || $row['bookedHours'] == '') {
                                 echo '0';

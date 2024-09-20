@@ -10,8 +10,13 @@ $currentLabel = $tpl->get('currentLabel');
 
 <x-global::content.modal.form action="{{ BASE_URL }}/setting/editBoxLabel?module={{ $_GET['module'] }}&label={{ $_GET['label'] }}">
 
-    <label><?=$tpl->__("label.label")?></label>
-    <input type="text" name="newLabel" value="<?php echo $currentLabel; ?>" /><br />
+<x-global::forms.text-input 
+    type="text" 
+    name="headline" 
+    placeholder="{{ __('input.placeholders.create_task') }}" 
+    autofocus 
+    variant="title"
+/>
 
     <div class="row">
         <div class="col-md-6">

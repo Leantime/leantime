@@ -104,16 +104,34 @@
                         <div class="hideOnLoad " id="ticket_new_<?= $key ?>" style="padding-top:5px; padding-bottom:5px;">
 
                             <form method="post">
-                                <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title"
-                                    title="<?= $tpl->__('label.headline') ?>" /><br />
-                                <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
-                                <input type="hidden" name="status" value="<?php echo $key; ?> " />
-                                <input type="hidden" name="sprint" value="<?php echo session('currentSprint'); ?> " />
-                                <input type="submit" value="Save" name="quickadd" />
-                                <a href="javascript:void(0);" class="btn btn-default"
-                                    onclick="jQuery('#ticket_new_<?= $key ?>, #ticket_new_link_<?= $key ?>').toggle('fast');">
-                                    <?= $tpl->__('links.cancel') ?>
-                                </a>
+                                <x-global::forms.text-input 
+                                    type="text" 
+                                    name="headline" 
+                                    placeholder="Enter To-Do Title" 
+                                    title="{!! $tpl->__('label.headline') !!}" 
+                                    variant="title"
+                                 />
+                                
+                                <input type="hidden" name="milestone" value="{!! $searchCriteria['milestone'] !!}" />
+                                <input type="hidden" name="status" value="{!! $key !!}" />
+                                <input type="hidden" name="sprint" value="{!! session('currentSprint') !!}" />
+                                
+                                <x-global::forms.button 
+                                    type="submit" 
+                                    name="quickadd"
+                                >
+                                    Save
+                                </x-global::forms.button>
+                                
+                                <x-global::forms.button 
+                                    tag="a"
+                                    class="btn btn-default"
+                                    href="javascript:void(0);" 
+                                    onclick="jQuery('#ticket_new_{!! $key !!}, #ticket_new_link_{!! $key !!}').toggle('fast');"
+                                >
+                                    {!! $tpl->__('links.cancel') !!}
+                                </x-global::forms.button>
+                                
                             </form>
 
                             <div class="clearfix"></div>
@@ -180,14 +198,21 @@
                                                 </div>
 
                                             </div>
-                                            <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
+                                            @if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00")
 
-                                                        echo $tpl->__("label.due_icon"); ?>
-                                            <input type="text" title="{{ __('label.due') }}" value="<?php echo format($row['dateToFinish'])->date(); ?>"
-                                                class="duedates secretInput" style="margin-left:0px;"
-                                                data-id="<?php echo $row['id']; ?>" name="date" />
+                                            <x-global::forms.text-input 
+                                                type="text" 
+                                                name="date" 
+                                                value="{!! format($row['dateToFinish'])->date() !!}" 
+                                                title="{{ __('label.due') }}" 
+                                                class="duedates secretInput" 
+                                                style="margin-left: 0px;" 
+                                                data-id="{!! $row['id'] !!}" 
+                                                leadingVisual="{!! $tpl->__('label.due_icon') !!}" 
+                                            />
+                                        
 
-                                            <?php } ?>
+                                            @endif
                                         </div>
                                     </div>
 

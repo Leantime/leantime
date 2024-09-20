@@ -34,94 +34,122 @@ $values = $tpl->get('values');
                     <div class="row row-fluid">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.name") }}</label>
-                                <div class="span6">
-                                    <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="name"
+                                    id="name"
+                                    value="{{ $tpl->escape($values['name']) }}"
+                                    labelText="{{ __('label.name') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.email") }}</label>
-                                <div class="span6">
-                                    <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="email"
+                                    id="email"
+                                    value="{{ $tpl->escape($values['email']) }}"
+                                    labelText="{{ __('label.email') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.url") }}</label>
-                                <div class="span6">
-                                    <input
-                                            type="text" name="internet" id="internet"
-                                            value="<?php $tpl->e($values['internet']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="internet"
+                                    id="internet"
+                                    value="{{ $tpl->escape($values['internet']) }}"
+                                    labelText="{{ __('label.url') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.street") }}</label>
-                                <div class="span6">
-                                    <input
-                                            type="text" name="street" id="street"
-                                            value="<?php $tpl->e($values['street']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="street"
+                                    id="street"
+                                    value="{{ $tpl->escape($values['street']) }}"
+                                    labelText="{{ __('label.street') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.zip") }}</label>
-                                <div class="span6">
-                                    <input type="text"
-                                           name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="zip"
+                                    id="zip"
+                                    value="{{ $tpl->escape($values['zip']) }}"
+                                    labelText="{{ __('label.zip') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.city") }}</label>
-                                <div class="span6">
-                                    <input type="text"
-                                           name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="city"
+                                    id="city"
+                                    value="{{ $tpl->escape($values['city']) }}"
+                                    labelText="{{ __('label.city') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.state") }}</label>
-                                <div class="span6">
-                                    <input
-                                            type="text" name="state" id="state"
-                                            value="<?php $tpl->e($values['state']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="state"
+                                    id="state"
+                                    value="{{ $tpl->escape($values['state']) }}"
+                                    labelText="{{ __('label.state') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.country") }}</label>
-                                <div class="span6">
-                                    <input
-                                            type="text" name="country" id="country"
-                                            value="<?php $tpl->e($values['country']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="country"
+                                    id="country"
+                                    value="{{ $tpl->escape($values['country']) }}"
+                                    labelText="{{ __('label.country') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label">{{ __("label.phone") }}</label>
-                                <div class="span6">
-                                    <input
-                                            type="text" name="phone" id="phone"
-                                            value="<?php $tpl->e($values['phone']); ?>" />
-                                </div>
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="phone"
+                                    id="phone"
+                                    value="{{ $tpl->escape($values['phone']) }}"
+                                    labelText="{{ __('label.phone') }}"
+                                    class="form-control"
+                                />
                             </div>
 
                             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
                             <div class="form-group">
                                 <div class="span4 control-label">
-                                    <x-global::forms.button type="submit" name="save" id="save">
+                                    <x-global::forms.button
+                                        type="submit"
+                                        name="save"
+                                        id="save"
+                                        class="btn btn-primary"
+                                    >
                                         {{ __('buttons.save') }}
                                     </x-global::forms.button>
-                                    
                                 </div>
                                 <div class="span6">
-
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>

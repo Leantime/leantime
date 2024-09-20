@@ -9,40 +9,52 @@
     'caption' => '',
     'validationText' => '',
     'validationState' => '',
+    'variant' => '', 
 ])
 
 @php
-    $sizeClass = $size ? 'input-'.$size : '';
+    $sizeClass = $variant === 'title' ? 'input-lg w-full' : ($size ? 'input-'.$size : '');
     $stateClass = $state ? 'input-'.$state : '';
     $validationClass = $validationState ? 'text-yellow-500' : '';
+    $ghostClass = $variant === 'ghost' ? 'input-ghost' : '';
+
+    if ($variant === 'title') {
+        $width = 'max-w-full';
+    } elseif ($variant === 'compact') {
+        $width = 'max-w-xs';
+    } else {
+        $width = 'w-full max-w-xs';
+    }
 @endphp
 
-<div class='par relative w-full max-w-xs'>
-    <x-global::forms.label-row>
+<div class='par relative {{$width}}'>
+    <div>
         @if($labelText)
-            <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
+        <span class='label-text font-medium'>{!! $labelText !!}</span>
         @endif
         @if($labelRight)
-            <x-slot:label-right> {!! $labelRight !!}</x-slot:label-right>
+        <span class='label-text-alt'>{!! $labelRight !!}</span>
         @endif
-    </x-global::forms.label-row>
+    </div>
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
     @endif
 
     <div class="relative">
+        @if($leadingVisual)
+            <x-global::elements.leadingVisual>
+                {{ $leadingVisual }}
+            </x-global::elements.leadingVisual>
+        @endif
 
-        <x-global::elements.leadingVisual>
-            {{ $leadingVisual }}
-        </x-global::elements.leadingVisual>
+        <input {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' '.$width.''.$ghostClass.' '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}} />
 
-        <input {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}}
-        />
-
-        <x-global::elements.trailingVisual>
-            {{ $trailingVisual }}
-        </x-global::elements.trailingVisual>
+        @if($trailingVisual)
+            <x-global::elements.trailingVisual>
+                {{ $trailingVisual }}
+            </x-global::elements.trailingVisual>
+        @endif
     </div>
 
     @if($validationText)
@@ -50,5 +62,4 @@
             <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
         </x-global::forms.label-row>
     @endif
-
 </div>

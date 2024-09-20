@@ -16,9 +16,15 @@ if (isset($currentSprint->id)) {
 ?>
 
 <x-global::content.modal.form action="{{ BASE_URL}}/sprints/editSprint/{{ $id }}">
-
-    <label><?=$tpl->__('label.sprint_name') ?></label>
-    <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="<?=$tpl->__('label.sprint_name') ?>"/><br />
+<x-global::forms.text-input 
+    type="text" 
+    name="name" 
+    value="{{ $currentSprint->name }}" 
+    placeholder="{{ $tpl->__('label.sprint_name') }}" 
+    labelText="{{ $tpl->__('label.sprint_name') }}" 
+    variant="title" 
+/>
+<br />
 
     <label><?=$tpl->__('label.project') ?></label>
     <select name="projectId">
@@ -39,11 +45,26 @@ if (isset($currentSprint->id)) {
 
     <br /><br />
     <p><?=$tpl->__('label.sprint_dates') ?></p><br/>
-    <label><?=$tpl->__('label.first_day') ?></label>
-    <input type="text" name="startDate" autocomplete="off" value="<?php echo $currentSprint->startDate?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="startDate" 
+        id="sprintStart" 
+        autocomplete="off" 
+        value="{{ $currentSprint->startDate }}" 
+        placeholder="{{ $tpl->__('language.dateformat') }}" 
+        labelText="{{ $tpl->__('label.first_day') }}"
+    />
+    <br />
 
-    <label><?=$tpl->__('label.last_day') ?></label>
-    <input type="text" name="endDate" autocomplete="off" value="<?php echo $currentSprint->endDate?>"  placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintEnd"  />
+    <x-global::forms.text-input 
+        type="text" 
+        name="endDate" 
+        id="sprintEnd" 
+        autocomplete="off" 
+        value="{{ $currentSprint->endDate }}" 
+        placeholder="{{ $tpl->__('language.dateformat') }}" 
+        labelText="{{ $tpl->__('label.last_day') }}"
+    />
 
     <br />
 

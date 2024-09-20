@@ -54,9 +54,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-        <label><?=$tpl->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php $tpl->e($canvasItem['description']) ?>" style="width:100%" /><br />
-
+        <x-global::forms.text-input 
+            type="text" 
+            name="description" 
+            value="{!! $tpl->escape($canvasItem['description']) !!}" 
+            labelText="{!! $tpl->__('label.description') !!}" 
+            class="w-full" 
+        />
+        <br />
+    
         <?php if (!empty($statusLabels)) { ?>
             <label><?=$tpl->__("label.status") ?></label>
             <select name="status" style="width: 50%" id="statusCanvas">
@@ -77,45 +83,43 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             ) ?>" />
         <?php } ?>
 
-        <?php if ($dataLabels[1]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[1]['title'] . "." . $tpl->escape($canvasItem['box'])) ?></label>
-            <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[2]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[2]['title'] . "." . $tpl->escape($canvasItem['box'])) ?></label>
-            <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[3]['active']) { ?>
-          <label><?=$tpl->__($dataLabels[3]['title'] . "." . $tpl->escape($canvasItem['box'])) ?></label>
-            <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
-        <?php } ?>
-
+        @foreach ([1, 2, 3] as $index)
+            @if ($dataLabels[$index]['active'])
+                <label>
+                    {!! $tpl->__($dataLabels[$index]['title'] . "." . $tpl->escape($canvasItem['box'])) !!}
+                </label>
+        
+                @if (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'int')
+                    <x-global::forms.text-input 
+                        type="number" 
+                        name="{!! $dataLabels[$index]['field'] !!}" 
+                        value="{!! $canvasItem[$dataLabels[$index]['field']] !!}" 
+                    />
+                    <br />
+        
+                @elseif (isset($dataLabels[$index]['type']) && $dataLabels[$index]['type'] == 'string')
+                    <x-global::forms.text-input 
+                        type="text" 
+                        name="{!! $dataLabels[$index]['field'] !!}" 
+                        value="{!! $canvasItem[$dataLabels[$index]['field']] !!}" 
+                        class="w-full" 
+                    />
+                    <br />
+        
+                @else
+                    <textarea 
+                        name="{!! $dataLabels[$index]['field'] !!}" 
+                        rows="3" 
+                        cols="10" 
+                        class="modalTextArea tinymceSimple w-full"
+                    >{!! $canvasItem[$dataLabels[$index]['field']] !!}</textarea>
+                    <br />
+                @endif
+            @else
+                <input type="hidden" name="{!! $dataLabels[$index]['field'] !!}" value="" />
+            @endif
+        @endforeach
+    
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
@@ -157,7 +161,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                <x-global::forms.text-input 
+                                    type="text" 
+                                    name="newMilestone" 
+                                    class="w-[50%]" 
+                                />
+                                <br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
                                 <x-global::forms.button type="button" onclick="jQuery('#primaryCanvasSubmitButton').click()">
