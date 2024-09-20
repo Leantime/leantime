@@ -62,16 +62,17 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.322.0",
+
+            "version": "3.322.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3eeb8d400acc902965f7de5bc85635853f27c109"
+                "reference": "1426256e7a10da135dbac91a233983a73328f078"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3eeb8d400acc902965f7de5bc85635853f27c109",
-                "reference": "3eeb8d400acc902965f7de5bc85635853f27c109",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1426256e7a10da135dbac91a233983a73328f078",
+                "reference": "1426256e7a10da135dbac91a233983a73328f078",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +155,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.1"
             },
-            "time": "2024-09-18T18:09:42+00:00"
+            "time": "2024-09-19T18:07:30+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -4836,16 +4837,16 @@
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "4.8.0",
+            "version": "4.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "2bbcb7e81097993cf64d5b296eaa6d396cddd5a7"
+                "reference": "73078e1f26d57f7a10e3bee2a2f543a02f6493c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/2bbcb7e81097993cf64d5b296eaa6d396cddd5a7",
-                "reference": "2bbcb7e81097993cf64d5b296eaa6d396cddd5a7",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/73078e1f26d57f7a10e3bee2a2f543a02f6493c3",
+                "reference": "73078e1f26d57f7a10e3bee2a2f543a02f6493c3",
                 "shasum": ""
             },
             "require": {
@@ -4909,7 +4910,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-laravel/issues",
-                "source": "https://github.com/getsentry/sentry-laravel/tree/4.8.0"
+                "source": "https://github.com/getsentry/sentry-laravel/tree/4.9.0"
             },
             "funding": [
                 {
@@ -4921,7 +4922,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2024-08-15T19:03:01+00:00"
+            "time": "2024-09-19T12:58:53+00:00"
         },
         {
             "name": "simple-cli/simple-cli",
