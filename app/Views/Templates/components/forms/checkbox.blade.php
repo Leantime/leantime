@@ -1,7 +1,8 @@
 @props ([
     'labelText' => '',
+    'labelPosition' => 'left', //left, right
     'size' => '',
-    'state' => '',
+    'state' => ''
 ])
 
 @php
@@ -10,15 +11,18 @@
 @endphp
 
 @if ($labelText)
-    <div class="form-control">
         <label class="cursor-pointer label">
-            <span class="label-text">{{$labelText}}</span>
+            @if ($labelPosition === 'left')
+                <span class="label-text">{{$labelText}}</span>
+            @endif
             <input 
                 type="checkbox" 
                 {{ $attributes->merge(['class' => 'checkbox '.$sizeClass.' '.$stateClass]) }}
             />
+            @if ($labelPosition === 'right')
+                <span class="label-text">{{$labelText}}</span>
+            @endif
         </label>
-    </div>
 @else
     <input 
         type="checkbox" 
