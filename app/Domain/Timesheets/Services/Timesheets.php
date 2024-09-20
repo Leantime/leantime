@@ -2,36 +2,31 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Users\Repositories\Users;
 
-/**
- *
- */
 class Timesheets
 {
     private TimesheetRepository $timesheetsRepo;
 
     private Users $userRepo;
 
-    public array $kind = array(
-        'GENERAL_BILLABLE' => 'label.general_billable',
-        'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
-        'PROJECTMANAGEMENT' => 'label.projectmanagement',
-        'DEVELOPMENT' => 'label.development',
+    public array $kind = [
+        'GENERAL_BILLABLE'       => 'label.general_billable',
+        'GENERAL_NOT_BILLABLE'   => 'label.general_not_billable',
+        'PROJECTMANAGEMENT'      => 'label.projectmanagement',
+        'DEVELOPMENT'            => 'label.development',
         'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
-        'TESTING' => 'label.testing',
-    );
+        'TESTING'                => 'label.testing',
+    ];
 
     /**
      * @param TimesheetRepository $timesheetsRepo
-     *
      */
     public function __construct(TimesheetRepository $timesheetsRepo, Users $userRepo)
     {
@@ -40,7 +35,7 @@ class Timesheets
     }
 
     /**
-     * isClocked - Checks to see whether a user is clocked in
+     * isClocked - Checks to see whether a user is clocked in.
      *
      * @param int $sessionId
      *
@@ -78,54 +73,54 @@ class Timesheets
     }
 
     /**
-     * logTime, will always add hours or increment existing values
+     * logTime, will always add hours or increment existing values.
      *
      * @param int   $ticketId
      * @param array $params
      *
-     * @return array|bool
-     *
      * @throws BindingResolutionException
      * @throws MissingParameterException
+     *
+     * @return array|bool
      *
      * @api
      */
     public function logTime(int $ticketId, array $params): array|bool
     {
         // @TODO: Change to use value objects for more type safeness.
-        $values = array(
-            'userId' => $params["userId"] ?? session("userdata.id"),
-            'ticket' => $ticketId,
-            'date' => '',
-            'kind' => $params['kind'] ?? '',
-            'hours' => '',
-            'rate' => '',
-            'description' => '',
-            'invoicedEmpl' => '',
-            'invoicedComp' => '',
+        $values = [
+            'userId'           => $params['userId'] ?? session('userdata.id'),
+            'ticket'           => $ticketId,
+            'date'             => '',
+            'kind'             => $params['kind'] ?? '',
+            'hours'            => '',
+            'rate'             => '',
+            'description'      => '',
+            'invoicedEmpl'     => '',
+            'invoicedComp'     => '',
             'invoicedEmplDate' => '',
             'invoicedCompDate' => '',
-            'paid' => '',
-        );
+            'paid'             => '',
+        ];
 
         if (!isset($ticketId)) {
-            throw new MissingParameterException("Ticket Id is a required field");
+            throw new MissingParameterException('Ticket Id is a required field');
         }
 
         if (!isset($params['date'])) {
-            throw new MissingParameterException("Date is a required field");
+            throw new MissingParameterException('Date is a required field');
         }
 
         if (!isset($params['hours'])) {
-            throw new MissingParameterException("Hours is a required field");
+            throw new MissingParameterException('Hours is a required field');
         }
 
         if (!isset($params['kind'])) {
-            throw new MissingParameterException("Timesheet type is a required field");
+            throw new MissingParameterException('Timesheet type is a required field');
         }
 
         if (empty($params['time'])) {
-            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['date'] = format($params['date'], 'start', FromFormat::UserDateStartOfDay)->isoDateTime();
         } else {
             $values['date'] = format($params['date'], $params['time'], FromFormat::UserDateTime)->isoDateTime();
         }
@@ -134,7 +129,7 @@ class Timesheets
         $values['description'] = $params['description'] ?? '';
 
         $loggingUser = $this->userRepo->getUser($values['userId']);
-        $values["rate"] = $loggingUser["wage"];
+        $values['rate'] = $loggingUser['wage'];
 
         $this->timesheetsRepo->addTime($values);
 
@@ -142,57 +137,57 @@ class Timesheets
     }
 
     /**
-     * Upserts a time entry for a ticket. Will update hours based on the values provided, not touching descriptions
+     * Upserts a time entry for a ticket. Will update hours based on the values provided, not touching descriptions.
      *
      * @param int   $ticketId The ID of the ticket.
      * @param array $params   An associative array of parameters for the time entry.
-     *     - userId: The ID of the user creating the time entry. Defaults to the ID of the logged-in user.
-     *     - kind: The type of timesheet entry. Required.
-     *     - date: The date of the time entry. Required.
-     *     - hours: The number of hours for the time entry. Required.
+     *                        - userId: The ID of the user creating the time entry. Defaults to the ID of the logged-in user.
+     *                        - kind: The type of timesheet entry. Required.
+     *                        - date: The date of the time entry. Required.
+     *                        - hours: The number of hours for the time entry. Required.
+     *
+     * @throws MissingParameterException  If any of the required parameters are missing.
+     * @throws BindingResolutionException
      *
      * @return array|bool Returns true if the time entry was successfully upserted.
-     *
-     * @throws MissingParameterException If any of the required parameters are missing.
-     * @throws BindingResolutionException
      *
      * @api
      */
     public function upsertTime(int $ticketId, array $params): array|bool
     {
         // @TODO: Change to use value objects for more type safeness.
-        $values = array(
-            'userId' => $params["userId"] ?? session("userdata.id"),
-            'ticket' => $ticketId,
-            'date' => '',
-            'kind' => $params['kind'] ?? '',
-            'hours' => '',
-            'rate' => '',
-            'invoicedEmpl' => '',
-            'invoicedComp' => '',
+        $values = [
+            'userId'           => $params['userId'] ?? session('userdata.id'),
+            'ticket'           => $ticketId,
+            'date'             => '',
+            'kind'             => $params['kind'] ?? '',
+            'hours'            => '',
+            'rate'             => '',
+            'invoicedEmpl'     => '',
+            'invoicedComp'     => '',
             'invoicedEmplDate' => '',
             'invoicedCompDate' => '',
-            'paid' => '',
-        );
+            'paid'             => '',
+        ];
 
         if (!isset($ticketId)) {
-            throw new MissingParameterException("Ticket Id is a required field");
+            throw new MissingParameterException('Ticket Id is a required field');
         }
 
         if (!isset($params['date'])) {
-            throw new MissingParameterException("Date is a required field");
+            throw new MissingParameterException('Date is a required field');
         }
 
         if (!isset($params['hours'])) {
-            throw new MissingParameterException("Hours is a required field");
+            throw new MissingParameterException('Hours is a required field');
         }
 
         if (!isset($params['kind'])) {
-            throw new MissingParameterException("Timesheet type is a required field");
+            throw new MissingParameterException('Timesheet type is a required field');
         }
 
         if (empty($params['timestamp'])) {
-            $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTime();
+            $values['date'] = format($params['date'], 'start', FromFormat::UserDateStartOfDay)->isoDateTime();
         } else {
             $values['date'] = dtHelper()->timestamp($params['timestamp'])->formatDateTimeForDb();
         }
@@ -200,7 +195,7 @@ class Timesheets
         $values['hours'] = $params['hours'];
 
         $loggingUser = $this->userRepo->getUser($values['userId']);
-        $values["rate"] = $loggingUser["wage"];
+        $values['rate'] = $loggingUser['wage'];
 
         $this->timesheetsRepo->upsertTimesheetEntry($values);
 
@@ -317,13 +312,13 @@ class Timesheets
     }
 
     /**
-     * @param int $projectId
+     * @param int             $projectId
      * @param CarbonInterface $fromDate
-     * @param int $userId
-     *
-     * @return array
+     * @param int             $userId
      *
      * @throws BindingResolutionException
+     *
+     * @return array
      *
      * @api
      */
@@ -348,71 +343,71 @@ class Timesheets
             // Various Entries can be in different timezones and thus would not be caught by upsert or grouping by
             // default Creating new rows for each timezone adjustment
             //to avoid timezone collisions we disable adding new times to rows that were created in an different timezone
-            $timezonedTime = $currentWorkDate->format("H:i:s");
+            $timezonedTime = $currentWorkDate->format('H:i:s');
 
-            $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-" . $timezonedTime;
+            $groupKey = $timesheet['ticketId'].'-'.$timesheet['kind'].'-'.$timezonedTime;
             if (!isset($timesheetGroups[$groupKey])) {
                 // Build an array of 7 days for the weekly timesheet. Include the start date of the current users
                 // timezone in UTC. That way we can compare the dates coming from the db
-                $timesheetGroups[$groupKey] = array(
-                    "kind" =>  $timesheet["kind"],
-                    "clientName" => $timesheet["clientName"],
-                    "name" => $timesheet["name"],
-                    "headline" => $timesheet["headline"],
-                    "ticketId" => $timesheet["ticketId"],
-                    "hasTimesheetOffset" => $workdateOffsetStart !== 0,
-                    "day1" => array(
-                        "start" =>  $fromDate,
-                        "end" => $fromDate->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
+                $timesheetGroups[$groupKey] = [
+                    'kind'               => $timesheet['kind'],
+                    'clientName'         => $timesheet['clientName'],
+                    'name'               => $timesheet['name'],
+                    'headline'           => $timesheet['headline'],
+                    'ticketId'           => $timesheet['ticketId'],
+                    'hasTimesheetOffset' => $workdateOffsetStart !== 0,
+                    'day1'               => [
+                        'start'          => $fromDate,
+                        'end'            => $fromDate->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
 
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day2" => array(
-                        "start" =>  $fromDate->addDays(1),
-                        "end" => $fromDate->addDays(1)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day3" => array(
-                        "start" =>  $fromDate->addDays(2),
-                        "end" => $fromDate->addDays(2)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day4" => array(
-                        "start" =>  $fromDate->addDays(3),
-                        "end" => $fromDate->addDays(3)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day5" => array(
-                        "start" =>  $fromDate->addDays(4),
-                        "end" => $fromDate->addDays(4)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day6" => array(
-                        "start" =>  $fromDate->addDays(5),
-                        "end" => $fromDate->addDays(5)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "day7" => array(
-                        "start" =>  $fromDate->addDays(6),
-                        "end" => $fromDate->addDays(6)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
-                        "hours" => 0,
-                        "description" => "",
-                    ),
-                    "rowSum" => 0,
-                );
+                        'hours'       => 0,
+                        'description' => '',
+                    ],
+                    'day2' => [
+                        'start'          => $fromDate->addDays(1),
+                        'end'            => $fromDate->addDays(1)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'day3' => [
+                        'start'          => $fromDate->addDays(2),
+                        'end'            => $fromDate->addDays(2)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'day4' => [
+                        'start'          => $fromDate->addDays(3),
+                        'end'            => $fromDate->addDays(3)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'day5' => [
+                        'start'          => $fromDate->addDays(4),
+                        'end'            => $fromDate->addDays(4)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'day6' => [
+                        'start'          => $fromDate->addDays(5),
+                        'end'            => $fromDate->addDays(5)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'day7' => [
+                        'start'          => $fromDate->addDays(6),
+                        'end'            => $fromDate->addDays(6)->addHours(23)->addMinutes(59),
+                        'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
+                        'hours'          => 0,
+                        'description'    => '',
+                    ],
+                    'rowSum' => 0,
+                ];
             }
 
             // Check if timesheet entry falls within the day range of the weekly grouped timesheets that we are trying
@@ -425,14 +420,13 @@ class Timesheets
             // stored as UTC timezone shoifted value in the db.
             // If the value is not exact but falls within the time period we're adding a new row
             for ($i = 1; $i < 8; $i++) {
-
-                $start = $timesheetGroups[$groupKey]["day" . $i]["start"];
-                $end = $timesheetGroups[$groupKey]["day" . $i]["end"];
+                $start = $timesheetGroups[$groupKey]['day'.$i]['start'];
+                $end = $timesheetGroups[$groupKey]['day'.$i]['end'];
 
                 if ($currentWorkDate->gte($start) && $currentWorkDate->lt($end)) {
-                    $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
-                    $timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] = $currentWorkDate;
-                    $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
+                    $timesheetGroups[$groupKey]['day'.$i]['hours'] += $timesheet['hours'];
+                    $timesheetGroups[$groupKey]['day'.$i]['actualWorkDate'] = $currentWorkDate;
+                    $timesheetGroups[$groupKey]['day'.$i]['description'] = $timesheet['description'];
 
                     // No need to check further, we found what we came for
                     break;
@@ -448,13 +442,9 @@ class Timesheets
                 }
             }*/
 
-
-
-
             // Add to rowsum
-            $timesheetGroups[$groupKey]["rowSum"] += $timesheet['hours'];
+            $timesheetGroups[$groupKey]['rowSum'] += $timesheet['hours'];
         }
-
 
         return $timesheetGroups;
     }
@@ -485,6 +475,7 @@ class Timesheets
 
     /**
      * @param ?int $projectId
+     *
      * @return array
      *
      * @api
@@ -494,15 +485,15 @@ class Timesheets
         $timesheets = $this->timesheetsRepo->getAllAccountTimesheets($projectId);
 
         foreach ($timesheets as $key => $timesheet) {
-          $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
+            $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
         }
 
         return $timesheets;
-
     }
 
     /**
      * @param ?int $projectId
+     *
      * @return array
      *
      * @api
@@ -513,46 +504,44 @@ class Timesheets
 
         foreach ($timesheets as $key => $timesheet) {
             $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
-            $timesheets[$key]['id'] = $timesheet['id'] . '-' . $timesheet['modified'];
+            $timesheets[$key]['id'] = $timesheet['id'].'-'.$timesheet['modified'];
         }
 
         return $timesheets;
     }
 
-
-    private function prepareDatesForApiResponse($timesheet) {
-
-        if(dtHelper()->isValidDateString($timesheet['workDate'])) {
+    private function prepareDatesForApiResponse($timesheet)
+    {
+        if (dtHelper()->isValidDateString($timesheet['workDate'])) {
             $timesheet['workDate'] = dtHelper()->parseDbDateTime($timesheet['workDate'])->toIso8601ZuluString();
         } else {
             $timesheet['workDate'] = null;
         }
 
-        if(dtHelper()->isValidDateString($timesheet['invoicedEmplDate'])) {
+        if (dtHelper()->isValidDateString($timesheet['invoicedEmplDate'])) {
             $timesheet['invoicedEmplDate'] = dtHelper()->parseDbDateTime($timesheet['invoicedEmplDate'])->toIso8601ZuluString();
         } else {
             $timesheet['invoicedEmplDate'] = null;
         }
 
-        if(dtHelper()->isValidDateString($timesheet['invoicedCompDate'])) {
+        if (dtHelper()->isValidDateString($timesheet['invoicedCompDate'])) {
             $timesheet['invoicedCompDate'] = dtHelper()->parseDbDateTime($timesheet['invoicedCompDate'])->toIso8601ZuluString();
         } else {
             $timesheet['invoicedCompDate'] = null;
         }
 
-        if(dtHelper()->isValidDateString($timesheet['paidDate'])) {
+        if (dtHelper()->isValidDateString($timesheet['paidDate'])) {
             $timesheet['paidDate'] = dtHelper()->parseDbDateTime($timesheet['paidDate'])->toIso8601ZuluString();
         } else {
             $timesheet['paidDate'] = null;
         }
 
-        if(dtHelper()->isValidDateString($timesheet['modified'])) {
+        if (dtHelper()->isValidDateString($timesheet['modified'])) {
             $timesheet['modified'] = dtHelper()->parseDbDateTime($timesheet['modified'])->toIso8601ZuluString();
         } else {
             $timesheet['modified'] = null;
         }
 
         return $timesheet;
-
     }
 }

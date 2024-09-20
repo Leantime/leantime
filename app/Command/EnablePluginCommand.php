@@ -8,7 +8,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * Class EnablePluginCommand
+ * Class EnablePluginCommand.
  *
  * This class represents a command that enables plugins.
  */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * canvas class - Generic canvas API controller
+ * canvas class - Generic canvas API controller.
  */
 
 namespace Leantime\Domain\Api\Controllers;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 class Canvas extends Controller
 {
     /**
-     * Constant that must be redefined
+     * Constant that must be redefined.
      */
     protected const CANVAS_NAME = '??';
 
@@ -31,30 +31,27 @@ class Canvas extends Controller
     private mixed $canvasRepo;
 
     /**
-     * constructor - initialize private variables
+     * constructor - initialize private variables.
      *
-     * @access public
      *
      * @param ProjectRepository $projects
      *
-     * @return void
-
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function init(ProjectRepository $projects): void
     {
         // @TODO: project are never used in this class?
         $this->projects = $projects;
-        $canvasName = Str::studly(static::CANVAS_NAME) . 'canvas';
-        $repoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+        $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
+        $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
         $this->canvasRepo = app()->make($repoName);
     }
 
-
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -66,9 +63,8 @@ class Canvas extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -80,9 +76,8 @@ class Canvas extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -101,9 +96,8 @@ class Canvas extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params
      *

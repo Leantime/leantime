@@ -10,9 +10,6 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Projects extends Controller
 {
     private FileuploadCore $fileUpload;
@@ -21,9 +18,8 @@ class Projects extends Controller
     private UserService $userService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param FileuploadCore $fileUpload
      * @param ProjectService $projectService
@@ -45,15 +41,14 @@ class Projects extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function get(array $params): Response
     {
@@ -61,44 +56,44 @@ class Projects extends Controller
             return $this->tpl->displayJson(['status' => 'failure'], 400);
         }
 
-        $svg = $this->projectService->getProjectAvatar($params["projectAvatar"]);
+        $svg = $this->projectService->getProjectAvatar($params['projectAvatar']);
         if (is_array($svg)) {
             $file = $this->fileUpload;
+
             return match ($svg['type']) {
-                'uploaded' => $file->displayImageFile($svg['filename']),
-                'generated' => $file->displayImageFile("avatar", $svg['filename']),
+                'uploaded'  => $file->displayImageFile($svg['filename']),
+                'generated' => $file->displayImageFile('avatar', $svg['filename']),
             };
         }
 
         $response = new Response($svg->toXMLString());
         $response->headers->set('Content-type', 'image/svg+xml');
-        $response->headers->set("Pragma", 'public');
-        $response->headers->set("Cache-Control", 'max-age=86400');
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'max-age=86400');
 
         return $response;
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
         // Updating User Image
         if (!empty($_FILES['file'])) {
-            $_FILES['file']['name'] = "profileImage-" . session("currentProject") . ".png";
+            $_FILES['file']['name'] = 'profileImage-'.session('currentProject').'.png';
 
-            $this->projectService->setProjectAvatar($_FILES, session("currentProject"));
+            $this->projectService->setProjectAvatar($_FILES, session('currentProject'));
 
-            session(["msg" => "PICTURE_CHANGED"]);
-            session(["msgT" => "success"]);
+            session(['msg' => 'PICTURE_CHANGED']);
+            session(['msgT' => 'success']);
 
             return $this->tpl->displayJson(['status' => 'ok']);
         }
@@ -108,8 +103,8 @@ class Projects extends Controller
         }
 
         $callback = match ($params['action']) {
-            'sortIndex' => fn() => $this->projectService->updateProjectStatusAndSorting($params["payload"], $handler ?? null),
-            'ganttSort' => fn() => $this->projectService->updateProjectSorting($params["payload"]),
+            'sortIndex' => fn () => $this->projectService->updateProjectStatusAndSorting($params['payload'], $handler ?? null),
+            'ganttSort' => fn () => $this->projectService->updateProjectSorting($params['payload']),
         };
 
         if (!$callback()) {
@@ -120,9 +115,8 @@ class Projects extends Controller
     }
 
     /**
-     * put - Special handling for settings
+     * put - Special handling for settings.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -135,18 +129,18 @@ class Projects extends Controller
             || (!empty($params['patchModalSettings']) && empty($params['settings']))
             || (!empty($params['patchViewSettings']) && empty($params['value']))
             || (!empty($params['patchMenuStateSettings']) && empty($params['value']))
-            || (!empty($params['patchProjectProgress']) && (empty($params['values']) || !session()->has("currentProject")))
+            || (!empty($params['patchProjectProgress']) && (empty($params['values']) || !session()->has('currentProject')))
         ) {
             return $this->tpl->displayJson(['status' => 'failure', 'error' => 'Required params not included in request'], 400);
         }
 
         foreach (
             [
-             'id' => fn() => $this->projectService->patch($params['id'], $params),
-             'patchModalSettings' => fn() => $this->userService->updateUserSettings("modals", $params['settings'], 1),
-             'patchViewSettings' => fn() => $this->userService->updateUserSettings("views", $params['patchViewSettings'], $params['value']),
-             'patchMenuStateSettings' => fn() => $this->userService->updateUserSettings("views", "menuState", $params['value']),
-             'patchProjectProgress' => fn() => $this->projectService->updateProjectProgress($params['values'], session("currentProject")),
+                'id'                     => fn () => $this->projectService->patch($params['id'], $params),
+                'patchModalSettings'     => fn () => $this->userService->updateUserSettings('modals', $params['settings'], 1),
+                'patchViewSettings'      => fn () => $this->userService->updateUserSettings('views', $params['patchViewSettings'], $params['value']),
+                'patchMenuStateSettings' => fn () => $this->userService->updateUserSettings('views', 'menuState', $params['value']),
+                'patchProjectProgress'   => fn () => $this->projectService->updateProjectProgress($params['values'], session('currentProject')),
             ] as $param => $callback
         ) {
             if (!isset($params[$param])) {
@@ -163,11 +157,9 @@ class Projects extends Controller
         return new Response();
     }
 
-
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

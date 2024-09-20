@@ -8,7 +8,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * Class InstallPluginCommand
+ * Class InstallPluginCommand.
  *
  * This class represents a command that installs plugins.
  */
@@ -31,7 +31,7 @@ class InstallPluginCommand extends AbstractPluginCommand
     /**
      * {@inheritdoc}
      *
-     *  @return int
+     * @return int
      */
     protected function executeCommand(): int
     {

@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Plugins\Contracts;
 
-/**
- *
- */
 interface PluginDisplayStrategy
 {
     /**

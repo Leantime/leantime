@@ -13,9 +13,6 @@ use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 
-/**
- *
- */
 class HeadMenu extends Composer
 {
     public static array $views = [
@@ -35,6 +32,7 @@ class HeadMenu extends Composer
      * @param TimesheetService    $timesheets
      * @param UserService         $userService
      * @param AuthService         $authService
+     *
      * @return void
      */
     public function init(
@@ -56,17 +54,18 @@ class HeadMenu extends Composer
     }
 
     /**
-     * @return array
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     public function with(): array
     {
         $notificationService = $this->notificationService;
-        $notifications = array();
+        $notifications = [];
         $newnotificationCount = 0;
-        if (session()->exists("userdata")) {
-            $notifications = $notificationService->getAllNotifications(session("userdata.id"));
-            $newnotificationCount = $notificationService->getAllNotifications(session("userdata.id"), true);
+        if (session()->exists('userdata')) {
+            $notifications = $notificationService->getAllNotifications(session('userdata.id'));
+            $newnotificationCount = $notificationService->getAllNotifications(session('userdata.id'), true);
         }
 
         $nCount = is_array($newnotificationCount) ? count($newnotificationCount) : 0;
@@ -75,7 +74,7 @@ class HeadMenu extends Composer
         $totalNewMentions =
         $totalNewNotifications = 0;
 
-        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), 'project');
 
         foreach ($notifications as $notif) {
             if ($notif['type'] == 'mention') {
@@ -92,35 +91,35 @@ class HeadMenu extends Composer
         }
 
         $user = false;
-        if (session()->exists("userdata")) {
-            $user = $this->userService->getUser(session("userdata.id"));
+        if (session()->exists('userdata')) {
+            $user = $this->userService->getUser(session('userdata.id'));
         }
 
         if (!$user) {
             $this->authService->logout();
-            FrontcontrollerCore::redirect(BASE_URL . '/auth/login');
+            FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
         }
 
         $modal = $this->helperService->getHelperModalByRoute(FrontcontrollerCore::getCurrentRoute());
 
-        if (!session()->exists("companysettings.logoPath")) {
-            session(["companysettings.logoPath" => $this->themeCore->getLogoUrl()]);
+        if (!session()->exists('companysettings.logoPath')) {
+            session(['companysettings.logoPath' => $this->themeCore->getLogoUrl()]);
         }
 
         return [
-            'newNotificationCount' => $nCount,
+            'newNotificationCount'   => $nCount,
             'totalNotificationCount' => $totalNotificationCount,
-            'totalMentionCount' => $totalMentionCount,
-            'totalNewMentions' => $totalNewMentions,
-            'totalNewNotifications' => $totalNewNotifications,
-            'menuType' => $menuType,
-            'notifications' => $notifications ?? [],
-            'onTheClock' => session()->exists("userdata") ? $this->timesheets->isClocked(session("userdata.id")) : false,
-            'activePath' => FrontcontrollerCore::getCurrentRoute(),
-            'action' => FrontcontrollerCore::getActionName(),
-            'module' => FrontcontrollerCore::getModuleName(),
-            'user' => $user ?? [],
-            'modal' => $modal,
+            'totalMentionCount'      => $totalMentionCount,
+            'totalNewMentions'       => $totalNewMentions,
+            'totalNewNotifications'  => $totalNewNotifications,
+            'menuType'               => $menuType,
+            'notifications'          => $notifications ?? [],
+            'onTheClock'             => session()->exists('userdata') ? $this->timesheets->isClocked(session('userdata.id')) : false,
+            'activePath'             => FrontcontrollerCore::getCurrentRoute(),
+            'action'                 => FrontcontrollerCore::getActionName(),
+            'module'                 => FrontcontrollerCore::getModuleName(),
+            'user'                   => $user ?? [],
+            'modal'                  => $modal,
         ];
     }
 }

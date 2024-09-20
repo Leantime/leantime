@@ -17,6 +17,7 @@ abstract class DTO
         $builder = build($this);
         $propertyAttributes = collect((new \ReflectionClass($this))->getProperties())->mapWithKeys(function ($property) {
             $property->setAccessible(true);
+
             return [$property->getName() => collect($property->getAttributes())->mapWithKeys(fn ($attr) => [$attr->getName() => $attr->getArguments()])];
         })->all();
         $propertyAttributes = Arr::dot($propertyAttributes);
@@ -54,8 +55,11 @@ abstract class DTO
      *
      * @param string[] $params validations rules to apply to the value
      * @param mixed    $value
+     *
      * @return mixed
+     *
      * @todo Implement. May use illuminate/validation later on.
+     *
      * @see https://github.com/mattstauffer/Torch/tree/master/components/validation
      **/
     private function validate(array $params, mixed $value): mixed
@@ -64,18 +68,21 @@ abstract class DTO
     }
 
     /**
-     * Gets the DTO data as multidimensional an array
+     * Gets the DTO data as multidimensional an array.
+     *
      * @return array
      **/
     public function toArray(): array
     {
         $props = get_class_vars($this::class);
         unset($props['data']);
+
         return collect($props)->map(fn ($defaultVal, $key) => $this->{$key} ?? $defaultVal)->all();
     }
 
     /**
-     * Gets the DTO data as multidimensional an array
+     * Gets the DTO data as multidimensional an array.
+     *
      * @return array
      **/
     public function all(): array

@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Strategy Brief - Delete Canvas
+ * Strategy Brief - Delete Canvas.
  */
-
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }

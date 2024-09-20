@@ -33,12 +33,12 @@ class Install
         $this->I->fillField(['name' => 'company'], $company);
         $this->I->click('Install');
 
-        $this->I->waitForElementVisible(".login-alert");
+        $this->I->waitForElementVisible('.login-alert');
 
         $this->I->see('The installation was successful');
 
         // Disable all on-boarding modal popups.
-        $this->settingsRepo->saveSetting("companysettings.completedOnboarding", 0);
+        $this->settingsRepo->saveSetting('companysettings.completedOnboarding', 0);
 
         Fixtures::add('installed', true);
     }

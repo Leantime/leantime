@@ -10,8 +10,7 @@ use Symfony\Component\ErrorHandler\Debug;
 
 class Environment extends ServiceProvider
 {
-
-    Use DispatchesEvents;
+    use DispatchesEvents;
 
     /**
      * Register any application services.
@@ -28,19 +27,17 @@ class Environment extends ServiceProvider
 
         $this->app->alias(\Leantime\Core\Configuration\Environment::class, 'config');
         $this->app->alias(\Leantime\Core\Configuration\Environment::class, \Illuminate\Contracts\Config\Repository::class);
-
     }
 
-    public function boot() {
-
+    public function boot()
+    {
         $config = $this->app->make(\Leantime\Core\Configuration\Environment::class);
 
-        if (empty(config("env"))) {
-            config(["env" => 'production']);
+        if (empty(config('env'))) {
+            config(['env' => 'production']);
         }
 
-        if($config->debug) {
-
+        if ($config->debug) {
             Debug::enable();
             config(['debug' => true]);
             config(['debug_blacklist' => [
@@ -68,14 +65,12 @@ class Environment extends ServiceProvider
         $exceptionsHandler = $this->app->make(HandleExceptions::class);
         $exceptionsHandler->bootstrap($this->app);
 
-
         self::dispatch_event('config_initialized');
-
     }
-
 
     /**
      * @param int $debug
+     *
      * @return void
      */
     private function setErrorHandler(int $debug): void
@@ -90,6 +85,4 @@ class Environment extends ServiceProvider
 
         Debug::enable();
     }
-
-
 }

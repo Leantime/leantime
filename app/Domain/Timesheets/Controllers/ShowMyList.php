@@ -9,9 +9,6 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowMyList extends Controller
 {
     private TimesheetService $timesheetService;
@@ -24,15 +21,15 @@ class ShowMyList extends Controller
     public function init(TimesheetService $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
-        session(["lastPage" => BASE_URL . "/timesheets/showMyList"]);
+        session(['lastPage' => BASE_URL.'/timesheets/showMyList']);
     }
 
     /**
-     * run - display template and edit data
-     *
-     * @return Response
+     * run - display template and edit data.
      *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function run(): Response
     {
@@ -40,7 +37,7 @@ class ShowMyList extends Controller
 
         $kind = 'all';
         if (!empty($_POST['kind'])) {
-            $kind = ($_POST['kind']);
+            $kind = $_POST['kind'];
         }
 
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
@@ -67,7 +64,7 @@ class ShowMyList extends Controller
             dateTo: $dateTo,
             projectId: -1,
             kind: $kind,
-            userId: session("userdata.id"),
+            userId: session('userdata.id'),
             invEmpl: 0,
             invComp: 0,
             paid: 0

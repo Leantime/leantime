@@ -10,10 +10,7 @@ use PDO;
 use PDOException;
 
 /**
- * Database Class - Very simple abstraction layer for pdo connection
- *
- * @package    leantime
- * @subpackage core
+ * Database Class - Very simple abstraction layer for pdo connection.
  */
 class Db
 {
@@ -50,9 +47,10 @@ class Db
     public PDO $database;
 
     /**
-     * __construct - connect to database and select db
+     * __construct - connect to database and select db.
      *
      * @param Environment $config
+     *
      * @return void
      */
     public function __construct(Environment $config)
@@ -60,8 +58,8 @@ class Db
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;
         $this->databaseName = $config->dbDatabase;
-        $this->host = $config->dbHost ?? "localhost";
-        $this->port = $config->dbPort ?? "3306";
+        $this->host = $config->dbHost ?? 'localhost';
+        $this->port = $config->dbPort ?? '3306';
 
         try {
             $this->database = new PDO(
@@ -78,14 +76,14 @@ class Db
             $found_errors = [];
 
             if (!extension_loaded('PDO')) {
-                $found_errors[] = "php-PDO is required, but not installed";
+                $found_errors[] = 'php-PDO is required, but not installed';
             }
 
             if (!extension_loaded('pdo_mysql')) {
-                $found_errors[] = "php-pdo_mysql is required, but not installed";
+                $found_errors[] = 'php-pdo_mysql is required, but not installed';
             }
 
-            if (! empty($found_errors)) {
+            if (!empty($found_errors)) {
                 echo "Checking common issues:$newline";
                 foreach ($found_errors as $error) {
                     echo "- $error$newline";
@@ -94,7 +92,7 @@ class Db
 
             report($e);
 
-            exit();
+            exit;
         }
     }
 
@@ -107,15 +105,16 @@ class Db
      *
      * @param string $name
      * @param int    $count
+     *
      * @return string
      */
     public static function arrayToPdoBindingString(string $name, int $count): string
     {
-        $bindingStatement = "";
+        $bindingStatement = '';
         for ($i = 0; $i < $count; $i++) {
-            $bindingStatement .= ":" . $name . $i;
+            $bindingStatement .= ':'.$name.$i;
             if ($i != $count - 1) {
-                $bindingStatement .= ",";
+                $bindingStatement .= ',';
             }
         }
 
@@ -124,14 +123,15 @@ class Db
 
     /**
      * Sanitizes a string to only contain letters, numbers and underscore.
-     * Used for patch statements with variable column keys values
+     * Used for patch statements with variable column keys values.
      *
      *
      * @param string $string
+     *
      * @return string
      */
     public static function sanitizeToColumnString(string $string): string
     {
-        return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $string);
     }
 }

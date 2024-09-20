@@ -11,10 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Frontcontroller class
- *
- * @package    leantime
- * @subpackage core
+ * Frontcontroller class.
  */
 class Frontcontroller
 {
@@ -43,12 +40,13 @@ class Frontcontroller
     /**
      * @var array - valid status codes
      */
-    private array $validStatusCodes = array("100","101","200","201","202","203","204","205","206","300","301","302","303","304","305","306","307","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","500","501","502","503","504","505");
+    private array $validStatusCodes = ['100', '101', '200', '201', '202', '203', '204', '205', '206', '300', '301', '302', '303', '304', '305', '306', '307', '400', '401', '402', '403', '404', '405', '406', '407', '408', '409', '410', '411', '412', '413', '414', '415', '416', '417', '500', '501', '502', '503', '504', '505'];
 
     /**
-     * __construct - Set the rootpath of the server
+     * __construct - Set the rootpath of the server.
      *
      * @param IncomingRequest $incomingRequest
+     *
      * @return void
      */
     public function __construct(IncomingRequest $incomingRequest)
@@ -58,54 +56,57 @@ class Frontcontroller
     }
 
     /**
-     * run - executes the action depending on Request or firstAction
+     * run - executes the action depending on Request or firstAction.
      *
-     * @access public
      * @param string $action
      * @param int    $httpResponseCode
-     * @return Response
+     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public static function dispatch(string $action = '', int $httpResponseCode = 200): Response
     {
         self::$fullAction = empty($action) ? self::getCurrentRoute() : $action;
 
         if (self::$fullAction == '') {
-            return self::dispatch("errors.error404", 404);
+            return self::dispatch('errors.error404', 404);
         }
 
         //execute action
-        return self::executeAction(self::$fullAction, array());
+        return self::executeAction(self::$fullAction, []);
     }
 
     public static function dispatch_request(IncomingRequest $request): Response
     {
         self::$incomingRequest = $request;
+
         return self::dispatch();
     }
 
     /**
-     * executeAction - includes the class in includes/modules by the Request
+     * executeAction - includes the class in includes/modules by the Request.
      *
-     * @access private
      * @param string $completeName actionname.filename
      * @param array  $params
-     * @return Response
+     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
-    private static function executeAction(string $completeName, array $params = array()): Response
+    private static function executeAction(string $completeName, array $params = []): Response
     {
         $namespace = app()->getNamespace(false);
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
 
-        self::dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
+        self::dispatch_event('execute_action_start', ['action'=>$actionName, 'module'=>$moduleName]);
 
-        $controllerNs = "Domain";
+        $controllerNs = 'Domain';
         $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
 
-        if (! class_exists($classname)) {
+        if (!class_exists($classname)) {
             $classname = "$namespace\\Plugins\\$moduleName\\$controllerType\\$actionName";
             $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
@@ -118,8 +119,8 @@ class Frontcontroller
                 break;
             }
 
-            if (! $pluginEnabled || ! class_exists($classname)) {
-                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : self::redirect(BASE_URL . "/errors/error404", 307);
+            if (!$pluginEnabled || !class_exists($classname)) {
+                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : self::redirect(BASE_URL.'/errors/error404', 307);
             }
         }
 
@@ -128,75 +129,77 @@ class Frontcontroller
 
         self::$lastAction = $completeName;
 
-        self::dispatch_event("execute_action_end", ["action"=>$actionName, "module"=>$moduleName ]);
+        self::dispatch_event('execute_action_end', ['action'=>$actionName, 'module'=>$moduleName]);
 
         return app()->make($classname)->getResponse();
     }
 
     /**
-     * includeAction - possible to include action from everywhere
+     * includeAction - possible to include action from everywhere.
      *
-     * @access public
      * @param string $completeName
      * @param array  $params
-     * @return void
+     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
-    public static function includeAction(string $completeName, array $params = array()): void
+    public static function includeAction(string $completeName, array $params = []): void
     {
         self::executeAction($completeName, $params);
     }
 
     /**
-     * getActionName - split string to get actionName
+     * getActionName - split string to get actionName.
      *
-     * @access public
      * @param string|null $completeName
-     * @return string
+     *
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public static function getActionName(string $completeName = null): string
     {
         $completeName ??= self::getCurrentRoute();
-        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
+        $actionParts = explode('.', empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         //If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
-            return "index";
+            return 'index';
         } elseif (is_array($actionParts) && count($actionParts) == 2) {
             return $actionParts[1];
         }
 
-        return "";
+        return '';
     }
 
     /**
-     * getModuleName - split string to get modulename
+     * getModuleName - split string to get modulename.
      *
-     * @access public
      * @param string|null $completeName
-     * @return string
+     *
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public static function getModuleName(string $completeName = null): string
     {
         $completeName ??= self::getCurrentRoute();
-        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
+        $actionParts = explode('.', empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         if (is_array($actionParts)) {
             return $actionParts[0];
         }
 
-        return "";
+        return '';
     }
 
-
     /**
-     * getCurrentRoute - gets the current main action in format module.action
+     * getCurrentRoute - gets the current main action in format module.action.
      *
-     * @access public
-     * @return string
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public static function getCurrentRoute(): string
     {
@@ -212,10 +215,11 @@ class Frontcontroller
     }
 
     /**
-     * redirect - redirects to a given url
+     * redirect - redirects to a given url.
      *
      * @param string $url
      * @param int    $http_response_code
+     *
      * @return RedirectResponse
      */
     public static function redirect(string $url, int $http_response_code = 303): RedirectResponse
@@ -227,9 +231,10 @@ class Frontcontroller
     }
 
     /**
-     * setResponseCode - sets the response code
+     * setResponseCode - sets the response code.
      *
      * @param int $responseCode
+     *
      * @return void
      */
     public static function setResponseCode(int $responseCode): void

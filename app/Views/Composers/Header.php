@@ -50,30 +50,30 @@ class Header extends Composer
         $themeFont = $this->themeCore->getFont();
 
         // Set colors to use
-        if (! session()->exists("companysettings.sitename")) {
-            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+        if (!session()->exists('companysettings.sitename')) {
+            $sitename = $this->settingsRepo->getSetting('companysettings.sitename');
             if ($sitename !== false) {
-                session(["companysettings.sitename" => $sitename]);
+                session(['companysettings.sitename' => $sitename]);
             } else {
-                session(["companysettings.sitename" => $this->config->sitename]);
+                session(['companysettings.sitename' => $this->config->sitename]);
             }
         }
 
         return [
-            'sitename' => session("companysettings.sitename") ?? '',
+            'sitename'     => session('companysettings.sitename') ?? '',
             'primaryColor' => $this->themeCore->getPrimaryColor(),
-            'theme' => $theme,
-            'version' => $this->appSettings->appVersion ?? '',
+            'theme'        => $theme,
+            'version'      => $this->appSettings->appVersion ?? '',
             'themeScripts' => [
                 $this->themeCore->getJsUrl() ?? '',
                 $this->themeCore->getCustomJsUrl() ?? '',
             ],
-            'themeColorMode' => $colorMode,
+            'themeColorMode'   => $colorMode,
             'themeColorScheme' => $colorScheme,
-            'themeFont' => $themeFont,
-            'themeStyles' => [
+            'themeFont'        => $themeFont,
+            'themeStyles'      => [
                 [
-                    'id' => 'themeStyleSheet',
+                    'id'  => 'themeStyleSheet',
                     'url' => $this->themeCore->getStyleUrl() ?? '',
                 ],
                 [

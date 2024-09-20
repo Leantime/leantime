@@ -8,7 +8,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class Ideas
+ * Class Ideas.
  *
  * This class represents a controller for handling ideas related requests.
  */
@@ -18,9 +18,8 @@ class Ideas extends Controller
     private IdeaRepository $ideaAPIRepo;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param ProjectRepository $projects
      * @param IdeaRepository    $ideaAPIRepo
@@ -35,9 +34,8 @@ class Ideas extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -49,9 +47,8 @@ class Ideas extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -59,16 +56,16 @@ class Ideas extends Controller
      */
     public function post(array $params): Response
     {
-        if (isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
-            if (! $this->ideaAPIRepo->updateIdeaSorting($params['payload'])) {
+        if (isset($params['action']) && $params['action'] == 'ideaSort' && isset($params['payload']) === true) {
+            if (!$this->ideaAPIRepo->updateIdeaSorting($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
             return $this->tpl->displayJson(['status' => 'ok']);
         }
 
-        if (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
-            if (! $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"])) {
+        if (isset($params['action']) && $params['action'] == 'statusUpdate' && isset($params['payload']) === true) {
+            if (!$this->ideaAPIRepo->bulkUpdateIdeaStatus($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -79,9 +76,8 @@ class Ideas extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -97,9 +93,8 @@ class Ideas extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params
      *

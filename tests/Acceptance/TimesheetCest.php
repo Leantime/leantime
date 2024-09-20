@@ -4,7 +4,6 @@ namespace Acceptance;
 
 use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
-use Codeception\Util\Locator;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -26,19 +25,19 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
         // Select project.
-        $I->waitForElementNotVisible(".project-select", 120);
+        $I->waitForElementNotVisible('.project-select', 120);
         $I->click('#projectSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
         $I->click('#projectSelect .chosen-results .active-result');
 
         // Select ticket.
-        $I->waitForElementNotVisible(".ticket-select", 120);
+        $I->waitForElementNotVisible('.ticket-select', 120);
         $I->click('#ticketSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
         $I->click('#ticketSelect .chosen-results .active-result');
 
         // Select type.
-        $I->waitForElementVisible(".kind-select", 120);
+        $I->waitForElementVisible('.kind-select', 120);
         $I->selectOption('.kind-select', 'General, billable');
 
         // Set hours in active
@@ -51,14 +50,14 @@ class TimesheetCest
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
         $I->seeInDatabase('zp_timesheets', [
-            'id' => 1,
+            'id'    => 1,
             'hours' => 1,
-            'kind' => 'GENERAL_BILLABLE'
+            'kind'  => 'GENERAL_BILLABLE',
         ]);
         $I->seeInDatabase('zp_timesheets', [
-            'id' => 2,
+            'id'    => 2,
             'hours' => 2,
-            'kind' => 'GENERAL_BILLABLE'
+            'kind'  => 'GENERAL_BILLABLE',
         ]);
     }
 
@@ -181,10 +180,9 @@ class TimesheetCest
         $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_timesheets', [
-            'id' => '1',
+            'id'    => '1',
             'hours' => 2,
         ]);
-
 
         // Close modal.
         $I->waitForElementVisible('.nyroModalClose');
@@ -283,7 +281,7 @@ class TimesheetCest
     /**
      * Change the timezone for the logged-in user.
      *
-     * @param AcceptanceTester $I The AcceptanceTester object representing the test runner.
+     * @param AcceptanceTester $I        The AcceptanceTester object representing the test runner.
      * @param string           $timezone The timezone to be set. Defaults to 'America/Los_Angeles'.
      *
      * @return void
@@ -296,9 +294,8 @@ class TimesheetCest
         $I->click('#saveSettings');
 
         $I->seeInDatabase('zp_settings', [
-            'key' => 'usersettings.1.timezone',
+            'key'   => 'usersettings.1.timezone',
             'value' => $timezone,
         ]);
-
     }
 }

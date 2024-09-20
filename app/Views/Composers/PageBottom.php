@@ -37,9 +37,9 @@ class PageBottom extends Composer
     public function with(): array
     {
         return [
-            'version' => $this->settings->appVersion,
+            'version'      => $this->settings->appVersion,
             'poorMansCron' => $this->environment->get('poorMansCron'),
-            'loggedIn' => session()->exists("userdata"),
+            'loggedIn'     => session()->exists('userdata'),
         ];
     }
 }

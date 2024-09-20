@@ -5,9 +5,6 @@ namespace Leantime\Domain\Audit\Repositories;
 use Leantime\Core\Db\Db as DbCore;
 use PDO;
 
-/**
- *
- */
 class Audit
 {
     private DbCore $db;
@@ -31,9 +28,8 @@ class Audit
      *
      * @return void
      */
-    public function storeEvent(string $action = "ping", string $values = "", string $entity = "", int $entityId = 0, int $userId = 0, int $projectId = 0, string $thedate = ''): void
+    public function storeEvent(string $action = 'ping', string $values = '', string $entity = '', int $entityId = 0, int $userId = 0, int $projectId = 0, string $thedate = ''): void
     {
-
         if ($thedate == '') {
             $thedate2 = date('Y-m-d H:i:s');
         } else {

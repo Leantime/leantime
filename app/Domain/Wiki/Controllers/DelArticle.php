@@ -1,52 +1,44 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Controllers {
+namespace Leantime\Domain\Wiki\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+
+class DelArticle extends Controller
+{
+    private WikiRepository $wikiRepo;
 
     /**
-     *
+     * init - initialize private variables.
      */
-    class DelArticle extends Controller
+    public function init(WikiRepository $wikiRepo)
     {
-        private WikiRepository $wikiRepo;
+        $this->wikiRepo = $wikiRepo;
+    }
 
-        /**
-         * init - initialize private variables
-         *
-         * @access public
-         */
-        public function init(WikiRepository $wikiRepo)
-        {
-            $this->wikiRepo = $wikiRepo;
+    /**
+     * run - display template and edit data.
+     */
+    public function run()
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        if (isset($_GET['id'])) {
+            $id = (int) $_GET['id'];
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        if (isset($_POST['del']) && isset($id)) {
+            $this->wikiRepo->delArticle($id);
 
-            if (isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
-            }
+            $this->tpl->setNotification($this->language->__('notification.article_deleted'), 'success', 'article_deleted');
 
-            if (isset($_POST['del']) && isset($id)) {
-                $this->wikiRepo->delArticle($id);
-
-                $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success", "article_deleted");
-
-                return Frontcontroller::redirect(BASE_URL . "/wiki/show");
-            }
-
-            return $this->tpl->displayPartial('wiki.delArticle');
+            return Frontcontroller::redirect(BASE_URL.'/wiki/show');
         }
+
+        return $this->tpl->displayPartial('wiki.delArticle');
     }
 }

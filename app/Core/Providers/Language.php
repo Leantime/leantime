@@ -15,6 +15,4 @@ class Language extends ServiceProvider
     {
         $this->app->singleton(\Leantime\Core\Language::class, \Leantime\Core\Language::class);
     }
-
-
 }

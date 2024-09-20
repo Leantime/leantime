@@ -10,9 +10,6 @@ use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
-/**
- *
- */
 class Api
 {
     use DispatchesEvents;
@@ -42,12 +39,12 @@ class Api
      */
     public function getAPIKeyUser(string $apiKey): bool|array
     {
-
         // Split apiKey into parts
-        $apiKeyParts = explode("_", $apiKey);
+        $apiKeyParts = explode('_', $apiKey);
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
-            report("Not a valid API Key format");
+            report('Not a valid API Key format');
+
             return false;
         }
 
@@ -55,8 +52,8 @@ class Api
         $user = $apiKeyParts[1];
         $key = $apiKeyParts[2];
 
-        if ($namespace != "lt") {
-            report("Unknown namespace for API request");
+        if ($namespace != 'lt') {
+            report('Unknown namespace for API request');
 
             return false;
         }
@@ -73,17 +70,16 @@ class Api
     }
 
     /**
-     * createAPIKey - simple service wrapper to create a new user
+     * createAPIKey - simple service wrapper to create a new user.
      *
      * TODO: Should accept userModel
      *
-     * @access public
-
+     *
      * @param array $values basic user values
-
-     * @return bool|array returns new user id on success, false on failure
-
+     *
      * @throws Exception
+     *
+     * @return bool|array returns new user id on success, false on failure
      *
      * @api
      */
@@ -92,22 +88,21 @@ class Api
         $user = $this->randomStr(32);
         $password = $this->randomStr(32);
 
-        $values["user"] = $user;
-        $values["lastname"] = '';
-        $values["passwordClean"] = $password;
-        $values["password"] = $password;
-        $values["status"] = 'a';
-        $values["clientId"] = '';
-        $values["phone"] = '';
-        $values["id"] = $this->userRepo->addUser($values);
+        $values['user'] = $user;
+        $values['lastname'] = '';
+        $values['passwordClean'] = $password;
+        $values['password'] = $password;
+        $values['status'] = 'a';
+        $values['clientId'] = '';
+        $values['phone'] = '';
+        $values['id'] = $this->userRepo->addUser($values);
 
-        return $values["id"] ? $values : false;
+        return $values['id'] ? $values : false;
     }
 
     /**
-     * getAPIKeys - gets api keys (users) from user table
+     * getAPIKeys - gets api keys (users) from user table.
      *
-     * @access public
      *
      * @return array|false
      *
@@ -115,7 +110,7 @@ class Api
      */
     public function getAPIKeys(): false|array
     {
-        $keys =  $this->userRepo->getAllBySource("api");
+        $keys = $this->userRepo->getAllBySource('api');
 
         foreach ($keys as &$key) {
             $key['username'] = substr($key['username'], 0, 5);
@@ -124,10 +119,9 @@ class Api
         return $keys;
     }
 
-
     /**
      * Generate a random string, using a cryptographically secure
-     * pseudorandom number generator (random_int)
+     * pseudorandom number generator (random_int).
      *
      * This function uses type hints now (PHP 7+ only), but it was originally
      * written for PHP 5 as well.
@@ -137,9 +131,10 @@ class Api
      *
      * @param int    $length   How many characters do we want?
      * @param string $keyspace A string of all possible characters to select from
-     * @return string
      *
      * @throws Exception
+     *
+     * @return string
      *
      * @api
      */
@@ -148,13 +143,13 @@ class Api
         string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ): string {
         if ($length < 1) {
-            throw new RangeException("Length must be a positive integer");
+            throw new RangeException('Length must be a positive integer');
         }
 
         $pieces = [];
         $max = mb_strlen($keyspace, '8bit') - 1;
-        for ($i = 0; $i < $length; ++$i) {
-            $pieces [] = $keyspace[random_int(0, $max)];
+        for ($i = 0; $i < $length; $i++) {
+            $pieces[] = $keyspace[random_int(0, $max)];
         }
 
         return implode('', $pieces);
@@ -174,16 +169,16 @@ class Api
      */
     public function jsonResponse(int $id, ?array $result): void
     {
-        $jsonRPCArray = array(
-            "jsonrpc" => "2.0",
-        );
+        $jsonRPCArray = [
+            'jsonrpc' => '2.0',
+        ];
 
         header('Content-Type: application/json; charset=utf-8');
 
         if ($this->error != null) {
-            $jsonRPCArray["error"] = $this->error;
+            $jsonRPCArray['error'] = $this->error;
         } elseif ($result !== null) {
-            $jsonRPCArray["result"] = $result;
+            $jsonRPCArray['result'] = $result;
         }
 
         echo json_encode($jsonRPCArray);
@@ -213,10 +208,11 @@ class Api
         $basePath = array_keys($correctManifest)[0];
         $correctManifest = array_values($correctManifest)[0];
 
-        return $basePath . array_search($referenceValue, $correctManifest);
+        return $basePath.array_search($referenceValue, $correctManifest);
     }
 
-    public function healthCheck() {
+    public function healthCheck()
+    {
         return true;
     }
 }

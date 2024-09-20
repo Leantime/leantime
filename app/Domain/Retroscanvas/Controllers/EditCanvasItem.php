@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Edit Canvas Item
+ * Controller / Edit Canvas Item.
  */
 
-namespace Leantime\Domain\Retroscanvas\Controllers {
+namespace Leantime\Domain\Retroscanvas\Controllers;
 
-    /**
-     *
-     */
-    class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
-    {
-        protected const CANVAS_NAME = 'retros';
-    }
-
+class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+{
+    protected const CANVAS_NAME = 'retros';
 }

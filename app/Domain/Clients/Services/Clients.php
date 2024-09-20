@@ -7,7 +7,7 @@ use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
 /**
- * Class Clients
+ * Class Clients.
  */
 class Clients
 {
@@ -18,7 +18,6 @@ class Clients
      * @param TemplateCore      $tpl
      * @param ProjectRepository $projectRepository
      * @param ClientRepository  $clientRepository
-     *
      */
     public function __construct(
         ProjectRepository $projectRepository,
@@ -30,6 +29,7 @@ class Clients
 
     /**
      * @param int $userId
+     *
      * @return array
      *
      * @api
@@ -42,8 +42,8 @@ class Clients
         if (is_array($userProjects)) {
             $userClients = [];
             foreach ($userProjects as $project) {
-                if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = array("id" => $project["clientId"], "name" => $project['clientName']);
+                if (!array_key_exists($project['clientId'], $clients)) {
+                    $clients[$project['clientId']] = ['id' => $project['clientId'], 'name' => $project['clientName']];
                 }
             }
         }
@@ -65,8 +65,7 @@ class Clients
      * patches the client by key.
      *
      * @param int   $id     Id of the object to be patched
-     * @param  array $params Key=>value array where key represents the object field name and value the value.
-     * @access public
+     * @param array $params Key=>value array where key represents the object field name and value the value.
      *
      * @return bool returns true on success, false on failure
      *
@@ -80,10 +79,9 @@ class Clients
     /**
      * updates the client by key.
      *
-     * @param  object|array $values expects the entire object to be updated as object or array
-     * @access public
+     * @param object|array $values expects the entire object to be updated as object or array
      *
-     * @return bool                 Returns true on success, false on failure
+     * @return bool Returns true on success, false on failure
      *
      * @api
      */
@@ -93,11 +91,11 @@ class Clients
     }
 
     /**
-     * Creates a new client
+     * Creates a new client.
      *
-     * @access public
-     * @param  object|array $values Object or array to be created
-     * @return int|false                Returns id of new element or false
+     * @param object|array $values Object or array to be created
+     *
+     * @return int|false Returns id of new element or false
      *
      * @api
      */
@@ -107,11 +105,11 @@ class Clients
     }
 
     /**
-     * Deletes a client
+     * Deletes a client.
      *
-     * @access public
      * @param int $id Id of the object to be deleted
-     * @return bool     Returns id of new element or false
+     *
+     * @return bool Returns id of new element or false
      *
      * @api
      */
@@ -121,10 +119,10 @@ class Clients
     }
 
     /**
-     * Gets 1 specific client by id
+     * Gets 1 specific client by id.
      *
-     * @access public
      * @param int $id Id of the object to be retrieved
+     *
      * @return object|array|false Returns object or array. False on failure or if item cannot be found
      *
      * @api

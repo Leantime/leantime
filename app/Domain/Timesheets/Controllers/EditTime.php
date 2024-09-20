@@ -11,9 +11,6 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class EditTime extends Controller
 {
     private TimesheetRepository $timesheetsRepo;
@@ -25,7 +22,7 @@ class EditTime extends Controller
     const EMPTY_DATE = '0000-00-00 00:00:00';
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param TimesheetRepository $timesheetsRepo
      * @param ProjectRepository   $projects
@@ -44,11 +41,11 @@ class EditTime extends Controller
     }
 
     /**
-     * run - display template and edit data
-     *
-     * @return Response
+     * run - display template and edit data.
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return Response
      */
     public function run(): Response
     {
@@ -58,7 +55,7 @@ class EditTime extends Controller
         // Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
             if (isset($_GET['id']) === true) {
-                $id = ($_GET['id']);
+                $id = $_GET['id'];
 
                 $timesheet = $this->timesheetsRepo->getTimesheet($id);
 
@@ -67,24 +64,24 @@ class EditTime extends Controller
                 $timesheet['invoicedCompDate'] = $timesheet['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedCompDate'];
                 $timesheet['paidDate'] = $timesheet['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheet['paidDate'];
 
-                $values = array(
-                    'id' => $id,
-                    'userId' => $timesheet['userId'],
-                    'ticket' => $timesheet['ticketId'],
-                    'project' => $timesheet['projectId'],
-                    'date' => new Carbon($timesheet['workDate'], 'UTC'),
-                    'kind' => $timesheet['kind'],
-                    'hours' => $timesheet['hours'],
-                    'description' => $timesheet['description'],
-                    'invoicedEmpl' => $timesheet['invoicedEmpl'],
-                    'invoicedComp' => $timesheet['invoicedComp'],
+                $values = [
+                    'id'               => $id,
+                    'userId'           => $timesheet['userId'],
+                    'ticket'           => $timesheet['ticketId'],
+                    'project'          => $timesheet['projectId'],
+                    'date'             => new Carbon($timesheet['workDate'], 'UTC'),
+                    'kind'             => $timesheet['kind'],
+                    'hours'            => $timesheet['hours'],
+                    'description'      => $timesheet['description'],
+                    'invoicedEmpl'     => $timesheet['invoicedEmpl'],
+                    'invoicedComp'     => $timesheet['invoicedComp'],
                     'invoicedEmplDate' => new Carbon($timesheet['invoicedEmplDate'], 'UTC'),
                     'invoicedCompDate' => new Carbon($timesheet['invoicedCompDate'], 'UTC'),
-                    'paid' => $timesheet['paid'],
-                    'paidDate' => new Carbon($timesheet['paidDate'], 'UTC'),
-                );
+                    'paid'             => $timesheet['paid'],
+                    'paidDate'         => new Carbon($timesheet['paidDate'], 'UTC'),
+                ];
 
-                if (Auth::userIsAtLeast(Roles::$manager) || session("userdata.id") == $values['userId']) {
+                if (Auth::userIsAtLeast(Roles::$manager) || session('userdata.id') == $values['userId']) {
                     if (isset($_POST['saveForm']) === true) {
                         if (!empty($_POST['tickets'])) {
                             $values['project'] = (int) $_POST['projects'];
@@ -92,20 +89,20 @@ class EditTime extends Controller
                         }
 
                         if (!empty($_POST['kind'])) {
-                            $values['kind'] = ($_POST['kind']);
+                            $values['kind'] = $_POST['kind'];
                         }
 
                         if (!empty($_POST['date'])) {
-                            $date = dtHelper()->parseUserDateTime($_POST['date'], "start")->formatDateTimeForDb();
+                            $date = dtHelper()->parseUserDateTime($_POST['date'], 'start')->formatDateTimeForDb();
                             $values['date'] = $date;
                         }
 
                         if (!empty($_POST['hours'])) {
-                            $values['hours'] = (float)($_POST['hours']);
+                            $values['hours'] = (float) $_POST['hours'];
                         }
 
                         if (!empty($_POST['description'])) {
-                            $values['description'] = ($_POST['description']);
+                            $values['description'] = $_POST['description'];
                         }
 
                         if (Auth::userIsAtLeast(Roles::$manager)) {
@@ -115,7 +112,7 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['invoicedEmplDate'])) {
-                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedEmplDate'], "start")->formatDateTimeForDb();
+                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedEmplDate'], 'start')->formatDateTimeForDb();
                                     $values['invoicedEmplDate'] = $date;
                                 } else {
                                     $values['invoicedEmplDate'] = dtHelper()->userNow()->formatDateTimeForDb();
@@ -131,7 +128,7 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['invoicedCompDate'])) {
-                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedCompDate'], "start")->formatDateTimeForDb();
+                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedCompDate'], 'start')->formatDateTimeForDb();
                                     $values['invoicedCompDate'] = $date;
                                 } else {
                                     $values['invoicedCompDate'] = dtHelper()->userNow()->formatDateTimeForDb();
@@ -147,7 +144,7 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['paidDate'])) {
-                                    $date = dtHelper()->parseUserDateTime($_POST['paidDate'], "start")->formatDateTimeForDb();
+                                    $date = dtHelper()->parseUserDateTime($_POST['paidDate'], 'start')->formatDateTimeForDb();
                                     $date->setTimezone('UTC');
                                     $values['paidDate'] = $date;
                                 } else {
@@ -173,22 +170,22 @@ class EditTime extends Controller
                                         $timesheetUpdated['invoicedCompDate'] = $timesheetUpdated['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedCompDate'];
                                         $timesheetUpdated['paidDate'] = $timesheetUpdated['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['paidDate'];
 
-                                        $values = array(
-                                            'id' => $id,
-                                            'userId' => $timesheetUpdated['userId'],
-                                            'ticket' => $timesheetUpdated['ticketId'],
-                                            'project' => $timesheetUpdated['projectId'],
-                                            'date' => new Carbon($timesheetUpdated['workDate'], 'UTC'),
-                                            'kind' => $timesheetUpdated['kind'],
-                                            'hours' => $timesheetUpdated['hours'],
-                                            'description' => $timesheetUpdated['description'],
-                                            'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
-                                            'invoicedComp' => $timesheetUpdated['invoicedComp'],
+                                        $values = [
+                                            'id'               => $id,
+                                            'userId'           => $timesheetUpdated['userId'],
+                                            'ticket'           => $timesheetUpdated['ticketId'],
+                                            'project'          => $timesheetUpdated['projectId'],
+                                            'date'             => new Carbon($timesheetUpdated['workDate'], 'UTC'),
+                                            'kind'             => $timesheetUpdated['kind'],
+                                            'hours'            => $timesheetUpdated['hours'],
+                                            'description'      => $timesheetUpdated['description'],
+                                            'invoicedEmpl'     => $timesheetUpdated['invoicedEmpl'],
+                                            'invoicedComp'     => $timesheetUpdated['invoicedComp'],
                                             'invoicedEmplDate' => new Carbon($timesheetUpdated['invoicedEmplDate'], 'UTC'),
                                             'invoicedCompDate' => new Carbon($timesheetUpdated['invoicedCompDate'], 'UTC'),
-                                            'paid' => $timesheetUpdated['paid'],
-                                            'paidDate' => new Carbon($timesheetUpdated['paidDate'], 'UTC'),
-                                        );
+                                            'paid'             => $timesheetUpdated['paid'],
+                                            'paidDate'         => new Carbon($timesheetUpdated['paidDate'], 'UTC'),
+                                        ];
                                     } else {
                                         $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
                                     }

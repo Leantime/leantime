@@ -9,10 +9,7 @@ use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Incoming Request information
- *
- * @package    leantime
- * @subpackage core
+ * Incoming Request information.
  */
 class IncomingRequest extends Request
 {
@@ -29,14 +26,14 @@ class IncomingRequest extends Request
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
-
         $this->setRequestDest();
     }
 
     /**
-     * Sets the request destination from the path
+     * Sets the request destination from the path.
      *
      * @param string|null $requestUri
+     *
      * @return void
      */
     protected function setRequestDest(?string $requestUri = null): void
@@ -64,7 +61,7 @@ class IncomingRequest extends Request
                 $id = $uriParts[2];
                 isset($uriParts[3]) && $request_parts = join('.', array_slice($uriParts, 3));
                 break;
-        };
+        }
 
         $this->query->set('act', $act);
         isset($id) && $this->query->set('id', $id);
@@ -72,25 +69,25 @@ class IncomingRequest extends Request
     }
 
     /**
-     * Gets the full URL including request uri and protocol
+     * Gets the full URL including request uri and protocol.
      *
      * @return string
      */
     public function getFullUrl(): string
     {
-        return  $this->getSchemeAndHttpHost() .  $this->getBaseUrl() .  $this->getPathInfo();
+        return  $this->getSchemeAndHttpHost().$this->getBaseUrl().$this->getPathInfo();
     }
 
     /**
      * Gets the request URI (path behind domain name)
-     * Will adjust for subfolder installations
+     * Will adjust for subfolder installations.
+     *
+     * @throws BindingResolutionException
      *
      * @return string
-     * @throws BindingResolutionException
      */
     public function getRequestUri(): string
     {
-
         $requestUri = parent::getRequestUri();
 
         $config = app()->make(Environment::class);
@@ -101,12 +98,12 @@ class IncomingRequest extends Request
 
         $baseUrlParts = explode('/', rtrim($config->appUrl, '/'));
 
-        if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
+        if (!is_array($baseUrlParts) || count($baseUrlParts) < 4) {
             return $requestUri;
         }
 
         $subfolderName = $baseUrlParts[3];
-        $requestUri = preg_replace('/^\/' . $subfolderName . '/', '', $requestUri);
+        $requestUri = preg_replace('/^\/'.$subfolderName.'/', '', $requestUri);
 
         $this->requestUri = $requestUri;
 
@@ -116,9 +113,10 @@ class IncomingRequest extends Request
     }
 
     /**
-     * Gets the request params
+     * Gets the request params.
      *
      * @param string|null $method
+     *
      * @return array
      */
     public function getRequestParams(string $method = null): array
@@ -133,7 +131,7 @@ class IncomingRequest extends Request
 
         return match ($method) {
             'PATCH' => $patch_vars,
-            'POST' => $this->request->all(),
+            'POST'  => $this->request->all(),
             'DELETE', 'GET' => $this->query->all(),
             default => $this->query->all(),
         };
@@ -153,7 +151,7 @@ class IncomingRequest extends Request
 
     /**
      * Get the full URL of the current request.
-     * Wrapper for Laravel
+     * Wrapper for Laravel.
      *
      * @return string The full URL of the current request.
      */
@@ -165,7 +163,8 @@ class IncomingRequest extends Request
     public function isApiOrCronRequest(): bool
     {
         $requestUri = $this->getRequestUri();
-        return str_starts_with($requestUri, "/api") || str_starts_with($requestUri, "/cron");
+
+        return str_starts_with($requestUri, '/api') || str_starts_with($requestUri, '/cron');
     }
 
     public function isHtmxRequest(): bool
@@ -175,7 +174,7 @@ class IncomingRequest extends Request
 
     public function isBoostedHtmxRequest(): bool
     {
-        if($this->isHtmxRequest() &&
+        if ($this->isHtmxRequest() &&
             this->headers->get('Hx-Boost') == 'true') {
             return true;
         }
@@ -185,14 +184,13 @@ class IncomingRequest extends Request
 
     public function isUnboostedHtmxRequest(): bool
     {
-        if($this->isHtmxRequest() &&
+        if ($this->isHtmxRequest() &&
             empty($this->headers->get('Hx-Boost'))) {
             return true;
         }
 
         return false;
     }
-
 
     /**
      * Determine if the current request probably expects a JSON response.
@@ -201,11 +199,10 @@ class IncomingRequest extends Request
      */
     public function expectsJson()
     {
-        if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
+        if ($this instanceof CliRequest || $this->isApiOrCronRequest()) {
             return true;
         }
 
         return false;
     }
-
 }

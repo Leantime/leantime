@@ -1,16 +1,12 @@
 <?php
 
 /**
- * XML export
+ * XML export.
  */
 
-namespace Leantime\Domain\Minempathycanvas\Controllers {
+namespace Leantime\Domain\Minempathycanvas\Controllers;
 
-    /**
-     *
-     */
-    class Export extends \Leantime\Domain\Canvas\Controllers\Export
-    {
-        protected const CANVAS_NAME = 'minempathy';
-    }
+class Export extends \Leantime\Domain\Canvas\Controllers\Export
+{
+    protected const CANVAS_NAME = 'minempathy';
 }

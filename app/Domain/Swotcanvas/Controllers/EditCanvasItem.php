@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Edit Canvas Item
+ * Controller / Edit Canvas Item.
  */
 
-namespace Leantime\Domain\Swotcanvas\Controllers {
+namespace Leantime\Domain\Swotcanvas\Controllers;
 
-    /**
-     *
-     */
-    class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
-    {
-        protected const CANVAS_NAME = 'swot';
-    }
-
+class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+{
+    protected const CANVAS_NAME = 'swot';
 }

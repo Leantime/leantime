@@ -21,17 +21,16 @@ class ApiKey extends Controller
     private ClientRepository $clientsRepo;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param ProjectRepository $projectsRepo
      * @param UserRepository    $userRepo
      * @param ClientRepository  $clientsRepo
      *
-     * @return void
-     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void
     {
@@ -43,60 +42,58 @@ class ApiKey extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * run - display template and edit data.
      *
-     * @access public
-     *
-     * @return Response
      *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function run(): Response
     {
-
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         // Only admins
         if (isset($_GET['id']) === true) {
-            $id = (int)($_GET['id']);
+            $id = (int) $_GET['id'];
             $row = $this->userRepo->getUser($id);
             $edit = false;
 
             // Build values array
-            $values = array(
+            $values = [
                 'firstname' => $row['firstname'],
-                'lastname' => $row['lastname'],
-                'user' => $row['username'],
-                'phone' => $row['phone'],
-                'status' => $row['status'],
-                'role' => $row['role'],
-                'hours' => $row['hours'],
-                'wage' => $row['wage'],
-                'clientId' => $row['clientId'],
-                'source' =>  $row['source'],
-                'pwReset' => $row['pwReset'],
-            );
+                'lastname'  => $row['lastname'],
+                'user'      => $row['username'],
+                'phone'     => $row['phone'],
+                'status'    => $row['status'],
+                'role'      => $row['role'],
+                'hours'     => $row['hours'],
+                'wage'      => $row['wage'],
+                'clientId'  => $row['clientId'],
+                'source'    => $row['source'],
+                'pwReset'   => $row['pwReset'],
+            ];
 
             if (isset($_POST['save'])) {
-                if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
-                    $values = array(
+                if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+                    $values = [
                         'firstname' => ($_POST['firstname'] ?? $row['firstname']),
-                        'lastname' => '',
-                        'user' => $row['username'],
-                        'phone' => '',
-                        'status' => ($_POST['status'] ?? $row['status']),
-                        'role' => ($_POST['role'] ?? $row['role']),
-                        'hours' => '',
-                        'wage' => '',
-                        'clientId' => '',
-                        'password' => '',
-                        'source' =>  'api',
-                        'pwReset' => '',
-                    );
+                        'lastname'  => '',
+                        'user'      => $row['username'],
+                        'phone'     => '',
+                        'status'    => ($_POST['status'] ?? $row['status']),
+                        'role'      => ($_POST['role'] ?? $row['role']),
+                        'hours'     => '',
+                        'wage'      => '',
+                        'clientId'  => '',
+                        'password'  => '',
+                        'source'    => 'api',
+                        'pwReset'   => '',
+                    ];
 
                     $edit = true;
                 } else {
-                    $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
                 }
             }
 
@@ -114,13 +111,13 @@ class ApiKey extends Controller
                     // If projects are not set, all project assignments have been removed.
                     $this->projectsRepo->deleteAllProjectRelations($id);
                 }
-                $this->tpl->setNotification($this->language->__("notifications.key_updated"), 'success', 'apikey_updated');
+                $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
             }
 
             // Get relations to projects
             $projects = $this->projectsRepo->getUserProjectRelation($id);
 
-            $projectrelation = array();
+            $projectrelation = [];
 
             foreach ($projects as $projectId) {
                 $projectrelation[] = $projectId['projectId'];
@@ -133,8 +130,8 @@ class ApiKey extends Controller
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
-            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
 
             $this->tpl->assign('values', $values);
             $this->tpl->assign('relations', $projectrelation);

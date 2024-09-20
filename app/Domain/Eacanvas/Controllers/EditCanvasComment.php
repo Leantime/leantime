@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Edit Comments
+ * Controller / Edit Comments.
  */
 
-namespace Leantime\Domain\Eacanvas\Controllers {
+namespace Leantime\Domain\Eacanvas\Controllers;
 
-    /**
-     *
-     */
-    class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
-    {
-        protected const CANVAS_NAME = 'ea';
-    }
-
+class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
+{
+    protected const CANVAS_NAME = 'ea';
 }

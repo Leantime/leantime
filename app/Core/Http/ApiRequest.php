@@ -3,10 +3,9 @@
 namespace Leantime\Core\Http;
 
 /**
- * Class ApiRequest
+ * Class ApiRequest.
  *
  * Represents an API request.
- *
  */
 class ApiRequest extends IncomingRequest
 {
@@ -49,7 +48,7 @@ class ApiRequest extends IncomingRequest
         ) {
             $header = trim($this->headers->get($key)) ?? '';
 
-            if (! empty($header)) {
+            if (!empty($header)) {
                 return $header;
             }
         }
@@ -100,6 +99,6 @@ class ApiRequest extends IncomingRequest
      */
     public function isApiRequest(): bool
     {
-        return str_starts_with($_SERVER['REQUEST_URI'], "/api/jsonrpc");
+        return str_starts_with($_SERVER['REQUEST_URI'], '/api/jsonrpc');
     }
 }

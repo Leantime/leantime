@@ -19,16 +19,16 @@ use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-if (! function_exists('app')) {
+if (!function_exists('app')) {
     /**
      * Returns the application instance.
      *
      * @param string $abstract
      * @param array  $parameters
      *
-     * @return mixed|Application
-     *
      * @throws BindingResolutionException
+     *
+     * @return mixed|Application
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
@@ -68,31 +68,34 @@ if (! function_exists('app')) {
 //     }
 // }
 
-if (! function_exists('bootstrap_minimal_app')) {
+if (!function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
-     * @return Application
-     *
      * @throws BindingResolutionException
+     *
+     * @return Application
      */
     function bootstrap_minimal_app(): Application
     {
         $app = app()::setInstance(new Application())::setHasBeenBootstrapped();
         $app_inst = Bootloader::getInstance($app)->getApplication();
         $app_inst->make(AppSettings::class)->loadSettings();
+
         return $app_inst;
     }
 }
 
-if (! function_exists('__')) {
+if (!function_exists('__')) {
     /**
      * Translate a string.
      *
      * @param string $index
      * @param string $default
-     * @return string
+     *
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     function __(string $index, string $default = ''): string
     {
@@ -100,13 +103,13 @@ if (! function_exists('__')) {
     }
 }
 
-if (! function_exists('view')) {
+if (!function_exists('view')) {
     /**
      * Get the view factory instance.
      *
-     * @return Factory
-     *
      * @throws BindingResolutionException
+     *
+     * @return Factory
      */
     function view(): Factory
     {
@@ -114,9 +117,9 @@ if (! function_exists('view')) {
     }
 }
 
-if (! function_exists('array_sort')) {
+if (!function_exists('array_sort')) {
     /**
-     * sort array of arrqays by value
+     * sort array of arrqays by value.
      *
      * @param array  $array
      * @param string $sortyBy
@@ -125,7 +128,6 @@ if (! function_exists('array_sort')) {
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
-
         if (is_string($sortyBy)) {
             $collection = collect($array);
 
@@ -138,7 +140,7 @@ if (! function_exists('array_sort')) {
     }
 }
 
-if (! function_exists('do_once')) {
+if (!function_exists('do_once')) {
     /**
      * Execute a callback only once.
      *
@@ -153,15 +155,15 @@ if (! function_exists('do_once')) {
         $key = "do_once_{$key}";
 
         if ($across_requests) {
-            if (session()->exists("do_once") === false) {
-                session(["do_once" => []]);
+            if (session()->exists('do_once') === false) {
+                session(['do_once' => []]);
             }
 
-            if (session("do_once." . $key) ?? false) {
+            if (session('do_once.'.$key) ?? false) {
                 return;
             }
 
-            session(["do_once." . $key => true]);
+            session(['do_once.'.$key => true]);
         } else {
             static $do_once;
             $do_once ??= [];
@@ -177,7 +179,7 @@ if (! function_exists('do_once')) {
     }
 }
 
-if (! function_exists('config')) {
+if (!function_exists('config')) {
     /**
      * Get / set the specified configuration value.
      * If an array is passed as the key, we will assume you want to set an array of values.
@@ -185,11 +187,11 @@ if (! function_exists('config')) {
      * @param array|string|null $key
      * @param mixed             $default
      *
-     * @return mixed|Application
-     *
      * @throws BindingResolutionException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     *
+     * @return mixed|Application
      */
     function config(array|string|null $key = null, mixed $default = null): mixed
     {
@@ -205,9 +207,10 @@ if (! function_exists('config')) {
     }
 }
 
-if (! function_exists('build')) {
+if (!function_exists('build')) {
     /**
-     * Turns any object into a builder object
+     * Turns any object into a builder object.
+     *
      * @param object $object
      *
      * @return Build
@@ -218,9 +221,9 @@ if (! function_exists('build')) {
     }
 }
 
-if (! function_exists('format')) {
+if (!function_exists('format')) {
     /**
-     * Returns a format object to format string values
+     * Returns a format object to format string values.
      *
      * @param string|int|float|DateTime|Carbon|null $value
      * @param string|int|float|DateTime|null        $value2
@@ -234,7 +237,7 @@ if (! function_exists('format')) {
     }
 }
 
-if (! function_exists('cast')) {
+if (!function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
@@ -243,10 +246,10 @@ if (! function_exists('cast')) {
      * @param array  $construct_params Optional parameters to pass to the constructor.
      * @param array  $mappings         Make sure certain sub properties are casted to specific types.
      *
-     * @return mixed The casted object, or throws an exception on failure.
-     *
-     * @throws \InvalidArgumentException If the class does not exist.
+     * @throws \InvalidArgumentException             If the class does not exist.
      * @throws \RuntimeException|ReflectionException On serialization errors.
+     *
+     * @return mixed The casted object, or throws an exception on failure.
      */
     function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed
     {
@@ -267,19 +270,20 @@ if (! function_exists('cast')) {
     }
 }
 
-if (! function_exists('mix')) {
+if (!function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
      * @param string $path
      * @param string $manifestDirectory
-     * @return Mix|string
      *
      * @throws BindingResolutionException
+     *
+     * @return Mix|string
      */
     function mix(string $path = '', string $manifestDirectory = ''): Mix|string
     {
-        if (! ($app = app())->bound(Mix::class)) {
+        if (!($app = app())->bound(Mix::class)) {
             $app->instance(Mix::class, new Mix());
         }
 
@@ -293,13 +297,13 @@ if (! function_exists('mix')) {
     }
 }
 
-if (! function_exists('dtHelper')) {
+if (!function_exists('dtHelper')) {
     /**
      * Get a singleton instance of the DateTimeHelper class.
      *
-     * @return DateTimeHelper|null
-     *
      * @throws BindingResolutionException
+     *
+     * @return DateTimeHelper|null
      */
     function dtHelper(): ?DateTimeHelper
     {
@@ -311,15 +315,16 @@ if (! function_exists('dtHelper')) {
     }
 }
 
-if (! function_exists('session')) {
+if (!function_exists('session')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
      * @param string $path
      * @param string $manifestDirectory
-     * @return Mix|string
      *
      * @throws BindingResolutionException
+     *
+     * @return Mix|string
      */
     function session($key = null, $default = null)
     {
@@ -333,23 +338,22 @@ if (! function_exists('session')) {
 
         return app('session')->get($key, $default);
     }
-
 }
 
-if (! function_exists('storage_path')) {
+if (!function_exists('storage_path')) {
     function storage_path($path = '')
     {
         return app()->storagePath($path);
     }
-
 }
 
-if (! function_exists('request')) {
+if (!function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
      *
-     * @param  list<string>|string|null $key
-     * @param  mixed                    $default
+     * @param list<string>|string|null $key
+     * @param mixed                    $default
+     *
      * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
      */
     function request($key = null, $default = null)
@@ -368,11 +372,12 @@ if (! function_exists('request')) {
     }
 }
 
-if (! function_exists('report')) {
+if (!function_exists('report')) {
     /**
      * Report an exception.
      *
-     * @param  \Throwable|string $exception
+     * @param \Throwable|string $exception
+     *
      * @return void
      */
     function report($exception)

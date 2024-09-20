@@ -8,7 +8,7 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class Ideation
+ * Class Ideation.
  */
 class Ideation extends Controller
 {
@@ -16,9 +16,8 @@ class Ideation extends Controller
     private IdeationRepository $ideationAPIRepo;
 
     /**
-     * constructor - initialize private variables
+     * constructor - initialize private variables.
      *
-     * @access public
      *
      * @param ProjectRepository  $projects
      * @param IdeationRepository $ideationAPIRepo
@@ -33,9 +32,8 @@ class Ideation extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -47,9 +45,8 @@ class Ideation extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -67,15 +64,15 @@ class Ideation extends Controller
         // @TODO: The two update functions do not seam to exists in ideas repository class?
         foreach (
             [
-            'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
-            'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]),
+                'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
+                'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params['payload']),
             ] as $param => $callback
         ) {
             if ($param !== $params['action']) {
                 continue;
             }
 
-            if (! $callback()) {
+            if (!$callback()) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -86,9 +83,8 @@ class Ideation extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -96,7 +92,7 @@ class Ideation extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! $this->ideationAPIRepo->patchCanvasItem($params['id'], $params)) {
+        if (!$this->ideationAPIRepo->patchCanvasItem($params['id'], $params)) {
             return $this->tpl->displayJson(['status', 'failure'], 500);
         }
 
@@ -104,9 +100,8 @@ class Ideation extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params
      *

@@ -12,12 +12,8 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use PHPUnit\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowMy extends Controller
 {
     private timesheetService $timesheetService;
@@ -27,7 +23,7 @@ class ShowMy extends Controller
     private UserRepository $userRepo;
 
     /**
-     * init - initialze private variables
+     * init - initialze private variables.
      *
      * @param TimesheetService    $timesheetService
      * @param TimesheetRepository $timesheetRepo
@@ -52,11 +48,11 @@ class ShowMy extends Controller
     }
 
     /**
-     * run - display template and edit data
-     *
-     * @return Response
+     * run - display template and edit data.
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return Response
      */
     public function run(): Response
     {
@@ -80,17 +76,17 @@ class ShowMy extends Controller
             $this->saveTimeSheet($_POST);
         }
 
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session("userdata.id"));
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session('userdata.id'));
 
         $this->tpl->assign('dateFrom', $fromDate);
         $this->tpl->assign('actKind', $kind);
         $this->tpl->assign('kind', $this->timesheetRepo->kind);
         $this->tpl->assign('allProjects', $this->projects->getUserProjects(
-            userId: session("userdata.id"),
-            projectTypes: "project"
+            userId: session('userdata.id'),
+            projectTypes: 'project'
         ));
         $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
-            id: session("userdata.id"),
+            id: session('userdata.id'),
             limit: -1
         ));
         $this->tpl->assign('allTimesheets', $myTimesheets);
@@ -101,46 +97,46 @@ class ShowMy extends Controller
     /**
      * @param array $postData
      *
-     * @return void
-     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function saveTimeSheet(array $postData): void
     {
         foreach ($postData as $key => $dateEntry) {
             // The temp data should contain four parts, spectated by "|":
             // TICKET ID | Type of booked hours | Date | Timestamp
-            $tempData = explode("|", $key);
+            $tempData = explode('|', $key);
 
             if (count($tempData) === 4) {
-                $ticketId =  $tempData[0];
+                $ticketId = $tempData[0];
                 $kind = $tempData[1];
                 $date = $tempData[2];
                 $timestamp = $tempData[3];
                 $hours = $dateEntry;
 
                 // if ticket ID is set to new, pull id and hour type from form field
-                if ($ticketId === "new" || $ticketId === 0) {
-                    $ticketId = (int)$postData["ticketId"];
-                    $kind = $postData["kindId"];
+                if ($ticketId === 'new' || $ticketId === 0) {
+                    $ticketId = (int) $postData['ticketId'];
+                    $kind = $postData['kindId'];
                 }
 
-                $values = array(
-                    "userId" => session("userdata.id"),
-                    "ticket" => $ticketId,
-                    "date" => $date,
-                    "timestamp" => $timestamp,
-                    "hours" => $hours,
-                    "kind" => $kind,
-                );
+                $values = [
+                    'userId'    => session('userdata.id'),
+                    'ticket'    => $ticketId,
+                    'date'      => $date,
+                    'timestamp' => $timestamp,
+                    'hours'     => $hours,
+                    'kind'      => $kind,
+                ];
 
                 //This should not be the case since we set the input to disabled, but check anyways
-                if($timestamp !== "false" && $timestamp != false) {
+                if ($timestamp !== 'false' && $timestamp != false) {
                     try {
                         $this->timesheetService->upsertTime($ticketId, $values);
-                        $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
+                        $this->tpl->setNotification('Timesheet saved successfully', 'success', 'save_timesheet');
                     } catch (\Exception $e) {
-                        $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
+                        $this->tpl->setNotification('Error logging time: '.$e->getMessage(), 'error', 'save_timesheet');
                         report($e);
                         continue;
                     }

@@ -8,9 +8,6 @@ use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Setting\Repositories\Setting;
 
-/**
- *
- */
 class Helpermodal extends Composer
 {
     private Setting $settingsRepo;
@@ -31,41 +28,42 @@ class Helpermodal extends Composer
         $this->helperService = $helperService;
     }
 
-
     /**
-     * @return array
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     public function with(): array
     {
         $action = FrontcontrollerCore::getCurrentRoute();
 
         $showHelperModal = false;
-        $completedOnboarding = $this->settingsRepo->getSetting("companysettings.completedOnboarding");
+        $completedOnboarding = $this->settingsRepo->getSetting('companysettings.completedOnboarding');
 
         $currentModal = $this->helperService->getHelperModalByRoute($action);
 
         if (
-            $completedOnboarding == "1"
+            $completedOnboarding == '1'
             && $currentModal !== 'notfound'
             && (
-                session()->exists("usersettings.modals.".$currentModal) === false
-                || session("usersettings.modals.".$currentModal) == 0)
+                session()->exists('usersettings.modals.'.$currentModal) === false
+                || session('usersettings.modals.'.$currentModal) == 0
+            )
         ) {
-            if (!session()->exists("usersettings.modals")) {
-                session(["usersettings.modals" => [] ]);
+            if (!session()->exists('usersettings.modals')) {
+                session(['usersettings.modals' => []]);
             }
 
-            if (!session()->exists("usersettings.modals.".$currentModal)) {
-                session(["usersettings.modals.".$currentModal => 1]);
+            if (!session()->exists('usersettings.modals.'.$currentModal)) {
+                session(['usersettings.modals.'.$currentModal => 1]);
                 $showHelperModal = true;
             }
         }
 
         return [
-            "completedOnboarding" => $completedOnboarding,
-            "showHelperModal" => $showHelperModal,
-            "currentModal" => $currentModal,
+            'completedOnboarding' => $completedOnboarding,
+            'showHelperModal'     => $showHelperModal,
+            'currentModal'        => $currentModal,
         ];
     }
 }

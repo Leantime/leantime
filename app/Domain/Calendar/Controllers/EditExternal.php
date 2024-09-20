@@ -8,9 +8,6 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class EditExternal extends Controller
 {
     private Calendar $calendarService;
@@ -26,32 +23,32 @@ class EditExternal extends Controller
     }
 
     /**
-     * @return Response
-     *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function run(): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
         if (isset($_GET['id']) === true) {
-            $id = ($_GET['id']);
+            $id = $_GET['id'];
 
-            $calendar = $this->calendarService->getExternalCalendar($id, session("userdata.id"));
+            $calendar = $this->calendarService->getExternalCalendar($id, session('userdata.id'));
 
             $values = $calendar;
 
             if (isset($_POST['save']) === true) {
-                $values = array(
-                    'id' => ($calendar['id']),
-                    'url' => ($_POST['url']),
-                    'name' => ($_POST['name']),
-                    'colorClass' => ($_POST['colorClass']),
-                );
+                $values = [
+                    'id'         => $calendar['id'],
+                    'url'        => $_POST['url'],
+                    'name'       => $_POST['name'],
+                    'colorClass' => $_POST['colorClass'],
+                ];
 
                 $this->calendarService->editExternalCalendar($values, $id);
 
-                $this->tpl->setNotification("notification.external_calendar_edited", "success", "externalCalendar_edited");
+                $this->tpl->setNotification('notification.external_calendar_edited', 'success', 'externalCalendar_edited');
             }
 
             $this->tpl->assign('values', $values);

@@ -9,16 +9,15 @@ use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Calendar controller
+ * Calendar controller.
  */
 class Calendar extends Controller
 {
     private CalendarService $calendarSvc;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param CalendarService $calendarSvc
      *
@@ -30,9 +29,8 @@ class Calendar extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @return Response
      */
@@ -42,9 +40,8 @@ class Calendar extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -56,9 +53,8 @@ class Calendar extends Controller
     }
 
     /**
-     * patch - handle patch requests
+     * patch - handle patch requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -66,15 +62,15 @@ class Calendar extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! AuthService::userIsAtLeast(Roles::$editor)) {
+        if (!AuthService::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->displayJson(['status' => 'failure', 'message' => 'Not authorized'], 401);
         }
 
-        if (! isset($params['id'])) {
+        if (!isset($params['id'])) {
             return $this->tpl->displayJson(['status' => 'failure', 'message' => 'ID not set'], 400);
         }
 
-        if (! $this->calendarSvc->patch($params['id'], $params)) {
+        if (!$this->calendarSvc->patch($params['id'], $params)) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
@@ -82,9 +78,8 @@ class Calendar extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      * @param array $params
      *
      * @return Response

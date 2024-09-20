@@ -6,28 +6,25 @@ use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class I18n
+ * Class I18n.
  *
  * This class handles attaching the language file to JavaScript.
  */
 class I18n extends Controller
 {
     /**
-     * Attach the language file to javascript
+     * Attach the language file to javascript.
      *
      * @todo refactor to remove user timezone and timeformat and move to user settings
      *
-     * @access public
-     *
      * @param array $params or body of the request.
      *
-     * @return Response
-     *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function get(array $params): Response
     {
-
         $languageIni = $this->language->readIni();
 
         $dateTimeIniSettings = [
@@ -40,7 +37,7 @@ class I18n extends Controller
         }
 
         //Fullcalendar and other scripts can handle local to use the browser timezone
-        $languageIni["usersettings.timezone"] = session("usersettings.timezone") ?? "local";
+        $languageIni['usersettings.timezone'] = session('usersettings.timezone') ?? 'local';
 
         $decodedString = json_encode($languageIni);
 
@@ -59,7 +56,7 @@ class I18n extends Controller
         );
 
         $response->headers->set('Content-Type', 'application/javascript');
-        $response->headers->set("Pragma", 'public');
+        $response->headers->set('Pragma', 'public');
 
         //Disable cache for this file since datetime format settings is stored in here as well.
         //Need to find a better cache busting option for this.

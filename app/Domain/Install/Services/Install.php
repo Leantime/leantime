@@ -1,11 +1,7 @@
 <?php
 
-namespace Leantime\Domain\Install\Services {
+namespace Leantime\Domain\Install\Services;
 
-    /**
-     *
-     */
-    class Install
-    {
-    }
+class Install
+{
 }

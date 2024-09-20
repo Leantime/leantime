@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use function Symfony\Component\String\u;
 
 /**
- * Class ListPluginCommand
+ * Class ListPluginCommand.
  *
  * This class represents a command that lists all plugins.
  */
@@ -87,8 +87,8 @@ EOL);
                 // Pad name to line up with wrapped description.
                 ['Name' => u($plugin->name)->padEnd(60)],
                 ['Description' => u($plugin->description)->wordwrap(60)],
-                ['Installed' => isset($plugin->id) ? 'yes' : 'no'],
-                ['Enabled' => $plugin->enabled ? 'yes' : 'no'],
+                ['Installed'   => isset($plugin->id) ? 'yes' : 'no'],
+                ['Enabled'     => $plugin->enabled ? 'yes' : 'no'],
             );
         }
 

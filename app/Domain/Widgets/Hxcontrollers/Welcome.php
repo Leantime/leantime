@@ -23,8 +23,9 @@ class Welcome extends HtmxController
      * Initializes the class by assigning the given services and setting the last page session variable.
      *
      * @param ProjectService $projectsService The project service object.
-     * @param TicketService $ticketsService The ticket service object.
-     * @param UserService $usersService The user service object.
+     * @param TicketService  $ticketsService  The ticket service object.
+     * @param UserService    $usersService    The user service object.
+     *
      * @return void
      */
     public function init(
@@ -35,7 +36,7 @@ class Welcome extends HtmxController
         $this->projectsService = $projectsService;
         $this->ticketsService = $ticketsService;
         $this->usersService = $usersService;
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     /**
@@ -45,32 +46,30 @@ class Welcome extends HtmxController
      */
     public function get()
     {
-
         try {
             $reportService = app()->make(ReportService::class);
             $promise = $reportService->sendAnonymousTelemetry();
             if ($promise !== false) {
                 $promise->wait();
             }
-        }catch(\Exception $e) {
+        } catch(\Exception $e) {
             report($e);
         }
 
-        $currentUser = $this->usersService->getUser(session("userdata.id"));
+        $currentUser = $this->usersService->getUser(session('userdata.id'));
         $this->tpl->assign('currentUser', $currentUser);
 
-
         //Todo: Write queries.
-        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session("userdata.id"), status: "not_done");
+        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done');
 
         $closedTicketsCount = 0;
-        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser(session("userdata.id"), null);
+        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser(session('userdata.id'), null);
         if (is_array($closedTickets)) {
             $closedTicketsCount = count($closedTickets);
         }
 
         $ticketsInGoals = 0;
-        $goalTickets = $this->ticketsService->goalsRelatedToWork(session("userdata.id"), null);
+        $goalTickets = $this->ticketsService->goalsRelatedToWork(session('userdata.id'), null);
         if (is_array($goalTickets)) {
             $ticketsInGoals = count($goalTickets);
         }
@@ -79,10 +78,9 @@ class Welcome extends HtmxController
 
         $todayStart = dtHelper()->userNow()->startOfDay();
         $todayEnd = dtHelper()->userNow()->endOfDay();
-        $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, session("userdata.id"));
+        $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, session('userdata.id'));
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
-
 
         $this->tpl->assign('totalTickets', $totalTickets);
         $this->tpl->assign('closedTicketsCount', $closedTicketsCount);
@@ -90,13 +88,11 @@ class Welcome extends HtmxController
         $this->tpl->assign('totalTodayCount', $totalToday);
         $this->tpl->assign('doneTodayCount', $doneToday);
 
-
-
-        $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser(session("userdata.id"), 'open');
-        if(!is_array($allAssignedprojects)){
+        $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser(session('userdata.id'), 'open');
+        if (!is_array($allAssignedprojects)) {
             $allAssignedprojects = [];
         }
-        $this->tpl->assign("allProjects", $allAssignedprojects);
-        $this->tpl->assign("projectCount", count($allAssignedprojects));
+        $this->tpl->assign('allProjects', $allAssignedprojects);
+        $this->tpl->assign('projectCount', count($allAssignedprojects));
     }
 }

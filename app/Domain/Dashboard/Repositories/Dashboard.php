@@ -1,37 +1,28 @@
 <?php
 
-namespace Leantime\Domain\Dashboard\Repositories {
+namespace Leantime\Domain\Dashboard\Repositories;
 
-    use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Db\Db as DbCore;
+
+class Dashboard
+{
+    /**
+     * @var ?DbCore
+     */
+    public ?DbCore $db;
 
     /**
-     *
+     * @var array
      */
-    class Dashboard
+    private array $defaultWidgets = [1, 3, 9];
+
+    /**
+     * __construct - neu db connection.
+     *
+     * @param DbCore $db
+     */
+    public function __construct(DbCore $db)
     {
-        /**
-         * @access public
-         * @var    ?DbCore
-         */
-        public ?DbCore $db;
-
-        /**
-         * @access private
-         * @var    array
-         */
-        private array $defaultWidgets = array(1, 3, 9);
-
-        /**
-         * __construct - neu db connection
-         *
-         * @access public
-         * @param DbCore $db
-         */
-        public function __construct(DbCore $db)
-        {
-            $this->db = $db;
-        }
+        $this->db = $db;
     }
-
-
 }

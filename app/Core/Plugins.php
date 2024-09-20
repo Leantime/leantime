@@ -5,26 +5,24 @@ namespace Leantime\Core;
 use Leantime\Core\Events\DispatchesEvents;
 
 /**
- * Plugins class
- *
- * @package    leantime
- * @subpackage core
+ * Plugins class.
  */
 class Plugins
 {
     use DispatchesEvents;
 
     /**
-     * Enabled plugins
+     * Enabled plugins.
      *
-     * @var    array
+     * @var array
      */
     private array $enabledPlugins = [];
 
     /**
-     * constructor
+     * constructor.
      *
      * @param \Leantime\Core\Configuration\Environment $config
+     *
      * @return void
      */
     public function __construct(Configuration\Environment $config)
@@ -41,9 +39,8 @@ class Plugins
     }
 
     /**
-     * Makes all plugin keys lowercase for easy comparisons
+     * Makes all plugin keys lowercase for easy comparisons.
      *
-     * @access private
      *
      * @param array $plugins
      *
@@ -64,9 +61,8 @@ class Plugins
     }
 
     /**
-     * Gets all plugin enabled/disabled settings
+     * Gets all plugin enabled/disabled settings.
      *
-     * @access public
      *
      * @return array
      */
@@ -76,9 +72,8 @@ class Plugins
     }
 
     /**
-     * Checks to see if a plugin is enabled
+     * Checks to see if a plugin is enabled.
      *
-     * @access public
      *
      * @param string $plugin_name
      *

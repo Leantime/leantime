@@ -19,27 +19,24 @@ class Cache extends ServiceProvider
      */
     public function register()
     {
-
         /**
          * @todo the following should eventually automatically turn caches into redis if available,
          *  then memcached if available,
          *  then fileStore
          */
         $this->app->singleton(\Illuminate\Cache\CacheManager::class, function () {
-
             //installation cache is per server
             app('config')['cache.stores.installation'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
+                'driver'     => !empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
-                'path' => APP_ROOT . '/cache/installation',
+                'path'       => APP_ROOT.'/cache/installation',
             ];
 
             //Instance is per company id
-            $instanceStore = fn () =>
-            app('config')['cache.stores.instance'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
+            $instanceStore = fn () => app('config')['cache.stores.instance'] = [
+                'driver'     => !empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
                 'connection' => 'default',
-                'path' => APP_ROOT . "/cache/" . app()->make(SettingsService::class)->getCompanyId(),
+                'path'       => APP_ROOT.'/cache/'.app()->make(SettingsService::class)->getCompanyId(),
             ];
 
             if (app()->make(IncomingRequest::class) instanceof CliRequest) {
@@ -53,7 +50,7 @@ class Cache extends ServiceProvider
                 EventDispatcher::add_event_listener(
                     'leantime.core.middleware.installed.handle.after_install',
                     function () use ($instanceStore) {
-                        if (! session("isInstalled")) {
+                        if (!session('isInstalled')) {
                             return;
                         }
                         $instanceStore();
@@ -68,19 +65,16 @@ class Cache extends ServiceProvider
             return $cacheManager;
         });
 
-
         $this->app->singleton('cache.store', fn () => app('cache')->driver());
         $this->app->singleton('cache.psr6', fn () => new \Symfony\Component\Cache\Adapter\Psr16Adapter(app('cache.store')));
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
 
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
         $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
-
-
     }
 
-    public function boot() {
-
+    public function boot()
+    {
         $currentVersion = app()->make(AppSettings::class)->appVersion;
         $cachedVersion = \Illuminate\Support\Facades\Cache::store('installation')->rememberForever('version', fn () => $currentVersion);
 
@@ -89,7 +83,6 @@ class Cache extends ServiceProvider
         }
 
         \Illuminate\Support\Facades\Cache::store('installation')->flush();
-
     }
 
     /**
@@ -99,8 +92,5 @@ class Cache extends ServiceProvider
      */
     public function checkCacheVersion(): void
     {
-
-
     }
-
 }

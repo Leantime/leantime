@@ -13,20 +13,19 @@ use kamermans\OAuth2\GrantType\RefreshToken;
 use kamermans\OAuth2\OAuth2Middleware;
 
 /**
- * ApiSession - Creates a Guzzle Client with a connection
- *
- * @package    leantime
- * @subpackage core
+ * ApiSession - Creates a Guzzle Client with a connection.
  */
 class ApiClient
 {
     /**
-     * Checks passed credentials to see if they are properly provided
+     * Checks passed credentials to see if they are properly provided.
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber#middleware-guzzle-6
+     *
      * @param array $requiredCreds
      * @param array $creds
      * @param array $optionalCreds (optional)
+     *
      * @return bool
      */
     private static function checkCreds(
@@ -50,12 +49,14 @@ class ApiClient
     }
 
     /**
-     * Creates a Guzzle Client with an oAuth2 connection
+     * Creates a Guzzle Client with an oAuth2 connection.
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber#client-credentials-example
+     *
      * @param string       $baseUri
      * @param HandlerStack $stack
      * @param array        $requestDefaults
+     *
      * @return Client
      */
     public static function oAuth2(
@@ -68,21 +69,23 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'handler' => $stack,
-                    'auth' => 'oauth',
+                    'handler'  => $stack,
+                    'auth'     => 'oauth',
                 ]
             )
         );
     }
 
     /**
-     * Creates a handler for oAuth2 Client
+     * Creates a handler for oAuth2 Client.
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber
+     *
      * @param string                  $baseUri
      * @param array                   $creds           Just pass an empty array if you supply $customGrantType.
      * @param bool                    $usesRefresh     (optional)
      * @param GrantTypeInterface|null $customGrantType (optional)
+     *
      * @return HandlerStack
      */
     public static function oAuth2Grants(
@@ -107,7 +110,7 @@ class ApiClient
 
             if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
                 throw new \Error(
-                    "oAuth2 credentials were incorrectly provided"
+                    'oAuth2 credentials were incorrectly provided'
                 );
             }
 
@@ -124,12 +127,9 @@ class ApiClient
             if ($usesRefresh) {
                 $middleware_params[] = new RefreshToken($client, $creds);
             }
-
         } else {
             $middleware_params[] = $customGrantType;
         }
-
-
 
         $stack = HandlerStack::create();
         $oauth = new OAuth2Middleware(...$middleware_params);
@@ -139,12 +139,14 @@ class ApiClient
     }
 
     /**
-     * Creates a Guzzle Client with an oAuth1 connection
+     * Creates a Guzzle Client with an oAuth1 connection.
      *
      * @see https://github.com/guzzle/oauth-subscriber#using-the-subscriber
+     *
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
+     *
      * @return Client
      */
     public static function oAuth1(
@@ -166,7 +168,7 @@ class ApiClient
 
         if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
             throw new \Error(
-                "oAuth1 credentials were incorrectly provided"
+                'oAuth1 credentials were incorrectly provided'
             );
         }
 
@@ -179,20 +181,22 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => 'oauth',
-                    'handler' => $stack,
+                    'auth'     => 'oauth',
+                    'handler'  => $stack,
                 ]
             )
         );
     }
 
     /**
-     * Creates a Guzzle Client with a basic authentication connection
+     * Creates a Guzzle Client with a basic authentication connection.
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
+     *
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
+     *
      * @return Client
      */
     public static function basicAuth(
@@ -216,19 +220,21 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds,
+                    'auth'     => $creds,
                 ]
             )
         );
     }
 
     /**
-     * Creates a Guzzle Client with a digest connection
+     * Creates a Guzzle Client with a digest connection.
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
+     *
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
+     *
      * @return Client
      */
     public static function digest(
@@ -253,19 +259,21 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds,
+                    'auth'     => $creds,
                 ],
             ])
         );
     }
 
     /**
-     * Creates a Guzzle Client with a ntlm connection
+     * Creates a Guzzle Client with a ntlm connection.
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
+     *
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
+     *
      * @return Client
      */
     public static function ntlm(
@@ -290,18 +298,19 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds,
+                    'auth'     => $creds,
                 ]
             )
         );
     }
 
     /**
-     * Creates a Guzzle Client with a token/apikey connection
+     * Creates a Guzzle Client with a token/apikey connection.
      *
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
+     *
      * @return Client
      */
     public static function bearerToken(
@@ -322,7 +331,7 @@ class ApiClient
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'headers' => ['Authorization' => "Bearer ".$creds['token'].""],
+                    'headers'  => ['Authorization' => 'Bearer '.$creds['token'].''],
                 ]
             )
         );

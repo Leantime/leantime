@@ -9,14 +9,14 @@ use Leantime\Core\Language;
 use PHPUnit\Exception;
 
 /**
- * Class Format
+ * Class Format.
  *
  * This class provides various formatting methods for simple data types (strings, ints, floats)
  */
 class Format
 {
-    private mixed $value = "";
-    private mixed $value2 = "";
+    private mixed $value = '';
+    private mixed $value2 = '';
     private DateTimeHelper $dateTimeHelper;
     private Language $language;
 
@@ -31,6 +31,7 @@ class Format
      *                                          as specified by $fromFormat.
      * @param FromFormat|null       $fromFormat The format of the values. Can be one of the constants defined in the
      *                                          FromFormat class.
+     *
      * @return void
      */
     public function __construct(
@@ -38,7 +39,6 @@ class Format
         string|int|float|null|\DateTimeInterface|CarbonInterface $value2,
         ?FromFormat $fromFormat = FromFormat::DbDate
     ) {
-
         $this->dateTimeHelper = app()->make(DateTimeHelper::class);
         $this->language = app()->make(Language::class);
 
@@ -46,12 +46,12 @@ class Format
             return;
         }
 
-        if($value instanceof \DateTime) {
+        if ($value instanceof \DateTime) {
             $value = CarbonImmutable::create($value);
             $this->value = CarbonImmutable::create($value);
         }
 
-        if($value2 instanceof \DateTime) {
+        if ($value2 instanceof \DateTime) {
             $value2 = CarbonImmutable::create($value2);
             $this->value = CarbonImmutable::create($value2);
         }
@@ -71,10 +71,10 @@ class Format
                     $this->value = $this->dateTimeHelper->parseDb24hTime($value);
                     break;
                 case FromFormat::UserDateStartOfDay:
-                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, "start");
+                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, 'start');
                     break;
                 case FromFormat::UserDateEndOfDay:
-                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, "end");
+                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, 'end');
                     break;
                 default:
                     $this->value = $value;
@@ -86,6 +86,7 @@ class Format
             //Since this format class is purely for user facing purposes we will not show an error message
             //but return an empty string.
             $this->value = $value;
+
             return;
         }
     }
@@ -96,20 +97,18 @@ class Format
      * @param string $emptyOutput The output to be returned when the 'value' property is empty.
      *                            Defaults to an empty string.
      *
-     * @return string             The formatted date string or the $emptyOutput if the 'value' property is empty or
-     *                            the formatted date string is empty.
+     * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or
+     *                the formatted date string is empty.
      */
-    public function date(string $emptyOutput = ""): string
+    public function date(string $emptyOutput = ''): string
     {
-
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return $emptyOutput;
         }
 
         $formattedDate = $this->value->formatDateForUser();
 
-
-        return $formattedDate !== "" ? $formattedDate : $emptyOutput;
+        return $formattedDate !== '' ? $formattedDate : $emptyOutput;
     }
 
     /**
@@ -121,7 +120,7 @@ class Format
     public function time(): string
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
 
         return $this->value->formatTimeForUser();
@@ -135,8 +134,9 @@ class Format
     public function isoDateTime(): string
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
+
         return $this->value->formatDateTimeForDb();
     }
 
@@ -150,9 +150,8 @@ class Format
      */
     public function isoDate(): string
     {
-
         if (empty($this->value)) {
-            return "";
+            return '';
         }
 
         //This method should not be used anymore however we have plugins that are still using it and they will not have
@@ -160,22 +159,20 @@ class Format
         //indicate that this is a user date (which it was historically).
         //So now we have to shuffle things around and since the format was probably not correct anyways, let's reparse
 
-        if(!$this->value instanceof CarbonImmutable) {
-
+        if (!$this->value instanceof CarbonImmutable) {
             try {
-                $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, "start");
-            }catch(Exception $e) {
+                $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, 'start');
+            } catch(Exception $e) {
                 report($e);
-                return "";
+
+                return '';
             }
-
-        }else{
-
+        } else {
             //If for some reason Carbon was able to parse the date we'll need to make sure the timezone is set to the
             //users timezone.
 
             //Date was falsly parsed as UTC but is actually user date. Shift timezone.
-            $userTimezone = session("usersettings.timezone");
+            $userTimezone = session('usersettings.timezone');
             //Carbon shift timezone will change timezone without actually changing the numbers
             $this->value->shiftTimezone($userTimezone);
         }
@@ -191,21 +188,21 @@ class Format
     public function timestamp(): int|bool
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
 
         return $this->value->getTimestamp();
     }
 
     /**
-     * Generate unix timestamp from date in miliseconds for javascript usage
+     * Generate unix timestamp from date in miliseconds for javascript usage.
      *
      * @return int|bool
      */
     public function jsTimestamp(): int|bool
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
 
         return $this->value->getTimestampMs();
@@ -219,12 +216,11 @@ class Format
     public function time24(): string
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
 
         return $this->value->format24HTimeForUser();
     }
-
 
     /**
      * Converts a 24-hour formatted time string to a user-friendly time string.
@@ -234,13 +230,11 @@ class Format
     public function userTime24toUserTime(): string
     {
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
-            return "";
+            return '';
         }
 
         return $this->value->formatTimeForUser();
-
     }
-
 
     /**
      * Generates a string representation of currency.
@@ -250,34 +244,35 @@ class Format
     public function currency(): string
     {
         if ($this->value == null) {
-            return "";
+            return '';
         }
 
-        return $this->language->__("language.currency") . "" . $this->value;
+        return $this->language->__('language.currency').''.$this->value;
     }
 
     /**
      * Generates a string representation of a percentage.
      *
      * @return string The percentage string. Returns an empty string if the value is null.
-     * If the second value is empty, the first value is returned with a "%" sign appended.
-     * If both values are set, the percentage is calculated and formatted to two decimal places, followed by a "%" sign.
+     *                If the second value is empty, the first value is returned with a "%" sign appended.
+     *                If both values are set, the percentage is calculated and formatted to two decimal places, followed by a "%" sign.
      */
     public function percent(): string
     {
         //First value empty, just return empty string
         if ($this->value == null) {
-            return "";
+            return '';
         }
 
         //Second value empty return first value with % sign
         if (empty($this->value2)) {
-            return number_format($this->value, 2) . "%";
+            return number_format($this->value, 2).'%';
         }
 
         //Both values set. Return percent calculation
         $percent = ($this->value / $this->value2) * 100;
-        return number_format($percent, 2) . "%";
+
+        return number_format($percent, 2).'%';
     }
 
     /**
@@ -287,6 +282,6 @@ class Format
      */
     public function decimal(): string
     {
-        return number_format((float)$this->value, 2);
+        return number_format((float) $this->value, 2);
     }
 }

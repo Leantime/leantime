@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Leantime\Core\Http;
 
-/**
- *
- */
 class HtmxRequest extends IncomingRequest
 {
     /**
@@ -22,7 +19,7 @@ class HtmxRequest extends IncomingRequest
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
-        if (! str_starts_with($path = $this->getPathInfo(), '/hx/')) {
+        if (!str_starts_with($path = $this->getPathInfo(), '/hx/')) {
             return;
         }
 
@@ -30,25 +27,25 @@ class HtmxRequest extends IncomingRequest
     }
 
     /**
-     * Get HTMX request information
+     * Get HTMX request information.
      *
      * @return array[string|bool]
      */
     public function getHtmxRequestVars(): array
     {
         return [
-            'boosted' => $this->isBoosted(),
-            'referrer' => $this->getReferrer(),
+            'boosted'                 => $this->isBoosted(),
+            'referrer'                => $this->getReferrer(),
             'isHistoryRestoreRequest' => $this->isHistoryRestoreRequest(),
-            'prompt' => $this->getPromptResponse(),
-            'target' => $this->getTarget(),
-            'triggerName' => $this->getTriggerName(),
-            'triggerId' => $this->getTriggerId(),
+            'prompt'                  => $this->getPromptResponse(),
+            'target'                  => $this->getTarget(),
+            'triggerName'             => $this->getTriggerName(),
+            'triggerId'               => $this->getTriggerId(),
         ];
     }
 
     /**
-     * Indicates that the request is via an element using hx-boost
+     * Indicates that the request is via an element using hx-boost.
      *
      * @return bool
      */
@@ -71,7 +68,7 @@ class HtmxRequest extends IncomingRequest
     }
 
     /**
-     * Indicates if the request is for history restoration after a miss in the local history cache
+     * Indicates if the request is for history restoration after a miss in the local history cache.
      *
      * @return bool
      */

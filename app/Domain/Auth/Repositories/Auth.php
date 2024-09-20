@@ -7,9 +7,6 @@ use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use PDO;
 
-/**
- *
- */
 class Auth
 {
     /**
@@ -53,12 +50,12 @@ class Auth
     private ?string $mail = null;
 
     /**
-     * @var bool $twoFAEnabled
+     * @var bool
      */
     private bool $twoFAEnabled;
 
     /**
-     * @var string $twoFASecret
+     * @var string
      */
     private string $twoFASecret;
 
@@ -90,12 +87,12 @@ class Auth
     /**
      * @var string
      */
-    public string $error = "";
+    public string $error = '';
 
     /**
      * @var string
      */
-    public string $success = "";
+    public string $success = '';
 
     /**
      * @var string|bool
@@ -110,7 +107,7 @@ class Auth
     private static Auth $instance;
 
     /**
-     * How often can a user reset a password before it has to be changed
+     * How often can a user reset a password before it has to be changed.
      *
      * @var int
      */
@@ -135,7 +132,7 @@ class Auth
     }
 
     /**
-     * logout - destroy sessions and cookies
+     * logout - destroy sessions and cookies.
      *
      * @param string $sessionId
      *
@@ -154,13 +151,13 @@ class Auth
     }
 
     /**
-     * checkSessions - check all sessions in the database and unset them if necessary
+     * checkSessions - check all sessions in the database and unset them if necessary.
      *
      * @return bool
      */
     private function invalidateExpiredUserSessions(): bool
     {
-        $query = "UPDATE zp_user SET session = '' WHERE (" . time() . " - sessionTime) > " . $this->config->sessionExpiration;
+        $query = "UPDATE zp_user SET session = '' WHERE (".time().' - sessionTime) > '.$this->config->sessionExpiration;
 
         $stmn = $this->db->database->prepare($query);
         $result = $stmn->execute();
@@ -170,7 +167,7 @@ class Auth
     }
 
     /**
-     * getUserByLogin - Check login data and returns user if correct
+     * getUserByLogin - Check login data and returns user if correct.
      *
      * @param string $username
      * @param string $password
@@ -199,7 +196,7 @@ class Auth
     }
 
     /**
-     * updateSession - Update the session time by sessionId
+     * updateSession - Update the session time by sessionId.
      *
      * @param int    $userId
      * @param string $sessionid
@@ -209,8 +206,7 @@ class Auth
      */
     public function updateUserSession(int $userId, string $sessionid, string $time): bool
     {
-
-        $query = "UPDATE zp_user
+        $query = 'UPDATE zp_user
             SET
                 lastlogin = NOW(),
                 session = :sessionid,
@@ -219,7 +215,7 @@ class Auth
                 pwResetExpiration = NULL
             WHERE
                 id =  :id
-            LIMIT 1";
+            LIMIT 1';
 
         $stmn = $this->db->database->prepare($query);
 
@@ -234,7 +230,7 @@ class Auth
     }
 
     /**
-     * validateResetLink - validates that the password reset link belongs to a user account in the database
+     * validateResetLink - validates that the password reset link belongs to a user account in the database.
      *
      * @param string $hash
      *
@@ -242,7 +238,6 @@ class Auth
      */
     public function validateResetLink(string $hash): bool
     {
-
         $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'a' LIMIT 1";
 
         $stmn = $this->db->database->prepare($query);
@@ -260,7 +255,7 @@ class Auth
     }
 
     /**
-     * getUserByInviteLink - gets an invited user by invite code
+     * getUserByInviteLink - gets an invited user by invite code.
      *
      * @param string $hash
      *
@@ -268,7 +263,6 @@ class Auth
      */
     public function getUserByInviteLink(string $hash): bool|array
     {
-
         $query = "SELECT * FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
 
         $stmn = $this->db->database->prepare($query);
@@ -289,19 +283,18 @@ class Auth
      */
     public function setPWResetLink(string $username, string $resetLink): bool
     {
-
-        $query = "UPDATE zp_user
+        $query = 'UPDATE zp_user
             SET
                 pwReset = :link,
                 pwResetExpiration = :time,
                 pwResetCount = IFNULL(pwResetCount, 0)+1
             WHERE
                 username = :user
-            LIMIT 1";
+            LIMIT 1';
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':user', $username);
-        $stmn->bindValue(':time', date("Y-m-d h:i:s", time()));
+        $stmn->bindValue(':time', date('Y-m-d h:i:s', time()));
         $stmn->bindValue(':link', $resetLink);
         $result = $stmn->execute();
         $stmn->closeCursor();
@@ -317,7 +310,6 @@ class Auth
      */
     public function changePW(string $password, string $hash): bool
     {
-
         $query = "UPDATE zp_user
             SET
                 password = :password,
@@ -330,7 +322,7 @@ class Auth
             LIMIT 1";
 
         $stmn = $this->db->database->prepare($query);
-        $stmn->bindValue(':time', date("Y-m-d h:i:s", time()), PDO::PARAM_STR);
+        $stmn->bindValue(':time', date('Y-m-d h:i:s', time()), PDO::PARAM_STR);
         $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
         $stmn->bindValue(':password', password_hash($password, PASSWORD_DEFAULT), PDO::PARAM_STR);
         $result = $stmn->execute();

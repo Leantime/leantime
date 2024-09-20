@@ -30,9 +30,10 @@ class MyProjects extends HtmxController
     private Menu $menuService;
 
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     *
      * @return void
      */
     public function init(
@@ -54,34 +55,33 @@ class MyProjects extends HtmxController
         $this->calendarRepo = $calendarRepo;
         $this->menuService = $menuService;
 
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get()
     {
+        $allprojects = $this->projectsService->getProjectsAssignedToUser(session('userdata.id'), 'open');
+        $clients = [];
 
-        $allprojects = $this->projectsService->getProjectsAssignedToUser(session("userdata.id"), 'open');
-        $clients = array();
-
-        $projectResults = array();
+        $projectResults = [];
         $i = 0;
 
-        $clientId = "";
+        $clientId = '';
 
-        $this->tpl->assign("background", $_GET['noBackground'] ?? "");
-        $this->tpl->assign("type", $_GET['type'] ?? "simple");
+        $this->tpl->assign('background', $_GET['noBackground'] ?? '');
+        $this->tpl->assign('type', $_GET['type'] ?? 'simple');
 
         if (is_array($allprojects)) {
             foreach ($allprojects as $project) {
-                if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = $project['clientName'];
+                if (!array_key_exists($project['clientId'], $clients)) {
+                    $clients[$project['clientId']] = $project['clientName'];
                 }
 
-                if ($clientId == "" || $project["clientId"] == $clientId) {
+                if ($clientId == '' || $project['clientId'] == $clientId) {
                     $projectResults[$i] = $project;
                     $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
 
-                    $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
+                    $fullReport = $this->reportsService->getRealtimeReport($project['id'], '');
 
                     $projectResults[$i]['report'] = $fullReport;
 
@@ -92,8 +92,8 @@ class MyProjects extends HtmxController
 
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
 
-        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
+        $this->tpl->assign('projectTypeAvatars', $projectTypeAvatars);
 
-        $this->tpl->assign("allProjects", $projectResults);
+        $this->tpl->assign('allProjects', $projectResults);
     }
 }

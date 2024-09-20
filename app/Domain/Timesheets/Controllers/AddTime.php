@@ -12,28 +12,25 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class AddTime extends Controller
 {
     /**
-     * @var TimesheetRepository $timesheetsRepo
+     * @var TimesheetRepository
      */
     private TimesheetRepository $timesheetsRepo;
 
     /**
-     * @var ProjectRepository $projects
+     * @var ProjectRepository
      */
     private ProjectRepository $projects;
 
     /**
-     * @var TicketRepository $tickets
+     * @var TicketRepository
      */
     private TicketRepository $tickets;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param TimesheetRepository $timesheetsRepo
      * @param ProjectRepository   $projects
@@ -52,13 +49,12 @@ class AddTime extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * run - display template and edit data.
      *
-     * @access public
-     *
-     * @return Response
      *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function run(): Response
     {
@@ -67,25 +63,25 @@ class AddTime extends Controller
         $info = '';
         //Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
-            $values = array(
-                'userId' => session("userdata.id"),
-                'ticket' => '',
-                'project' => '',
-                'date' => '',
-                'kind' => '',
-                'hours' => '',
-                'description' => '',
-                'invoicedEmpl' => '',
-                'invoicedComp' => '',
+            $values = [
+                'userId'           => session('userdata.id'),
+                'ticket'           => '',
+                'project'          => '',
+                'date'             => '',
+                'kind'             => '',
+                'hours'            => '',
+                'description'      => '',
+                'invoicedEmpl'     => '',
+                'invoicedComp'     => '',
                 'invoicedEmplDate' => '',
                 'invoicedCompDate' => '',
-                'paid' => '',
-                'paidDate' => '',
-            );
+                'paid'             => '',
+                'paidDate'         => '',
+            ];
 
             if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
                 if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
-                    $temp = ($_POST['tickets']);
+                    $temp = $_POST['tickets'];
 
                     $tempArr = explode('|', $temp);
 
@@ -94,15 +90,15 @@ class AddTime extends Controller
                 }
 
                 if (!empty($_POST['kind'])) {
-                    $values['kind'] = ($_POST['kind']);
+                    $values['kind'] = $_POST['kind'];
                 }
 
                 if (!empty($_POST['date'])) {
-                    $values['date'] = (new Carbon($_POST['date'], session("usersettings.timezone")))->setTimezone('UTC');
+                    $values['date'] = (new Carbon($_POST['date'], session('usersettings.timezone')))->setTimezone('UTC');
                 }
 
                 if (!empty($_POST['hours'])) {
-                    $values['hours'] = ($_POST['hours']);
+                    $values['hours'] = $_POST['hours'];
                 }
 
                 if (!empty($_POST['invoicedEmpl'])) {
@@ -111,7 +107,7 @@ class AddTime extends Controller
                     }
 
                     if (!empty($_POST['invoicedEmplDate'])) {
-                        $values['invoicedEmplDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                        $values['invoicedEmplDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                     }
                 }
 
@@ -122,7 +118,7 @@ class AddTime extends Controller
                         }
 
                         if (!empty($_POST['invoicedCompDate'])) {
-                            $values['invoicedCompDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                            $values['invoicedCompDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                         }
                     }
                 }
@@ -134,16 +130,14 @@ class AddTime extends Controller
                         }
 
                         if (!empty($_POST['paidDate'])) {
-                            $values['paidDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                            $values['paidDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                         }
                     }
                 }
 
-
                 if (!empty($_POST['description'])) {
-                    $values['description'] = ($_POST['description']);
+                    $values['description'] = $_POST['description'];
                 }
-
 
                 if ($values['ticket'] != '' && $values['project'] != '') {
                     if ($values['kind'] != '') {
@@ -167,21 +161,21 @@ class AddTime extends Controller
                 if (isset($_POST['save']) === true) {
                     $this->tpl->assign('values', $values);
                 } elseif (isset($_POST['saveNew']) === true) {
-                    $values = array(
-                        'userId' => session("userdata.id"),
-                        'ticket' => '',
-                        'project' => '',
-                        'date' => '',
-                        'kind' => '',
-                        'hours' => '',
-                        'description' => '',
-                        'invoicedEmpl' => '',
-                        'invoicedComp' => '',
+                    $values = [
+                        'userId'           => session('userdata.id'),
+                        'ticket'           => '',
+                        'project'          => '',
+                        'date'             => '',
+                        'kind'             => '',
+                        'hours'            => '',
+                        'description'      => '',
+                        'invoicedEmpl'     => '',
+                        'invoicedComp'     => '',
                         'invoicedEmplDate' => '',
                         'invoicedCompDate' => '',
-                        'paid' => '',
-                        'paidDate' => '',
-                    );
+                        'paid'             => '',
+                        'paidDate'         => '',
+                    ];
 
                     $this->tpl->assign('values', $values);
                 }

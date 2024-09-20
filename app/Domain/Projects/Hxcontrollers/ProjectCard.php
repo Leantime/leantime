@@ -40,9 +40,10 @@ class ProjectCard extends HtmxController
     private Reactions $reactionService;
 
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     *
      * @return void
      */
     public function init(
@@ -70,8 +71,7 @@ class ProjectCard extends HtmxController
         $this->menuService = $menuService;
         $this->reactionService = $reactionService;
 
-
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get()
@@ -80,46 +80,44 @@ class ProjectCard extends HtmxController
 
     public function toggleFavorite()
     {
+        $projectData = $this->incomingRequest->request->all();
 
-            $projectData = $this->incomingRequest->request->all();
+        $projectId = $projectData['projectId'];
+        $isFavorite = $projectData['isFavorite'];
 
-            $projectId = $projectData['projectId'];
-            $isFavorite = $projectData['isFavorite'];
-
-            $project = $this->projectsService->getProject($projectId);
+        $project = $this->projectsService->getProject($projectId);
 
         if ($isFavorite) {
             $this->reactionService->removeReaction(
-                userId: session("userdata.id"),
-                module: "project",
+                userId: session('userdata.id'),
+                module: 'project',
                 moduleId: $projectId,
-                reaction: "favorite"
+                reaction: 'favorite'
             );
         } else {
             $this->reactionService->addReaction(
-                userId: session("userdata.id"),
-                module: "project",
+                userId: session('userdata.id'),
+                module: 'project',
                 moduleId: $projectId,
-                reaction: "favorite"
+                reaction: 'favorite'
             );
         }
 
-        $this->setHTMXEvent("HTMX.updateProjectList");
+        $this->setHTMXEvent('HTMX.updateProjectList');
 
         $project = $this->projectsService->getProject($projectId);
-        $this->tpl->assign("project", $project);
+        $this->tpl->assign('project', $project);
     }
 
-    public function getProgress() {
-
+    public function getProgress()
+    {
         $projectId = $_GET['projectId'];
 
-        $project = array("id" => $projectId);
+        $project = ['id' => $projectId];
 
         $project['progress'] = $this->projectsService->getProjectProgress($project['id']);
-        $projectComment = $this->commentsService->getComments("project", $project['id']);
+        $projectComment = $this->commentsService->getComments('project', $project['id']);
         $project['team'] = $this->projectsService->getUsersAssignedToProject($project['id']);
-
 
         if (is_array($projectComment) && count($projectComment) > 0) {
             $project['lastUpdate'] = $projectComment[0];
@@ -127,16 +125,15 @@ class ProjectCard extends HtmxController
             $project['lastUpdate'] = false;
         }
 
+        $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
 
-        $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
-
-        $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+        $currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());
 
         $project = $this->projectsService->getProject($projectId);
 
-        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
-        $this->tpl->assign("currentUrlPath", $currentUrlPath);
-        $this->tpl->assign("project", $project);
-        $this->tpl->assign("type", "full");
+        $this->tpl->assign('projectTypeAvatars', $projectTypeAvatars);
+        $this->tpl->assign('currentUrlPath', $currentUrlPath);
+        $this->tpl->assign('project', $project);
+        $this->tpl->assign('type', 'full');
     }
 }

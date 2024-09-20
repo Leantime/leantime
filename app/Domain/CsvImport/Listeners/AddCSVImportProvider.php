@@ -5,7 +5,7 @@ namespace Leantime\Domain\CsvImport\Listeners;
 use Leantime\Domain\CsvImport\Services;
 
 /**
- * Class AddCSVImportProvider
+ * Class AddCSVImportProvider.
  *
  * The AddCSVImportProvider class is responsible for adding a CSV import provider to the given payload.
  */
@@ -13,8 +13,10 @@ class AddCSVImportProvider
 {
     /**
      * @param mixed $payload
-     * @return mixed
+     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return mixed
      */
     public function handle(mixed $payload): mixed
     {

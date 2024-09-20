@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Support;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 /**
@@ -26,16 +25,18 @@ class Cast
      * @param string $classDest
      * @param array  $constructParams
      * @param array  $mappings
-     * @return object
+     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      * @throws \ReflectionException
+     *
+     * @return object
      **/
     public function castTo(string $classDest, array $constructParams = [], array $mappings = []): object
     {
         $this->mappings ??= $mappings;
 
-        if (! class_exists($classDest)) {
+        if (!class_exists($classDest)) {
             throw new \InvalidArgumentException(sprintf('Class %s does not exist.', $classDest));
         }
 
@@ -44,7 +45,7 @@ class Cast
         $properties = $classRef->getProperties();
 
         if (
-            ! empty($reflectedConstructParams = $classRef->getConstructor()?->getParameters() ?? [])
+            !empty($reflectedConstructParams = $classRef->getConstructor()?->getParameters() ?? [])
             && empty($constructParams)
         ) {
             foreach ($reflectedConstructParams as $param) {
@@ -67,7 +68,7 @@ class Cast
         foreach ($properties as $property) {
             $name = $property->getName();
 
-            if (! isset($sourceObj->$name)) {
+            if (!isset($sourceObj->$name)) {
                 if ($property->hasDefaultValue()) {
                     $returnObj->set($name, $property->getDefaultValue());
                     continue;
@@ -83,7 +84,7 @@ class Cast
             }
 
             $returnObj->set($name, match (true) {
-                enum_exists($type) => self::castEnum($sourceObj->$name, $type),
+                enum_exists($type)                          => self::castEnum($sourceObj->$name, $type),
                 $type !== 'stdClass' && class_exists($type) => (new self($sourceObj->$name))->castTo(
                     classDest: $type,
                     mappings: $this->getMatchingMappings($mappings, $name),
@@ -93,7 +94,7 @@ class Cast
                     $this->getMatchingMappings($mappings, $name)
                 ),
                 is_null($type) || $type == 'mixed' => $sourceObj->$name,
-                default => self::castSimple($sourceObj->$name, $type),
+                default                            => self::castSimple($sourceObj->$name, $type),
             });
         }
 
@@ -103,21 +104,23 @@ class Cast
     /**
      * @param mixed  $value
      * @param string $simpleType
-     * @return mixed
+     *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
+     *
+     * @return mixed
      **/
     public static function castSimple(mixed $value, string $simpleType): mixed
     {
         if (
             is_null($castedValue = match ($simpleType) {
-            'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
-            'float' => filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE),
-            'string', 'str' => is_array($value) || (is_object($value) && ! method_exists($value, '__toString')) ? null : (string) $value,
-            'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-            'object', 'stdClass' => is_array($value) ? (object) $value : null,
-            'array' => is_object($value) || is_array($value) ? (array) $value : null,
-            default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
+                'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
+                'float' => filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE),
+                'string', 'str' => is_array($value) || (is_object($value) && !method_exists($value, '__toString')) ? null : (string) $value,
+                'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+                'object', 'stdClass' => is_array($value) ? (object) $value : null,
+                'array' => is_object($value) || is_array($value) ? (array) $value : null,
+                default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
             })
         ) {
             throw new \RuntimeException(sprintf('Could not cast value to type %s.', $simpleType));
@@ -127,7 +130,7 @@ class Cast
     }
 
     /**
-     * Cast to backed enum
+     * Cast to backed enum.
      *
      * @param mixed  $value
      * @param string $enumClass
@@ -158,8 +161,10 @@ class Cast
      * Casts a string value into a datetime object.
      *
      * @param string $value The value to be casted into a datetime object.
-     * @return \DateTime The datetime object.
+     *
      * @throws \InvalidArgumentException If the value is not a valid datetime string.
+     *
+     * @return \DateTime The datetime object.
      **/
     public static function castDateTime(string $value)
     {
@@ -173,6 +178,7 @@ class Cast
     /**
      * @param array|object $iterator
      * @param array        $mappings
+     *
      * @return array|object
      **/
     protected function handleIterator(iterable $iterator, array $mappings = []): array|object
@@ -191,13 +197,13 @@ class Cast
             }
 
             $value = match (true) {
-                $type && enum_exists($type) => self::castEnum($value, $type),
-                $type && class_exists($type) => (new self($value))->castTo($type),
+                $type && enum_exists($type)                                                               => self::castEnum($value, $type),
+                $type && class_exists($type)                                                              => (new self($value))->castTo($type),
                 $type && in_array($type, ['string', 'str', 'int', 'integer', 'float', 'bool', 'boolean']) => self::castSimple($value, $type),
                 $type && in_array($type, ['array', 'object', 'stdClass']),
                 is_array($value),
                 is_object($value) => $this->{__FUNCTION__}($value, $this->getMatchingMappings($mappings, (string) $key)),
-                default => $value,
+                default           => $value,
             };
 
             if (is_object($result)) {
@@ -213,6 +219,7 @@ class Cast
     /**
      * @param array  $mappings
      * @param string $propName
+     *
      * @return array
      **/
     protected function getMatchingMappings(array $mappings, string $propName): array

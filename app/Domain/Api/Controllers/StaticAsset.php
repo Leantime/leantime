@@ -13,9 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- *
- */
 class StaticAsset extends Controller
 {
     use DispatchesEvents;
@@ -24,9 +21,8 @@ class StaticAsset extends Controller
     private ApiService $apiService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param Environment $config
      * @param ApiService  $apiService
@@ -42,7 +38,6 @@ class StaticAsset extends Controller
     /**
      * Displays the static asset by path.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -51,12 +46,12 @@ class StaticAsset extends Controller
     public function get(array $params): Response
     {
         $fullpath = Str::of($this->incomingRequest->getPathInfo())
-            ->replaceFirst('/api/static-asset/', APP_ROOT . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR)
+            ->replaceFirst('/api/static-asset/', APP_ROOT.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR)
             ->replace('/', DIRECTORY_SEPARATOR)
             ->lower();
 
         // Check if it's a static asset
-        if (! defined($constant = StaticAssetType::class . '::' . $fullpath->afterLast('.')->upper())) {
+        if (!defined($constant = StaticAssetType::class.'::'.$fullpath->afterLast('.')->upper())) {
             if ($this->config->get('debug', false)) {
                 throw new BadRequestHttpException();
             }
@@ -67,7 +62,7 @@ class StaticAsset extends Controller
         /** @var StaticAssetType $type */
         $type = constant($constant);
 
-        if (! $correctPath = $this->apiService->getCaseCorrectPathFromManifest($fullpath)) {
+        if (!$correctPath = $this->apiService->getCaseCorrectPathFromManifest($fullpath)) {
             if ($this->config->get('debug', false)) {
                 throw new NotFoundHttpException();
             }

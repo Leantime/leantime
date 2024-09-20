@@ -1,16 +1,12 @@
 <?php
 
 /**
- * Controller / Delete Canvas
+ * Controller / Delete Canvas.
  */
 
-namespace Leantime\Domain\Eacanvas\Controllers {
+namespace Leantime\Domain\Eacanvas\Controllers;
 
-    /**
-     *
-     */
-    class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
-    {
-        protected const CANVAS_NAME = 'ea';
-    }
+class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
+{
+    protected const CANVAS_NAME = 'ea';
 }

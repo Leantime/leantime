@@ -6,7 +6,6 @@ use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
-use Illuminate\Foundation\Bus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ProcessUtils;
@@ -42,8 +41,7 @@ class ConsoleKernel implements ConsoleKernelContract
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplicationContract::class);
         app()->alias(\Illuminate\Console\Application::class, ConsoleApplication::class);
 
-        return $this->artisan ??= app()->instance(\Illuminate\Console\Application::class, new class extends ConsoleApplication implements ConsoleApplicationContract
-        {
+        return $this->artisan ??= app()->instance(\Illuminate\Console\Application::class, new class() extends ConsoleApplication implements ConsoleApplicationContract {
             /**
              * The output from the previous command.
              *
@@ -54,12 +52,13 @@ class ConsoleKernel implements ConsoleKernelContract
             /**
              * Run an Artisan console command by name.
              *
-             * @param  string                                                 $command
-             * @param  array                                                  $parameters
-             * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
-             * @return int
+             * @param string                                                 $command
+             * @param array                                                  $parameters
+             * @param \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
              *
              * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
+             *
+             * @return int
              */
             public function call($command, array $parameters = [], $outputBuffer = null)
             {
@@ -67,7 +66,7 @@ class ConsoleKernel implements ConsoleKernelContract
                 array_unshift($parameters, $command);
                 $input = new \Symfony\Component\Console\Input\ArrayInput($parameters);
 
-                if (! $this->has($command)) {
+                if (!$this->has($command)) {
                     throw new \Symfony\Component\Console\Exception\CommandNotFoundException(sprintf('The command "%s" does not exist.', $command));
                 }
 
@@ -127,21 +126,20 @@ class ConsoleKernel implements ConsoleKernelContract
 
         $customCommands = $customPluginCommands = null;
 
-
-        Cache::store('installation')->set("commands.core", collect(glob(APP_ROOT . '/app/Command/*.php') ?? [])
+        Cache::store('installation')->set('commands.core', collect(glob(APP_ROOT.'/app/Command/*.php') ?? [])
             ->filter(function ($command) use (&$customCommands) {
-                return ! Arr::has(
-                    $customCommands ??= collect(glob(APP_ROOT . '/custom/Command/*.php') ?? []),
-                    str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command)
+                return !Arr::has(
+                    $customCommands ??= collect(glob(APP_ROOT.'/custom/Command/*.php') ?? []),
+                    str_replace(APP_ROOT.'/app', APP_ROOT.'/custom', $command)
                 );
             })
             ->concat($customCommands ?? []));
 
-        Cache::store('installation')->set("commands.plugins", collect(glob(APP_ROOT . '/app/Plugins/*/Command/*.php') ?? [])
+        Cache::store('installation')->set('commands.plugins', collect(glob(APP_ROOT.'/app/Plugins/*/Command/*.php') ?? [])
             ->filter(function ($command) use (&$customPluginCommands) {
-                return ! in_array(
-                    str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command),
-                    $customPluginCommands ??= collect(glob(APP_ROOT . '/custom/Plugins/*/Command/*.php') ?? [])->toArray(),
+                return !in_array(
+                    str_replace(APP_ROOT.'/app', APP_ROOT.'/custom', $command),
+                    $customPluginCommands ??= collect(glob(APP_ROOT.'/custom/Plugins/*/Command/*.php') ?? [])->toArray(),
                 );
             })
             ->concat($customPluginCommands ?? [])
@@ -151,21 +149,22 @@ class ConsoleKernel implements ConsoleKernelContract
                 array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabledOnly: true)),
             )));
 
-        $commands = collect(Arr::flatten(session("commands")))
-            ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
+        $commands = collect(Arr::flatten(session('commands')))
+            ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
 
         /**
-         * Other commands to be included
+         * Other commands to be included.
          *
          * @var LaravelCommand[]|SymfonyCommand[] $additionalCommands
          **/
-        $glob = glob(APP_ROOT . '/vendor/illuminate/*/Console/*.php');
+        $glob = glob(APP_ROOT.'/vendor/illuminate/*/Console/*.php');
         $laravelCommands = collect($glob)->map(function ($command) {
-            $path = Str::replace(APP_ROOT."/vendor/illuminate/", "", $command);
+            $path = Str::replace(APP_ROOT.'/vendor/illuminate/', '', $command);
             $cleanPath = ucfirst(Str::replace(['/', '.php'], ['\\', ''], $path));
-            return "Illuminate\\".$cleanPath;
+
+            return 'Illuminate\\'.$cleanPath;
         });
-        session(["commands.laravel" => $laravelCommands]);
+        session(['commands.laravel' => $laravelCommands]);
 
         $additionalCommands = self::dispatch_filter('additional_commands', [
             \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
@@ -181,7 +180,7 @@ class ConsoleKernel implements ConsoleKernelContract
         collect($commands)->concat($additionalCommands)
             ->each(function ($command) {
                 if (
-                    ! is_subclass_of($command, SymfonyCommand::class)
+                    !is_subclass_of($command, SymfonyCommand::class)
                     || (new \ReflectionClass($command))->isAbstract()
                 ) {
                     return;
@@ -221,8 +220,9 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface        $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null $output
+     * @param \Symfony\Component\Console\Input\InputInterface        $input
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
+     *
      * @return int
      */
     public function handle($input, $output = null)
@@ -243,9 +243,10 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string                                                 $command
-     * @param  array                                                  $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
+     * @param string                                                 $command
+     * @param array                                                  $parameters
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
+     *
      * @return int
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -258,8 +259,9 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Queue an Artisan console command by name.
      *
-     * @param  string $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @todo Implement
      */
     /** @phpstan-ignore-next-line */
@@ -296,8 +298,9 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Terminate the application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface $input
-     * @param  int                                             $status
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param int                                             $status
+     *
      * @return void
      */
     public function terminate($input, $status)

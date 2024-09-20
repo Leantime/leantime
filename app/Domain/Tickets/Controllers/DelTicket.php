@@ -1,83 +1,85 @@
 <?php
 
-namespace Leantime\Domain\Tickets\Controllers {
+namespace Leantime\Domain\Tickets\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Symfony\Component\HttpFoundation\Response;
+
+class DelTicket extends Controller
+{
+    private TicketService $ticketService;
 
     /**
+     * @param TicketService $ticketService
      *
+     * @return void
      */
-    class DelTicket extends Controller
+    public function init(TicketService $ticketService): void
     {
-        private TicketService $ticketService;
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        /**
-         * @param TicketService $ticketService
-         * @return void
-         */
-        public function init(TicketService $ticketService): void
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        $this->ticketService = $ticketService;
+    }
 
-            $this->ticketService = $ticketService;
-        }
-
-        /**
-         * @return Response
-         * @throws \Exception
-         */
-        public function get(): Response
-        {
-
-            //Only admins
-            if (Auth::userIsAtLeast(Roles::$editor)) {
-                if (isset($_GET['id'])) {
-                    $id = (int)($_GET['id']);
-                    $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                    return $this->tpl->displayPartial('tickets.delTicket');
-                } else {
-                    return $this->tpl->display('errors.error404', responseCode: 404);
-                }
-            } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
-            }
-        }
-
-        /**
-         * @param $params
-         * @return Response
-         * @throws \Exception
-         */
-        public function post($params): Response
-        {
+    /**
+     * @throws \Exception
+     *
+     * @return Response
+     */
+    public function get(): Response
+    {
+        //Only admins
+        if (Auth::userIsAtLeast(Roles::$editor)) {
             if (isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
+                $id = (int) $_GET['id'];
+                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+                return $this->tpl->displayPartial('tickets.delTicket');
+            } else {
+                return $this->tpl->display('errors.error404', responseCode: 404);
             }
+        } else {
+            return $this->tpl->display('errors.error403', responseCode: 403);
+        }
+    }
 
-            //Only admins
-            if (Auth::userIsAtLeast(Roles::$editor)) {
-                if (isset($params['del'])) {
-                    $result = $this->ticketService->delete($id);
+    /**
+     * @param $params
+     *
+     * @throws \Exception
+     *
+     * @return Response
+     */
+    public function post($params): Response
+    {
+        if (isset($_GET['id'])) {
+            $id = (int) $_GET['id'];
+        }
 
-                    if ($result === true) {
-                        $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");
-                        return Frontcontroller::redirect(session("lastPage"));
-                    } else {
-                        $this->tpl->setNotification($this->language->__($result['msg']), "error");
-                        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                        return $this->tpl->displayPartial('tickets.delTicket');
-                    }
+        //Only admins
+        if (Auth::userIsAtLeast(Roles::$editor)) {
+            if (isset($params['del'])) {
+                $result = $this->ticketService->delete($id);
+
+                if ($result === true) {
+                    $this->tpl->setNotification($this->language->__('notification.todo_deleted'), 'success');
+
+                    return Frontcontroller::redirect(session('lastPage'));
                 } else {
-                    return $this->tpl->display('errors.error403', responseCode: 403);
+                    $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+                    $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+                    return $this->tpl->displayPartial('tickets.delTicket');
                 }
             } else {
                 return $this->tpl->display('errors.error403', responseCode: 403);
             }
+        } else {
+            return $this->tpl->display('errors.error403', responseCode: 403);
         }
     }
 }

@@ -15,9 +15,6 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Oidc
 {
     private Environment $config;
@@ -71,7 +68,6 @@ class Oidc
         $this->userRepo = $userRepo;
         $this->language = $language;
 
-
         $providerUrl = $this->config->get('oidcProviderUrl');
 
         $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
@@ -98,6 +94,7 @@ class Oidc
 
     /**
      * @param string $str
+     *
      * @return string
      */
     private function trimTrailingSlash(string $str): string
@@ -106,39 +103,45 @@ class Oidc
         if ($str[$almost] == '/') {
             return substr($str, 0, $almost);
         }
+
         return $str;
     }
 
     /**
-     * @return string
      * @throws GuzzleException
+     *
+     * @return string
      */
     public function buildLoginUrl(): string
     {
-        return $this->getAuthUrl() . '?' . http_build_query([
-            'client_id' => $this->clientId,
-            'redirect_uri' => $this->buildRedirectUrl(),
+        return $this->getAuthUrl().'?'.http_build_query([
+            'client_id'     => $this->clientId,
+            'redirect_uri'  => $this->buildRedirectUrl(),
             'response_type' => 'code',
-            'scope' => $this->scopes,
-            'state' => $this->generateState(),
+            'scope'         => $this->scopes,
+            'state'         => $this->generateState(),
         ]);
     }
 
     /**
-     * @return string
      * @throws GuzzleException
+     *
+     * @return string
      */
     private function getAuthUrl(): string
     {
         $this->loadEndpoints();
+
         return $this->authUrl;
     }
 
     /**
      * @param string $code
      * @param string $state
-     * @return void
+     *
      * @throws GuzzleException
+     *
+     * @return void
      */
     public function callback(string $code, string $state): Response
     {
@@ -156,7 +159,7 @@ class Oidc
             //falback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         } else {
-            $this->displayError("oidc.error.unsupportedToken");
+            $this->displayError('oidc.error.unsupportedToken');
         }
 
         if ($userInfo == null) {
@@ -169,8 +172,10 @@ class Oidc
 
     /**
      * @param string $token
-     * @return array
+     *
      * @throws GuzzleException
+     *
+     * @return array
      */
     private function pollUserInfo(string $token): array
     {
@@ -179,11 +184,11 @@ class Oidc
 
     /**
      * @param array $userInfo
+     *
      * @return void
      */
     private function login(array $userInfo): Response
     {
-
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
 
         if (!$userName) {
@@ -196,18 +201,18 @@ class Oidc
             if ($this->createUser) {
                 //create user if it doesn't exist yet
                 $userArray = [
-                    'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
-                    'lastname' => $this->readMultilayerKey($userInfo, $this->fieldLastName),
-                    'phone' => $this->readMultilayerKey($userInfo, $this->fieldPhone),
-                    'jobTitle' => $this->readMultilayerKey($userInfo, $this->fieldJobtitle),
-                    'jobLevel' => $this->readMultilayerKey($userInfo, $this->fieldJoblevel),
+                    'firstname'  => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
+                    'lastname'   => $this->readMultilayerKey($userInfo, $this->fieldLastName),
+                    'phone'      => $this->readMultilayerKey($userInfo, $this->fieldPhone),
+                    'jobTitle'   => $this->readMultilayerKey($userInfo, $this->fieldJobtitle),
+                    'jobLevel'   => $this->readMultilayerKey($userInfo, $this->fieldJoblevel),
                     'department' => $this->readMultilayerKey($userInfo, $this->fieldDepartment),
-                    'user' => $userName,
-                    'role' => $this->defaultRole,
-                    'password' => '',
-                    'clientId' => '',
-                    'source' => 'oidc',
-                    'status' => 'a',
+                    'user'       => $userName,
+                    'role'       => $this->defaultRole,
+                    'password'   => '',
+                    'clientId'   => '',
+                    'source'     => 'oidc',
+                    'status'     => 'a',
                 ];
 
                 $userId = $this->userRepo->addUser($userArray);
@@ -215,7 +220,7 @@ class Oidc
                 if ($userId !== false) {
                     $user = $this->userRepo->getUserByEmail($userName);
                 } else {
-                    throw new \Exception("OIDC user creation failed.");
+                    throw new \Exception('OIDC user creation failed.');
                 }
             } else {
                 $this->displayError('oidc.error.user_not_found');
@@ -223,12 +228,12 @@ class Oidc
         } else {
             //update user if it exists
             $user['user'] = $user['username'];
-            $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
-            $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['lastname'];
-            $user['phone'] = $this->readMultilayerKey($userInfo, $this->fieldPhone)  != "" ?  $this->readMultilayerKey($userInfo, $this->fieldPhone) : $user['phone'];
-            $user['jobTitle'] = $this->readMultilayerKey($userInfo, $this->fieldJobtitle) != "" ? $this->readMultilayerKey($userInfo, $this->fieldJobtitle) : $user['jobTitle'];
-            $user['jobLevel'] = $this->readMultilayerKey($userInfo, $this->fieldJoblevel) != "" ?  $this->readMultilayerKey($userInfo, $this->fieldJoblevel) : $user['jobLevel'];
-            $user['department'] = $this->readMultilayerKey($userInfo, $this->fieldDepartment) != "" ? $this->readMultilayerKey($userInfo, $this->fieldDepartment) : $user['department'];
+            $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != '' ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
+            $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName) != '' ? $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['lastname'];
+            $user['phone'] = $this->readMultilayerKey($userInfo, $this->fieldPhone) != '' ? $this->readMultilayerKey($userInfo, $this->fieldPhone) : $user['phone'];
+            $user['jobTitle'] = $this->readMultilayerKey($userInfo, $this->fieldJobtitle) != '' ? $this->readMultilayerKey($userInfo, $this->fieldJobtitle) : $user['jobTitle'];
+            $user['jobLevel'] = $this->readMultilayerKey($userInfo, $this->fieldJoblevel) != '' ? $this->readMultilayerKey($userInfo, $this->fieldJoblevel) : $user['jobLevel'];
+            $user['department'] = $this->readMultilayerKey($userInfo, $this->fieldDepartment) != '' ? $this->readMultilayerKey($userInfo, $this->fieldDepartment) : $user['department'];
 
             $user['role'] = $this->getUserRole($userInfo, $user);
 
@@ -240,12 +245,13 @@ class Oidc
 
         $this->authService->setUserSession($user, false);
 
-        return Frontcontroller::redirect(BASE_URL . "/dashboard/home");
+        return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
     }
 
     /**
      * @param array $userInfo
      * @param array $user
+     *
      * @return string
      */
     private function getUserRole(array $userInfo, array $user = []): string
@@ -255,18 +261,20 @@ class Oidc
 
     /**
      * @param string $code
-     * @return array
+     *
      * @throws GuzzleException
+     *
+     * @return array
      */
     private function requestTokens(string $code): array
     {
         $httpClient = new Client();
         $response = $httpClient->post($this->getTokenUrl(), [
             'form_params' => [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => $this->buildRedirectUrl(),
-                'client_id' => $this->clientId,
+                'grant_type'    => 'authorization_code',
+                'code'          => $code,
+                'redirect_uri'  => $this->buildRedirectUrl(),
+                'client_id'     => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ],
         ]);
@@ -281,6 +289,7 @@ class Oidc
             case 'application/x-www-form-urlencoded':
                 $result = [];
                 parse_str($response->getBody()->getContents(), $result);
+
                 return $result;
             default:
                 return json_decode($response->getBody()->getContents(), true);
@@ -290,6 +299,7 @@ class Oidc
     /**
      * @param array  $topic
      * @param string $key
+     *
      * @return string
      */
     private function readMultilayerKey(array $topic, string $key): string
@@ -302,13 +312,16 @@ class Oidc
             }
             $layer = $layer[$layerKey];
         }
+
         return $layer;
     }
 
     /**
      * @param string $jwt
-     * @return array|null
+     *
      * @throws GuzzleException
+     *
+     * @return array|null
      */
     private function decodeJWT(string $jwt): array|null
     {
@@ -316,13 +329,11 @@ class Oidc
 
         $tokenData = json_decode($this->decodeBase64Url($content), true);
 
-
         if ($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
             $this->displayError('oidc.error.providerMismatch', $tokenData['iss'], $this->providerUrl);
         }
 
         $headerData = json_decode($this->decodeBase64Url($header), true);
-
 
         $key = $this->getPublicKey($headerData['kid']);
 
@@ -330,7 +341,7 @@ class Oidc
             return null;
         }
 
-        $data = $header . '.' . $content;
+        $data = $header.'.'.$content;
 
         if (openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
             return $tokenData;
@@ -341,6 +352,7 @@ class Oidc
 
     /**
      * @param string $header
+     *
      * @return int
      */
     private function getAlgorythm(string $header): int
@@ -352,17 +364,18 @@ class Oidc
         ];
 
         if (!isset($map[$algorythmName])) {
-            $this->displayError("oidc.error.unsupportedAlgorythm", $algorythmName);
+            $this->displayError('oidc.error.unsupportedAlgorythm', $algorythmName);
         }
-
 
         return $map[$algorythmName];
     }
 
     /**
      * @param string $kid
-     * @return OpenSSLAsymmetricKey|false
+     *
      * @throws GuzzleException
+     *
+     * @return OpenSSLAsymmetricKey|false
      */
     private function getPublicKey(string $kid): OpenSSLAsymmetricKey|false
     {
@@ -372,8 +385,6 @@ class Oidc
         if ($this->certificateFile) {
             return openssl_pkey_get_public(file_get_contents($this->certificateFile));
         }
-
-
 
         $httpClient = new Client();
         $response = $httpClient->get($this->getJwksUrl());
@@ -393,7 +404,7 @@ class Oidc
             } elseif (!isset($kid[0]) || $kid == $key['kid']) {
                 $keySource = '';
                 if (isset($key['x5c'])) {
-                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split($key['x5c'][0], 64, PHP_EOL) . '-----END CERTIFICATE-----';
+                    $keySource = '-----BEGIN CERTIFICATE-----'.PHP_EOL.chunk_split($key['x5c'][0], 64, PHP_EOL).'-----END CERTIFICATE-----';
                 } elseif (isset($key['n'])) {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
                 }
@@ -408,28 +419,33 @@ class Oidc
     }
 
     /**
-     * @return string
      * @throws GuzzleException
+     *
+     * @return string
      */
     private function getJwksUrl(): string
     {
         $this->loadEndpoints();
+
         return $this->jwksUrl;
     }
 
     /**
-     * @return string
      * @throws GuzzleException
+     *
+     * @return string
      */
     private function getTokenUrl(): string
     {
         $this->loadEndpoints();
+
         return $this->tokenUrl;
     }
 
     /**
-     * @return bool
      * @throws GuzzleException
+     *
+     * @return bool
      */
     private function loadEndpoints(): bool
     {
@@ -439,15 +455,18 @@ class Oidc
 
         if ($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
             $this->configLoaded = true;
+
             return true;
         }
 
         $httpClient = new Client();
+
         try {
-            $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
+            $response = $httpClient->get($this->providerUrl.'/.well-known/openid-configuration');
             $endpoints = json_decode($response->getBody()->getContents(), true);
-        }catch(\Exception $e) {
+        } catch(\Exception $e) {
             report($e);
+
             return false;
         }
         //load all not yet defined endpoints from well-known configuration
@@ -474,8 +493,10 @@ class Oidc
     /**
      * @param string $urls
      * @param string $token
-     * @return array
+     *
      * @throws GuzzleException
+     *
+     * @return array
      */
     private function getMultiUrl(string $urls, string $token = ''): array
     {
@@ -487,7 +508,7 @@ class Oidc
         if ($token) {
             $options = [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $token,
+                    'Authorization' => 'Bearer '.$token,
                 ],
             ];
         }
@@ -499,6 +520,7 @@ class Oidc
                 $combinedArray = array_merge_recursive($combinedArray, $urlData);
             }
         }
+
         return $combinedArray;
     }
 
@@ -507,12 +529,13 @@ class Oidc
      */
     private function buildRedirectUrl(): string
     {
-        return $this->trimTrailingSlash(BASE_URL) . '/oidc/callback';
+        return $this->trimTrailingSlash(BASE_URL).'/oidc/callback';
     }
 
     /**
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     private function generateState(): string
     {
@@ -521,6 +544,7 @@ class Oidc
 
     /**
      * @param string $state
+     *
      * @return bool
      */
     private function verifyState(string $state): bool
@@ -531,6 +555,7 @@ class Oidc
 
     /**
      * @param string $value
+     *
      * @return string
      */
     private function encodeBase64Url(string $value): string
@@ -540,6 +565,7 @@ class Oidc
 
     /**
      * @param string $value
+     *
      * @return string
      */
     private function decodeBase64Url(string $value): string
@@ -550,12 +576,13 @@ class Oidc
     /**
      * @param string $translationKey
      * @param string ...$values
+     *
      * @throws HttpResponseException
+     *
      * @return void
      */
     private function displayError(string $translationKey, string ...$values): void
     {
-
         throw new \Exception(sprintf($this->language->__($translationKey), ...$values));
     }
 }

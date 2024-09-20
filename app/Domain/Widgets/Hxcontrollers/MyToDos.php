@@ -9,7 +9,7 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
- * Class MyToDos
+ * Class MyToDos.
  *
  * This class extends the HtmxController class and represents a controller for managing to-do items.
  */
@@ -24,11 +24,11 @@ class MyToDos extends HtmxController
 
     private Language $language;
 
-
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     *
      * @return void
      */
     public function init(
@@ -37,7 +37,7 @@ class MyToDos extends HtmxController
     ) {
         $this->ticketsService = $ticketsService;
         $this->language = $language;
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     /**
@@ -47,9 +47,7 @@ class MyToDos extends HtmxController
      */
     public function get()
     {
-
-        $params =  $this->incomingRequest->query->all();
-
+        $params = $this->incomingRequest->query->all();
 
         $tplVars = $this->ticketsService->getToDoWidgetAssignments($params);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
@@ -57,21 +55,19 @@ class MyToDos extends HtmxController
 
     public function addTodo()
     {
-
-        $params =  $_POST;
+        $params = $_POST;
 
         if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor])) {
             if (isset($params['quickadd']) == true) {
                 $result = $this->ticketsService->quickAddTicket($params);
 
-                if (isset($result["status"])) {
-                    $this->tpl->setNotification($result["message"], $result["status"]);
+                if (isset($result['status'])) {
+                    $this->tpl->setNotification($result['message'], $result['status']);
                 } else {
-                    $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
                 }
 
-                $this->setHTMXEvent("HTMX.ShowNotification");
-
+                $this->setHTMXEvent('HTMX.ShowNotification');
             }
         }
 

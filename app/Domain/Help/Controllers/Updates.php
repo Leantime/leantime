@@ -1,53 +1,36 @@
 <?php
 
-namespace Leantime\Domain\Help\Controllers {
+namespace Leantime\Domain\Help\Controllers;
 
-    use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 
+class Updates extends Controller
+{
     /**
-     *
+     * get - handle get requests.
      */
-    class Updates extends Controller
+    public function get($params)
     {
-        /**
-         * get - handle get requests
-         *
-         * @access public
-         *
-         */
-        public function get($params)
-        {
-        }
-
-        /**
-         * post - handle post requests
-         *
-         * @access public
-         *
-         */
-        public function post($params)
-        {
-        }
-
-        /**
-         * put - handle put requests
-         *
-         * @access public
-         *
-         */
-        public function put($params)
-        {
-        }
-
-        /**
-         * delete - handle delete requests
-         *
-         * @access public
-         *
-         */
-        public function delete($params)
-        {
-        }
     }
 
+    /**
+     * post - handle post requests.
+     */
+    public function post($params)
+    {
+    }
+
+    /**
+     * put - handle put requests.
+     */
+    public function put($params)
+    {
+    }
+
+    /**
+     * delete - handle delete requests.
+     */
+    public function delete($params)
+    {
+    }
 }

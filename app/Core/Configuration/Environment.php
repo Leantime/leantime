@@ -12,14 +12,11 @@ use Leantime\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * environment - class To handle environment variables
- *
- * @package    leantime
- * @subpackage core
+ * environment - class To handle environment variables.
  */
 class Environment implements ArrayAccess, ConfigContract
 {
-    # Config Files ===============================================================================
+    // Config Files ===============================================================================
     /**
      * @var Dotenv
      */
@@ -35,7 +32,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public ?Config $phpConfig;
 
-    # Config ======================================================================================
+    // Config ======================================================================================
     /**
      * @var array The Config
      */
@@ -43,66 +40,67 @@ class Environment implements ArrayAccess, ConfigContract
 
     /**
      * @var array list of legacy mappings
+     *
      * @todo remove this after deprecating configuration.php
      */
     private const LEGACY_MAPPINGS = [
-        'printLogoUrl' => 'LEAN_PRINT_LOGO_URL',
-        'primarycolor' => 'LEAN_PRIMARY_COLOR',
-        'secondarycolor' => 'LEAN_SECONDARY_COLOR',
-        'email' => 'LEAN_EMAIL_RETURN',
-        'useSMTP' => 'LEAN_EMAIL_USE_SMTP',
-        'smtpHosts' => 'LEAN_EMAIL_SMTP_HOSTS',
-        'smtpAuth' => 'LEAN_EMAIL_SMTP_AUTH',
-        'smtpUsername' => 'LEAN_EMAIL_SMTP_USERNAME',
-        'smtpPassword' => 'LEAN_EMAIL_SMTP_PASSWORD',
-        'smtpAutoTLS' => 'LEAN_EMAIL_SMTP_AUTO_TLS',
-        'smtpSecure' => 'LEAN_EMAIL_SMTP_SECURE',
-        'smtpPort' => 'LEAN_EMAIL_SMTP_PORT',
-        'smtpSSLNoverify' => 'LEAN_EMAIL_SMTP_SSLNOVERIFY',
-        'useLdap' => 'LEAN_LDAP_USE_LDAP',
-        'ldapType' => 'LEAN_LDAP_LDAP_TYPE',
+        'printLogoUrl'           => 'LEAN_PRINT_LOGO_URL',
+        'primarycolor'           => 'LEAN_PRIMARY_COLOR',
+        'secondarycolor'         => 'LEAN_SECONDARY_COLOR',
+        'email'                  => 'LEAN_EMAIL_RETURN',
+        'useSMTP'                => 'LEAN_EMAIL_USE_SMTP',
+        'smtpHosts'              => 'LEAN_EMAIL_SMTP_HOSTS',
+        'smtpAuth'               => 'LEAN_EMAIL_SMTP_AUTH',
+        'smtpUsername'           => 'LEAN_EMAIL_SMTP_USERNAME',
+        'smtpPassword'           => 'LEAN_EMAIL_SMTP_PASSWORD',
+        'smtpAutoTLS'            => 'LEAN_EMAIL_SMTP_AUTO_TLS',
+        'smtpSecure'             => 'LEAN_EMAIL_SMTP_SECURE',
+        'smtpPort'               => 'LEAN_EMAIL_SMTP_PORT',
+        'smtpSSLNoverify'        => 'LEAN_EMAIL_SMTP_SSLNOVERIFY',
+        'useLdap'                => 'LEAN_LDAP_USE_LDAP',
+        'ldapType'               => 'LEAN_LDAP_LDAP_TYPE',
         'ldapLtGroupAssignments' => 'LEAN_LDAP_GROUP_ASSIGNMENT',
-        'ldapDomain' => 'LEAN_LDAP_LDAP_DOMAIN',
-        'oidcClientId' => 'LEAN_OIDC_CLIENT_ID',
-        'oidcClientSecret' => 'LEAN_OIDC_CLIENT_SECRET',
-        'oidcAuthUrl' => 'LEAN_OIDC_AUTH_URL_OVERRIDE',
-        'oidcTokenUrl' => 'LEAN_OIDC_TOKEN_URL_OVERRIDE',
-        'oidcJwksUrl' => 'LEAN_OIDC_JWKS_URL_OVERRIDE',
-        'oidcUserInfoUrl' => 'LEAN_OIDC_USERINFO_URL_OVERRIDE',
-        'oidcFieldFirstName' => 'LEAN_OIDC_FIELD_FIRSTNAME',
-        'oidcFieldLastName' => 'LEAN_OIDC_FIELD_LASTNAME',
-        'redisURL' => 'LEAN_REDIS_URL',
+        'ldapDomain'             => 'LEAN_LDAP_LDAP_DOMAIN',
+        'oidcClientId'           => 'LEAN_OIDC_CLIENT_ID',
+        'oidcClientSecret'       => 'LEAN_OIDC_CLIENT_SECRET',
+        'oidcAuthUrl'            => 'LEAN_OIDC_AUTH_URL_OVERRIDE',
+        'oidcTokenUrl'           => 'LEAN_OIDC_TOKEN_URL_OVERRIDE',
+        'oidcJwksUrl'            => 'LEAN_OIDC_JWKS_URL_OVERRIDE',
+        'oidcUserInfoUrl'        => 'LEAN_OIDC_USERINFO_URL_OVERRIDE',
+        'oidcFieldFirstName'     => 'LEAN_OIDC_FIELD_FIRSTNAME',
+        'oidcFieldLastName'      => 'LEAN_OIDC_FIELD_LASTNAME',
+        'redisURL'               => 'LEAN_REDIS_URL',
     ];
 
     /**
      * environment constructor.
+     *
      * @param DefaultConfig $defaultConfiguration
+     *
      * @throws Exception
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
-
-
         /* PHP */
         $this->phpConfig = null;
-        if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
+        if (file_exists($phpConfigFile = APP_ROOT.'/config/configuration.php')) {
             require_once $phpConfigFile;
 
-            if (! class_exists(Config::class)) {
-                throw new Exception("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
+            if (!class_exists(Config::class)) {
+                throw new Exception('We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.');
             }
 
             $this->phpConfig = new Config();
         }
 
         /* Dotenv */
-        $this->dotenv = Dotenv::createImmutable(APP_ROOT . "/config");
+        $this->dotenv = Dotenv::createImmutable(APP_ROOT.'/config');
         $this->dotenv->safeLoad();
 
         /* YAML */
         $this->yaml = null;
-        if (file_exists(APP_ROOT . "/config/config.yaml")) {
-            $this->yaml = Yaml::parseFile(APP_ROOT . "/config/config.yaml");
+        if (file_exists(APP_ROOT.'/config/config.yaml')) {
+            $this->yaml = Yaml::parseFile(APP_ROOT.'/config/config.yaml');
         }
 
         $defaultConfigurationProperties = get_class_vars($defaultConfiguration::class);
@@ -112,24 +110,26 @@ class Environment implements ArrayAccess, ConfigContract
             $type = $type == 'NULL' ? 'string' : $type;
 
             $this->config[$propertyName] = $this->environmentHelper(
-                envVar: self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_' . Str::of($propertyName)->snake()->upper()->toString(),
+                envVar: self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_'.Str::of($propertyName)->snake()->upper()->toString(),
                 default: $defaultConfigurationProperties[$propertyName],
                 dataType: $type,
             );
         }
 
         $end = microtime(true);
-
     }
 
-    public function updateCache() {
-        file_put_contents(APP_ROOT . "/cache/configCache", serialize($this->config));
+    public function updateCache()
+    {
+        file_put_contents(APP_ROOT.'/cache/configCache', serialize($this->config));
     }
+
     /**
-     * getBool - get a boolean value from the environment
+     * getBool - get a boolean value from the environment.
      *
      * @param string $envVar
      * @param bool   $default
+     *
      * @return bool
      */
     private function getBool(string $envVar, bool $default): bool
@@ -138,10 +138,11 @@ class Environment implements ArrayAccess, ConfigContract
     }
 
     /**
-     * getString - get a string value from the environment
+     * getString - get a string value from the environment.
      *
      * @param string $envVar
      * @param string $default
+     *
      * @return string
      */
     private function getString(string $envVar, string $default = ''): string
@@ -150,14 +151,15 @@ class Environment implements ArrayAccess, ConfigContract
     }
 
     /**
-     * environmentHelper - helper function to get a value from the environment
+     * environmentHelper - helper function to get a value from the environment.
      *
      * @param string $envVar
      * @param mixed  $default
      * @param string $dataType
+     *
      * @return mixed
      */
-    private function environmentHelper(string $envVar, mixed $default, string $dataType = "string"): mixed
+    private function environmentHelper(string $envVar, mixed $default, string $dataType = 'string'): mixed
     {
         /**
          * Basically, here, we are doing the fetch order of
@@ -171,21 +173,21 @@ class Environment implements ArrayAccess, ConfigContract
 
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
-            "string" => $found,
-            "boolean" => $found == "true",
-            "number" => intval($found),
-            default => $found,
+            'string'  => $found,
+            'boolean' => $found == 'true',
+            'number'  => intval($found),
+            default   => $found,
         };
     }
 
     /**
      * @param string $envVar
      * @param mixed  $currentValue
+     *
      * @return mixed
      */
     private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
     {
-
         if ($this->phpConfig) {
             $key = array_search($envVar, self::LEGACY_MAPPINGS) ?: Str::of($envVar)->replace('LEAN_', '')->lower()->camel()->toString();
 
@@ -196,30 +198,31 @@ class Environment implements ArrayAccess, ConfigContract
     }
 
     /**
-     * tryGetFromEnvironment - try to get a value from the environment
+     * tryGetFromEnvironment - try to get a value from the environment.
      *
      * @param string $envVar
      * @param mixed  $currentValue
+     *
      * @return mixed
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
     {
-
         return $_ENV[$envVar] ?? $currentValue;
     }
 
     /**
-     * tryGetFromYaml - try to get a value from the yaml file
+     * tryGetFromYaml - try to get a value from the yaml file.
      *
      * @param string $envVar
      * @param mixed  $currentValue
+     *
      * @return mixed
      */
     private function tryGetFromYaml(string $envVar, mixed $currentValue): mixed
     {
-
         if ($this->yaml) {
             $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
+
             return $this->yaml[$key] ?? $currentValue;
         }
 
@@ -229,7 +232,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration value exists.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return bool
      */
     public function has($key): bool
@@ -240,8 +244,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get the specified configuration value.
      *
-     * @param  array|string $key
-     * @param  mixed        $default
+     * @param array|string $key
+     * @param mixed        $default
+     *
      * @return mixed
      */
     public function get($key, $default = null): mixed
@@ -261,6 +266,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Get many configuration values.
      *
      * @param array $keys
+     *
      * @return array
      */
     public function getMany(array $keys): array
@@ -281,8 +287,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Set a given configuration value.
      *
-     * @param  array|string $key
-     * @param  mixed        $value
+     * @param array|string $key
+     * @param mixed        $value
+     *
      * @return void
      */
     public function set($key, $value = null): void
@@ -292,14 +299,14 @@ class Environment implements ArrayAccess, ConfigContract
         foreach ($keys as $key => $value) {
             Arr::set($this->config, $key, $value);
         }
-
     }
 
     /**
      * Prepend a value onto an array configuration value.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function prepend($key, $value): void
@@ -314,8 +321,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Push a value onto an array configuration value.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function push($key, $value): void
@@ -340,7 +348,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration option exists.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return bool
      */
     public function offsetExists($key): bool
@@ -351,7 +360,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get a configuration option.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function offsetGet($key): mixed
@@ -362,8 +372,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Set a configuration option.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function offsetSet($key, mixed $value): void
@@ -374,7 +385,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Unset a configuration option.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return void
      */
     public function offsetUnset($key): void
@@ -386,6 +398,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Dynamically access the configuration using object syntax.
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function __get(string $key): mixed

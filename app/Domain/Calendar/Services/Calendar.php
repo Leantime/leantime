@@ -12,11 +12,7 @@ use Leantime\Domain\Tickets\Services\Tickets;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
 use Spatie\IcalendarGenerator\Enums\Display;
-use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Calendar
 {
     private CalendarRepository $calendarRepo;
@@ -25,7 +21,6 @@ class Calendar
     /**
      * @param CalendarRepository $calendarRepo
      * @param LanguageCore       $language
-     *
      */
     public function __construct(CalendarRepository $calendarRepo, LanguageCore $language)
     {
@@ -48,9 +43,8 @@ class Calendar
     }
 
     /**
-     * Patches calendar event
+     * Patches calendar event.
      *
-     * @access public
      *
      * @params $id id of event to be updated (only events can be updated. Tickets need to be updated via ticket api
      * @params $params key value array of columns to be updated
@@ -71,9 +65,8 @@ class Calendar
     }
 
     /**
-     * Checks if user is allowed to make changes to event
+     * Checks if user is allowed to make changes to event.
      *
-     * @access public
      *
      * @params int $eventId Id of event to be checked
      *
@@ -83,12 +76,11 @@ class Calendar
      */
     private function userIsAllowedToUpdate($eventId): bool
     {
-
         if (Auth::userIsAtLeast(Roles::$admin)) {
             return true;
         } else {
             $event = $this->calendarRepo->getEvent($eventId);
-            if ($event && $event["userId"] == session("userdata.id")) {
+            if ($event && $event['userId'] == session('userdata.id')) {
                 return true;
             }
         }
@@ -96,11 +88,9 @@ class Calendar
         return false;
     }
 
-
     /**
-     * Adds a new event to the user's calendar
+     * Adds a new event to the user's calendar.
      *
-     * @access public
      *
      * @params array $values array of event values
      *
@@ -120,7 +110,7 @@ class Calendar
 
         $dateTo = null;
         if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-            $dateTo =  format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
+            $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
         }
         $values['dateTo'] = $dateTo;
 
@@ -149,7 +139,6 @@ class Calendar
      * edits an event on the user's calendar
      * Important: Time needs to come in as user formatted time value.
      *
-     * @access public
      *
      * @params array $values array of event values
      *
@@ -199,9 +188,8 @@ class Calendar
     }
 
     /**
-     * deletes an event on the user's calendar
+     * deletes an event on the user's calendar.
      *
-     * @access public
      *
      * @param int $id
      *
@@ -246,17 +234,16 @@ class Calendar
      * @param string $userHash The hash of the user.
      * @param string $calHash  The hash of the calendar.
      *
-     * @return IcalCalendar The iCal calendar generated from the calendar events.
      * @throws MissingParameterException If either user hash or calendar hash is empty.
      *
+     * @return IcalCalendar The iCal calendar generated from the calendar events.
      *
      * @api
      */
     public function getIcalByHash(string $userHash, string $calHash): IcalCalendar
     {
-
         if (empty($userHash) || empty($calHash)) {
-            throw new MissingParameterException("userHash and calendar hash are required");
+            throw new MissingParameterException('userHash and calendar hash are required');
         }
 
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
@@ -265,10 +252,9 @@ class Calendar
 
         //Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
-
             try {
                 $currentEvent = IcalEvent::create()
-                    ->image(BASE_URL . '/dist/images/favicon.png', 'image/png', Display::badge())
+                    ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
                     ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
                     ->endsAt(dtHelper()->parseDbDateTime($event['dateTo'])->setToUserTimezone())
                     ->name($event['title'])
@@ -280,17 +266,16 @@ class Calendar
                     $currentEvent->fullDay();
                 }
 
-                if ($event['eventType'] == 'ticket' && $event['dateContext'] == "due") {
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'due') {
                     $currentEvent->alertMinutesBefore(30, $this->language->__('text.ical.todo_is_due'));
                 }
 
-                if ($event['eventType'] == 'ticket' && $event['dateContext'] == "edit") {
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == 'edit') {
                     $currentEvent->alertMinutesBefore(5, $this->language->__('text.ical.todo_start_alert'));
                 }
 
                 $eventObjects[] = $currentEvent;
-
-            }catch(\Exception $e) {
+            } catch(\Exception $e) {
                 //Do not include event in ical
                 report($e);
             }
@@ -298,52 +283,51 @@ class Calendar
 
         $icalCalendar = IcalCalendar::create($this->language->__('text.ical_title'))->event($eventObjects);
 
-
         return $icalCalendar;
     }
 
     public function getCalendar(int $userId): array
     {
         $ticketService = app()->make(Tickets::class);
-        $dbTickets =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
+        $dbTickets = $ticketService->getOpenUserTicketsThisWeekAndLater($userId, '', true);
 
-        $tickets = array();
-        if (isset($dbTickets["thisWeek"]["tickets"])) {
-            $tickets = array_merge($tickets, $dbTickets["thisWeek"]["tickets"]);
+        $tickets = [];
+        if (isset($dbTickets['thisWeek']['tickets'])) {
+            $tickets = array_merge($tickets, $dbTickets['thisWeek']['tickets']);
         }
 
-        if (isset($dbTickets["later"]["tickets"])) {
-            $tickets = array_merge($tickets, $dbTickets["later"]["tickets"]);
+        if (isset($dbTickets['later']['tickets'])) {
+            $tickets = array_merge($tickets, $dbTickets['later']['tickets']);
         }
 
-        if (isset($dbTickets["overdue"]["tickets"])) {
-            $tickets = array_merge($tickets, $dbTickets["overdue"]["tickets"]);
+        if (isset($dbTickets['overdue']['tickets'])) {
+            $tickets = array_merge($tickets, $dbTickets['overdue']['tickets']);
         }
 
         $dbUserEvents = $this->calendarRepo->getAll($userId);
 
-        $newValues = array();
+        $newValues = [];
         foreach ($dbUserEvents as $value) {
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-            $newValues[] = array(
-                'title'  => $value['description'],
-                'allDay' => $allDay,
-                'description' => '',
-                'dateFrom' => $value['dateFrom'],
-                'dateTo' => $value['dateTo'],
-                'id' => $value['id'],
-                'projectId' => '',
-                'eventType' => "calendar",
-                'dateContext' => 'plan',
+            $newValues[] = [
+                'title'           => $value['description'],
+                'allDay'          => $allDay,
+                'description'     => '',
+                'dateFrom'        => $value['dateFrom'],
+                'dateTo'          => $value['dateTo'],
+                'id'              => $value['id'],
+                'projectId'       => '',
+                'eventType'       => 'calendar',
+                'dateContext'     => 'plan',
                 'backgroundColor' => 'var(--accent1)',
-                'borderColor' => 'var(--accent1)',
-                'url' => BASE_URL . '/calendar/showMyCalendar/#/calendar/editEvent/' . $value['id'],
-            );
+                'borderColor'     => 'var(--accent1)',
+                'url'             => BASE_URL.'/calendar/showMyCalendar/#/calendar/editEvent/'.$value['id'],
+            ];
         }
 
         if (count($tickets)) {
-            $statusLabelsArray = array();
+            $statusLabelsArray = [];
 
             foreach ($tickets as $ticket) {
                 if (!isset($statusLabelsArray[$ticket['projectId']])) {
@@ -353,26 +337,26 @@ class Calendar
                 }
 
                 if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
-                    $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
-                    $statusColor = $this->calendarRepo->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]["class"]];
+                    $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]['name'];
+                    $statusColor = $this->calendarRepo->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]['class']];
                 } else {
-                    $statusName = "";
-                    $statusColor = "var(--grey)";
+                    $statusName = '';
+                    $statusColor = 'var(--grey)';
                 }
 
-                $backgroundColor = "var(--accent2)";
+                $backgroundColor = 'var(--accent2)';
 
-                if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-                    $context = '❕ ' . $this->language->__("label.due_todo");
+                if ($ticket['dateToFinish'] != '0000-00-00 00:00:00' && $ticket['dateToFinish'] != '1969-12-31 00:00:00') {
+                    $context = '❕ '.$this->language->__('label.due_todo');
 
                     $newValues[] = $this->mapEventData(
-                        title:$context . $ticket['headline'] . " (" . $statusName . ")",
+                        title:$context.$ticket['headline'].' ('.$statusName.')',
                         description: $ticket['description'],
                         allDay:false,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
-                        eventType: "ticket",
-                        dateContext: "due",
+                        eventType: 'ticket',
+                        dateContext: 'due',
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
                         dateFrom: $ticket['dateToFinish'],
@@ -382,24 +366,24 @@ class Calendar
 
                 if (dtHelper()->isValidDateString($ticket['editFrom'])) {
                     // Set ticket to all-day ticket when no time is set
-                    $dateFrom =  dtHelper()->parseDbDateTime($ticket['editFrom']);
-                    $dateTo =  dtHelper()->parseDbDateTime($ticket['editTo']);
+                    $dateFrom = dtHelper()->parseDbDateTime($ticket['editFrom']);
+                    $dateTo = dtHelper()->parseDbDateTime($ticket['editTo']);
 
                     $allDay = false;
                     if ($dateFrom->diffInDays($dateTo) >= 1) {
                         $allDay = true;
                     }
 
-                    $context = $this->language->__("label.planned_edit");
+                    $context = $this->language->__('label.planned_edit');
 
                     $newValues[] = $this->mapEventData(
-                        title: $context . $ticket['headline'] . " (" . $statusName . ")",
+                        title: $context.$ticket['headline'].' ('.$statusName.')',
                         description: $ticket['description'],
                         allDay:$allDay,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
-                        eventType: "ticket",
-                        dateContext: "edit",
+                        eventType: 'ticket',
+                        dateContext: 'edit',
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
                         dateFrom: $ticket['editFrom'],
@@ -443,19 +427,19 @@ class Calendar
         string $dateFrom,
         string $dateTo
     ): array {
-        return array(
-            'title'  => $title,
-            'allDay' => $allDay,
-            'description' => $description,
-            'dateFrom' => $dateFrom,
-            'dateTo' => $dateTo,
-            'id' => $id,
-            'projectId' => $projectId,
-            'eventType' => $eventType,
-            'dateContext' => $dateContext,
+        return [
+            'title'           => $title,
+            'allDay'          => $allDay,
+            'description'     => $description,
+            'dateFrom'        => $dateFrom,
+            'dateTo'          => $dateTo,
+            'id'              => $id,
+            'projectId'       => $projectId,
+            'eventType'       => $eventType,
+            'dateContext'     => $dateContext,
             'backgroundColor' => $backgroundColor,
-            'borderColor' => $borderColor,
-            'url' => BASE_URL . "/dashboard/home/#/tickets/showTicket/" . $id,
-        );
+            'borderColor'     => $borderColor,
+            'url'             => BASE_URL.'/dashboard/home/#/tickets/showTicket/'.$id,
+        ];
     }
 }

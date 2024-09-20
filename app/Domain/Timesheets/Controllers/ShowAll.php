@@ -12,9 +12,6 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowAll extends Controller
 {
     private ProjectService $projectService;
@@ -22,7 +19,7 @@ class ShowAll extends Controller
     private TimesheetService $timesheetsService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param ProjectService   $projectService
      * @param TimesheetService $timesheetsService
@@ -41,18 +38,18 @@ class ShowAll extends Controller
     }
 
     /**
-     * run - display template and edit data
-     *
-     * @return Response
+     * run - display template and edit data.
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return Response
      */
     public function run(): Response
     {
         //Only admins and employees
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-        session(["lastPage" => BASE_URL . "/timesheets/showAll"]);
+        session(['lastPage' => BASE_URL.'/timesheets/showAll']);
 
         if (isset($_POST['saveInvoice']) === true) {
             $invEmpl = [];
@@ -93,7 +90,7 @@ class ShowAll extends Controller
 
         $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
         if (!empty($_POST['dateTo'])) {
-            $dateTo =  dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         if (isset($_POST['invEmpl'])) {
@@ -109,7 +106,7 @@ class ShowAll extends Controller
         }
 
         if (isset($_POST['invComp'])) {
-            $invCompCheck = ($_POST['invComp']);
+            $invCompCheck = $_POST['invComp'];
 
             if ($invCompCheck == 'on') {
                 $invCompCheck = '1';
@@ -130,7 +127,7 @@ class ShowAll extends Controller
             $paidCheck = '0';
         }
 
-        $projectFilter = "";
+        $projectFilter = '';
         if (!empty($_POST['project'])) {
             $projectFilter = strip_tags($_POST['project']);
         }
@@ -160,7 +157,7 @@ class ShowAll extends Controller
         $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
             $dateFrom,
             $dateTo,
-            (int)$projectFilter,
+            (int) $projectFilter,
             $kind,
             $userId,
             $invEmplCheck,

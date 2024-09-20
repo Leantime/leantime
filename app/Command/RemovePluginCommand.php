@@ -8,7 +8,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * Class RemovePluginCommand
+ * Class RemovePluginCommand.
  *
  * This class represents a command that removes plugins.
  */

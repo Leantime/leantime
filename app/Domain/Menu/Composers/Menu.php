@@ -9,9 +9,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
-/**
- *
- */
 class Menu extends Composer
 {
     use DispatchesEvents;
@@ -28,6 +25,7 @@ class Menu extends Composer
      * @param MenuRepository                      $menuRepo
      * @param \Leantime\Domain\Menu\Services\Menu $menuService
      * @param IncomingRequestCore                 $request
+     *
      * @return void
      */
     public function init(
@@ -42,8 +40,10 @@ class Menu extends Composer
 
     /**
      * @param array $data
-     * @return array
+     *
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     public function with(): array
     {
@@ -60,14 +60,14 @@ class Menu extends Composer
         $projectType = '';
         $menuType = 'default';
 
-        $projectSelectFilter = session("usersettings.projectSelectFilter") ?? array(
-            "groupBy" => "structure",
-            "client" => null,
-        );
+        $projectSelectFilter = session('usersettings.projectSelectFilter') ?? [
+            'groupBy' => 'structure',
+            'client'  => null,
+        ];
 
-        if (session()->exists("userdata")) {
+        if (session()->exists('userdata')) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
-            $projectVars = $this->menuService->getUserProjectList(session("userdata.id"), $projectSelectFilter["client"]);
+            $projectVars = $this->menuService->getUserProjectList(session('userdata.id'), $projectSelectFilter['client']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects = $projectVars['availableProjects'];
@@ -92,46 +92,46 @@ class Menu extends Composer
         $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
 
         $settingsLink = [
-            'label' => '',
-            'module' => '',
-            'action' => '',
-            'settingsIcon' => '',
+            'label'           => '',
+            'module'          => '',
+            'action'          => '',
+            'settingsIcon'    => '',
             'settingsTooltip' => '',
-            ];
+        ];
 
-        if ($menuType == "project" || $menuType == "default") {
+        if ($menuType == 'project' || $menuType == 'default') {
             $settingsLink = [
-                'label' => __('menu.project_settings'),
-                'module' => 'projects',
-                'action' => 'showProject',
-                'settingsIcon' => __('menu.project_settings_icon'),
+                'label'           => __('menu.project_settings'),
+                'module'          => 'projects',
+                'action'          => 'showProject',
+                'settingsIcon'    => __('menu.project_settings_icon'),
                 'settingsTooltip' => __('menu.project_settings_tooltip'),
             ];
         }
 
-        $newProjectUrl = self::dispatch_filter("startSomething", "#/projects/createnew");
+        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
 
         return [
-            'currentClient' => $currentClient,
-            'module' => FrontcontrollerCore::getModuleName(),
-            'action' => FrontcontrollerCore::getActionName(),
-            'currentProjectType' => $projectType,
-            'allAssignedProjects' => $allAssignedprojects,
-            'allAvailableProjects' => $allAvailableProjects,
+            'currentClient'                 => $currentClient,
+            'module'                        => FrontcontrollerCore::getModuleName(),
+            'action'                        => FrontcontrollerCore::getActionName(),
+            'currentProjectType'            => $projectType,
+            'allAssignedProjects'           => $allAssignedprojects,
+            'allAvailableProjects'          => $allAvailableProjects,
             'allAvailableProjectsHierarchy' => $allAvailableProjectsHierarchy,
-            'projectHierarchy' => $allAssignedprojectsHierarchy,
-            'recentProjects' => $recentProjects,
-            'currentProject' => $currentProject,
-            'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
-            'menuType' => $menuType,
-            'settingsLink' => $settingsLink,
-            'redirectUrl' => $redirectUrl,
-            'projectTypeAvatars' => $projectTypeAvatars,
-            'favoriteProjects' => $favoriteProjects,
-            'projectSelectGroupOptions' => $projectSelectGroupOptions,
-            'projectSelectFilter' => $projectSelectFilter,
-            'clients' => $clients,
-            'startSomethingUrl' => $newProjectUrl,
+            'projectHierarchy'              => $allAssignedprojectsHierarchy,
+            'recentProjects'                => $recentProjects,
+            'currentProject'                => $currentProject,
+            'menuStructure'                 => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
+            'menuType'                      => $menuType,
+            'settingsLink'                  => $settingsLink,
+            'redirectUrl'                   => $redirectUrl,
+            'projectTypeAvatars'            => $projectTypeAvatars,
+            'favoriteProjects'              => $favoriteProjects,
+            'projectSelectGroupOptions'     => $projectSelectGroupOptions,
+            'projectSelectFilter'           => $projectSelectFilter,
+            'clients'                       => $clients,
+            'startSomethingUrl'             => $newProjectUrl,
         ];
     }
 }

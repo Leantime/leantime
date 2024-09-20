@@ -19,6 +19,5 @@ class Events extends ServiceProvider
 
     public function boot()
     {
-
     }
 }

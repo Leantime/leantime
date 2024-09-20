@@ -12,9 +12,6 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class NewApiKey extends Controller
 {
     private UserRepository $userRepo;
@@ -23,18 +20,17 @@ class NewApiKey extends Controller
     private ApiService $APIService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param UserRepository    $userRepo
      * @param ProjectRepository $projectsRepo
      * @param UserService       $userService
      * @param ApiService        $APIService
      *
-     * @return void
-     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function init(
         UserRepository $userRepo,
@@ -42,7 +38,6 @@ class NewApiKey extends Controller
         UserService $userService,
         ApiService $APIService
     ): void {
-
         self::dispatch_event('api_key_init', $this);
 
         $this->userRepo = $userRepo;
@@ -52,42 +47,41 @@ class NewApiKey extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * run - display template and edit data.
      *
-     * @access public
-     *
-     * @return Response
      *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function run(): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        $values = array(
-            'firstname' => "",
-            'lastname' => "",
-            'user' => "",
-            'role' => "",
-            'password' => "",
-            'status' => 'a',
-            'source' => 'api',
-        );
+        $values = [
+            'firstname' => '',
+            'lastname'  => '',
+            'user'      => '',
+            'role'      => '',
+            'password'  => '',
+            'status'    => 'a',
+            'source'    => 'api',
+        ];
 
         //only Admins
         if (Auth::userIsAtLeast(Roles::$admin)) {
-            $projectRelation = array();
+            $projectRelation = [];
 
             if (isset($_POST['save'])) {
-                $values = array(
-                    'firstname' => ($_POST['firstname']),
-                    'user' => '',
-                    'role' => ($_POST['role']),
-                    'password' => '',
-                    'pwReset' => '',
-                    'status' => '',
-                    'source' => 'api',
-                );
+                $values = [
+                    'firstname' => $_POST['firstname'],
+                    'user'      => '',
+                    'role'      => $_POST['role'],
+                    'password'  => '',
+                    'pwReset'   => '',
+                    'status'    => '',
+                    'source'    => 'api',
+                ];
 
                 if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                     foreach ($_POST['projects'] as $project) {
@@ -106,7 +100,7 @@ class NewApiKey extends Controller
                     }
                 }
 
-                $this->tpl->setNotification("notification.api_key_created", 'success', 'apikey_created');
+                $this->tpl->setNotification('notification.api_key_created', 'success', 'apikey_created');
 
                 $this->tpl->assign('apiKeyValues', $apiKeyValues);
             }

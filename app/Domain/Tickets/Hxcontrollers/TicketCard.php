@@ -6,9 +6,6 @@ use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
-/**
- *
- */
 class TicketCard extends HtmxController
 {
     /**
@@ -22,9 +19,10 @@ class TicketCard extends HtmxController
     private Tickets $ticketService;
 
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param Timesheets $timesheetService
+     *
      * @return void
      */
     public function init(Tickets $ticketService): void
@@ -37,7 +35,6 @@ class TicketCard extends HtmxController
      */
     public function save(): void
     {
-
         $postParams = $_POST;
         $id = $postParams['id'];
 
@@ -52,13 +49,11 @@ class TicketCard extends HtmxController
         $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
         $allProjectMilestones = $this->ticketService->getAllMilestones([
-            "sprint" => '',
-            "type" => "milestone",
-            "currentProject" => session("currentProject"),
+            'sprint'         => '',
+            'type'           => 'milestone',
+            'currentProject' => session('currentProject'),
         ]);
         $this->tpl->assign('milestones', $allProjectMilestones);
-
-
     }
 
     /**
@@ -66,9 +61,7 @@ class TicketCard extends HtmxController
      */
     public function get($params): void
     {
-
-        $id = (int)($params['id']);
+        $id = (int) $params['id'];
         $ticket = $this->ticketService->getTicket($id);
-
     }
 }

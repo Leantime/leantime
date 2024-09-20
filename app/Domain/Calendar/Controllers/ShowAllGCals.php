@@ -8,15 +8,12 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowAllGCals extends Controller
 {
     private CalendarRepository $calendarRepo;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param CalendarRepository $calendarRepo
      *
@@ -28,13 +25,12 @@ class ShowAllGCals extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * run - display template and edit data.
      *
-     * @access public
-     *
-     * @return Response
      *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function run(): Response
     {

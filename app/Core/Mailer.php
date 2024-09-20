@@ -9,12 +9,11 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * Mail class - mails with php mail()
+ * Mail class - mails with php mail().
  *
  * @version 1.0
+ *
  * @license GNU/AGPL-3.0, see license.txt
- * @package leantime
- * @subpackage core
  */
 class Mailer
 {
@@ -86,9 +85,8 @@ class Mailer
     public bool $nl2br = true;
 
     /**
-     * __construct - get configurations
+     * __construct - get configurations.
      *
-     * @access public
      * @return void
      */
     public function __construct(Environment $config, Language $language)
@@ -96,23 +94,22 @@ class Mailer
         if ($config->email != '') {
             $this->emailDomain = $config->email;
         } else {
-            $host = $_SERVER['HTTP_HOST'] ?? "leantime";
-            $this->emailDomain = "no-reply@" . $host;
+            $host = $_SERVER['HTTP_HOST'] ?? 'leantime';
+            $this->emailDomain = 'no-reply@'.$host;
         }
 
-        $this->emailDomain  = self::dispatch_filter("fromEmail", $this->emailDomain, $this);
+        $this->emailDomain = self::dispatch_filter('fromEmail', $this->emailDomain, $this);
 
         //PHPMailer
         $this->mailAgent = new PHPMailer(false);
 
         $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
         //Use SMTP or php mail().
-        if ($config->useSMTP === true || $config->useSMTP == "true") {
+        if ($config->useSMTP === true || $config->useSMTP == 'true') {
             if ($config->debug) {
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                 $this->mailAgent->Debugoutput = function ($str, $level) {
-
-                    report($level . ' ' . $str);
+                    report($level.' '.$str);
                 };
             } else {
                 $this->mailAgent->SMTPDebug = 0;
@@ -137,8 +134,8 @@ class Mailer
             if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
                 $this->mailAgent->SMTPOptions = [
                     'ssl' => [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
+                        'verify_peer'       => false,
+                        'verify_peer_name'  => false,
                         'allow_self_signed' => true,
                     ],
                 ];
@@ -147,18 +144,18 @@ class Mailer
             $this->mailAgent->isMail();
         }
 
-        $this->logo = !session()->has("companysettings.logoPath") ? "/dist/images/logo_blue.png" : session("companysettings.logoPath");
-        $this->companyColor = !session()->has("companysettings.primarycolor") ? "#006c9e" : session("companysettings.primarycolor");
+        $this->logo = !session()->has('companysettings.logoPath') ? '/dist/images/logo_blue.png' : session('companysettings.logoPath');
+        $this->companyColor = !session()->has('companysettings.primarycolor') ? '#006c9e' : session('companysettings.primarycolor');
 
         $this->language = $language;
     }
 
     /**
      * setContext - sets the context for the mailing
-     * (used for filters & events)
+     * (used for filters & events).
      *
-     * @access public
-     * @param  $context
+     * @param $context
+     *
      * @return void
      */
     public function setContext($context): void
@@ -167,10 +164,10 @@ class Mailer
     }
 
     /**
-     * setText - sets the mailtext
+     * setText - sets the mailtext.
      *
-     * @access public
-     * @param  $text
+     * @param $text
+     *
      * @return void
      */
     public function setText($text): void
@@ -179,11 +176,11 @@ class Mailer
     }
 
     /**
-     * setHTML - set Mail html (no function yet)
+     * setHTML - set Mail html (no function yet).
      *
-     * @access public
-     * @param  $html
+     * @param       $html
      * @param false $hideWrapper
+     *
      * @return void
      */
     public function setHtml($html, bool $hideWrapper = false): void
@@ -193,10 +190,10 @@ class Mailer
     }
 
     /**
-     * setSubject - set mail subject
+     * setSubject - set mail subject.
      *
-     * @access public
-     * @param  $subject
+     * @param $subject
+     *
      * @return void
      */
     public function setSubject($subject): void
@@ -205,11 +202,12 @@ class Mailer
     }
 
     /**
-     * dispatchMailerEvent - dispatches a mailer event
+     * dispatchMailerEvent - dispatches a mailer event.
      *
-     * @param  $hookname
-     * @param  $payload
-     * @param array    $additional_params
+     * @param       $hookname
+     * @param       $payload
+     * @param array $additional_params
+     *
      * @return void
      */
     private function dispatchMailerEvent($hookname, $payload, array $additional_params = []): void
@@ -218,11 +216,12 @@ class Mailer
     }
 
     /**
-     * dispatchMailerFilter - dispatches a mailer filter
+     * dispatchMailerFilter - dispatches a mailer filter.
      *
-     * @param  $hookname
-     * @param  $payload
-     * @param array    $additional_params
+     * @param       $hookname
+     * @param       $payload
+     * @param array $additional_params
+     *
      * @return mixed
      */
     private function dispatchMailerFilter($hookname, $payload, array $additional_params = []): mixed
@@ -231,14 +230,16 @@ class Mailer
     }
 
     /**
-     * dispatchMailerHook - dispatches a mailer hook
+     * dispatchMailerHook - dispatches a mailer hook.
      *
-     * @param  $type
-     * @param  $hookname
-     * @param  $payload
-     * @param array    $additional_params
-     * @return mixed
+     * @param       $type
+     * @param       $hookname
+     * @param       $payload
+     * @param array $additional_params
+     *
      * @throws BindingResolutionException
+     *
+     * @return mixed
      */
     private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = []): mixed
     {
@@ -269,13 +270,14 @@ class Mailer
     }
 
     /**
-     * sendMail - send the mail with mail()
+     * sendMail - send the mail with mail().
      *
-     * @access public
      * @param array $to
-     * @param  $from
-     * @return void
+     * @param       $from
+     *
      * @throws Exception
+     *
+     * @return void
      */
     public function sendMail(array $to, $from): void
     {
@@ -286,12 +288,12 @@ class Mailer
 
         $this->mailAgent->isHTML(true); // Set email format to HTML
 
-        $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
+        $this->mailAgent->setFrom($this->emailDomain, $from.' (Leantime)');
 
         $this->mailAgent->Subject = $this->subject;
 
         if (str_contains($this->logo, 'images/logo.svg')) {
-            $this->logo = "/dist/images/logo_blue.png";
+            $this->logo = '/dist/images/logo_blue.png';
         }
 
         $logoParts = parse_url($this->logo);
@@ -300,14 +302,14 @@ class Mailer
             //Logo is URL
             $inlineLogoContent = $this->logo;
         } else {
-            if(file_exists(ROOT . "" . $this->logo) && $this->logo != '' && is_file(ROOT . "" . $this->logo)) {
+            if (file_exists(ROOT.''.$this->logo) && $this->logo != '' && is_file(ROOT.''.$this->logo)) {
                 //Logo comes from local file system
-                $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
-            }else{
-                $this->mailAgent->addEmbeddedImage(ROOT . "/dist/images/logo_blue.png", 'companylogo');
+                $this->mailAgent->addEmbeddedImage(ROOT.''.$this->logo, 'companylogo');
+            } else {
+                $this->mailAgent->addEmbeddedImage(ROOT.'/dist/images/logo_blue.png', 'companylogo');
             }
 
-            $inlineLogoContent = "cid:companylogo";
+            $inlineLogoContent = 'cid:companylogo';
         }
 
         $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
@@ -341,9 +343,9 @@ class Mailer
                 'mailBodyParams',
                 [
                     'inlineLogoContent' => $inlineLogoContent,
-                    'headline' => $this->language->__('email_notifications.hi'),
-                    'content' => $this->nl2br ? nl2br($this->html) : $this->html,
-                    'unsub_link' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                    'headline'          => $this->language->__('email_notifications.hi'),
+                    'content'           => $this->nl2br ? nl2br($this->html) : $this->html,
+                    'unsub_link'        => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/'),
                 ]
             )
         );
@@ -353,11 +355,11 @@ class Mailer
             $mailBody,
             [
                 [
-                    'companyColor' => $this->companyColor,
-                    'logoUrl' => $inlineLogoContent,
-                    'languageHiText' => $this->language->__('email_notifications.hi'),
+                    'companyColor'      => $this->companyColor,
+                    'logoUrl'           => $inlineLogoContent,
+                    'languageHiText'    => $this->language->__('email_notifications.hi'),
                     'emailContentsHtml' => nl2br($this->html),
-                    'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                    'unsubLink'         => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL.'/users/editOwn/'),
                 ],
             ]
         );

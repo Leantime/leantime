@@ -6,17 +6,13 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Tags\Services\Tags as TagService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Tags extends Controller
 {
     private TagService $tagService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param TagService $tagService
      *
@@ -28,9 +24,8 @@ class Tags extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -38,14 +33,14 @@ class Tags extends Controller
      */
     public function get(array $params): Response
     {
-        $tags = $this->tagService->getTags(session("currentProject"), $params['term']);
+        $tags = $this->tagService->getTags(session('currentProject'), $params['term']);
+
         return $this->tpl->displayJson($tags);
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -57,9 +52,8 @@ class Tags extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -71,9 +65,8 @@ class Tags extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

@@ -23,15 +23,12 @@ use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService
 use Psr\Container\ContainerInterface as PsrContainerContract;
 
 /**
- * Application Class - IoC Container for the application
- *
- * @package    leantime
- * @subpackage core
+ * Application Class - IoC Container for the application.
  */
 class Application extends Container
 {
     /**
-     * Application bootstrap status
+     * Application bootstrap status.
      *
      * @var bool
      */
@@ -45,14 +42,14 @@ class Application extends Container
     protected $deferredServices = [];
 
     /**
-     * Array to store laravel service providers
+     * Array to store laravel service providers.
      *
      * @var array
      */
     protected $serviceProviders = [];
 
     /**
-     * Array to store already loaded providers
+     * Array to store already loaded providers.
      *
      * @var array
      */
@@ -91,7 +88,6 @@ class Application extends Container
      */
     public function __construct()
     {
-
         $this->registerCoreBindings();
         $this->registerCoreAliases();
         $this->registerBaseServiceProviders();
@@ -104,8 +100,9 @@ class Application extends Container
 
         $this->boot();
     }
+
     /**
-     * Check if application has been bootstrapped
+     * Check if application has been bootstrapped.
      *
      * @return bool
      */
@@ -115,7 +112,7 @@ class Application extends Container
     }
 
     /**
-     * Set the application as having been bootstrapped
+     * Set the application as having been bootstrapped.
      *
      * @return Application
      */
@@ -127,9 +124,10 @@ class Application extends Container
     }
 
     /**
-     * Get the application namespace
+     * Get the application namespace.
      *
      * @param bool $includeSuffix
+     *
      * @return string
      *
      * @see \Illuminate\Contracts\Foundation\Application::getNamespace()
@@ -138,16 +136,18 @@ class Application extends Container
     {
         static $namespace;
 
-        if (! $namespace) {
+        if (!$namespace) {
             $namespace = substr(__NAMESPACE__, 0, strpos(__NAMESPACE__, '\\') + 1);
         }
 
-        return ! $includeSuffix ? rtrim($namespace, '\\') : $namespace;
+        return !$includeSuffix ? rtrim($namespace, '\\') : $namespace;
     }
 
     /**
-     * Checks whether the application is down for maintenance
+     * Checks whether the application is down for maintenance.
+     *
      * @return bool
+     *
      * @todo should return true if application is updating to a new version
      **/
     public function isDownForMaintenance()
@@ -156,7 +156,8 @@ class Application extends Container
     }
 
     /**
-     * Gets the current environment
+     * Gets the current environment.
+     *
      * @return string
      **/
     public function environment()
@@ -165,7 +166,7 @@ class Application extends Container
     }
 
     /**
-     * Gets the base path of the application
+     * Gets the base path of the application.
      *
      * @return string
      **/
@@ -186,7 +187,7 @@ class Application extends Container
     {
         static::setInstance($this);
 
-        $this->singleton(Application::class, fn() => Application::getInstance());
+        $this->singleton(Application::class, fn () => Application::getInstance());
 
         $this->singleton(\Illuminate\Contracts\Debug\ExceptionHandler::class, ExceptionHandler::class);
 
@@ -203,7 +204,6 @@ class Application extends Container
      */
     private function registerCoreAliases(): void
     {
-
         $this->alias(Application::class, 'app');
         $this->alias(Application::class, IlluminateContainerContract::class);
         $this->alias(Application::class, PsrContainerContract::class);
@@ -215,8 +215,7 @@ class Application extends Container
 
         $this->alias(ExceptionHandler::class, 'exceptions');
 
-
-        $this->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
+        $this->alias(\Illuminate\Encryption\Encrypter::class, 'encrypter');
 
         $this->alias(\Leantime\Core\Events\EventDispatcher::class, 'events');
     }
@@ -228,7 +227,6 @@ class Application extends Container
      */
     protected function registerBaseServiceProviders()
     {
-
         $this->register(new \Leantime\Core\Providers\Environment($this));
 
         $this->register(new \Leantime\Core\Providers\Logging($this));
@@ -254,11 +252,10 @@ class Application extends Container
      */
     protected function setUrlPathConstants()
     {
-
         $config = $this->make(Environment::class);
         $request = $this->make(IncomingRequest::class);
 
-        if (! defined('BASE_URL')) {
+        if (!defined('BASE_URL')) {
             if (isset($config->appUrl) && !empty($config->appUrl)) {
                 define('BASE_URL', $config->appUrl);
             } else {
@@ -266,8 +263,8 @@ class Application extends Container
             }
         }
 
-        if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', BASE_URL . $request->getRequestUri());
+        if (!defined('CURRENT_URL')) {
+            define('CURRENT_URL', BASE_URL.$request->getRequestUri());
         }
     }
 
@@ -281,24 +278,22 @@ class Application extends Container
      */
     public function bindRequest()
     {
-
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
                 strtolower($key) => match (true) {
                     in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
-                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
-                    default => $val,
+                    preg_match('/^[0-9]+$/', $val)    => filter_var($val, FILTER_VALIDATE_INT),
+                    default                           => $val,
                 },
             ])
             ->all();
 
         $this->singleton(IncomingRequest::class, function () use ($headers) {
-
             $request = match (true) {
-                isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
-                isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+                isset($headers['hx-request'])   => HtmxRequest::createFromGlobals(),
+                isset($headers['x-api-key'])    => ApiRequest::createFromGlobals(),
                 defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
-                default => IncomingRequest::createFromGlobals(),
+                default                         => IncomingRequest::createFromGlobals(),
             };
 
             do_once('overrideGlobals', fn () => $request->overrideGlobals());
@@ -310,13 +305,14 @@ class Application extends Container
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string $provider
-     * @param  bool                                       $force
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     * @param bool                                       $force
+     *
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register(\Illuminate\Support\ServiceProvider|string $provider, bool $force = false)
     {
-        if (($registered = $this->getProvider($provider)) && ! $force) {
+        if (($registered = $this->getProvider($provider)) && !$force) {
             return $registered;
         }
 
@@ -361,7 +357,8 @@ class Application extends Container
     /**
      * Get the registered service provider instance if it exists.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string $provider
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     *
      * @return \Illuminate\Support\ServiceProvider|null
      */
     public function getProvider(\Illuminate\Support\ServiceProvider|string $provider)
@@ -374,7 +371,8 @@ class Application extends Container
     /**
      * Get the registered service provider instances if any exist.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string $provider
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     *
      * @return array
      */
     public function getProviders(\Illuminate\Support\ServiceProvider|string $provider)
@@ -387,7 +385,8 @@ class Application extends Container
     /**
      * Resolve a service provider instance from the class name.
      *
-     * @param  string $provider
+     * @param string $provider
+     *
      * @return \Illuminate\Support\ServiceProvider
      */
     public function resolveProvider(string $provider)
@@ -398,7 +397,8 @@ class Application extends Container
     /**
      * Mark the given provider as registered.
      *
-     * @param  \Illuminate\Support\ServiceProvider $provider
+     * @param \Illuminate\Support\ServiceProvider $provider
+     *
      * @return void
      */
     protected function markAsRegistered(\Illuminate\Support\ServiceProvider $provider)
@@ -430,12 +430,13 @@ class Application extends Container
     /**
      * Load the provider for a deferred service.
      *
-     * @param  string $service
+     * @param string $service
+     *
      * @return void
      */
     public function loadDeferredProvider(string $service)
     {
-        if (! $this->isDeferredService($service)) {
+        if (!$this->isDeferredService($service)) {
             return;
         }
 
@@ -444,7 +445,7 @@ class Application extends Container
         // If the service provider has not already been loaded and registered we can
         // register it with the application and remove the service from this list
         // of deferred services, since it will already be loaded on subsequent.
-        if (! isset($this->loadedProviders[$provider])) {
+        if (!isset($this->loadedProviders[$provider])) {
             $this->registerDeferredProvider($provider, $service);
         }
     }
@@ -452,8 +453,9 @@ class Application extends Container
     /**
      * Register a deferred provider and service.
      *
-     * @param  string      $provider
-     * @param  string|null $service
+     * @param string      $provider
+     * @param string|null $service
+     *
      * @return void
      */
     public function registerDeferredProvider(string $provider, string|null $service = null)
@@ -467,7 +469,7 @@ class Application extends Container
 
         $this->register($instance = new $provider($this));
 
-        if (! $this->isBooted()) {
+        if (!$this->isBooted()) {
             $this->booting(function () use ($instance) {
                 $this->bootProvider($instance);
             });
@@ -477,8 +479,9 @@ class Application extends Container
     /**
      * Resolve the given type from the container.
      *
-     * @param  string $abstract
-     * @param  array  $parameters
+     * @param string $abstract
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function make($abstract, $parameters = [])
@@ -491,9 +494,10 @@ class Application extends Container
     /**
      * Resolve the given type from the container.
      *
-     * @param  string $abstract
-     * @param  array  $parameters
-     * @param  bool   $raiseEvents
+     * @param string $abstract
+     * @param array  $parameters
+     * @param bool   $raiseEvents
+     *
      * @return mixed
      */
     protected function resolve($abstract, $parameters = [], $raiseEvents = true)
@@ -506,12 +510,13 @@ class Application extends Container
     /**
      * Load the deferred provider if the given type is a deferred service and the instance has not been loaded.
      *
-     * @param  string $abstract
+     * @param string $abstract
+     *
      * @return void
      */
     protected function loadDeferredProviderIfNeeded($abstract)
     {
-        if ($this->isDeferredService($abstract) && ! isset($this->instances[$abstract])) {
+        if ($this->isDeferredService($abstract) && !isset($this->instances[$abstract])) {
             $this->loadDeferredProvider($abstract);
         }
     }
@@ -519,7 +524,8 @@ class Application extends Container
     /**
      * Determine if the given abstract type has been bound.
      *
-     * @param  string $abstract
+     * @param string $abstract
+     *
      * @return bool
      */
     public function bound($abstract)
@@ -565,7 +571,8 @@ class Application extends Container
     /**
      * Boot the given service provider.
      *
-     * @param  \Illuminate\Support\ServiceProvider $provider
+     * @param \Illuminate\Support\ServiceProvider $provider
+     *
      * @return void
      */
     protected function bootProvider(ServiceProvider $provider)
@@ -582,7 +589,8 @@ class Application extends Container
     /**
      * Register a new boot listener.
      *
-     * @param  callable $callback
+     * @param callable $callback
+     *
      * @return void
      */
     public function booting($callback)
@@ -593,7 +601,8 @@ class Application extends Container
     /**
      * Register a new "booted" listener.
      *
-     * @param  callable $callback
+     * @param callable $callback
+     *
      * @return void
      */
     public function booted($callback)
@@ -618,7 +627,8 @@ class Application extends Container
     /**
      * Determine if the given service provider is loaded.
      *
-     * @param  string $provider
+     * @param string $provider
+     *
      * @return bool
      */
     public function providerIsLoaded($provider)
@@ -639,7 +649,8 @@ class Application extends Container
     /**
      * Set the application's deferred services.
      *
-     * @param  array $services
+     * @param array $services
+     *
      * @return void
      */
     public function setDeferredServices($services)
@@ -650,7 +661,8 @@ class Application extends Container
     /**
      * Add an array of services to the application's deferred services.
      *
-     * @param  array $services
+     * @param array $services
+     *
      * @return void
      */
     public function addDeferredServices(array $services)
@@ -661,7 +673,8 @@ class Application extends Container
     /**
      * Determine if the given service is a deferred service.
      *
-     * @param  string $service
+     * @param string $service
+     *
      * @return bool
      */
     public function isDeferredService(string $service)
@@ -672,7 +685,8 @@ class Application extends Container
     /**
      * Call the booting callbacks for the application.
      *
-     * @param  callable[]  $callbacks
+     * @param callable[] $callbacks
+     *
      * @return void
      */
     protected function fireAppCallbacks(array &$callbacks)
@@ -686,7 +700,8 @@ class Application extends Container
         }
     }
 
-    public function runningUnitTests() {
+    public function runningUnitTests()
+    {
         return false;
     }
 
@@ -715,29 +730,27 @@ class Application extends Container
         $this->globalAfterResolvingCallbacks = [];
     }
 
-    public function storagePath($path) {
-
-        if($path == "framework/cache") {
-            $path = "cache";
+    public function storagePath($path)
+    {
+        if ($path == 'framework/cache') {
+            $path = 'cache';
         }
 
-        return APP_ROOT."/".$path;
+        return APP_ROOT.'/'.$path;
     }
 
-    public function runningInConsole() {
-
+    public function runningInConsole()
+    {
         if ($this->isRunningInConsole === null) {
-
-            if(defined('LEAN_CLI') && LEAN_CLI) {
+            if (defined('LEAN_CLI') && LEAN_CLI) {
                 $this->isRunningInConsole = true;
             }
 
-            if(\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg') {
+            if (\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg') {
                 $this->isRunningInConsole = true;
             }
         }
 
         return $this->isRunningInConsole;
-
     }
 }

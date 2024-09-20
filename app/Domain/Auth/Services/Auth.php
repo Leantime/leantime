@@ -18,9 +18,6 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RobThree\Auth\TwoFactorAuth;
 
-/**
- *
- */
 class Auth
 {
     use DispatchesEvents;
@@ -66,12 +63,12 @@ class Auth
     private ?string $mail = null;
 
     /**
-     * @var bool $twoFAEnabled
+     * @var bool
      */
     private bool $twoFAEnabled;
 
     /**
-     * @var string $twoFASecret
+     * @var string
      */
     private string $twoFASecret;
 
@@ -85,7 +82,7 @@ class Auth
      */
     public string $role = '';
 
-    public array $settings = array();
+    public array $settings = [];
 
     /**
      * @var int time for cookie
@@ -95,12 +92,12 @@ class Auth
     /**
      * @var string
      */
-    public string $error = "";
+    public string $error = '';
 
     /**
      * @var string
      */
-    public string $success = "";
+    public string $success = '';
 
     /**
      * @var string|bool
@@ -108,7 +105,7 @@ class Auth
     public string|bool $resetInProgress = false;
 
     /**
-     * How often can a user reset a password before it has to be changed
+     * How often can a user reset a password before it has to be changed.
      *
      * @var int
      */
@@ -121,7 +118,7 @@ class Auth
     public UserRepository $userRepo;
 
     /**
-     * __construct - getInstance of session and get sessionId and refers to login if post is set
+     * __construct - getInstance of session and get sessionId and refers to login if post is set.
      *
      * @param EnvironmentCore   $config
      * @param SessionManager    $session
@@ -129,6 +126,7 @@ class Auth
      * @param SettingRepository $settingsRepo
      * @param AuthRepository    $authRepo
      * @param UserRepository    $userRepo
+     *
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -152,32 +150,33 @@ class Auth
     /**
      * @param bool $forceGlobalRoleCheck
      *
-     * @return string|bool returns role as string or false on failure
-     *
      * @throws BindingResolutionException
+     *
+     * @return string|bool returns role as string or false on failure
      */
     public static function getRoleToCheck(bool $forceGlobalRoleCheck): string|bool
     {
-        if (session()->exists("userdata") === false) {
+        if (session()->exists('userdata') === false) {
             return false;
         }
 
         if ($forceGlobalRoleCheck) {
-            $roleToCheck = session("userdata.role");
-            // If projectRole is not defined or if it is set to inherited
-        } elseif (!session()->exists("userdata.projectRole") || session("userdata.projectRole") == "inherited" || session("userdata.projectRole") == "") {
-            $roleToCheck = session("userdata.role");
-            // Do not overwrite admin or owner roles
-        } elseif (session("userdata.role") == Roles::$owner || session("userdata.role") == Roles::$admin || session("userdata.role") == Roles::$manager) {
-            $roleToCheck = session("userdata.role");
-            // In all other cases check the project role
+            $roleToCheck = session('userdata.role');
+        // If projectRole is not defined or if it is set to inherited
+        } elseif (!session()->exists('userdata.projectRole') || session('userdata.projectRole') == 'inherited' || session('userdata.projectRole') == '') {
+            $roleToCheck = session('userdata.role');
+        // Do not overwrite admin or owner roles
+        } elseif (session('userdata.role') == Roles::$owner || session('userdata.role') == Roles::$admin || session('userdata.role') == Roles::$manager) {
+            $roleToCheck = session('userdata.role');
+        // In all other cases check the project role
         } else {
-            $roleToCheck = session("userdata.projectRole");
+            $roleToCheck = session('userdata.projectRole');
         }
 
         // Ensure the role is a valid role
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
-            report("Check for invalid role detected: " . $roleToCheck);
+            report('Check for invalid role detected: '.$roleToCheck);
+
             return false;
         }
 
@@ -185,18 +184,18 @@ class Auth
     }
 
     /**
-     * login - Validate POST-data with DB
+     * login - Validate POST-data with DB.
      *
      * @param string $username
      * @param string $password
      *
-     * @return bool
-     *
      * @throws BindingResolutionException
+     *
+     * @return bool
      */
     public function login(string $username, string $password): bool
     {
-        self::dispatch_event("beforeLoginCheck", ['username' => $username, 'password' => $password]);
+        self::dispatch_event('beforeLoginCheck', ['username' => $username, 'password' => $password]);
 
         // different identity providers can live here
         // they all need to
@@ -221,31 +220,32 @@ class Auth
 
                 // If user does not exist create user
                 if (!$user) {
-                    $userArray = array(
-                        'firstname' => $ldapUser['firstname'],
-                        'lastname' => $ldapUser['lastname'],
-                        'phone' => $ldapUser['phone'],
-                        'user' => $ldapUser['user'],
-                        'role' => $ldapUser['role'],
+                    $userArray = [
+                        'firstname'  => $ldapUser['firstname'],
+                        'lastname'   => $ldapUser['lastname'],
+                        'phone'      => $ldapUser['phone'],
+                        'user'       => $ldapUser['user'],
+                        'role'       => $ldapUser['role'],
                         'department' => $ldapUser['department'],
-                        'jobTitle'  => $ldapUser['jobTitle'],
-                        'jobLevel'  => $ldapUser['jobLevel'],
-                        'password' => '',
-                        'clientId' => '',
-                        'source' => 'ldap',
-                        'status' => 'a',
-                    );
+                        'jobTitle'   => $ldapUser['jobTitle'],
+                        'jobLevel'   => $ldapUser['jobLevel'],
+                        'password'   => '',
+                        'clientId'   => '',
+                        'source'     => 'ldap',
+                        'status'     => 'a',
+                    ];
 
                     $userId = $this->userRepo->addUser($userArray);
 
                     if ($userId !== false) {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
-                        report("Ldap user creation failed.");
+                        report('Ldap user creation failed.');
+
                         return false;
                     }
 
-                    // @TODO: create a better login response. This will return that the username or password was not correct
+                // @TODO: create a better login response. This will return that the username or password was not correct
                 } else {
                     $user['firstname'] = $ldapUser['firstname'];
                     $user['lastname'] = $ldapUser['lastname'];
@@ -253,7 +253,7 @@ class Auth
                     $user['user'] = $user['username'];
                     $user['department'] = $ldapUser['department'];
                     $user['jobTitle'] = $ldapUser['jobTitle'];
-                    $user['jobLevel']  = $ldapUser['jobLevel'];
+                    $user['jobLevel'] = $ldapUser['jobLevel'];
 
                     $this->userRepo->editUser($user, $user['id']);
                 }
@@ -263,14 +263,14 @@ class Auth
 
                     return true;
                 } else {
-                    report("Could not retrieve user by email");
+                    report('Could not retrieve user by email');
 
                     return false;
                 }
             }
 
-            // Don't return false, to allow the standard login provider to check the db for contractors or clients not
-            // in ldap
+        // Don't return false, to allow the standard login provider to check the db for contractors or clients not
+        // in ldap
         } elseif ($this->config->useLdap === true && !extension_loaded('ldap')) {
             report("Can't use ldap. Extension not installed");
         }
@@ -284,12 +284,12 @@ class Auth
         if ($user !== false && is_array($user)) {
             $this->setUserSession($user);
 
-            self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return true;
         } else {
             $this->logFailedLogin($username);
-            self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return false;
         }
@@ -299,9 +299,9 @@ class Auth
      * @param mixed $user
      * @param bool  $isLdap
      *
-     * @return false|void
-     *
      * @throws BindingResolutionException
+     *
+     * @return false|void
      */
     public function setUsersession(mixed $user, bool $isLdap = false)
     {
@@ -309,21 +309,21 @@ class Auth
             return false;
         }
 
-        $currentUser = array(
-            "id" => (int)$user['id'],
-            "name" => strip_tags($user['firstname']),
-            "profileId" => $user['profileId'],
-            "mail" => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
-            "clientId" => $user['clientId'],
-            "role" => Roles::getRoleString($user['role']),
-            "settings" => $user['settings'] ? unserialize($user['settings']) : array(),
-            "twoFAEnabled" => $user['twoFAEnabled'] ?? false,
-            "twoFAVerified" => false,
-            "twoFASecret" => $user['twoFASecret'] ?? '',
-            "isLdap" => $isLdap,
-            "createdOn" => !empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
-            "modified" => !empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow()
-        );
+        $currentUser = [
+            'id'            => (int) $user['id'],
+            'name'          => strip_tags($user['firstname']),
+            'profileId'     => $user['profileId'],
+            'mail'          => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
+            'clientId'      => $user['clientId'],
+            'role'          => Roles::getRoleString($user['role']),
+            'settings'      => $user['settings'] ? unserialize($user['settings']) : [],
+            'twoFAEnabled'  => $user['twoFAEnabled'] ?? false,
+            'twoFAVerified' => false,
+            'twoFASecret'   => $user['twoFASecret'] ?? '',
+            'isLdap'        => $isLdap,
+            'createdOn'     => !empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
+            'modified'      => !empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
+        ];
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
@@ -334,7 +334,6 @@ class Auth
         //Clear user theme cache on login
         Theme::clearCache();
     }
-
 
     /**
      * @param int    $userId
@@ -348,18 +347,17 @@ class Auth
     }
 
     /**
-     * logged_in - Check if logged in and Update sessions
+     * logged_in - Check if logged in and Update sessions.
      *
-     * @access public
      *
      * @return bool
      */
     public function loggedIn(): bool
     {
         // Check if we actually have a php session available
-        if (session()->exists("userdata")) {
+        if (session()->exists('userdata')) {
             return true;
-            // If the session doesn't have any session data we are out of sync. Start again
+        // If the session doesn't have any session data we are out of sync. Start again
         } else {
             return false;
         }
@@ -372,9 +370,8 @@ class Auth
      */
     public static function isLoggedIn(): bool
     {
-
         // Check if we actually have a php session available
-        if (session()->exists("userdata")) {
+        if (session()->exists('userdata')) {
             return true;
         } else {
             return false;
@@ -382,39 +379,37 @@ class Auth
     }
 
     /**
-     * logout - destroy sessions and cookies
-     *
-     * @return void
+     * logout - destroy sessions and cookies.
      *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function logout(): void
     {
-
         $this->authRepo->invalidateSession($this->session->getId());
 
         $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
-                    'userdata',
-                    'template',
-                    'subdomainData',
-                    'currentProject',
-                    'currentSprint',
-                    'projectsettings',
-                    'currentSubscriptions',
-                    'lastTicketView',
-                    'lastFilterdTicketTableView',
+            'userdata',
+            'template',
+            'subdomainData',
+            'currentProject',
+            'currentSprint',
+            'projectsettings',
+            'currentSubscriptions',
+            'lastTicketView',
+            'lastFilterdTicketTableView',
         ]);
 
         foreach ($sessionsToDestroy as $key) {
             session()->forget($key);
         }
 
-        self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
-
+        self::dispatch_event('afterSessionDestroy', ['authService' => app()->make(self::class)]);
     }
 
     /**
-     * validateResetLink - validates that the password reset link belongs to a user account in the database
+     * validateResetLink - validates that the password reset link belongs to a user account in the database.
      *
      * @param string $hash invite link hash
      *
@@ -422,12 +417,11 @@ class Auth
      */
     public function validateResetLink(string $hash): bool
     {
-
         return $this->authRepo->validateResetLink($hash);
     }
 
     /**
-     * getUserByInviteLink - gets the user by invite link
+     * getUserByInviteLink - gets the user by invite link.
      *
      * @param string $hash invite link hash
      *
@@ -439,18 +433,17 @@ class Auth
     }
 
     /**
-     * generateLinkAndSendEmail - generates an invitation link (hash) and sends email to user
+     * generateLinkAndSendEmail - generates an invitation link (hash) and sends email to user.
      *
      * @param string $username new user to be invited (email)
      *
-     * @return bool returns true on success, false on failure
-     *
      * @throws BindingResolutionException
+     *
+     * @return bool returns true on success, false on failure
      */
     public function generateLinkAndSendEmail(string $username): bool
     {
-
-        $userFromDB = $this->userRepo->getUserByEmail($_POST["username"]);
+        $userFromDB = $this->userRepo->getUserByEmail($_POST['username']);
 
         if ($userFromDB !== false && count($userFromDB) > 0) {
             if ($userFromDB['pwResetCount'] < $this->pwResetLimit) {
@@ -464,16 +457,16 @@ class Auth
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
-                    $actual_link = "" . BASE_URL . "/auth/resetPw/" . $resetLink;
+                    $actual_link = ''.BASE_URL.'/auth/resetPw/'.$resetLink;
                     $mailer->setHtml(sprintf($this->language->__('email_notifications.password_reset_message'), $actual_link));
-                    $to = array($username);
-                    $mailer->sendMail($to, "Leantime System");
+                    $to = [$username];
+                    $mailer->sendMail($to, 'Leantime System');
 
                     return true;
                 }
             } elseif ($this->config->debug) {
                 report(
-                    "PW reset failed: maximum request count has been reached for user " . $userFromDB['id']
+                    'PW reset failed: maximum request count has been reached for user '.$userFromDB['id']
                 );
             }
         }
@@ -496,13 +489,12 @@ class Auth
      * @param string $role
      * @param bool   $forceGlobalRoleCheck
      *
-     * @return bool
-     *
      * @throws BindingResolutionException
+     *
+     * @return bool
      */
     public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
     {
-
         //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
@@ -512,8 +504,9 @@ class Auth
 
         $testKey = array_search($role, Roles::getRoles());
 
-        if ($role == "" || $testKey === false) {
-            report("Check for invalid role detected: " . $role);
+        if ($role == '' || $testKey === false) {
+            report('Check for invalid role detected: '.$role);
+
             return false;
         }
 
@@ -526,14 +519,13 @@ class Auth
         }
     }
 
-
     /**
      * @param array|string $role
      * @param bool         $forceGlobalRoleCheck
      *
-     * @return bool
-     *
      * @throws HttpResponseException
+     *
+     * @return bool
      */
     public static function authOrRedirect(array|string $role, bool $forceGlobalRoleCheck = false): bool
     {
@@ -541,20 +533,19 @@ class Auth
             return true;
         }
 
-        throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL . "/errors/error403"));
+        throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL.'/errors/error403'));
     }
 
     /**
      * @param string|array $role
      * @param bool         $forceGlobalRoleCheck
      *
-     * @return bool
-     *
      * @throws BindingResolutionException
+     *
+     * @return bool
      */
     public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
     {
-
         //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
@@ -579,7 +570,7 @@ class Auth
      */
     public static function getUserClientId(): mixed
     {
-        return session("userdata.clientId");
+        return session('userdata.clientId');
     }
 
     /**
@@ -587,7 +578,7 @@ class Auth
      */
     public static function getUserId(): mixed
     {
-        return session("userdata.id");
+        return session('userdata.id');
     }
 
     /**
@@ -595,9 +586,8 @@ class Auth
      */
     public function use2FA(): mixed
     {
-        return session("userdata.twoFAEnabled");
+        return session('userdata.twoFAEnabled');
     }
-
 
     /**
      * @param string $code
@@ -608,16 +598,15 @@ class Auth
     {
         $tfa = new TwoFactorAuth('Leantime');
 
-        return $tfa->verifyCode(session("userdata.twoFASecret"), $code);
+        return $tfa->verifyCode(session('userdata.twoFASecret'), $code);
     }
-
 
     /**
      * @return mixed
      */
     public function get2FAVerified(): mixed
     {
-        return session("userdata.twoFAVerified");
+        return session('userdata.twoFAVerified');
     }
 
     /**
@@ -625,7 +614,7 @@ class Auth
      */
     public function set2FAVerified(): void
     {
-        session(["userdata.twoFAVerified" => true]);
+        session(['userdata.twoFAVerified' => true]);
     }
 
     /**
@@ -635,12 +624,12 @@ class Auth
      */
     private function logFailedLogin(string $user): void
     {
-        $user = $user == "" ? "unknown" : $user;
+        $user = $user == '' ? 'unknown' : $user;
         $date = new \DateTime();
-        $date = $date->format("y:m:d h:i:s");
+        $date = $date->format('y:m:d h:i:s');
 
         $ip = $_SERVER['REMOTE_ADDR'];
-        $msg = "[" . $date . "][" . $ip . "] Login failed for user: " . $user;
+        $msg = '['.$date.']['.$ip.'] Login failed for user: '.$user;
 
         report($msg);
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Support\Page\Acceptance;
 
-use Tests\Support\Page\Acceptance\Install;
 use Codeception\Util\Fixtures;
 
 class Login
@@ -26,7 +25,7 @@ class Login
             return;
         }
 
-        if (! Fixtures::exists('installed')) {
+        if (!Fixtures::exists('installed')) {
             $this->installPage->install(
                 'test@leantime.io',
                 'test',
@@ -48,7 +47,7 @@ class Login
 
     protected function loadSessionShapshot(string $name): bool
     {
-        if (! Fixtures::exists($name)) {
+        if (!Fixtures::exists($name)) {
             return false;
         }
 

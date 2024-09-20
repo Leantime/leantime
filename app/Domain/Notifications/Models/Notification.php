@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Notifications\Models;
 
-/**
- *
- */
 class Notification
 {
     public int $id;

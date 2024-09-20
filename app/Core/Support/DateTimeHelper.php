@@ -13,7 +13,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
 
 /**
- * Class DateTimeHelper
+ * Class DateTimeHelper.
  *
  * A helper class for working with dates and times.
  * This class should NOT contain any formatting methods. Any datetime formatting should be included into the
@@ -37,7 +37,7 @@ class DateTimeHelper extends CarbonImmutable
      * Constructs a new instance of the class.
      *
      * @param DateTimeInterface|null|string $time Optional. The datetime object, ISO format string, or null.
-     * @param DateTimeZone|null|string       $tz  Optional. The timezone object, timezone identifier, or null.
+     * @param DateTimeZone|null|string      $tz   Optional. The timezone object, timezone identifier, or null.
      *
      * @throws BindingResolutionException
      */
@@ -49,15 +49,15 @@ class DateTimeHelper extends CarbonImmutable
         $this->config = app()->make(Environment::class);
 
         // These are read only for a reason
-        $this->dbFormat = "Y-m-d H:i:s";
-        $this->dbTimezone = "UTC";
+        $this->dbFormat = 'Y-m-d H:i:s';
+        $this->dbTimezone = 'UTC';
 
         // Session is set in middleware, unlikely to not be set but just in case set defaults.
-        $this->userTimezone = session("usersettings.timezone") ?? $this->config->defaultTimezone;
-        $this->userLanguage = str_replace("-", "_", (session("usersettings.language") ?? $this->config->language));
+        $this->userTimezone = session('usersettings.timezone') ?? $this->config->defaultTimezone;
+        $this->userLanguage = str_replace('-', '_', session('usersettings.language') ?? $this->config->language);
 
-        $this->userDateFormat = session("usersettings.date_format") ?? $this->language->__("language.dateformat");
-        $this->userTimeFormat = session("usersettings.time_format") ?? $this->language->__("language.timeformat");
+        $this->userDateFormat = session('usersettings.date_format') ?? $this->language->__('language.dateformat');
+        $this->userTimeFormat = session('usersettings.time_format') ?? $this->language->__('language.timeformat');
     }
 
     /**
@@ -70,31 +70,31 @@ class DateTimeHelper extends CarbonImmutable
      *
      * @return CarbonImmutable The parsed date and time in user timezone as a CarbonImmutable object.
      */
-    public function parseUserDateTime(string $userDate, string $userTime = ""): CarbonImmutable
+    public function parseUserDateTime(string $userDate, string $userTime = ''): CarbonImmutable
     {
-
         if (!$this->isValidDateString($userDate)) {
-            throw new InvalidDateException("The string is not a valid date time string to parse as user datetime string", $userDate);
+            throw new InvalidDateException('The string is not a valid date time string to parse as user datetime string', $userDate);
         }
 
         //Check if provided date is iso8601 (from API)
-        try{
+        try {
             $this->datetime = CarbonImmutable::createFromFormat(DateTime::ISO8601, $userDate);
+
             return $this->datetime;
         } catch (\Exception $e) {
             //Do nothing
         }
 
-        if ($userTime == "start") {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
+        if ($userTime == 'start') {
+            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->startOfDay();
-        } elseif ($userTime == "end") {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
+        } elseif ($userTime == 'end') {
+            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
                 ->endOfDay();
-        } elseif ($userTime == "") {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone);
+        } elseif ($userTime == '') {
+            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone);
         } else {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, substr($this->userLanguage, 0, 2), trim($userDate . " " . $userTime), $this->userTimezone);
+            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat.' '.$this->userTimeFormat, substr($this->userLanguage, 0, 2), trim($userDate.' '.$userTime), $this->userTimezone);
         }
 
         return $this->datetime;
@@ -110,7 +110,7 @@ class DateTimeHelper extends CarbonImmutable
     public function parseDbDateTime(string $dbDate): CarbonImmutable
     {
         if (!$this->isValidDateString($dbDate)) {
-            throw new InvalidDateException("The string is not a valid date time string to parse as Database string", $dbDate);
+            throw new InvalidDateException('The string is not a valid date time string to parse as Database string', $dbDate);
         }
 
         $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale($this->userLanguage);
@@ -127,7 +127,7 @@ class DateTimeHelper extends CarbonImmutable
      */
     public function parseUser24hTime(string $local24Time): CarbonImmutable
     {
-        $this->datetime = CarbonImmutable::createFromFormat("!H:i", $local24Time, $this->userTimezone);
+        $this->datetime = CarbonImmutable::createFromFormat('!H:i', $local24Time, $this->userTimezone);
 
         return $this->datetime;
     }
@@ -165,7 +165,7 @@ class DateTimeHelper extends CarbonImmutable
     }
 
     /**
-     * isValidDateString - checks if a given string is a valid date and time string
+     * isValidDateString - checks if a given string is a valid date and time string.
      *
      * @param string|null $dateTimeString The date and time string to be validated
      *
@@ -175,8 +175,8 @@ class DateTimeHelper extends CarbonImmutable
     {
         if (
             empty($dateTimeString) === false
-            && $dateTimeString != "1969-12-31 00:00:00"
-            && $dateTimeString != "0000-00-00 00:00:00"
+            && $dateTimeString != '1969-12-31 00:00:00'
+            && $dateTimeString != '0000-00-00 00:00:00'
         ) {
             return true;
         }

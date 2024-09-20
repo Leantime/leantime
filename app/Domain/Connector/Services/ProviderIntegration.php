@@ -4,9 +4,6 @@ namespace Leantime\Domain\Connector\Services;
 
 use Leantime\Domain\Connector\Models\Entity;
 
-/**
- *
- */
 interface ProviderIntegration
 {
     /**
@@ -16,6 +13,7 @@ interface ProviderIntegration
 
     /**
      * @param Entity $entity
+     *
      * @return mixed
      */
     public function sync(Entity $entity): mixed;
@@ -32,6 +30,7 @@ interface ProviderIntegration
 
     /**
      * @param Entity $entity
+     *
      * @return mixed
      */
     public function getValues(Entity $entity): mixed;

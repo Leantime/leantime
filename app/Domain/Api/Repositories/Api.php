@@ -4,9 +4,6 @@ namespace Leantime\Domain\Api\Repositories;
 
 use Leantime\Core\Db\Db as DbCore;
 
-/**
- *
- */
 class Api
 {
     private DbCore $db;

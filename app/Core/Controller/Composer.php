@@ -6,27 +6,24 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Fluent;
 use Illuminate\View\View;
 
-/**
- *
- */
 abstract class Composer
 {
     /**
-     * List of views to receive data by this composer
+     * List of views to receive data by this composer.
      *
      * @var string[]
      */
     public static array $views;
 
     /**
-     * Current view
+     * Current view.
      *
      * @var View
      */
     protected View $view;
 
     /**
-     * Current view data
+     * Current view data.
      *
      * @var Fluent
      */
@@ -36,8 +33,10 @@ abstract class Composer
      * Compose the view before rendering.
      *
      * @param View $view
-     * @return void
+     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function compose(View $view): void
     {
@@ -65,7 +64,7 @@ abstract class Composer
     }
 
     /**
-     * Data to be passed to view before rendering
+     * Data to be passed to view before rendering.
      *
      * @return array
      */

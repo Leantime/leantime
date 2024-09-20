@@ -9,28 +9,22 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
 use PDO;
-use PHPUnit\Exception;
 
-/**
- *
- */
 class Timesheets extends Repository
 {
     private DbCore $db;
 
-    public array $kind = array(
-        'GENERAL_BILLABLE' => 'label.general_billable',
-        'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
-        'PROJECTMANAGEMENT' => 'label.projectmanagement',
-        'DEVELOPMENT' => 'label.development',
+    public array $kind = [
+        'GENERAL_BILLABLE'       => 'label.general_billable',
+        'GENERAL_NOT_BILLABLE'   => 'label.general_not_billable',
+        'PROJECTMANAGEMENT'      => 'label.projectmanagement',
+        'DEVELOPMENT'            => 'label.development',
         'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
-        'TESTING' => 'label.testing',
-    );
+        'TESTING'                => 'label.testing',
+    ];
 
     /**
-     * Get database connection
-     *
-     * @access public
+     * Get database connection.
      */
     public function __construct(DbCore $db)
     {
@@ -40,22 +34,22 @@ class Timesheets extends Repository
     /**
      * Retrieves all timesheets based on the provided filters.
      *
-     * @param int|null $id
-     * @param string|null $kind
+     * @param int|null             $id
+     * @param string|null          $kind
      * @param CarbonInterface|null $dateFrom
      * @param CarbonInterface|null $dateTo
-     * @param int|null $userId
-     * @param string|null $invEmpl
-     * @param string|null $invComp
-     * @param string|null $paid
-     * @param int|null $clientId
-     * @param int|null $ticketFilter
+     * @param int|null             $userId
+     * @param string|null          $invEmpl
+     * @param string|null          $invComp
+     * @param string|null          $paid
+     * @param int|null             $clientId
+     * @param int|null             $ticketFilter
      *
      * @return array|false An array of timesheets or false if there was an error
      */
     public function getAll(?int $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
-        $query = "SELECT
+        $query = 'SELECT
                     zp_timesheets.id,
                     zp_timesheets.userId,
                     zp_timesheets.ticketId,
@@ -89,48 +83,48 @@ class Timesheets extends Repository
                 LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
                 LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id
                 WHERE
-                    ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateFrom)) AND (TO_SECONDS(zp_timesheets.workDate) <= (TO_SECONDS(:dateTo))))";
+                    ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateFrom)) AND (TO_SECONDS(zp_timesheets.workDate) <= (TO_SECONDS(:dateTo))))';
 
         if ($id > 0) {
-            $query .= " AND (zp_tickets.projectId = :projectId)";
+            $query .= ' AND (zp_tickets.projectId = :projectId)';
         }
 
         if ($clientId > 0) {
-            $query .= " AND (zp_projects.clientId = :clientId)";
+            $query .= ' AND (zp_projects.clientId = :clientId)';
         }
 
         if ($ticketFilter > 0) {
-            $query .= " AND (zp_tickets.id = :ticketFilter)";
+            $query .= ' AND (zp_tickets.id = :ticketFilter)';
         }
 
         if ($kind != 'all') {
-            $query .= " AND (zp_timesheets.kind = :kind)";
+            $query .= ' AND (zp_timesheets.kind = :kind)';
         }
 
         if ($userId != 'all' && $userId != null) {
-            $query .= " AND (zp_timesheets.userId = :userId)";
+            $query .= ' AND (zp_timesheets.userId = :userId)';
         }
 
         if ($invComp == '1') {
-            $query .= " AND (zp_timesheets.invoicedComp = 1)";
+            $query .= ' AND (zp_timesheets.invoicedComp = 1)';
         }
 
         if ($invEmpl == '1') {
-            $query .= " AND (zp_timesheets.invoicedEmpl = 1)";
+            $query .= ' AND (zp_timesheets.invoicedEmpl = 1)';
         }
 
         if ($paid == '1') {
-            $query .= " AND (zp_timesheets.paid = 1)";
+            $query .= ' AND (zp_timesheets.paid = 1)';
         }
 
-        $query .= " GROUP BY
+        $query .= ' GROUP BY
             zp_timesheets.id,
             zp_timesheets.userId,
             zp_timesheets.ticketId,
             zp_timesheets.workDate,
             zp_timesheets.hours,
             zp_timesheets.description,
-            zp_timesheets.kind";
+            zp_timesheets.kind';
 
         $call = $this->dbcall(func_get_args());
 
@@ -171,7 +165,7 @@ class Timesheets extends Repository
      */
     public function getUsersHours(int $id): mixed
     {
-        $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
+        $sql = 'SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC';
 
         $call = $this->dbcall(func_get_args());
 
@@ -224,34 +218,34 @@ class Timesheets extends Repository
                     )";
 
         //If user is not a manager, only pull their own timesheet entries
-        if( session("userdata.role") !== 'admin' && session("userdata.role") !== 'manager') {
-            $query .= " AND zp_timesheets.userId = :userId";
+        if (session('userdata.role') !== 'admin' && session('userdata.role') !== 'manager') {
+            $query .= ' AND zp_timesheets.userId = :userId';
         }
 
-        if (isset($projectId) && $projectId  > 0) {
-            $query .= " AND (zp_projects.id = :projectId)";
+        if (isset($projectId) && $projectId > 0) {
+            $query .= ' AND (zp_projects.id = :projectId)';
         }
 
-        $query .= " GROUP BY
+        $query .= ' GROUP BY
                 zp_timesheets.id,
                 zp_timesheets.userId,
                 zp_timesheets.ticketId,
                 zp_timesheets.workDate,
                 zp_timesheets.hours,
                 zp_timesheets.description,
-                zp_timesheets.kind";
+                zp_timesheets.kind';
 
         $stmn = $this->db->database->prepare($query);
 
-        if (session()->exists("userdata")) {
-            $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+        if (session()->exists('userdata')) {
+            $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
         } else {
             $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
         }
 
-        $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
-        $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
-        if (isset($projectId) && $projectId  > 0) {
+        $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
+        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
+        if (isset($projectId) && $projectId > 0) {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
         }
 
@@ -259,6 +253,7 @@ class Timesheets extends Repository
         $values = $stmn->fetchAll();
 
         $stmn->closeCursor();
+
         return $values;
     }
 
@@ -269,8 +264,8 @@ class Timesheets extends Repository
      */
     public function getHoursBooked(): mixed
     {
-        $sql = "SELECT SUM(hours) AS hoursBooked
-                FROM zp_timesheets;";
+        $sql = 'SELECT SUM(hours) AS hoursBooked
+                FROM zp_timesheets;';
 
         $call = $this->dbcall(func_get_args());
 
@@ -294,7 +289,7 @@ class Timesheets extends Repository
      */
     public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): mixed
     {
-        $query = "SELECT
+        $query = 'SELECT
             zp_timesheets.id,
             zp_timesheets.userId,
             zp_timesheets.ticketId,
@@ -325,20 +320,20 @@ class Timesheets extends Repository
             (zp_timesheets.workDate >= :dateStart1 AND zp_timesheets.workDate < :dateEnd)
             AND (zp_timesheets.userId = :userId)
             AND hours > 0
-        ";
+        ';
 
         if ($projectId > 0) {
-            $query .= " AND zp_tickets.projectId = :projectId";
+            $query .= ' AND zp_tickets.projectId = :projectId';
         }
 
-        $query .= " ORDER BY zp_timesheets.ticketId, zp_timesheets.kind, zp_timesheets.workDate DESC";
+        $query .= ' ORDER BY zp_timesheets.ticketId, zp_timesheets.kind, zp_timesheets.workDate DESC';
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
         if (!$fromDate->isUtc()) {
-            $fromDate->setTimezone("UTC");
+            $fromDate->setTimezone('UTC');
         }
 
         $call->bindValue(':dateStart1', $fromDate);
@@ -355,7 +350,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * getUsersTicketHours - get the total hours
+     * getUsersTicketHours - get the total hours.
      *
      * @param int $ticketId
      * @param int $userId
@@ -385,7 +380,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * getTime - get a specific time entry
+     * getTime - get a specific time entry.
      *
      * @param int $id
      *
@@ -393,7 +388,7 @@ class Timesheets extends Repository
      */
     public function getTimesheet(int $id): mixed
     {
-        $query = "SELECT
+        $query = 'SELECT
             zp_timesheets.id,
             zp_timesheets.userId,
             zp_timesheets.ticketId,
@@ -413,7 +408,7 @@ class Timesheets extends Repository
         FROM zp_timesheets
         LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
         LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-        WHERE zp_timesheets.id = :id";
+        WHERE zp_timesheets.id = :id';
 
         $call = $this->dbcall(func_get_args());
 
@@ -425,7 +420,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * getProjectHours - get the Project hours for a specific project
+     * getProjectHours - get the Project hours for a specific project.
      *
      * @TODO: Function is currently not used by core.
      *
@@ -435,7 +430,7 @@ class Timesheets extends Repository
      */
     public function getProjectHours(int $projectId)
     {
-        $query = "SELECT
+        $query = 'SELECT
             MONTH(zp_timesheets.workDate) AS month,
             SUM(zp_timesheets.hours) AS summe
         FROM
@@ -445,7 +440,7 @@ class Timesheets extends Repository
         GROUP BY
             MONTH(zp_timesheets.workDate)
             WITH ROLLUP
-        LIMIT 12";
+        LIMIT 12';
 
         $call = $this->dbcall(func_get_args());
 
@@ -456,15 +451,14 @@ class Timesheets extends Repository
     }
 
     /**
-     * getLoggedHoursForTicket - get the Ticket hours for a specific ticket
+     * getLoggedHoursForTicket - get the Ticket hours for a specific ticket.
      *
-     * @access public
      *
      * @param int $ticketId
      *
-     * @return array
-     *
      * @throws BindingResolutionException
+     *
+     * @return array
      */
     public function getLoggedHoursForTicket(int $ticketId): array
     {
@@ -489,7 +483,7 @@ class Timesheets extends Repository
         $call->bindValue(':ticketId', $ticketId);
 
         $values = $call->fetchAll();
-        $returnValues = array();
+        $returnValues = [];
 
         if (count($values) > 0) {
             try {
@@ -500,28 +494,28 @@ class Timesheets extends Repository
                 foreach ($range as $key => $date) {
                     $utc = $date->format('Y-m-d');
                     $returnValues[$utc] = [
-                        'utc' => $utc,
+                        'utc'   => $utc,
                         'summe' => 0,
                     ];
                 }
 
                 foreach ($values as $row) {
-                    $returnValues[$row['utc']]["summe"] = $row['summe'];
+                    $returnValues[$row['utc']]['summe'] = $row['summe'];
                 }
             } catch (\Exception $e) {
                 // Some broken date formats in the db. Log error and return empty results.
                 report($e);
 
-                $utc = dtHelper()->dbNow()->format("Y-m-d");
+                $utc = dtHelper()->dbNow()->format('Y-m-d');
                 $returnValues[$utc] = [
-                    'utc' => $utc,
+                    'utc'   => $utc,
                     'summe' => 0,
                 ];
             }
         } else {
-            $utc = dtHelper()->dbNow()->format("Y-m-d");
+            $utc = dtHelper()->dbNow()->format('Y-m-d');
             $returnValues[$utc] = [
-                'utc' => $utc,
+                'utc'   => $utc,
                 'summe' => 0,
             ];
         }
@@ -530,7 +524,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * isClocked - Checks to see whether a user is clocked in
+     * isClocked - Checks to see whether a user is clocked in.
      *
      * @param int $id $id
      *
@@ -538,11 +532,11 @@ class Timesheets extends Repository
      */
     public function isClocked(int $id): false|array
     {
-        if (!session()->exists("userdata")) {
+        if (!session()->exists('userdata')) {
             return false;
         }
 
-        $query = "SELECT
+        $query = 'SELECT
                  zp_punch_clock.id,
                  zp_punch_clock.userId,
                  zp_punch_clock.minutes,
@@ -551,40 +545,40 @@ class Timesheets extends Repository
                  zp_tickets.headline,
                  zp_tickets.id as ticketId
               FROM `zp_punch_clock`
-              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
+              LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1';
 
         $onTheClock = false;
 
         $call = $this->dbcall(func_get_args());
         $call->prepare($query);
-        $call->bindValue(':sessionId', session("userdata.id"));
+        $call->bindValue(':sessionId', session('userdata.id'));
 
         $results = $call->fetchAll();
 
         if (count($results) > 0) {
-            $onTheClock = array();
-            $onTheClock["id"] = $results[0]["id"];
-            $onTheClock["since"] = $results[0]["punchIn"];
-            $onTheClock["headline"] = $results[0]["headline"];
-            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
-            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $onTheClock = [];
+            $onTheClock['id'] = $results[0]['id'];
+            $onTheClock['since'] = $results[0]['punchIn'];
+            $onTheClock['headline'] = $results[0]['headline'];
+            $start_date = new Carbon($results[0]['punchIn'], 'UTC');
+            $since_start = $start_date->diff(Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
 
             $r = $since_start->format('%H:%I');
 
-            $onTheClock["totalTime"] = $r;
+            $onTheClock['totalTime'] = $r;
         }
 
         return $onTheClock;
     }
 
     /**
-     * addTime - add user-specific time entry
+     * addTime - add user-specific time entry.
      *
      * @param array $values
      *
-     * @return void
-     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return void
      */
     public function addTime(array $values): void
     {
@@ -641,7 +635,7 @@ class Timesheets extends Repository
         $call->bindValue(':hours', $values['hours']);
         $call->bindValue(':paid', $values['paid'] ?? '');
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+        $call->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -649,7 +643,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * punchIn - clock in on a specified ticket
+     * punchIn - clock in on a specified ticket.
      *
      * @param int $ticketId
      *
@@ -657,14 +651,14 @@ class Timesheets extends Repository
      */
     public function punchIn(int $ticketId): mixed
     {
-        $query = "INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)";
+        $query = 'INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)';
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
+        $call->bindValue(':sessionId', session('userdata.id'));
         // Unix timestamp is by default UTC.
         $call->bindValue(':time', time());
 
@@ -674,24 +668,24 @@ class Timesheets extends Repository
     }
 
     /**
-     * punchOut - clock out on whatever ticket is open for the user
+     * punchOut - clock out on whatever ticket is open for the user.
      *
      * @param int $ticketId
      *
-     * @return float|false|int
-     *
      * @throws BindingResolutionException
+     *
+     * @return float|false|int
      */
     public function punchOut(int $ticketId): float|false|int
     {
-        $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
+        $query = 'SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1';
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'select']);
 
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-        $call->bindValue(':sessionId', session("userdata.id"), PDO::PARAM_INT);
+        $call->bindValue(':sessionId', session('userdata.id'), PDO::PARAM_INT);
 
         $result = $call->fetch();
         unset($call);
@@ -703,18 +697,18 @@ class Timesheets extends Repository
         $inTimestamp = $result['punchIn'];
         $outTimestamp = time();
 
-        $seconds =  ($outTimestamp - $inTimestamp);
+        $seconds = ($outTimestamp - $inTimestamp);
         $totalMinutesWorked = $seconds / 60;
-        $hoursWorked = round(($totalMinutesWorked / 60), 2);
+        $hoursWorked = round($totalMinutesWorked / 60, 2);
 
-        $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
+        $query = 'DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ';
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'delete']);
 
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
+        $call->bindValue(':sessionId', session('userdata.id'));
 
         $call->execute();
 
@@ -729,16 +723,15 @@ class Timesheets extends Repository
                   VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
-
-        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, "UTC")->setToUserTimezone()->startOfDay();
+        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')->setToUserTimezone()->startOfDay();
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
         $call->prepare($query);
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', session("userdata.id"));
+        $call->bindValue(':sessionId', session('userdata.id'));
         $call->bindValue(':hoursWorked', $hoursWorked);
         $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
-        $call->bindValue(':modified',  date('Y-m-d H:i:s'));
+        $call->bindValue(':modified', date('Y-m-d H:i:s'));
 
         $call->execute();
 
@@ -746,17 +739,17 @@ class Timesheets extends Repository
     }
 
     /**
-     * addTime - add user-specific time entry
+     * addTime - add user-specific time entry.
      *
      * @param array $values
      *
-     * @return void
-     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return void
      */
     public function upsertTimesheetEntry(array $values): void
     {
-        $query = "INSERT INTO zp_timesheets (
+        $query = 'INSERT INTO zp_timesheets (
                 userId,
                 ticketId,
                 workDate,
@@ -785,7 +778,7 @@ class Timesheets extends Repository
                 :paidDate,
                 :modified
             ) ON DUPLICATE KEY UPDATE
-                 hours = :hours";
+                 hours = :hours';
 
         $query = self::dispatch_filter('sql', $query);
 
@@ -805,7 +798,7 @@ class Timesheets extends Repository
         $call->bindValue(':hours', $values['hours']);
         $call->bindValue(':paid', $values['paid'] ?? '');
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+        $call->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -813,7 +806,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * updatTime - update specific time entry
+     * updatTime - update specific time entry.
      *
      * @param array $values
      *
@@ -821,7 +814,7 @@ class Timesheets extends Repository
      */
     public function updateTime(array $values): void
     {
-        $query = "UPDATE
+        $query = 'UPDATE
                 zp_timesheets
             SET
                 ticketId = :ticket,
@@ -837,7 +830,7 @@ class Timesheets extends Repository
                 paidDate =:paidDate,
                 modified =:modified
             WHERE
-                id = :id";
+                id = :id';
 
         $call = $this->dbcall(func_get_args());
 
@@ -854,7 +847,7 @@ class Timesheets extends Repository
         $call->bindValue(':paid', $values['paid']);
         $call->bindValue(':paidDate', $values['paidDate']);
         $call->bindValue(':id', $values['id']);
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+        $call->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -862,17 +855,17 @@ class Timesheets extends Repository
     }
 
     /**
-     * updatTime - update specific time entry
+     * updatTime - update specific time entry.
      *
      * @param array $values
      *
-     * @return void
-     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return void
      */
     public function updateHours(array $values): void
     {
-        $query = "UPDATE
+        $query = 'UPDATE
                 zp_timesheets
             SET
                 hours = :hours,
@@ -882,7 +875,7 @@ class Timesheets extends Repository
                 AND ticketId = :ticketId
                 AND kind = :kind
                 AND TO_DAYS(workDate) = TO_DAYS(:date)
-                LIMIT 1";
+                LIMIT 1';
 
         $query = self::dispatch_filter('sql', $query);
 
@@ -894,7 +887,7 @@ class Timesheets extends Repository
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticketId', $values['ticket']);
         $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+        $call->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $call->execute();
 
@@ -902,7 +895,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * updateInvoices
+     * updateInvoices.
      *
      * @param array $invEmpl
      * @param array $invComp
@@ -913,16 +906,16 @@ class Timesheets extends Repository
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
         foreach ($invEmpl as $row1) {
-            $query = "UPDATE zp_timesheets
+            $query = 'UPDATE zp_timesheets
                       SET invoicedEmpl = 1,
                           invoicedEmplDate = :date,
                           modified = :modified
-                      WHERE id = :id ";
+                      WHERE id = :id ';
 
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
             $invEmplCall->bindValue(':id', $row1);
-            $invEmplCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invEmplCall->bindValue(':date', Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
             $invEmplCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $invEmplCall->execute();
 
@@ -930,16 +923,16 @@ class Timesheets extends Repository
         }
 
         foreach ($invComp as $row2) {
-            $query2 = "UPDATE zp_timesheets
+            $query2 = 'UPDATE zp_timesheets
                        SET invoicedComp = 1,
                            invoicedCompDate = :date,
                            modified = :modified
-                       WHERE id = :id ";
+                       WHERE id = :id ';
 
             $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
             $invCompCall->prepare($query2);
             $invCompCall->bindValue(':id', $row2);
-            $invCompCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $invCompCall->bindValue(':date', Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
             $invCompCall->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $invCompCall->execute();
 
@@ -947,16 +940,16 @@ class Timesheets extends Repository
         }
 
         foreach ($paid as $row3) {
-            $query3 = "UPDATE zp_timesheets
+            $query3 = 'UPDATE zp_timesheets
                        SET paid = 1,
                            paidDate = :date,
                            modified = :modified
-                       WHERE id = :id ";
+                       WHERE id = :id ';
 
             $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
             $paidCol->prepare($query3);
             $paidCol->bindValue(':id', $row3);
-            $paidCol->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
+            $paidCol->bindValue(':date', Carbon::now(session('usersettings.timezone'))->setTimezone('UTC'));
             $paidCol->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $paidCol->execute();
 
@@ -973,7 +966,7 @@ class Timesheets extends Repository
      */
     public function deleteTime(int $id): void
     {
-        $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
+        $query = 'DELETE FROM zp_timesheets WHERE id = :id LIMIT 1';
 
         $call = $this->dbcall(func_get_args());
 
@@ -993,7 +986,7 @@ class Timesheets extends Repository
      */
     public function cleanUpEmptyTimesheets(): void
     {
-        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
+        $query = 'DELETE FROM zp_timesheets WHERE hours = 0';
 
         $call = $this->dbcall(func_get_args());
 
@@ -1001,5 +994,4 @@ class Timesheets extends Repository
 
         $call->execute();
     }
-
 }

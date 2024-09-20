@@ -12,7 +12,7 @@ use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * HtmxController Class - Base class For all htmx controllers
+ * HtmxController Class - Base class For all htmx controllers.
  *
  * @method string|null run() The fallback method to be initialized.
  */
@@ -20,20 +20,21 @@ abstract class HtmxController
 {
     use DispatchesEvents;
 
-    /** @var Response $response */
+    /** @var Response */
     protected Response $response;
 
-    /** @var string $view */
+    /** @var string */
     protected static string $view;
 
-    /** @var array $headers */
+    /** @var array */
     protected array $headers = [];
 
     /**
-     * constructor - initialize private variables
+     * constructor - initialize private variables.
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
      * @param Template        $tpl             The template to be initialized.
+     *
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -55,12 +56,13 @@ abstract class HtmxController
     }
 
     /**
-     * Allows hooking into all controllers with events
+     * Allows hooking into all controllers with events.
      *
-     * @return void
      * @throws BindingResolutionException
      * @throws Error
      * @throws LogicException
+     *
+     * @return void
      */
     private function executeActions(): void
     {
@@ -71,13 +73,13 @@ abstract class HtmxController
 
         self::dispatch_event('before_action', ['controller' => $this]);
 
-        if (! property_exists($this, 'view')) {
+        if (!property_exists($this, 'view')) {
             throw new LogicException('HTMX Controllers must include the "$view" static property');
         }
 
         $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
 
-        if (! method_exists($this, $action) && ! method_exists($this, 'run')) {
+        if (!method_exists($this, $action) && !method_exists($this, 'run')) {
             throw new Error("Method $action doesn't exist and no fallback method.");
         }
 
@@ -94,9 +96,10 @@ abstract class HtmxController
     }
 
     /**
-     * Sets the response header to trigger an htmx event
+     * Sets the response header to trigger an htmx event.
      *
      * @param string $eventName
+     *
      * @return void
      **/
     public function setHTMXEvent(string $eventName): void
@@ -106,7 +109,7 @@ abstract class HtmxController
     }
 
     /**
-     * Gets the response
+     * Gets the response.
      *
      * @return Response
      **/
@@ -115,4 +118,3 @@ abstract class HtmxController
         return $this->response;
     }
 }
-

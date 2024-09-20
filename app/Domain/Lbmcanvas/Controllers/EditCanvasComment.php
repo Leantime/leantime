@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Edit Comments
+ * Controller / Edit Comments.
  */
 
-namespace Leantime\Domain\Lbmcanvas\Controllers {
+namespace Leantime\Domain\Lbmcanvas\Controllers;
 
-    /**
-     *
-     */
-    class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
-    {
-        protected const CANVAS_NAME = 'lbm';
-    }
-
+class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
+{
+    protected const CANVAS_NAME = 'lbm';
 }

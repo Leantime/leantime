@@ -7,17 +7,13 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Setting extends Controller
 {
     private SettingService $settingService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param SettingService $settingService
      *
@@ -29,9 +25,8 @@ class Setting extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -43,36 +38,34 @@ class Setting extends Controller
     }
 
     /**
-     * post - Updatind User Image
+     * post - Updatind User Image.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
-        if (! isset($_FILES['file'])) {
+        if (!isset($_FILES['file'])) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
-        $_FILES['file']['name'] = "logo.png";
+        $_FILES['file']['name'] = 'logo.png';
 
         $this->settingService->setLogo($_FILES);
 
-        session(["msg" => "PICTURE_CHANGED"]);
-        session(["msgT" => "success"]);
+        session(['msg' => 'PICTURE_CHANGED']);
+        session(['msgT' => 'success']);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -84,9 +77,8 @@ class Setting extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

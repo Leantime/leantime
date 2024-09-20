@@ -22,7 +22,8 @@ class HttpKernel implements HttpKernelContract
 
     protected Application $app;
 
-    public function __construct(Application $app) {
+    public function __construct(Application $app)
+    {
         $this->app = $app;
     }
 
@@ -44,10 +45,11 @@ class HttpKernel implements HttpKernelContract
      * Handle the incoming request.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request The incoming request.
-     * @return \Symfony\Component\HttpFoundation\Response  The response.
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
-     * @throws \Throwable  If an error occurs and it is not caught.
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException If an HTTP response exception occurs.
+     * @throws \Throwable                                                    If an error occurs and it is not caught.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response The response.
      */
     public function handle($request)
     {
@@ -57,7 +59,8 @@ class HttpKernel implements HttpKernelContract
         $response = (new Pipeline($this->app))
             ->send($request)
             ->through($this->getMiddleware())
-            ->then(fn ($request) =>
+            ->then(
+                fn ($request) =>
                 //Then run through plugin pipeline
             (new Pipeline($this->app))
                 ->send($request)
@@ -70,20 +73,18 @@ class HttpKernel implements HttpKernelContract
             );
 
         return self::dispatch_filter('beforeSendResponse', $response);
-
     }
 
     /**
      * Terminate the request.
      *
-     * @param mixed $request The request object.
+     * @param mixed $request  The request object.
      * @param mixed $response The response object.
      *
      * @return void
      */
     public function terminate($request, $response)
     {
-
         if (method_exists($this->app, 'terminate')) {
             $this->app->terminate();
         }
@@ -94,9 +95,9 @@ class HttpKernel implements HttpKernelContract
 
         foreach ($this->getMiddleware() as $middleware) {
             if (
-                ! is_string($middleware)
-                || ! class_exists($middleware)
-                || ! method_exists($middleware, 'terminate')
+                !is_string($middleware)
+                || !class_exists($middleware)
+                || !method_exists($middleware, 'terminate')
             ) {
                 continue;
             }
@@ -122,7 +123,8 @@ class HttpKernel implements HttpKernelContract
     }
 
     /**
-     * Get the application middleware
+     * Get the application middleware.
+     *
      * @return array
      **/
     public function getMiddleware(): array

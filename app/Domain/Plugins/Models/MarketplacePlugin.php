@@ -4,9 +4,6 @@ namespace Leantime\Domain\Plugins\Models;
 
 use Leantime\Domain\Plugins\Contracts\PluginDisplayStrategy;
 
-/**
- *
- */
 class MarketplacePlugin implements PluginDisplayStrategy
 {
     public string $identifier;
@@ -37,27 +34,27 @@ class MarketplacePlugin implements PluginDisplayStrategy
     {
         $links = [];
 
-        if (! empty($this->vendorDisplayName) && (! empty($this->vendorId) || ! empty($this->vendorEmail))) {
+        if (!empty($this->vendorDisplayName) && (!empty($this->vendorId) || !empty($this->vendorEmail))) {
             $vendor = [
-                'prefix' => __('text.by'),
+                'prefix'  => __('text.by'),
                 'display' => $this->vendorDisplayName,
             ];
 
-            $vendor['link'] = ! empty($this->vendorId) ? "/plugins/marketplace?" . http_build_query(['vendor_id' => $this->vendorId]) : "mailto:{$this->vendorEmail}";
+            $vendor['link'] = !empty($this->vendorId) ? '/plugins/marketplace?'.http_build_query(['vendor_id' => $this->vendorId]) : "mailto:{$this->vendorEmail}";
 
             $links[] = $vendor;
         }
 
-        if (! empty($this->startingPrice)) {
+        if (!empty($this->startingPrice)) {
             $links[] = [
-                'prefix' => __('text.starting_at'),
+                'prefix'  => __('text.starting_at'),
                 'display' => $this->startingPrice,
             ];
         }
 
-        if (! empty($this->rating)) {
+        if (!empty($this->rating)) {
             $links[] = [
-                'prefix' => __('text.rating'),
+                'prefix'  => __('text.rating'),
                 'display' => $this->rating,
             ];
         }
@@ -74,9 +71,9 @@ class MarketplacePlugin implements PluginDisplayStrategy
     {
         static $defaultImage;
         $defaultImage ??= 'data: '
-            . mime_content_type($imageUrl = APP_ROOT . "/public/dist/images/svg/undraw_search_app_oso2.svg")
-            . ';base64,' . base64_encode(file_get_contents($imageUrl));
+            .mime_content_type($imageUrl = APP_ROOT.'/public/dist/images/svg/undraw_search_app_oso2.svg')
+            .';base64,'.base64_encode(file_get_contents($imageUrl));
 
-        return ! empty($this->imageUrl) ? $this->imageUrl : $defaultImage;
+        return !empty($this->imageUrl) ? $this->imageUrl : $defaultImage;
     }
 }

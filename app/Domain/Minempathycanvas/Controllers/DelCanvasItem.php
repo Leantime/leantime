@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Delete Canvas Item
+ * Controller / Delete Canvas Item.
  */
 
-namespace Leantime\Domain\Minempathycanvas\Controllers {
+namespace Leantime\Domain\Minempathycanvas\Controllers;
 
-    /**
-     *
-     */
-    class DelCanvasItem extends \Leantime\Domain\Canvas\Controllers\DelCanvasItem
-    {
-        protected const CANVAS_NAME = 'minempathy';
-    }
-
+class DelCanvasItem extends \Leantime\Domain\Canvas\Controllers\DelCanvasItem
+{
+    protected const CANVAS_NAME = 'minempathy';
 }

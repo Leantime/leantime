@@ -1,16 +1,12 @@
 <?php
 
 /**
- * Controller / Delete Canvas
+ * Controller / Delete Canvas.
  */
 
-namespace Leantime\Domain\Minempathycanvas\Controllers {
+namespace Leantime\Domain\Minempathycanvas\Controllers;
 
-    /**
-     *
-     */
-    class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
-    {
-        protected const CANVAS_NAME = 'minempathy';
-    }
+class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
+{
+    protected const CANVAS_NAME = 'minempathy';
 }

@@ -40,9 +40,10 @@ class ProjectCardProgress extends HtmxController
     private Reactions $reactionService;
 
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     *
      * @return void
      */
     public function init(
@@ -70,18 +71,17 @@ class ProjectCardProgress extends HtmxController
         $this->menuService = $menuService;
         $this->reactionService = $reactionService;
 
-
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
-    public function getProgress() {
-
+    public function getProgress()
+    {
         $projectId = $_GET['pId'];
 
-        $project = array("id" => $projectId);
+        $project = ['id' => $projectId];
 
         $project['progress'] = $this->projectsService->getProjectProgress($project['id']);
-        $projectComment = $this->commentsService->getComments("project", $project['id']);
+        $projectComment = $this->commentsService->getComments('project', $project['id']);
         $project['team'] = $this->projectsService->getUsersAssignedToProject($project['id']);
 
         if (is_array($projectComment) && count($projectComment) > 0) {
@@ -92,13 +92,13 @@ class ProjectCardProgress extends HtmxController
             $project['status'] = '';
         }
 
-        $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
+        $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
 
-        $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+        $currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());
 
-        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
-        $this->tpl->assign("currentUrlPath", $currentUrlPath);
-        $this->tpl->assign("project", $project);
-        $this->tpl->assign("type", "full");
+        $this->tpl->assign('projectTypeAvatars', $projectTypeAvatars);
+        $this->tpl->assign('currentUrlPath', $currentUrlPath);
+        $this->tpl->assign('project', $project);
+        $this->tpl->assign('type', 'full');
     }
 }

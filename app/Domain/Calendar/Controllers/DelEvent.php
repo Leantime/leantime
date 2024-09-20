@@ -1,8 +1,7 @@
 <?php
 
 /**
- * delClient Class - Deleting clients
- *
+ * delClient Class - Deleting clients.
  */
 
 namespace Leantime\Domain\Calendar\Controllers;
@@ -14,15 +13,12 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class DelEvent extends Controller
 {
     private CalendarService $calendarService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param CalendarService $calendarService
      *
@@ -35,9 +31,8 @@ class DelEvent extends Controller
     }
 
     /**
-     * retrieves delete calendar event page data
+     * retrieves delete calendar event page data.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -49,9 +44,8 @@ class DelEvent extends Controller
     }
 
     /**
-     * sets, creates, and updates edit calendar event page data
+     * sets, creates, and updates edit calendar event page data.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -59,9 +53,8 @@ class DelEvent extends Controller
      */
     public function post(array $params): Response
     {
-
         if (isset($_GET['id']) === false) {
-            return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
+            return Frontcontroller::redirect(BASE_URL.'/calendar/showMyCalendar/');
         }
 
         $id = (int) $_GET['id'];
@@ -70,7 +63,7 @@ class DelEvent extends Controller
         if (is_numeric($result) === true) {
             $this->tpl->setNotification('notification.event_removed_successfully', 'success');
 
-            return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
+            return Frontcontroller::redirect(BASE_URL.'/calendar/showMyCalendar/');
         } else {
             $this->tpl->setNotification('notification.could_not_delete_event', 'error');
 

@@ -27,7 +27,8 @@ class WhoopsHandler
     /**
      * Register the application paths with the handler.
      *
-     * @param  \Whoops\Handler\PrettyPageHandler $handler
+     * @param \Whoops\Handler\PrettyPageHandler $handler
+     *
      * @return $this
      */
     protected function registerApplicationPaths($handler)
@@ -48,14 +49,15 @@ class WhoopsHandler
     {
         return Arr::except(
             array_flip((new Filesystem())->directories(APP_ROOT)),
-            [APP_ROOT."/vendor"]
+            [APP_ROOT.'/vendor']
         );
     }
 
     /**
      * Register the blacklist with the handler.
      *
-     * @param  \Whoops\Handler\PrettyPageHandler $handler
+     * @param \Whoops\Handler\PrettyPageHandler $handler
+     *
      * @return $this
      */
     protected function registerBlacklist($handler)
@@ -72,17 +74,17 @@ class WhoopsHandler
     /**
      * Register the editor with the handler.
      *
-     * @param  \Whoops\Handler\PrettyPageHandler $handler
+     * @param \Whoops\Handler\PrettyPageHandler $handler
+     *
      * @return $this
      */
     protected function registerEditor($handler)
     {
-
         $editor = config('editor');
         if (config('editor', false)) {
             $handler->setEditor(config('editor'));
-        }else{
-            $handler->setEditor("phpstorm");
+        } else {
+            $handler->setEditor('phpstorm');
         }
 
         return $this;

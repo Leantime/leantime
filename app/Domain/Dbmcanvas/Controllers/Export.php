@@ -1,16 +1,12 @@
 <?php
 
 /**
- * XML export
+ * XML export.
  */
 
-namespace Leantime\Domain\Dbmcanvas\Controllers {
+namespace Leantime\Domain\Dbmcanvas\Controllers;
 
-    /**
-     *
-     */
-    class Export extends \Leantime\Domain\Canvas\Controllers\Export
-    {
-        protected const CANVAS_NAME = 'dbm';
-    }
+class Export extends \Leantime\Domain\Canvas\Controllers\Export
+{
+    protected const CANVAS_NAME = 'dbm';
 }

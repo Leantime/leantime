@@ -4,7 +4,6 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
@@ -27,9 +26,6 @@ use Leantime\Domain\Wiki\Repositories\Wiki;
 
 /**
  * The Projects class is responsible for managing projects and project-related operations.
- *
- * @package Domain\Projects
- *
  */
 class Projects
 {
@@ -53,8 +49,7 @@ class Projects
      * @param LanguageCore        $language
      * @param Messengers          $messengerService
      * @param NotificationService $notificationService
-     *
-    */
+     */
     public function __construct(
         TemplateCore $tpl,
         ProjectRepository $projectRepository,
@@ -84,18 +79,17 @@ class Projects
      */
     public function getProjectTypes(): mixed
     {
+        $types = ['project' => 'label.project'];
 
-        $types = array("project" => "label.project");
-
-        $filtered = static::dispatch_filter("filterProjectType", $types);
+        $filtered = static::dispatch_filter('filterProjectType', $types);
 
         //Strategy & Program are protected types
-        if (isset($filtered["strategy"])) {
-            unset($filtered["strategy"]);
+        if (isset($filtered['strategy'])) {
+            unset($filtered['strategy']);
         }
 
-        if (isset($filtered["program"])) {
-            unset($filtered["program"]);
+        if (isset($filtered['program'])) {
+            unset($filtered['program']);
         }
 
         return $filtered;
@@ -105,6 +99,7 @@ class Projects
      * Gets the project with the given ID.
      *
      * @param int $id The ID of the project to retrieve.
+     *
      * @return bool|array Returns the project data as an associative array if the project exists, otherwise returns false.
      *
      * @api
@@ -122,13 +117,14 @@ class Projects
      * and planned completion date of the project.
      *
      * @param int $projectId The ID of the project.
+     *
      * @return array The progress of the project.
      *
      * @api
      */
     public function getProjectProgress($projectId): array
     {
-        $returnValue = array("percent" => 0, "estimatedCompletionDate" => "We need more data to determine that.", "plannedCompletionDate" => "");
+        $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
@@ -139,10 +135,9 @@ class Projects
             return $returnValue;
         }
 
-        $dateOfFirstTicket =  new DateTime($firstTicket->date);
+        $dateOfFirstTicket = new DateTime($firstTicket->date);
         $today = new DateTime();
-        $totalprojectDays = $today->diff($dateOfFirstTicket)->format("%a");
-
+        $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
 
         //Calculate percent
 
@@ -181,26 +176,25 @@ class Projects
             $estDaysLeftInProject = ceil($percentLeft / $dailyPercent);
         }
 
-        $today->add(new DateInterval('P' . $estDaysLeftInProject . 'D'));
-
+        $today->add(new DateInterval('P'.$estDaysLeftInProject.'D'));
 
         //Fix this
         $currentDate = new DateTime();
-        $inFiveYears = intval($currentDate->format("Y")) + 5;
+        $inFiveYears = intval($currentDate->format('Y')) + 5;
 
-        if (intval($today->format("Y")) >= $inFiveYears) {
-            $completionDate = "Past " . $inFiveYears;
+        if (intval($today->format('Y')) >= $inFiveYears) {
+            $completionDate = 'Past '.$inFiveYears;
         } else {
             $completionDate = $today->format($this->language->__('language.dateformat'));
         }
 
-
-        $returnValue = array("percent" => $finalPercent, "estimatedCompletionDate" => $completionDate, "plannedCompletionDate" => '');
+        $returnValue = ['percent' => $finalPercent, 'estimatedCompletionDate' => $completionDate, 'plannedCompletionDate' => ''];
         if ($numberOfClosedTickets < 10) {
-            $returnValue['estimatedCompletionDate'] = "<a href='" . BASE_URL . "/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
         } elseif ($finalPercent == 100) {
-            $returnValue['estimatedCompletionDate'] = "<a href='" . BASE_URL . "/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
         }
+
         return $returnValue;
     }
 
@@ -208,21 +202,21 @@ class Projects
      * Gets an array of user IDs to notify for a given project.
      *
      * @param int $projectId The ID of the project to get users to notify for.
+     *
      * @return array An array of user IDs.
      *
      * @api
      */
     public function getUsersToNotify($projectId): array
     {
-
         $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-        $to = array();
+        $to = [];
 
         //Only users that actually want to be notified and are active
         foreach ($users as $user) {
-            if ($user["notifications"] != 0 && strtolower($user["status"]) == 'a') {
-                $to[] = $user["id"];
+            if ($user['notifications'] != 0 && strtolower($user['status']) == 'a') {
+                $to[] = $user['id'];
             }
         }
 
@@ -233,20 +227,20 @@ class Projects
      * Gets all the users who need to be notified for a given project.
      *
      * @param int $projectId The ID of the project.
+     *
      * @return array An array of users to notify.
      *
      * @api
      */
     public function getAllUserInfoToNotify($projectId): array
     {
-
         $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-        $to = array();
+        $to = [];
 
         //Only users that actually want to be notified
         foreach ($users as $user) {
-            if ($user["notifications"] != 0 && ($user['username'] != session("userdata.mail"))) {
+            if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
                 $to[] = $user;
             }
         }
@@ -260,15 +254,15 @@ class Projects
      * Notifies the users associated with a project about a notification.
      *
      * @param Notification $notification The notification object to send.
+     *
      * @return void
      *
      * @api
      */
     public function notifyProjectUsers(Notification $notification): void
     {
-
         //Filter notifications
-        $notification = EventCore::dispatch_filter("notificationFilter", $notification);
+        $notification = EventCore::dispatch_filter('notificationFilter', $notification);
 
         //Email
         $users = $this->getUsersToNotify($notification->projectId);
@@ -292,7 +286,7 @@ class Projects
 
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
-            $emailMessage .= " <a href='" . $notification->url['url'] . "'>" . $notification->url['text'] . "</a>";
+            $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
         }
 
         // NEW Queuing messaging system
@@ -304,18 +298,18 @@ class Projects
 
         //Notify users about mentions
         //Fields that should be parsed for mentions
-        $mentionFields = array(
-            "comments" => array("text"),
-            "projects" => array("details"),
-            "tickets" => array("description"),
-            "canvas" => array("description", "data", "conclusion", "assumptions"),
-        );
+        $mentionFields = [
+            'comments' => ['text'],
+            'projects' => ['details'],
+            'tickets'  => ['description'],
+            'canvas'   => ['description', 'data', 'conclusion', 'assumptions'],
+        ];
 
         $contentToCheck = '';
         //Find entity ID & content
         //Todo once all entities are models this if statement can be reduced
-        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity["id"])) {
-            $entityId = $notification->entity["id"];
+        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
+            $entityId = $notification->entity['id'];
 
             if (isset($mentionFields[$notification->module])) {
                 $fields = $mentionFields[$notification->module];
@@ -347,9 +341,9 @@ class Projects
             $this->notificationService->processMentions(
                 $contentToCheck,
                 $notification->module,
-                (int)$entityId,
+                (int) $entityId,
                 $notification->authorId,
-                $notification->url["url"]
+                $notification->url['url']
             );
         }
 
@@ -361,32 +355,33 @@ class Projects
          *
          * @event notifyProjectUsers
          *
-         * @param string $type The type of update. E.g., "projectUpdate"
-         * @param string $module The name of the module affected by the update.
-         * @param int $moduleId The ID of the entity affected by the update.
-         * @param string $message The content of the notification message.
-         * @param string $subject The subject of the notification message.
-         * @param array $users The users to be notified about this update. Retrieved by the 'getAllUserInfoToNotify' method.
-         * @param string|null $url The url leading to the update if any.
+         * @param string      $type     The type of update. E.g., "projectUpdate"
+         * @param string      $module   The name of the module affected by the update.
+         * @param int         $moduleId The ID of the entity affected by the update.
+         * @param string      $message  The content of the notification message.
+         * @param string      $subject  The subject of the notification message.
+         * @param array       $users    The users to be notified about this update. Retrieved by the 'getAllUserInfoToNotify' method.
+         * @param string|null $url      The url leading to the update if any.
+         *
          * @context domain.services.projects
          */
-         EventCore::dispatch_event("notifyProjectUsers", array("type" => "projectUpdate", "module" => $notification->module, "moduleId" => $entityId, "message" => $notification->message, "subject" => $notification->subject, "users" => $this->getAllUserInfoToNotify($notification->projectId), "url" => $notification->url['url']), "domain.services.projects");
+        EventCore::dispatch_event('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
     }
 
     /**
      * Retrieves the name of a project based on its ID.
      *
      * @param int $projectId The ID of the project.
+     *
      * @return string|null The name of the project, or null if the project does not exist.
      *
      * @api
      */
     public function getProjectName($projectId)
     {
-
         $project = $this->projectRepository->getProject($projectId);
         if ($project) {
-            return $project["name"];
+            return $project['name'];
         }
     }
 
@@ -394,13 +389,13 @@ class Projects
      * Gets the project IDs assigned to a specified user.
      *
      * @param int $userId The ID of the user.
+     *
      * @return false|array The project IDs assigned to the user, or false if no projects are found.
      *
      * @api
      */
     public function getProjectIdAssignedToUser($userId): false|array
     {
-
         $projects = $this->projectRepository->getUserProjectRelation($userId);
 
         if ($projects) {
@@ -413,14 +408,15 @@ class Projects
     /**
      * Gets projects assigned to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The status of the projects. Defaults to "open".
-     * @param int|null $clientId The ID of the client. Defaults to null.
+     * @param int      $userId        The ID of the user.
+     * @param string   $projectStatus The status of the projects. Defaults to "open".
+     * @param int|null $clientId      The ID of the client. Defaults to null.
+     *
      * @return array The projects assigned to the user.
      *
      * @api
      */
-    public function getProjectsAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
         $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
@@ -431,19 +427,18 @@ class Projects
         }
     }
 
-
     /**
      * Finds all children projects for a given parent project.
      *
      * @param mixed $currentParentId The ID of the current parent project.
-     * @param array $projects An array of projects to search for children.
+     * @param array $projects        An array of projects to search for children.
+     *
      * @return array An array of children projects found.
      *
      * @api
      */
     public function findMyChildren($currentParentId, array $projects): array
     {
-
         $branch = [];
 
         foreach ($projects as $project) {
@@ -455,6 +450,7 @@ class Projects
                 $branch[] = $project;
             }
         }
+
         return $branch;
     }
 
@@ -464,13 +460,13 @@ class Projects
      * Assigns a parent id of 0 to projects that have no parent.
      *
      * @param array $projects An array of projects
+     *
      * @return array The cleaned array of projects
      *
      * @api
      */
     public function cleanParentRelationship(array $projects): array
     {
-
         $parents = [];
         foreach ($projects as $project) {
             $parents[$project['id']] = $project;
@@ -492,54 +488,53 @@ class Projects
     /**
      * Gets the hierarchy of projects assigned to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The project status. Default is "open".
-     * @param int|null $clientId The ID of the client. Default is null.
+     * @param int      $userId        The ID of the user.
+     * @param string   $projectStatus The project status. Default is "open".
+     * @param int|null $clientId      The ID of the client. Default is null.
      *
      * @return array An array containing the assigned projects, the project hierarchy, and the favorite projects.
      *
      * @api
      */
-    public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
-
         //Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
             userId: $userId,
             projectStatus: $projectStatus,
-            clientId: (int)$clientId,
-            accessStatus: "assigned"
+            clientId: (int) $clientId,
+            accessStatus: 'assigned'
         );
         $projects = self::dispatch_filter('afterLoadingProjects', $projects);
-
 
         //Build project hierarchy
         $projectsClean = $this->cleanParentRelationship($projects);
         $projectHierarchy = $this->findMyChildren(0, $projectsClean);
-        $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
+        $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
 
         //Get favorite projects
         $favorites = [];
         foreach ($projects as $project) {
-            if (isset($project["isFavorite"]) && $project["isFavorite"] == 1) {
+            if (isset($project['isFavorite']) && $project['isFavorite'] == 1) {
                 $favorites[] = $project;
             }
         }
-        $favorites = self::dispatch_filter('afterPopulatingProjectFavorites', $favorites, array("projects" => $projects));
+        $favorites = self::dispatch_filter('afterPopulatingProjectFavorites', $favorites, ['projects' => $projects]);
 
         return [
-            "allAssignedProjects" => $projects,
-            "allAssignedProjectsHierarchy" => $projectHierarchy,
-            "favoriteProjects" => $favorites,
+            'allAssignedProjects'          => $projects,
+            'allAssignedProjectsHierarchy' => $projectHierarchy,
+            'favoriteProjects'             => $favorites,
         ];
     }
 
     /**
      * Gets the project hierarchy available to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The status of the projects to retrieve. Defaults to "open".
-     * @param int|null $clientId The ID of the client. Defaults to null.
+     * @param int      $userId        The ID of the user.
+     * @param string   $projectStatus The status of the projects to retrieve. Defaults to "open".
+     * @param int|null $clientId      The ID of the client. Defaults to null.
+     *
      * @return array Returns an array containing the following keys:
      *               - "allAvailableProjects": An array of all projects available to the user.
      *               - "allAvailableProjectsHierarchy": An array representing the project hierarchy available to the user.
@@ -547,74 +542,66 @@ class Projects
      *
      * @api
      */
-    public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
-
         //Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
             userId: $userId,
             projectStatus: $projectStatus,
-            clientId: (int)$clientId,
-            accessStatus: "all"
+            clientId: (int) $clientId,
+            accessStatus: 'all'
         );
         $projects = self::dispatch_filter('afterLoadingProjects', $projects);
-
 
         //Build project hierarchy
         $projectsClean = $this->cleanParentRelationship($projects);
         $projectHierarchy = $this->findMyChildren(0, $projectsClean);
-        $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
+        $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
 
         $clients = $this->getClientsFromProjectList($projects);
 
         return [
-            "allAvailableProjects" => $projects,
-            "allAvailableProjectsHierarchy" => $projectHierarchy,
-            "clients" => $clients,
+            'allAvailableProjects'          => $projects,
+            'allAvailableProjectsHierarchy' => $projectHierarchy,
+            'clients'                       => $clients,
         ];
     }
-
 
     /**
      * Gets all the clients available to a user.
      *
-     * @param int $userId The ID of the user.
+     * @param int    $userId        The ID of the user.
      * @param string $projectStatus The status of the projects to be considered. Defaults to "open".
+     *
      * @return array An array of clients available to the user.
      *
      * @api
      */
-    public function getAllClientsAvailableToUser($userId, string $projectStatus = "open"): array
+    public function getAllClientsAvailableToUser($userId, string $projectStatus = 'open'): array
     {
-
         //Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
             userId: $userId,
             projectStatus: $projectStatus,
             clientId: null,
-            accessStatus: "all"
+            accessStatus: 'all'
         );
         $projects = self::dispatch_filter('afterLoadingProjects', $projects);
-
 
         $clients = $this->getClientsFromProjectList($projects);
 
         return $clients;
     }
 
-    /**
-     *
-     */
     public function getClientsFromProjectList(array $projects): array
     {
-
         $clients = [];
         foreach ($projects as $project) {
-            if (!array_key_exists($project["clientId"], $clients)) {
-                $clients[$project["clientId"]] = array(
-                    "name" => $project['clientName'],
-                    "id" => $project["clientId"],
-                );
+            if (!array_key_exists($project['clientId'], $clients)) {
+                $clients[$project['clientId']] = [
+                    'name' => $project['clientName'],
+                    'id'   => $project['clientId'],
+                ];
             }
         }
 
@@ -624,25 +611,25 @@ class Projects
     /**
      * Gets the role of a user in a specific project.
      *
-     * @param mixed $userId The user ID.
+     * @param mixed $userId    The user ID.
      * @param mixed $projectId The project ID.
+     *
      * @return mixed The role of the user in the project (string) or an empty string if the user is not assigned to the project or if the project role is not defined.
      *
      * @api
      */
     public function getProjectRole($userId, $projectId): mixed
     {
-
         $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
 
         if (is_array($project)) {
             if (isset($project[0]['projectRole']) && $project[0]['projectRole'] != '') {
                 return $project[0]['projectRole'];
             } else {
-                return "";
+                return '';
             }
         } else {
-            return "";
+            return '';
         }
     }
 
@@ -650,13 +637,14 @@ class Projects
      * Gets the projects that a user has access to.
      *
      * @param int $userId The ID of the user.
+     *
      * @return array|false The array of projects if the user has access, false otherwise.
      *
      * @api
      */
     public function getProjectsUserHasAccessTo($userId): false|array
     {
-        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: "all");
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
 
         if ($projects) {
             return $projects;
@@ -674,13 +662,12 @@ class Projects
      * If lastProject setting is not set, it sets the currentProject to the first project assigned to the user.
      * If no projects are assigned to the user, it throws an Exception.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
+     * @return void
      */
     public function setCurrentProject(): void
     {
-
         if (isset($_GET['projectId']) === true) {
             $projectId = filter_var($_GET['projectId'], FILTER_SANITIZE_NUMBER_INT);
 
@@ -690,16 +677,16 @@ class Projects
         }
 
         if (
-            session()->has("currentProject")
-            && $this->changeCurrentSessionProject(session("currentProject"))
+            session()->has('currentProject')
+            && $this->changeCurrentSessionProject(session('currentProject'))
         ) {
             return;
         }
 
-        session(["currentProject" => 0]);
+        session(['currentProject' => 0]);
 
         //If last project setting is set use that
-        $lastProject = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".lastProject");
+        $lastProject = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.lastProject');
         if (
             !empty($lastProject)
             && $this->changeCurrentSessionProject($lastProject)
@@ -707,7 +694,7 @@ class Projects
             return;
         }
 
-        $allProjects = $this->getProjectsAssignedToUser(session("userdata.id"));
+        $allProjects = $this->getProjectsAssignedToUser(session('userdata.id'));
         if (empty($allProjects)) {
             return;
         }
@@ -716,7 +703,7 @@ class Projects
             return;
         }
 
-        throw new \Exception("Error trying to set a project");
+        throw new \Exception('Error trying to set a project');
     }
 
     /**
@@ -725,12 +712,11 @@ class Projects
      * Otherwise, it returns 0.
      *
      * @return int The current project ID.
-     *
      */
     public function getCurrentProjectId(): int
     {
         // Make sure that we never return a value less than 0.
-        return max(0, (int) (session("currentProject") ?? 0));
+        return max(0, (int) (session('currentProject') ?? 0));
     }
 
     /**
@@ -748,91 +734,90 @@ class Projects
             return false;
         }
 
-        $projectId = (int)$projectId;
+        $projectId = (int) $projectId;
 
         if (
-            session()->exists("currentProject") &&
-            session("currentProject") == $projectId
+            session()->exists('currentProject') &&
+            session('currentProject') == $projectId
         ) {
             return true;
         }
 
-        session(["currentProjectName" => '']);
+        session(['currentProjectName' => '']);
 
-        if ($this->isUserAssignedToProject(session("userdata.id"), $projectId) === true) {
+        if ($this->isUserAssignedToProject(session('userdata.id'), $projectId) === true) {
             //Get user project role
 
             $project = $this->getProject($projectId);
 
             if ($project) {
                 if (
-                    session()->exists("currentProject") &&
-                    session("currentProject") == $project['id']
+                    session()->exists('currentProject') &&
+                    session('currentProject') == $project['id']
                 ) {
                     return true;
                 }
 
-                $projectRole = $this->getProjectRole(session("userdata.id"), $projectId);
+                $projectRole = $this->getProjectRole(session('userdata.id'), $projectId);
 
-                session(["currentProject" => $projectId]);
+                session(['currentProject' => $projectId]);
 
                 if (mb_strlen($project['name']) > 25) {
-                    session(["currentProjectName" => mb_substr($project['name'], 0, 25) . " (...)"]);
+                    session(['currentProjectName' => mb_substr($project['name'], 0, 25).' (...)']);
                 } else {
-                    session(["currentProjectName" => $project['name']]);
+                    session(['currentProjectName' => $project['name']]);
                 }
 
-                session(["currentProjectClient" => $project['clientName']]);
+                session(['currentProjectClient' => $project['clientName']]);
 
-                session(["userdata.projectRole" => '']);
+                session(['userdata.projectRole' => '']);
                 if ($projectRole != '') {
-                    session(["userdata.projectRole" => Roles::getRoleString($projectRole)]);
+                    session(['userdata.projectRole' => Roles::getRoleString($projectRole)]);
                 }
 
-                session(["currentSprint" => ""]);
-                session(["currentIdeaCanvas" => ""]);
-                session(["lastTicketView" => ""]);
-                session(["lastFilterdTicketTableView" => ""]);
-                session(["lastFilterdTicketKanbanView" => ""]);
-                session(["currentWiki" => '']);
-                session(["lastArticle" => ""]);
+                session(['currentSprint' => '']);
+                session(['currentIdeaCanvas' => '']);
+                session(['lastTicketView' => '']);
+                session(['lastFilterdTicketTableView' => '']);
+                session(['lastFilterdTicketKanbanView' => '']);
+                session(['currentWiki' => '']);
+                session(['lastArticle' => '']);
 
-                session(["currentSWOTCanvas" => ""]);
-                session(["currentLEANCanvas" => ""]);
-                session(["currentEMCanvas" => ""]);
-                session(["currentINSIGHTSCanvas" => ""]);
-                session(["currentSBCanvas" => ""]);
-                session(["currentRISKSCanvas" => ""]);
-                session(["currentEACanvas" => ""]);
-                session(["currentLBMCanvas" => ""]);
-                session(["currentOBMCanvas" => ""]);
-                session(["currentDBMCanvas" => ""]);
-                session(["currentSQCanvas" => ""]);
-                session(["currentCPCanvas" => ""]);
-                session(["currentSMCanvas" => ""]);
-                session(["currentRETROSCanvas" => ""]);
-                $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".lastProject", session("currentProject"));
+                session(['currentSWOTCanvas' => '']);
+                session(['currentLEANCanvas' => '']);
+                session(['currentEMCanvas' => '']);
+                session(['currentINSIGHTSCanvas' => '']);
+                session(['currentSBCanvas' => '']);
+                session(['currentRISKSCanvas' => '']);
+                session(['currentEACanvas' => '']);
+                session(['currentLBMCanvas' => '']);
+                session(['currentOBMCanvas' => '']);
+                session(['currentDBMCanvas' => '']);
+                session(['currentSQCanvas' => '']);
+                session(['currentCPCanvas' => '']);
+                session(['currentSMCanvas' => '']);
+                session(['currentRETROSCanvas' => '']);
+                $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.lastProject', session('currentProject'));
 
-
-                $recentProjects =  $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".recentProjects");
+                $recentProjects = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.recentProjects');
                 $recent = unserialize($recentProjects);
 
                 if (is_array($recent) === false) {
-                    $recent = array();
+                    $recent = [];
                 }
-                $key = array_search(session("currentProject"), $recent);
+                $key = array_search(session('currentProject'), $recent);
                 if ($key !== false) {
                     unset($recent[$key]);
                 }
-                array_unshift($recent, session("currentProject"));
+                array_unshift($recent, session('currentProject'));
 
                 $recent = array_slice($recent, 0, 20);
 
-                $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".recentProjects", serialize($recent));
+                $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.recentProjects', serialize($recent));
 
-                session()->forget("projectsettings");
+                session()->forget('projectsettings');
 
-                self::dispatch_event("projects.setCurrentProject", $project);
+                self::dispatch_event('projects.setCurrentProject', $project);
 
                 return true;
             } else {
@@ -847,44 +832,42 @@ class Projects
      * Resets the current project by clearing all session data related to the project.
      *
      * @return void
-     *
      */
     public function resetCurrentProject(): void
     {
+        session(['currentProject' => '']);
+        session(['currentProjectClient' => '']);
+        session(['currentProjectName' => '']);
 
-        session(["currentProject" => ""]);
-        session(["currentProjectClient" => ""]);
-        session(["currentProjectName" => ""]);
+        session(['currentSprint' => '']);
+        session(['currentIdeaCanvas' => '']);
 
-        session(["currentSprint" => ""]);
-        session(["currentIdeaCanvas" => ""]);
+        session(['currentSWOTCanvas' => '']);
+        session(['currentLEANCanvas' => '']);
+        session(['currentEMCanvas' => '']);
+        session(['currentINSIGHTSCanvas' => '']);
+        session(['currentSBCanvas' => '']);
+        session(['currentRISKSCanvas' => '']);
+        session(['currentEACanvas' => '']);
+        session(['currentLBMCanvas' => '']);
+        session(['currentOBMCanvas' => '']);
+        session(['currentDBMCanvas' => '']);
+        session(['currentSQCanvas' => '']);
+        session(['currentCPCanvas' => '']);
+        session(['currentSMCanvas' => '']);
+        session(['currentRETROSCanvas' => '']);
+        session()->forget('projectsettings');
 
-        session(["currentSWOTCanvas" => ""]);
-        session(["currentLEANCanvas" => ""]);
-        session(["currentEMCanvas" => ""]);
-        session(["currentINSIGHTSCanvas" => ""]);
-        session(["currentSBCanvas" => ""]);
-        session(["currentRISKSCanvas" => ""]);
-        session(["currentEACanvas" => ""]);
-        session(["currentLBMCanvas" => ""]);
-        session(["currentOBMCanvas" => ""]);
-        session(["currentDBMCanvas" => ""]);
-        session(["currentSQCanvas" => ""]);
-        session(["currentCPCanvas" => ""]);
-        session(["currentSMCanvas" => ""]);
-        session(["currentRETROSCanvas" => ""]);
-        session()->forget("projectsettings");
-
-        $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".lastProject", session("currentProject"));
+        $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.lastProject', session('currentProject'));
 
         $this->setCurrentProject();
     }
-
 
     /**
      * Gets all the users assigned to a specific project.
      *
      * @param int $projectId The ID of the project.
+     *
      * @return array An array of users assigned to the project.
      *
      * @api
@@ -894,41 +877,41 @@ class Projects
         $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
         foreach ($users as $key => $user) {
-
-             if(dtHelper()->isValidDateString($user['modified'])) {
-                 $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
-             }else{
-                 $users[$key]['modified'] = null;
-             }
+            if (dtHelper()->isValidDateString($user['modified'])) {
+                $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+            } else {
+                $users[$key]['modified'] = null;
+            }
         }
 
         if ($users) {
             return $users;
         }
 
-        return array();
+        return [];
     }
 
     /**
      * Checks if a user is assigned to a particular project.
      *
-     * @param int $userId The ID of the user being checked.
+     * @param int $userId    The ID of the user being checked.
      * @param int $projectId The ID of the project being checked.
+     *
      * @return bool Returns true if the user is assigned to the project, false otherwise.
      *
      * @api
      */
     public function isUserAssignedToProject(int $userId, int $projectId): bool
     {
-
         return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
     }
 
     /**
      * Checks if a user is a member of a specific project.
      *
-     * @param int $userId - The ID of the user.
+     * @param int $userId    - The ID of the user.
      * @param int $projectId - The ID of the project.
+     *
      * @return bool - Returns true if the user is a member of the project, otherwise false.
      *
      * @api
@@ -938,64 +921,65 @@ class Projects
         return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
     }
 
-
     /**
      * Adds a new project.
      *
      * @param array $values The project data.
-     *   - name: string (required) The name of the project.
-     *   - details: string (optional) Additional details about the project.
-     *   - clientId: int (required) The ID of the client associated with the project.
-     *   - hourBudget: int (optional) The hour budget for the project (defaults to 0).
-     *   - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
-     *   - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
-     *   - psettings: string (optional) The project settings (defaults to 'restricted').
-     *   - type: string (fixed value 'project') The type of the project.
-     *   - start: string|null The start date of the project in user format or null.
-     *   - end: string|null The end date of the project in user format or null.
+     *                      - name: string (required) The name of the project.
+     *                      - details: string (optional) Additional details about the project.
+     *                      - clientId: int (required) The ID of the client associated with the project.
+     *                      - hourBudget: int (optional) The hour budget for the project (defaults to 0).
+     *                      - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
+     *                      - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
+     *                      - psettings: string (optional) The project settings (defaults to 'restricted').
+     *                      - type: string (fixed value 'project') The type of the project.
+     *                      - start: string|null The start date of the project in user format or null.
+     *                      - end: string|null The end date of the project in user format or null.
+     *
      * @return int|false The ID of the added project, or false if the project could not be added.
      *
      * @api
      */
     public function addProject(array $values): int|false
     {
-        $values = array(
-            "name" => $values['name'],
-            'details' => $values['details'] ?? '',
-            'clientId' => $values['clientId'],
-            'hourBudget' => $values['hourBudget'] ?? 0,
+        $values = [
+            'name'          => $values['name'],
+            'details'       => $values['details'] ?? '',
+            'clientId'      => $values['clientId'],
+            'hourBudget'    => $values['hourBudget'] ?? 0,
             'assignedUsers' => $values['assignedUsers'] ?? '',
-            'dollarBudget' => $values['dollarBudget'] ?? 0,
-            'psettings' => $values['psettings'] ?? 'restricted',
-            'type' => "project",
-            'start' => $values['start'],
-            'end' => $values['end'],
-        );
+            'dollarBudget'  => $values['dollarBudget'] ?? 0,
+            'psettings'     => $values['psettings'] ?? 'restricted',
+            'type'          => 'project',
+            'start'         => $values['start'],
+            'end'           => $values['end'],
+        ];
         if ($values['start'] != null) {
             $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
         }
         if ($values['end'] != null) {
             $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
         }
+
         return $this->projectRepository->addProject($values);
     }
 
     /**
      * Duplicates a project with the specified details.
      *
-     * @param int $projectId The ID of the project to duplicate.
-     * @param int $clientId The ID of the client for the duplicate project.
-     * @param string $projectName The name of the duplicate project.
-     * @param string $userStartDate The start date of the duplicate project in the format specified by the language setting.
-     * @param bool $assignSameUsers Whether to assign the same users as the original project.
+     * @param int    $projectId       The ID of the project to duplicate.
+     * @param int    $clientId        The ID of the client for the duplicate project.
+     * @param string $projectName     The name of the duplicate project.
+     * @param string $userStartDate   The start date of the duplicate project in the format specified by the language setting.
+     * @param bool   $assignSameUsers Whether to assign the same users as the original project.
+     *
      * @return bool|int Returns true if the project was successfully duplicated, or the ID of the new project if successful.
      *
      * @api
      */
     public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
     {
-
-        $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
+        $startDate = datetime::createFromFormat($this->language->__('language.dateformat'), $userStartDate);
 
         //Ignoring
         //Comments, files, timesheets, personalCalendar EventDispatcher
@@ -1004,35 +988,35 @@ class Projects
         //Copy project Entry
         $projectValues = $this->getProject($projectId);
 
-        $copyProject = array(
-            "name" => $projectName,
-            "clientId" => $clientId,
-            "details" => $projectValues['details'],
-            "state" => $projectValues['state'],
-            "hourBudget" => $projectValues['hourBudget'],
-            "dollarBudget" => $projectValues['dollarBudget'],
-            "menuType" => $projectValues['menuType'],
-            'psettings' => $projectValues['psettings'],
-            'assignedUsers' => array(),
-        );
+        $copyProject = [
+            'name'          => $projectName,
+            'clientId'      => $clientId,
+            'details'       => $projectValues['details'],
+            'state'         => $projectValues['state'],
+            'hourBudget'    => $projectValues['hourBudget'],
+            'dollarBudget'  => $projectValues['dollarBudget'],
+            'menuType'      => $projectValues['menuType'],
+            'psettings'     => $projectValues['psettings'],
+            'assignedUsers' => [],
+        ];
 
         if ($assignSameUsers) {
             $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
             foreach ($projectUsers as $user) {
-                $copyProject['assignedUsers'][] = array("id" => $user['id'], "projectRole" => $user['projectRole']);
+                $copyProject['assignedUsers'][] = ['id' => $user['id'], 'projectRole' => $user['projectRole']];
             }
         }
 
-        $projectSettingsKeys = array("retrolabels", "ticketlabels", "idealabels");
+        $projectSettingsKeys = ['retrolabels', 'ticketlabels', 'idealabels'];
         $newProjectId = $this->projectRepository->addProject($copyProject);
 
         //ProjectSettings
         foreach ($projectSettingsKeys as $key) {
-            $setting = $this->settingsRepo->getSetting("projectsettings." . $projectId . "." . $key);
+            $setting = $this->settingsRepo->getSetting('projectsettings.'.$projectId.'.'.$key);
 
             if ($setting !== false) {
-                $this->settingsRepo->saveSetting("projectsettings." . $newProjectId . "." . $key, $setting);
+                $this->settingsRepo->saveSetting('projectsettings.'.$newProjectId.'.'.$key, $setting);
             }
         }
 
@@ -1043,74 +1027,73 @@ class Projects
         $oldestTicket = new DateTime();
 
         foreach ($allTickets as $ticket) {
-            if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
-                $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->editFrom);
+            if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
+                $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->editFrom);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
 
-            if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
-                $ticketDateTimeObject = datetime::createFromFormat("Y-m-d H:i:s", $ticket->dateToFinish);
+            if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
+                $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->dateToFinish);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
         }
 
-
         $projectStart = new DateTime($startDate);
         $interval = $oldestTicket->diff($projectStart);
 
         //oldId = > newId
-        $ticketIdList = array();
+        $ticketIdList = [];
 
         //Iterate through root tickets first
         foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid == 0 || $ticket->milestoneid == "" || $ticket->milestoneid == null) {
-                $dateToFinishValue = "";
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+            if ($ticket->milestoneid == 0 || $ticket->milestoneid == '' || $ticket->milestoneid == null) {
+                $dateToFinishValue = '';
+                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
                     $dateToFinish = new DateTime($ticket->dateToFinish);
                     $dateToFinish->add($interval);
                     $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
                 }
 
-                $editFromValue = "";
-                if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                $editFromValue = '';
+                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
                     $editFrom = new DateTime($ticket->editFrom);
                     $editFrom->add($interval);
                     $editFromValue = $editFrom->format('Y-m-d H:i:s');
                 }
 
-                $editToValue = "";
-                if ($ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                $editToValue = '';
+                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
                     $editTo = new DateTime($ticket->editTo);
                     $editTo->add($interval);
                     $editToValue = $editTo->format('Y-m-d H:i:s');
                 }
 
-                $ticketValues = array(
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session("userdata.id"),
-                    'date' => date("Y-m-d H:i:s"),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => "",
+                $ticketValues = [
+                    'headline'           => $ticket->headline,
+                    'type'               => $ticket->type,
+                    'description'        => $ticket->description,
+                    'projectId'          => $newProjectId,
+                    'editorId'           => $ticket->editorId,
+                    'userId'             => session('userdata.id'),
+                    'date'               => date('Y-m-d H:i:s'),
+                    'dateToFinish'       => $dateToFinishValue,
+                    'status'             => $ticket->status,
+                    'storypoints'        => $ticket->storypoints,
+                    'hourRemaining'      => $ticket->hourRemaining,
+                    'planHours'          => $ticket->planHours,
+                    'priority'           => $ticket->priority,
+                    'sprint'             => '',
                     'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'dependingTicketId' => "",
-                    'milestoneid' => '',
-                );
+                    'tags'               => $ticket->tags,
+                    'editFrom'           => $editFromValue,
+                    'editTo'             => $editToValue,
+                    'dependingTicketId'  => '',
+                    'milestoneid'        => '',
+                ];
 
                 $newTicketId = $this->ticketRepository->addTicket($ticketValues);
 
@@ -1120,49 +1103,49 @@ class Projects
 
         //Iterate through childObjects
         foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid != "" && $ticket->milestoneid > 0) {
-                $dateToFinishValue = "";
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
+            if ($ticket->milestoneid != '' && $ticket->milestoneid > 0) {
+                $dateToFinishValue = '';
+                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
                     $dateToFinish = new DateTime($ticket->dateToFinish);
                     $dateToFinish->add($interval);
                     $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
                 }
 
-                $editFromValue = "";
-                if ($ticket->editFrom != null && $ticket->editFrom != "" && $ticket->editFrom != "0000-00-00 00:00:00" && $ticket->editFrom != "1969-12-31 00:00:00") {
+                $editFromValue = '';
+                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
                     $editFrom = new DateTime($ticket->editFrom);
                     $editFrom->add($interval);
                     $editFromValue = $editFrom->format('Y-m-d H:i:s');
                 }
 
-                $editToValue = "";
-                if ($ticket->editTo != null && $ticket->editTo != "" && $ticket->editTo != "0000-00-00 00:00:00" && $ticket->editTo != "1969-12-31 00:00:00") {
+                $editToValue = '';
+                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
                     $editTo = new DateTime($ticket->editTo);
                     $editTo->add($interval);
                     $editToValue = $editTo->format('Y-m-d H:i:s');
                 }
 
-                $ticketValues = array(
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session("userdata.id"),
-                    'date' => date("Y-m-d H:i:s"),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => "",
+                $ticketValues = [
+                    'headline'           => $ticket->headline,
+                    'type'               => $ticket->type,
+                    'description'        => $ticket->description,
+                    'projectId'          => $newProjectId,
+                    'editorId'           => $ticket->editorId,
+                    'userId'             => session('userdata.id'),
+                    'date'               => date('Y-m-d H:i:s'),
+                    'dateToFinish'       => $dateToFinishValue,
+                    'status'             => $ticket->status,
+                    'storypoints'        => $ticket->storypoints,
+                    'hourRemaining'      => $ticket->hourRemaining,
+                    'planHours'          => $ticket->planHours,
+                    'priority'           => $ticket->priority,
+                    'sprint'             => '',
                     'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'milestoneid' => $ticketIdList[$ticket->milestoneid],
-                );
+                    'tags'               => $ticket->tags,
+                    'editFrom'           => $editFromValue,
+                    'editTo'             => $editToValue,
+                    'milestoneid'        => $ticketIdList[$ticket->milestoneid],
+                ];
 
                 $newTicketId = $this->ticketRepository->addTicket($ticketValues);
 
@@ -1187,7 +1170,7 @@ class Projects
             repository: Wiki::class,
             originalProjectId: $projectId,
             newProjectId: $newProjectId,
-            canvasTypeName: "wiki"
+            canvasTypeName: 'wiki'
         );
 
         $this->duplicateCanvas(
@@ -1202,28 +1185,28 @@ class Projects
     /**
      * Duplicate a canvas from one project to another.
      *
-     * @param string $repository The repository class to use for CRUD operations
-     * @param int $originalProjectId The ID of the original project
-     * @param int $newProjectId The ID of the new project
-     * @param string $canvasTypeName The canvas type name (optional)
+     * @param string $repository        The repository class to use for CRUD operations
+     * @param int    $originalProjectId The ID of the original project
+     * @param int    $newProjectId      The ID of the new project
+     * @param string $canvasTypeName    The canvas type name (optional)
+     *
      * @return bool True if the canvas is duplicated successfully, false otherwise
      *
      * @api
      */
     private function duplicateCanvas(string $repository, int $originalProjectId, int $newProjectId, string $canvasTypeName = ''): bool
     {
-
         $canvasIdList = [];
         $canvasRepo = app()->make($repository);
         $canvasBoards = $canvasRepo->getAllCanvas($originalProjectId, $canvasTypeName);
 
         foreach ($canvasBoards as $canvas) {
-            $canvasValues = array(
-                "title" => $canvas['title'],
-                "author" => session("userdata.id"),
-                "projectId" => $newProjectId,
-                "description" => $canvas['description'] ?? '',
-            );
+            $canvasValues = [
+                'title'       => $canvas['title'],
+                'author'      => session('userdata.id'),
+                'projectId'   => $newProjectId,
+                'description' => $canvas['description'] ?? '',
+            ];
 
             $newCanvasId = $canvasRepo->addCanvas($canvasValues, $canvasTypeName);
             $canvasIdList[$canvas['id']] = $newCanvasId;
@@ -1233,51 +1216,50 @@ class Projects
             if ($canvasItems && count($canvasItems) > 0) {
                 //Build parent Array
                 //oldId => newId
-                $idMap = array();
+                $idMap = [];
 
                 foreach ($canvasItems as $item) {
-
-                    $milestoneId = "";
+                    $milestoneId = '';
                     if (isset($idMap[$item['milestoneId']])) {
                         $milestoneId = $idMap[$item['milestoneId']];
                     }
 
-                    $canvasItemValues = array(
-                        "description" => $item['description'] ?? '',
-                        "assumptions" => $item['assumptions'] ?? '',
-                        "data" => $item['data'] ?? '',
-                        "conclusion" => $item['conclusion'] ?? '',
-                        "box" => $item['box'] ?? '',
-                        "author" => $item['author'] ?? '',
+                    $canvasItemValues = [
+                        'description' => $item['description'] ?? '',
+                        'assumptions' => $item['assumptions'] ?? '',
+                        'data'        => $item['data'] ?? '',
+                        'conclusion'  => $item['conclusion'] ?? '',
+                        'box'         => $item['box'] ?? '',
+                        'author'      => $item['author'] ?? '',
 
-                        "canvasId" => $newCanvasId,
-                        "sortindex" => $item['sortindex'] ?? '',
-                        "status" => $item['status'] ?? '',
-                        "relates" => $item['relates'] ?? '',
-                        "milestoneId" => $milestoneId,
-                        "title" => $item['title'] ?? '',
-                        "parent" => $item['parent'] ?? '',
-                        "featured" => $item['featured'] ?? '',
-                        "tags" => $item['tags'] ?? '',
-                        "kpi" => $item['kpi'] ?? '',
-                        "data1" => $item['data1'] ?? '',
-                        "data2" => $item['data2'] ?? '',
-                        "data3" => $item['data3'] ?? '',
-                        "data4" => $item['data4'] ?? '',
-                        "data5" => $item['data5'] ?? '',
-                        "startDate" => '',
-                        "endDate" => '',
-                        "setting" => $item['setting'] ?? '',
-                        "metricType" => $item['metricType'] ?? '',
-                        "startValue" => '',
-                        "currentValue" => '',
-                        "endValue" => $item['endValue'] ?? '',
-                        "impact" => $item['impact'] ?? '',
-                        "effort" => $item['effort'] ?? '',
-                        "probability" => $item['probability'] ?? '',
-                        "action" => $item['action'] ?? '',
-                        "assignedTo" => $item['assignedTo'] ?? '',
-                    );
+                        'canvasId'     => $newCanvasId,
+                        'sortindex'    => $item['sortindex'] ?? '',
+                        'status'       => $item['status'] ?? '',
+                        'relates'      => $item['relates'] ?? '',
+                        'milestoneId'  => $milestoneId,
+                        'title'        => $item['title'] ?? '',
+                        'parent'       => $item['parent'] ?? '',
+                        'featured'     => $item['featured'] ?? '',
+                        'tags'         => $item['tags'] ?? '',
+                        'kpi'          => $item['kpi'] ?? '',
+                        'data1'        => $item['data1'] ?? '',
+                        'data2'        => $item['data2'] ?? '',
+                        'data3'        => $item['data3'] ?? '',
+                        'data4'        => $item['data4'] ?? '',
+                        'data5'        => $item['data5'] ?? '',
+                        'startDate'    => '',
+                        'endDate'      => '',
+                        'setting'      => $item['setting'] ?? '',
+                        'metricType'   => $item['metricType'] ?? '',
+                        'startValue'   => '',
+                        'currentValue' => '',
+                        'endValue'     => $item['endValue'] ?? '',
+                        'impact'       => $item['impact'] ?? '',
+                        'effort'       => $item['effort'] ?? '',
+                        'probability'  => $item['probability'] ?? '',
+                        'action'       => $item['action'] ?? '',
+                        'assignedTo'   => $item['assignedTo'] ?? '',
+                    ];
 
                     $newId = $canvasRepo->addCanvasItem($canvasItemValues);
                     $idMap[$item['id']] = $newId;
@@ -1286,10 +1268,10 @@ class Projects
                 //Now fix relates to and parent relationships
                 $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
                 foreach ($canvasItems as $newItem) {
-                    $newCanvasItemValues = array(
-                        "relates" => $idMap[$newItem['relates']] ?? '',
-                        "parent" => $idMap[$newItem['parent']] ?? '',
-                    );
+                    $newCanvasItemValues = [
+                        'relates' => $idMap[$newItem['relates']] ?? '',
+                        'parent'  => $idMap[$newItem['parent']] ?? '',
+                    ];
 
                     $canvasRepo->patchCanvasItem($newItem['id'], $newCanvasItemValues);
                 }
@@ -1303,6 +1285,7 @@ class Projects
      * Retrieves the relation between a project and its users.
      *
      * @param int $id The ID of the project.
+     *
      * @return array The relation between the project and its users.
      *
      * @api
@@ -1315,8 +1298,9 @@ class Projects
     /**
      * Updates a project with the given parameters.
      *
-     * @param int $id The ID of the project.
+     * @param int   $id     The ID of the project.
      * @param array $params The parameters to update the project.
+     *
      * @return bool Returns true if the project was successfully updated, false otherwise.
      *
      * @api
@@ -1330,6 +1314,7 @@ class Projects
      * Retrieves the avatar for a project.
      *
      * @param mixed $id The ID of the project.
+     *
      * @return mixed The avatar for the project.
      *
      * @api
@@ -1337,15 +1322,17 @@ class Projects
     public function getProjectAvatar($id): mixed
     {
         $avatar = $this->projectRepository->getProjectAvatar($id);
-        $avatar = self::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
+        $avatar = self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
+
         return $avatar;
     }
 
     /**
      * Sets the avatar for a project.
      *
-     * @param mixed $file The file containing the avatar.
+     * @param mixed $file    The file containing the avatar.
      * @param mixed $project The project object.
+     *
      * @return bool Indicates whether the avatar was successfully set.
      *
      * @api
@@ -1359,6 +1346,7 @@ class Projects
      * Retrieves all projects.
      *
      * @return array The projects.
+     *
      * @api
      */
     public function getAllProjects()
@@ -1370,89 +1358,89 @@ class Projects
      * Retrieves the setup checklist for a project.
      *
      * @param int $projectId The ID of the project.
-     * @return array The setup checklist for the project.
      *
+     * @return array The setup checklist for the project.
      */
     public function getProjectSetupChecklist($projectId): array
     {
-        $progressSteps = array(
-            "define" => array(
-                "title" => "label.define",
-                "description" => "checklist.define.description",
-                "tasks" => array(
-                    "description" => array(
-                        "title" => "label.projectDescription",
-                        "status" => "",
-                        "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "",
-                        "description" => "checklist.define.tasks.description",
-                    ),
-                    "defineTeam" => array(
-                        "title" => "label.defineTeam",
-                        "status" => "",
-                        "link" => BASE_URL . "/projects/showProject/" . session("currentProject") . "#team",
-                        "description" => "checklist.define.tasks.defineTeam",
-                    ),
-                    "createBlueprint" => array(
-                        "title" => "label.createBlueprint",
-                        "status" => "",
-                        "link" => BASE_URL . "/strategy/showBoards/",
-                        "description" => "checklist.define.tasks.createBlueprint",
-                    ),
-                ),
-                "status" => '',
-            ),
-            "goals" => array(
-                "title" => "label.setGoals",
-                "description" => "checklist.goals.description",
-                "tasks" => array(
-                    "setGoals" => array(
-                        "title" => "label.setGoals",
-                        "status" => "",
-                        "link" => BASE_URL . "/goalcanvas/dashboard",
-                        "description" => "checklist.goals.tasks.setGoals",
-                    ),
-                ),
-                "status" => '',
-            ),
-            "timeline" => array(
-                "title" => "label.setTimeline",
-                "description" => "checklist.timeline.description",
-                "tasks" => array(
-                    "createMilestones" => array(
-                        "title" => "label.createMilestones",
-                        "status" => "",
-                        "link" => BASE_URL . "/tickets/roadmap",
-                        "description" => "checklist.timeline.tasks.createMilestones",
-                    ),
+        $progressSteps = [
+            'define' => [
+                'title'       => 'label.define',
+                'description' => 'checklist.define.description',
+                'tasks'       => [
+                    'description' => [
+                        'title'       => 'label.projectDescription',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/projects/showProject/'.session('currentProject').'',
+                        'description' => 'checklist.define.tasks.description',
+                    ],
+                    'defineTeam' => [
+                        'title'       => 'label.defineTeam',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/projects/showProject/'.session('currentProject').'#team',
+                        'description' => 'checklist.define.tasks.defineTeam',
+                    ],
+                    'createBlueprint' => [
+                        'title'       => 'label.createBlueprint',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/strategy/showBoards/',
+                        'description' => 'checklist.define.tasks.createBlueprint',
+                    ],
+                ],
+                'status' => '',
+            ],
+            'goals' => [
+                'title'       => 'label.setGoals',
+                'description' => 'checklist.goals.description',
+                'tasks'       => [
+                    'setGoals' => [
+                        'title'       => 'label.setGoals',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/goalcanvas/dashboard',
+                        'description' => 'checklist.goals.tasks.setGoals',
+                    ],
+                ],
+                'status' => '',
+            ],
+            'timeline' => [
+                'title'       => 'label.setTimeline',
+                'description' => 'checklist.timeline.description',
+                'tasks'       => [
+                    'createMilestones' => [
+                        'title'       => 'label.createMilestones',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/tickets/roadmap',
+                        'description' => 'checklist.timeline.tasks.createMilestones',
+                    ],
 
-                ),
-                "status" => '',
-            ),
-            "implementation" => array(
-                "title" => "label.implement",
-                "description" => "checklist.implementation.description",
-                "tasks" => array(
-                    "createTasks" =>  array(
-                        "title" => "label.createTasks",
-                        "status" => "", "link" => BASE_URL . "/tickets/showAll",
-                        "description" => "checklist.implementation.tasks.createTasks ",
-                    ),
-                    "finish80percent" =>  array(
-                        "title" => "label.finish80percent",
-                        "status" => "",
-                        "link" => BASE_URL . "/reports/show",
-                        "description" => "checklist.implementation.tasks.finish80percent",
-                    ),
-                ),
-                "status" => '',
-            ),
-        );
+                ],
+                'status' => '',
+            ],
+            'implementation' => [
+                'title'       => 'label.implement',
+                'description' => 'checklist.implementation.description',
+                'tasks'       => [
+                    'createTasks' => [
+                        'title'       => 'label.createTasks',
+                        'status'      => '', 'link' => BASE_URL.'/tickets/showAll',
+                        'description' => 'checklist.implementation.tasks.createTasks ',
+                    ],
+                    'finish80percent' => [
+                        'title'       => 'label.finish80percent',
+                        'status'      => '',
+                        'link'        => BASE_URL.'/reports/show',
+                        'description' => 'checklist.implementation.tasks.finish80percent',
+                    ],
+                ],
+                'status' => '',
+            ],
+        ];
 
         //Todo determine tasks that are done.
         $project = $this->getProject($projectId);
         //Project Description
         if ($project['details'] != '') {
-            $progressSteps["define"]["tasks"]["description"]["status"] = "done";
+            $progressSteps['define']['tasks']['description']['status'] = 'done';
         }
 
         /*
@@ -1472,7 +1460,7 @@ class Projects
             $totalGoals = $totalGoals + $goalsCanvas['boxItems'];
         }
         if ($totalGoals > 0) {
-            $progressSteps["define"]["goals"]["setGoals"]["status"] = "done";
+            $progressSteps['define']['goals']['setGoals']['status'] = 'done';
         }
 
         /*
@@ -1486,7 +1474,7 @@ class Projects
 
         $percentDone = $this->getProjectProgress($projectId);
         if ($percentDone['percent'] >= 80) {
-            $progressSteps["implementation"]["tasks"]["finish80percent"]["status"] = "done";
+            $progressSteps['implementation']['tasks']['finish80percent']['status'] = 'done';
         }
 
         //Add overrides
@@ -1512,6 +1500,7 @@ class Projects
                 collect(data_get($progressSteps, "$name.tasks"))
                     ->map(function ($task, $key) use ($stepsCompleted) {
                         $task['status'] = $stepsCompleted[$key] ?? '';
+
                         return $task;
                     })
                     ->toArray()
@@ -1557,12 +1546,12 @@ class Projects
         ];
     }
 
-
     /**
      * Updates the progress of a project.
      *
      * @param string|array $stepsComplete The steps completed for the project.
-     * @param int $projectId The ID of the project.
+     * @param int          $projectId     The ID of the project.
+     *
      * @return void
      */
     public function updateProjectProgress($stepsComplete, $projectId): void
@@ -1587,8 +1576,9 @@ class Projects
     /**
      * Edits the project relations of a user.
      *
-     * @param int $id The ID of the user.
+     * @param int   $id       The ID of the user.
      * @param array $projects The projects to be edited.
+     *
      * @return bool True if the project relations were successfully edited, false otherwise.
      */
     public function editUserProjectRelations($id, $projects): bool
@@ -1599,8 +1589,9 @@ class Projects
     /**
      * Retrieves the ID of a project by its name.
      *
-     * @param array $allProjects The array of all projects.
+     * @param array  $allProjects The array of all projects.
      * @param string $projectName The name of the project to retrieve the ID for.
+     *
      * @return mixed The ID of the project if found, or false if not found.
      */
     public function getProjectIdbyName($allProjects, $projectName)
@@ -1610,6 +1601,7 @@ class Projects
                 return $project['id'];
             }
         }
+
         return false;
     }
 
@@ -1617,13 +1609,14 @@ class Projects
      * Updates the sorting of multiple projects.
      *
      * @param array $params The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
+     *
      * @return bool Returns true if the sorting update was successful, false otherwise.
      */
     public function updateProjectSorting($params): bool
     {
         //ticketId: sortIndex
         foreach ($params as $id => $sortKey) {
-            if ($this->projectRepository->patch($id, ["sortIndex" => $sortKey * 100]) === false) {
+            if ($this->projectRepository->patch($id, ['sortIndex' => $sortKey * 100]) === false) {
                 return false;
             }
         }
@@ -1635,7 +1628,8 @@ class Projects
      * Edits a project.
      *
      * @param mixed $values The values to be updated in the project.
-     * @param int $id The ID of the project to be edited.
+     * @param int   $id     The ID of the project to be edited.
+     *
      * @return void
      */
     public function editProject($values, $id)
@@ -1646,27 +1640,27 @@ class Projects
     /**
      * Updates the status and sorting of projects.
      *
-     * @param array $params An associative array representing the project status and sorting.
-     *                      The key is the status and the value is the serialized project list.
-     * @param null $handler Optional parameter for handling the project update process.
+     * @param array $params  An associative array representing the project status and sorting.
+     *                       The key is the status and the value is the serialized project list.
+     * @param null  $handler Optional parameter for handling the project update process.
+     *
      * @return bool Returns true if the update process is successful, false otherwise.
      */
     public function updateProjectStatusAndSorting($params, $handler = null): bool
     {
-
         //Jquery sortable serializes the array for kanban in format
         //statusKey: item[]=X&item[]=X2...,
         //statusKey2: item[]=X&item[]=X2...,
         //This represents status & kanban sorting
         foreach ($params as $status => $projectList) {
             if (is_numeric($status) && !empty($projectList)) {
-                $projects = explode("&", $projectList);
+                $projects = explode('&', $projectList);
 
                 if (is_array($projects) === true) {
                     foreach ($projects as $key => $projectString) {
                         $id = substr($projectString, 7);
 
-                        $this->projectRepository->patch($id, ["sortIndex" => $key * 100, "state" => $status]);
+                        $this->projectRepository->patch($id, ['sortIndex' => $key * 100, 'state' => $status]);
                     }
                 }
             }
@@ -1678,13 +1672,13 @@ class Projects
     /**
      * Retrieves the projects for a client manager.
      *
-     * @param int $userId The ID of the user.
+     * @param int $userId   The ID of the user.
      * @param int $clientId The ID of the client.
+     *
      * @return array The projects for the client manager.
      */
     public function getClientManagerProjects(int $userId, int $clientId): array
     {
-
         $clientProjects = $this->projectRepository->getClientProjects($clientId);
         $userProjects = $this->projectRepository->getUserProjects($userId);
 
@@ -1710,40 +1704,44 @@ class Projects
      * By default, closed projects are not included.
      *
      * @param bool $showClosedProjects (optional) Set to true to include closed projects.
+     *
      * @return array Returns an array of projects.
      *
      * @api
      */
     public function getAll(bool $showClosedProjects = false): array
     {
-        return $this->projectRepository->getUserProjects( userId: session('userdata.id'),
-            accessStatus: "all",
-            projectTypes: "project");
+        return $this->projectRepository->getUserProjects(
+            userId: session('userdata.id'),
+            accessStatus: 'all',
+            projectTypes: 'project'
+        );
     }
 
     /**
      * Finds projects based on a search term.
      *
      * @param string $term The search term (optional)
+     *
      * @return array The filtered projects that match the search term
      *
      * @api
      */
-    public function findProject(string $term = "")
+    public function findProject(string $term = '')
     {
         $projects = $this->projectRepository->getUserProjects(
             userId: session('userdata.id'),
-            accessStatus: "all",
-            projectTypes: "project");
+            accessStatus: 'all',
+            projectTypes: 'project'
+        );
 
         $filteredProjects = [];
         foreach ($projects as $key => $project) {
-
-            if(Str::contains($projects[$key]['name'], $term, ignoreCase: true) || $term =='') {
+            if (Str::contains($projects[$key]['name'], $term, ignoreCase: true) || $term == '') {
                 $projects[$key] = $this->prepareDatesForApiResponse($project);
-                $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
+                $projects[$key]['id'] = $project['id'].'-'.$project['modified'];
 
-                $filteredProjects[] =  $projects[$key];
+                $filteredProjects[] = $projects[$key];
             }
         }
 
@@ -1758,18 +1756,16 @@ class Projects
      *
      * @api
      */
-    public function pollForNewProjects() {
-
-        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
+    public function pollForNewProjects()
+    {
+        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: 'all');
 
         foreach ($projects as $key => $project) {
             $projects[$key] = $this->prepareDatesForApiResponse($project);
         }
 
         return $projects;
-
     }
-
 
     /**
      * Polls for updated projects.
@@ -1782,17 +1778,15 @@ class Projects
      */
     public function pollForUpdatedProjects(): array
     {
-        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
+        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: 'all');
 
         foreach ($projects as $key => $project) {
             $projects[$key] = $this->prepareDatesForApiResponse($project);
-            $projects[$key]['id'] = $project['id'] . '-' . $project['modified'];
-
+            $projects[$key]['id'] = $project['id'].'-'.$project['modified'];
         }
 
         return $projects;
     }
-
 
     /**
      * Prepares date values in a project for API response.
@@ -1802,32 +1796,31 @@ class Projects
      * is not a valid string, it sets it to null.
      *
      * @param array $project The project array to be modified.
+     *
      * @return array The modified project array with formatted date values.
      *
      * @internal
      */
-    private function prepareDatesForApiResponse($project) {
-
-        if(dtHelper()->isValidDateString($project['modified'])) {
+    private function prepareDatesForApiResponse($project)
+    {
+        if (dtHelper()->isValidDateString($project['modified'])) {
             $project['modified'] = dtHelper()->parseDbDateTime($project['modified'])->toIso8601ZuluString();
-        }else{
+        } else {
             $project['modified'] = null;
         }
 
-        if(dtHelper()->isValidDateString($project['start'])) {
+        if (dtHelper()->isValidDateString($project['start'])) {
             $project['start'] = dtHelper()->parseDbDateTime($project['start'])->toIso8601ZuluString();
-        }else{
+        } else {
             $project['start'] = null;
         }
 
-        if(dtHelper()->isValidDateString($project['end'])) {
+        if (dtHelper()->isValidDateString($project['end'])) {
             $project['end'] = dtHelper()->parseDbDateTime($project['end'])->toIso8601ZuluString();
-        }else{
+        } else {
             $project['end'] = null;
         }
 
         return $project;
-
     }
 }
-

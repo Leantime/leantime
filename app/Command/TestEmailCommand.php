@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Class TestEmailCommand
+ * Class TestEmailCommand.
  *
  * This class represents a command that sends an email to test the system configuration.
  */
@@ -30,28 +30,31 @@ class TestEmailCommand extends Command
     {
         parent::configure();
 
-        $this->addOption('address', null, InputOption::VALUE_REQUIRED, "Recipient email address");
+        $this->addOption('address', null, InputOption::VALUE_REQUIRED, 'Recipient email address');
     }
 
     /**
-     * Execute the command
+     * Execute the command.
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code.
+     *
      * @throws BindingResolutionException
+     *
+     * @return int 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Depending on the entry point, the constants may not be defined
-        !defined('BASE_URL') && define('BASE_URL', "");
-        !defined('CURRENT_URL') && define('CURRENT_URL', "");
+        !defined('BASE_URL') && define('BASE_URL', '');
+        !defined('CURRENT_URL') && define('CURRENT_URL', '');
 
         $io = new SymfonyStyle($input, $output);
 
         $address = $input->getOption('address');
         if ($address == '') {
-            $io->error("address parameter needs to be set");
+            $io->error('address parameter needs to be set');
+
             return Command::INVALID;
         }
 
@@ -66,7 +69,7 @@ class TestEmailCommand extends Command
         $mailer = app()->make(Mailer::class);
         $mailer->setSubject('Leantime email test');
         $mailer->setHtml('This is a test of the leantime mailer configuration. If you have received this email, then the mail configuration is correct.', true);
-        $mailer->sendMail(array($input->getOption('address')), 'Command-line test');
+        $mailer->sendMail([$input->getOption('address')], 'Command-line test');
 
         return Command::SUCCESS;
     }

@@ -3,14 +3,11 @@
 namespace Leantime\Core\Configuration;
 
 /**
- * Default Configuration Class
- *
- * @package    leantime
- * @subpackage core
+ * Default Configuration Class.
  */
 class DefaultConfig
 {
-    # General =====================================================================================
+    // General =====================================================================================
     /**
      * @var string Name of your site, can be changed later
      */
@@ -84,7 +81,7 @@ class DefaultConfig
     /**
      * @var string Log Path
      */
-    public string $logPath = APP_ROOT . '/logs/error.log';
+    public string $logPath = APP_ROOT.'/logs/error.log';
 
     /**
      * @var bool Whether or not to enable the Poor Man's Cron fallback
@@ -96,8 +93,7 @@ class DefaultConfig
      */
     public bool $disableLoginForm = false;
 
-
-    # Database ====================================================================================
+    // Database ====================================================================================
     /**
      * @var string Database host
      */
@@ -123,8 +119,7 @@ class DefaultConfig
      */
     public string $dbPort = '3306';
 
-
-    # Fileupload ==================================================================================
+    // Fileupload ==================================================================================
     /**
      * @var string Local relative path to store uploaded files (if not using S3)
      */
@@ -135,8 +130,7 @@ class DefaultConfig
      */
     public string $dbBackupPath = 'userfiles/';
 
-
-    # S3 configuration ============================================================================
+    // S3 configuration ============================================================================
     /**
      * @var bool Set to true if you want to use S3 instead of local files
      */
@@ -174,12 +168,12 @@ class DefaultConfig
 
     /**
      * @var string|null S3 EndPoint S3 Compatible
+     *
      * @see https://sfo2.digitaloceanspaces.com
      */
     public ?string $s3EndPoint = null;
 
-
-    # Sessions ====================================================================================
+    // Sessions ====================================================================================
     /**
      * @var string Salting sessions. Replace with a strong password
      */
@@ -190,8 +184,7 @@ class DefaultConfig
      */
     public int $sessionExpiration = 28800;
 
-
-    # Email =======================================================================================
+    // Email =======================================================================================
     /**
      * @var string Return email address
      */
@@ -242,8 +235,7 @@ class DefaultConfig
      */
     public int $smtpPort = 587;
 
-
-    # ldap default settings (can be changed in company settings) ==================================
+    // ldap default settings (can be changed in company settings) ==================================
     /**
      * @var bool Set to true if you want to use LDAP
      */
@@ -310,8 +302,7 @@ class DefaultConfig
 
     /**
      * @var bool Create users
-     * Create user if not exists
-     *
+     *           Create user if not exists
      */
     public bool $ldapCreateUser = false;
 
@@ -346,13 +337,12 @@ class DefaultConfig
         }';
     //Default Leantime Role on creation. (set to editor)
 
-
     /**
      * @var int Default Leantime Role on creation. (set to editor)
      */
     public int $ldapDefaultRoleKey = 20;
 
-    # Plugin Settings ==============================================================================
+    // Plugin Settings ==============================================================================
     /**
      * @var string Comma separated list of plugins that will always be loaded
      */
@@ -363,7 +353,7 @@ class DefaultConfig
      **/
     public string $marketplaceUrl = 'https://marketplace.leantime.io/';
 
-    # OIDC Settings ================================================================================
+    // OIDC Settings ================================================================================
     /**
      * @var bool Set to true if you want to use OIDC
      */
@@ -423,7 +413,6 @@ class DefaultConfig
      * @var bool create user
      *
      * Create user if not exists
-     *
      */
     public bool $oidcCreateUser = false;
 
@@ -431,7 +420,6 @@ class DefaultConfig
      * @var string OIDC
      *
      * Default Role for new users
-     *
      */
     public int $oidcDefaultRole = 20;
 
@@ -470,8 +458,7 @@ class DefaultConfig
      */
     public string $oidcFieldDepartment = '';
 
-
-    # Redis Settings ===============================================================================
+    // Redis Settings ===============================================================================
     /**
      * @var bool Set to true if you want to use Redis
      */
@@ -507,7 +494,7 @@ class DefaultConfig
      */
     public string $redisPrefix = 'ltRedis';
 
-    # Security/Rate Limiting Settings ===============================================================================
+    // Security/Rate Limiting Settings ===============================================================================
     /**
      * @var string trusted Proxies
      */

@@ -1,64 +1,62 @@
 <?php
 
 /**
- * Repository
+ * Repository.
  */
 
-namespace Leantime\Domain\Retroscanvas\Repositories {
+namespace Leantime\Domain\Retroscanvas\Repositories;
 
-    use Leantime\Domain\Canvas\Repositories\Canvas;
+use Leantime\Domain\Canvas\Repositories\Canvas;
+
+class Retroscanvas extends Canvas
+{
+    /**
+     * Constant that must be redefined.
+     */
+    protected const CANVAS_NAME = 'retros';
+
+    /***
+     * icon - Icon associated with canvas (must be extended)
+     *
+     * @access public
+     * @var    string Fontawesome icone
+     */
+    protected string $icon = 'fa-hand-spock';
 
     /**
+     * canvasTypes - Must be extended.
      *
+     * @acces protected
+     *
+     * @var array
      */
-    class Retroscanvas extends Canvas
-    {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = 'retros';
+    protected array $canvasTypes = [
+        'well'       => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
+        'notwell'    => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
+        'startdoing' => ['icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing'],
+    ];
 
-        /***
-         * icon - Icon associated with canvas (must be extended)
-         *
-         * @access public
-         * @var    string Fontawesome icone
-         */
-        protected string $icon = 'fa-hand-spock';
+    /**
+     * dataLabels - Data labels (may be extended).
+     *
+     * @acces protected
+     *
+     * @var array
+     */
+    protected array $dataLabels = [
+        1 => ['title' => 'label.description', 'field' => 'conclusion',  'active' => true],
+        2 => ['title' => 'label.data',        'field' => 'data',        'active' => false],
+        3 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false],
+    ];
 
-        /**
-         * canvasTypes - Must be extended
-         *
-         * @acces protected
-         * @var   array
-         */
-        protected array $canvasTypes = [
-            'well'       => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
-            'notwell'    => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
-            'startdoing' => ['icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing'],
-        ];
+    /**
+     * statusLabels - Status labels (may be extended).
+     *
+     * @acces protected
+     *
+     * @var array
+     */
+    protected array $statusLabels = [];
 
-        /**
-         * dataLabels - Data labels (may be extended)
-         *
-         * @acces protected
-         * @var   array
-         */
-        protected array $dataLabels = [
-            1 => ['title' => 'label.description', 'field' => 'conclusion',  'active' => true],
-            2 => ['title' => 'label.data',        'field' => 'data',        'active' => false],
-            3 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false],
-        ];
-
-        /**
-         * statusLabels - Status labels (may be extended)
-         *
-         * @acces protected
-         * @var   array
-         */
-        protected array $statusLabels = [];
-
-
-        protected array $relatesLabels = [];
-    }
+    protected array $relatesLabels = [];
 }

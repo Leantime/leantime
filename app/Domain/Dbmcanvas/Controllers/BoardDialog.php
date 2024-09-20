@@ -1,16 +1,12 @@
 <?php
 
 /**
- * Controller / Delete Canvas
+ * Controller / Delete Canvas.
  */
 
-namespace Leantime\Domain\Dbmcanvas\Controllers {
+namespace Leantime\Domain\Dbmcanvas\Controllers;
 
-    /**
-     *
-     */
-    class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
-    {
-        protected const CANVAS_NAME = 'dbm';
-    }
+class BoardDialog extends \Leantime\Domain\Canvas\Controllers\BoardDialog
+{
+    protected const CANVAS_NAME = 'dbm';
 }

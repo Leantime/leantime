@@ -18,19 +18,19 @@ class Roles
     public static string $manager = 'manager';
     public static string $admin = 'admin';
     public static string $owner = 'owner';
-    private static array $roleKeys = array(
-        5 => 'readonly',      //prev: none
+    private static array $roleKeys = [
+        5  => 'readonly',      //prev: none
         10 => 'commenter',    //prev: client
         20 => 'editor',       //prev: developer
         30 => 'manager',      //prev: clientmanager
         40 => 'admin',        //prev: manager
         50 => 'owner',        //prev: admin
-    );
+    ];
 
     /**
-     * @return mixed
-     *
      * @throws BindingResolutionException
+     *
+     * @return mixed
      */
     private static function getFilteredRoles(): mixed
     {
@@ -40,9 +40,9 @@ class Roles
     /**
      * @param mixed $key
      *
-     * @return false|mixed
-     *
      * @throws BindingResolutionException
+     *
+     * @return false|mixed
      */
     public static function getRoleString(mixed $key): mixed
     {
@@ -50,9 +50,9 @@ class Roles
     }
 
     /**
-     * @return mixed
-     *
      * @throws BindingResolutionException
+     *
+     * @return mixed
      */
     public static function getRoles(): mixed
     {

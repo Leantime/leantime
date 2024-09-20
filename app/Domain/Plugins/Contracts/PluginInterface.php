@@ -3,13 +3,12 @@
 namespace Leantime\Domain\Plugins\Contracts;
 
 /**
- * Interface PluginInterface
+ * Interface PluginInterface.
  *
  * This interface represents a plugin that can be installed, uninstalled, enabled, and disabled.
  */
 interface PluginInterface
 {
-
     /**
      * Installs the plugin.
      *
@@ -44,6 +43,4 @@ interface PluginInterface
      * @return bool True if the functionality is successfully disabled, false otherwise.
      */
     public function disable(): bool;
-
-
 }

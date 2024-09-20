@@ -5,9 +5,6 @@ namespace Leantime\Domain\Tickets\Hxcontrollers;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
-/**
- *
- */
 class TimerButton extends HtmxController
 {
     /**
@@ -21,9 +18,10 @@ class TimerButton extends HtmxController
     private Timesheets $timesheetService;
 
     /**
-     * Controller constructor
+     * Controller constructor.
      *
      * @param Timesheets $timesheetService
+     *
      * @return void
      */
     public function init(Timesheets $timesheetService): void
@@ -36,11 +34,10 @@ class TimerButton extends HtmxController
      */
     public function getStatus(): void
     {
+        $params = $this->incomingRequest->query->all();
 
-        $params =  $this->incomingRequest->query->all();
-
-        $onTheClock = session()->exists("userdata") ? $this->timesheetService->isClocked(session("userdata.id")) : false;
-        $this->tpl->assign("onTheClock", $onTheClock);
-        $this->tpl->assign("parentTicketId", $params['request_parts'] ?? false);
+        $onTheClock = session()->exists('userdata') ? $this->timesheetService->isClocked(session('userdata.id')) : false;
+        $this->tpl->assign('onTheClock', $onTheClock);
+        $this->tpl->assign('parentTicketId', $params['request_parts'] ?? false);
     }
 }

@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller
+ * Controller.
  */
 
-namespace Leantime\Domain\Eacanvas\Controllers {
+namespace Leantime\Domain\Eacanvas\Controllers;
 
-    /**
-     *
-     */
-    class ShowCanvas extends \Leantime\Domain\Canvas\Controllers\ShowCanvas
-    {
-        protected const CANVAS_NAME = 'ea';
-    }
-
+class ShowCanvas extends \Leantime\Domain\Canvas\Controllers\ShowCanvas
+{
+    protected const CANVAS_NAME = 'ea';
 }

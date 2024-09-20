@@ -10,48 +10,45 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 
 /**
- * EventDispatcher class - Handles all events and filters
- *
- * @package    leantime
- * @subpackage core
+ * EventDispatcher class - Handles all events and filters.
  */
 class EventDispatcher implements Dispatcher
 {
     /**
-     * Registry of all events added to a hook
+     * Registry of all events added to a hook.
      *
      * @var array
      */
     private static array $eventRegistry = [];
 
     /**
-     * Registry of all filters added to a hook
+     * Registry of all filters added to a hook.
      *
      * @var array
      */
     private static array $filterRegistry = [];
 
     /**
-     * Registry of all hooks available
+     * Registry of all hooks available.
      *
      * @var array
      */
     private static array $available_hooks = [
         'filters' => [],
-        'events' => [],
+        'events'  => [],
     ];
 
     /**
-     * Dispatches an event to be executed somewhere
+     * Dispatches an event to be executed somewhere.
      *
-     * @access public
      *
      * @param string $eventName
      * @param mixed  $payload
      * @param string $context
      *
-     * @return void
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public static function dispatch_event(
         string $eventName,
@@ -71,7 +68,7 @@ class EventDispatcher implements Dispatcher
 
         $payload = self::defineParams($payload);
 
-        self::executeHandlers($matchedEvents, "events", $eventName, $payload);
+        self::executeHandlers($matchedEvents, 'events', $eventName, $payload);
     }
 
     public function dispatch(
@@ -79,21 +76,19 @@ class EventDispatcher implements Dispatcher
         $payload = [],
         $context = ''
     ) {
-
-        if($eventName instanceof MessageLogged) {
+        if ($eventName instanceof MessageLogged) {
             $this->dispatch_event($eventName->message, $payload, $context);
+
             return;
         }
 
         $this->dispatch_event($eventName, $payload, $context);
     }
 
-
     /**
      * Finds event listeners by event names,
-     * Allows listeners with wildcards
+     * Allows listeners with wildcards.
      *
-     * @access public
      *
      * @param string $eventName
      * @param array  $registry
@@ -117,7 +112,7 @@ class EventDispatcher implements Dispatcher
             $pattern = preg_quote($key, '/');
 
             $pattern = strtr($pattern, [
-                'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
+                'RANDOM_STRING'    => '.*?', // 0 or more (lazy) - asterisk (*)
                 'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
                 ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
             ]);
@@ -130,19 +125,18 @@ class EventDispatcher implements Dispatcher
         return $matches;
     }
 
-
     /**
-     * Dispatches a filter to manipulate a variable somewhere
+     * Dispatches a filter to manipulate a variable somewhere.
      *
-     * @access public
      *
      * @param string $filtername
      * @param mixed  $payload
      * @param mixed  $available_params
      * @param mixed  $context
      *
-     * @return mixed
      * @throws BindingResolutionException
+     *
+     * @return mixed
      */
     public static function dispatch_filter(
         string $filtername,
@@ -163,17 +157,17 @@ class EventDispatcher implements Dispatcher
 
         $available_params = self::defineParams($available_params);
 
-        return self::executeHandlers($matchedEvents, "filters", $filtername, $payload, $available_params);
+        return self::executeHandlers($matchedEvents, 'filters', $filtername, $payload, $available_params);
     }
 
     /**
      * Finds all the event and filter listeners and registers them
-     * (should only be executed once at the beginning of the program)
+     * (should only be executed once at the beginning of the program).
      *
-     * @access public
+     *
+     * @throws BindingResolutionException
      *
      * @return void
-     * @throws BindingResolutionException
      */
     public static function discover_listeners(): void
     {
@@ -184,13 +178,11 @@ class EventDispatcher implements Dispatcher
             return;
         }
 
-        if((bool)config('debug') === false) {
-
+        if ((bool) config('debug') === false) {
             $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
                 return EventDispatcher::getDomainPaths();
             });
-
-        }else{
+        } else {
             $modules = self::getDomainPaths();
         }
 
@@ -207,23 +199,22 @@ class EventDispatcher implements Dispatcher
         ) {
             //TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
-                if (file_exists($pluginEventsPath = APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
+                if (file_exists($pluginEventsPath = APP_ROOT.'/app/Plugins/'.$plugin.'/register.php')) {
                     include_once $pluginEventsPath;
                 }
             }
         }
 
         EventDispatcher::add_event_listener('leantime.core.middleware.installed.handle.after_install', function () {
-            if (! session("isInstalled")) {
+            if (!session('isInstalled')) {
                 return;
             }
 
-            $pluginPath = APP_ROOT . "/app/Plugins/";
+            $pluginPath = APP_ROOT.'/app/Plugins/';
             $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
             $enabledPlugins = $pluginService->getEnabledPlugins();
 
             foreach ($enabledPlugins as $plugin) {
-
                 //Catch issue when plugins are cached on load but autoloader is not quite done loading.
                 //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
                 //Clearing session cache in that case.
@@ -236,16 +227,16 @@ class EventDispatcher implements Dispatcher
                     continue;
                 }
 
-                if ($plugin->format == "phar") {
+                if ($plugin->format == 'phar') {
                     $pharPath = "phar://{$pluginPath}{$plugin->foldername}/{$plugin->foldername}.phar";
 
-                    if (! file_exists($pharPath)) {
+                    if (!file_exists($pharPath)) {
                         continue;
                     }
 
                     include_once $pharPath;
 
-                    if (! file_exists("$pharPath/register.php")) {
+                    if (!file_exists("$pharPath/register.php")) {
                         continue;
                     }
 
@@ -254,7 +245,7 @@ class EventDispatcher implements Dispatcher
                     continue;
                 }
 
-                if (! file_exists($registerPath = "{$pluginPath}{$plugin->foldername}/register.php")) {
+                if (!file_exists($registerPath = "{$pluginPath}{$plugin->foldername}/register.php")) {
                     continue;
                 }
 
@@ -265,22 +256,21 @@ class EventDispatcher implements Dispatcher
         $discovered = true;
     }
 
-    public static function getDomainPaths() {
-
-        $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
-        $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
+    public static function getDomainPaths()
+    {
+        $customModules = collect(glob(APP_ROOT.'/custom/Domain'.'/*', GLOB_ONLYDIR));
+        $domainModules = collect(glob(APP_ROOT.'/app/Domain'.'/*', GLOB_ONLYDIR));
 
         $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
 
-        $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
+        $filteredModules = $domainModules->filter(fn ($path) => !$testers->contains($path));
 
         return $customModules->concat($filteredModules)->all();
     }
 
     /**
-     * Adds an event listener to be registered
+     * Adds an event listener to be registered.
      *
-     * @access public
      *
      * @param string                 $eventName
      * @param string|callable|object $handler
@@ -293,16 +283,15 @@ class EventDispatcher implements Dispatcher
         string|callable|object $handler,
         int $priority = 10
     ): void {
-        if (! key_exists($eventName, self::$eventRegistry)) {
+        if (!key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];
         }
-        self::$eventRegistry[$eventName][] = array("handler" => $handler, "priority" => $priority);
+        self::$eventRegistry[$eventName][] = ['handler' => $handler, 'priority' => $priority];
     }
 
     /**
-     * Adds a filter listener to be registered
+     * Adds a filter listener to be registered.
      *
-     * @access public
      *
      * @param string                 $filtername
      * @param string|callable|object $handler
@@ -315,31 +304,29 @@ class EventDispatcher implements Dispatcher
         string|callable|object $handler,
         int $priority = 10
     ): void {
-        if (! key_exists($filtername, self::$filterRegistry)) {
+        if (!key_exists($filtername, self::$filterRegistry)) {
             self::$filterRegistry[$filtername] = [];
         }
-        self::$filterRegistry[$filtername][] = array("handler" => $handler, "priority" => $priority);
+        self::$filterRegistry[$filtername][] = ['handler' => $handler, 'priority' => $priority];
     }
 
     /**
-     * Gets all registered listeners
+     * Gets all registered listeners.
      *
-     * @access public
      *
      * @return array
      */
     public static function get_registries(): array
     {
         return [
-            'events' => array_keys(self::$eventRegistry),
+            'events'  => array_keys(self::$eventRegistry),
             'filters' => array_keys(self::$filterRegistry),
         ];
     }
 
     /**
-     * Gets all available hooks
+     * Gets all available hooks.
      *
-     * @access public
      *
      * @return array
      */
@@ -349,9 +336,8 @@ class EventDispatcher implements Dispatcher
     }
 
     /**
-     * Sorts listeners by priority for a given hook and type
+     * Sorts listeners by priority for a given hook and type.
      *
-     * @access private
      *
      * @param string $type
      * @param string $hookName
@@ -365,9 +351,9 @@ class EventDispatcher implements Dispatcher
         }
 
         $sorter = fn ($a, $b) => match (true) {
-            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] > $b['priority']  => 1,
             $a['priority'] == $b['priority'] => 0,
-            default => -1,
+            default                          => -1,
         };
 
         if ($type == 'filters') {
@@ -378,14 +364,14 @@ class EventDispatcher implements Dispatcher
     }
 
     /**
-     * Adds the current_route to the event's/filter's available params
+     * Adds the current_route to the event's/filter's available params.
      *
-     * @access private
      *
      * @param mixed $paramAttr
      *
-     * @return array|object
      * @throws BindingResolutionException
+     *
+     * @return array|object
      */
     private static function defineParams(mixed $paramAttr): array|object
     {
@@ -402,11 +388,13 @@ class EventDispatcher implements Dispatcher
 
         if (is_array($paramAttr)) {
             $finalParams = array_merge($default_params, $paramAttr);
+
             return $finalParams;
         }
 
         if (is_object($paramAttr) && get_class($paramAttr) == 'stdClass') {
             $finalParams = (object) array_merge($default_params, (array) $paramAttr);
+
             return $finalParams;
         }
 
@@ -417,9 +405,8 @@ class EventDispatcher implements Dispatcher
     }
 
     /**
-     * Executes all the handlers for a given hook
+     * Executes all the handlers for a given hook.
      *
-     * @access private
      *
      * @param array        $registry
      * @param string       $registryType
@@ -436,22 +423,21 @@ class EventDispatcher implements Dispatcher
         mixed $payload,
         array|object $available_params = []
     ): mixed {
-
-        $isEvent = $registryType == "events";
+        $isEvent = $registryType == 'events';
         $filteredPayload = null;
 
         //sort matches by priority
         usort($registry, fn ($a, $b) => match (true) {
-            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] > $b['priority']  => 1,
             $a['priority'] == $b['priority'] => 0,
-            default => -1,
+            default                          => -1,
         });
 
         foreach ($registry as $index => $listener) {
             $handler = $listener['handler'];
 
             // class with handle function
-            if (is_object($handler) && method_exists($handler, "handle")) {
+            if (is_object($handler) && method_exists($handler, 'handle')) {
                 if ($isEvent) {
                     $handler->handle($payload);
                     continue;
@@ -480,12 +466,12 @@ class EventDispatcher implements Dispatcher
 
             if (
                 in_array(true, [
-                // function name as string
-                is_string($handler) && function_exists($handler),
-                // class instance with method name
-                is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
-                // class name with method name
-                is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
+                    // function name as string
+                    is_string($handler) && function_exists($handler),
+                    // class instance with method name
+                    is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
+                    // class name with method name
+                    is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
                 ])
             ) {
                 if ($isEvent) {
@@ -503,7 +489,7 @@ class EventDispatcher implements Dispatcher
                 continue;
             }
 
-            if($index == 0) {
+            if ($index == 0) {
                 $filteredPayload = $payload;
             }
         }
@@ -525,71 +511,84 @@ class EventDispatcher implements Dispatcher
         return self::$filterRegistry;
     }
 
-
-    public function listen($events, $listener = null) {}
+    public function listen($events, $listener = null)
+    {
+    }
 
     /**
      * Determine if a given event has listeners.
      *
-     * @param  string  $eventName
+     * @param string $eventName
+     *
      * @return bool
      */
-    public function hasListeners($eventName) {
-        throw new \Exception("Not implemented");
+    public function hasListeners($eventName)
+    {
+        throw new \Exception('Not implemented');
+
         return false;
     }
 
     /**
      * Register an event subscriber with the dispatcher.
      *
-     * @param  object|string  $subscriber
+     * @param object|string $subscriber
+     *
      * @return void
      */
-    public function subscribe($subscriber) {
-        throw new \Exception("Not implemented");
+    public function subscribe($subscriber)
+    {
+        throw new \Exception('Not implemented');
     }
 
     /**
      * Dispatch an event until the first non-null response is returned.
      *
-     * @param  string|object  $event
-     * @param  mixed  $payload
+     * @param string|object $event
+     * @param mixed         $payload
+     *
      * @return mixed
      */
-    public function until($event, $payload = []) {
-        throw new \Exception("Not implemented");
+    public function until($event, $payload = [])
+    {
+        throw new \Exception('Not implemented');
     }
-
 
     /**
      * Register an event and payload to be fired later.
      *
-     * @param  string  $event
-     * @param  array  $payload
+     * @param string $event
+     * @param array  $payload
+     *
      * @return void
      */
-    public function push($event, $payload = []) {
-        throw new \Exception("Not implemented");
+    public function push($event, $payload = [])
+    {
+        throw new \Exception('Not implemented');
     }
 
     /**
      * Flush a set of pushed events.
      *
-     * @param  string  $event
+     * @param string $event
+     *
      * @return void
      */
-    public function flush($event) {
-        throw new \Exception("Not implemented");
+    public function flush($event)
+    {
+        throw new \Exception('Not implemented');
     }
 
     /**
      * Remove a set of listeners from the dispatcher.
      *
-     * @param  string  $event
+     * @param string $event
+     *
      * @return void
      */
-    public function forget($event) {
-        throw new \Exception("Not implemented");
+    public function forget($event)
+    {
+        throw new \Exception('Not implemented');
     }
 
     /**
@@ -597,7 +596,8 @@ class EventDispatcher implements Dispatcher
      *
      * @return void
      */
-    public function forgetPushed() {
-        throw new \Exception("Not implemented");
+    public function forgetPushed()
+    {
+        throw new \Exception('Not implemented');
     }
 }

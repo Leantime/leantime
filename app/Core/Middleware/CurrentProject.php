@@ -13,16 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 class CurrentProject
 {
     /**
-     * Set the current project
+     * Set the current project.
      *
      * @param \Closure(IncomingRequest): Response $next
+     *
      * @return Response
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-
         if (app()->make(AuthService::class)->loggedIn()) {
-
             $actionPath = Frontcontroller::getModuleName();
 
             //Only change/set project if the request is not htmx, api or cron

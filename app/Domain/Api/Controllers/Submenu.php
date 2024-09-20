@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AJAX class - Save menu state in a persistent way
+ * AJAX class - Save menu state in a persistent way.
  */
 
 namespace Leantime\Domain\Api\Controllers;
@@ -10,17 +10,13 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Submenu extends Controller
 {
     private MenuRepository $menuRepos;
 
     /**
-     * constructor - initialize private variables
+     * constructor - initialize private variables.
      *
-     * @access public
      *
      * @return void
      */
@@ -30,9 +26,8 @@ class Submenu extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -44,9 +39,8 @@ class Submenu extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -58,9 +52,8 @@ class Submenu extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -68,18 +61,18 @@ class Submenu extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! isset($params['submenu'], $params['state'])) {
+        if (!isset($params['submenu'], $params['state'])) {
             return $this->tpl->displayJson(['status' => false], 500);
         }
 
         $this->menuRepos->setSubmenuState($params['submenu'], $params['state']);
+
         return $this->tpl->displayJson(['status' => 'ok']);
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

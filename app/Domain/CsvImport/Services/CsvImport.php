@@ -8,9 +8,6 @@ use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class CsvImport extends Provider implements ProviderIntegration
 {
     private array $fields;
@@ -21,37 +18,36 @@ class CsvImport extends Provider implements ProviderIntegration
     public array $methods;
 
     public array $steps = [
-        "connect",
-        "entity",
-        "fields",
-        "parse",
-        "import",
+        'connect',
+        'entity',
+        'fields',
+        'parse',
+        'import',
     ];
 
-    public array $button = array(
-        "url" => '',
-        "text" => 'Import CSV',
-    );
+    public array $button = [
+        'url'  => '',
+        'text' => 'Import CSV',
+    ];
 
     public function __construct()
     {
-
-        $this->id = "csv_importer";
-        $this->name = "CSV Import";
-        $this->image = "/dist/images/svg/csv-icon.svg";
+        $this->id = 'csv_importer';
+        $this->name = 'CSV Import';
+        $this->image = '/dist/images/svg/csv-icon.svg';
         $this->description = "Impport data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/en/article/importing-data-via-csv-1v941gy' target='_blank'>documentation</a>";
 
-        $this->methods[] = "import, update";
+        $this->methods[] = 'import, update';
 
         //CSVs can be anyting but are always one file.
-        $this->entities = array(
-            "default" => array(
-                "name" => "Sheet",
-                "fields" => array(),
-            ),
-        );
+        $this->entities = [
+            'default' => [
+                'name'   => 'Sheet',
+                'fields' => [],
+            ],
+        ];
 
-        $this->button["url"] = BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload";
+        $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
     }
 
     //Logic to connect to provider goes here.
@@ -64,18 +60,18 @@ class CsvImport extends Provider implements ProviderIntegration
     {
         //Connection done. Send to next step.
         //May just want to add a nextStep() method to provider model or so.
-        return Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
+        return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload');
     }
 
     //Sync the entities from the db
 
     /**
      * @param Entity $Entity
+     *
      * @return true
      */
     public function sync(Entity $Entity): bool
     {
-
         return true;
     }
 
@@ -86,17 +82,16 @@ class CsvImport extends Provider implements ProviderIntegration
      */
     public function getFields(): mixed
     {
-        return session("csvImporter.headers") ?? array();
+        return session('csvImporter.headers') ?? [];
     }
 
     /**
      * @param array $fields
+     *
      * @return void
      */
     public function setFields(array $fields): void
     {
-
-
     }
 
     //Get available entities
@@ -110,11 +105,12 @@ class CsvImport extends Provider implements ProviderIntegration
 
     /**
      * @param Entity $Entity
+     *
      * @return void
      */
     public function getValues(Entity $Entity): mixed
     {
-        $integrationMeta = session("csvImporter.meta", '');
+        $integrationMeta = session('csvImporter.meta', '');
 
         if (empty($integrationMeta)) {
             return false;
@@ -127,12 +123,12 @@ class CsvImport extends Provider implements ProviderIntegration
         if (count($rows) > 0) {
             $headers = array_shift($rows);
         }
+
         return $rows;
     }
 
     public function geValues()
     {
-
-        return session("csv_records") ?? [];
+        return session('csv_records') ?? [];
     }
 }

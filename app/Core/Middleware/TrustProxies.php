@@ -9,11 +9,9 @@ use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class TrustProxies
+ * Class TrustProxies.
  *
  * The TrustProxies class is responsible for handling incoming requests and checking if they are from trusted proxies.
- *
- * @package Your\Namespace
  */
 class TrustProxies
 {
@@ -44,17 +42,15 @@ class TrustProxies
      */
     public function __construct(Environment $config)
     {
-
         if (empty($config->trustedProxies)) {
-            $config->trustedProxies = "127.0.0.1,REMOTE_ADDR";
+            $config->trustedProxies = '127.0.0.1,REMOTE_ADDR';
         }
 
         $this->proxies = self::dispatch_filter(
-            "trustedProxies",
-            explode(",", $config->trustedProxies),
+            'trustedProxies',
+            explode(',', $config->trustedProxies),
             ['bootloader' => $this]
         );
-
     }
 
     /**
@@ -63,11 +59,11 @@ class TrustProxies
      *
      * @param IncomingRequest $request The incoming request.
      * @param Closure         $next    The next middleware closure.
+     *
      * @return Response The response returned by the next middleware.
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-
         $request::setTrustedProxies($this->proxies, $this->headers);
 
         if (!$request->isFromTrustedProxy()) {

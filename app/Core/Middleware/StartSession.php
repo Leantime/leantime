@@ -5,7 +5,6 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Session\Session;
-use Illuminate\Routing\Route;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -36,8 +35,9 @@ class StartSession
     /**
      * Create a new session middleware.
      *
-     * @param  \Illuminate\Session\SessionManager $manager
-     * @param  callable|null                      $cacheFactoryResolver
+     * @param \Illuminate\Session\SessionManager $manager
+     * @param callable|null                      $cacheFactoryResolver
+     *
      * @return void
      */
     public function __construct(SessionManager $manager, ?callable $cacheFactoryResolver = null)
@@ -49,13 +49,14 @@ class StartSession
     /**
      * Handle an incoming request.
      *
-     * @param  IncomingRequest $request
-     * @param  \Closure        $next
+     * @param IncomingRequest $request
+     * @param \Closure        $next
+     *
      * @return mixed
      */
     public function handle(IncomingRequest $request, Closure $next)
     {
-        if (! $this->sessionConfigured()) {
+        if (!$this->sessionConfigured()) {
             return $next($request);
         }
 
@@ -69,39 +70,41 @@ class StartSession
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
-     * @param  \Closure                              $next
+     * @param IncomingRequest                       $request
+     * @param \Illuminate\Contracts\Session\Session $session
+     * @param \Closure                              $next
+     *
      * @return mixed
      */
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
-
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
-        $lock = $this->cache("installation")
-            ->lock('session:' . $session->getId(), $lockFor)
+        $lock = $this->cache('installation')
+            ->lock('session:'.$session->getId(), $lockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
             //Acquire lock every 50ms for 20 seconds
             $lock->block(20);
+
             return $this->handleStatefulRequest($request, $session, $next);
         } catch (LockTimeoutException $e) {
             $lock->block(60);
+
             return $this->handleStatefulRequest($request, $session, $next);
         } finally {
             $lock?->release();
         }
     }
 
-
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
-     * @param  \Closure                              $next
+     * @param IncomingRequest                       $request
+     * @param \Illuminate\Contracts\Session\Session $session
+     * @param \Closure                              $next
+     *
      * @return mixed
      */
     protected function handleStatefulRequest(IncomingRequest $request, $session, Closure $next)
@@ -134,8 +137,9 @@ class StartSession
     /**
      * Start the session for the given request.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param IncomingRequest                       $request
+     * @param \Illuminate\Contracts\Session\Session $session
+     *
      * @return \Illuminate\Contracts\Session\Session
      */
     protected function startSession(IncomingRequest $request, $session)
@@ -150,7 +154,8 @@ class StartSession
     /**
      * Get the session implementation from the manager.
      *
-     * @param  IncomingRequest $request
+     * @param IncomingRequest $request
+     *
      * @return \Illuminate\Contracts\Session\Session
      */
     public function getSession(IncomingRequest $request)
@@ -163,7 +168,8 @@ class StartSession
     /**
      * Remove the garbage from the session if necessary.
      *
-     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param \Illuminate\Contracts\Session\Session $session
+     *
      * @return void
      */
     protected function collectGarbage(Session $session)
@@ -181,7 +187,8 @@ class StartSession
     /**
      * Determine if the configuration odds hit the lottery.
      *
-     * @param  array $config
+     * @param array $config
+     *
      * @return bool
      */
     protected function configHitsLottery(array $config)
@@ -192,8 +199,9 @@ class StartSession
     /**
      * Store the current URL for the request if necessary.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param IncomingRequest                       $request
+     * @param \Illuminate\Contracts\Session\Session $session
+     *
      * @return void
      */
     protected function storeCurrentUrl(IncomingRequest $request, $session)
@@ -211,8 +219,9 @@ class StartSession
     /**
      * Add the session cookie to the application response.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response $response
-     * @param  \Illuminate\Contracts\Session\Session      $session
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \Illuminate\Contracts\Session\Session      $session
+     *
      * @return void
      */
     protected function addCookieToResponse(Response $response, Session $session)
@@ -236,7 +245,8 @@ class StartSession
     /**
      * Save the session data to storage.
      *
-     * @param  IncomingRequest $request
+     * @param IncomingRequest $request
+     *
      * @return void
      */
     protected function saveSession(IncomingRequest $request)
@@ -277,26 +287,28 @@ class StartSession
      */
     protected function sessionConfigured()
     {
-        return ! is_null($this->manager->getSessionConfig()['driver'] ?? null);
+        return !is_null($this->manager->getSessionConfig()['driver'] ?? null);
     }
 
     /**
      * Determine if the configured session driver is persistent.
      *
-     * @param  array|null $config
+     * @param array|null $config
+     *
      * @return bool
      */
     protected function sessionIsPersistent(?array $config = null)
     {
         $config = $config ?: $this->manager->getSessionConfig();
 
-        return ! is_null($config['driver'] ?? null);
+        return !is_null($config['driver'] ?? null);
     }
 
     /**
      * Resolve the given cache driver.
      *
-     * @param  string $driver
+     * @param string $driver
+     *
      * @return \Illuminate\Cache\Store
      */
     protected function cache($driver)

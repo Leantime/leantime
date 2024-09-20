@@ -7,9 +7,6 @@ use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 
-/**
- *
- */
 class Marketplaceplugins extends HtmxController
 {
     /**
@@ -32,8 +29,9 @@ class Marketplaceplugins extends HtmxController
     }
 
     /**
-     * @return void
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function getlist(): void
     {

@@ -1,17 +1,12 @@
 <?php
 
 /**
- * Controller / Delete Canvas Item
+ * Controller / Delete Canvas Item.
  */
 
-namespace Leantime\Domain\Insightscanvas\Controllers {
+namespace Leantime\Domain\Insightscanvas\Controllers;
 
-    /**
-     *
-     */
-    class DelCanvasItem extends \Leantime\Domain\Canvas\Controllers\DelCanvasItem
-    {
-        protected const CANVAS_NAME = 'insights';
-    }
-
+class DelCanvasItem extends \Leantime\Domain\Canvas\Controllers\DelCanvasItem
+{
+    protected const CANVAS_NAME = 'insights';
 }

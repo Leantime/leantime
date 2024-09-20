@@ -10,18 +10,14 @@ use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Users extends Controller
 {
     private UserService $userService;
     private FileRepository $filesRepository;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param UserService    $userService
      * @param FileRepository $filesRepository
@@ -37,26 +33,25 @@ class Users extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function get(array $params): Response
     {
         if (isset($params['projectUsersAccess'])) {
             if ($params['projectUsersAccess'] == 'current') {
-                $projectId = session("currentProject");
+                $projectId = session('currentProject');
             } else {
                 $projectId = $params['projectUsersAccess'];
             }
 
-            $users = $this->userService->getUsersWithProjectAccess(session("userdata.id"), $projectId);
+            $users = $this->userService->getUsersWithProjectAccess(session('userdata.id'), $projectId);
 
             if (isset($params['query'])) {
                 $query = $params['query'];
@@ -69,12 +64,13 @@ class Users extends Controller
             return $this->tpl->displayJson($users);
         }
 
-        if (isset($params["profileImage"])) {
-            $svg = $this->userService->getProfilePicture($params["profileImage"]);
+        if (isset($params['profileImage'])) {
+            $svg = $this->userService->getProfilePicture($params['profileImage']);
             if (is_array($svg)) {
                 $file = app()->make(FileuploadCore::class);
+
                 return match ($svg['type']) {
-                    'uploaded' => $file->displayImageFile($svg['filename']),
+                    'uploaded'  => $file->displayImageFile($svg['filename']),
                     'generated' => $file->displayImageFile('avatar', $svg['filename']),
                 };
             }
@@ -83,8 +79,8 @@ class Users extends Controller
             $response->headers->set('Content-type', 'image/svg+xml');
 
             if (false === app()->make(Environment::class)->debug) {
-                $response->headers->set("Pragma", 'public');
-                $response->headers->set("Cache-Control", 'max-age=86400');
+                $response->headers->set('Pragma', 'public');
+                $response->headers->set('Cache-Control', 'max-age=86400');
             }
 
             return $response;
@@ -94,35 +90,34 @@ class Users extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
-        if (! isset($_FILES['file'])) {
+        if (!isset($_FILES['file'])) {
             return $this->tpl->displayJson(['error' => 'File not included'], 400);
         }
 
         // Updating User Image
-        $_FILES['file']['name'] = "userPicture.png";
+        $_FILES['file']['name'] = 'userPicture.png';
 
-        $this->userService->setProfilePicture($_FILES, session("userdata.id"));
+        $this->userService->setProfilePicture($_FILES, session('userdata.id'));
 
-        session(["msg" => "PICTURE_CHANGED"]);
-        session(["msgT" => "success"]);
+        session(['msg' => 'PICTURE_CHANGED']);
+        session(['msgT' => 'success']);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }
 
     /**
-     * put - Special handling for settings
+     * put - Special handling for settings.
      *
      * @param array $params parameters or body of the request
      *
@@ -142,12 +137,12 @@ class Users extends Controller
         $success = false;
         foreach (
             [
-                'patchModalSettings' => fn () => $this->userService->updateUserSettings("modals", $params['settings'], 1),
-                'patchViewSettings' => fn () => $this->userService->updateUserSettings("views", $params['patchViewSettings'], $params['value']),
-                'patchMenuStateSettings' => fn () => $this->userService->updateUserSettings("views", "menuState", $params['value']),
+                'patchModalSettings'     => fn () => $this->userService->updateUserSettings('modals', $params['settings'], 1),
+                'patchViewSettings'      => fn () => $this->userService->updateUserSettings('views', $params['patchViewSettings'], $params['value']),
+                'patchMenuStateSettings' => fn () => $this->userService->updateUserSettings('views', 'menuState', $params['value']),
             ] as $param => $callback
         ) {
-            if (! isset($params[$param])) {
+            if (!isset($params[$param])) {
                 continue;
             }
 
@@ -163,9 +158,8 @@ class Users extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

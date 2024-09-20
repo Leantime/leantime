@@ -1,8 +1,7 @@
 <?php
 
 /**
- * showAll Class - show My Calender
- *
+ * showAll Class - show My Calender.
  */
 
 namespace Leantime\Domain\Calendar\Controllers;
@@ -14,9 +13,6 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 
-/**
- *
- */
 class ExternalCal extends Controller
 {
     private CalendarRepository $calendarRepo;
@@ -24,7 +20,7 @@ class ExternalCal extends Controller
     private int $cacheTime = 60 * 30; // 30min
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
      * @param CalendarRepository $calendarRepo
      *
@@ -36,33 +32,31 @@ class ExternalCal extends Controller
     }
 
     /**
-     * run - display template and edit data
+     * run - display template and edit data.
      *
-     * @access public
-     *
-     * @return void
      *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function run(): void
     {
-
         $calId = $_GET['id'];
 
-        if (!session()->exists("calendarCache")) {
-            session(["calendarCache" => []]);
+        if (!session()->exists('calendarCache')) {
+            session(['calendarCache' => []]);
         }
 
         $content = '';
-        if (session()->exists("calendarCache.".$calId) && session()->exits("calendarCache.".$calId.".lastUpdate") > time() - $this->cacheTime) {
-            $content = session("calendarCache.".$calId.".content");
+        if (session()->exists('calendarCache.'.$calId) && session()->exits('calendarCache.'.$calId.'.lastUpdate') > time() - $this->cacheTime) {
+            $content = session('calendarCache.'.$calId.'.content');
         } else {
-            $cal = $this->calendarRepo->getExternalCalendar($calId, session("userdata.id"));
+            $cal = $this->calendarRepo->getExternalCalendar($calId, session('userdata.id'));
 
-            if (isset($cal["url"])) {
-                $content = $this->loadIcalUrl($cal["url"]);
-                session(["calendarCache.".$calId.".lastUpdate" => time()]);
-                session(["calendarCache.".$calId."content" => $content]);
+            if (isset($cal['url'])) {
+                $content = $this->loadIcalUrl($cal['url']);
+                session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
+                session(['calendarCache.'.$calId.'content' => $content]);
             }
         }
 
@@ -71,7 +65,7 @@ class ExternalCal extends Controller
 
         echo $content;
 
-        exit();
+        exit;
     }
 
     /**
@@ -79,9 +73,9 @@ class ExternalCal extends Controller
      *
      * @param string $url The URL of the iCal to load.
      *
-     * @return string The contents of the iCal.
-     *
      * @throws BindingResolutionException
+     *
+     * @return string The contents of the iCal.
      */
     private function loadIcalUrl(string $url): string
     {
@@ -89,8 +83,8 @@ class ExternalCal extends Controller
 
         $appSettings = app()->make(AppSettings::class);
 
-        if(str_contains($url, "webcal://")) {
-            $url = str_replace("webcal://", "https://", $url);
+        if (str_contains($url, 'webcal://')) {
+            $url = str_replace('webcal://', 'https://', $url);
         }
 
         try {
@@ -98,11 +92,11 @@ class ExternalCal extends Controller
                 'headers' => [
                     'Accept' => 'text/calendar',
                     // GitHub needs a user agent.
-                    'User-Agent' => 'Leantime Calendar Integration v' . $appSettings->appVersion,
+                    'User-Agent' => 'Leantime Calendar Integration v'.$appSettings->appVersion,
                 ],
             ]);
         } catch (ClientException $e) {
-            throw new \Exception('Guzzle problem: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new \Exception('Guzzle problem: '.$e->getMessage(), $e->getCode(), $e);
         }
 
         if ($response->getStatusCode() == '200') {

@@ -10,10 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function PHPUnit\Framework\directoryExists;
-
 /**
- * Class BackupDbCommand
+ * Class BackupDbCommand.
  *
  * Command to back up the database.
  *
@@ -35,34 +33,32 @@ class BackupDbCommand extends Command
     }
 
     /**
-     * Execute the command
+     * Execute the command.
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int 0 if everything went fine, or an exit code.
-     *
      * @throws BindingResolutionException
+     *
+     * @return int 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         $config = app()->make(Environment::class);
 
         $io = new SymfonyStyle($input, $output);
 
-
         $date = new \DateTime();
-        $backupFile = $config->dbDatabase . '_' .  $date->format("Y-m-d") . '.sql';
-        $backupPath = APP_ROOT . "/" . $config->dbBackupPath . $backupFile;
+        $backupFile = $config->dbDatabase.'_'.$date->format('Y-m-d').'.sql';
+        $backupPath = APP_ROOT.'/'.$config->dbBackupPath.$backupFile;
 
-        if (!is_dir(APP_ROOT . "/" . $config->dbBackupPath)) {
-            mkdir(APP_ROOT . "/" . $config->dbBackupPath);
+        if (!is_dir(APP_ROOT.'/'.$config->dbBackupPath)) {
+            mkdir(APP_ROOT.'/'.$config->dbBackupPath);
         }
 
-        $output = array();
+        $output = [];
         $cmd = sprintf(
-            "mysqldump --column-statistics=0 --user=%s --password=%s --host=%s %s --port=%s --result-file=%s 2>&1",
+            'mysqldump --column-statistics=0 --user=%s --password=%s --host=%s %s --port=%s --result-file=%s 2>&1',
             $config->dbUser,
             $config->dbPassword,
             $config->dbHost,
@@ -74,13 +70,15 @@ class BackupDbCommand extends Command
 
         switch ($worked) {
             case 0:
-                chmod(APP_ROOT . '/' . $config->userFilePath, 0755);
-                $io->success("Success, database was backedup successfully");
+                chmod(APP_ROOT.'/'.$config->userFilePath, 0755);
+                $io->success('Success, database was backedup successfully');
+
                 return Command::SUCCESS;
 
             case 2:
             case 1:
-                $io->error("There was an issue backing up the database");
+                $io->error('There was an issue backing up the database');
+
                 return Command::FAILURE;
         }
 

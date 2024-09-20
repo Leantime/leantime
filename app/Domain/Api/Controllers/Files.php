@@ -7,18 +7,14 @@ use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Files extends Controller
 {
     private UserService $userService;
     private FileRepository $fileRepo;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param FileRepository $fileRepo
      * @param UserService    $userService
@@ -32,9 +28,8 @@ class Files extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -46,15 +41,14 @@ class Files extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params
      *
-     * @return Response
-     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
@@ -67,13 +61,13 @@ class Files extends Controller
         }
 
         if (isset($_FILES['file'])) {
-            $_FILES['file']['name'] = "pastedImage.png";
-            $file = $this->fileRepo->upload($_FILES, 'project', session("currentProject"));
+            $_FILES['file']['name'] = 'pastedImage.png';
+            $file = $this->fileRepo->upload($_FILES, 'project', session('currentProject'));
 
-            return new Response(BASE_URL . '/files/get?'
-                . http_build_query([
-                    'encName' => $file['encName'],
-                    'ext' => $file['extension'],
+            return new Response(BASE_URL.'/files/get?'
+                .http_build_query([
+                    'encName'  => $file['encName'],
+                    'ext'      => $file['extension'],
                     'realName' => $file['realName'],
                 ]));
         }
@@ -82,9 +76,8 @@ class Files extends Controller
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params
      *
@@ -94,7 +87,7 @@ class Files extends Controller
     {
         if (
             !isset($params['patchModalSettings'])
-            || !$this->userService->updateUserSettings("modals", $params['settings'], 1)
+            || !$this->userService->updateUserSettings('modals', $params['settings'], 1)
         ) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
@@ -103,9 +96,8 @@ class Files extends Controller
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params
      *

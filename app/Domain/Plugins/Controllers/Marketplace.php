@@ -29,7 +29,6 @@ class Marketplace extends Controller
      */
     public function get(): Response
     {
-
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         $this->tpl->assign('plugins', []);

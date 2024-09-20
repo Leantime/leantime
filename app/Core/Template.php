@@ -32,17 +32,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Template class - Template routing
- *
- * @package leantime
- * @subpackage core
+ * Template class - Template routing.
  */
 class Template
 {
     use DispatchesEvents;
 
     /** @var array - vars that are set in the action */
-    private array $vars = array();
+    private array $vars = [];
 
     /** @var string */
     private string $notifcation = '';
@@ -62,24 +59,23 @@ class Template
     public string $template = '';
 
     /** @var array */
-    public array $picture = array(
-        'calendar' => 'fa-calendar',
-        'clients' => 'fa-people-group',
-        'dashboard' => 'fa-th-large',
-        'files' => 'fa-picture',
-        'leads' => 'fa-signal',
-        'messages' => 'fa-envelope',
-        'projects' => 'fa-bar-chart',
-        'setting' => 'fa-cogs',
-        'tickets' => 'fa-pushpin',
+    public array $picture = [
+        'calendar'   => 'fa-calendar',
+        'clients'    => 'fa-people-group',
+        'dashboard'  => 'fa-th-large',
+        'files'      => 'fa-picture',
+        'leads'      => 'fa-signal',
+        'messages'   => 'fa-envelope',
+        'projects'   => 'fa-bar-chart',
+        'setting'    => 'fa-cogs',
+        'tickets'    => 'fa-pushpin',
         'timesheets' => 'fa-table',
-        'users' => 'fa-people-group',
-        'default' => 'fa-off',
-    );
-
+        'users'      => 'fa-people-group',
+        'default'    => 'fa-off',
+    ];
 
     /**
-     * __construct - get instance of frontcontroller
+     * __construct - get instance of frontcontroller.
      *
      * @param Theme           $theme
      * @param Language        $language
@@ -91,6 +87,7 @@ class Template
      * @param Roles           $roles
      * @param Factory|null    $viewFactory
      * @param Compiler|null   $bladeCompiler
+     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
@@ -125,10 +122,8 @@ class Template
         /** @var CompilerInterface|null */
         private ?CompilerInterface $bladeCompiler = null,
     ) {
-
-        if (! is_null($this->viewFactory) && ! is_null($this->bladeCompiler)) {
+        if (!is_null($this->viewFactory) && !is_null($this->bladeCompiler)) {
             return;
-
         }
 
         app()->call([$this, 'setupBlade']);
@@ -138,12 +133,14 @@ class Template
     }
 
     /**
-     * Create View Factory capable of rendering PHP and Blade templates
+     * Create View Factory capable of rendering PHP and Blade templates.
      *
      * @param Application $app
      * @param Dispatcher  $eventDispatcher
-     * @return void
+     *
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function setupBlade(
         Application $app,
@@ -153,14 +150,14 @@ class Template
         $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
         // View/Component createBladeViewFromString method needs to access the view compiled path, expects it to be attached to config
-        $this->config->set('view.compiled', APP_ROOT . '/cache/views');
+        $this->config->set('view.compiled', APP_ROOT.'/cache/views');
 
         // Find Template Paths
-        if (!session()->has("template_paths") || $this->config->debug) {
-            $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
+        if (!session()->has('template_paths') || $this->config->debug) {
+            $domainPaths = collect(glob(APP_ROOT.'/app/Domain/*'))
                 ->mapWithKeys(fn ($path) => [
                     $basename = strtolower(basename($path)) => [
-                        APP_ROOT . '/custom/Domain/' . $basename . '/Templates',
+                        APP_ROOT.'/custom/Domain/'.$basename.'/Templates',
                         "$path/Templates",
                     ],
                 ]);
@@ -168,7 +165,6 @@ class Template
             $plugins = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
 
             $pluginPaths = $plugins->mapWithKeys(function ($plugin) use ($domainPaths) {
-
                 //Catch issue when plugins are cached on load but autoloader is not quite done loading.
                 //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
                 //Clearing session cache in that case.
@@ -177,43 +173,44 @@ class Template
                     if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
                         report("Plugin $basename conflicts with domain");
                         //Clear cache, something is up
-                        session()->forget("enabledPlugins");
+                        session()->forget('enabledPlugins');
+
                         return [];
                     }
 
-                    if ($plugin->format == "phar") {
-                        $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/' . $plugin->foldername . '.phar/Templates';
+                    if ($plugin->format == 'phar') {
+                        $path = 'phar://'.APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar/Templates';
                     } else {
-                        $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
+                        $path = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Templates';
                     }
 
                     return [$basename => $path];
                 }
 
-                session()->forget("enabledPlugins");
+                session()->forget('enabledPlugins');
+
                 return [];
             });
 
-           $storePaths = $domainPaths
-                ->merge($pluginPaths)
-                ->merge(['global' => APP_ROOT . '/app/Views/Templates'])
-                ->merge(['__components' => $this->config->get('view.compiled')])
-                ->all();
+            $storePaths = $domainPaths
+                 ->merge($pluginPaths)
+                 ->merge(['global' => APP_ROOT.'/app/Views/Templates'])
+                 ->merge(['__components' => $this->config->get('view.compiled')])
+                 ->all();
 
-            session(["template_paths" => $storePaths]);
+            session(['template_paths' => $storePaths]);
         }
 
         // Setup Blade Compiler
         $app->singleton(
             CompilerInterface::class,
             function ($app) {
-
                 $bladeCompiler = new BladeCompiler(
                     $app->make(Filesystem::class),
                     $this->config->get('view.compiled'),
                 );
 
-                $namespaces = array_keys(session("template_paths"));
+                $namespaces = array_keys(session('template_paths'));
                 array_map(
                     [$bladeCompiler, 'anonymousComponentNamespace'],
                     array_map(fn ($namespace) => "$namespace::components", $namespaces),
@@ -234,6 +231,7 @@ class Template
                 $viewResolver = new EngineResolver();
                 $viewResolver->register('blade', fn () => $app->make(CompilerEngine::class));
                 $viewResolver->register('php', fn () => $app->make(PhpEngine::class));
+
                 return $viewResolver;
             }
         );
@@ -244,7 +242,8 @@ class Template
             ViewFinderInterface::class,
             function ($app) {
                 $viewFinder = $app->make(FileViewFinder::class, ['paths' => []]);
-                array_map([$viewFinder, 'addNamespace'], array_keys(session("template_paths")), array_values(session("template_paths")));
+                array_map([$viewFinder, 'addNamespace'], array_keys(session('template_paths')), array_values(session('template_paths')));
+
                 return $viewFinder;
             }
         );
@@ -262,6 +261,7 @@ class Template
                 // reprioritize blade
                 $viewFactory->addExtension('blade.php', 'blade');
                 $viewFactory->setContainer($app);
+
                 return $viewFactory;
             }
         );
@@ -272,46 +272,47 @@ class Template
     }
 
     /**
-     * attachComposers - attach view composers
+     * attachComposers - attach view composers.
+     *
+     * @throws \ReflectionException
      *
      * @return void
-     * @throws \ReflectionException
      */
     public function attachComposers(): void
     {
-        if (!session()->has("composers") || $this->config->debug) {
-            $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/custom/Domain/*/Composers/*.php'));
+        if (!session()->has('composers') || $this->config->debug) {
+            $customComposerClasses = collect(glob(APP_ROOT.'/custom/Views/Composers/*.php'))
+                ->concat(glob(APP_ROOT.'/custom/Domain/*/Composers/*.php'));
 
-            $appComposerClasses = collect(glob(APP_ROOT . '/app/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'));
+            $appComposerClasses = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
+                ->concat(glob(APP_ROOT.'/app/Domain/*/Composers/*.php'));
 
             $pluginComposerClasses = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins())
-                ->map(fn ($plugin) => glob(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Composers/*.php'))
+                ->map(fn ($plugin) => glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php'))
                 ->flatten();
 
             $testers = $customComposerClasses->map(fn ($path) => str_replace('/custom/', '/app/', $path));
 
             $stockComposerClasses = $appComposerClasses
                 ->concat($pluginComposerClasses)
-                ->filter(fn ($composerClass) => ! $testers->contains($composerClass));
+                ->filter(fn ($composerClass) => !$testers->contains($composerClass));
 
             $storeComposers = $customComposerClasses
                 ->concat($stockComposerClasses)
                 ->map(fn ($filepath) => Str::of($filepath)
-                    ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
+                    ->replace([APP_ROOT.'/app/', APP_ROOT.'/custom/', '.php'], ['', '', ''])
                     ->replace('/', '\\')
                     ->start(app()->getNamespace())
                     ->toString())
                 ->all();
 
-            session(["composers" => $storeComposers]);
+            session(['composers' => $storeComposers]);
         }
 
-        foreach (session("composers") as $composerClass) {
+        foreach (session('composers') as $composerClass) {
             if (
                 is_subclass_of($composerClass, Composer::class) &&
-                ! (new ReflectionClass($composerClass))->isAbstract()
+                !(new ReflectionClass($composerClass))->isAbstract()
             ) {
                 $this->viewFactory->composer($composerClass::$views, $composerClass);
             }
@@ -319,7 +320,7 @@ class Template
     }
 
     /**
-     * setupDirectives - setup blade directives
+     * setupDirectives - setup blade directives.
      *
      * @return void
      */
@@ -337,7 +338,7 @@ class Template
 
         $this->bladeCompiler->directive(
             'spaceless',
-            fn ($args) => "<?php ob_start(); ?>",
+            fn ($args) => '<?php ob_start(); ?>',
         );
 
         $this->bladeCompiler->directive(
@@ -357,12 +358,12 @@ class Template
 
         $this->bladeCompiler->directive(
             'displayNotification',
-            fn ($args) => "<?php echo \$tpl->displayNotification(); ?>",
+            fn ($args) => '<?php echo $tpl->displayNotification(); ?>',
         );
     }
 
     /**
-     * setupGlobalVars - setup global vars
+     * setupGlobalVars - setup global vars.
      *
      * @return void
      */
@@ -370,28 +371,30 @@ class Template
     {
         $this->viewFactory->share([
             'frontController' => $this->frontcontroller,
-            'config' => $this->config,
+            'config'          => $this->config,
             /** @todo remove settings after renaming all uses to appSettings */
-            'settings' => $this->settings,
+            'settings'    => $this->settings,
             'appSettings' => $this->settings,
-            'login' => $this->login,
-            'roles' => $this->roles,
-            'language' => $this->language,
+            'login'       => $this->login,
+            'roles'       => $this->roles,
+            'language'    => $this->language,
 
         ]);
     }
 
     /**
-     * assign - assign variables in the action for template
+     * assign - assign variables in the action for template.
      *
      * @param string $name  Name of variable
      * @param mixed  $value Value of variable
+     *
      * @return void
      */
     public function assign(string $name, mixed $value): void
     {
         /**
-         * Filter to access template variable names after they have been assigned
+         * Filter to access template variable names after they have been assigned.
+         *
          * @var mixed $value The current value of the variable.
          */
         $value = self::dispatch_filter("var.$name", $value);
@@ -400,44 +403,46 @@ class Template
     }
 
     /**
-     * setNotification - assign errors to the template
+     * setNotification - assign errors to the template.
      *
      * @param string $msg
      * @param string $type
      * @param string $event_id as a string for further identification
+     *
      * @return void
      */
     public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
-        session(["notification" => $msg]);
-        session(["notificationType" => $type]);
-        session(["event_id" => $event_id]);
+        session(['notification' => $msg]);
+        session(['notificationType' => $type]);
+        session(['event_id' => $event_id]);
     }
 
     /**
      * Set a flag to indicate that confetti should be displayed.
-     * Will be displayed next time a notification is displayed
+     * Will be displayed next time a notification is displayed.
      *
      * @return void confetti, duh
      */
     public function sendConfetti()
     {
-        session(["confettiInYourFace" => true]);
+        session(['confettiInYourFace' => true]);
     }
 
     /**
-     * getTemplatePath - Find template in custom and src directories
+     * getTemplatePath - Find template in custom and src directories.
      *
-     * @access public
      * @param string $namespace The namespace the template is for.
      * @param string $path      The path to the template.
-     * @return string Full template path or false if file does not exist
+     *
      * @throws Exception If template not found.
+     *
+     * @return string Full template path or false if file does not exist
      */
     public function getTemplatePath(string $namespace, string $path): string
     {
         if ($namespace == '' || $path == '') {
-            throw new Exception("Both namespace and path must be provided");
+            throw new Exception('Both namespace and path must be provided');
         }
 
         $namespace = strtolower($namespace);
@@ -446,7 +451,7 @@ class Template
             "$namespace::$path",
             [
                 'namespace' => $namespace,
-                'path' => $path,
+                'path'      => $path,
             ]
         );
 
@@ -458,32 +463,35 @@ class Template
     }
 
     /**
-     * gives HTMX response
+     * gives HTMX response.
      *
      * @param string $viewPath The blade view path.
      * @param string $fragment The fragment key.
+     *
      * @return Response
      */
     public function displayFragment(string $viewPath, string $fragment = ''): Response
     {
-        $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
+        $layout = $this->confirmLayoutName('blank', !empty($fragment) ? "$viewPath.fragment" : $viewPath);
         $this->viewFactory->share(['tpl' => $this]);
         /** @var View $view */
         $view = $this->viewFactory->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
-        return new Response($view->fragmentIf(! empty($fragment), $fragment));
+
+        return new Response($view->fragmentIf(!empty($fragment), $fragment));
     }
 
     /**
-     * display - display template from folder template including main layout wrapper
+     * display - display template from folder template including main layout wrapper.
      *
-     * @access public
      * @param string $template
      * @param string $layout
      * @param int    $responseCode
-     * @return Response
+     *
      * @throws Exception
+     *
+     * @return Response
      */
-    public function display(string $template, string $layout = "app", int $responseCode = 200): Response
+    public function display(string $template, string $layout = 'app', int $responseCode = 200): Response
     {
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
@@ -523,18 +531,18 @@ class Template
         return new Response($content, $responseCode);
     }
 
-
     /**
      * Confirm the layout name based on the provided parameters.
      *
      * @param string $layoutName The layout name to be confirmed.
      * @param string $template   The template name associated with the layout.
+     *
      * @return bool|string The confirmed layout name, or false if not found.
      */
     protected function confirmLayoutName(string $layoutName, string $template): bool|string
     {
         $layout = htmlspecialchars($layoutName);
-        $layout = self::dispatch_filter("layout", $layout);
+        $layout = self::dispatch_filter('layout', $layout);
         $layout = self::dispatch_filter("layout.$template", $layout);
 
         $layout = $this->getTemplatePath('global', "layouts.$layout");
@@ -547,6 +555,7 @@ class Template
      *
      * @param array|object|string $jsonContent The JSON content to be displayed.
      * @param int                 $statusCode  The HTTP response code to be returned (default: 200).
+     *
      * @return Response The response object after displaying the JSON content.
      */
     public function displayJson(array|object|string $jsonContent, int $statusCode = 200): Response
@@ -574,6 +583,7 @@ class Template
      *
      * @param string $template     The path to the partial template file.
      * @param int    $responseCode The HTTP response code to be returned (default: 200).
+     *
      * @return Response The response object after displaying the partial template.
      */
     public function displayPartial(string $template, int $responseCode = 200): Response
@@ -582,10 +592,10 @@ class Template
     }
 
     /**
-     * get - get assigned values
+     * get - get assigned values.
      *
-     * @access public
      * @param string $name
+     *
      * @return array
      */
     public function get(string $name): mixed
@@ -598,7 +608,7 @@ class Template
     }
 
     /**
-     * getAll - get all assigned values
+     * getAll - get all assigned values.
      *
      * @return array
      **/
@@ -608,36 +618,37 @@ class Template
     }
 
     /**
-     * getNotification - pulls notification from the current session
+     * getNotification - pulls notification from the current session.
      *
-     * @access public
      * @return array
      */
     public function getNotification(): array
     {
-        if (session()->exists("notificationType") && session()->exists("notification")) {
-            $event_id = session("event_id") ?? '';
-            return array('type' => session("notificationType"), 'msg' => session("notification"), 'event_id' => $event_id);
+        if (session()->exists('notificationType') && session()->exists('notification')) {
+            $event_id = session('event_id') ?? '';
+
+            return ['type' => session('notificationType'), 'msg' => session('notification'), 'event_id' => $event_id];
         } else {
-            return array('type' => "", 'msg' => "", 'event_id' => "");
+            return ['type' => '', 'msg' => '', 'event_id' => ''];
         }
     }
 
     /**
-     * displaySubmodule - display a submodule for a given module
+     * displaySubmodule - display a submodule for a given module.
      *
-     * @access public
      * @param string $alias
-     * @return void
+     *
      * @throws Exception
+     *
+     * @return void
      */
     public function displaySubmodule(string $alias): void
     {
-        if (! str_contains($alias, '-')) {
-            throw new Exception("Submodule alias must be in the format module-submodule");
+        if (!str_contains($alias, '-')) {
+            throw new Exception('Submodule alias must be in the format module-submodule');
         }
 
-        [$module, $submodule] = explode("-", $alias);
+        [$module, $submodule] = explode('-', $alias);
 
         $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
@@ -645,11 +656,11 @@ class Template
     }
 
     /**
-     * displayNotification - display notification
+     * displayNotification - display notification.
      *
-     * @access public
-     * @return string
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public function displayNotification(): string
     {
@@ -674,18 +685,18 @@ class Template
                 '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
-                    'style' => $note['type'],
+                    'style'   => $note['type'],
                 ]
             );
 
-            self::dispatch_event("notification_displayed", $note);
+            self::dispatch_event('notification_displayed', $note);
 
-            session(["notification" => ""]);
-            session(["notificationType" => ""]);
-            session(["event_id" => ""]);
+            session(['notification' => '']);
+            session(['notificationType' => '']);
+            session(['event_id' => '']);
         }
 
-        if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
+        if (session()->exists('confettiInYourFace') && session('confettiInYourFace') === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti({
                      spread: 70,
@@ -696,34 +707,34 @@ class Template
                 []
             );
 
-            session(["confettiInYourFace" => false]);
+            session(['confettiInYourFace' => false]);
         }
 
         return $notification;
     }
 
     /**
-     * getToggleState - retrieves the toggle state of a submenu by name from the session
+     * getToggleState - retrieves the toggle state of a submenu by name from the session.
      *
-     * @access  public
      * @param string $name - the name of the submenu toggle
-     * @return  string - the toggle state of the submenu (either "true" or "false")
+     *
+     * @return string - the toggle state of the submenu (either "true" or "false")
      */
     public function getToggleState(string $name): string
     {
-        if (session()->exists("usersettings.submenuToggle.".$name)) {
-            return session("usersettings.submenuToggle.".$name);
+        if (session()->exists('usersettings.submenuToggle.'.$name)) {
+            return session('usersettings.submenuToggle.'.$name);
         }
 
         return false;
     }
 
     /**
-     * displayInlineNotification - display notification
+     * displayInlineNotification - display notification.
      *
-     * @access public
-     * @return string
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public function displayInlineNotification(): string
     {
@@ -751,20 +762,20 @@ class Template
                     </div>
                 </div>',
                 [
-                    'type' => $note['type'],
+                    'type'    => $note['type'],
                     'message' => $message,
                 ],
                 deleteCachedView: true
             );
 
-            self::dispatch_event("notification_displayed", $note);
+            self::dispatch_event('notification_displayed', $note);
 
-            session(["notification" => ""]);
-            session(["notificationType" => ""]);
-            session(["event_id" => ""]);
+            session(['notification' => '']);
+            session(['notificationType' => '']);
+            session(['event_id' => '']);
         }
 
-        if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
+        if (session()->exists('confettiInYourFace') && session('confettiInYourFace') === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti({
                         spread: 70,
@@ -775,16 +786,17 @@ class Template
                 []
             );
 
-            session(["confettiInYourFace" => false]);
+            session(['confettiInYourFace' => false]);
         }
 
         return $notification;
     }
 
     /**
-     * redirect - redirect to a given url
+     * redirect - redirect to a given url.
      *
-     * @param  string $url
+     * @param string $url
+     *
      * @return RedirectResponse
      */
     public function redirect(string $url): RedirectResponse
@@ -793,9 +805,10 @@ class Template
     }
 
     /**
-     * __ - returns a language specific string. wraps language class method
+     * __ - returns a language specific string. wraps language class method.
      *
-     * @param  string $index
+     * @param string $index
+     *
      * @return string
      */
     public function __(string $index): string
@@ -804,9 +817,10 @@ class Template
     }
 
     /**
-     * e - echos and escapes content
+     * e - echos and escapes content.
      *
      * @param string|null $content
+     *
      * @return void
      */
     public function e(?string $content): void
@@ -818,15 +832,17 @@ class Template
     }
 
     /**
-     * escape - escapes content
+     * escape - escapes content.
      *
      * @param string|null $content
+     *
      * @return string
      */
     public function escape(?string $content): string
     {
         if (!is_null($content)) {
             $content = $this->convertRelativePaths($content);
+
             return htmlentities($content);
         }
 
@@ -834,56 +850,59 @@ class Template
     }
 
     /**
-     * escapeMinimal - escapes content
+     * escapeMinimal - escapes content.
      *
      * @param string|null $content
+     *
      * @return string
      */
     public function escapeMinimal(?string $content): string
     {
         $content = $this->convertRelativePaths($content);
-        $config = array(
-            'safe' => 1,
-            'style_pass' => 1,
-            'cdata' => 1,
-            'comment' => 1,
+        $config = [
+            'safe'           => 1,
+            'style_pass'     => 1,
+            'cdata'          => 1,
+            'comment'        => 1,
             'deny_attribute' => '* -href -style',
-            'keep_bad' => 0,
-        );
+            'keep_bad'       => 0,
+        ];
 
         if (!is_null($content)) {
-            return htmLawed($content, array(
-                'comments' => 0,
-                'cdata' => 0,
+            return htmLawed($content, [
+                'comments'       => 0,
+                'cdata'          => 0,
                 'deny_attribute' => 'on*',
-                'elements' => '* -applet -canvas -embed -object -script',
-                'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
-            ));
+                'elements'       => '* -applet -canvas -embed -object -script',
+                'schemes'        => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
+            ]);
         }
 
         return '';
     }
 
     /**
-     * truncate - truncate text
+     * truncate - truncate text.
      *
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
+     *
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
-     * @access public
+     *
      * @param string $html
      * @param int    $maxLength
      * @param string $ending
      * @param bool   $exact
      * @param bool   $considerHtml
+     *
      * @return string
      */
     public function truncate(string $html, int $maxLength = 100, string $ending = '(...)', bool $exact = true, bool $considerHtml = false): string
     {
         $printedLength = 0;
         $position = 0;
-        $tags = array();
+        $tags = [];
         $isUtf8 = true;
-        $truncate = "";
+        $truncate = '';
         $html = $this->convertRelativePaths($html);
         // For UTF-8, we need to count multibyte sequences as one character.
         $re = $isUtf8 ? '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;|[\x80-\xFF][\x80-\xBF]*}' : '{</?([a-z]+)[^>]*>|&#?[a-zA-Z0-9]+;}';
@@ -951,10 +970,10 @@ class Template
     }
 
     /**
-     * convertRelativePaths - convert relative paths to absolute paths
+     * convertRelativePaths - convert relative paths to absolute paths.
      *
-     * @access public
      * @param string|null $text
+     *
      * @return string|null
      */
     public function convertRelativePaths(?string $text): ?string
@@ -966,7 +985,7 @@ class Template
         $base = BASE_URL;
 
         // base url needs trailing /
-        $base = rtrim($base, "/") . "/";
+        $base = rtrim($base, '/').'/';
 
         // Replace links
         $text = preg_replace(
@@ -987,11 +1006,11 @@ class Template
     }
 
     /**
-     * getModulePicture - get module picture
+     * getModulePicture - get module picture.
      *
-     * @access public
-     * @return string
      * @throws BindingResolutionException
+     *
+     * @return string
      */
     public function getModulePicture(): string
     {
@@ -1007,15 +1026,15 @@ class Template
 
     /**
      * patchDownloadUrlToFilenameOrAwsUrl - Replace all local files/get references in <img src=""> tags
-     * by either local filenames or AWS URLs that can be accesse without being authenticated
+     * by either local filenames or AWS URLs that can be accesse without being authenticated.
      *
      * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
      * authenticated
      *
-     * @access public
-     * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/files/get?xxxx"> tags
-     * @return string  HTML text with the https://local.domain/files/get?xxxx replaced by either full qualified
-     *                 local filenames or AWS URLs
+     * @param string $textHtml HTML text, potentially containing <img srv="https://local.domain/files/get?xxxx"> tags
+     *
+     * @return string HTML text with the https://local.domain/files/get?xxxx replaced by either full qualified
+     *                local filenames or AWS URLs
      */
     public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
     {
@@ -1032,13 +1051,14 @@ class Template
      *
      * @param string $hookName The name of the event hook.
      * @param mixed  $payload  The payload to be passed to the event hook (default: null).
+     *
      * @return void
      */
     public function dispatchTplEvent(string $hookName, mixed $payload = null): void
     {
         try {
             $this->dispatchTplHook('event', $hookName, $payload);
-        }catch(\Exception $e){
+        } catch(\Exception $e) {
             //If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
         }
@@ -1054,10 +1074,8 @@ class Template
     public function dispatchTplFilter(string $hookName, mixed $payload, array $available_params = []): mixed
     {
         try {
-
             return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
-
-        }catch(\Exception $e){
+        } catch(\Exception $e) {
             //If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
 
@@ -1075,7 +1093,7 @@ class Template
      */
     private function dispatchTplHook(string $type, string $hookName, mixed $payload, array $available_params = []): mixed
     {
-        if (! is_string($type) || ! in_array($type, ['event', 'filter'])) {
+        if (!is_string($type) || !in_array($type, ['event', 'filter'])) {
             return null;
         }
 

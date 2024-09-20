@@ -1,23 +1,19 @@
 <?php
 
-namespace Leantime\Domain\Errors\Controllers {
+namespace Leantime\Domain\Errors\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
+class Error500 extends Controller
+{
     /**
+     * @throws \Exception
      *
+     * @return Response
      */
-    class Error500 extends Controller
+    public function run(): Response
     {
-        /**
-         * @return Response
-         * @throws \Exception
-         */
-        public function run(): Response
-        {
-            return $this->tpl->display('errors.error500', layout:"error", responseCode: 500,);
-        }
+        return $this->tpl->display('errors.error500', layout:'error', responseCode: 500);
     }
-
 }

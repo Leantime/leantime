@@ -12,67 +12,64 @@ use Leantime\Core\Http\IncomingRequest;
 use Psr\Container\ContainerInterface as PsrContainerContract;
 
 /**
- * Bootloader
- *
- * @package leantime
- * @subpackage core
+ * Bootloader.
  */
 class Bootloader
 {
     use DispatchesEvents;
 
     /**
-     * Bootloader instance
+     * Bootloader instance.
      *
      * @var static
      */
     protected static ?Bootloader $instance = null;
 
     /**
-     * Application instance
+     * Application instance.
      *
      * @var Application|PsrContainerContract|null
      */
     protected Application|null|PsrContainerContract $app;
 
     /**
-     * Public actions
+     * Public actions.
      *
      * @var array
      */
-    private array $publicActions = array(
-        "auth.login",
-        "auth.resetPw",
-        "auth.userInvite",
-        "install",
-        "install.update",
-        "errors.error403",
-        "errors.error404",
-        "errors.error500",
-        "errors.error501",
-        "api.i18n",
-        "calendar.ical",
-        "oidc.login",
-        "oidc.callback",
-        "cron.run",
-    );
+    private array $publicActions = [
+        'auth.login',
+        'auth.resetPw',
+        'auth.userInvite',
+        'install',
+        'install.update',
+        'errors.error403',
+        'errors.error404',
+        'errors.error500',
+        'errors.error501',
+        'api.i18n',
+        'calendar.ical',
+        'oidc.login',
+        'oidc.callback',
+        'cron.run',
+    ];
 
     /**
-     * Telemetry response
+     * Telemetry response.
      *
      * @var bool|PromiseInterface
      */
     private bool|PromiseInterface $telemetryResponse;
 
     /**
-     * Get the Bootloader instance
+     * Get the Bootloader instance.
      *
      * @param PsrContainerContract|null $app
+     *
      * @return Bootloader
      */
     public static function getInstance(?PsrContainerContract $app = null): self
     {
-
         if (is_null(static::$instance)) {
             static::$instance = new self($app);
         }
@@ -81,7 +78,7 @@ class Bootloader
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PsrContainerContract|null $app
      */
@@ -93,8 +90,9 @@ class Bootloader
     /**
      * Boot the Application.
      *
-     * @return void
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function __invoke(): void
     {
@@ -104,21 +102,21 @@ class Bootloader
     /**
      * Execute the Application lifecycle.
      *
-     * @return void
      * @throws BindingResolutionException
+     *
+     * @return void
      */
     public function boot(): void
     {
-        if (! defined('LEANTIME_START')) {
+        if (!defined('LEANTIME_START')) {
             define('LEANTIME_START', microtime(true));
         }
 
         $this->app = new Application();
 
-        $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
+        $this->app = self::dispatch_filter('initialized', $this->app, ['bootloader' => $this]);
 
-        self::dispatch_event("beginning", ['bootloader' => $this]);
-
+        self::dispatch_event('beginning', ['bootloader' => $this]);
 
         if ($this->app::hasBeenBootstrapped()) {
             return;
@@ -130,31 +128,28 @@ class Bootloader
 
         $this->app::setHasBeenBootstrapped();
 
-        self::dispatch_event("end", ['bootloader' => $this]);
+        self::dispatch_event('end', ['bootloader' => $this]);
     }
 
-
-
     /**
-     * Handle the request
+     * Handle the request.
+     *
+     * @throws BindingResolutionException
      *
      * @return void
-     * @throws BindingResolutionException
+     *
      * @todo Refactor into middleware and then dispatch
      */
     private function handleRequest(): void
     {
-        if (! ($request = $this->app->make(IncomingRequest::class)) instanceof CliRequest) {
-
+        if (!($request = $this->app->make(IncomingRequest::class)) instanceof CliRequest) {
             /** @var HttpKernel $kernel */
             $kernel = $this->app->make(HttpKernel::class);
 
             $response = $kernel->handle($request)->send();
 
             $kernel->terminate($request, $response);
-
         } else {
-
             /** @var ConsoleKernel $kernel */
             $kernel = $this->app->make(ConsoleKernel::class);
 
@@ -168,8 +163,4 @@ class Bootloader
             exit($status);
         }
     }
-
-
-
-
 }

@@ -24,9 +24,8 @@ class EventsTest extends Unit
         $available_hooks = EventDispatcher::get_available_hooks();
 
         // Test that the dispatched event has been registered in available_hooks
-        $this->assertContains("$context.$eventName", $available_hooks["events"]);
+        $this->assertContains("$context.$eventName", $available_hooks['events']);
     }
-
 
     /**
      * This test will check the findEventListeners method of the EventDispatcher class.

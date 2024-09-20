@@ -11,9 +11,6 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Tickets extends Controller
 {
     private ProjectRepository $projects;
@@ -21,9 +18,8 @@ class Tickets extends Controller
     private ApiService $apiService;
 
     /**
-     * init - initialize private variables
+     * init - initialize private variables.
      *
-     * @access public
      *
      * @param ProjectRepository $projects
      * @param TicketService     $ticketsApiService
@@ -42,9 +38,8 @@ class Tickets extends Controller
     }
 
     /**
-     * get - handle get requests
+     * get - handle get requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -59,6 +54,7 @@ class Tickets extends Controller
 
             /**
              * @todo remove this jsonResponse call and instead use Response class.
+             *
              * @see ../Services/Api.php
              **/
             $this->apiService->jsonResponse(1, $results);
@@ -68,32 +64,31 @@ class Tickets extends Controller
     }
 
     /**
-     * post - handle post requests
+     * post - handle post requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
-        if (! AuthService::userIsAtLeast(Roles::$editor)) {
+        if (!AuthService::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->displayJson(['Error' => 'Not Authorized'], 403);
         }
 
-        if (! isset($params['action'])) {
+        if (!isset($params['action'])) {
             return $this->tpl->displayJson(['Error' => 'Action not set'], 400);
         }
 
         ob_start();
 
         if (
-            $params['action'] == "kanbanSort"
+            $params['action'] == 'kanbanSort'
             && isset($params['payload'])
-            && !$this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $params['handler'] ?? null)
+            && !$this->ticketsApiService->updateTicketStatusAndSorting($params['payload'], $params['handler'] ?? null)
         ) {
             ob_end_clean();
 
@@ -102,7 +97,7 @@ class Tickets extends Controller
 
         if (
             $params['action'] == 'ganttSort'
-            && !$this->ticketsApiService->updateTicketSorting($params["payload"])
+            && !$this->ticketsApiService->updateTicketSorting($params['payload'])
         ) {
             ob_end_clean();
 
@@ -111,15 +106,14 @@ class Tickets extends Controller
 
         $htmlOutput = ob_get_clean();
 
-        $result = array("html" => $htmlOutput);
+        $result = ['html' => $htmlOutput];
 
         return $this->tpl->displayJson(['result' => $result]);
     }
 
     /**
-     * put - handle put requests
+     * put - handle put requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *
@@ -127,32 +121,32 @@ class Tickets extends Controller
      */
     public function patch(array $params): Response
     {
-        if (! AuthService::userIsAtLeast(Roles::$editor)) {
+        if (!AuthService::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->displayJson(['error' => 'Not Authorized'], 403);
         }
 
-        if (! isset($params['id'])) {
+        if (!isset($params['id'])) {
             return $this->tpl->displayJson(['error' => 'ID not set'], 400);
         }
 
         ob_start();
 
-        if (! $this->ticketsApiService->patch($params['id'], $params)) {
+        if (!$this->ticketsApiService->patch($params['id'], $params)) {
             ob_end_clean();
+
             return $this->tpl->displayJson(['error' => 'Could not update status'], 500);
         }
 
         $htmlOutput = ob_get_clean();
 
-        $result = array("html" => $htmlOutput);
+        $result = ['html' => $htmlOutput];
 
         return $this->tpl->displayJson(['result' => $result]);
     }
 
     /**
-     * delete - handle delete requests
+     * delete - handle delete requests.
      *
-     * @access public
      *
      * @param array $params parameters or body of the request
      *

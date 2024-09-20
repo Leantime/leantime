@@ -25,7 +25,7 @@ class ApiClientTest extends TestCase
     {
         $baseUri = 'http://test.com';
         $creds = [
-            'client_id' => 'testclient',
+            'client_id'     => 'testclient',
             'client_secret' => 'testsecret',
         ];
 
@@ -38,10 +38,10 @@ class ApiClientTest extends TestCase
     {
         $baseUri = 'http://test.com';
         $creds = [
-            'consumer_key' => 'testconsumer',
+            'consumer_key'    => 'testconsumer',
             'consumer_secret' => 'testsecret',
-            'token' => 'testtoken',
-            'token_secret' => 'testtokensecret',
+            'token'           => 'testtoken',
+            'token_secret'    => 'testtokensecret',
         ];
 
         $client = ApiClient::oAuth1($baseUri, $creds);
@@ -70,14 +70,14 @@ class ApiClientTest extends TestCase
         $creds = [
             'username' => 'testuser',
             'password' => 'testpass',
-            'digest' => 'testdigest',
+            'digest'   => 'testdigest',
         ];
 
         $client = ApiClient::digest($baseUri, $creds);
 
         $config = $client->getConfig();
         $this->assertEquals('http://test.com', $config[1]['base_uri']);
-        $this->assertEquals($creds,  $config[1]['auth']);
+        $this->assertEquals($creds, $config[1]['auth']);
     }
 
     public function testNtlm(): void
@@ -86,7 +86,7 @@ class ApiClientTest extends TestCase
         $creds = [
             'username' => 'testuser',
             'password' => 'testpass',
-            'ntlm' => 'testntlm',
+            'ntlm'     => 'testntlm',
         ];
 
         $client = ApiClient::ntlm($baseUri, $creds);

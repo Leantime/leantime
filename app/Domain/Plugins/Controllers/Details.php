@@ -17,6 +17,7 @@ class Details extends Controller
 
     /**
      * @param PluginService $pluginService
+     *
      * @return void
      */
     public function init(PluginService $pluginService): void
@@ -29,10 +30,9 @@ class Details extends Controller
      */
     public function get(): Response
     {
-
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        if (! $this->incomingRequest->query->has('id')) {
+        if (!$this->incomingRequest->query->has('id')) {
             throw new \Exception('Plugin Identifier is required');
         }
 
@@ -43,7 +43,7 @@ class Details extends Controller
             $this->incomingRequest->query->get('id'),
         );
 
-        if (! $plugin) {
+        if (!$plugin) {
             return $this->tpl->display('error.error404', 'blank');
         }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Generates an JSON-RPC 2.0 API
+ * Generates an JSON-RPC 2.0 API.
  */
 
 namespace Leantime\Domain\Api\Controllers;
@@ -13,18 +13,15 @@ use Leantime\Core\Controller\Controller;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Jsonrpc extends Controller
 {
     /**
-     * @var array $json_data - holds json data from request body
+     * @var array - holds json data from request body
      */
     private array $json_data = [];
 
     /**
-     * init - initialize private variables or events to happen before route execution
+     * init - initialize private variables or events to happen before route execution.
      *
      * @return void
      */
@@ -36,14 +33,14 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Handles post requests
+     * Handles post requests.
      *
      * @param array $params - value of $_POST
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
+     *
+     * @return Response
      */
     public function post(array $params): Response
     {
@@ -62,40 +59,40 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Handles get requests
+     * Handles get requests.
      *
      * @param array $params - value of $_GET
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
+     *
+     * @return Response
      */
     public function get(array $params): Response
     {
         if (!isset($params['method'])) {
-            return $this->returnInvalidRequest("Method name required");
+            return $this->returnInvalidRequest('Method name required');
         }
 
         /**
-         * Decode params
+         * Decode params.
          *
          * @see https://www.jsonrpc.org/historical/json-rpc-over-http.html#get
          */
         if (isset($params['params'])) {
             $paramsDecoded = base64_decode(urldecode($params['params']));
         } else {
-            $paramsDecoded = array();
+            $paramsDecoded = [];
         }
 
-        $params = array(
-            "method" => $params['method'],
-            "params" => $paramsDecoded,
-            "id" => $params["id"] ?? null,
-            "jsonrpc" => $params["jsonrpc"] ?? '',
-        );
+        $params = [
+            'method'  => $params['method'],
+            'params'  => $paramsDecoded,
+            'id'      => $params['id'] ?? null,
+            'jsonrpc' => $params['jsonrpc'] ?? '',
+        ];
 
-        $params["params"] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
+        $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
 
         // check if decode failed
         if ($params == null) {
@@ -106,7 +103,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Handles patch requests
+     * Handles patch requests.
      *
      * @return Response
      */
@@ -116,7 +113,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Handles delete requests
+     * Handles delete requests.
      *
      * @return Response
      */
@@ -126,19 +123,19 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * executes api call
+     * executes api call.
      *
      * @param array $params - request body
      *
-     * @return Response
-     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
+     *
+     * @return Response
      */
     private function executeApiRequest(array $params): Response
     {
         /**
-         * checks to see if array keys are incremented, if so, assume it's a batch request
+         * checks to see if array keys are incremented, if so, assume it's a batch request.
          *
          * @see https://jsonrpc.org/specification#batch
          */
@@ -162,8 +159,8 @@ class Jsonrpc extends Controller
         $moduleName = Str::studly($methodparts['module']);
         $serviceName = Str::studly($methodparts['service']);
 
-        $domainServiceNamespace = app()->getNamespace() . "Domain\\$moduleName\\Services\\$serviceName";
-        $pluginServiceNamespace = app()->getNamespace() . "Plugins\\$moduleName\\Services\\$serviceName";
+        $domainServiceNamespace = app()->getNamespace()."Domain\\$moduleName\\Services\\$serviceName";
+        $pluginServiceNamespace = app()->getNamespace()."Plugins\\$moduleName\\Services\\$serviceName";
 
         $methodName = Str::camel($methodparts['method']);
 
@@ -177,7 +174,7 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Service doesn't exist: $serviceName", $id);
         }
 
-        if (! method_exists($serviceName, $methodName)) {
+        if (!method_exists($serviceName, $methodName)) {
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
@@ -185,11 +182,11 @@ class Jsonrpc extends Controller
         //TODO: Check if method is available for api
 
         if ($jsonRpcVer == null) {
-            return $this->returnInvalidRequest("You must include a \"jsonrpc\" parameter with a value of \"2.0\"", $id);
+            return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
         }
 
         if ($jsonRpcVer !== '2.0') {
-            return $this->returnInvalidRequest("Leantime only supports JSON-RPC version 2.0", $id);
+            return $this->returnInvalidRequest('Leantime only supports JSON-RPC version 2.0', $id);
         }
 
         try {
@@ -212,7 +209,7 @@ class Jsonrpc extends Controller
         }
 
         if ($method_response !== null) {
-            if (! settype($method_response, 'array')) {
+            if (!settype($method_response, 'array')) {
                 $method_response = [$method_response];
             }
         }
@@ -221,13 +218,13 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Parses the method string
+     * Parses the method string.
      *
      * @param string $methodstring - leantime.rpc.service.method
      *
-     * @return array
-     *
      * @throws Exception
+     *
+     * @return array
      */
     private function parseMethodString(string $methodstring): array
     {
@@ -235,7 +232,7 @@ class Jsonrpc extends Controller
             throw new Exception('Must include method');
         }
 
-        if (!str_starts_with($methodstring, "leantime.rpc.")) {
+        if (!str_starts_with($methodstring, 'leantime.rpc.')) {
             throw new Exception("Method string doesn't start with \"leantime.rpc.\"");
         }
 
@@ -245,36 +242,35 @@ class Jsonrpc extends Controller
         $methodStringPieces = explode('.', $methodstring);
 
         if (count($methodStringPieces) !== 4 && count($methodStringPieces) !== 5) {
-            throw new Exception("Method is case sensitive and must follow the following naming convention: \"leantime.rpc.{domain}.{servicename}.{methodname}\"");
+            throw new Exception('Method is case sensitive and must follow the following naming convention: "leantime.rpc.{domain}.{servicename}.{methodname}"');
         }
 
-        if (count($methodStringPieces) === 4){
+        if (count($methodStringPieces) === 4) {
             return [
-                'module' => $methodStringPieces[2],
+                'module'  => $methodStringPieces[2],
                 'service' => $methodStringPieces[2],
-                'method' => $methodStringPieces[3],
+                'method'  => $methodStringPieces[3],
             ];
         }
 
-        if (count($methodStringPieces) === 5){
+        if (count($methodStringPieces) === 5) {
             return [
-                'module' => $methodStringPieces[2],
+                'module'  => $methodStringPieces[2],
                 'service' => $methodStringPieces[3],
-                'method' => $methodStringPieces[4],
+                'method'  => $methodStringPieces[4],
             ];
         }
-
     }
 
     /**
-     * Gets the Method Parameters
+     * Gets the Method Parameters.
      *
      * @param string $servicename
      * @param string $methodname
      *
-     * @return array
-     *
      * @throws \ReflectionException
+     *
+     * @return array
      */
     private function getMethodParameters(string $servicename, string $methodname): array
     {
@@ -284,14 +280,14 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Checks request params
+     * Checks request params.
      *
      * @param array $params
      * @param array $methodParams
      *
-     * @return array
-     *
      * @throws Exception
+     *
+     * @return array
      */
     private function prepareParameters(array $params, array $methodParams): array
     {
@@ -321,7 +317,7 @@ class Jsonrpc extends Controller
                     continue;
                 }
 
-                if ($params[$name] === null && ! $type->allowsNull()) {
+                if ($params[$name] === null && !$type->allowsNull()) {
                     throw new Exception("Parameter $name can't be null");
                 }
 
@@ -329,6 +325,7 @@ class Jsonrpc extends Controller
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
                     report($e);
+
                     throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
                 }
             }
@@ -345,7 +342,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Echos the return response
+     * Echos the return response.
      *
      * @see https://jsonrpc.org/specification#response_object
      *
@@ -357,7 +354,7 @@ class Jsonrpc extends Controller
     private function returnResponse(array|null $returnValue, string $id = null): Response
     {
         /**
-         * No IDs imply notification and MUST not be responded to
+         * No IDs imply notification and MUST not be responded to.
          *
          * @see https://jsonrpc.org/specification#notification
          */
@@ -367,13 +364,13 @@ class Jsonrpc extends Controller
 
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
-            'result' => $returnValue,
-            'id' => $id,
+            'result'  => $returnValue,
+            'id'      => $id,
         ]);
     }
 
     /**
-     * Return error response
+     * Return error response.
      *
      * @see https://jsonrpc.org/specification#error_object
      *
@@ -386,21 +383,20 @@ class Jsonrpc extends Controller
      */
     private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
-
         //TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
-            'error' => [
-                'code' => $errorcode,
+            'error'   => [
+                'code'    => $errorcode,
                 'message' => $errorMessage,
-                'data' => $additional_info instanceof \Throwable ? $additional_info->getMessage() : $additional_info,
+                'data'    => $additional_info instanceof \Throwable ? $additional_info->getMessage() : $additional_info,
             ],
             'id' => $id,
         ]);
     }
 
     /**
-     * Returns a parse error
+     * Returns a parse error.
      *
      * @see https://jsonrpc.org/specification#error_object
      *
@@ -415,7 +411,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Returns an invalid request error
+     * Returns an invalid request error.
      *
      * @see https://jsonrpc.org/specification#error_object
      *
@@ -430,7 +426,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Returns a method not found error
+     * Returns a method not found error.
      *
      * @see https://jsonrpc.org/specification#error_object
      *
@@ -445,7 +441,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Returns an invalid parameters error
+     * Returns an invalid parameters error.
      *
      * @see https://jsonrpc.org/specification#error_object
      *
@@ -460,7 +456,7 @@ class Jsonrpc extends Controller
     }
 
     /**
-     * Returns a server error
+     * Returns a server error.
      *
      * @see https://jsonrpc.org/specification#error_object
      *

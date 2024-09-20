@@ -3,23 +3,18 @@
 namespace Unit\app\Domain\Menu\Repositories;
 
 use Codeception\Test\Unit;
-use Leantime\Config\Config;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Core\Theme;
-use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Tickets\Services\Tickets;
 
 class ThemeTest extends Unit
 {
-
     use \Codeception\Test\Feature\Stub;
 
     /**
-     * The test object
+     * The test object.
      *
      * @var Theme
      */
@@ -35,23 +30,22 @@ class ThemeTest extends Unit
 
     protected function _before()
     {
-
         //Mock classes
-        $this->settingsRepoMock =  $this->make(Setting::class, [
+        $this->settingsRepoMock = $this->make(Setting::class, [
 
         ]);
         $this->languageMock = $this->make(Language::class, [
 
         ]);
 
-        $this->configMock =  $this->make(Environment::class, [
-            "primarycolor"=> "#123",
-            "secondarycolor"=> "#123",
+        $this->configMock = $this->make(Environment::class, [
+            'primarycolor'  => '#123',
+            'secondarycolor'=> '#123',
 
         ]);
 
         $this->appSettingsMock = $this->make(AppSettings::class, [
-            "appVersion" => "123",
+            'appVersion' => '123',
 
         ]);
 
@@ -62,7 +56,6 @@ class ThemeTest extends Unit
             config:$this->configMock,
             appSettings:  $this->appSettingsMock
         );
-
     }
 
     protected function _after()
@@ -73,21 +66,20 @@ class ThemeTest extends Unit
     //Write tests below
 
     /**
-     * Test GetMenuTypes method
+     * Test GetMenuTypes method.
      */
-    public function testGetDefaultColorSchemeWithColorEnvSet() {
-
+    public function testGetDefaultColorSchemeWithColorEnvSet()
+    {
         $colorScheme = $this->theme->getColorScheme();
-        $this->assertEquals("companyColors", $colorScheme);
-
+        $this->assertEquals('companyColors', $colorScheme);
     }
 
     /**
-     * Test GetMenuTypes method
+     * Test GetMenuTypes method.
      */
-    public function testGetDefaultColorSchemeWithoutEnv() {
-
-        $configMock =  $this->make(Environment::class, []);
+    public function testGetDefaultColorSchemeWithoutEnv()
+    {
+        $configMock = $this->make(Environment::class, []);
 
         $theme = new Theme(
             settingsRepo: $this->settingsRepoMock,
@@ -96,8 +88,6 @@ class ThemeTest extends Unit
             appSettings:  $this->appSettingsMock
         );
         $colorScheme = $theme->getColorScheme();
-        $this->assertEquals("themeDefault", $colorScheme);
-
+        $this->assertEquals('themeDefault', $colorScheme);
     }
-    
 }

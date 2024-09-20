@@ -17,8 +17,5 @@ class Auth extends ServiceProvider
     {
         $this->app->singleton(AuthService::class, AuthService::class);
         $this->app->singleton(OidcService::class, OidcService::class);
-
     }
-
-
 }

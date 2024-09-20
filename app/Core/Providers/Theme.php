@@ -14,8 +14,6 @@ class Theme extends ServiceProvider
     public function register()
     {
         $this->app->singleton(\Leantime\Core\Theme::class, \Leantime\Core\Theme::class);
-        $this->app->alias(\Leantime\Core\Theme::class, "themne");
+        $this->app->alias(\Leantime\Core\Theme::class, 'themne');
     }
-
-
 }

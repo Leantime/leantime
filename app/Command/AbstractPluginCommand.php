@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Class AbstractPluginCommand
+ * Class AbstractPluginCommand.
  */
 abstract class AbstractPluginCommand extends Command
 {
@@ -28,10 +28,11 @@ abstract class AbstractPluginCommand extends Command
     }
 
     /**
-     * Execute the command
+     * Execute the command.
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,6 +54,7 @@ abstract class AbstractPluginCommand extends Command
      * Asks a confirmation question.
      *
      * @param string $question
+     *
      * @return bool
      */
     protected function confirm(string $question): bool
