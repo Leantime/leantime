@@ -45,17 +45,6 @@ class MenuRepositoryTest extends Unit
             ticketsService:$ticketService
         );
 
-        //Creating a test event
-        //Unsetting a menu item (replacing would work the same way
-        \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company", function($menu){
-
-            if(isset($menu[15]) && isset($menu[15]['submenu'])) {
-                unset($menu[15]['submenu'][20]);
-            }
-
-            return $menu;
-
-        }, 10);
     }
 
     protected function _after()
@@ -116,8 +105,19 @@ class MenuRepositoryTest extends Unit
     public function testGetFilteredMenuStructure()
     {
 
+        \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company", function($menu){
+
+            if(isset($menu[15]) && isset($menu[15]['submenu'])) {
+                unset($menu[15]['submenu'][20]);
+            }
+
+            return $menu;
+
+        }, 10);
+
         $fullMenuStructure = $this->menu->getMenuStructure('company');
         $this->assertIsArray($fullMenuStructure[15]['submenu']);
+
         $this->assertFalse(isset($fullMenuStructure[15]['submenu'][20]), "menu item was not removed");
 
     }
@@ -127,7 +127,10 @@ class MenuRepositoryTest extends Unit
 
         \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures", function($menuStructure){
 
-            $testStructure = ["item" => "myNewMenu"];
+            $testStructure = [
+                10 => ["item" => "myNewMenu", "type"=>"item"]
+            ];
+
             $menuStructure["testType"] = $testStructure;
 
             return $menuStructure;
@@ -136,7 +139,7 @@ class MenuRepositoryTest extends Unit
 
         $fullMenuStructure = $this->menu->getMenuStructure('testType');
         $this->assertIsArray($fullMenuStructure);
-        $this->assertEquals("muNewMenu", $fullMenuStructure["item"]);
+        $this->assertEquals("myNewMenu", $fullMenuStructure[10]["item"]);
 
     }
 }
