@@ -246,20 +246,30 @@
                         </td>
 
 
-                        <td data-order="<?php echo $row->editFrom; ?>">
-                            {{ __('label.due_icon') }}<input type="text" title="{{ __('label.planned_start_date') }}"
-                                value="<?php echo format($row->editFrom)->date(); ?>"
-                                class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id; ?>"
-                                data-id="<?php echo $row->id; ?>" name="editFrom" class="" />
+                        <td data-order="{!! $row->editFrom !!}">
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="editFrom" 
+                                value="{!! format($row->editFrom)->date() !!}" 
+                                title="{!! __('label.planned_start_date') !!}" 
+                                class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{!! $row->id !!}" 
+                                data-id="{!! $row->id !!}" 
+                                leadingVisual="{!! __('label.due_icon') !!}"
+                            />
                         </td>
-
-                        <td data-order="<?php echo $row->editTo; ?>">
-                            {{ __('label.due_icon') }}<input type="text" title="{{ __('label.planned_end_date') }}"
-                                value="<?php echo format($row->editTo)->date(); ?>"
-                                class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id; ?>"
-                                data-id="<?php echo $row->id; ?>" name="editTo" class="" />
-
+                        
+                        <td data-order="{!! $row->editTo !!}">
+                            <x-global::forms.text-input 
+                                type="text" 
+                                name="editTo" 
+                                value="{!! format($row->editTo)->date() !!}" 
+                                title="{!! __('label.planned_end_date') !!}" 
+                                class="editToDate secretInput milestoneEditToAsync toDateTicket-{!! $row->id !!}" 
+                                data-id="{!! $row->id !!}" 
+                                leadingVisual="{!! __('label.due_icon') !!}"
+                            />
                         </td>
+                        
 
                         <td data-order="<?= $row->planHours ?>">
                             <?php echo $row->planHours; ?>

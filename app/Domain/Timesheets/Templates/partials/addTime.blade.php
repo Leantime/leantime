@@ -99,11 +99,14 @@ $values = $tpl->get('values');
                                     name="description"><?php echo $values['description']; ?></textarea><br/>
                             <br/>
                             <br/>
-                            <label for="invoicedEmpl">{{ __("INVOICED") }}</label> <input
-                                    type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
-                                <?php if (isset($values['invoicedEmpl']) === true && $values['invoicedEmpl'] == '1') {
-                                    echo ' checked="checked"';
-                                } ?> />
+
+                            <x-global::forms.checkbox
+                                name="invoicedEmpl"
+                                id="invoicedEmpl"
+                                :checked="isset($values['invoicedEmpl']) && $values['invoicedEmpl'] == '1'"
+                                labelText="{{ __('INVOICED') }}"
+                                labelPosition="left"
+                            />
                             {{ __("ONDATE") }}&nbsp;<input type="text"
                                                                           id="invoicedEmplDate" name="invoicedEmplDate"
                                                                           value="<?php echo $values['invoicedEmplDate'] ?>"
@@ -112,22 +115,27 @@ $values = $tpl->get('values');
 
                             <?php if ($login::userIsAtLeast($roles::$manager)) {
                                 ?> <br/>
-                                <label for="invoicedComp">{{ __("INVOICED_COMP") }}</label> <input
-                                        type="checkbox" name="invoicedComp" id="invoicedComp"
-                                    <?php if ($values['invoicedComp'] == '1') {
-                                        echo ' checked="checked"';
-                                    } ?> />
+                                <x-global::forms.checkbox
+                                    name="invoicedComp"
+                                    id="invoicedComp"
+                                    :checked="$values['invoicedComp'] == '1'"
+                                    labelText="{{ __('INVOICED_COMP') }}"
+                                    labelPosition="left"
+                                />
                                 {{ __("ONDATE") }}&nbsp;<input type="text" autocomplete="off"
                                                                               id="invoicedCompDate"
                                                                               name="invoicedCompDate"
                                                                               value="<?php echo $values['invoicedCompDate'] ?>"
                                                                               size="7"/><br/>
+                                
+                                <x-global::forms.checkbox
+                                    name="paid"
+                                    id="paid"
+                                    :checked="$values['paid'] == '1'"
+                                    labelText="{{ __('labels.paid') }}"
+                                    labelPosition="left"
+                                />
 
-                                <label for="paid">{{ __("labels.paid") }}</label> <input
-                                    type="checkbox" name="paid" id="paid"
-                                    <?php if ($values['paid'] == '1') {
-                                        echo ' checked="checked"';
-                                    } ?> />
                                 {{ __("ONDATE") }}&nbsp;<input type="text" autocomplete="off"
                                                                               id="paidDate"
                                                                               name="paidDate"

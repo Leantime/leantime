@@ -1,3 +1,8 @@
+#
+# This docker compose file is used to build the environment for our testing framework in codeception
+# It is not to be used for development
+#
+
 version: "3.9"
 
 services:
@@ -7,6 +12,9 @@ services:
       - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
       - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
       - "./test.env:/var/www/html/config/.env"
+    ports:
+        - "8002:8080" #Using different ports for testing, so we don't have to worry about collision
+        - "44302:443" #Using different ports for testing, so we don't have to worry about collision (available range is 44300–44399)
     environment:
       LEAN_DB_HOST: 'db'
       LEAN_DB_USER: 'leantime'

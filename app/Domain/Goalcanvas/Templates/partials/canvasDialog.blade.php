@@ -15,8 +15,9 @@
 
         <div class="row">
             <div class="col-md-8">
-                <label>{{ __('label.what_is_your_goal') }}</label>
-                <input type="text" name="title" value="{{ $canvasItem['title'] }}" style="width:100%"><br>
+                <x-global::forms.text-input type="text" name="title" value="{{ $canvasItem['title'] }}"
+                    labelText="{{ __('label.what_is_your_goal') }}" variant="title" />
+                <br />
 
                 @if (!empty($relatesLabels))
                     <label>{{ __('label.relates') }}</label>
@@ -32,28 +33,32 @@
 
                 @dispatchEvent('beforeMeasureGoalContainer', $canvasItem)
                 <div id="measureGoalContainer">
-                    <label>{{ __('text.what_metric_will_you_be_using') }}</label>
-                    <input type="text" name="description" value="{{ $canvasItem['description'] }}"
-                        style="width:100%"><br>
+                    <x-global::forms.text-input type="text" name="description"
+                        value="{{ $canvasItem['description'] }}"
+                        labelText="{{ __('text.what_metric_will_you_be_using') }}" variant="title" />
+
                 </div>
 
                 <div class="row">
                     <div class="col-md-3">
-                        <label>{{ __('label.starting_value') }}</label>
-                        <input type="number" step="0.01" name="startValue" value="{{ $canvasItem['startValue'] }}"
-                            style="width:105px">
+                        <x-global::forms.text-input type="number" step="0.01" name="startValue"
+                            value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
+                            variant="compact" />
+
                     </div>
                     <div class="col-md-3">
-                        <label>{{ __('label.current_value') }}</label>
-                        <input type="number" step="0.01" name="currentValue" id="currentValueField"
-                            value="{{ $canvasItem['currentValue'] }}"
-                            @if ($canvasItem['setting'] == 'linkAndReport') readonly data-tippy-content="Current value calculated from child goals" @endif
-                            style="width:105px">
+                        <x-global::forms.text-input type="number" step="0.01" name="currentValue"
+                            id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
+                            labelText="{{ __('label.current_value') }}" variant="compact"
+                            @if ($canvasItem['setting'] == 'linkAndReport') readonly
+                                data-tippy-content="Current value calculated from child goals" @endif />
+
                     </div>
                     <div class="col-md-3">
-                        <label>{{ __('label.goal_value') }}</label>
-                        <input type="number" step="0.01" name="endValue" value="{{ $canvasItem['endValue'] }}"
-                            style="width:105px">
+                        <x-global::forms.text-input type="number" step="0.01" name="endValue"
+                            value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
+                            variant="compact" />
+
                     </div>
                     <div class="col-md-3">
                         <label>{{ __('label.type') }}</label>
@@ -70,14 +75,13 @@
 
                 <br>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <div class="align-right">
-                        <x-global::forms.button  contentRole="primary"
-                            id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();" tag="button"
-                                             value="closeModal" >
-                        <x-slot:label-text>
-                            {{ __('buttons.save_and_close') }}
-                        </x-slot:label-text></x-global::forms.button>
-                    </div>
+                    <x-global::forms.button type="submit" id="saveBtn">
+                        {{ __('buttons.save') }}
+                    </x-global::forms.button>
+
+                    <x-global::forms.button id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();">
+                        {{ __('buttons.save_and_close') }}
+                    </x-global::forms.button>
                 @endif
 
             </div>
@@ -126,7 +130,8 @@
                             </div>
                             <div class="row" id="newMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <input type="text" width="50%" name="newMilestone" /><br />
+                                    <x-global::forms.text-input type="text" name="newMilestone" />
+                                    <br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                     <x-global::forms.button content-role="primary" type="button"

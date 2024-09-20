@@ -27,8 +27,14 @@ $statusLabels = $tpl->get('statusLabels');
 
 <x-global::content.modal.form action="{{ BASE_URL }}/tickets/editMilestone/{{ $currentMilestone->id }}">
 
-    <label><?=$tpl->__("label.milestone_title"); ?></label>
-    <input type="text" name="headline" value="<?php $tpl->e($currentMilestone->headline) ?>" placeholder="<?=$tpl->__("label.milestone_title"); ?>"/><br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="headline" 
+        value="{!! $tpl->escape($currentMilestone->headline) !!}" 
+        placeholder="{!! $tpl->__('label.milestone_title') !!}" 
+        labelText="{!! $tpl->__('label.milestone_title') !!}"
+    />
+    <br />
 
     <label class="control-label"><?=$tpl->__('label.project') ?></label>
     <select name="projectId" class="w-full">
@@ -98,14 +104,37 @@ $statusLabels = $tpl->get('statusLabels');
         <?php } ?>
     </select>
 
-    <label><?=$tpl->__("label.color"); ?></label>
-    <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$tpl->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="tags" 
+        value="{!! $currentMilestone->tags !!}" 
+        placeholder="{!! $tpl->__('input.placeholders.pick_a_color') !!}" 
+        labelText="{!! $tpl->__('label.color') !!}" 
+        autocomplete="off" 
+        class="simpleColorPicker"
+    />
+    <br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="editFrom" 
+        id="milestoneEditFrom" 
+        value="{!! format($currentMilestone->editFrom)->date() !!}" 
+        placeholder="{!! $tpl->__('language.dateformat') !!}" 
+        labelText="{!! $tpl->__('label.planned_start_date') !!}" 
+        autocomplete="off" 
+    />
+    <br />
 
-    <label><?=$tpl->__("label.planned_start_date"); ?></label>
-    <input type="text" name="editFrom" autocomplete="off" value="<?php echo format($currentMilestone->editFrom)->date() ?>" placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
-
-    <label><?=$tpl->__("label.planned_end_date"); ?></label>
-    <input type="text" name="editTo" autocomplete="off" value="<?php echo format($currentMilestone->editTo)->date() ?>"  placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="editTo" 
+        id="milestoneEditTo" 
+        value="{!! format($currentMilestone->editTo)->date() !!}" 
+        placeholder="{!! $tpl->__('language.dateformat') !!}" 
+        labelText="{!! $tpl->__('label.planned_end_date') !!}" 
+        autocomplete="off" 
+    />
+    <br />
 
     <div class="row">
         <div class="col-md-6">

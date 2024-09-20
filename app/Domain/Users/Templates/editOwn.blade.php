@@ -27,49 +27,76 @@
 
                     <div id="myProfile">
                         <form action="" method="post">
-
-                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
+                            <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
+                        
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="firstname" >{{ __('label.firstname') }}</label>
-                                    <span>
-                                        <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['firstname'] }}"/><br/>
-                                    </span>
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="firstname" 
+                                        id="firstname" 
+                                        value="{{ $values['firstname'] }}" 
+                                        labelText="{{ __('label.firstname') }}"
+                                        class="input"
+                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                    />
+                                    <br/>
                                 </div>
-
+                        
                                 <div class="form-group">
-                                    <label for="lastname" >{{ __('label.lastname') }}</label>
-                                    <span>
-                                        <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['lastname']  }}"/><br/>
-                                    </span>
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="lastname" 
+                                        id="lastname" 
+                                        value="{{ $values['lastname'] }}" 
+                                        labelText="{{ __('label.lastname') }}"
+                                        class="input"
+                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                    />
+                                    <br/>
                                 </div>
-
+                        
                                 <div class="form-group">
-                                    <label for="user" >{{ __('label.email') }}</label>
-                                    <span>
-                                        <input type="text" name="user" class="input" id="user" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['user']  }}"/><br/>
-                                    </span>
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="user" 
+                                        id="user" 
+                                        value="{{ $values['user'] }}" 
+                                        labelText="{{ __('label.email') }}"
+                                        class="input"
+                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                    />
+                                    <br/>
                                 </div>
-
+                        
                                 <div class="form-group">
-                                    <label for="phone" >{{ __('label.phone') }}</label>
-                                    <span>
-                                        <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['phone']  }}"/><br/>
-                                    </span>
+                                    <x-global::forms.text-input 
+                                        type="text" 
+                                        name="phone" 
+                                        id="phone" 
+                                        value="{{ $values['phone'] }}" 
+                                        labelText="{{ __('label.phone') }}"
+                                        class="input"
+                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                    />
+                                    <br/>
                                 </div>
-
                             </div>
-                            <p class='stdformbutton'>
+                        
+                            <p class="stdformbutton">
                                 <input type="hidden" name="profileInfo" value="1" />
-
-                                <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button"/>
+                                
+                                <x-global::forms.button 
+                                    type="submit" 
+                                    name="save" 
+                                    id="save"
+                                    class="button"
+                                >
+                                    {{ __('buttons.save') }}
+                                </x-global::forms.button>
                             </p>
-
                         </form>
+                        
                     </div>
 
                     <div id="security">

@@ -78,23 +78,55 @@ $user = $tpl->get("user");
 
         <input type="hidden" name="step" value="1"/>
 
-        <div class="">
-            <input type="text" name="firstname" style="margin-bottom:15px" id="firstname" placeholder="<?php echo $tpl->language->__("input.placeholders.firstname"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
-
+        <div>
+            <x-global::forms.text-input 
+                type="text" 
+                name="firstname" 
+                id="firstname" 
+                placeholder="{{ $tpl->language->__('input.placeholders.firstname') }}" 
+                value="{{ $tpl->escape($user['firstname']) }}" 
+            />
         </div>
-        <div class="">
-            <input type="text" name="lastname" id="lastname" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.lastname"); ?>" value="<?=$tpl->escape($user['lastname']); ?>" />
+        
+        <div>
+            <x-global::forms.text-input 
+                type="text" 
+                name="lastname" 
+                id="lastname" 
+                placeholder="{{ $tpl->language->__('input.placeholders.lastname') }}" 
+                value="{{ $tpl->escape($user['lastname']) }}" 
+            />
         </div>
-        <div class="">
-            <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
+        
+        <div>
+            <x-global::forms.text-input 
+                type="text" 
+                name="jobTitle" 
+                id="jobTitle" 
+                placeholder="{{ $tpl->language->__('input.placeholders.jobtitle') }}" 
+                value="{{ $tpl->escape($user['jobTitle']) }}" 
+            />
         </div>
-        <div class="">
-            <input type="password" name="password" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
-            <span id="pwStrength" style="width:100%;"></span>
+        
+        <div>
+            <x-global::forms.text-input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="{{ $tpl->language->__('input.placeholders.enter_new_password') }}" 
+            />
+            <span id="pwStrength" class="w-full"></span>
         </div>
-        <div class=" ">
-            <input type="password" name="password2" id="password2" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.confirm_password"); ?>" />
+        
+        <div>
+            <x-global::forms.text-input 
+                type="password" 
+                name="password2" 
+                id="password2" 
+                placeholder="{{ $tpl->language->__('input.placeholders.confirm_password') }}" 
+            />
         </div>
+        
         <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />

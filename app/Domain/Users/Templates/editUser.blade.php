@@ -75,12 +75,21 @@ $projects = $tpl->get('relations');
                             contentRole="link" position="bottom" align="start">
                             <x-slot:menu class="padding-md noClickProp">
                                 <x-global::actions.dropdown.item>
-                                    <input type="text" id="inviteURL"
-                                        value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}" />
-                                        <x-global::forms.button type="button" onclick="leantime.snippets.copyUrl('inviteURL')">
-                                            {{ __('links.copy_url') }}
-                                        </x-global::forms.button>
-                                                                        </x-global::actions.dropdown.item>
+                                    <x-global::forms.text-input
+                                    type="text"
+                                    id="inviteURL"
+                                    value="{{ BASE_URL }}/auth/userInvite/{{ $values['pwReset'] }}"
+                                    class="w-full"
+                                />
+
+                                <x-global::forms.button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    onclick="leantime.snippets.copyUrl('inviteURL');"
+                                >
+                                    {{ __('links.copy_url') }}
+                                </x-global::forms.button>
+                                                                </x-global::actions.dropdown.item>
                             </x-slot:menu>
                         </x-global::actions.dropdown>
 

@@ -19,8 +19,16 @@ if (isset($currentWiki->id)) {
 
 <x-global::content.modal.form action="{{ BASE_URL }}/wiki/wikiModal/{{ $id }}">
 
-    <label><?=$tpl->__('label.wiki_title') ?></label>
-    <input type="text" name="title" id="wikiTitle" value="<?php echo $tpl->escape($currentWiki->title) ?>" placeholder="<?=$tpl->__('input.placeholders.wiki_title') ?>"/><br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="title" 
+        id="wikiTitle" 
+        value="{!! $tpl->escape($currentWiki->title) !!}" 
+        placeholder="{!! $tpl->__('input.placeholders.wiki_title') !!}" 
+        labelText="{!! $tpl->__('label.wiki_title') !!}" 
+        variant="title" 
+    />
+    <br />
 
     <br />
 

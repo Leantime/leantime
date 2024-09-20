@@ -81,58 +81,59 @@
 
                         <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9" style="padding:0 15px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                                {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
+                        </div>
+                        <div class="col-md-4">
+                            <x-global::forms.text-input
+                                type="text"
+                                name="planHours"
+                                value="{{ $subticket['planHours'] }}"
+                                data-label="planHours-{{ $subticket['id'] }}"
+                                class="small-input secretInput asyncInputUpdate w-[40px]"
+                                labelText="{{ __('label.planned_hours') }}"
+                            />
+                        </div>
+
+                        <div class="col-md-4">
+                            <x-global::forms.text-input
+                                type="text"
+                                name="hourRemaining"
+                                value="{{ $subticket['hourRemaining'] }}"
+                                data-label="hourRemaining-{{ $subticket['id'] }}"
+                                class="small-input secretInput asyncInputUpdate w-[40px]"
+                                labelText="{{ __('label.estimated_hours_remaining') }}"
+                            />
+                        </div>
+
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-9" style="padding:0 15px;">
-                        <div class="row">
-                            <div class="col-md-4">
-                                {{ __('label.due') }}<input type="text" title="{{ __('label.due') }}"
-                                    value="{{ $date }}" class="duedates secretInput quickDueDates"
-                                    data-id="{{ $subticket['id'] }}" name="date" />
-                            </div>
-                            <div class="col-md-4">
-                                {{ __('label.planned_hours') }}<input type="text"
-                                    value="{{ $subticket['planHours'] }}" name="planHours"
-                                    data-label="planHours-{{ $subticket['id'] }}"
-                                    class="small-input secretInput asyncInputUpdate" style="width:40px" />
-                            </div>
-                            <div class="col-md-4">
-                                {{ __('label.estimated_hours_remaining') }}<input type="text"
-                                    value="{{ $subticket['hourRemaining'] }}" name="hourRemaining"
-                                    data-label="hourRemaining-{{ $subticket['id'] }}"
-                                    class="small-input secretInput asyncInputUpdate" style="width:40px" />
-                            </div>
+                <div class="col-md-3" style="padding-top:3px;" >
+                    <div class="right">
+                        <div class="dropdown ticketDropdown effortDropdown show">
+                            <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0)
+                                                                                        {{ $efforts[$subticket['storypoints']] }}
+                                                                                   @else
+                                                                                           {{ __("label.story_points_unkown") }}
+                                                                                    @endif
+                                                                </span>
+                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
+                                <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>
+                                @foreach($efforts as $effortKey => $effortValue)
+                                    <li class='dropdown-item'>
+                                        <a href='javascript:void(0);' data-value='{{  $subticket['id'] }}_{{ $effortKey }}' id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'> {{  $effortValue }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
-                    </div>
-                    <div class="col-md-3" style="padding-top:3px;">
-                        <div class="right">
-                            <div class="dropdown ticketDropdown effortDropdown show">
-                                <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);"
-                                    role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="text">
-                                        @if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0)
-                                            {{ $efforts[$subticket['storypoints']] }}
-                                        @else
-                                            {{ __('label.story_points_unkown') }}
-                                        @endif
-                                    </span>
-                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                </a>
-                                <ul class="dropdown-menu"
-                                    aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
-                                    <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
-                                    @foreach ($efforts as $effortKey => $effortValue)
-                                        <li class='dropdown-item'>
-                                            <a href='javascript:void(0);'
-                                                data-value='{{ $subticket['id'] }}_{{ $effortKey }}'
-                                                id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'>
-                                                {{ $effortValue }}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
 
                             @php
                                 if (isset($statusLabels[$subticket['status']])) {

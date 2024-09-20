@@ -132,8 +132,16 @@
                 >
                     <input type="hidden" name="quickadd" value="1"/>
                     <div class="flex" style="display:flex; column-gap: 10px;">
-                        <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
-
+                        <x-global::forms.text-input 
+                            type="text" 
+                            name="headline" 
+                            placeholder="Enter To-Do Title" 
+                            title="{!! $tpl->__('label.headline') !!}" 
+                            variant="title" 
+                            class="w-full" 
+                        />
+                        <br />
+                    
                         <label style="padding-top: 8px;">Project</label>
                         <select name="projectId">
                             @foreach($allAssignedprojects as $project)

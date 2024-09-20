@@ -81,6 +81,8 @@
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
         "phpstan/phpstan": "^1.10",
+        "phpstan/extension-installer": "^1.4",
+        "codeception/stub": "^4.1",
         "laravel/pint": "^1.17",
         "symfony/http-client": "^6.2.4",
         "symfony/psr-http-message-bridge": "^2.0",

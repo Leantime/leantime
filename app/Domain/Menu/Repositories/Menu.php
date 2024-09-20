@@ -21,7 +21,7 @@ namespace Leantime\Domain\Menu\Repositories {
         public const DEFAULT_MENU = 'default';
 
         // Menu structures
-        private array $menuStructures = [
+        public array $menuStructures = [
             'default' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
                 10 => [
@@ -129,7 +129,6 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
         ];
 
-        private array $companyMenuStructure = [];
 
         public function __construct(
             /** @var SettingRepository */
@@ -140,8 +139,6 @@ namespace Leantime\Domain\Menu\Repositories {
             private EnvironmentCore $config,
             /** @var TicketService */
             private TicketService $ticketsService,
-            /** @var AuthService */
-            private AuthService $authService,
         ) {
             if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
                 $setting = $this->settingsRepo;
@@ -208,23 +205,36 @@ namespace Leantime\Domain\Menu\Repositories {
             return session('usersettings.submenuToggle.'.$submenu) ?? false;
         }
 
-        protected function buildMenuStructure(array $menuStructure, string $filter): array
+        /**
+         * Builds the menu structure recursively.
+         *
+         * @param array &$menuStructure The menu structure to build. Passed by reference.
+         * @param string $filter The filter to apply to the menu structure.
+         *
+         * @return array The built menu structure.
+         */
+        protected function buildMenuStructure(array &$menuStructure, string $filter): array
         {
-            return collect($menuStructure)
-                ->map(function ($menuItem) use ($filter) {
-                    if ($menuItem['type'] !== 'submenu') {
-                        return $menuItem;
-                    }
 
-                    $filter = $filter.'.'.$menuItem['id'];
-                    $menuItem['submenu'] = self::dispatchFilter(
-                        hook: $filter,
-                        payload: $this->buildMenuStructure($menuItem['submenu'], $filter),
-                        function: 'getMenuStructure'
-                    );
+            foreach($menuStructure as &$menuItem) {
 
-                    return $menuItem;
-                })->all();
+                if ($menuItem['type'] !== 'submenu') {
+                    continue;
+                }
+
+                $menuItem['submenu'] = $this->buildMenuStructure($menuItem['submenu'], $filter);
+
+                $filter = $filter . '.' . $menuItem['id'];
+
+                return self::dispatch_filter(
+                    hook: $filter,
+                    payload:  $menuItem['submenu'],
+                    function: 'getMenuStructure'
+                );
+
+            }
+
+            return $menuStructure;
         }
 
         /**
@@ -235,28 +245,30 @@ namespace Leantime\Domain\Menu\Repositories {
          */
         public function getMenuStructure(string $menuType = ''): array
         {
-            $language = $this->language;
-            $filter = "menuStructures.$menuType";
 
-            $menuCollection = collect($this->menuStructures)->map(
-                function ($menu) use ($filter) {
-                    return self::dispatchFilter(
-                        $filter,
-                        $this->buildMenuStructure($menu, $filter),
-                        'getMenuStructure'
-                    );
-                }
-            )->all();
+            if (empty($menuType)) {
+                $menuType = self::DEFAULT_MENU;
+            }
 
-            $this->menuStructures = self::dispatchFilter(
+            $this->menuStructures = self::dispatch_filter(
                 'menuStructures',
-                $menuCollection,
+                $this->menuStructures,
                 ['menuType' => $menuType]
             );
 
-            if (! isset($this->menuStructures[$menuType]) || empty($menuType)) {
-                $menuType = self::DEFAULT_MENU;
+            //If menu structure cannot be found, don't return anything
+            if(! isset($this->menuStructures[$menuType])) {
+                return [];
             }
+
+            $language = $this->language;
+            $filter = "menuStructures.$menuType";
+
+            $this->menuStructures[$menuType] = self::dispatch_filter(
+                        $filter,
+                        $this->menuStructures[$menuType],
+                        ['menuType' => $menuType]
+                    );
 
             $menuStructure = $this->menuStructures[$menuType];
 

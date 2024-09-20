@@ -8,14 +8,33 @@
 
 <x-global::content.modal.form action="{{ BASE_URL }}/calendar/importGCal">
 
-    <label for="name">{{ $tpl->__('label.calendar_name') }}:</label>
-    <input type="text" id="name" name="name" autocomplete="off" value="{{ $values['name'] }}" /><br />
+<x-global::forms.text-input 
+    type="text" 
+    id="name" 
+    name="name" 
+    autocomplete="off" 
+    labelText="{{ $tpl->__('label.calendar_name') }}" 
+    value="{{ $values['name'] }}" 
+/>
 
-    <label for="url">{{ $tpl->__('label.ical_url') }}:</label>
-    <input type="text" id="url" name="url" autocomplete="off" style="width:300px;" value="{{ $values['url'] }}" /><br />
+<x-global::forms.text-input 
+    type="text" 
+    id="url" 
+    name="url" 
+    autocomplete="off" 
+    labelText="{{ $tpl->__('label.ical_url') }}" 
+    value="{{ $values['url'] }}" 
+    {{-- class="w-[300px]"  --}}
+/>
 
-    <label for="color">{{ $tpl->__('label.color') }}:</label>
-    <input type="text" name="colorClass" autocomplete="off" value="{{ $values['colorClass'] }}"  class="simpleColorPicker"/>
+<x-global::forms.text-input 
+    type="text" 
+    name="colorClass" 
+    autocomplete="off" 
+    labelText="{{ $tpl->__('label.color') }}" 
+    value="{{ $values['colorClass'] }}" 
+    {{-- class="simpleColorPicker"  --}}
+/>
 
     @dispatchEvent('beforeSubmitButton')
     <br /><br />

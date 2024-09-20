@@ -86,8 +86,13 @@ $state = $tpl->get('state');
                                             </label>
                                             <?php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
-                                                <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
-                                            <?php } else { ?>
+                                                <x-global::forms.text-input
+                                                    type="text"
+                                                    value="{{ $tpl->__('label.roles.' . $roles::getRoles()[$assignedUser['role']]) }}"
+                                                    readonly
+                                                    disabled
+                                                />
+                                        <?php } else { ?>
                                                 <select name="userProjectRole-<?php echo $userId ?>">
                                                     <option value="inherit">Inherit</option>
                                                     <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
@@ -141,8 +146,13 @@ $state = $tpl->get('state');
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
-                                                    <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$row['role']]) ?>" />
-                                                <?php } else { ?>
+                                                    <x-global::forms.text-input
+                                                    type="text"
+                                                    value="{{ $tpl->__('label.roles.' . $roles::getRoles()[$row['role']]) }}"
+                                                    readonly
+                                                    disabled
+                                                />
+                                                                                                <?php } else { ?>
                                                     <select name="userProjectRole-<?php echo $row['id'] ?>">
                                                         <option value="inherit">Inherit</option>
                                                         <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
@@ -201,7 +211,7 @@ $state = $tpl->get('state');
                     <x-global::forms.button type="submit" name="saveUsers" id="save" class="button">
                         {{ __('buttons.save') }}
                     </x-global::forms.button>
-                    
+
                 </form>
 
             </div>
@@ -219,12 +229,21 @@ $state = $tpl->get('state');
                     <div class="col-md-4">
                         <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->get("mattermostWebhookURL"); ?>"/>
+                            <x-global::forms.text-input
+                                type="text"
+                                name="mattermostWebhookURL"
+                                id="mattermostWebhookURL"
+                                value="{{ $tpl->get('mattermostWebhookURL') }}"
+                            />
                             <br />
-                            <x-global::forms.button type="submit" name="mattermostSave">
-                                {{ __('buttons.save') }}
+
+                            <x-global::forms.button
+                                type="submit"
+                                name="mattermostSave"
+                            >
+                                {{ $tpl->__('buttons.save') }}
                             </x-global::forms.button>
-                                                    </form>
+                        </form>
                     </div>
                 </div>
                 <br />
@@ -239,11 +258,23 @@ $state = $tpl->get('state');
                     </div>
                     <div class="col-md-4">
                         <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
-                        <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->get("slackWebhookURL"); ?>"/>
+                        <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                            <x-global::forms.text-input
+                                type="text"
+                                name="slackWebhookURL"
+                                id="slackWebhookURL"
+                                value="{{ $tpl->get('slackWebhookURL') }}"
+                            />
                             <br />
-                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="slackSave" />
+
+                            <x-global::forms.button
+                                type="submit"
+                                name="slackSave"
+                            >
+                                {{ $tpl->__('buttons.save') }}
+                            </x-global::forms.button>
                         </form>
+
                     </div>
                 </div>
 
@@ -258,26 +289,80 @@ $state = $tpl->get('state');
                     </div>
                     <div class="col-md-4">
 
-                        <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <strong><?=$tpl->__('label.base_url'); ?></strong><br />
-                            <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$tpl->__('input.placeholders.zulip_url'); ?>" value="<?php echo $tpl->get("zulipHook")['zulipURL']; ?>"/>
+                        <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#integrations" method="post">
+                            <x-global::forms.text-input
+                                type="text"
+                                name="zulipURL"
+                                id="zulipURL"
+                                value="{{ $tpl->get('zulipHook')['zulipURL'] }}"
+                                placeholder="{{ $tpl->__('input.placeholders.zulip_url') }}"
+                            >
+                                <x-slot:labelText>
+                                    <strong>{{ $tpl->__('label.base_url') }}</strong>
+                                </x-slot:labelText>
+                            </x-global::forms.text-input>
                             <br />
-                            <strong><?=$tpl->__('label.bot_email'); ?></strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipEmail']; ?>"/>
+
+                            <x-global::forms.text-input
+                                type="text"
+                                name="zulipEmail"
+                                id="zulipEmail"
+                                value="{{ $tpl->get('zulipHook')['zulipEmail'] }}"
+                                placeholder=""
+                            >
+                                <x-slot:labelText>
+                                    <strong>{{ $tpl->__('label.bot_email') }}</strong>
+                                </x-slot:labelText>
+                            </x-global::forms.text-input>
                             <br />
-                            <strong><?=$tpl->__('label.botkey'); ?></strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipBotKey']; ?>"/>
+
+                            <x-global::forms.text-input
+                                type="text"
+                                name="zulipBotKey"
+                                id="zulipBotKey"
+                                value="{{ $tpl->get('zulipHook')['zulipBotKey'] }}"
+                                placeholder=""
+                            >
+                                <x-slot:labelText>
+                                    <strong>{{ $tpl->__('label.botkey') }}</strong>
+                                </x-slot:labelText>
+                            </x-global::forms.text-input>
                             <br />
-                            <strong><?=$tpl->__('label.stream'); ?></strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipStream']; ?>"/>
+
+                            <x-global::forms.text-input
+                                type="text"
+                                name="zulipStream"
+                                id="zulipStream"
+                                value="{{ $tpl->get('zulipHook')['zulipStream'] }}"
+                                placeholder=""
+                            >
+                                <x-slot:labelText>
+                                    <strong>{{ $tpl->__('label.stream') }}</strong>
+                                </x-slot:labelText>
+                            </x-global::forms.text-input>
                             <br />
-                            <strong><?=$tpl->__('label.topic'); ?></strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipTopic']; ?>"/>
+
+                            <x-global::forms.text-input
+                                type="text"
+                                name="zulipTopic"
+                                id="zulipTopic"
+                                value="{{ $tpl->get('zulipHook')['zulipTopic'] }}"
+                                placeholder=""
+                            >
+                                <x-slot:labelText>
+                                    <strong>{{ $tpl->__('label.topic') }}</strong>
+                                </x-slot:labelText>
+                            </x-global::forms.text-input>
                             <br />
-                            <x-global::forms.button type="submit" name="zulipSave">
-                                {{ __('buttons.save') }}
+
+                            <x-global::forms.button
+                                type="submit"
+                                name="zulipSave"
+                            >
+                                {{ $tpl->__('buttons.save') }}
                             </x-global::forms.button>
                         </form>
+
                     </div>
                 </div>
 
@@ -294,42 +379,70 @@ $state = $tpl->get('state');
                     <div class="col-md-4">
                         <strong><?= $tpl->__('label.webhook_url'); ?></strong><br/>
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <?php for ($i = 1; 3 >= $i; $i++) : ?>
-                            <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->get('discordWebhookURL' . $i); ?>"/><br/>
-                            <?php endfor; ?>
-                            <x-global::forms.button type="submit" name="discordSave">
-                                {{ __('buttons.save') }}
-                            </x-global::forms.button>
+                            @for ($i = 0; $i < $count; $i++)
+                            <x-global::forms.text-input
+                                type="text"
+                                name="discordWebhookURL{{ $i }}"
+                                id="discordWebhookURL{{ $i }}"
+                                value="{{ $tpl->get('discordWebhookURL' . $i) }}"
+                                placeholder="{{ $tpl->__('input.placeholders.discord_url') }}"
+                                labelText="{{ __('Discord Webhook URL') }} {{ $i + 1 }}"
+                            />
+                            <br />
+                        @endfor
+
+                        <x-global::forms.button
+                            type="submit"
+                            name="discordSave"
+                        >
+                            {{ $tpl->__('buttons.save') }}
+                        </x-global::forms.button>
                         </form>
-                    </div>
-                </div>
 
-            </div>
+                        <div id="todosettings">
+                            <form action="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}#todosettings" method="post">
+                                <ul class="sortableTicketList" id="todoStatusList">
+                                    @foreach ($tpl->get('todoStatus') as $key => $ticketStatus)
+                                        <li>
+                                            <div class="ticketBox">
+                                                <div class="row statusList" id="todostatus-{{ $key }}">
+                                                    <input type="hidden" name="labelKeys[]" id="labelKey-{{ $key }}" class='labelKey' value="{{ $key }}" />
 
-            <div id="todosettings">
-                <form action="{{ BASE_URL }}/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
-                    <ul class="sortableTicketList" id="todoStatusList">
-                        <?php foreach ($tpl->get('todoStatus') as $key => $ticketStatus) { ?>
-                            <li>
-                                <div class="ticketBox">
+                                                    <div class="sortHandle">
+                                                        <br />
+                                                        <span class="fa fa-sort"></span>
+                                                    </div>
 
-                                    <div class="row statusList" id="todostatus-<?=$key ?>">
+                                                    <div class="col-md-1">
+                                                        <x-global::forms.text-input
+                                                            type="text"
+                                                            name="labelSort-{{ $key }}"
+                                                            class="sorter"
+                                                            id="labelSort-{{ $key }}"
+                                                            value="{{ $tpl->escape($ticketStatus['sortKey']) }}"
+                                                            class="w-[50px]"
+                                                            labelText="{{ $tpl->__('label.sortindex') }}"
+                                                        />
+                                                    </div>
 
-                                        <input type="hidden" name="labelKeys[]" id="labelKey-<?=$key?>" class='labelKey' value="<?=$key?>"/>
-                                        <div class="sortHandle">
-                                            <br />
-                                            <span class="fa fa-sort"></span>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label><?=$tpl->__("label.sortindex") ?></label>
-                                            <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$tpl->escape($ticketStatus['sortKey']);?>" style="width:50px;"/>
-                                        </div>
-                                        <div class="col-md-2">
-
-                                            <label><?=$tpl->__("label.label") ?></label>
-                                            <input type="text" name="label-<?=$key?>" <?=$key==-1?'readonly':''?> id="label-<?=$key?>" value="<?=$tpl->escape($ticketStatus['name']);?>" />
-
-                                        </div>
+                                                    <div class="col-md-2">
+                                                        <x-global::forms.text-input
+                                                            type="text"
+                                                            name="label-{{ $key }}"
+                                                            id="label-{{ $key }}"
+                                                            value="{{ $tpl->escape($ticketStatus['name']) }}"
+                                                            @if ($key == -1) readonly @endif
+                                                            labelText="{{ $tpl->__('label.label') }}"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </form>
+                        </div>
+                                                                </div>
                                         <div class="col-md-2">
                                             <label><?=$tpl->__("label.color") ?></label>
                                             <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
@@ -402,12 +515,26 @@ $state = $tpl->get('state');
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label><?=$tpl->__("label.sortindex") ?></label>
-            <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:50px;"/>
-        </div>
-        <div class="col-md-2">
-            <label><?=$tpl->__("label.label") ?></label>
-            <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
+            <div class="col-md-1">
+                <x-global::forms.text-input
+                    type="text"
+                    name="labelSort-XXNEWKEYXX"
+                    id="labelSort-XXNEWKEYXX"
+                    value=""
+                    class="w-[50px] sorter"
+                    labelText="{{ $tpl->__('label.sortindex') }}"
+                />
+            </div>
+
+            <div class="col-md-2">
+                <x-global::forms.text-input
+                    type="text"
+                    name="label-XXNEWKEYXX"
+                    id="label-XXNEWKEYXX"
+                    value=""
+                    labelText="{{ $tpl->__('label.label') }}"
+                />
+            </div>
 
         </div>
         <div class="col-md-2">

@@ -32,16 +32,26 @@
                                 <h5>2. {{ __("text.twoFA_verify_code") }}</h5>
                                 <p>
                                     <span>{{ __("label.twoFACode_short") }}:</span>
-                                    <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
-                                </p>
+                                    <x-global::forms.text-input
+                                        type="text"
+                                        name="twoFACode"
+                                        id="twoFACode"
+                                        class="input"
+                                    />
+                                    <br />
 
-                                <input type="hidden" name="secret" value="<?php echo $tpl->get("secret"); ?>" />
-                                <br/>
-                                <p class='stdformbutton'>
-                                    <x-global::forms.button type="submit" name="save" id="save" class="button">
-                                        {{ __('buttons.save') }}
-                                    </x-global::forms.button>                                    
-                                </p>
+                                    <input type="hidden" name="secret" value="{{ $tpl->get('secret') }}" />
+                                    <br />
+
+                                    <p class="stdformbutton">
+                                        <x-global::forms.button
+                                            type="submit"
+                                            name="save"
+                                            id="save"
+                                        >
+                                            {{ __("buttons.save") }}
+                                        </x-global::forms.button>
+                                    </p>
                             </form>
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
@@ -51,11 +61,11 @@
                                     <x-global::forms.button type="submit" name="disable" id="disable" class="button">
                                         {{ __('buttons.remove') }}
                                     </x-global::forms.button>
-                                    
+
                                     <x-global::forms.button tag="a" href="{{ BASE_URL }}/users/editOwn">
                                         {{ __('buttons.back') }}
                                     </x-global::forms.button>
-                                    
+
                                 </p>
                             </form>
                         <?php } ?>

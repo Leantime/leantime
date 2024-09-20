@@ -29,7 +29,7 @@ class InitialHeaders
             "base-uri 'self';",
             "script-src 'self' 'unsafe-inline' unpkg.com",
             "font-src 'self'  data:",
-            "img-src * 'self' *.leantime.io *.amazonaws.com data: blob:",
+            "img-src * 'self' *.leantime.io *.amazonaws.com data: blob: marketplace.localhost",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];

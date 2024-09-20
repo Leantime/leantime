@@ -146,11 +146,23 @@ if (isset($currentArticle->id)) {
             </div>
             <input type="hidden" class="articleIcon" value="<?=$currentArticle->data ?>" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="<?=$tpl->escape($currentArticle->title) ?>" placeholder="<?=$tpl->__('input.placeholders.wiki_title') ?>" style="width:80%"/>
-
+            <x-global::forms.text-input 
+                type="text" 
+                name="title" 
+                class="main-title-input w-[80%]" 
+                value="{!! $tpl->escape($currentArticle->title) !!}" 
+                placeholder="{!! $tpl->__('input.placeholders.wiki_title') !!}" 
+                variant="title" 
+            />
+        
             <br />
-            <input type="text" value="<?php $tpl->e($currentArticle->tags); ?>" name="tags" id="tags" />
-
+            <x-global::forms.text-input 
+                type="text" 
+                name="tags" 
+                id="tags" 
+                value="{!! $tpl->escape($currentArticle->tags) !!}" 
+            />
+        
             <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
 
 

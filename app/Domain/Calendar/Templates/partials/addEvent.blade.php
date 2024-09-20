@@ -19,8 +19,8 @@ $values = $tpl->get('values');
         name="description"
         size='md'
         placeholder=""
-        label="{{__('label.title')}}"
-        value="$values['description']"
+        labelText="{{__('label.title')}}"
+        value="{{$values['description']}}"
     />
 
     <x-global::forms.text-input
@@ -29,7 +29,7 @@ $values = $tpl->get('values');
         name="dateFrom"
         size='md'
         placeholder=""
-        label="{{__('label.start_date')}}"
+        labelText="{{__('label.start_date')}}"
         value=""
     />
 
@@ -38,7 +38,7 @@ $values = $tpl->get('values');
         id="event_time_from"
         name="timeFrom"
         placeholder=""
-        label="{{ __('label.start_time') }}"
+        labelText="{{ __('label.start_time') }}"
         value=""
     />
 
@@ -48,7 +48,7 @@ $values = $tpl->get('values');
         name="dateFrom"
         size='md'
         placeholder=""
-        label="{{__('label.end_date')}}"
+        labelText="{{__('label.end_date')}}"
         value=""
     />
 
@@ -58,7 +58,7 @@ $values = $tpl->get('values');
         id="event_time_to"
         name="timeTo"
         placeholder=""
-        label="{{ __('label.end_time') }}"
+        labelText="{{ __('label.end_time') }}"
         value=""
     />
 

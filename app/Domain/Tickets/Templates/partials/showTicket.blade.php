@@ -29,7 +29,15 @@
 
         <div class="row pb-l">
             <div class="col-md-12">
-                <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input " autocomplete="off" style="width:99%;" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_todo')?>"/>
+                <x-global::forms.text-input 
+                    type="text" 
+                    name="headline" 
+                    value="{!! $tpl->escape($ticket->headline) !!}" 
+                    placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}" 
+                    variant="title" 
+                    class="w-[99%]" 
+                    autocomplete="off" 
+                />
             </div>
         </div>
 

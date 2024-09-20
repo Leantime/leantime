@@ -7,6 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
