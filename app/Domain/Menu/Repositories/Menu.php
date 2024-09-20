@@ -278,14 +278,11 @@ namespace Leantime\Domain\Menu\Repositories {
             $language = $this->language;
             $filter = "menuStructures.$menuType";
 
-            $menuCollection = [];
-            $menuCollection[$menuType] = self::dispatch_filter(
+            $this->menuStructures[$menuType] = self::dispatch_filter(
                         $filter,
                         $this->menuStructures[$menuType],
                         ['menuType' => $menuType]
                     );
-
-
 
             $menuStructure = $this->menuStructures[$menuType];
 
