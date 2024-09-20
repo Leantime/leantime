@@ -124,7 +124,7 @@
                             <a href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow['id'] }}" class="btn btn-primary pull-right">
                                 <i class="fa fa-plus"></i> Create New Goal
                             </a>
-                            
+
                             <h5 class='subtitle'><a
                                     href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a>
                             </h5>
@@ -189,8 +189,8 @@
                                                                     <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal" data-item="item_{{ $row['id'] }}">
                                                                         {{ $tpl->e($row['title']) }}
                                                                     </a>
-                                                                    
-                                                                
+
+
                                                                 </h4>
                                                                 <br />
                                                                 <strong>Metric:</strong>
@@ -392,15 +392,8 @@
                                                                 </div>
 
                                                                 <div class="right" style="margin-right:10px;">
-                                                                    <x-global::forms.button
-                                                                    tag="a"
-                                                                    href="{{ BASE_URL }}/goalcanvas/editCanvasComment/{{ $row['id'] }}"
-                                                                    class="goalCanvasModal"
-                                                                    :data-item="'item_' . $row['id']"
-                                                                    :style="$nbcomments == 0 ? 'color: grey;' : ''">
                                                                     <span class="fas fa-comments"></span>
-                                                                </x-global::forms.button>
-                                                                                                                                    <small>{{ $nbcomments }}</small>
+                                                                    <small>{{ $nbcomments }}</small>
                                                                 </div>
                                                             </div>
                                                         </div>

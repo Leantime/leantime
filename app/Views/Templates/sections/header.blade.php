@@ -50,8 +50,8 @@
 <style id="colorSchemeSetter">
     @foreach ($accents as $accent)
         @if($accent !== false)
-           :root {
-        --accent {{ $loop->iteration }}: {{{ $accent }}};
+    :root {
+        --accent{{ $loop->iteration }}: {{{ $accent }}};
     }
     @endif
     @endforeach
