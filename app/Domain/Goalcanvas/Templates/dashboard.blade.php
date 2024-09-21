@@ -48,11 +48,11 @@ foreach ($allCanvas as $canvasRow) {
 
                     <ul class="dropdown-menu canvasSelector">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <li><a href="#/goalcanvas/bigRock">{{ __("links.icon.create_new_board") }}</a></li>
+                            <li><a href="#/goalcanvas/bigRock">{!! __("links.icon.create_new_board") !!}</a></li>
                         @endif
                         <li class="border"></li>
                         @foreach ($allCanvas as $canvasRow)
-                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $tpl->escape($canvasRow['title']) }}</a></li>
+                            <li><a href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">{{ $canvasRow['title'] }}</a></li>
                         @endforeach
                     </ul>
                 </span>
@@ -108,7 +108,7 @@ foreach ($allCanvas as $canvasRow) {
                 <div class="col-md-12">
                     <a href='#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow["id"] }}' class='btn btn-primary pull-right'><i class="fa fa-plus"></i> Create New Goal</a>
 
-                    <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $tpl->escape($canvasRow["title"]) }}</a></h5>
+                    <h5 class='subtitle'><a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow["id"] }}'>{{ $canvasRow["title"] }}</a></h5>
                 </div>
             </div>
             <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
@@ -147,8 +147,8 @@ foreach ($allCanvas as $canvasRow) {
                                                                 &nbsp;&nbsp;&nbsp;
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header">{{ __("subtitles.edit") }}</li>
-                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.edit_canvas_item") }}</a></li>
-                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{{ __("links.delete_canvas_item") }}</a></li>
+                                                                    <li><a href="#/goalcanvas/editCanvasItem/{{ $row["id"] }}" class="goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.edit_canvas_item") !!}</a></li>
+                                                                    <li><a href="#/goalcanvas/delCanvasItem/{{ $row["id"] }}" class="delete goalCanvasModal" data="item_{{ $row["id"] }}">{!! __("links.delete_canvas_item") !!}</a></li>
                                                                 </ul>
                                                             @endif
                                                         </div>
@@ -156,11 +156,11 @@ foreach ($allCanvas as $canvasRow) {
                                                         <h4>
                                                             <strong>Goal:</strong>
                                                             <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal" data="item_{{ $row['id'] }}">
-                                                                {{ $tpl->e($row["title"]) }}
+                                                                {{ $row["title"] }}
                                                             </a>
                                                         </h4>
                                                         <br />
-                                                        <strong>Metric:</strong> {{ $tpl->escape($row["description"]) }}
+                                                        <strong>Metric:</strong> {{$row["description"] }}
                                                         <br /><br />
 
                                                         @php
@@ -210,7 +210,7 @@ foreach ($allCanvas as $canvasRow) {
                                                                     @foreach ($statusLabels as $key => $data)
                                                                         @if ($data['active'] || true)
                                                                             <li class='dropdown-item'>
-                                                                                <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}" data-label='{{ $data["title"] }}' data-value="{{ $row['id'] . "/" . $key }}" id="ticketStatusChange{{ $row['id'] . $key }}">{{ $data['title'] }}</a>
+                                                                                <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}" data-label='{{ $data["title"] }}' data-value="{{ $row['id'] . "/" . $key }}" id="ticketStatusChange{{ $row['id'] . $key }}">{!! $data['title'] !!}</a>
                                                                             </li>
                                                                         @endif
                                                                     @endforeach
@@ -228,7 +228,7 @@ foreach ($allCanvas as $canvasRow) {
                                                                     @foreach ($relatesLabels as $key => $data)
                                                                         @if ($data['active'] || true)
                                                                             <li class='dropdown-item'>
-                                                                                <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}" data-label='{{ $data["title"] }}' data-value="{{ $row['id'] . "/" . $key }}" id="ticketRelatesChange{{ $row['id'] . $key }}">{{ $data['title'] }}</a>
+                                                                                <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}" data-label='{{ $data["title"] }}' data-value="{{ $row['id'] . "/" . $key }}" id="ticketRelatesChange{{ $row['id'] . $key }}">{!! $data['title'] !!}</a>
                                                                             </li>
                                                                         @endif
                                                                     @endforeach
