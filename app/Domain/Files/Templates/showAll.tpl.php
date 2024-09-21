@@ -5,10 +5,6 @@ foreach ($__data as $var => $val) {
 
 ?>
 
-
-
-
-
 <div id="fileManager">
     <div>
 
