@@ -1,6 +1,5 @@
 leantime.wikiController = (function () {
 
-
     //Functions
     var initTree = function (id, selectedId) {
 
@@ -21,13 +20,19 @@ leantime.wikiController = (function () {
                 },
             },
             "plugins" : ["wholerow", "types", "state"]
-        }).bind("loaded.jstree", function (e, data) {
-            jQuery(id).jstree("select_node", "treenode_" + selectedId + "", true);
         });
+
+        jQuery(id).on("ready.jstree", function (e, data) {
+
+            jQuery(this).jstree("deselect_all");
+            jQuery(this).jstree("select_node", "treenode_" + selectedId + "", true);
+            jQuery(this).jstree("save_state");
+
+        })
 
         jQuery(id).on('activate_node.jstree', function (e, data) {
 
-            jQuery(id).jstree("save_state");
+            jQuery(this).jstree("save_state");
 
             if (data == undefined || data.node == undefined || data.node.id == undefined) {
                 return;
@@ -40,37 +45,8 @@ leantime.wikiController = (function () {
 
     }
 
-    var wikiModal = function () {
-
-        var wikiModalConfig = {
-            sizes: {
-                minW: 400,
-                minH: 350
-            },
-            resizable: true,
-            autoSizable: true,
-            callbacks: {
-                afterShowCont: function () {
-
-                    jQuery(".formModal").nyroModal(wikiModalConfig);
-                },
-                beforeClose: function () {
-                    location.reload();
-                }
-
-
-            },
-            titleFromIframe: true
-        };
-        jQuery(".wikiModal").nyroModal(wikiModalConfig);
-
-    }
-
-
     // Make public what you want to have public, everything else is private
     return {
         initTree: initTree,
-        wikiModal:wikiModal,
-
     };
 })();
