@@ -529,6 +529,33 @@ class Timesheets extends Repository
         return $returnValues;
     }
 
+    public function getTimesheetsByTicket($id) {
+
+        $query = "SELECT
+                YEAR(zp_timesheets.workDate) AS year,
+                zp_timesheets.workdate,
+                DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
+                DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
+                DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
+                SUM(ROUND(zp_timesheets.hours, 2)) AS sum
+            FROM
+                zp_timesheets
+            WHERE
+                zp_timesheets.ticketId = :ticketId
+                AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
+            GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
+            ORDER BY utc";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $id);
+
+        $values = $call->fetchAll();
+
+        return $values;
+    }
+
     /**
      * isClocked - Checks to see whether a user is clocked in
      *
