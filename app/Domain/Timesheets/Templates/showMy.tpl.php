@@ -367,7 +367,9 @@ jQuery(document).ready(function(){
                                 <div class="form-group" id="ticketSelect">
                                     <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
-                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) { ?>
+                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) {
+                                            if(in_array($ticketRow['id'],$tpl->get('existingTicketIds'))) continue;
+                                            ?>
                                             <?php echo sprintf(
                                                 $tpl->dispatchTplFilter(
                                                     'todo_format',
