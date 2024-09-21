@@ -277,7 +277,7 @@ class Calendar
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
 
         if(!$calendarEvents) {
-            throw new Exception("Calendar could not be retrieved");
+            throw new \Exception("Calendar could not be retrieved");
         }
 
         $eventObjects = [];

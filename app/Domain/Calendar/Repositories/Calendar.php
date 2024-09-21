@@ -13,7 +13,6 @@ use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Repositories\Users;
 use PDO;
-use PHPUnit\Exception;
 
 /**
  *
