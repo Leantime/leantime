@@ -436,12 +436,13 @@ class Calendar
 
     public function getICalUrl() {
 
-        if(empty(session("userdata.id"))) {
-            throw new \Exception("Session id is not set.");
+        $userId = -1;
+        if(!empty(session("userdata.id"))) {
+            $userId = session("userdata.id");
         }
 
-        $userHash = hash('sha1', session("userdata.id") . $this->config->sessionPassword);
-        $icalHash = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".icalSecret");
+        $userHash = hash('sha1', $userId . $this->config->sessionPassword);
+        $icalHash = $this->settingsRepo->getSetting("usersettings." . $userId. ".icalSecret");
 
         if(empty($icalHash)) {
             throw new \Exception("User has no ical hash");
