@@ -27,7 +27,7 @@ class InitialHeaders
             "default-src 'self' 'unsafe-inline'",
             "base-uri 'self';",
             "script-src 'self' 'unsafe-inline' unpkg.com blob:",
-            "font-src 'self'  data:",
+            "font-src 'self' data: unpkg.com",
             "img-src 'self' *.leantime.io *.amazonaws.com data: blob: marketplace.localhost",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
