@@ -304,7 +304,9 @@ $state = $tpl->get('state');
                         <?php foreach ($tpl->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
                                 <div class="ticketBox">
-                                    <div class="row statusList" id="todostatus-<?=$key?>">
+
+                                    <div class="row statusList" id="todostatus-<?=$key ?>">
+
                                         <input type="hidden" name="labelKeys[]" id="labelKey-<?=$key?>" class='labelKey' value="<?=$key?>"/>
                                         <div class="sortHandle">
                                             <br />
@@ -315,8 +317,9 @@ $state = $tpl->get('state');
                                             <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$tpl->escape($ticketStatus['sortKey']);?>" style="width:50px;"/>
                                         </div>
                                         <div class="col-md-2">
+
                                             <label><?=$tpl->__("label.label") ?></label>
-                                            <input type="text" name="label-<?=$key?>" id="label-<?=$key?>" value="<?=$tpl->escape($ticketStatus['name']);?>" />
+                                            <input type="text" name="label-<?=$key?>" <?=$key==-1?'readonly':''?> id="label-<?=$key?>" value="<?=$tpl->escape($ticketStatus['name']);?>" />
 
                                         </div>
                                         <div class="col-md-2">
@@ -354,9 +357,15 @@ $state = $tpl->get('state');
                                         </div>
                                         <div class="remove">
                                             <br />
-                                            <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
+                                            <?php if($key != -1){ ?>
+                                                <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?=$key?>)" class="delete"><span class="fa fa-trash"></span></a>
+                                            <?php } ?>
                                         </div>
                                     </div>
+
+                                    <?php if ($key == -1) { ?>
+                                        <em>* the archive status is protected cannot be renamed or removed.</em>
+                                    <?php } ?>
                                 </div>
                             </li>
 

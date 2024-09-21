@@ -12,6 +12,8 @@ namespace Leantime\Domain\Notifications\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Notifications
     {
@@ -24,7 +26,9 @@ namespace Leantime\Domain\Notifications\Services {
          * __construct - get database connection
          *
          * @access public
-         */
+         *
+     * @api
+     */
         public function __construct(
             DbCore $db,
             NotificationRepository $notificationsRepo,
@@ -44,7 +48,9 @@ namespace Leantime\Domain\Notifications\Services {
          * @param $limitEnd
          * @param $filterOptions
          * @return array|false
-         */
+         *
+     * @api
+     */
         /**
          * @param $userId
          * @param int    $showNewOnly
@@ -52,7 +58,9 @@ namespace Leantime\Domain\Notifications\Services {
          * @param int    $limitEnd
          * @param array  $filterOptions
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
         {
 
@@ -63,7 +71,9 @@ namespace Leantime\Domain\Notifications\Services {
         /**
          * @param array $notifications
          * @return bool|null
-         */
+         *
+     * @api
+     */
         public function addNotifications(array $notifications): ?bool
         {
 
@@ -74,12 +84,16 @@ namespace Leantime\Domain\Notifications\Services {
          * @param $id
          * @param $userId
          * @return bool
-         */
+         *
+     * @api
+     */
         /**
          * @param $id
          * @param $userId
          * @return bool
-         */
+         *
+     * @api
+     */
         public function markNotificationRead($id, $userId): bool
         {
 
@@ -98,7 +112,9 @@ namespace Leantime\Domain\Notifications\Services {
          * @param string $url
          * @return void
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
         {
 

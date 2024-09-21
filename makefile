@@ -52,7 +52,6 @@ package: clean build
 
 	# Remove DeepL.com and mltranslate engine (not needed in production)
 	rm -rf $(TARGET_DIR)/vendor/mpdf/mpdf/ttfonts
-	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/src/fonts
 	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/tests/fonts
 
 	# Remove local configuration, if any
@@ -87,9 +86,12 @@ gendocs: # Requires github CLI (brew install gh)
 	git clone $(DOCS_REPO) $(DOCS_DIR)
 
 	# Generate the docs
-	phpDocumentor
+	phpDocumentor --config=phpdoc.xml
+	phpDocumentor --config=phpdoc-api.xml
+
 	php vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
 
+pushdocs:
 	# create pull request
 	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)"
 	cd $(DOCS_DIR) && git add -A
@@ -120,15 +122,15 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
 codesniffer:
-	./vendor/squizlabs/php_codesniffer/bin/phpcs app
+	./vendor/squizlabs/php_codesniffer/bin/phpcs app -d memory_limit=1048M
 
 codesniffer-fix:
-	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
+	./vendor/squizlabs/php_codesniffer/bin/phpcbf app -d memory_limit=1048M
 
 get-version:
 	@echo $(VERSION)
 
-phpstan: build-dev
+phpstan:
 	./vendor/bin/phpstan analyse --memory-limit 512M
 
 update-carbon-macros:

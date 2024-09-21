@@ -187,7 +187,12 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             //Override the state values that are in the db
             if ($values !== false) {
+
                 $statusList = array();
+
+                //Archive is required and protected.
+                //Adding the original version back in case folks removed it
+                $statusList[-1] = $this->statusListSeed[-1];
 
                 foreach (unserialize($values['value']) as $key => $status) {
                     if (is_int($key)) {
@@ -197,7 +202,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                         if (!is_array($status)) {
                             $statusList[$key] = $this->statusListSeed[$key];
 
-                            if (is_array($statusList[$key]) && isset($statusList[$key]["name"])) {
+                            if (is_array($statusList[$key]) && isset($statusList[$key]["name"]) && $key !== -1) {
                                 $statusList[$key]["name"] = $status;
                             }
                         } else {
@@ -380,9 +385,9 @@ namespace Leantime\Domain\Tickets\Repositories {
          * @param null   $limit
          * @return array | bool
          */
-        public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null): bool|array
+        public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true): bool|array
         {
-            $query = <<<SQL
+            $query = "
                 SELECT
                     zp_tickets.id,
                     zp_tickets.headline,
@@ -395,7 +400,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     zp_tickets.dateToFinish,
                     zp_tickets.projectId,
                     zp_tickets.priority,
-                    IF(zp_tickets.type <> "", zp_tickets.type, "task") AS type,
+                    IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
                     zp_tickets.status,
                     zp_tickets.tags,
                     zp_tickets.editorId,
@@ -417,10 +422,23 @@ namespace Leantime\Domain\Tickets\Repositories {
                     t2.lastname AS editorLastname,
                     t2.profileId AS editorProfileId,
                     milestone.headline AS milestoneHeadline,
-                    IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
-                    (SELECT COUNT(*) FROM zp_comment WHERE zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket') AS commentCount,
-                    (SELECT COUNT(*) FROM zp_file WHERE zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket') AS fileCount,
-                    (SELECT COUNT(*) FROM zp_tickets AS subtasks WHERE zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0) AS subtaskCount,
+                    IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,";
+
+                if($includeCounts) {
+                    $query .= "
+                        (SELECT COUNT(*) FROM zp_comment WHERE zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket') AS commentCount,
+                        (SELECT COUNT(*) FROM zp_file WHERE zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket') AS fileCount,
+                        (SELECT COUNT(*) FROM zp_tickets AS subtasks WHERE zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0) AS subtaskCount,
+                    ";
+                }else{
+                    $query .= "
+                        0 AS commentCount,
+                        0 AS fileCount,
+                        0 AS subtaskCount,
+                    ";
+                }
+
+                $query .= "
                     parent.headline AS parentHeadline
                 FROM
                     zp_tickets
@@ -438,7 +456,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
                     OR (requestor.role >= 40)
                 )
-            SQL;
+            ";
 
             if (isset($searchCriteria["excludeType"]) && $searchCriteria["excludeType"]  != "") {
                 $query .= " AND zp_tickets.type <> :excludeType";
@@ -1723,21 +1741,6 @@ namespace Leantime\Domain\Tickets\Repositories {
         }
 
 
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         /**
          * @param $id
          * @param $params

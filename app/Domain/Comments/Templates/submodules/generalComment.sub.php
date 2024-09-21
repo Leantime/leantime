@@ -164,7 +164,9 @@ if (str_contains($formUrl, '?delComment=')) {
 
 <script type='text/javascript'>
 
-    leantime.editorController.initSimpleEditor();
+    jQuery(document).ready(function() {
+        leantime.editorController.initSimpleEditor();
+    });
 
     function toggleCommentBoxes(id, commentId, formHash,editComment = false, isReply = false) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>

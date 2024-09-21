@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Users\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Log\Logger;
+    use Illuminate\Support\Facades\Log;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
@@ -134,7 +136,7 @@ namespace Leantime\Domain\Users\Repositories {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
-            $stmn->bindValue(':sessionSecret', $this->config->sessionpassword, PDO::PARAM_STR);
+            $stmn->bindValue(':sessionSecret', $this->config->sessionPassword, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -718,18 +720,27 @@ namespace Leantime\Domain\Users\Repositories {
                 $stmn->closeCursor();
             }
 
-            $avatar = (new InitialAvatar())
-                ->fontName("Verdana")
-                ->background('#00a887')
-                ->color("#fff");
+            try {
 
-            if (empty($value)) {
-                return $avatar->name("👻")->generateSvg();
+                $avatar = (new InitialAvatar())
+                    ->fontName("Verdana")
+                    ->background('#00a887')
+                    ->color("#fff");
+
+                if (empty($value)) {
+                    return $avatar->name("👻")->generateSvg();
+                }
+
+            } catch (\Exception $e) {
+                Log::error("Could not generate user avatar.");
+                Log::error($e);
+                return array("filename" => "not_found", "type" => "uploaded");
             }
 
             $name = $value['firstname'] . " " . $value['lastname'];
 
             if (empty($value['profileId'])) {
+
                 /** @var Initials $initialsClass */
                 $initialsClass = app()->make(Initials::class);
                 $initialsClass->name($name);

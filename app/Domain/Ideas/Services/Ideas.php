@@ -13,6 +13,13 @@ namespace Leantime\Domain\Ideas\Services {
             $this->ideasRepository = $ideasRepository;
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
         public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
         {
             $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);
@@ -24,6 +31,13 @@ namespace Leantime\Domain\Ideas\Services {
             return $ideas;
         }
 
+        /**
+         * @param ?int $projectId
+         * @param ?int $board
+         * @return array
+         *
+         * @api
+         */
         public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
         {
             $ideas = $this->ideasRepository->getAllIdeas($projectId, $board);

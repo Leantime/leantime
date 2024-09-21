@@ -36,10 +36,26 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
+
+
+
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
+
+                    try{
+
+                        $this->ticketService->canDelete($id);
+
+                    }catch(\Exception $e) {
+
+                        $this->tpl->assign("error", $e->getMessage());
+                        return $this->tpl->displayPartial('tickets.delTicket');
+                    }
+
+                    $this->tpl->assign("error", "");
                     $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
                     return $this->tpl->displayPartial('tickets.delTicket');
+
                 } else {
                     return $this->tpl->display('errors.error404', responseCode: 404);
                 }

@@ -16,20 +16,20 @@ leantime.modals = (function () {
             autoSizable: true,
             callbacks: {
                 beforePostSubmit: function () {
+
                     jQuery(".showDialogOnLoad").show();
 
                     if(tinymce.editors.length>0) {
 
-                        jQuery(".simpleEditor").each(function() {
-                            jQuery(this).tinymce().save();
-                            jQuery(this).tinymce().remove();
+                        tinymce.editors.forEach(function(editor) {
+                            editor.save();
+                            editor.destroy();
+                            editor.remove();
                         });
 
-                        jQuery(".complexEditor").each(function() {
-                            jQuery(this).tinymce().save();
-                            jQuery(this).tinymce().remove();
-                        });
+                        tinymce.EditorManager.remove();
                     }
+
                 },
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
@@ -66,9 +66,12 @@ leantime.modals = (function () {
             modalOptions.sizes.minH = 1800;
         }
 
+        //Ensure we have no trailing slash at the end.
+        var baseUrl = leantime.appUrl.replace(/\/$/, '');
+
         var urlParts = url.split("/");
         if(urlParts.length>2 && urlParts[1] !== "tab") {
-            jQuery.nmManual(leantime.appUrl+"/"+url, modalOptions);
+            jQuery.nmManual(baseUrl+""+url, modalOptions);
         }
     }
 

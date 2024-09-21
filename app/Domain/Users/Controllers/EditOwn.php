@@ -327,7 +327,7 @@ namespace Leantime\Domain\Users\Controllers {
          * Returns list of supported varying date-time formats.
          * @link https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
          *
-         * @return [<string,string>] Format of ID => date-time string
+         * @return array<string> Format of ID => date-time string
          */
         private function getSupportedDateTimeFormats(): array
         {

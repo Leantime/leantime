@@ -79,6 +79,8 @@ class Application extends Container
      */
     protected $bootedCallbacks = [];
 
+    protected $isRunningInConsole = null;
+
     /**
      * Constructor method for the class.
      *
@@ -241,6 +243,8 @@ class Application extends Container
         $this->register(new \Leantime\Core\Providers\RateLimiter($this));
         $this->register(new \Leantime\Core\Providers\Db($this));
         $this->register(new \Leantime\Core\Providers\Language($this));
+
+        $this->register(new \Leantime\Core\Providers\Theme($this));
     }
 
     /**
@@ -721,6 +725,19 @@ class Application extends Container
     }
 
     public function runningInConsole() {
-        return defined('LEAN_CLI') && LEAN_CLI;
+
+        if ($this->isRunningInConsole === null) {
+
+            if(defined('LEAN_CLI') && LEAN_CLI) {
+                $this->isRunningInConsole = true;
+            }
+
+            if(\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg') {
+                $this->isRunningInConsole = true;
+            }
+        }
+
+        return $this->isRunningInConsole;
+
     }
 }

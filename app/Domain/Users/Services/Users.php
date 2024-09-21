@@ -17,6 +17,8 @@ namespace Leantime\Domain\Users\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Users
     {
@@ -34,7 +36,8 @@ namespace Leantime\Domain\Users\Services {
          * @param ProjectRepository $projectRepository
          * @param ClientRepository  $clientRepo
          * @param AuthService       $authService
-         */
+         *
+     */
         public function __construct(
             UserRepository $userRepo,
             LanguageCore $language,
@@ -55,7 +58,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $id
          * @return string[]|SVG
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function getProfilePicture($id): array|SVG
         {
             return $this->userRepo->getProfilePicture($id);
@@ -66,7 +71,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $values
          * @param $id
          * @return bool
-         */
+         *
+     * @api
+     */
         public function editUser($values, $id): bool
         {
 
@@ -80,7 +87,9 @@ namespace Leantime\Domain\Users\Services {
          * @param bool $activeOnly
          * @param bool $includeApi
          * @return int
-         */
+         *
+     * @api
+     */
         public function getNumberOfUsers(bool $activeOnly = false, bool $includeApi = true): int
         {
             $filters = [];
@@ -99,7 +108,9 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param false $activeOnly
          * @return mixed
-         */
+         *
+     * @api
+     */
         public function getAll(bool $activeOnly = false): mixed
         {
             $users =  $this->userRepo->getAll($activeOnly);
@@ -112,7 +123,9 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param $id
          * @return array|bool
-         */
+         *
+     * @api
+     */
         public function getUser($id): array|bool
         {
             return $this->userRepo->getUser($id);
@@ -121,7 +134,9 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param $email
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getUserByEmail($email, $status = "a"): false|array
         {
             return $this->userRepo->getUserByEmail($email, $status);
@@ -130,7 +145,9 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param $source
          * @return array|false
-         */
+         *
+     * @api
+     */
         public function getAllBySource($source): false|array
         {
             return $this->userRepo->getAllBySource($source);
@@ -144,7 +161,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $id
          * @return void
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function setProfilePicture($photo, $id): void
         {
             $this->userRepo->setPicture($photo, $id);
@@ -155,7 +174,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $setting
          * @param $value
          * @return bool
-         */
+         *
+     * @api
+     */
         public function updateUserSettings($category, $setting, $value): bool
         {
 
@@ -180,7 +201,9 @@ namespace Leantime\Domain\Users\Services {
          * @access public
          * @param  string $password The string to be checked
          * @return bool returns true if password meets requirements
-         */
+         *
+     * @api
+     */
         public function checkPasswordStrength(string $password): bool
         {
 
@@ -209,7 +232,9 @@ namespace Leantime\Domain\Users\Services {
          * @param array $values basic user values
          * @return bool|int returns new user id on success, false on failure
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function createUserInvite(array $values): bool|int
         {
 
@@ -266,7 +291,9 @@ namespace Leantime\Domain\Users\Services {
          * @access public
          * @param  array $values basic user values
          * @return bool|int returns new user id on success, false on failure
-         */
+         *
+     * @api
+     */
         public function addUser(array $values): bool|int
         {
             $values = array(
@@ -302,7 +329,9 @@ namespace Leantime\Domain\Users\Services {
          * @param string     $username  username
          * @param int|string $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
          * @return bool returns true or false
-         */
+         *
+     * @api
+     */
         public function usernameExist(string $username, int|string $notUserId = ''): bool
         {
             return $this->userRepo->usernameExist($username, $notUserId);
@@ -318,7 +347,9 @@ namespace Leantime\Domain\Users\Services {
          * @param int $projectId   project id
          * @return array returns array of users
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
         {
             $users = array();
@@ -360,7 +391,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $values
          * @param $id
          * @return void
-         */
+         *
+     * @api
+     */
         public function editOwn($values, $id): void
         {
             $this->userRepo->editOwn($values, $id);
@@ -378,7 +411,9 @@ namespace Leantime\Domain\Users\Services {
          * @param int $id The id of the user to delete.
          * @return bool True if the user was deleted successfully, false otherwise.
          * @throws \Exception If the user is not authorized to delete the user.
-         */
+         *
+     * @api
+     */
         public function deleteUser(int $id): bool
         {
 

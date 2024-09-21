@@ -78,17 +78,23 @@ $projects = $tpl->get('relations');
                     <?php
                     $currentClient = '';
                     $i = 0;
+                    $containerOpen = false;
                     foreach ($tpl->get('allProjects') as $row) {
+
                         if ($currentClient != $row['clientName']) {
-                            if ($i > 0) {
+                            if ($i > 0 && $containerOpen) {
                                 echo"</div>";
+                                $containerOpen = false;
                             }
+
                             echo "<h3 id='accordion_link_" . $i . "'>
-                        <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
-                        </h3>
-                        <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
-                            $currentClient = $row['clientName'];
+                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
+                            </h3>
+                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
+                                $currentClient = $row['clientName'];
+                                $containerOpen = true;
                         } ?>
+
                         <div class="item">
                             <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
                                 <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
@@ -97,7 +103,7 @@ $projects = $tpl->get('relations');
                             /><label for="project_<?php echo $row['id'] ?>"><?php $tpl->e($row['name']); ?></label>
                             <div class="clearall"></div>
                         </div>
-                                            <?php $i++; ?>
+                        <?php $i++; ?>
                     <?php } ?>
 
 

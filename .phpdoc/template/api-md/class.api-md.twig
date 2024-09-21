@@ -1,0 +1,57 @@
+{% import "include/macros.twig" as macros %}
+{% block content %}
+---
+title: {{ node.FullyQualifiedStructuralElementName }}
+{% include 'config/frontmatter.twig' %}
+---
+
+# {{ node.name }}
+
+{{ node.summary|raw }}
+
+{{ node.description|raw }}
+`{{ macros.mdEndpointName(node.FullyQualifiedStructuralElementName) }}`
+{% if node.deprecated %}* **Warning:** this class is **deprecated**. This means that this class will likely be removed in a future version.
+{% endif %}
+
+{% if node.tags.see is not empty or node.tags.link is not empty %}
+**See Also:**
+
+{% for see in node.tags.see %}
+* {{ see.reference }} {% if see.description %}- {{ see.description|raw }}{% endif %}
+{% endfor %}
+
+{% for link in node.tags.link %}
+* {{ link.link }} {% if link.description and link.description != link.link %}- {{ link.description|raw }}{% endif %}
+{% endfor %}
+
+{% endif %}{# node.tags.see || node.tags.link #}
+
+{# Check methods #}
+{% if node.methods|length > 0 %}
+## Available Methods
+{% for method in node.methods %}
+{% if  method.tags.api|length > 0 %}
+### `{{ macros.mdEndpointName(node.FullyQualifiedStructuralElementName, method.name) }}`
+
+{{ method.summary|raw }}
+
+{# Method signature #}
+```json
+{
+    "method": "{{ macros.mdEndpointName(node.FullyQualifiedStructuralElementName, method.name) }}",
+    "jsonrpc": "2.0",
+    "id": 1,
+    "params": {
+{% for argument in method.arguments %}
+        "{{ argument.name }}": {{ argument.type ? argument.type|raw }},{{ "\n" }}
+{%- endfor %}
+    }
+}
+```
+{% include 'method.api-md.twig' %}
+{% endif %}{# if api tag #}
+{% endfor %}
+{% endif %}{# if methods #}
+
+{% endblock %}

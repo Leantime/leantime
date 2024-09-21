@@ -12,5 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install Dependencies
+      run: make build-dev
+      
     - name: Run Tests
       run: make phpstan

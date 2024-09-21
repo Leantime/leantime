@@ -56,23 +56,8 @@ namespace Leantime\Domain\Modulemanager\Services {
         }
 
         /**
-         * @param $module
-         * @return bool
-         */
-        public static function isModuleEnabled($module): bool
-        {
-            if (isset(self::$modules[$module])) {
-                if (self::$modules[$module]['enabled'] === true) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Checks if a module is available.
-         * In Progress: This method is a stub to hook into via filters.
+         * Checks if a module is available and enabled.
+         * This also checks plugins and whether they are installed and enabled
          *
          * @param string $module The name of the module to check availability for.
          *
@@ -81,7 +66,6 @@ namespace Leantime\Domain\Modulemanager\Services {
         public function isModuleAvailable(string $module): bool
         {
             $available = false;
-
 
             $plugins = $this->pluginService->getEnabledPlugins();
 
@@ -94,7 +78,6 @@ namespace Leantime\Domain\Modulemanager\Services {
             }
 
             $available = static::dispatch_filter("moduleAvailability", $available, ["module" => $module]);
-
 
             return $available;
         }

@@ -10,6 +10,8 @@ namespace Leantime\Domain\Canvas\Services {
 
     /**
      *
+     *
+     * @api
      */
     class Canvas
     {
@@ -23,7 +25,9 @@ namespace Leantime\Domain\Canvas\Services {
          * @param int    $authorId
          * @return bool|int False if import failed and the id of the newly created canvas otherwise
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
         {
 
@@ -193,7 +197,9 @@ namespace Leantime\Domain\Canvas\Services {
          * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function getBoardProgress(string $projectId = '', array $boards = array()): array
         {
 
@@ -267,7 +273,9 @@ namespace Leantime\Domain\Canvas\Services {
          * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          * @throws BindingResolutionException
-         */
+         *
+     * @api
+     */
         public function getLastUpdatedCanvas(string $projectId = '', array $boards = array()): array
         {
             $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
