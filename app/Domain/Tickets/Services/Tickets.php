@@ -1787,6 +1787,24 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
+        public function canDelete($id) {
+
+            $ticket = $this->getTicket($id);
+
+            if(empty($ticket)) {
+                throw new \Exception ("Task does not exist");
+            }
+
+            $hasLoggedHours = $this->timesheetsRepo->getTimesheetsByTicket($id);
+
+            if($hasLoggedHours) {
+                throw new \Exception ("Task has timesheets attached, delete all timesheets first or consider archiving the task");
+            }
+
+            return true;
+
+        }
+
         /**
          * @param $id
          * @return bool|string[]
