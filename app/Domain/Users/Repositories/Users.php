@@ -136,7 +136,7 @@ namespace Leantime\Domain\Users\Repositories {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':hash', $hash, PDO::PARAM_STR);
-            $stmn->bindValue(':sessionSecret', $this->config->sessionpassword, PDO::PARAM_STR);
+            $stmn->bindValue(':sessionSecret', $this->config->sessionPassword, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();

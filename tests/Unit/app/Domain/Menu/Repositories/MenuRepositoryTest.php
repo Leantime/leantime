@@ -11,6 +11,8 @@ use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 
+
+
 class MenuRepositoryTest extends Unit
 {
 
@@ -44,6 +46,7 @@ class MenuRepositoryTest extends Unit
             config:$config,
             ticketsService:$ticketService
         );
+
 
     }
 
