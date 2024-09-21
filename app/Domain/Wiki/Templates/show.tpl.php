@@ -290,8 +290,6 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
         leantime.wikiController.initTree("#article-toc-wrapper", <?=$currentArticle->id ?>);
        <?php } ?>
 
-       leantime.wikiController.wikiModal();
-
        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
         leantime.commentsController.enableCommenterForms();
        <?php }?>

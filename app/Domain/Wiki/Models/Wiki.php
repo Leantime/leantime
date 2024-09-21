@@ -12,6 +12,7 @@ namespace Leantime\Domain\Wiki\Models {
         public $author;
         public $created;
         public $projectId;
+        public $category;
 
         public function __construct()
         {

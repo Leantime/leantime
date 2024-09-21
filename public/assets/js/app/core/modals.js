@@ -20,11 +20,14 @@ leantime.modals = (function () {
                     jQuery(".showDialogOnLoad").show();
 
                     if(tinymce.editors.length>0) {
+
                         tinymce.editors.forEach(function(editor) {
                             editor.save();
                             editor.destroy();
                             editor.remove();
                         });
+
+                        tinymce.EditorManager.remove();
                     }
 
                 },

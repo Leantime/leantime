@@ -43,6 +43,9 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success", "article_deleted");
 
+                session()->forget("lastArticle");
+                session()->forget("currentWiki");
+
                 return Frontcontroller::redirect(BASE_URL . "/wiki/show");
             }
 
