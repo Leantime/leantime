@@ -11,7 +11,6 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use phpDocumentor\Reflection\Exception;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
