@@ -126,7 +126,7 @@ class ShowMy extends Controller
                     $ticketId = (int)$postData["ticketId"];
                     $kind = $postData["kindId"];
 
-                    if($ticketId == 0){
+                    if($ticketId == 0 && $hours > 0){
                         $this->tpl->setNotification("Task ID is required for new entries", "error", "save_timesheet");
                         return;
                     }
