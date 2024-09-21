@@ -60,8 +60,9 @@ class Timesheets
      *
      * @api
      */
-    public function punchIn(int $ticketId): mixed
+    public function punchIn(int|string $ticketId): mixed
     {
+        $ticketId = (int)$ticketId;
         return $this->timesheetsRepo->punchIn($ticketId);
     }
 
@@ -72,8 +73,9 @@ class Timesheets
      *
      * @api
      */
-    public function punchOut(int $ticketId): float|false|int
+    public function punchOut(int|string $ticketId): float|false|int
     {
+        $ticketId = (int)$ticketId;
         return $this->timesheetsRepo->punchOut($ticketId);
     }
 
