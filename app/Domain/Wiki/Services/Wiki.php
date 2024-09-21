@@ -160,25 +160,6 @@ namespace Leantime\Domain\Wiki\Services {
             return $this->wikiRepository->updateArticle($article);
         }
 
-        public function getDefaultWiki($projectId) {
-
-            //Clear cache
-            $this->clearWikiCache();
-
-            $wikis = $this->wikiService->getAllProjectWikis($projectId);
-
-            if($wikis)
-
-            if ($wiki) {
-                //Set the session
-                session(["currentWiki" => $id]);
-                return true;
-            }
-
-            return false;
-
-        }
-
         public function setCurrentWiki($id) {
 
             //Clear cache

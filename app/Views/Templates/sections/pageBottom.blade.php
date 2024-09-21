@@ -8,15 +8,6 @@
     </script>
 @endif
 
-@if ($loggedIn)
-    <script>
-        //5 min keep alive timer
-        setInterval(function(){
-            jQuery.get(leantime.appUrl+'/auth/keepAlive');
-        }, 300000);
-    </script>
-@endif
-
 <script src="{!! BASE_URL !!}/dist/js/compiled-footer.{!! $version !!}.min.js"></script>
 
 @dispatchEvent('beforeBodyClose')

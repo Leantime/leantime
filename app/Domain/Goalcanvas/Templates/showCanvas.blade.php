@@ -114,7 +114,7 @@
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
-                                @if ($filter['status'] == 'all')
+                                @if (($filter['status'] ?? '') == 'all')
                                     <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="fas fa-filter"></i>
                                         {!! __('status.all') !!} {!! __('links.view') !!}</button>
                                 @else

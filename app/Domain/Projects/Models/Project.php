@@ -31,6 +31,8 @@ namespace Leantime\Domain\Projects\Models {
 
         public $status;
 
+        public $clientName;
+
 
 
         public function __construct()

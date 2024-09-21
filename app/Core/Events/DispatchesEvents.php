@@ -10,7 +10,6 @@ namespace Leantime\Core\Events {
      */
     trait DispatchesEvents
     {
-        private static string $event_context = '';
 
         /**
          * dispatches an event with context
@@ -42,7 +41,7 @@ namespace Leantime\Core\Events {
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {
-            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, DispatchesEvents::get_event_context($function));
         }
 
         /**
@@ -53,17 +52,16 @@ namespace Leantime\Core\Events {
          * @param $function
          * @return string
          */
-        protected static function get_event_context($function): string
+        public static function get_event_context($function): string
         {
-            if (empty(self::$event_context)) {
-                self::$event_context = static::set_class_context();
-            }
+
+            $event_context = DispatchesEvents::set_class_context();
 
             $function = !empty($function) && is_string($function) && !is_numeric($function)
                 ? $function
-                : static::get_function_context(is_numeric($function) ? (int) $function : null);
+                : DispatchesEvents::get_function_context(is_numeric($function) ? (int) $function : null);
 
-            return self::$event_context . '.' . $function;
+            return $event_context . '.' . $function;
         }
 
         /**
@@ -74,7 +72,7 @@ namespace Leantime\Core\Events {
          *
          * @return string
          */
-        private static function set_class_context(): string
+        public static function set_class_context(): string
         {
             return str_replace('\\', '.', strtolower(get_called_class()));
         }
@@ -89,7 +87,7 @@ namespace Leantime\Core\Events {
          * @param ?int $functionInt
          * @return string
          */
-        private static function get_function_context(?int $functionInt = null): string
+        public static function get_function_context(?int $functionInt = null): string
         {
             $tracePointer = is_int($functionInt) ? $functionInt : 3;
 
