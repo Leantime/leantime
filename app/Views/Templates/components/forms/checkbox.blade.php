@@ -1,6 +1,6 @@
 @props ([
     'labelText' => '',
-    'labelPosition' => 'left',
+    'labelPosition' => 'left', //left, right
     'size' => '',
     'state' => ''
 ])
