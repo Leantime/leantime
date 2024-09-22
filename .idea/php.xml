@@ -252,43 +252,17 @@
       <path value="$PROJECT_DIR$/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/vendor/maximebf/debugbar" />
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/contracts" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/pipeline" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/filesystem" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/bus" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/support" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/container" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/view" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/macroable" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/collections" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/events" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/conditionable" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
-      <path value="$PROJECT_DIR$/vendor/php-http/message-factory" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/session" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/http" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/console" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/cache" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/encryption" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/log" />
-      <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
-      <path value="$PROJECT_DIR$/vendor/php-http/client-common" />
-      <path value="$PROJECT_DIR$/vendor/clue/stream-filter" />
-      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
-      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
-      <path value="$PROJECT_DIR$/vendor/php-http/message" />
-      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
-      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
-      <path value="$PROJECT_DIR$/vendor/leantime/leantime-documentor" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
     </include_path>
+  </component>
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="leantime.localhost" id="822abf0f-3bb4-4146-b5e4-26439962d6a2" name="Mamp Localhost" port="443">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$" remote-root="/var/www/html" />
+        </path_mappings>
+      </server>
+    </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
@@ -306,8 +280,8 @@
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Billing/vendor/autoload.php" />
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Sentry/vendor/autoload.php" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Billing/vendor/autoload.php" />
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
     </phpunit_settings>
   </component>
