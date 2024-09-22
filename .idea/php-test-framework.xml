@@ -16,8 +16,6 @@
       <tool tool_name="Codeception">
         <cache>
           <versions>
-            <info id="$PROJECT_DIR$/vendor/codeception/codeception/codecept" version="5.0.11" />
-            <info id="Local" version="5.0.11" />
             <info id="Local/Volumes/Source/leantime-oss/vendor/codeception/codeception/codecept" version="5.1.2" />
           </versions>
         </cache>

@@ -49,10 +49,15 @@ class ExternalCal extends Controller
         } else {
             $cal = $this->calendarRepo->getExternalCalendar($calId, session('userdata.id'));
 
-            if (isset($cal['url'])) {
-                $content = $this->loadIcalUrl($cal['url']);
-                session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
-                session(['calendarCache.'.$calId.'content' => $content]);
+            if (isset($cal["url"])) {
+
+                try {
+                    $content = $this->loadIcalUrl($cal["url"]);
+                    session(["calendarCache." . $calId . ".lastUpdate" => time()]);
+                    session(["calendarCache." . $calId . "content" => $content]);
+                }catch(\Exception $e) {
+                    $content = "";
+                }
             }
         }
 
@@ -83,6 +88,7 @@ class ExternalCal extends Controller
         }
 
         try {
+
             $response = $guzzle->request('GET', $url, [
                 'headers' => [
                     'Accept' => 'text/calendar',

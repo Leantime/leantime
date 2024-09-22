@@ -36,6 +36,10 @@ namespace Leantime\Domain\Projects\Models {
 
         public $status;
 
+        public $clientName;
+
+        public $isFavorite;
+
         public function __construct() {}
     }
 

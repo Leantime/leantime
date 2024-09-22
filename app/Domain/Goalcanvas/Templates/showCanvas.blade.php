@@ -103,7 +103,7 @@
                             <x-slot:menu>
                                 @if ($login::userIsAtLeast($roles::$editor))
                                     <x-global::actions.dropdown.item href="#/goalcanvas/bigRock">
-                                        {{ __('links.icon.create_new_bigrock') }}
+                                        {!! __('links.icon.create_new_bigrock') !!}
                                     </x-global::actions.dropdown.item>
                                 @endif
 
@@ -147,29 +147,33 @@
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
-                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="menu">
+                                @php
+                                    $filterStatus = $filter['status'] ?? 'all';
+                                    $filterRelates = $filter['relates'] ?? 'all';
+                                @endphp
+                                <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="menu">
                                 <!-- Dropdown Trigger -->
                                 <x-slot:labelText>
                                     @if ($filter['status'] == 'all')
                                         <i class="fas fa-filter"></i> {!! __('status.all') !!} {!! __('links.view') !!}
                                     @else
-                                        <i class="fas fa-fw {!! __($statusLabels[$filter['status']]['icon']) !!}"></i> 
+                                        <i class="fas fa-fw {!! __($statusLabels[$filter['status']]['icon']) !!}"></i>
                                         {!! $statusLabels[$filter['status']]['title'] !!} {!! __('links.view') !!}
                                     @endif
                                 </x-slot:labelText>
-                            
+
                                 <!-- Menu Slot -->
                                 <x-slot:menu>
                                     <!-- "All" Status Option -->
-                                    <x-global::actions.dropdown.item 
+                                    <x-global::actions.dropdown.item
                                         href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status=all"
                                         class="{{ $filter['status'] == 'all' ? 'active' : '' }}">
                                         <i class="fas fa-globe"></i> {{ __('status.all') }}
                                     </x-global::actions.dropdown.item>
-                            
+
                                     <!-- Dynamic Status Options -->
                                     @foreach ($statusLabels as $key => $data)
-                                        <x-global::actions.dropdown.item 
+                                        <x-global::actions.dropdown.item
                                             href="{{ BASE_URL }}/goalcanvas/showCanvas?filter_status={{ $key }}"
                                             class="{{ $filter['status'] == $key ? 'active' : '' }}">
                                             <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
@@ -177,23 +181,27 @@
                                     @endforeach
                                 </x-slot:menu>
                             </x-global::actions.dropdown>
-                            
+
                             @endif
                         </div>
 
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                            <x-global::actions.dropdown contentRole="link" position="bottom" align="start" class="btn dropdown-toggle">
+                                @php
+                                    $filterStatus = $filter['status'] ?? 'all';
+                                    $filterRelates = $filter['relates'] ?? 'all';
+                                @endphp
+                                <x-global::actions.dropdown contentRole="link" position="bottom" align="start" class="btn dropdown-toggle">
                                 <!-- Dropdown Trigger -->
                                 <x-slot:labelText>
                                     @if ($filter['relates'] == 'all')
                                         <i class="fas fa-fw fa-globe"></i> {!! __('relates.all') !!} {!! __('links.view') !!}
                                     @else
-                                        <i class="fas fa-fw {!! __($relatesLabels[$filter['relates']]['icon']) !!}"></i> 
+                                        <i class="fas fa-fw {!! __($relatesLabels[$filter['relates']]['icon']) !!}"></i>
                                         {!! $relatesLabels[$filter['relates']]['title'] !!} {!! __('links.view') !!}
                                     @endif
                                 </x-slot:labelText>
-                            
+
                                 <!-- Menu Slot -->
                                 <x-slot:menu>
                                     <!-- 'All' Filter Option -->
@@ -202,7 +210,7 @@
                                         :class="$filter['relates'] == 'all' ? 'active' : ''">
                                         <i class="fas fa-globe"></i> {!! __('relates.all') !!}
                                     </x-global::actions.dropdown.item>
-                            
+
                                     <!-- Dynamic Relates Options -->
                                     @foreach ($relatesLabels as $key => $data)
                                         <x-global::actions.dropdown.item variant="link"
@@ -213,7 +221,7 @@
                                     @endforeach
                                 </x-slot:menu>
                             </x-global::actions.dropdown>
-                            
+
                             @endif
                         </div>
                     </div>
@@ -239,7 +247,7 @@
                                             ($filterStatus == 'all' || $filterStatus == $row['status']) &&
                                             ($filterRelates == 'all' || $filterRelates == $row['relates']))
                                         @php
-                                            $comments = app()->make(Comments::class);
+                                            $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
                                             $nbcomments = $comments->countComments(moduleId: $row['id']);
                                         @endphp
                                         <div class="col-md-4">
@@ -258,7 +266,7 @@
                                                                         <x-global::actions.dropdown.item variant="nav-header">
                                                                             {{ __('subtitles.edit') }}
                                                                         </x-global::actions.dropdown.item>
-                                                                        
+
 
                                                                         <!-- Edit Canvas Item -->
                                                                         <x-global::actions.dropdown.item variant="link"
@@ -279,54 +287,54 @@
                                                             @endif
                                                         </div>
 
-                                                        <h4><strong>Goal:</strong> <a
-                                                                href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
-                                                                data="item_{{ $row['id'] }}">{{ $row['title'] }}</a>
-                                                        </h4>
-                                                        <br />
-                                                        <strong>Metric:</strong> {{ $row['description'] }}
-                                                        <br /><br />
+                                            <h4><strong>Goal:</strong> <a
+                                                    href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}"
+                                                    data="item_{{ $row['id'] }}">{{ $row['title'] }}</a>
+                                            </h4>
+                                            <br />
+                                            <strong>Metric:</strong> {{ $row['description'] }}
+                                            <br /><br />
 
-                                                        @php
-                                                            $percentDone = $row['goalProgress'];
-                                                            $metricTypeFront = '';
-                                                            $metricTypeBack = '';
-                                                            if ($row['metricType'] == 'percent') {
-                                                                $metricTypeBack = '%';
-                                                            } elseif ($row['metricType'] == 'currency') {
-                                                                $metricTypeFront = __('language.currency');
-                                                            }
-                                                        @endphp
+                                            @php
+                                                $percentDone = $row['goalProgress'];
+                                                $metricTypeFront = '';
+                                                $metricTypeBack = '';
+                                                if ($row['metricType'] == 'percent') {
+                                                    $metricTypeBack = '%';
+                                                } elseif ($row['metricType'] == 'currency') {
+                                                    $metricTypeFront = __('language.currency');
+                                                }
+                                            @endphp
 
-                                                        <div class="row">
-                                                            <div class="col-md-4"></div>
-                                                            <div class="col-md4 center">
-                                                                <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
-                                                            </div>
-                                                            <div class="col-md-4"></div>
-                                                        </div>
-                                                        <div class="progress" style="margin-bottom:0px;">
-                                                            <div class="progress-bar progress-bar-success"
-                                                                role="progressbar" aria-valuenow="{{ $percentDone }}"
-                                                                aria-valuemin="0" aria-valuemax="100"
-                                                                style="width: {{ $percentDone }}%">
-                                                                <span
-                                                                    class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row" style="padding-bottom:0px;">
-                                                            <div class="col-md-4">
-                                                                <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
-                                                            </div>
-                                                            <div class="col-md-4 center">
-                                                                <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
-                                                            </div>
-                                                            <div class="col-md-4" style="text-align:right">
-                                                                <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
-                                                            </div>
-                                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-4"></div>
+                                                <div class="col-md4 center">
+                                                    <small>{{ sprintf(__('text.percent_complete'), $percentDone) }}</small>
+                                                </div>
+                                                <div class="col-md-4"></div>
+                                            </div>
+                                            <div class="progress" style="margin-bottom:0px;">
+                                                <div class="progress-bar progress-bar-success"
+                                                    role="progressbar" aria-valuenow="{{ $percentDone }}"
+                                                    aria-valuemin="0" aria-valuemax="100"
+                                                    style="width: {{ $percentDone }}%">
+                                                    <span
+                                                        class="sr-only">{{ sprintf(__('text.percent_complete'), $percentDone) }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="padding-bottom:0px;">
+                                                <div class="col-md-4">
+                                                    <small>Start:<br />{{ $metricTypeFront . $row['startValue'] . $metricTypeBack }}</small>
+                                                </div>
+                                                <div class="col-md-4 center">
+                                                    <small>{{ __('label.current') }}:<br />{{ $metricTypeFront . $row['currentValue'] . $metricTypeBack }}</small>
+                                                </div>
+                                                <div class="col-md-4" style="text-align:right">
+                                                    <small>{{ __('label.goal') }}:<br />{{ $metricTypeFront . $row['endValue'] . $metricTypeBack }}</small>
+                                                </div>
+                                            </div>
 
-                                                        <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                            <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                                                         @if (!empty($statusLabels))
                                                             <div
@@ -351,7 +359,7 @@
                                                                         <x-global::actions.dropdown.item variant="nav-header-border">
                                                                             {{ __('dropdown.choose_status') }}
                                                                         </x-global::actions.dropdown.item>
-                                                                        
+
 
                                                                         <!-- Dynamic Status Menu Items -->
                                                                         @foreach ($statusLabels as $key => $data)
@@ -407,7 +415,7 @@
                                                                     <x-global::actions.dropdown.item variant="nav-header-border">
                                                                         {{ __('dropdown.choose_user') }}
                                                                     </x-global::actions.dropdown.item>
-                                                                    
+
 
                                                                     @foreach ($users as $user)
                                                                         <x-global::actions.dropdown.item
@@ -444,33 +452,33 @@
                                                             <small>{{ $nbcomments }}</small>
                                                         </div>
 
-                                                    </div>
-                                                </div>
+                                        </div>
+                                    </div>
 
-                                                @if ($row['milestoneHeadline'] != '')
-                                                    <br />
-                                                    <div hx-trigger="load" hx-indicator=".htmx-indicator"
-                                                        hx-get="{{ BASE_URL }} /hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
-                                                        <div class="htmx-indicator">
-                                                            {{ __('label.loading_milestone') }}
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                    @if ($row['milestoneHeadline'] != '')
+                                        <br />
+                                        <div hx-trigger="load" hx-indicator=".htmx-indicator"
+                                            hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId={{ $row['milestoneId'] }}">
+                                            <div class="htmx-indicator">
+                                                {{ __('label.loading_milestone') }}
                                             </div>
                                         </div>
                                     @endif
-                                @endforeach
+                                </div>
                             </div>
-                            <br />
-                        </div>
-                    </div>
+                        @endif
+                    @endforeach
                 </div>
+                <br />
+            </div>
+        </div>
+    </div>
 
-                @if (count($canvasItems) == 0)
-                    <br /><br />
-                    <div class='center'>
-                        <div class='svgContainer'>
-                            {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
+    @if (count($canvasItems) == 0)
+        <br /><br />
+        <div class='center'>
+            <div class='svgContainer'>
+                {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
                         </div>
                         <h3>{{ __('headlines.goal.analysis') }}</h3>
                         <br />{!! __('text.goal.helper_content') !!}
@@ -504,7 +512,7 @@
                             href="javascript:void(0)"
                             class="addCanvasLink btn btn-primary">
                             {{ __('links.icon.create_new_board') }}
-                        </x-global::forms.button>     
+                        </x-global::forms.button>
                     @endif
                 </div>
             @endif

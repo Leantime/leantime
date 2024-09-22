@@ -200,11 +200,6 @@ leantime.editorController = (function () {
                 plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
                 toolbar_location: 'bottom',
-                autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
-                autosave_restore_when_empty: true,
-                autosave_retention: '120m',
-                autosave_interval: '10s',
-                autosave_ask_before_unload: false,
                 branding: false,
                 statusbar: false,
                 convert_urls: true,
@@ -227,6 +222,15 @@ leantime.editorController = (function () {
 
         var entityId = jQuery("input[name=id]").val();
 
+        if(entityId == undefined) {
+            entityId = "new";
+        }
+
+        let projectId = 'none';
+        if(window.leantime.currentProject){
+            projectId = window.leantime.currentProject;
+        }
+
         //modal is 50px from top. Always
         //Then reduce headline, save button range padding from modal
         var height = window.innerHeight - 50 - 205;
@@ -242,7 +246,7 @@ leantime.editorController = (function () {
                 content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
-                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
                 autosave_restore_when_empty: true,
                 autosave_retention: '120m',
                 autosave_interval: '10s',
@@ -294,10 +298,18 @@ leantime.editorController = (function () {
 
         var entityId = jQuery("input[name=id]").val();
 
+        if(entityId == undefined) {
+            entityId = "new";
+        }
+
+        let projectId = 'none';
+        if(window.leantime.currentProject){
+            projectId = window.leantime.currentProject;
+        }
+
         //modal is 50px from top. Always
         //Then reduce headline, save button range padding from modal
         var height = window.innerHeight - 50 - 205;
-
 
         jQuery('textarea.notesEditor').tinymce(
             {
@@ -310,7 +322,7 @@ leantime.editorController = (function () {
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
                 toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
                 toolbar_location: 'bottom',
-                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+                autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
                 autosave_restore_when_empty: true,
                 autosave_retention: '120m',
                 autosave_interval: '10s',
