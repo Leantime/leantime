@@ -1370,7 +1370,7 @@ class Projects
      * Retrieves the setup checklist for a project.
      *
      * @param int $projectId The ID of the project.
-     * @return array The setup checklist for the project.
+     * @return array The setup checklist for the project
      *
      */
     public function getProjectSetupChecklist($projectId): array
@@ -1590,6 +1590,9 @@ class Projects
      * @param int $id The ID of the user.
      * @param array $projects The projects to be edited.
      * @return bool True if the project relations were successfully edited, false otherwise.
+     *
+     * @api
+     *
      */
     public function editUserProjectRelations($id, $projects): bool
     {
@@ -1602,6 +1605,8 @@ class Projects
      * @param array $allProjects The array of all projects.
      * @param string $projectName The name of the project to retrieve the ID for.
      * @return mixed The ID of the project if found, or false if not found.
+     *
+     *  @api
      */
     public function getProjectIdbyName($allProjects, $projectName)
     {
@@ -1618,6 +1623,7 @@ class Projects
      *
      * @param array $params The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
      * @return bool Returns true if the sorting update was successful, false otherwise.
+     *
      */
     public function updateProjectSorting($params): bool
     {
@@ -1637,6 +1643,8 @@ class Projects
      * @param mixed $values The values to be updated in the project.
      * @param int $id The ID of the project to be edited.
      * @return void
+     *
+     *  @api
      */
     public function editProject($values, $id)
     {
@@ -1650,6 +1658,7 @@ class Projects
      *                      The key is the status and the value is the serialized project list.
      * @param null $handler Optional parameter for handling the project update process.
      * @return bool Returns true if the update process is successful, false otherwise.
+     *
      */
     public function updateProjectStatusAndSorting($params, $handler = null): bool
     {
@@ -1681,6 +1690,8 @@ class Projects
      * @param int $userId The ID of the user.
      * @param int $clientId The ID of the client.
      * @return array The projects for the client manager.
+     *
+     *  @api
      */
     public function getClientManagerProjects(int $userId, int $clientId): array
     {
