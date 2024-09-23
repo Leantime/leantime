@@ -27,6 +27,7 @@
     } elseif ($variant === 'compact') {
         $style= 'input-bordered';
         $width = 'max-w-xs';
+        $sizeClass = '';
 
     } else {
         $style= 'input-bordered';

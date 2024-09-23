@@ -47,28 +47,43 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     />
 
     @if (!empty($statusLabels))
-        <label for="statusCanvas">{{ $tpl->__('label.status') }}</label>
-        <select name="status" style="width: 50%" id="statusCanvas">
-            @foreach ($statusLabels as $key => $label)
-                <option value="{{ $key }}" {{ $canvasItem['status'] == $key ? 'selected' : '' }}>
-                    {{ $tpl->__($label) }}
-                </option>
-            @endforeach
-        </select>
+    <x-global::forms.select 
+        name="status" 
+        id="statusCanvas" 
+        labelText="{!! __('label.status') !!}"
+    >
+        @foreach ($statusLabels as $key => $label)
+            <x-global::forms.select.select-option 
+                value="{{ $key }}" 
+                :selected="$canvasItem['status'] == $key"
+            >
+                {!! __($label) !!}
+            </x-global::forms.select.select-option>
+        @endforeach
+    </x-global::forms.select>
+
         <br /><br />
     @else
         <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
     @endif
 
     @if (!empty($relatesLabels))
-        <label for="relatesCanvas">{{ $tpl->__('label.relates') }}</label>
-        <select name="relates" style="width: 50%" id="relatesCanvas">
+        <x-global::forms.select 
+            name="relates" 
+            id="relatesCanvas" 
+            style="width: 50%" 
+            labelText="{!! __('label.relates') !!}"
+        >
             @foreach ($relatesLabels as $key => $label)
-                <option value="{{ $key }}" {{ $canvasItem['relates'] == $key ? 'selected' : '' }}>
-                    {{ $tpl->__($label) }}
-                </option>
+                <x-global::forms.select.select-option 
+                    value="{{ $key }}" 
+                    :selected="$canvasItem['relates'] == $key"
+                >
+                    {!! __($label) !!}
+                </x-global::forms.select.select-option>
             @endforeach
-        </select>
+        </x-global::forms.select>
+
         <br />
     @else
         <input type="hidden" name="relates" value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}" />
@@ -167,19 +182,25 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                         <div class="row" id="existingMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
-                                    <option value=""></option>
-                                        <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
-                                            <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                echo" selected='selected' ";
-                                            }
-
-                                            echo">" . $milestoneRow->headline . "</option>"; ?>
-                                            <?php
-                                        }     ?>
-                                </select>
+                                <x-global::forms.select 
+                                    name="existingMilestone" 
+                                    class="user-select" 
+                                    :placeholder="__('input.placeholders.filter_by_milestone')"
+                                >
+                                    <x-global::forms.select.select-option value="">
+                                        {{-- Empty option for placeholder --}}
+                                    </x-global::forms.select.select-option>
+                                
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <x-global::forms.select.select-option 
+                                            value="{{ $milestoneRow->id }}" 
+                                            :selected="isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id"
+                                        >
+                                            {!! $milestoneRow->headline !!}
+                                        </x-global::forms.select.select-option>
+                                    @endforeach
+                                </x-global::forms.select>
+                            
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
                                 <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />

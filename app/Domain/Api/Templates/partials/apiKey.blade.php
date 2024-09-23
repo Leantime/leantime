@@ -30,37 +30,36 @@ $projects = $tpl->get('relations');
                     value="<?php echo $values['firstname'] ?>" /><br />
 
 
-                <label for="role">{{ __("label.role") }}</label><div class="clearfix"></div>
-                <select name="role" id="role">
-
-                    <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                        <option value="<?php  echo $key; ?>"
-                            <?php if ($key == $values['role']) {
-                                ?> selected="selected" <?php
-                            } ?>>
-                            <?=$tpl->__("label.roles." . $role) ?>
-                        </option>
-                    <?php } ?>
-
-                </select> <br />
-
-                <label for="status">{{ __("label.status") }}</label><div class="clearfix"></div>
-                <select name="status" id="status">
-                    <option value="a"
-                        <?php if (strtolower($values['status']) == "a") {
-                            ?> selected="selected" <?php
-                        } ?>>
-                        <?=$tpl->__("label.active") ?>
-                    </option>
-
-                    <option value=""
-                        <?php if (strtolower($values['status']) == "") {
-                            ?> selected="selected" <?php
-                        } ?>>
-                        <?=$tpl->__("label.deactivated") ?>
-                    </option>
-
-                </select>
+                    <x-global::forms.select 
+                    name="role" 
+                    id="role" 
+                    labelText="{!! __('label.role') !!}"
+                >
+                    @foreach ($tpl->get('roles') as $key => $role)
+                        <x-global::forms.select.select-option 
+                            value="{{ $key }}" 
+                            :selected="$key == $values['role']">
+                            {!! __('label.roles.' . $role) !!}
+                        </x-global::forms.select.select-option>
+                    @endforeach
+                </x-global::forms.select>
+                
+                <br />
+                
+                <x-global::forms.select 
+                    name="status" 
+                    id="status" 
+                    labelText="{!! __('label.status') !!}"
+                >
+                    <x-global::forms.select.select-option value="a" :selected="strtolower($values['status']) == 'a'">
+                        {!! __('label.active') !!}
+                    </x-global::forms.select.select-option>
+                
+                    <x-global::forms.select.select-option value="" :selected="strtolower($values['status']) == ''">
+                        {!! __('label.deactivated') !!}
+                    </x-global::forms.select.select-option>
+                </x-global::forms.select>
+                
 
                     <div class="clearfix"></div>
 
