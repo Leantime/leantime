@@ -46,19 +46,19 @@ use Leantime\Core\Support\FromFormat;
                     </div>
 
                     <div class="filterBoxLeft">
-                        <label for="kind"><?php echo $tpl->__("label.type")?></label>
-                        <select id="kind" name="kind" onchange="submit();">
-                            <option value="all">{{ __("label.all_types") }}</option>
-                            <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo'<option value="' . $key . '"';
-                                if ($key == $tpl->get('actKind')) {
-                                    echo ' selected="selected"';
-                                }
-                                echo'>' . $tpl->__($row) . '</option>';
-                            }
-                            ?>
-
-                        </select>
+                        <label for="kind">{!! __('label.type') !!}</label>
+                        <x-global::forms.select id="kind" name="kind" onchange="submit();">
+                            <x-global::forms.select.select-option value="all">
+                                {!! __('label.all_types') !!}
+                            </x-global::forms.select.select-option>
+                        
+                            @foreach ($tpl->get('kind') as $key => $row)
+                                <x-global::forms.select.select-option :value="$key" :selected="$key == $tpl->get('actKind')">
+                                    {!! __($row) !!}
+                                </x-global::forms.select.select-option>
+                            @endforeach
+                        </x-global::forms.select>
+                        
                     </div>
                     <div class="filterBoxLeft">
                         <label>&nbsp;</label>

@@ -345,13 +345,14 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
-                                            <?php echo sprintf(
+                                    <x-global::forms.select data-placeholder="{!! __('input.placeholders.choose_project') !!}" class="project-select">
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
+                                    
+                                        @foreach ($tpl->get('allProjects') as $projectRow)
+                                            {!! sprintf(
                                                 $tpl->dispatchTplFilter(
                                                     'client_product_format',
-                                                    '<option value="%s">%s / %s</option>'
+                                                    '<x-global::forms.select.select-option value="%s">%s / %s</x-global::forms.select.select-option>'
                                                 ),
                                                 ...$tpl->dispatchTplFilter(
                                                     'client_product_values',
@@ -361,42 +362,47 @@ jQuery(document).ready(function(){
                                                         $tpl->escape($projectRow['name']),
                                                     ]
                                                 )
-                                            ); ?>
-                                        <?php } ?>
-                                    </select>
+                                            ) !!}
+                                        @endforeach
+                                    </x-global::forms.select>
+                                    
                                 </div>
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) {
-                                            if(in_array($ticketRow['id'],$tpl->get('existingTicketIds'))) continue;
-                                            ?>
-                                            <?php echo sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'todo_format',
-                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'todo_values',
-                                                    [
-                                                        $ticketRow['id'],
-                                                        $ticketRow['projectId'],
-                                                        $tpl->escape($ticketRow['headline']),
-                                                    ]
-                                                )
-                                            ); ?>
-                                        <?php }?>
-                                    </select>
+                                    <x-global::forms.select data-placeholder="{!! __('input.placeholders.choose_todo') !!}" class="ticket-select" name="ticketId">
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
+                                    
+                                        @foreach ($tpl->get('allTickets') as $ticketRow)
+                                            @if (!in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
+                                                {!! sprintf(
+                                                    $tpl->dispatchTplFilter(
+                                                        'todo_format',
+                                                        '<x-global::forms.select.select-option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</x-global::forms.select.select-option>'
+                                                    ),
+                                                    ...$tpl->dispatchTplFilter(
+                                                        'todo_values',
+                                                        [
+                                                            $ticketRow['id'],
+                                                            $ticketRow['projectId'],
+                                                            $tpl->escape($ticketRow['headline']),
+                                                        ]
+                                                    )
+                                                ) !!}
+                                            @endif
+                                        @endforeach
+                                    </x-global::forms.select>
+                                    
                                 </div>
                             </td>
                             <td width="14%">
-                                <select class="kind-select" name="kindId">
-                                        <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
-                                            <?php echo"<option value=" . $key . ">" . $tpl->__($kindRow) . "</option>"; ?>
-                                        <?php }?>
-                                    </select>
+                                    <x-global::forms.select class="kind-select" name="kindId">
+                                        @foreach ($tpl->get('kind') as $key => $kindRow)
+                                            <x-global::forms.select.select-option :value="$key">
+                                                {!! __($kindRow) !!}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                             </td>
 
                             <?php

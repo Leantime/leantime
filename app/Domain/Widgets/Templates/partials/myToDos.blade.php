@@ -142,18 +142,16 @@
                         />
                         <br />
                     
-                        <label style="padding-top: 8px;">Project</label>
-                        <select name="projectId">
+                        <x-global::forms.select name="projectId" :labelText="'Project'" style="padding-top: 8px;">
                             @foreach($allAssignedprojects as $project)
-                                <option value="{{ $project['id']  }}"
-                                @if($groupBy == 'sprint')
-                                    {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
-                                    @else
-                                    {{ session("currentProject") == $project['id'] ? 'selected' : '' }}
-                                    @endif
-                                >{{ $project["name"]  }}</option>
+                                <x-global::forms.select.select-option :value="$project['id']"
+                                    :selected="($groupBy == 'sprint' && explode('-', $ticketGroup['groupValue'])[1] == $project['id']) || (session('currentProject') == $project['id'])"
+                                >
+                                    {{ $project['name'] }}
+                                </x-global::forms.select.select-option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
+                        
                     </div>
                     <input type="submit" value="Save" name="quickadd" />
                     <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">

@@ -48,15 +48,14 @@
                                     <label><?=$tpl->__("label.language")?></label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select name="language" id="language">
-                                        <?php foreach ($tpl->get("languageList") as $languagKey => $languageValue) {?>
-                                            <option
-                                                value="<?=$languagKey?>"
-                                                <?php if ($companySettings['language'] == $languagKey) {
-                                                    echo "selected='selected'";
-                                                } ?>><?=$languageValue?></option>
-                                        <?php } ?>
-                                    </select>
+                                    <x-global::forms.select name="language" id="language">
+                                        @foreach ($tpl->get('languageList') as $languageKey => $languageValue)
+                                            <x-global::forms.select.select-option :value="$languageKey" :selected="$companySettings['language'] == $languageKey">
+                                                {!! $languageValue !!}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
+                                    
 
 
                                             </div>
@@ -107,61 +106,55 @@
                                     <label for="messageFrequency">{{ __("label.messages_frequency") }}</label>
                                 </div>
                                 <div class="col-md-8">
-                                                    <span class='field'>
-                                                        <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
-                                                            <option value="">--{{ __("label.choose_option") }}--</option>
-                                                            <option
-                                                                value="300"
-                                                                <?php if ($companySettings['messageFrequency'] == "300") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.5min") }}</option>
-                                                            <option
-                                                                value="900"
-                                                                <?php if ($companySettings['messageFrequency'] == "900") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.15min") }}</option>
-                                                            <option
-                                                                value="1800"
-                                                                <?php if ($companySettings['messageFrequency'] == "1800") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.30min") }}</option>
-                                                            <option
-                                                                value="3600"
-                                                                <?php if ($companySettings['messageFrequency'] == "3600") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.1h") }}</option>
-                                                            <option
-                                                                value="10800"
-                                                                <?php if ($companySettings['messageFrequency'] == "10800") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.3h") }}</option>
-                                                            <option
-                                                                value="36000"
-                                                                <?php if ($companySettings['messageFrequency'] == "36000") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.6h") }}</option>
-                                                            <option
-                                                                value="43200"
-                                                                <?php if ($companySettings['messageFrequency'] == "43200") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.12h") }}</option>
-                                                            <option
-                                                                value="86400"
-                                                                <?php if ($companySettings['messageFrequency'] == "86400") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.24h") }}</option>
-                                                            <option
-                                                                value="172800"
-                                                                <?php if ($companySettings['messageFrequency'] == "172800") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.48h") }}</option>
-                                                            <option
-                                                                value="604800"
-                                                                <?php if ($companySettings['messageFrequency'] == "604800") {
-                                                                    echo " selected ";
-                                                                } ?>>{{ __("label.1w") }}</option>
-                                                        </select> <br/>
-                                                    </span>
+                                    <span class='field'>
+                                        <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px" :labelText="__('label.choose_option')">
+                                            <x-global::forms.select.select-option value="">
+                                                --{!! __('label.choose_option') !!}--
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="300" :selected="$companySettings['messageFrequency'] == '300'">
+                                                {!! __('label.5min') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="900" :selected="$companySettings['messageFrequency'] == '900'">
+                                                {!! __('label.15min') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="1800" :selected="$companySettings['messageFrequency'] == '1800'">
+                                                {!! __('label.30min') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="3600" :selected="$companySettings['messageFrequency'] == '3600'">
+                                                {!! __('label.1h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="10800" :selected="$companySettings['messageFrequency'] == '10800'">
+                                                {!! __('label.3h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="36000" :selected="$companySettings['messageFrequency'] == '36000'">
+                                                {!! __('label.6h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="43200" :selected="$companySettings['messageFrequency'] == '43200'">
+                                                {!! __('label.12h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="86400" :selected="$companySettings['messageFrequency'] == '86400'">
+                                                {!! __('label.24h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="172800" :selected="$companySettings['messageFrequency'] == '172800'">
+                                                {!! __('label.48h') !!}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="604800" :selected="$companySettings['messageFrequency'] == '604800'">
+                                                {!! __('label.1w') !!}
+                                            </x-global::forms.select.select-option>
+                                        </x-global::forms.select>
+                                        
+                                        <br/>
+                                    </span>
                                 </div>
                             </div>
                             <x-global::forms.button type="submit" id="saveBtn">

@@ -24,22 +24,28 @@ if (isset($currentArticle->id)) {
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span>{{ __("subtitles.organization") }}
                 </h4>
-                <label>Parent</label>
-                <select name="parent" style="width:100%;">
-                    <option value="0">None</option>
-                    <?php foreach ($wikiHeadlines as $parent) {?>
-                        <?php if ($id != $parent->id) {?>
-                            <option value="<?=$parent->id ?>"
-                                    <?=($parent->id == $currentArticle->parent) ? "selected='selected'" : '' ?> ><?php $tpl->e($parent->title) ?></option>
-                        <?php } ?>
-                    <?php } ?>
-                </select>
-
-                <label><?=$tpl->__('label.status') ?></label>
-                <select name="status" style="width:100%;">
-                    <option value="draft" <?=$currentArticle->status == 'draft' ? "selected='selected'" : "" ?>><?=$tpl->__('label.draft') ?></option>
-                    <option value="published" <?=$currentArticle->status == 'published' ? "selected='selected'" : "" ?>><?=$tpl->__('label.published') ?></option>
-                </select>
+                <x-global::forms.select name="parent" style="width: 100%" :labelText="'Parent'">
+                    <x-global::forms.select.select-option value="0">None</x-global::forms.select.select-option>
+                
+                    @foreach ($wikiHeadlines as $parent)
+                        @if ($id != $parent->id)
+                            <x-global::forms.select.select-option :value="$parent->id" :selected="$parent->id == $currentArticle->parent">
+                                {!! $tpl->escape($parent->title) !!}
+                            </x-global::forms.select.select-option>
+                        @endif
+                    @endforeach
+                </x-global::forms.select>
+                
+                <x-global::forms.select name="status" style="width: 100%" :labelText="__('label.status')">
+                    <x-global::forms.select.select-option value="draft" :selected="$currentArticle->status == 'draft'">
+                        {!! __('label.draft') !!}
+                    </x-global::forms.select.select-option>
+                
+                    <x-global::forms.select.select-option value="published" :selected="$currentArticle->status == 'published'">
+                        {!! __('label.published') !!}
+                    </x-global::forms.select.select-option>
+                </x-global::forms.select>
+                
             </div>
 
             <?php if ($id !== '') { ?>
@@ -77,21 +83,26 @@ if (isset($currentArticle->id)) {
 
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
-                                        <option value=""><?=$tpl->__("label.all_milestones") ?></option>
-                                        <?php foreach ($tpl->get('milestones') as $milestoneRow) {
-                                            ?>
-
-                                            <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                echo" selected='selected' ";
-                                            }
-
-                                            echo">" . $milestoneRow->headline . "</option>"; ?>
-                                            <?php
-                                        }     ?>
-                                    </select>
+                                    <x-global::forms.select 
+                                    name="existingMilestone" 
+                                    class="user-select" 
+                                    :labelText="__('input.placeholders.filter_by_milestone')" 
+                                    data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
+                                >
+                                    <x-global::forms.select.select-option value="">
+                                        {!! __('label.all_milestones') !!}
+                                    </x-global::forms.select.select-option>
+                                
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <x-global::forms.select.select-option 
+                                            :value="$milestoneRow->id" 
+                                            :selected="isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id"
+                                        >
+                                            {!! $milestoneRow->headline !!}
+                                        </x-global::forms.select.select-option>
+                                    @endforeach
+                                </x-global::forms.select>
+                                
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="<?php echo $id; ?> " />
                                     <x-global::forms.button type="button" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary">

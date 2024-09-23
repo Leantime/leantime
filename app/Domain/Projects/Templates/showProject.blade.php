@@ -93,30 +93,40 @@ $state = $tpl->get('state');
                                                     disabled
                                                 />
                                         <?php } else { ?>
-                                                <select name="userProjectRole-<?php echo $userId ?>">
-                                                    <option value="inherit">Inherit</option>
-                                                    <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
-                                                            echo" selected='selected' ";
-                                                        }?>
-                                                    ><?php echo $tpl->__("label.roles." . $roles::$readonly) ?></option>
-
-                                                    <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
-                                                            echo" selected='selected' ";
-                                                        }?>
-                                                    ><?php echo $tpl->__("label.roles." . $roles::$commenter) ?></option>
-                                                    <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
-                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
-                                                            echo" selected='selected' ";
-                                                        }?>
-                                                    ><?php echo $tpl->__("label.roles." . $roles::$editor) ?></option>
-                                                    <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
-                                                        <?php if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
-                                                            echo" selected='selected' ";
-                                                        }?>
-                                                    ><?php echo $tpl->__("label.roles." . $roles::$manager) ?></option>
-                                                </select>
+                                            <x-global::forms.select :name="'userProjectRole-' . $userId">
+                                                <x-global::forms.select-option value="inherit">
+                                                    Inherit
+                                                </x-global::forms.select-option>
+                                            
+                                                <x-global::forms.select-option 
+                                                    :value="array_search($roles::$readonly, $roles::getRoles())" 
+                                                    :selected="$assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())"
+                                                >
+                                                    {{ $tpl->__('label.roles.' . $roles::$readonly) }}
+                                                </x-global::forms.select-option>
+                                            
+                                                <x-global::forms.select-option 
+                                                    :value="array_search($roles::$commenter, $roles::getRoles())" 
+                                                    :selected="$assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())"
+                                                >
+                                                    {{ $tpl->__('label.roles.' . $roles::$commenter) }}
+                                                </x-global::forms.select-option>
+                                            
+                                                <x-global::forms.select-option 
+                                                    :value="array_search($roles::$editor, $roles::getRoles())" 
+                                                    :selected="$assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())"
+                                                >
+                                                    {{ $tpl->__('label.roles.' . $roles::$editor) }}
+                                                </x-global::forms.select-option>
+                                            
+                                                <x-global::forms.select-option 
+                                                    :value="array_search($roles::$manager, $roles::getRoles())" 
+                                                    :selected="$assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())"
+                                                >
+                                                    {{ $tpl->__('label.roles.' . $roles::$manager) }}
+                                                </x-global::forms.select-option>
+                                            </x-global::forms.select>
+                                            
                                             <?php } ?>
                                             <div class="clearall"></div>
                                         </div>
@@ -153,30 +163,40 @@ $state = $tpl->get('state');
                                                     disabled
                                                 />
                                                                                                 <?php } else { ?>
-                                                    <select name="userProjectRole-<?php echo $row['id'] ?>">
-                                                        <option value="inherit">Inherit</option>
-                                                        <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                        <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
-                                                            echo" selected='selected' ";
-                                                        }?>
-                                                            ><?php echo $tpl->__("label.roles." . $roles::$readonly) ?></option>
-
-                                                        <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
-                                                                echo" selected='selected' ";
-                                                            }?>
-                                                        ><?php echo $tpl->__("label.roles." . $roles::$commenter) ?></option>
-                                                        <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
-                                                                echo" selected='selected' ";
-                                                            }?>
-                                                        ><?php echo $tpl->__("label.roles." . $roles::$editor) ?></option>
-                                                        <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
-                                                                echo" selected='selected' ";
-                                                            }?>
-                                                        ><?php echo $tpl->__("label.roles." . $roles::$manager) ?></option>
-                                                    </select>
+                                                                                                    <x-global::forms.select :name="'userProjectRole-' . $row['id']">
+                                                                                                        <x-global::forms.select-option value="inherit">
+                                                                                                            Inherit
+                                                                                                        </x-global::forms.select-option>
+                                                                                                    
+                                                                                                        <x-global::forms.select-option 
+                                                                                                            :value="array_search($roles::$readonly, $roles::getRoles())"
+                                                                                                            :selected="isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())"
+                                                                                                        >
+                                                                                                            {{ $tpl->__('label.roles.' . $roles::$readonly) }}
+                                                                                                        </x-global::forms.select-option>
+                                                                                                    
+                                                                                                        <x-global::forms.select-option 
+                                                                                                            :value="array_search($roles::$commenter, $roles::getRoles())"
+                                                                                                            :selected="isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())"
+                                                                                                        >
+                                                                                                            {{ $tpl->__('label.roles.' . $roles::$commenter) }}
+                                                                                                        </x-global::forms.select-option>
+                                                                                                    
+                                                                                                        <x-global::forms.select-option 
+                                                                                                            :value="array_search($roles::$editor, $roles::getRoles())"
+                                                                                                            :selected="isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())"
+                                                                                                        >
+                                                                                                            {{ $tpl->__('label.roles.' . $roles::$editor) }}
+                                                                                                        </x-global::forms.select-option>
+                                                                                                    
+                                                                                                        <x-global::forms.select-option 
+                                                                                                            :value="array_search($roles::$manager, $roles::getRoles())"
+                                                                                                            :selected="isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())"
+                                                                                                        >
+                                                                                                            {{ $tpl->__('label.roles.' . $roles::$manager) }}
+                                                                                                        </x-global::forms.select-option>
+                                                                                                    </x-global::forms.select>
+                                                                                                    
                                                 <?php } ?>
                                                 <div class="clearall"></div>
                                             </div>
@@ -444,33 +464,76 @@ $state = $tpl->get('state');
                         </div>
                                                                 </div>
                                         <div class="col-md-2">
-                                            <label><?=$tpl->__("label.color") ?></label>
-                                            <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
-                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : ""; ?>><span class="label-purple"><?=$tpl->__('label.purple'); ?></span></option>
-                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : ""; ?>><span class="label-pink"><?=$tpl->__('label.pink'); ?></span></option>
-                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : ""; ?>><span class="label-darker-blue"><?=$tpl->__('label.darker-blue'); ?></span></option>
-                                                <option value="label-info" class="label-info" <?=$ticketStatus['class'] == 'label-info' ? 'selected="selected"' : ""; ?>><span class="label-info"><?=$tpl->__('label.dark-blue'); ?></span></option>
-                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class'] == 'label-blue' ? 'selected="selected"' : ""; ?>><span class="label-blue"><?=$tpl->__('label.blue'); ?></span></option>
-                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class'] == 'label-dark-green' ? 'selected="selected"' : ""; ?>><span class="label-dark-green"><?=$tpl->__('label.dark-green'); ?></span></option>
-                                                <option value="label-success" class="label-success" <?=$ticketStatus['class'] == 'label-success' ? 'selected="selected"' : ""; ?>><span class="label-success"><?=$tpl->__('label.green'); ?></span></option>
-                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class'] == 'label-warning' ? 'selected="selected"' : ""; ?>><span class="label-warning"><?=$tpl->__('label.yellow'); ?></span></option>
-                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class'] == 'label-brown' ? 'selected="selected"' : ""; ?>><span class="label-brown"><?=$tpl->__('label.brown'); ?></span></option>
-                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class'] == 'label-danger' ? 'selected="selected"' : ""; ?>><span class="label-danger"><?=$tpl->__('label.dark-red'); ?></span></option>
-                                                <option value="label-important" class="label-important" <?=$ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ""; ?>><span class="label-important"><?=$tpl->__('label.red'); ?></span></option>
-                                                <option value="label-default" class="label-default" <?=$ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ""; ?>><span class="label-default"><?=$tpl->__('label.grey'); ?></span></option>
-
-
-
-                                            </select>
+                                            <x-global::forms.select name="labelClass-{{ $key }}" id="labelClass-{{ $key }}" class="colorChosen" :labelText="__('label.color')">
+                                                <x-global::forms.select.select-option value="label-purple" :selected="$ticketStatus['class'] == 'label-purple'">
+                                                    {!! __('label.purple') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-pink" :selected="$ticketStatus['class'] == 'label-pink'">
+                                                    {!! __('label.pink') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-darker-blue" :selected="$ticketStatus['class'] == 'label-darker-blue'">
+                                                    {!! __('label.darker-blue') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-info" :selected="$ticketStatus['class'] == 'label-info'">
+                                                    {!! __('label.dark-blue') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-blue" :selected="$ticketStatus['class'] == 'label-blue'">
+                                                    {!! __('label.blue') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-dark-green" :selected="$ticketStatus['class'] == 'label-dark-green'">
+                                                    {!! __('label.dark-green') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-success" :selected="$ticketStatus['class'] == 'label-success'">
+                                                    {!! __('label.green') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-warning" :selected="$ticketStatus['class'] == 'label-warning'">
+                                                    {!! __('label.yellow') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-brown" :selected="$ticketStatus['class'] == 'label-brown'">
+                                                    {!! __('label.brown') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-danger" :selected="$ticketStatus['class'] == 'label-danger'">
+                                                    {!! __('label.dark-red') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-important" :selected="$ticketStatus['class'] == 'label-important'">
+                                                    {!! __('label.red') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="label-default" :selected="$ticketStatus['class'] == 'label-default'">
+                                                    {!! __('label.grey') !!}
+                                                </x-global::forms.select.select-option>
+                                            </x-global::forms.select>
+                                                                                        
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?=$tpl->__("label.reportType") ?></label>
-                                            <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
-                                                <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.new'); ?></option>
-                                                <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.in_progress'); ?></option>
-                                                <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.done'); ?></option>
-                                                <option value="NONE" <?=($ticketStatus['statusType'] == 'NONE') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.dont_report'); ?></option>
-                                            </select>
+                                            <x-global::forms.select name="labelType-{{ $key }}" id="labelType-{{ $key }}" :labelText="__('label.reportType')">
+                                                <x-global::forms.select.select-option value="NEW" :selected="$ticketStatus['statusType'] == 'NEW'">
+                                                    {!! __('status.new') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="INPROGRESS" :selected="$ticketStatus['statusType'] == 'INPROGRESS'">
+                                                    {!! __('status.in_progress') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="DONE" :selected="$ticketStatus['statusType'] == 'DONE'">
+                                                    {!! __('status.done') !!}
+                                                </x-global::forms.select.select-option>
+                                            
+                                                <x-global::forms.select.select-option value="NONE" :selected="$ticketStatus['statusType'] == 'NONE'">
+                                                    {!! __('status.dont_report') !!}
+                                                </x-global::forms.select.select-option>
+                                            </x-global::forms.select>
+                                            
                                         </div>
                                         <div class="col-md-2">
                                             <x-global::forms.checkbox
@@ -543,31 +606,77 @@ $state = $tpl->get('state');
 
         </div>
         <div class="col-md-2">
-            <label><?=$tpl->__("label.color") ?></label>
-            <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
-                <option value="label-blue" class="label-blue"><span class="label-blue"><?=$tpl->__('label.blue'); ?></span></option>
-                <option value="label-info" class="label-info"><span class="label-info"><?=$tpl->__('label.dark-blue'); ?></span></option>
-                <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue"><?=$tpl->__('label.darker-blue'); ?></span></option>
-                <option value="label-warning" class="label-warning"><span class="label-warning"><?=$tpl->__('label.yellow'); ?></span></option>
-                <option value="label-success" class="label-success"><span class="label-success"><?=$tpl->__('label.green'); ?></span></option>
-                <option value="label-dark-green" class="label-dark-green"><span class="label-dark-green"><?=$tpl->__('label.dark-green'); ?></span></option>
-                <option value="label-important" class="label-important"><span class="label-important"><?=$tpl->__('label.red'); ?></span></option>
-                <option value="label-danger" class="label-danger"><span class="label-danger"><?=$tpl->__('label.dark-red'); ?></span></option>
-                <option value="label-pink" class="label-pink"><span class="label-pink"><?=$tpl->__('label.pink'); ?></span></option>
-                <option value="label-purple" class="label-purple"><span class="label-purple"><?=$tpl->__('label.purple'); ?></span></option>
-                <option value="label-brown" class="label-brown"><span class="label-brown"><?=$tpl->__('label.brown'); ?></span></option>
-                <option value="label-default" class="label-default"><span class="label-default"><?=$tpl->__('label.grey'); ?></span></option>
-            </select>
+            <x-global::forms.select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen" :labelText="__('label.color')">
+                <x-global::forms.select.select-option value="label-blue">
+                    {!! __('label.blue') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-info">
+                    {!! __('label.dark-blue') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-darker-blue">
+                    {!! __('label.darker-blue') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-warning">
+                    {!! __('label.yellow') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-success">
+                    {!! __('label.green') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-dark-green">
+                    {!! __('label.dark-green') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-important">
+                    {!! __('label.red') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-danger">
+                    {!! __('label.dark-red') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-pink">
+                    {!! __('label.pink') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-purple">
+                    {!! __('label.purple') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-brown">
+                    {!! __('label.brown') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="label-default">
+                    {!! __('label.grey') !!}
+                </x-global::forms.select.select-option>
+            </x-global::forms.select>
         </div>
+        
         <div class="col-md-2">
-            <label><?=$tpl->__("label.reportType") ?></label>
-            <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
-                <option value="NEW"><?=$tpl->__('status.new'); ?></option>
-                <option value="INPROGRESS"><?=$tpl->__('status.in_progress'); ?></option>
-                <option value="DONE"><?=$tpl->__('status.done'); ?></option>
-                <option value="NONE"><?=$tpl->__('status.dont_report'); ?></option>
-            </select>
+            <x-global::forms.select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX" :labelText="__('label.reportType')">
+                <x-global::forms.select.select-option value="NEW">
+                    {!! __('status.new') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="INPROGRESS">
+                    {!! __('status.in_progress') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="DONE">
+                    {!! __('status.done') !!}
+                </x-global::forms.select.select-option>
+        
+                <x-global::forms.select.select-option value="NONE">
+                    {!! __('status.dont_report') !!}
+                </x-global::forms.select.select-option>
+            </x-global::forms.select>
         </div>
+        
         <div class="col-md-2">
             <x-global::forms.checkbox
                 name="labelKanbanCol-XXNEWKEYXX"
