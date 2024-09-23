@@ -9,21 +9,29 @@
     'caption' => '',
     'validationText' => '',
     'validationState' => '',
-    'variant' => '', 
+    'variant' => '',
 ])
 
 @php
-    $sizeClass = $variant === 'title' ? 'input-lg w-full' : ($size ? 'input-'.$size : '');
+
     $stateClass = $state ? 'input-'.$state : '';
-    $validationClass = $validationState ? 'text-yellow-500' : '';
+    $validationClass = $validationState ? 'text-red-500' : '';
     $ghostClass = $variant === 'ghost' ? 'input-ghost' : '';
 
     if ($variant === 'title') {
+        $style= 'text-lg';
         $width = 'max-w-full';
+        $sizeClass = 'w-full';
+        $ghostClass = 'input-ghost ';
+
     } elseif ($variant === 'compact') {
+        $style= 'input-bordered';
         $width = 'max-w-xs';
+
     } else {
+        $style= 'input-bordered';
         $width = 'w-full max-w-xs';
+        $sizeClass = $size ? 'input-'.$size : '';
     }
 @endphp
 
@@ -48,7 +56,7 @@
             </x-global::elements.leadingVisual>
         @endif
 
-        <input {{$attributes->merge(['class' => 'input input-shadow input-bordered '.$sizeClass.' '.$stateClass.' '.$width.''.$ghostClass.' '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}} />
+        <input {{$attributes->merge(['class' => 'input input-hover '.$style.' '.$sizeClass.' '.$stateClass.' '.$width.' '.$ghostClass.' '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}} />
 
         @if($trailingVisual)
             <x-global::elements.trailingVisual>

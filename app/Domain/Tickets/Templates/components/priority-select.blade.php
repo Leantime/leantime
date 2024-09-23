@@ -1,4 +1,4 @@
-<x-global::forms.select id='priority2' name='priority2' search="false">
+<x-global::forms.select id='priority2' name='priority2' search="false" variant="chip">
     <x-slot:label-text>
         {!!  __('label.priority') !!}
     </x-slot:label-text>

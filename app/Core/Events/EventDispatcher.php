@@ -354,12 +354,13 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
             //Filter event
             //Filters carry the filterload in the available params array
-            $eventPayload['payload'] = $handler(event: $hookName, payload: $eventPayload);
+            $return = $handler(event: $hookName, payload: $eventPayload);
+            $eventPayload[0] = $return;
 
         }
 
         if (! $isEvent) {
-            return $eventPayload['payload'];
+            return $eventPayload[0];
         }
 
         return null;

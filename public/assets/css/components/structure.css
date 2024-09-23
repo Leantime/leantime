@@ -400,9 +400,6 @@
     top:0px;
     z-index: 15;
     width: 100%;
-    box-shadow: var(--large-shadow);
-    backdrop-filter: var(--glass-blur);
-
 }
 
 .header .headmenu > li > a {

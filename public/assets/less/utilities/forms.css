@@ -2,7 +2,16 @@
     @apply shadow-md;
 }
 
+
 .input,
 .select {
 
+    &:hover {
+        @apply shadow-none border-base-content/50;
+    }
+
+}
+
+.form-control {
+    @apply pb-4;
 }

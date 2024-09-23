@@ -244,7 +244,7 @@ module.exports = {
                 'base-100' : '#ffffff',          /* Base color of page, used for blank backgrounds */
                  //'base-200' : '#e7e7e7',          /* Base color, a little darker */
                  //'base-300' : '#dedede',          /* Base color, even more darker */
-                'base-content' : '#3f3f3f',      /* Foreground content color to use on base color */
+                'base-content' : '#272727',      /* Foreground content color to use on base color */
 
                 'info' : '#0a4aa3',              /* Info */
                 'success' :  '#108e38',           /* Success */
@@ -254,8 +254,8 @@ module.exports = {
                 'text-sm': '0.938rem',
 
                 "--rounded-box": '1.5rem', // border radius rounded-box utility class, used in card and other large boxes
-                "--rounded-input": '0.25rem',
-                "--rounded-btn": '1rem', // border radius rounded-btn utility class, used in buttons and similar element
+                "--rounded-input": '0.5rem',
+                "--rounded-btn": '0.5rem', // border radius rounded-btn utility class, used in buttons and similar element
                 "--rounded-badge": '3.0rem', // border radius rounded-badge utility class, used in badges and similar
                 "--animation-btn": "0.25s", // duration of animation when you click on button
                 "--animation-input": "0.2s", // duration of animation for inputs like checkbox, toggle, radio, etc

@@ -4,7 +4,7 @@ body .menu {
 }
 
 .leftmenu .menu li > * {
-    @apply text-primary-content;
+    @apply text-primary-content rounded-3xl;
 }
 
 .leftmenu .menu li > *:not(ul):not(.menu-title):not(details):active,
