@@ -36,19 +36,27 @@ class Ical extends Controller
      */
     public function run(): RedirectResponse|Response
     {
-        $calId = $_GET['id'];
 
-        $idParts = explode('_', $calId);
+        $calId = $_GET['id'] ?? "";
+        $idParts = explode("_", $calId);
 
         if (count($idParts) != 2) {
             return Frontcontroller::redirect(BASE_URL.'/errors/404');
         }
 
-        $calendar = $this->calendarService->getIcalByHash($idParts[1], $idParts[0]);
+        try {
 
-        return new Response($calendar->get(), 200, [
-            'Content-Type' => 'text/calendar; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="leantime-calendar.ics"',
-        ]);
+            $calendar = $this->calendarService->getIcalByHash($idParts[1], $idParts[0]);
+
+            return new Response($calendar->get(), 200, [
+                'Content-Type' => 'text/calendar; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="leantime-calendar.ics"',
+            ]);
+
+        }catch(\Exception $e) {
+            return Frontcontroller::redirect(BASE_URL . "/errors/404");
+        }
+
+
     }
 }

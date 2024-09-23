@@ -187,14 +187,14 @@
                                                                 <h4>
                                                                     <strong>Goal:</strong>
                                                                     <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal" data-item="item_{{ $row['id'] }}">
-                                                                        {{ $tpl->e($row['title']) }}
+                                                                        {{ $row['title'] }}
                                                                     </a>
 
 
                                                                 </h4>
                                                                 <br />
                                                                 <strong>Metric:</strong>
-                                                                {{ $tpl->escape($row['description']) }}
+                                                                {{ $row['description'] }}
                                                                 <br /><br />
 
                                                                 @php

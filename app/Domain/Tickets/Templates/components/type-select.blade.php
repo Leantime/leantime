@@ -2,7 +2,7 @@
     $typeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'subtask' => 'fa-diagram-successor', 'bug' => 'fa-bug');
 @endphp
 
-<x-global::forms.select id='type' name='type' search="false">
+<x-global::forms.select id='type' name='type' search="false" variant="chip">
     @foreach ($ticketTypes as $type)
         <x-global::forms.select.option
             :value="strtolower($type)"

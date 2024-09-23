@@ -87,9 +87,12 @@
                                                 <label><?= $tpl->__('label.send_telemetry') ?></label>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="checkbox" class="toggle" name="telemetryActive"
+                                                <x-global::forms.checkbox
+                                                    name="telemetryActive"
                                                     id="telemetryActive"
-                                                    <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '' ?> />
+                                                    :checked="isset($companySettings['telemetryActive']) ? $companySettings['telemetryActive'] : false"
+                                                    class="toggle"
+                                                />
 
                                     <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
                                     <div class="clearall"></div><br />

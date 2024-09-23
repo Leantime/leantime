@@ -28,7 +28,11 @@ function getOptions(selectElement) {
     return items;
 }
 
-export const initSelect = function (element, enableSearch) {
+export const initSelect = function (element, enableSearch, additionalClasses) {
+
+    console.log(additionalClasses);
+
+  let tokens = additionalClasses.replace(/ /g, ",");
 
   const select = new Choices(element, {
     editItems: false,
@@ -52,7 +56,8 @@ export const initSelect = function (element, enableSearch) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-        containerOuter: ["choices"],
+        containerOuter: ["select"],
+
         containerInner: ["choices__inner"],
         input: ["choices__input"],
         inputCloned: [
@@ -103,7 +108,7 @@ export const initSelect = function (element, enableSearch) {
   );
 };
 
-export const initTags = function (element, enableSearch, autoCompleteTags) {
+export const initTags = function (element, enableSearch, autoCompleteTags, additionalClasses) {
   // let choiceList = choices.split(",");
   const select = new Choices(element, {
     editItems: false,
@@ -130,7 +135,7 @@ export const initTags = function (element, enableSearch, autoCompleteTags) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-      containerOuter: ["choices"],
+      containerOuter: ["choices "+additionalClasses],
       containerInner: ["choices__inner"],
       input: ["choices__input"],
       inputCloned: [

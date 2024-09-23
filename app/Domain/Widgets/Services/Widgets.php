@@ -109,7 +109,8 @@ class Widgets
         ];
 
         $this->availableWidgets = self::dispatchFilter('availableWidgets', $this->availableWidgets);
-        $this->defaultWidgets = self::dispatchFilter('defaultWidgets', $this->defaultWidgets, ['availableWidgets' => $this->availableWidgets]);
+        $widgets = self::dispatchFilter('defaultWidgets', ['defaultWidgets' => $this->defaultWidgets, 'availableWidgets' => $this->availableWidgets]);
+        $this->defaultWidgets = $widgets['defaultWidgets'] ?? [];
     }
 
     /**

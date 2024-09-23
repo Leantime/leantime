@@ -785,7 +785,7 @@ class Projects
 
                 session()->forget('projectsettings');
 
-                self::dispatchEvent('projects.setCurrentProject', $project);
+                self::dispatchEvent('projects.setCurrentProject', [$project]);
 
                 return true;
             } else {
@@ -1318,11 +1318,13 @@ class Projects
         return $this->projectRepository->getAll();
     }
 
-        /**
-         * @throws BindingResolutionException
-         *
-         * @api
-         */
+    /**
+     * Retrieves the setup checklist for a project.
+     *
+     * @param int $projectId The ID of the project.
+     * @return array The setup checklist for the project
+     *
+     */
         public function getProjectSetupChecklist($projectId): array
         {
             $progressSteps = [
@@ -1536,41 +1538,46 @@ class Projects
         );
     }
 
-        /**
-         * Edits the project relations of a user.
-         *
-         * @param  int  $id  The ID of the user.
-         * @param  array  $projects  The projects to be edited.
+    /**
+     * Edits the project relations of a user.
+     *
+     * @param  int  $id  The ID of the user.
+     * @param  array  $projects  The projects to be edited.
      * @return bool True if the project relations were successfully edited, false otherwise.
-         */
-        public function editUserProjectRelations($id, $projects): bool
-        {
-            return $this->projectRepository->editUserProjectRelations($id, $projects);
-        }
+     *
+     * @api
+     *
+     */
+    public function editUserProjectRelations($id, $projects): bool
+    {
+        return $this->projectRepository->editUserProjectRelations($id, $projects);
+    }
 
     /**
      * Retrieves the ID of a project by its name.
-         *
-         * @param  array  $allProjects  The array of allprojects.
-         * @param  string  $projectName  The name of the project to retrieve the ID for.
+     *
+     * @param  array  $allProjects  The array of allprojects.
+     * @param  string  $projectName  The name of the project to retrieve the ID for.
      * @return mixed The ID of the project if found, or false if not found.
-         */
-        public function getProjectIdbyName($allProjects, $projectName)
-        {
-            foreach ($allProjects as $project) {
-                if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
-                    return $project['id'];
-                }
+     *
+     *  @api
+     */
+    public function getProjectIdbyName($allProjects, $projectName)
+    {
+        foreach ($allProjects as $project) {
+            if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
+                return $project['id'];
             }
-
-            return false;
         }
+        return false;
+    }
 
     /**
      * Updates the sorting of multiple projects.
      *
      * @param array $params The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
      * @return bool Returns true if the sorting update was successful, false otherwise.
+     *
      */
     public function updateProjectSorting($params): bool
     {
@@ -1590,6 +1597,8 @@ class Projects
      * @param mixed $values The values to be updated in the project.
      * @param int $id The ID of the project to be edited.
      * @return void
+     *
+     *  @api
      */
     public function editProject($values, $id)
     {
@@ -1603,6 +1612,7 @@ class Projects
      *                      The key is the status and the value is the serialized project list.
      * @param null $handler Optional parameter for handling the project update process.
      * @return bool Returns true if the update process is successful, false otherwise.
+     *
      */
     public function updateProjectStatusAndSorting($params, $handler = null): bool
     {
@@ -1634,6 +1644,8 @@ class Projects
      * @param int $userId The ID of the user.
      * @param int $clientId The ID of the client.
      * @return array The projects for the client manager.
+     *
+     *  @api
      */
     public function getClientManagerProjects(int $userId, int $clientId): array
     {

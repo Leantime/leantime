@@ -15,5 +15,12 @@ export default function () {
 
     document.addEventListener('scroll', () => {
         document.documentElement.dataset.scroll = window.scrollY;
+        if(window.scrollY > 25) {
+            jQuery("body").addClass("scrolled");
+        }
+
+        if(window.scrollY <= 25) {
+            jQuery("body").removeClass("scrolled");
+        }
     });
 };

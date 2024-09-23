@@ -1,9 +1,7 @@
 
 .select {
-    @apply input-shadow select-bordered select-sm w-full max-w-xs;
+    @apply select-bordered select-sm w-full max-w-xs relative;
 }
-
-
 
 /* ===============================
 =            Choices            =
@@ -12,27 +10,38 @@
     @apply select relative;
     overflow: hidden;
 
+    &:focus,
     &.is-focused {
         box-shadow: none;
         @apply border-base-content/20 outline-base-content/20 outline outline-2 outline-offset-2;
     }
+
 }
 
-.tags .choices {
-    min-width: 13rem;
-}
-
-.choices:focus {
-}
-.choices:last-child {
-    margin-bottom: 0;
-}
-.choices.is-open {
+.select.is-open {
     overflow: visible;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom-width: 0;
 }
+
+.choices__inner {
+    select {
+        display: none;
+    }
+}
+
+
+
+.tags .choices {
+    min-width: 13rem;
+}
+
+.choices
+.choices:last-child {
+    margin-bottom: 0;
+}
+
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
 
@@ -180,9 +189,10 @@
 
 /* Item dropdown list */
 
-.choices__list--dropdown, .choices__list[aria-expanded] {
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
 
-    @apply dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-md select-bordered;
+    @apply dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-md border-base-content/20;
     border-top-left-radius:0;
     border-top-right-radius:0;
     border-width: 1px;
@@ -193,8 +203,14 @@
     will-change: visibility;
     position: absolute;
     top:100%;
-    left:0px;
+    width:calc(100% + 2px);
+    left:-1px;
     min-width: 100%;
+
+
+    &:hover {
+        @apply border-base-content/50;
+    }
 
     /*
 

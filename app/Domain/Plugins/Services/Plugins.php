@@ -162,8 +162,9 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            if (Cache::store("installation")->has("enabledPlugins")) {
-                $enabledPlugins = static::dispatchFilter('beforeReturnCachedPlugins', session('enabledPlugins'), ['enabledOnly' => true]);
+            if (Cache::store("installation")->has("enabledPlugins")
+            && Cache::store("installation")->get("enabledPlugins") !== null) {
+                $enabledPlugins = self::dispatchFilter('beforeReturnCachedPlugins', Cache::store("installation")->get("enabledPlugins"), ['enabledOnly' => true]);
 
                 return $enabledPlugins;
             }

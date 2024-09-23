@@ -205,6 +205,8 @@
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/translation" />
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/symfony/translation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Sentry/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/debugbar" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/framework" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

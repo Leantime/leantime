@@ -447,23 +447,24 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
 
         });
 
-        var tickets =  jQuery("#yourToDoContainer")[0];
-        if (tickets) {
-            new ThirdPartyDraggable(tickets, {
-                itemSelector: '.ticketBox',
-                eventDragMinDistance: 10,
-                eventData: function (eventEl) {
-                    return {
-                        id: jQuery(eventEl).attr("data-val"),
-                        title: jQuery(eventEl).find(".titleContainer strong").text(),
-                        borderColor: 'var(--accent2)',
-                        enitityType: "ticket",
-                        duration: '01:00',
-                        url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
-                    };
-                }
-            });
-        }
+            var tickets =  jQuery("#yourToDoContainer")[0];
+            if (tickets) {
+                new ThirdPartyDraggable(tickets, {
+                    itemSelector: '.ticketBox',
+                    eventDragMinDistance: 10,
+                    eventData: function (eventEl) {
+                        return {
+                            id: jQuery(eventEl).attr("data-val"),
+                            title: jQuery(eventEl).find(".titleContainer strong").text(),
+                            borderColor: 'var(--accent2)',
+                            enitityType: "ticket",
+                            dateContext: "edit",
+                            duration: '01:00',
+                            url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
+                        };
+                    }
+                });
+            }
 
         calendar.scrollToTime(Date.now());
     });

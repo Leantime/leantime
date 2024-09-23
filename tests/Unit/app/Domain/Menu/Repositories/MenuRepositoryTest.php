@@ -11,6 +11,8 @@ use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 
+
+
 class MenuRepositoryTest extends Unit
 {
 
@@ -44,6 +46,7 @@ class MenuRepositoryTest extends Unit
             config:$config,
             ticketsService:$ticketService
         );
+
 
     }
 
@@ -105,7 +108,7 @@ class MenuRepositoryTest extends Unit
     public function testGetFilteredMenuStructure()
     {
 
-        \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company", function($menu){
+        \Leantime\Core\Events\EventDispatcher::addFilterListener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company", function($menu){
 
             if(isset($menu[15]) && isset($menu[15]['submenu'])) {
                 unset($menu[15]['submenu'][20]);
@@ -125,7 +128,7 @@ class MenuRepositoryTest extends Unit
     public function testInjectNewProjectMenuType()
     {
 
-        \Leantime\Core\Events\EventDispatcher::add_filter_listener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures", function($menuStructure){
+        \Leantime\Core\Events\EventDispatcher::addFilterListener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures", function($menuStructure){
 
             $testStructure = [
                 10 => ["item" => "myNewMenu", "type"=>"item"]
