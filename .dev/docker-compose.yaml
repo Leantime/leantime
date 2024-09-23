@@ -13,7 +13,7 @@ services:
   leantime-dev:
     build: .
     ports:
-      - "8888:8080" #Using ports that are hopefully available. format is: 80XX
+      - "8001:8080" #Using ports that are hopefully available. format is: 80XX
       - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     volumes:
       - "../:/var/www/html"
