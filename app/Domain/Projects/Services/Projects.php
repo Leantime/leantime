@@ -882,16 +882,17 @@ class Projects
 
 
     /**
-     * Gets all the users assigned to a specific project.
+     * Gets all users that have access to a project.
+     * For direct access only set the teamOnly flag to true
      *
      * @param int $projectId The ID of the project.
      * @return array An array of users assigned to the project.
      *
      * @api
      */
-    public function getUsersAssignedToProject($projectId): array
+    public function getUsersAssignedToProject($projectId, $teamOnly = false): array
     {
-        $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+        $users = $this->projectRepository->getUsersAssignedToProject($projectId, $teamOnly);
 
         foreach ($users as $key => $user) {
 
@@ -1455,14 +1456,14 @@ class Projects
             $progressSteps["define"]["tasks"]["description"]["status"] = "done";
         }
 
-        /*
-        if ($project['numUsers'] > 1) {
-            $progressSteps["define"]["tasks"]["defineTeam"]["status"] = "done";
-        }
+            /*
+            if ($project['numUsers'] > 1) {
+                $progressSteps["define"]["tasks"]["defineTeam"]["status"] = "done";
+            }
 
-        if ($project['numDefinitionCanvas'] >= 1) {
-            $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
-        }*/
+            if ($project['numDefinitionCanvas'] >= 1) {
+                $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
+            }*/
 
         $goals = app()->make(GoalcanvaRepository::class);
         $allCanvas = $goals->getAllCanvas($projectId);
@@ -1475,14 +1476,14 @@ class Projects
             $progressSteps["define"]["goals"]["setGoals"]["status"] = "done";
         }
 
-        /*
-        if ($project['numberMilestones'] >= 1) {
-            $progressSteps["timeline"]["tasks"]["createMilestones"]["status"] = "done";
-        }
+            /*
+            if ($project['numberMilestones'] >= 1) {
+                $progressSteps["timeline"]["tasks"]["createMilestones"]["status"] = "done";
+            }
 
-        if ($project['numberOfTickets'] >= 1) {
-            $progressSteps["implementation"]["tasks"]["createTasks"]["status"] = "done";
-        }*/
+            if ($project['numberOfTickets'] >= 1) {
+                $progressSteps["implementation"]["tasks"]["createTasks"]["status"] = "done";
+            }*/
 
         $percentDone = $this->getProjectProgress($projectId);
         if ($percentDone['percent'] >= 80) {
