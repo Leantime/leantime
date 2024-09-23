@@ -31,9 +31,14 @@ $showClosedProjects = $tpl->get('showClosedProjects');
         <div class="pull-right">
             <form action="" method="post">
                 <input type="hidden" name="hideClosedProjects" value="1" />
-                <input type="checkbox" name="showClosedProjects" onclick="form.submit();" id="showClosed" <?php if ($showClosedProjects) {
-                    echo"checked='checked'";
-                                                                                                          } ?> />&nbsp;<label for="showClosed" class="pull-right">Show Closed Projects</label>
+                <x-global::forms.checkbox
+                    name="showClosedProjects"
+                    id="showClosed"
+                    :checked="$showClosedProjects"
+                    onclick="form.submit();"
+                    labelText="Show Closed Projects"
+                    labelPosition="right"
+                />
             </form>
         </div>
 
