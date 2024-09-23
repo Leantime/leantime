@@ -18,8 +18,8 @@ body:
         - Cloud Hosted
         - Self Hosted Server
         - Self Hosted Docker
-      validations:
-        required: true
+    validations:
+      required: true
   - type: input
     id: version
     attributes:
@@ -32,8 +32,8 @@ body:
     attributes:
       label: Describe the issue
       placeholder: A clear and concise description of what the bug is.
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: repro
     attributes:
