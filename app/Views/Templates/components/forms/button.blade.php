@@ -20,7 +20,7 @@
 
     switch($contentRole){
         case 'secondary':
-            $typeClass = 'btn-secondary shadow-md border-primary text-primary hover:bg-primary/20 ';
+            $typeClass = 'btn-secondary border-primary text-primary hover:bg-primary/20 ';
             break;
         case 'tertiary':
         case 'ghost':
@@ -30,7 +30,7 @@
             $typeClass = 'btn-link text-primary hover:bg-primary/20 ';
             break;
         default:
-            $typeClass = 'btn-primary shadow-md border-primary hover:bg-primary ';
+            $typeClass = 'btn-primary border-primary hover:bg-primary ';
     }
     $sizeClass = $scale ? 'btn-'.$scale : '';
     $stateClass = $state ? 'btn-'.$state : '';

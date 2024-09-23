@@ -13,6 +13,7 @@ namespace Leantime\Domain\Wiki\Models {
         public $created;
 
         public $projectId;
+        public $category;
 
         public function __construct() {}
     }

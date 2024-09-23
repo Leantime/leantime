@@ -69,7 +69,7 @@ if (isset($currentArticle->id)) {
                                     <x-global::forms.button type="button" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary">
                                         {{ __('buttons.save') }}
                                     </x-global::forms.button>
-                                    <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
+                                    <a href="javascript:void(0);" onclick="leantime.canvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
@@ -118,7 +118,7 @@ if (isset($currentArticle->id)) {
                                     <?=$tpl->__("label.loading_milestone") ?>
                                 </div>
                             </div>
-                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $currentArticle->milestoneId ?>" class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
 
                         </li>
                     <?php } ?>
@@ -146,23 +146,23 @@ if (isset($currentArticle->id)) {
             </div>
             <input type="hidden" class="articleIcon" value="<?=$currentArticle->data ?>" name="articleIcon"/>
 
-            <x-global::forms.text-input 
-                type="text" 
-                name="title" 
-                class="main-title-input w-[80%]" 
-                value="{!! $tpl->escape($currentArticle->title) !!}" 
-                placeholder="{!! $tpl->__('input.placeholders.wiki_title') !!}" 
-                variant="title" 
+            <x-global::forms.text-input
+                type="text"
+                name="title"
+                class="main-title-input w-[80%]"
+                value="{!! $tpl->escape($currentArticle->title) !!}"
+                placeholder="{!! $tpl->__('input.placeholders.wiki_title') !!}"
+                variant="title"
             />
-        
+
             <br />
-            <x-global::forms.text-input 
-                type="text" 
-                name="tags" 
-                id="tags" 
-                value="{!! $tpl->escape($currentArticle->tags) !!}" 
+            <x-global::forms.text-input
+                type="text"
+                name="tags"
+                id="tags"
+                value="{!! $tpl->escape($currentArticle->tags) !!}"
             />
-        
+
             <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
 
 
@@ -172,7 +172,7 @@ if (isset($currentArticle->id)) {
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
                         <input type="submit" name="saveArticle" value="{{ __("buttons.save") }}" id="primaryArticleSubmitButton"/>
-                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __("buttons.save_and_close") }}"/>
+                        <input type="submit" class="btn btn-secondary" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="{{ __("buttons.save_and_close") }}"/>
 
 
 
@@ -199,11 +199,9 @@ if (isset($currentArticle->id)) {
 
 <script>
 
-
-    jQuery("#articleContentEditor").show();
-    leantime.editorController.initComplexEditor();
-
     jQuery(document).ready(function(){
+
+        leantime.editorController.initComplexEditor();
 
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();

@@ -5,9 +5,6 @@ input, button, select, textarea {
 input:focus,
 button:focus,
 textarea:focus {
-    outline:none;
-    /* TODO: Figure out good focus outline */
-    text-decoration: none;
 }
 
 form label{
@@ -20,96 +17,81 @@ form .switchery {
 
 tox-edit-area, textarea,
 input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="color"], .uneditable-input {
-    height: auto;
-    background-color: var(--secondary-background);
-    line-height: var(--form-element-line-height);
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
+
 }
 
 input[type="text"]:read-only,
 input:disabled {
-    border:none;
-    box-shadow:none;
-    opacity:0.4;
+
 }
 
 body input:focus {
-    border-color:var(--main-border-color-hover);
+
 }
 
 
 
 /* Tags */
 
-body div.tagsinput {
-    border:1px solid transparent;
-    overflow:hidden;
-}
+/*body div.tagsinput {*/
+/*    border:1px solid transparent;*/
+/*    overflow:hidden;*/
+/*}*/
 
-body div.tagsinput:hover,
-body div.tagsinput:focus,
-body input[type=text].main-title-input.main-title-input:hover,
-body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color-hover);
-}
+/*body div.tagsinput:hover,*/
+/*body div.tagsinput:focus,*/
+/*body input[type=text].main-title-input.main-title-input:hover,*/
+/*body input[type=text].main-title-input.main-title-input:focus{*/
+/*    border: 1px solid var(--main-border-color-hover);*/
+/*}*/
 
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
+/*body div.tagsinput.readonly {*/
+/*    display:inline-block;*/
+/*    width:auto;*/
+/*    padding:0px;*/
+/*    border:0px !important;*/
+/*    height:auto !important;*/
+/*    background:none;*/
+/*}*/
 
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
+/*body .ticketBox div.tagsinput.readonly {*/
+/*    background:none !important;*/
+/*    margin-bottom:0px !important;*/
+/*}*/
 
-body div.tagsinput {
-    background-color: var(--input-background);
-    color:var(--primary-font-color);
-    font-family: var(--primary-font-family);
-    width:100% !important;
-    height:auto !important;
-    border-radius:var(--input-radius);
-    box-shadow: none;
-    padding:var(--input-padding);
-    border:0px;
-}
+/*body div.tagsinput {*/
+/*    background-color: var(--input-background);*/
+/*    color:var(--primary-font-color);*/
+/*    font-family: var(--primary-font-family);*/
+/*    width:100% !important;*/
+/*    height:auto !important;*/
+/*    border-radius:var(--input-radius);*/
+/*    box-shadow: none;*/
+/*    padding:var(--input-padding);*/
+/*    border:0px;*/
+/*}*/
 
-body div.tagsinput input {
-    color:var(--primary-font-color) !important;
-    width:auto;
-    padding:0px;
-    margin-bottom:0px;
-    font-family: var(--primary-font-family);
-}
+/*body div.tagsinput input {*/
+/*    color:var(--primary-font-color) !important;*/
+/*    width:auto;*/
+/*    padding:0px;*/
+/*    margin-bottom:0px;*/
+/*    font-family: var(--primary-font-family);*/
+/*}*/
 
-body div.tagsinput span.tag {
-    border-radius: 12px;
-    padding: 0px 10px;
-    border: 0px solid var(--primary-color);
-}
+/*body div.tagsinput span.tag {*/
+/*    border-radius: 12px;*/
+/*    padding: 0px 10px;*/
+/*    border: 0px solid var(--primary-color);*/
+/*}*/
 
-div.tagsinput span.tag {
-    font-size:var(--font-size-m);
-}
+/*div.tagsinput span.tag {*/
+/*    font-size:var(--font-size-m);*/
+/*}*/
 
-div.tagsinput span.tag a {
-    vertical-align: text-bottom;
-}
+/*div.tagsinput span.tag a {*/
+/*    vertical-align: text-bottom;*/
+/*}*/
 
 .ss-main .ss-multi-selected {
     padding:var(--input-padding);

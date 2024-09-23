@@ -62,3 +62,8 @@
     }</style>
 
 @dispatchEvent('afterThemeColors')
+
+
+<script>
+    window.leantime.currentProject = '{{ session("currentProject") }}';
+</script>

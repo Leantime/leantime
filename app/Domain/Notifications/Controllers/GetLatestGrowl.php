@@ -6,6 +6,7 @@
 
 namespace Leantime\Domain\Notifications\Controllers {
 
+    use Illuminate\Support\Facades\Cache;
     use Leantime\Core\Controller\Controller;
     use Symfony\Component\HttpFoundation\JsonResponse;
 

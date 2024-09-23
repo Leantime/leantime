@@ -19,6 +19,8 @@
             </source>
             <ignore>
                 <path>app/Plugins</path>
+                <path>app/Views</path>
+                <path>app/Domain/**/Templates</path>
             </ignore>
         </api>
     </version>

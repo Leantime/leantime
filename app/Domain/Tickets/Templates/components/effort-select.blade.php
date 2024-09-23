@@ -1,4 +1,4 @@
-<x-global::forms.select id='storypoints' name='storypoints' search="false">
+<x-global::forms.select id='storypoints' name='storypoints' search="false"  variant="chip">
     <x-slot:label-text>
         {{ __('label.effort')  }}
     </x-slot:label-text>

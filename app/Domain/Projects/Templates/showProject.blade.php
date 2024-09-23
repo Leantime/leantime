@@ -473,8 +473,13 @@ $state = $tpl->get('state');
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for=""><?=$tpl->__('label.showInKanban'); ?></label>
-                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?= $ticketStatus['kanbanCol'] ? 'checked="checked"' : ""; ?>/>
+                                            <x-global::forms.checkbox
+                                                name="labelKanbanCol-{{ $key }}"
+                                                id="labelKanbanCol-{{ $key }}"
+                                                :checked="$ticketStatus['kanbanCol']"
+                                                labelText="{{ __('label.showInKanban') }}"
+                                                labelPosition="left"
+                                            />
                                         </div>
                                         <div class="remove">
                                             <br />
@@ -564,8 +569,13 @@ $state = $tpl->get('state');
             </select>
         </div>
         <div class="col-md-2">
-            <label for=""><?=$tpl->__('label.showInKanban'); ?></label>
-            <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
+            <x-global::forms.checkbox
+                name="labelKanbanCol-XXNEWKEYXX"
+                id="labelKanbanCol-XXNEWKEYXX"
+                {{-- :checked="$ticketStatus['kanbanCol']" --}}
+                labelText="{{ __('label.showInKanban') }}"
+                labelPosition="left"
+            />
         </div>
         <div class="remove">
             <br />

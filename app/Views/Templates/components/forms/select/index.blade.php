@@ -19,7 +19,16 @@
     $sizeClass = $size && $size != 'md' ? 'select-'.$size : '';
     $stateClass = $state && $state != 'disabled' ? 'select-'.$state : '';
     $validationClass = $validationState ? 'text-yellow-500' : '';
-@endphp
+
+    $selectChip = '';
+    if($variant == 'chip'){
+        $selectChip = "select-chip";
+    }
+
+    $selectClassBuilder = 'leantime-select select '. $selectChip .' select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '');
+
+    var_dump($selectClassBuilder);
+    @endphp
 
 
 <div class='form-control relative w-full max-w-xs'>
@@ -46,7 +55,7 @@
 
         <select
 
-            {{$attributes->merge(['class' => 'leantime-select select select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '')])}}
+            {{$attributes->merge(['class' => $selectClassBuilder ])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
             {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
         >
@@ -66,9 +75,9 @@
 <script>
 
     @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }});
+        leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }}, '{{ $selectClassBuilder }}');
     @else
-        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }});
+        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
     @endif
 </script>
 
