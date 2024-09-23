@@ -28,7 +28,7 @@ body:
       placeholder: "3.x.x"
     validations:
       required: true
-  - type: description
+  - type: textarea
     attributes:
       label: Describe the issue
       placeholder: A clear and concise description of what the bug is.
