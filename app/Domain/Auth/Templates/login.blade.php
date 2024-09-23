@@ -32,7 +32,6 @@ $redirectUrl = $tpl->get('redirectUrl');
                 id="username"
                 labelText="Email"
                 placeholder="{{ $tpl->language->__($tpl->get('inputPlaceholder')) }}"
-                class="form-control"
                 value=""
             />
         </div>
@@ -44,7 +43,6 @@ $redirectUrl = $tpl->get('redirectUrl');
                 id="password"
                 labelText="Password"
                 placeholder="{{ $tpl->language->__('input.placeholders.enter_password') }}"
-                class="form-control"
                 value=""
             />
 
