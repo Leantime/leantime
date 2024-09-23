@@ -25,7 +25,7 @@ findActive("");
 ?>
 
 <div class="maincontentinner tabs">
-    <ul hx-boost="true" hx-indicator="#global-loader">
+    <ul hx-indicator="#global-loader">
         <li class="<?=findActive('Kanban'); ?>">
             <a href="{{ BASE_URL }}/tickets/showKanban<?=$tpl->get('searchParams') ?>">
                 <?=$tpl->__("links.kanban") ?>

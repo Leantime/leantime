@@ -213,7 +213,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </x-global::content.card>
                     @endforeach
 
@@ -299,9 +298,7 @@
                                         {{ __('buttons.save') }}
                                     </x-global::forms.button>
 
-                                    <x-global::forms.button tag="a" href="javascript:void(0);"
-                                        onclick="leantime.commentsController.toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();"
-                                        content-role="secondary" class="leading-[50px]">
+                                    <x-global::forms.button tag="a" href="javascript:void(0);" onclick="leantime.commentsController.toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();" content-role="secondary" class="leading-[50px]">
                                         {{ __('links.cancel') }}
                                     </x-global::forms.button>
 
@@ -414,40 +411,41 @@
             </div>
 
 
-            <div class="row" id="milestoneProgressContainer">
-                <div class="col-md-12">
-                    <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
-                    <ul class="sortableTicketList">
-                        @if (count($milestones) == 0)
-                            <div class="center">
-                                <br />
-                                <h4>{{ __('headlines.no_milestones') }}</h4>
-                                {{ __('text.milestones_help_organize_projects') }}
-                                <br /><br />
-                                <a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
-                            </div>
-                        @endif
+                    <div class="row" id="milestoneProgressContainer">
+                        <div class="col-md-12">
+                            <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
 
-                        @foreach ($milestones as $row)
-                            @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
-                            @break
-                        @endif
-
-                        <li class="ui-state-default" id="milestone_{!! $row->id !!}">
-
-                            <div hx-trigger="load" hx-indicator=".htmx-indicator"
-                                hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?= $row->id ?>">
-                                <div class="htmx-indicator">
-                                    <?= $tpl->__('label.loading_milestone') ?>
+                            @if (count($milestones) == 0)
+                                <div class="center">
+                                    <br />
+                                    <h4>{{ __('headlines.no_milestones') }}</h4>
+                                    {{ __('text.milestones_help_organize_projects') }}
+                                    <br /><br />
+                                    <a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
                                 </div>
-                            </div>
+                            @endif
 
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </x-global::content.card>
+                            @foreach ($milestones as $row)
+                                @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
+                                    @break
+                                @endif
+
+                                <x-global::content.card>
+
+                                    <div hx-trigger="load"
+                                         hx-indicator=".htmx-indicator"
+                                         hx-get="{{ BASE_URL }}/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                        <div class="htmx-indicator">
+                                                <?=$tpl->__("label.loading_milestone") ?>
+                                        </div>
+                                    </div>
+
+                                    </x-global::content.card>
+                            @endforeach
+
+                        </div>
+                    </div>
+                </x-global::content.card>
 
     </div>
     </div>

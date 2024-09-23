@@ -12,7 +12,12 @@
                         <p>{{ __($widget->description) }}</p>
                         <div class="right">
                             @if($widget->alwaysVisible == false)
-                                <input type="checkbox" class="toggle" onclick="leantime.widgetController.toggleWidgetVisibility('{{ $widget->id }}', this, {{ json_encode($widget) }})" {{ isset($activeWidgets[$widget->id]) ? "checked='checked'" : "" }} />
+                                <x-global::forms.checkbox
+                                    name="widgetToggle"
+                                    class="toggle"
+                                    onclick="leantime.widgetController.toggleWidgetVisibility('{{ $widget->id }}', this, {{ json_encode($widget) }})"
+                                    :checked="isset($activeWidgets[$widget->id])"
+                                />
                             @endif
                         </div>
                         <div class="clearall"></div>

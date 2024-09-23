@@ -225,7 +225,9 @@ class StartSession
      */
     protected function saveSession(IncomingRequest $request)
     {
-        $this->manager->driver()->save();
+        if ($request->isBoostedHtmxRequest() === false) {
+            $this->manager->driver()->save();
+        }
     }
 
     /**

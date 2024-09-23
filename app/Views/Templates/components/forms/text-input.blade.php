@@ -25,18 +25,18 @@
         $ghostClass = 'input-ghost ';
 
     } elseif ($variant === 'compact') {
-        $style= 'input-bordered';
+        $style= 'input-bordered input-sm';
         $width = 'max-w-xs';
         $sizeClass = '';
 
     } else {
-        $style= 'input-bordered';
+        $style= 'input-bordered  input-sm';
         $width = 'w-full max-w-xs';
         $sizeClass = $size ? 'input-'.$size : '';
     }
 @endphp
 
-<div class='par relative {{$width}}'>
+<div class='par relative form-control {{$width}}'>
     <div>
         @if($labelText)
         <span class='label-text font-medium'>{!! $labelText !!}</span>

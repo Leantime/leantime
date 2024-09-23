@@ -94,11 +94,14 @@ $projects = $tpl->get('relations');
                         } ?>
 
                         <div class="item">
-                            <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
-                                <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
-                                    echo "checked='checked';";
-                                } ?>
-                            /><label for="project_<?php echo $row['id'] ?>"><?php $tpl->e($row['name']); ?></label>
+                            <x-global::forms.checkbox
+                                name="projects[]"
+                                id="project_{{ $row['id'] }}"
+                                value="{{ $row['id'] }}"
+                                :checked="is_array($projects) && in_array($row['id'], $projects)"
+                                labelText="{{ $row['name'] }}"
+                                labelPosition="right"
+                            />
                             <div class="clearall"></div>
                         </div>
                         <?php $i++; ?>
