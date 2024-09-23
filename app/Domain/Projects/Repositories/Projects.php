@@ -140,7 +140,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return array|bool
          *
          */
-        public function getUsersAssignedToProject($id, $teamOnly): array|bool
+        public function getUsersAssignedToProject($id, $teamOnly = false): array|bool
         {
 
             $query = "SELECT
