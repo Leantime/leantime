@@ -7,10 +7,7 @@ assignees:
 body:
   - type: markdown
     attributes:
-      value: "## Welcome!"
-  - type: markdown
-    attributes:
-      value: "*If you have problems with the installation please use our [community forum](https://community.leantime.io)*"
+      value: "Thank you for taking the time to submit a bug report. If you have problems with the installation or other questions please use the [discussion forum](https://github.com/Leantime/leantime/discussions) or our [discord server](https://discord.gg/4zMzJtAq9z)"
   - type: dropdown
     attributes:
       label: What is your set up? 
