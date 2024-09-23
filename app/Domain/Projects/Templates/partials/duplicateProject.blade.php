@@ -32,10 +32,13 @@ $project = $tpl->get('project');
         <?php } ?>
     </select>
     <br />
-    <input style="float:left; margin-right:5px;"
-           type="checkbox" name="assignSameUsers" id="assignSameUsers"/>
-    <label for="assignSameUsers">{{ __("label.assignSameUsers") }}</label>
-
+    <x-global::forms.checkbox
+        name="assignSameUsers"
+        id="assignSameUsers"
+        {{-- :checked="$ add condition here" --}}
+        labelText="{{ __("label.assignSameUsers") }}"
+        labelPosition="right"
+    />
     <br />
 
     <div class="row">
