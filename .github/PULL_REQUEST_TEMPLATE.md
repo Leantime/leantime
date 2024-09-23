@@ -8,9 +8,9 @@ Please add a link to the GitHub issue being addressed by this change.
 
 ### Type
 
-[] Fix
-[] Feature
-[] Cleanup 
+* [] Fix
+* [] Feature
+* [] Cleanup 
 
 #### Screenshot of the result
 
