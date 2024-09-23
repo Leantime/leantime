@@ -316,7 +316,6 @@
                                     <x-global::forms.checkbox
                                         name="notifications"
                                         id="notifications"
-                                        value=""
                                         :checked="$values['notifications'] == '1'"
                                         class="input"
                                         labelText="{{ __('label.receive_notifications') }}"
