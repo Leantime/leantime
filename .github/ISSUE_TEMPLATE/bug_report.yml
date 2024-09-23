@@ -46,7 +46,7 @@ body:
         ...
     validations:
       required: true
-- type: textarea
+  - type: textarea
     id: context
     attributes:
       label: Additional Notes
