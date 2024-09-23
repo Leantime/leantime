@@ -216,7 +216,7 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function isBoostedHtmxRequest(): bool
     {
         if ($this->isHtmxRequest() &&
-            this->headers->get('Hx-Boost') == 'true') {
+            $this->headers->get('Hx-Boost') == 'true') {
             return true;
         }
 

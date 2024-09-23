@@ -24,7 +24,7 @@
     || $menuType == "company")
 
 
-    <ul class="menu" hx-boost="true" hx-indicator="#global-loader">
+    <ul class="menu" hx-indicator="#global-loader">
 
         @foreach ($menuStructure as $key => $menuItem)
 
