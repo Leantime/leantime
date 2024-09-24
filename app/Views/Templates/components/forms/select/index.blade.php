@@ -25,9 +25,8 @@
         $selectChip = "select-chip";
     }
 
-    $selectClassBuilder = 'leantime-select select '. $selectChip .' select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '');
+    $selectClassBuilder = 'leantime-select select '. $selectChip .' select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs '.($leadingVisual ? 'pl-10' : '');
 
-    var_dump($selectClassBuilder);
     @endphp
 
 
@@ -75,9 +74,9 @@
 <script>
 
     @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }}, '{{ $selectClassBuilder }}');
+        leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }}, '{{ $selectChip }}');
     @else
-        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
+        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectChip }}');
     @endif
 </script>
 

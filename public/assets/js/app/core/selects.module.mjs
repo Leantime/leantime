@@ -28,11 +28,15 @@ function getOptions(selectElement) {
     return items;
 }
 
-export const initSelect = function (element, enableSearch, additionalClasses) {
+export const initSelect = function (element, enableSearch, additionalClass) {
 
-    console.log(additionalClasses);
+    let outerClasses = [];
+    outerClasses.push("select");
+    outerClasses.push("choices");
 
-  let tokens = additionalClasses.replace(/ /g, ",");
+    if(additionalClass !== '') {
+        outerClasses.push(additionalClass);
+    }
 
   const select = new Choices(element, {
     editItems: false,
@@ -56,8 +60,7 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-        containerOuter: ["select"],
-
+        containerOuter: outerClasses,
         containerInner: ["choices__inner"],
         input: ["choices__input"],
         inputCloned: [
@@ -108,8 +111,16 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
   );
 };
 
-export const initTags = function (element, enableSearch, autoCompleteTags, additionalClasses) {
-  // let choiceList = choices.split(",");
+export const initTags = function (element, enableSearch, autoCompleteTags, additionalClass) {
+
+    let outerClasses = [];
+    outerClasses.push("select");
+    outerClasses.push("choices");
+
+    if(additionalClass !== '') {
+        outerClasses.push(additionalClass);
+    }
+
   const select = new Choices(element, {
     editItems: false,
     addItems: true,
@@ -135,7 +146,7 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-      containerOuter: ["choices "+additionalClasses],
+      containerOuter: outerClasses,
       containerInner: ["choices__inner"],
       input: ["choices__input"],
       inputCloned: [

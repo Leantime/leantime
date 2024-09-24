@@ -253,9 +253,10 @@ module.exports = {
 
                 'text-sm': '0.938rem',
 
-                "--rounded-box": '1.5rem', // border radius rounded-box utility class, used in card and other large boxes
-                "--rounded-input": '0.5rem',
-                "--rounded-btn": '0.5rem', // border radius rounded-btn utility class, used in buttons and similar element
+                "--rounded-box": '1.5rem', // biggest elements, large content cards
+                "--rounded-element": '1rem', //Second biggest element dropdowns, content cards
+                "--rounded-input": '0.5rem', // inputs
+                "--rounded-btn": '0.5rem', // button
                 "--rounded-badge": '3.0rem', // border radius rounded-badge utility class, used in badges and similar
                 "--animation-btn": "0.25s", // duration of animation when you click on button
                 "--animation-input": "0.2s", // duration of animation for inputs like checkbox, toggle, radio, etc

@@ -1,6 +1,6 @@
-<x-global::forms.select id='storypoints' name='storypoints' search="false"  variant="chip">
+<x-global::forms.select id='storypoints' name='storypoints' search="false">
     <x-slot:label-text>
-        {{ __('label.effort')  }}
+        👕 {{ __('label.effort')  }}
     </x-slot:label-text>
     <x-slot:validation-text>
 

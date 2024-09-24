@@ -29,14 +29,14 @@
 
         <div class="row pb-l">
             <div class="col-md-12">
-                <x-global::forms.text-input 
-                    type="text" 
-                    name="headline" 
-                    value="{!! $tpl->escape($ticket->headline) !!}" 
-                    placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}" 
-                    variant="title" 
-                    class="w-[99%]" 
-                    autocomplete="off" 
+                <x-global::forms.text-input
+                    type="text"
+                    name="headline"
+                    value="{!! $tpl->escape($ticket->headline) !!}"
+                    placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}"
+                    variant="title"
+                    class="w-[99%]"
+                    autocomplete="off"
                 />
             </div>
         </div>
@@ -46,7 +46,7 @@
         <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
 
         <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1">
-            <x-slot:label-text>Due Date</x-slot:label-text>
+            <x-slot:label-text>📅 Due Date</x-slot:label-text>
         </x-global::forms.datepicker>
 
         {{-- <x-global::forms.select

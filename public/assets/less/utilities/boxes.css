@@ -1,0 +1,3 @@
+.rounded-element {
+    @apply rounded-lg;
+}

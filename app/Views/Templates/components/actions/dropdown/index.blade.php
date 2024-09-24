@@ -23,8 +23,8 @@
 
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
-        'card' => 'card dropdown-content  card-compact text-primary-content w-64 p-2 shadow', // Card variant class
-        default => 'menu dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
+        'card' => 'card dropdown-content card-compact text-primary-content w-64 p-2 shadow', // Card variant class
+        default => 'menu dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50', // Default to regular menu
     };
 
     // Determine the dropdown position class
