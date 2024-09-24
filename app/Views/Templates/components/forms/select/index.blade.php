@@ -27,7 +27,7 @@
 
     $selectClassBuilder = 'leantime-select select '. $selectChip .' select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '');
 
-    var_dump($selectClassBuilder);
+    // var_dump($selectClassBuilder);
     @endphp
 
 

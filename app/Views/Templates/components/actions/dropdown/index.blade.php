@@ -1,8 +1,6 @@
-<!-- resources/views/components/actions/dropdown/index.blade.php -->
-
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
-    'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
+    'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link, transparent
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
@@ -16,8 +14,9 @@
         'primary' => 'btn btn-primary',
         'secondary' => 'btn btn-secondary',
         'accent' => 'btn btn-accent',
-        'ghost' => 'btn btn-tertiary',
+        'ghost' => 'btn btn-tertiary text-white text-xl',
         'link' => 'btn btn-link',
+        'transparent' => 'bg-transparent text-white text-xl ', 
         default => 'btn', // Default to base button class
     };
 
@@ -42,7 +41,6 @@
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
     <!-- Dropdown Button -->
-
     <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape">
         {!! $labelText !!}
     </x-global::forms.button>

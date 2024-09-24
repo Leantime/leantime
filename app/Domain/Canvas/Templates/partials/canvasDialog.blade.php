@@ -174,7 +174,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     {{ __('buttons.save') }}
                                 </x-global::forms.button>
 
-                                <x-global::forms.button type="button" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')">
+                                <x-global::forms.button type="button" variant="secondary" onclick="leantime.canvasController.toggleMilestoneSelectors('hide')">
                                     {{ __('buttons.cancel') }}
                                 </x-global::forms.button>
                             </div>
