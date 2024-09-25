@@ -75,18 +75,18 @@
                             <div class="col-md-4">
 
                                 <?php if ($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1) {?>
-                                <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project
-                                    Type</h4>
-                                <p>The type of the project. This will determine which features are available.</p>
-                                <x-global::forms.select name="type">
-                                    @foreach ($tpl->get('projectTypes') as $key => $type)
-                                        <x-global::forms.select.select-option :value="$tpl->escape($key)" :selected="$project['type'] == $key">
-                                            {{ $tpl->__($tpl->escape($type)) }}
-                                        </x-global::forms.select.select-option>
-                                    @endforeach
-                                </x-global::forms.select>
+                                    <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project
+                                        Type</h4>
+                                    <p>The type of the project. This will determine which features are available.</p>
+                                    <x-global::forms.select name="type">
+                                        @foreach ($tpl->get('projectTypes') as $key => $type)
+                                            <x-global::forms.select.select-option :value="$tpl->escape($key)" :selected="$project['type'] == $key">
+                                                {{ $tpl->__($tpl->escape($type)) }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
 
-                                <br /><br />
+                                    <br /><br />
                                 <?php } ?>
 
                                 <?php $tpl->dispatchTplEvent('beforeClientPicker', $project); ?>
@@ -118,7 +118,8 @@
                                     <div class="">
                                         <h4 class="widgettitle title-light"><span
                                                 class="fa fa-building"></span>{{ __('label.client_product') }}</h4>
-                                        <x-global::forms.select name="clientId" id="clientId">
+                                                
+                                        <x-global::forms.select name="clientId" id="clientId" >
                                             @foreach ($tpl->get('clients') as $row)
                                                 <x-global::forms.select.select-option :value="$row['id']" :selected="$project['clientId'] == $row['id']">
                                                     {{ $tpl->escape($row['name']) }}
