@@ -2,7 +2,7 @@
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
 
-    <x-global::actions.dropdown contentRole='ghost'>
+    <x-global::actions.dropdown contentRole='ghost' position="left">
         <x-slot:labelText>
             @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
                 <a href="{{ BASE_URL }}/users/editOwn/" class="profileHandler includeLogo">
