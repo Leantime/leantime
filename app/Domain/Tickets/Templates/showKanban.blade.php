@@ -95,7 +95,7 @@
 
                     </h4>
 
-                    <div class="">
+                    <div class="" style="margin-top: 1rem;">
                         <a href="javascript:void(0);" style="padding:10px; display:block; width:100%;"
                             id="ticket_new_link_<?= $key ?>"
                             onclick="jQuery('#ticket_new_link_<?= $key ?>').toggle('fast'); jQuery('#ticket_new_<?= $key ?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
@@ -109,7 +109,8 @@
                                     name="headline" 
                                     placeholder="Enter To-Do Title" 
                                     title="{!! $tpl->__('label.headline') !!}" 
-                                    variant="title"
+                                    variant=""
+                                    class="rounded-full"
                                  />
                                 
                                 <input type="hidden" name="milestone" value="{!! $searchCriteria['milestone'] !!}" />
@@ -126,6 +127,7 @@
                                 <x-global::forms.button 
                                     tag="a"
                                     class="btn btn-default"
+                                    content-role="secondary"
                                     href="javascript:void(0);" 
                                     onclick="jQuery('#ticket_new_{!! $key !!}, #ticket_new_link_{!! $key !!}').toggle('fast');"
                                 >
