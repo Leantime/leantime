@@ -1,41 +1,63 @@
 @props([
-    "dateName" => '',
-    "value" => '',
-    "timeName" => '',
-    "showTime" => true,
-    "noDateLabel" => "",
-    "labelText" => '',
-    "labelRight" => '',
-    "caption" => '',
-    "validationText" => '',
+    //Basic Definition
+    'contentRole' => 'ghost', //default, primary, secondary, tertiary (ghost), accent, link
+    'state' => '', //default, info, warning, danger, success,
+    'scale' => '', //xs, sm, md, lg, xl
+
+    //labels & content
+    'labelPosition' => 'top',
+    'labelText' => '',
+    'helpText' => '',
+    'leadingVisual' => '',
+    'trailingVisual' => '',
+    'caption' => '',
+    'validationText' => '',
+    'validationState' => '',
+
+    //Variation options
+    'variant' => '', //chip, input
+    'dateName' => '',
+    'value' => '',
+    'timeName' => '',
+    'showTime' => true,
+    'noDateLabel' => "",
 ])
 
-<div class='form-control relative w-full max-w-xs'>
+@php
 
-    <x-global::forms.label-row>
-        @if($labelText)
-            <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
-        @endif
-        @if($labelRight)
-            <x-slot:label-right> {!! $labelRight !!}</x-slot:label-right>
-        @endif
-    </x-global::forms.label-row>
+    $buttonSize = '';
+    if($variant !== 'chip') {
+        $buttonSize = 'w-full';
+    }
+
+@endphp
+
+<x-global::forms.field-row :label-position="$labelPosition">
+    @if($labelText)
+        <x-slot:label-text>{!! $labelText !!}</x-slot:label-text>
+    @endif
+
+    @if($helpText)
+        <x-slot:help-text>{!! $helpText !!}</x-slot:help-text>
+    @endif
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
     @endif
 
-    <x-global::actions.dropdown variant="card" content-role="ghost" class="date-dropdown">
+    <x-global::actions.dropdown variant="card" :content-role="$contentRole" class="date-dropdown {{ $buttonSize }}" button-variant="{{ $variant }}">
         <x-slot:label-text class="font-normal">
-            <div class="h-6 w-6">
-                <i class="fa fa-calendar"></i>
-            </div>
+            @if(!empty(trim($leadingVisual)))
+                <div class="h-6 w-6">
+                    {!! $leadingVisual !!}
+                </div>
+            @endif
             @if(empty($value) || ! dtHelper()->isValidDateString($value))
-                <span class="dateField font-normal">{{ $noDateLabel }}</span>
-                <span class="timeField font-normal"></span>
+                <span class="dateField font-light">{{ $noDateLabel }}</span>
+                <span class="timeField font-light"></span>
             @else
-                <span class="dateField font-normal">{{ format($value)->date() }}</span>
-                <span class="timeField font-normal">
+                <span class="dateField font-light">{{ format($value)->date() }}</span>
+                <span class="timeField font-light">
                         @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
                             {{ format($value)->time() }}
                     @endif
@@ -56,11 +78,11 @@
     </x-global::actions.dropdown>
 
     @if($validationText)
-        <x-global::forms.label-row class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
-            <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
-        </x-global::forms.label-row>
+        <x-slot:validation-text> {!! $validationText !!}</x-slot:validation-text>
     @endif
-</div>
+
+
+</x-global::forms.field-row>
 
 <script>
 

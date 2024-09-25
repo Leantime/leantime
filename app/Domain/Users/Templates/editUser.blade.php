@@ -159,11 +159,13 @@ $projects = $tpl->get('relations');
                                 $currentClient = $row['clientName'];
                             } ?>
                             <div class="item" style="padding:10px 0px;">
-                                <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
-                                    <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
-                                        echo "checked='checked';";
-                                    } ?>
+                                <x-global::forms.checkbox
+                                    name="projects[]"
+                                    :id="'project_' . $row['id']"
+                                    :value="$row['id']"
+                                    :checked="is_array($projects) && in_array($row['id'], $projects)"
                                 />
+                                
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
                                     <img src='{{ BASE_URL }}/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
                                 </span>

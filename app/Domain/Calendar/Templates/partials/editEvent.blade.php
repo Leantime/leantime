@@ -48,7 +48,7 @@
         id="allDay"
         :checked="$values['allDay']"
         labelText="{{ __('label.all_day') }}"
-        labelPosition="left"
+        labelPosition="right"
     />
 
     <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>

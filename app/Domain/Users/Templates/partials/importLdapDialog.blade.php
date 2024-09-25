@@ -16,8 +16,15 @@
     <?php if ($tpl->get("confirmUsers")) { ?>
         <form class="importModal userImportModal" method="post" action="{{ BASE_URL }}/users/import">
             <?php foreach ($tpl->get("allLdapUsers") as $user) { ?>
-                <input type="checkbox" value="<?php $tpl->e($user['user']); ?>" id="<?php $tpl->e($user['user']) ?>" name="users[]" checked="checked"/>
-                <label for="<?php $tpl->e($user['user']) ?>" style="display:inline;"><?php $tpl->e($user['user']) ?> - <?php $tpl->e($user['firstname']) ?>,  <?php $tpl->e($user['lastname']) ?><br />
+                <x-global::forms.checkbox
+                    name="users[]"
+                    :id="$user['user']"
+                    :value="$user['user']"
+                    checked
+                    :labelText="$user['user'].' - '.$user['firstname'].', '.$user['lastname']"
+                    labelPosition="right"
+                />
+                    <br />
             <?php } ?>
             <br />
             <input type="hidden" name="importSubmit" value="1"/>

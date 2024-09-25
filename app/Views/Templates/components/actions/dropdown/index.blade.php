@@ -1,11 +1,15 @@
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
-    'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link, transparent
+
+    'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
+    'state' => '',
+
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
     'cardLabel' => 'Card Title!', // Text for the card title
     'buttonShape' => ''
+    'buttonVariant' => '',
 ])
 
 @php
@@ -22,8 +26,8 @@
 
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
-        'card' => 'card dropdown-content  card-compact text-primary-content w-64 p-2 shadow', // Card variant class
-        default => 'menu dropdown-content bg-base-100 rounded-box p-2 shadow w-52 z-50', // Default to regular menu
+        'card' => 'card dropdown-content card-compact text-primary-content w-64 p-2 shadow', // Card variant class
+        default => 'menu dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50', // Default to regular menu
     };
 
     // Determine the dropdown position class
@@ -40,8 +44,10 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
+
+
     <!-- Dropdown Button -->
-    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape">
+    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant">
         {!! $labelText !!}
     </x-global::forms.button>
 

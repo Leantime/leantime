@@ -4,7 +4,7 @@
 
 @if ($variant === 'link')
     <li>
-        <a {{ $attributes->merge(['class' => 'text-neutral-content link:text-neutral-content visited:text-neutral-content']) }}>
+        <a {{ $attributes->merge(['class' => 'text-neutral-content rounded-full link:text-neutral-content visited:text-neutral-content']) }}>
             {!! $slot !!}
         </a>
     </li>

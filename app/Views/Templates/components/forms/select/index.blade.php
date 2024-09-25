@@ -1,13 +1,20 @@
 @props([
+    //Basic Definition
+    'contentRole' => '', //default, primary, secondary, tertiary (ghost), accent, link
+    'state' => '', //default, info, warning, danger, success,
+    'scale' => '', //xs, sm, md, lg, xl
+
+    //labels & content
+    'labelPosition' => 'top',
     'labelText' => '',
-    'labelRight' => '',
+    'helpText' => '',
     'caption' => '',
     'leadingVisual' => '',
-    'size' => '',
-    'state' => '',
-    'variant' => 'single', //single, multiple, tags
     'validationText' => '',
     'validationState' => '',
+
+    //Variation options
+    'variant' => 'single', //single, multiple, tags, chip
     'search' => 'true',
     'addChoices' => 'false',
     'autocompleteTags' => false,
@@ -16,31 +23,55 @@
 ])
 
 @php
-    $sizeClass = $size && $size != 'md' ? 'select-'.$size : '';
+    $sizeClass = $scale && $scale != 'md' ? 'select-'.$scale : '';
     $stateClass = $state && $state != 'disabled' ? 'select-'.$state : '';
     $validationClass = $validationState ? 'text-yellow-500' : '';
 
-    $selectChip = '';
+    $selectVariant = '';
     if($variant == 'chip'){
-        $selectChip = "select-chip";
+        $selectVariant = "select-chip";
     }
+    
+    switch($contentRole){
+        case 'secondary':
+            $contentRoleClass = 'select-bordered';
+            break;
+        case 'tertiary':
+        case 'ghost':
+            $contentRoleClass = '';
+            break;
+        case 'link':
+            $contentRoleClass = '';
+            break;
+        default:
+            $contentRoleClass = 'select-bordered';
+    }
+    $selectClassArray = [
+        'select-'.$formHash,
+        'select',
+        $contentRoleClass,
+        $selectVariant,
+        $sizeClass,
+        $stateClass,
+        "w-full",
+        "max-w-xs",
+        ($leadingVisual ? 'pl-10' : '')
+    ];
 
-    $selectClassBuilder = 'leantime-select select '. $selectChip .' select-bordered select-'.$formHash.' '.$sizeClass.' '.$stateClass.' w-full max-w-xs input-shadow '.($leadingVisual ? 'pl-10' : '');
+    //Clean up array and implode for js
+    $selectClassBuilder = implode(" ", array_filter(array_map('trim', $selectClassArray)));
 
-    // var_dump($selectClassBuilder);
-    @endphp
+@endphp
 
+<x-global::forms.field-row :label-position="$labelPosition">
 
-<div class='form-control relative w-full max-w-xs'>
+    @if($labelText)
+        <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
+    @endif
 
-    <x-global::forms.label-row>
-        @if($labelText)
-            <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
-        @endif
-        @if($labelRight)
-            <x-slot:label-right> {!! $labelRight !!}</x-slot:label-right>
-        @endif
-    </x-global::forms.label-row>
+    @if($helpText)
+        <x-slot:help-text> {!! $helpText !!}</x-slot:help-text>
+    @endif
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
@@ -54,23 +85,20 @@
         @endif
 
         <select
-
             {{$attributes->merge(['class' => $selectClassBuilder ])}}
             {{ $state === 'disabled' ? 'disabled' : '' }}
-            {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}
-        >
+            {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
             {{ $slot }}
         </select>
 
     </div>
 
     @if($validationText)
-        <x-global::forms.label-row class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
-            <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
-        </x-global::forms.label-row>
+        <x-slot:validation-text> {!! $validationText !!}</x-slot:validation-text>
     @endif
 
-</div>
+
+</x-global::forms.field-row>
 
 <script>
 

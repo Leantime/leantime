@@ -30,9 +30,12 @@ function getOptions(selectElement) {
 
 export const initSelect = function (element, enableSearch, additionalClasses) {
 
-    console.log(additionalClasses);
+    let outerClasses = ["select"];
 
-  let tokens = additionalClasses.replace(/ /g, ",");
+    if(additionalClasses !== '') {
+        const selectClasses = additionalClasses.trim().split(" ");
+        outerClasses = selectClasses;
+    }
 
   const select = new Choices(element, {
     editItems: false,
@@ -56,8 +59,7 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-        containerOuter: ["select"],
-
+        containerOuter: outerClasses,
         containerInner: ["choices__inner"],
         input: ["choices__input"],
         inputCloned: [
@@ -66,7 +68,8 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
         list: ["choices__list"],
         listItems: ["choices__list--multiple"],
         listSingle: ["choices__list--single"],
-        listDropdown: ["choices__list--dropdown"],
+        listDropdown: ["dropdown-content", "menu"],
+
         item: ["choices__item"],
         itemSelectable: ["choices__item--selectable"],
         itemDisabled: ["choices__item--disabled"],
@@ -109,7 +112,14 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
 };
 
 export const initTags = function (element, enableSearch, autoCompleteTags, additionalClasses) {
-  // let choiceList = choices.split(",");
+
+    let outerClasses = ["select"];
+
+    if(additionalClasses !== '') {
+        const selectClasses = additionalClasses.trim().split(" ");
+        outerClasses = selectClasses;
+    }
+
   const select = new Choices(element, {
     editItems: false,
     addItems: true,
@@ -135,17 +145,16 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-      containerOuter: ["choices "+additionalClasses],
+      containerOuter: outerClasses,
       containerInner: ["choices__inner"],
       input: ["choices__input"],
       inputCloned: [
         "choices__input--cloned",
-
       ],
-      list: ["choices__list"],
+      list: ["dropdown-content","menu"],
       listItems: ["choices__list--multiple"],
       listSingle: ["choices__list--single"],
-      listDropdown: ["choices__list--dropdown"],
+      listDropdown: ["dropdown-content","menu"],
       item: ["choices__item"],
       itemSelectable: ["choices__item--selectable"],
       itemDisabled: ["choices__item--disabled"],

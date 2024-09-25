@@ -292,14 +292,15 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" >{{ __('label.receive_notifications') }}</label>
-                                    <span>
-                                        <input type="checkbox" value="" name="notifications" class="input"
-                                               id="notifications"
-                                               @if ($values['notifications'] == "1" )
-                                                   checked='checked'
-                                               @endif/> <br/>
-                                    </span>
+                                    <x-global::forms.checkbox
+                                        name="notifications"
+                                        id="notifications"
+                                        :checked="$values['notifications'] == '1'"
+                                        class="input"
+                                        labelText="{{ __('label.receive_notifications') }}"
+                                        labelPosition="left"
+                                    />    
+                                    <br/>
                                 </div>
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>

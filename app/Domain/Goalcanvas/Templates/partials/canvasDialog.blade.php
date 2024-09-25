@@ -50,20 +50,24 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="startValue"
                             value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
-                            variant="compact" />
+                            variant="compact"
+                            class="w-20" />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
                             labelText="{{ __('label.current_value') }}" variant="compact"
-                            @if ($canvasItem['setting'] == 'linkAndReport') readonly
-                                data-tippy-content="Current value calculated from child goals" @endif />
+                            class="w-20"
+{{--                            @if ($canvasItem['setting'] == 'linkAndReport')--}}
+{{--                                dataTippyContent="Current value calculated from child goals" @endif--}}
+                        />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="endValue"
                             value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
+                            class="w-20"
                             variant="compact" />
 
                     </div>
