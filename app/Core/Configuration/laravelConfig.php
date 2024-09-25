@@ -1,18 +1,8 @@
 <?php
 
-use \Illuminate\Support;
-use Leantime\Core\Providers\Auth;
 use Leantime\Core\Providers\Cache;
-use Leantime\Core\Providers\ConsoleSupport;
-use Leantime\Core\Providers\Db;
-use Leantime\Core\Providers\EncryptionServiceProvider;
-use Leantime\Core\Providers\FileSystemServiceProvider;
-use Leantime\Core\Providers\Frontcontroller;
-use Leantime\Core\Providers\Language;
-use Leantime\Core\Providers\RateLimiter;
 use Leantime\Core\Providers\Redis;
 use Leantime\Core\Providers\Session;
-use Leantime\Core\Providers\TemplateServiceProvider;
 use Leantime\Core\Providers\Views;
 
 return [
@@ -22,6 +12,7 @@ return [
              * Package Service Providers...
              */
             Barryvdh\Debugbar\ServiceProvider::class,
+
 
             /*
              * Application Service Providers...
@@ -45,7 +36,6 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             //\Illuminate\Queue\QueueServiceProvider::class,
 
-
             \Leantime\Core\Providers\Session::class,
 
             //\Illuminate\Redis\RedisServiceProvider::class,
@@ -63,6 +53,7 @@ return [
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
+
 
         ],
     ],
@@ -112,7 +103,7 @@ return [
         ],
         'default' => 'single',
     ],
-    "debugbar" => [
+    'debugbar' => [
 
         /*
          |--------------------------------------------------------------------------
@@ -149,14 +140,14 @@ return [
          | Leaving it to null will allow localhost only.
          */
         'storage' => [
-            'enabled'    => true,
-            'open'       => true, // bool/callback.
-            'driver'     => 'file', // redis, file, pdo, socket, custom
-            'path'       => storage_path('debugbar'), // For file driver
+            'enabled' => true,
+            'open' => true, // bool/callback.
+            'driver' => 'file', // redis, file, pdo, socket, custom
+            'path' => storage_path('debugbar'), // For file driver
             'connection' => null,   // Leave null for default connection (Redis/PDO)
-            'provider'   => '', // Instance of StorageInterface for custom driver
-            'hostname'   => '127.0.0.1', // Hostname to use with the "socket" driver
-            'port'       => 2304, // Port to use with the "socket" driver
+            'provider' => '', // Instance of StorageInterface for custom driver
+            'hostname' => '127.0.0.1', // Hostname to use with the "socket" driver
+            'port' => 2304, // Port to use with the "socket" driver
         ],
 
         /*
@@ -175,7 +166,7 @@ return [
 
         'editor' => 'phpstorm',
 
-          /*
+        /*
          |--------------------------------------------------------------------------
          | Vendors
          |--------------------------------------------------------------------------
@@ -245,30 +236,30 @@ return [
          */
 
         'collectors' => [
-            'phpinfo'         => true,  // Php version
-            'messages'        => true,  // Messages
-            'time'            => true,  // Time Datalogger
-            'memory'          => true,  // Memory usage
-            'exceptions'      => true,  // Exception displayer
-            'log'             => true,  // Logs from Monolog (merged in messages if enabled)
-            'db'              => false,  // Show database (PDO) queries and bindings
-            'views'           => true,  // Views with their data
-            'route'           => true,  // Current route information
-            'auth'            => false, // Display Laravel authentication status
-            'gate'            => false,  // Display Laravel Gate checks
-            'session'         => true,  // Display session data
+            'phpinfo' => true,  // Php version
+            'messages' => true,  // Messages
+            'time' => true,  // Time Datalogger
+            'memory' => true,  // Memory usage
+            'exceptions' => true,  // Exception displayer
+            'log' => true,  // Logs from Monolog (merged in messages if enabled)
+            'db' => false,  // Show database (PDO) queries and bindings
+            'views' => true,  // Views with their data
+            'route' => true,  // Current route information
+            'auth' => false, // Display Laravel authentication status
+            'gate' => false,  // Display Laravel Gate checks
+            'session' => true,  // Display session data
             'symfony_request' => true,  // Only one can be enabled..
-            'mail'            => false,  // Catch mail messages
-            'laravel'         => false, // Laravel version and environment
-            'events'          => true, // All events fired
+            'mail' => false,  // Catch mail messages
+            'laravel' => false, // Laravel version and environment
+            'events' => true, // All events fired
             'default_request' => false, // Regular or special Symfony request logger
-            'logs'            => true, // Add the latest log messages
-            'files'           => true, // Show the included files
-            'config'          => true, // Display config settings
-            'cache'           => true, // Display cache events
-            'models'          => false,  // Display models
-            'livewire'        => false,  // Display Livewire (when available)
-            'jobs'            => false, // Display dispatched jobs
+            'logs' => true, // Add the latest log messages
+            'files' => true, // Show the included files
+            'config' => true, // Display config settings
+            'cache' => true, // Display cache events
+            'models' => false,  // Display models
+            'livewire' => false,  // Display Livewire (when available)
+            'jobs' => false, // Display dispatched jobs
         ],
 
         /*
@@ -297,21 +288,21 @@ return [
                 'show_guards' => true, // Show the guards that are used
             ],
             'db' => [
-                'with_params'       => true,   // Render SQL with the parameters substituted
-                'backtrace'         => true,   // Use a backtrace to find the origin of the query in your files.
+                'with_params' => true,   // Render SQL with the parameters substituted
+                'backtrace' => true,   // Use a backtrace to find the origin of the query in your files.
                 'backtrace_exclude_paths' => [],   // Paths to exclude from backtrace. (in addition to defaults)
-                'timeline'          => false,  // Add the queries to the timeline
-                'duration_background'  => true,   // Show shaded background on each query relative to how long it took to execute.
+                'timeline' => false,  // Add the queries to the timeline
+                'duration_background' => true,   // Show shaded background on each query relative to how long it took to execute.
                 'explain' => [                 // Show EXPLAIN output on queries
                     'enabled' => false,
                     'types' => ['SELECT'],     // Deprecated setting, is always only SELECT
                 ],
-                'hints'             => false,    // Show hints for common mistakes
-                'show_copy'         => false,    // Show copy button next to the query,
-                'slow_threshold'    => false,   // Only track queries that last longer than this time in ms
-                'memory_usage'      => false,   // Show queries memory usage
-                'soft_limit'       => 100,      // After the soft limit, no parameters/backtrace are captured
-                'hard_limit'       => 500,      // After the hard limit, queries are ignored
+                'hints' => false,    // Show hints for common mistakes
+                'show_copy' => false,    // Show copy button next to the query,
+                'slow_threshold' => false,   // Only track queries that last longer than this time in ms
+                'memory_usage' => false,   // Show queries memory usage
+                'soft_limit' => 100,      // After the soft limit, no parameters/backtrace are captured
+                'hard_limit' => 500,      // After the hard limit, queries are ignored
             ],
             'mail' => [
                 'timeline' => false,  // Add mails to the timeline
@@ -322,7 +313,7 @@ return [
                 'data' => true,        //true for all data, 'keys' for only names, false for no parameters.
                 'group' => 50,          // Group duplicate views. Pass value to auto-group, or true/false to force
                 'exclude_paths' => [    // Add the paths which you don't want to appear in the views
-                    'vendor/filament'   // Exclude Filament components by default
+                    'vendor/filament',   // Exclude Filament components by default
                 ],
             ],
             'route' => [
@@ -691,4 +682,16 @@ return [
         'compiled' => realpath(storage_path('framework/views')),
 
     ],
+    'blade-icons' => [
+        'path' => 'public/assets/images/svg',
+        'class' => '',
+        'components' => [
+            'default' => 'svg',
+        ],
+    ],
+    'blade-google-material-design-icons' => [
+        'path' => 'public/assets/images/svg',
+        'prefix' => 'gmdi',
+    ],
+
 ];

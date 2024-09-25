@@ -2,16 +2,15 @@
     @apply shadow-md;
 }
 
-
 .input,
 .select {
-
     &:hover {
-        @apply shadow-none border-base-content/50;
+        @apply shadow-md bg-neutral;
     }
 
-}
-
-.form-control {
-    @apply pb-4;
+    &-bordered {
+        &:hover {
+            @apply border-base-content/50 bg-none;
+        }
+    }
 }

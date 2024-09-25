@@ -16,6 +16,7 @@ module.exports = {
             hanken: ['"Hanken Grotesk"', 'sans-serif'],
             atkinson: ['"Atkinson Hyperlegible"', 'sans-serif'],
             shantell: ['"Shantell Sans"', 'sans-serif'],
+            materialIcons: ['"Material Symbols Rounded"', 'sans-serif'],
         },
         fontWeight: {
             thin: '100',

@@ -69,7 +69,9 @@
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "predis/predis": "^2.2",
-        "sentry/sentry-laravel": "^4.8"
+        "sentry/sentry-laravel": "^4.8",
+        "blade-ui-kit/blade-icons": "^1.7",
+        "codeat3/blade-google-material-design-icons": "^1.19"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
