@@ -3,6 +3,10 @@
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
     'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
+    'state' => '',
+
+    'buttonVariant' => '',
+
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
@@ -41,9 +45,9 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
-    <!-- Dropdown Button -->
 
-    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape">
+    <!-- Dropdown Button -->
+    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant">
         {!! $labelText !!}
     </x-global::forms.button>
 

@@ -1,6 +1,14 @@
 
 .select {
-    @apply select-bordered select-sm w-full max-w-xs relative;
+    @apply select-sm text-sm w-full max-w-xs relative;
+
+    &.select-ghost {
+        @apply bg-none;
+
+        &:hover {
+            @apply caret-neutral-700;
+        }
+    }
 
    &.select-chip {
        @apply bg-none leading-6 min-h-6 h-6 w-auto px-0.5 rounded-full ps-1.5 pe-1.5 bg-none text-xs leading-6 min-h-6 h-6 align-sub;
@@ -31,10 +39,15 @@
         @apply border-base-content/20 outline-base-content/20 outline outline-2 outline-offset-2;
     }
 
-    .choices__inner {
-        select {
-            display: none;
-        }
+    &:hover {
+        @apply shadow-lg;
+    }
+
+}
+
+.choices__inner {
+    select {
+        display: none;
     }
 }
 
@@ -161,7 +174,7 @@
 .choices__list--single .choices__item {
     width: 100%;
     align-content: center;
-    @apply select-sm text-sm px-1;
+    @apply px-0 text-sm select-sm;
 }
 
 .select-chip {

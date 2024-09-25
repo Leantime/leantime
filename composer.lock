@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c83702290190764135fa91054b004993",
+    "content-hash": "26b7582442204a3d1b9e004580963947",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -213,6 +213,87 @@
             "time": "2022-12-07T17:46:57+00:00"
         },
         {
+            "name": "blade-ui-kit/blade-icons",
+            "version": "1.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/blade-ui-kit/blade-icons.git",
+                "reference": "8f787baf09d88cdfd6ec4dbaba11ebfa885f0595"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/blade-ui-kit/blade-icons/zipball/8f787baf09d88cdfd6ec4dbaba11ebfa885f0595",
+                "reference": "8f787baf09d88cdfd6ec4dbaba11ebfa885f0595",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0",
+                "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "illuminate/view": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^7.4|^8.0",
+                "symfony/console": "^5.3|^6.0|^7.0",
+                "symfony/finder": "^5.3|^6.0|^7.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5.1",
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^9.0|^10.5|^11.0"
+            },
+            "bin": [
+                "bin/blade-icons-generate"
+            ],
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BladeUI\\Icons\\BladeIconsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "BladeUI\\Icons\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dries Vints",
+                    "homepage": "https://driesvints.com"
+                }
+            ],
+            "description": "A package to easily make use of icons in your Laravel Blade views.",
+            "homepage": "https://github.com/blade-ui-kit/blade-icons",
+            "keywords": [
+                "blade",
+                "icons",
+                "laravel",
+                "svg"
+            ],
+            "support": {
+                "issues": "https://github.com/blade-ui-kit/blade-icons/issues",
+                "source": "https://github.com/blade-ui-kit/blade-icons"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/driesvints",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.paypal.com/paypalme/driesvints",
+                    "type": "paypal"
+                }
+            ],
+            "time": "2024-08-14T14:25:11+00:00"
+        },
+        {
             "name": "brick/math",
             "version": "0.12.1",
             "source": {
@@ -388,6 +469,79 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "codeat3/blade-google-material-design-icons",
+            "version": "1.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codeat3/blade-google-material-design-icons.git",
+                "reference": "7a20f3a763edc54dba69725660eff2b2e99f8dad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codeat3/blade-google-material-design-icons/zipball/7a20f3a763edc54dba69725660eff2b2e99f8dad",
+                "reference": "7a20f3a763edc54dba69725660eff2b2e99f8dad",
+                "shasum": ""
+            },
+            "require": {
+                "blade-ui-kit/blade-icons": "^1.1",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "codeat3/blade-icon-generation-helpers": "^0.8",
+                "codeat3/phpcs-styles": "^1.0",
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^9.0|^10.5|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Codeat3\\BladeGoogleMaterialDesignIcons\\BladeGoogleMaterialDesignIconsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Codeat3\\BladeGoogleMaterialDesignIcons\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Swapnil Sarwe",
+                    "homepage": "https://swapnilsarwe.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "homepage": "https://driesvints.com"
+                }
+            ],
+            "description": "A package to easily make use of \"Google Fonts Material Icons\" in your Laravel Blade views.",
+            "homepage": "https://github.com/codeat3/blade-google-material-design-icons",
+            "keywords": [
+                "blade",
+                "google",
+                "icons",
+                "laravel",
+                "material"
+            ],
+            "support": {
+                "issues": "https://github.com/codeat3/blade-google-material-design-icons/issues",
+                "source": "https://github.com/codeat3/blade-google-material-design-icons/tree/1.19.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/swapnilsarwe",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-02-28T15:02:13+00:00"
         },
         {
             "name": "dasprid/enum",
