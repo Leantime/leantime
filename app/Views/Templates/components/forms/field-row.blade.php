@@ -25,7 +25,7 @@
     @endif
 
         <x-global::forms.label-row>
-            @if($labelText && $labelPosition !== 'left')
+            @if($labelText && $labelPosition !== 'left' && $labelPosition !== 'right')
                 <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
             @endif
             @if($helpText)

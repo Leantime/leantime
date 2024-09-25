@@ -220,7 +220,8 @@ module.exports = {
                 "90": "#272727",
                 "95": "#1b1b1b",
                 "05": "#f3f3f3"
-            }
+            },
+            "pagetitle-content" : "#fff",
         },
     },
     daisyui: {
@@ -253,6 +254,8 @@ module.exports = {
                 'error' :  '#aa0909',             /* Error */
 
                 'text-sm': '0.938rem',
+
+
 
                 "--rounded-box": '1.5rem', // biggest elements, large content cards
                 "--rounded-element": '1rem', //Second biggest element dropdowns, content cards
