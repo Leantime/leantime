@@ -4,6 +4,7 @@
     "timeName" => '',
     "showTime" => true,
     "noDateLabel" => "",
+    "leadingVisual" => "",
 ])
 <div class="dropDownContainer">
     <a href="javascript:void(0);" class="dropdown-toggle input-proxy" data-toggle="dropdown" id="dateTimeDropdown-{{ $dateName }}">
@@ -24,15 +25,15 @@
         <x-global::forms.button type="button" content-role="ghost" class="float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
             <i class="fa fa-clock"></i>
         </x-global::forms.button>
-        
+
         <div class="clearall"></div>
         <input type="date" id="datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
         <hr class="mt-xs"/>
-        
+
         <x-global::forms.button type="button" content-role="ghost" class="float-right" onclick="jQuery(body).click()">
             Close
         </x-global::forms.button>
-        
+
         <x-global::forms.button type="button" content-role="ghost" class="float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();">
             Clear
         </x-global::forms.button>
