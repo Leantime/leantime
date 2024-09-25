@@ -3,9 +3,9 @@
 }
 
 .label {
-    @apply text-sm py-0.5;
+    @apply text-sm py-0.5 ;
 }
 
 .label-text {
-    @apply text-sm;
+    @apply text-sm text-base-content/80;
 }

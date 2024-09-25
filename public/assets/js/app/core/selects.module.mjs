@@ -28,14 +28,13 @@ function getOptions(selectElement) {
     return items;
 }
 
-export const initSelect = function (element, enableSearch, additionalClass) {
+export const initSelect = function (element, enableSearch, additionalClasses) {
 
-    let outerClasses = [];
-    outerClasses.push("select");
-    outerClasses.push("choices");
+    let outerClasses = ["select"];
 
-    if(additionalClass !== '') {
-        outerClasses.push(additionalClass);
+    if(additionalClasses !== '') {
+        const selectClasses = additionalClasses.trim().split(" ");
+        outerClasses = selectClasses;
     }
 
   const select = new Choices(element, {
@@ -69,7 +68,8 @@ export const initSelect = function (element, enableSearch, additionalClass) {
         list: ["choices__list"],
         listItems: ["choices__list--multiple"],
         listSingle: ["choices__list--single"],
-        listDropdown: ["choices__list--dropdown"],
+        listDropdown: ["dropdown-content", "menu"],
+
         item: ["choices__item"],
         itemSelectable: ["choices__item--selectable"],
         itemDisabled: ["choices__item--disabled"],
@@ -111,14 +111,13 @@ export const initSelect = function (element, enableSearch, additionalClass) {
   );
 };
 
-export const initTags = function (element, enableSearch, autoCompleteTags, additionalClass) {
+export const initTags = function (element, enableSearch, autoCompleteTags, additionalClasses) {
 
-    let outerClasses = [];
-    outerClasses.push("select");
-    outerClasses.push("choices");
+    let outerClasses = ["select"];
 
-    if(additionalClass !== '') {
-        outerClasses.push(additionalClass);
+    if(additionalClasses !== '') {
+        const selectClasses = additionalClasses.trim().split(" ");
+        outerClasses = selectClasses;
     }
 
   const select = new Choices(element, {
@@ -151,12 +150,11 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
       input: ["choices__input"],
       inputCloned: [
         "choices__input--cloned",
-
       ],
-      list: ["choices__list"],
+      list: ["dropdown-content","menu"],
       listItems: ["choices__list--multiple"],
       listSingle: ["choices__list--single"],
-      listDropdown: ["choices__list--dropdown"],
+      listDropdown: ["dropdown-content","menu"],
       item: ["choices__item"],
       itemSelectable: ["choices__item--selectable"],
       itemDisabled: ["choices__item--disabled"],
