@@ -58,7 +58,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
         <div class="">
-            <x-global::forms.button type="submit" contentRole="primary" name="login" cornerShape="full" :takeFullWidth="true">
+            <x-global::forms.button type="submit" content-role="primary" name="login" cornerShape="full" :takeFullWidth="true">
                 {{ $tpl->language->__('buttons.login') }}
             </x-global::forms.button>
         </div>
@@ -76,7 +76,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <div class="">
             <br /><center class="uppercase"><?php echo $tpl->language->__("label.or"); ?></center><br />
             
-            <x-global::forms.button onclick="window.location.href = '{{ BASE_URL }}/oidc/login'" contentRole="primary" name="oidclogin" cornerShape="full" :takeFullWidth="true">
+            <x-global::forms.button onclick="window.location.href = '{{ BASE_URL }}/oidc/login'" content-role="primary" name="oidclogin" cornerShape="full" :takeFullWidth="true">
                 {{ $tpl->language->__('buttons.oidclogin') }}
             </x-global::forms.button>
         </div>
