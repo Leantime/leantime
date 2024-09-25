@@ -1,14 +1,37 @@
 @props([
-    'size' => '', //lg, md, sm. xs
-    'type' => '', //neutral, primary, secondary, accent, ghost, info, success, warning, error
-    'outlineState' => false,
+    'contentRole' => '', //primary, secondary, tertiary, accent, ghost
+    'scale' => '', //xs, s, m. l
+    'outline' => false,
     'leadingVisual' => ''
 ])
 
 @php
-    $sizeClass = $size ? 'badge-'.$size : '';
-    $typeClass = $type ? 'badge-'.$type : '';
-    $outlineClass = $outlineState ? 'badge-outline' : '';
+    switch($contentRole){
+        case 'secondary':
+            $typeClass = 'badge-secondary';
+            break;
+        case 'tertiary':
+        case 'accent':
+            $typeClass = 'badge-accent';
+            break;
+        case 'ghost':
+            $typeClass = 'badge-ghost';
+            break;
+        default:
+            $typeClass = 'badge-primary';
+    }
+
+    if ($scale === 'xs') {
+        $sizeClass = 'badge-xs';
+    } elseif ($scale === 's') {
+        $sizeClass = 'badge-sm';
+    } elseif ($scale === 'l') {
+        $sizeClass = 'badge-lg';
+    } else {
+        $sizeClass = '';
+    }
+
+    $outlineClass = $outline ? 'badge-outline' : '';
 @endphp
 
 

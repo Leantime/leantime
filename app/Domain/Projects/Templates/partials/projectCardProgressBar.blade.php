@@ -22,15 +22,15 @@
         <div class="col-md-12">
             @if ($project['status'] !== null && $project['status'] != '')
                 <x-global::elements.badge
-                    :type="$project['status']"
-                    :outlineState="true"
+                    :content-role="$project['status']"
+                    :outline="true"
                 >
                     {{ __("label.project_status_" . $project['status']) }}
                 </x-global::elements.badge>
             @else
                 <x-global::elements.badge
-                    type="ghost"
-                    :outlineState="true"
+                    content-role="ghost"
+                    :outline="true"
                 >
                     {{ __("label.no_status") }}
                 </x-global::elements.badge>
