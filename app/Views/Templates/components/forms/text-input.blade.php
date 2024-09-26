@@ -13,10 +13,9 @@
     'caption' => '',
     'validationText' => '',
     'validationState' => '',
-
+    
     //Variation options
-    'variant' => '', //default, title
-
+    'variant' => '', //default, title, compact, fullWidth
 ])
 
 @php
@@ -38,6 +37,10 @@
         $width = 'max-w-xs';
         $sizeClass = $size ? 'input-'.$size : '';
 
+    } elseif ($variant === 'fullWidth') {
+        $style= 'input-bordered  input-sm';
+        $width = 'w-full';
+        $sizeClass = $scale ? 'input-'.$scale : '';
     } else {
         $style= 'input-bordered  input-sm';
         $width = 'w-full max-w-xs';
