@@ -25,53 +25,59 @@ use Leantime\Core\Support\FromFormat;
         @displayNotification()
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
-            <div class="filterWrapper relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left">{{ __("links.filter") }} (1)</a>
-                <div class="filterBar" style="display:none; top:30px;">
-
-                    <div class="filterBoxLeft">
-                        <label for="dateFrom">{{ __("label.date_from") }} {{ __("label.date_to") }}</label>
-                        <input type="text"
-                               id="dateFrom"
-                               class="dateFrom"
-                               name="dateFrom"
-                               value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text"
-                               id="dateTo"
-                               class="dateTo"
-                               name="dateTo"
-                               value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
-                               style="margin-bottom:10px; width:90px" />
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label for="kind">{!! __('label.type') !!}</label>
-                        <x-global::forms.select id="kind" name="kind" onchange="submit();">
-                            <x-global::forms.select.select-option value="all">
-                                {!! __('label.all_types') !!}
-                            </x-global::forms.select.select-option>
-                        
-                            @foreach ($tpl->get('kind') as $key => $row)
-                                <x-global::forms.select.select-option :value="$key" :selected="$key == $tpl->get('actKind')">
-                                    {!! __($row) !!}
+            <div class="relative">
+                <x-global::actions.dropdown variant="card" content-role="ghost" cardLabel="Filter Options">
+                    <x-slot:labelText>
+                        {!! __("links.filter") !!} (1)
+                    </x-slot:labelText>
+                
+                    <x-slot:cardContent>
+                        <div class="filterBoxLeft">
+                            <label for="dateFrom">{{ __("label.date_from") }} {{ __("label.date_to") }}</label>
+                            <input type="text"
+                                   id="dateFrom"
+                                   class="dateFrom"
+                                   name="dateFrom"
+                                   value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
+                                   style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                            <input type="text"
+                                   id="dateTo"
+                                   class="dateTo"
+                                   name="dateTo"
+                                   value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
+                                   style="margin-bottom:10px; width:90px" />
+                        </div>
+                
+                        <div>
+                            <x-global::forms.select id="kind" name="kind" onchange="submit();">
+                                <x-global::forms.select.select-option value="all">
+                                    {!! __("label.all_types") !!}
                                 </x-global::forms.select.select-option>
-                            @endforeach
-                        </x-global::forms.select>
-                        
-                    </div>
-                    <div class="filterBoxLeft">
-                        <label>&nbsp;</label>
-                        <x-global::forms.button type="submit" class="reload">
-                            {{ __('buttons.search') }}
-                        </x-global::forms.button>
-                    </div>
-                    <div class="clearall"></div>
-                </div>
+                            
+                                @foreach ($kind as $key => $row)
+                                    <x-global::forms.select.select-option :value="$key" :selected="$key == $actKind">
+                                        {!! __($row) !!}
+                                    </x-global::forms.select.select-option>
+                                @endforeach
+                            </x-global::forms.select>
+                            
+                        </div>
+                
+                        <div>
+                            <label>&nbsp;</label>
+                            <x-global::forms.button type="submit" class="reload">
+                                {{ __('buttons.search') }}
+                            </x-global::forms.button>
+                        </div>
+                
+                        <div class="clearall"></div>
+                    </x-slot:cardContents>
+                </x-global::actions.dropdown>
+                
             </div>
             <div class="pull-right">
-                <div class="btn-group viewDropDown">
-                    <x-global::actions.dropdown content-role="secondary">
+                <div class="btn-group">
+                    <x-global::actions.dropdown content-role="ghost">
                         <x-slot:label-text>
                             {!! __('links.list_view') !!} {!! __('links.view') !!} <span class="caret"></span>
                         </x-slot:label-text>
