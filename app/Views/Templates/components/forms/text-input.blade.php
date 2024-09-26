@@ -28,6 +28,10 @@
         $style= 'input-bordered input-sm';
         $width = 'max-w-xs';
 
+    } elseif ($variant === 'fullWidth') {
+        $style= 'input-bordered input-sm';
+        $width = 'w-full';
+        $sizeClass = $size ? 'input-'.$size : '';
     } else {
         $style= 'input-bordered  input-sm';
         $width = 'w-full max-w-xs';
