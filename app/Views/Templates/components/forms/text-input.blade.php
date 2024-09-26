@@ -15,9 +15,7 @@
     'validationState' => '',
     
     //Variation options
-    'variant' => '', //default, title
-    'cornerShape' => '' //md, lg, full, none
-
+    'variant' => '', //default, title, compact, fullWidth
 ])
 
 @php
@@ -25,7 +23,6 @@
     $stateClass = $state ? 'input-'.$state : '';
     $validationClass = $validationState ? 'text-red-500' : '';
     $ghostClass = $variant === 'ghost' ? 'input-ghost' : '';
-    $cornerClass = $cornerShape ? 'rounded-'.$cornerShape : '';
 
     if ($variant === 'title') {
 
@@ -40,9 +37,13 @@
         $width = 'max-w-xs';
         $sizeClass = $size ? 'input-'.$size : '';
 
-    } else {
+    } elseif ($variant === 'fullWidth') {
         $style= 'input-bordered  input-sm';
         $width = 'w-full';
+        $sizeClass = $scale ? 'input-'.$scale : '';
+    } else {
+        $style= 'input-bordered  input-sm';
+        $width = 'w-full max-w-xs';
         $sizeClass = $scale ? 'input-'.$scale : '';
     }
 @endphp
@@ -67,7 +68,7 @@
             </x-global::elements.leadingVisual>
         @endif
 
-        <input {{$attributes->merge(['class' => 'input input-hover '.$style.' '.$sizeClass.' '.$stateClass.' '.$width.' '.$ghostClass.' '.$cornerClass.' '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}} />
+        <input {{$attributes->merge(['class' => 'input input-hover '.$style.' '.$sizeClass.' '.$stateClass.' '.$width.' '.$ghostClass.' '.($leadingVisual ? 'pl-10' : '').($trailingVisual ? 'pr-10' : '')])}} />
 
         @if($trailingVisual)
             <x-global::elements.trailingVisual>

@@ -33,7 +33,7 @@ $redirectUrl = $tpl->get('redirectUrl');
                 labelText="Email"
                 placeholder="{{ $tpl->language->__($tpl->get('inputPlaceholder')) }}"
                 value=""
-                cornerShape="full"
+                variant="fullWidth"
             />
         </div>
 
@@ -45,7 +45,7 @@ $redirectUrl = $tpl->get('redirectUrl');
                 labelText="Password"
                 placeholder="{{ $tpl->language->__('input.placeholders.enter_password') }}"
                 value=""
-                cornerShape="full"
+                variant="fullWidth"
             />
 
             <div class="forgotPwContainer">
@@ -58,7 +58,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
         <div class="">
-            <x-global::forms.button type="submit" content-role="primary" name="login" cornerShape="full" :takeFullWidth="true">
+            <x-global::forms.button type="submit" content-role="primary" name="login" class="w-full" >
                 {{ $tpl->language->__('buttons.login') }}
             </x-global::forms.button>
         </div>
@@ -76,7 +76,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <div class="">
             <br /><center class="uppercase"><?php echo $tpl->language->__("label.or"); ?></center><br />
             
-            <x-global::forms.button onclick="window.location.href = '{{ BASE_URL }}/oidc/login'" content-role="primary" name="oidclogin" cornerShape="full" :takeFullWidth="true">
+            <x-global::forms.button onclick="window.location.href = '{{ BASE_URL }}/oidc/login'" content-role="primary" name="oidclogin" class="w-full">
                 {{ $tpl->language->__('buttons.oidclogin') }}
             </x-global::forms.button>
         </div>

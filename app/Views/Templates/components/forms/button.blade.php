@@ -10,9 +10,7 @@
     'rightIcon' => '',
     'leadingVisual' => '',
     'trailingVisual' => '',
-    'shape' => '',
-    'cornerShape' => '', //md, lg, full, none
-    'takeFullWidth' => false
+    'shape' => ''
 ])
 
 @aware([
@@ -44,11 +42,9 @@
     $sizeClass = $scale ? 'btn-'.$scale : '';
     $stateClass = $state ? 'btn-'.$state : '';
     $shapeClass = $shape ? 'btn-'.$shape : '';
-    $cornerClass = $cornerShape ? 'rounded-'.$cornerShape : '';
-    $widthClass = $takeFullWidth ? 'w-full' : '';
 @endphp
 
-<{{ $tag }} role="button" {{ $attributes->merge(['class' => 'btn btn-sm active:shadow-inner '. $typeClass.' '.$sizeClass. ' '.$stateClass. ' '.$shapeClass . ' '.$variantClasses.' '.$cornerClass.' '.$widthClass])->class([
+<{{ $tag }} role="button" {{ $attributes->merge(['class' => 'btn btn-sm active:shadow-inner '. $typeClass.' '.$sizeClass. ' '.$stateClass. ' '.$shapeClass . ' '.$variantClasses])->class([
     'join-item' => $join,
     'mr-1' => ! $join,
     ]) }}>
