@@ -152,7 +152,7 @@
                             }
                             ?>
                             <td data-order="{{ $name }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown statusDropdown colorized show {{ $class }} f-left"
                                     id="statusDropdownMenuLink{{ $row['id'] }}" :selectedKey="$selectedKey" :options="$statusLabels">
                                     <x-slot name="buttonText">
@@ -169,7 +169,7 @@
                                             {{ $label['name'] }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
 
@@ -185,7 +185,7 @@
                             ?>
 
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown milestoneDropdown colorized show label-default milestone f-left"
                                     id="{{ $milestoneDropdownId }}" :style="'background-color:' . $milestoneColor" :labelText="$milestoneHeadline" type="milestone"
                                     :parentId="$row['id']">
@@ -213,7 +213,7 @@
                                             {{ $tpl->escape($milestone->headline) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <td
@@ -225,7 +225,7 @@
                                 $dropdownId = 'effortDropdownMenuLink' . $row['id'];
                                 ?>
 
-                                <x-global::forms.dropdownPill class="label-default effort f-left" id="{{ $dropdownId }}"
+                                <x-global::forms._archive.dropdownPill class="label-default effort f-left" id="{{ $dropdownId }}"
                                     :labelText="$effortText" type="effort" :parentId="$row['id']">
                                     <x-slot name="buttonText">
                                         {{ $effortText }} <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -241,7 +241,7 @@
                                             {{ $effortValue }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
 
                             </td>
 
@@ -253,7 +253,7 @@
                             ?>
 
                             <td data-order="{{ $priorityText }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown priorityDropdown show label-default priority priority-bg-{{ $row['priority'] }} f-left"
                                     id="{{ $dropdownId }}" :labelText="$priorityText" type="priority" :parentId="$row['id']"
                                     :selectedKey="$row['priority']">
@@ -271,7 +271,7 @@
                                             {{ $priorityValue }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -287,7 +287,7 @@
 
                             <td
                                 data-order="{{ $row['editorFirstname'] != '' ? $tpl->escape($row['editorFirstname']) : $tpl->__('dropdown.not_assigned') }}">
-                                <x-global::forms.dropdownPill class="ticketDropdown userDropdown noBg show f-left"
+                                <x-global::forms._archive.dropdownPill class="ticketDropdown userDropdown noBg show f-left"
                                     id="{{ $dropdownId }}" :labelText="html_entity_decode($userText)" type="user" :parentId="$row['id']">
                                     <x-slot name="buttonText">
                                         {!! $userText !!} <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -309,7 +309,7 @@
                                             {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -320,7 +320,7 @@
                             ?>
 
                             <td data-order="{{ $sprintHeadline }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown sprintDropdown show label-default sprint f-left"
                                     id="{{ $dropdownId }}" :labelText="$sprintHeadline" type="sprint" :parentId="$row['id']">
                                     <x-slot name="buttonText">
@@ -342,7 +342,7 @@
                                             {{ $tpl->escape($sprint->name) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
 
