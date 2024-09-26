@@ -68,7 +68,7 @@ $values = $tpl->get('values');
         id="allDay"
         :checked="isset($values['allDay']) && $values['allDay']"
         labelText="{{ __('label.all_day') }}"
-        labelPosition="left"
+        labelPosition="right"
     />
     <br /><br />
 

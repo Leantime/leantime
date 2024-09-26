@@ -1,26 +1,45 @@
 @props([
-    'asLink' => false,
-    'color' => match ($color ?? null) {
-        'yellow' => ['yellow-500', 'bg-yellow-500'],
-        'red' => ['red-500', 'bg-red-500'],
-        'blue' => ['blue-500', 'bg-blue-500'],
-        'green' => ['green', 'bg-green'],
-        'primary' => ['primary', 'bg-primary'],
-        'gray', default => ['gray-900', 'bg-gray-900'],
-    },
+    'contentRole' => '', //primary, secondary, tertiary, accent, ghost
+    'scale' => '', //xs, s, m. l
+    'outline' => false,
+    'leadingVisual' => ''
 ])
 
-@if ($asLink)
-<a
-@else
-<span
-@endif
-{{ $attributes->merge([
-    'class' => 'mix-blend-difference px-2.5 py-0.5 rounded' . ($asLink ? 'text-white' . $color[1] : $color[0] . 'bg-gray-300'),
-] + ($asLink ? ['href' => $url ?? '#'] : [])) }}>
+@php
+    switch($contentRole){
+        case 'secondary':
+            $typeClass = 'badge-secondary';
+            break;
+        case 'tertiary':
+        case 'accent':
+            $typeClass = 'badge-accent';
+            break;
+        case 'ghost':
+            $typeClass = 'badge-ghost';
+            break;
+        default:
+            $typeClass = 'badge-primary';
+    }
+
+    if ($scale === 'xs') {
+        $sizeClass = 'badge-xs';
+    } elseif ($scale === 's') {
+        $sizeClass = 'badge-sm';
+    } elseif ($scale === 'l') {
+        $sizeClass = 'badge-lg';
+    } else {
+        $sizeClass = '';
+    }
+
+    $outlineClass = $outline ? 'badge-outline' : '';
+@endphp
+
+
+<div {{ $attributes->merge(['class' => 'badge mt-1 '.$typeClass.' '.$sizeClass.' '.$outlineClass]) }}>
+    @if($leadingVisual)
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            {{ $leadingVisual }}>
+        </span>
+    @endif
     {{ $slot }}
-@if ($asLink)
-</a>
-@else
-</span>
-@endif
+</div>
