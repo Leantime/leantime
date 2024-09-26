@@ -65,7 +65,11 @@
                 <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                 <div class="column">
 
-                    <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
+                    <h4 class="flex justify-between items-center widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
+                        <div>
+                            <strong class="count">0</strong>
+                            <?php $tpl->e($statusRow['name']); ?>
+                        </div>
 
                         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <!-- Determine Label Text for the Dropdown -->
@@ -74,8 +78,7 @@
                         @endphp
 
                         <!-- Context Menu Component -->
-                        <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
-                            align="start">
+                        <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom" align="end">
                             <!-- Dropdown Items -->
                             <x-global::actions.dropdown.item
                                 href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}"
@@ -90,12 +93,9 @@
 
                         <?php } ?>
 
-                        <strong class="count">0</strong>
-                        <?php $tpl->e($statusRow['name']); ?>
-
                     </h4>
 
-                    <div class="" style="margin-top: 1rem;">
+                    <div class="">
                         <a href="javascript:void(0);" style="padding:10px; display:block; width:100%;"
                             id="ticket_new_link_<?= $key ?>"
                             onclick="jQuery('#ticket_new_link_<?= $key ?>').toggle('fast'); jQuery('#ticket_new_<?= $key ?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
@@ -109,8 +109,6 @@
                                     name="headline" 
                                     placeholder="Enter To-Do Title" 
                                     title="{!! $tpl->__('label.headline') !!}" 
-                                    variant=""
-                                    class="rounded-full"
                                  />
                                 
                                 <input type="hidden" name="milestone" value="{!! $searchCriteria['milestone'] !!}" />
