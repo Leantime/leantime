@@ -36,9 +36,6 @@
         case 'link':
             $typeClass = 'btn-link text-primary hover:bg-primary/20 ';
             break;
-        case 'transparent':
-            $typeClass = 'btn-link bg-transparent text-white hover:bg-primary/20 ';
-            break;
         default:
             $typeClass = 'btn-primary border-primary hover:bg-primary ';
     }

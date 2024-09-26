@@ -18,9 +18,8 @@
         'primary' => 'btn btn-primary',
         'secondary' => 'btn btn-secondary',
         'accent' => 'btn btn-accent',
-        'ghost' => 'btn btn-tertiary text-white text-xl',
+        'ghost' => 'btn btn-tertiary',
         'link' => 'btn btn-link',
-        'transparent' => 'bg-transparent text-white text-xl ', 
         default => 'btn', // Default to base button class
     };
 

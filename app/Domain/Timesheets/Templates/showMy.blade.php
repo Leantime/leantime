@@ -203,9 +203,9 @@ jQuery(document).ready(function(){
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <x-global::actions.dropdown contentRole="secondary">
+                <x-global::actions.dropdown contentRole="ghost">
                     <x-slot:label-text>
-                        {!! __('links.week_view') !!} {!! $tpl->__('links.view') !!}
+                        {!! __('links.week_view') !!} {!! __('links.view') !!}
                     </x-slot:label-text>
                 
                     <x-slot:menu>
@@ -344,30 +344,10 @@ jQuery(document).ready(function(){
                         <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
-                                <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
-                                            <?php echo sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'client_product_format',
-                                                    '<option value="%s">%s / %s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'client_product_values',
-                                                    [
-                                                        $projectRow['id'],
-                                                        $tpl->escape($projectRow['clientName']),
-                                                        $tpl->escape($projectRow['name']),
-                                                    ]
-                                                )
-                                            ); ?>
-                                        <?php } ?>
-                                    </select>
-
-                                    {{-- <x-global::forms.select 
+                                <div id="projectSelect">
+                                    <x-global::forms.select 
                                         data-placeholder="{{ $tpl->__('input.placeholders.choose_project') }}" 
-                                        class="project-select"
+                                        {{-- class="project-select" --}}
                                     >
                                         <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
                                         
@@ -378,42 +358,21 @@ jQuery(document).ready(function(){
                                                 {{ $tpl->escape($projectRow['clientName']) }} / {{ $tpl->escape($projectRow['name']) }}
                                             </x-global::forms.select.select-option>
                                         @endforeach
-                                    </x-global::forms.select> --}}
+                                    </x-global::forms.select>
 
                                     
                                 </div>
                             </td>
                             <td width="14%">
-                                <div class="form-group" id="ticketSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) {
-                                            if(in_array($ticketRow['id'],$tpl->get('existingTicketIds'))) continue;
-                                            ?>
-                                            <?php echo sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'todo_format',
-                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'todo_values',
-                                                    [
-                                                        $ticketRow['id'],
-                                                        $ticketRow['projectId'],
-                                                        $tpl->escape($ticketRow['headline']),
-                                                    ]
-                                                )
-                                            ); ?>
-                                        <?php }?>
-                                    </select>
-                                    {{-- <x-global::forms.select 
+                                <div id="ticketSelect">
+                                    <x-global::forms.select 
                                         data-placeholder="{{ $tpl->__('input.placeholders.choose_todo') }}" 
-                                        class="ticket-select" 
+                                        {{-- class="ticket-select"  --}}
                                         name="ticketId"
                                     >
                                         <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
                                         
-                                        @foreach ($tpl->get('allTickets') as $ticketRow)
+                                        @foreach ($allTickets as $ticketRow)
                                             @if (!in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
                                                 <x-global::forms.select.select-option 
                                                     value="{{ $ticketRow['id'] }}" 
@@ -424,13 +383,13 @@ jQuery(document).ready(function(){
                                                 </x-global::forms.select.select-option>
                                             @endif
                                         @endforeach
-                                    </x-global::forms.select> --}}
+                                    </x-global::forms.select>
                                 
                                     
                                 </div>
                             </td>
                             <td width="14%">
-                                    <x-global::forms.select class="kind-select" name="kindId">
+                                    <x-global::forms.select name="kindId">
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <x-global::forms.select.select-option :value="$key">
                                                 {!! __($kindRow) !!}
