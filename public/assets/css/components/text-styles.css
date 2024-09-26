@@ -66,11 +66,6 @@ a .label.feature-label:after {
     line-height:60px;
 }
 
-.pagetitle h1 a {
-    color: var(--main-titles-color);
-    text-decoration:underline;
-}
-
 .pagetitle h5 {
     text-transform: uppercase;
     font-size: 10px;
