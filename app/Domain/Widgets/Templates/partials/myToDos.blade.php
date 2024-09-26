@@ -142,7 +142,7 @@
                         />
                         <br />
                     
-                        <x-global::forms.select name="projectId" :labelText="'Project'" style="padding-top: 8px;">
+                        <x-global::forms.select name="projectId" :labelText="'Project'">
                             @foreach($allAssignedprojects as $project)
                                 <x-global::forms.select.select-option :value="$project['id']"
                                     :selected="($groupBy == 'sprint' && explode('-', $ticketGroup['groupValue'])[1] == $project['id']) || (session('currentProject') == $project['id'])"

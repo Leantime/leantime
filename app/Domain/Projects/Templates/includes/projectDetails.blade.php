@@ -207,7 +207,7 @@ $menuTypes = $tpl->get('menuTypes');
                     {{ __("text.who_can_access") }}
                     <br /><br />
 
-                    <x-global::forms.select name="globalProjectUserAccess" style="max-width:300px;">
+                    <x-global::forms.select name="globalProjectUserAccess">
                         <x-global::forms.select.select-option value="restricted" :selected="$project['psettings'] == 'restricted'">
                             {!! __('labels.only_chose') !!}
                         </x-global::forms.select.select-option>

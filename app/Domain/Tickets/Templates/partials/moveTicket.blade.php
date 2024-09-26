@@ -41,10 +41,10 @@ $ticket = $tpl->get("ticket");
                     @php
                         $lastClient = $projectRow['clientName'];
                     @endphp
-                    <optgroup label="{!! $tpl->escape($projectRow['clientName']) !!}">
+                    <optgroup label="{{$projectRow['clientName'])}}">
                 @endif
                 <x-global::forms.select.select-option value="{{ $projectRow['id'] }}">
-                    {!! $tpl->escape($projectRow['name']) !!}
+                    {{$projectRow['name']) }}
                 </x-global::forms.select.select-option>
                 @php $i++; @endphp
             @endforeach
@@ -58,7 +58,7 @@ $ticket = $tpl->get("ticket");
         <x-global::forms.button 
             type="submit"
             name="move"
-            class="button">
+            >
             {{ __('buttons.move') }}
         </x-global::forms.button>
             <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{{ __("buttons.back") }}</a>

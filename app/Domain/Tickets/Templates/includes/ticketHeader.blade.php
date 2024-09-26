@@ -113,7 +113,6 @@ if (is_array($tpl->get('sprints'))) {
                     <x-global::actions.dropdown.item 
                         href="javascript:void(0);" 
                         onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
-                        class="text-black"
                     >
                         {{ $tpl->__("links.all_todos") }}
                     </x-global::actions.dropdown.item>
@@ -121,7 +120,6 @@ if (is_array($tpl->get('sprints'))) {
                     <x-global::actions.dropdown.item 
                         href="javascript:void(0);" 
                         onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
-                        class="text-black"
                     >
                         {{ $tpl->__("links.backlog") }}
                     </x-global::actions.dropdown.item>
@@ -131,8 +129,7 @@ if (is_array($tpl->get('sprints'))) {
                         <x-global::actions.dropdown.item 
                             href="javascript:void(0);" 
                             onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
-                            class="text-black"
-                        >
+                            >
                             {{ $tpl->escape($sprintRow->name) }}<br />
                             <small>{{ sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) }}</small>
                         </x-global::actions.dropdown.item>

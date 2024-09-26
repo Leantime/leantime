@@ -21,11 +21,11 @@
 
                 @if (!empty($relatesLabels))
                 <x-global::forms.select 
-                name="relates" 
-                id="relatesCanvas" 
-                labelText="{!! __('label.relates') !!}" 
-                style="width: 50%"
-            >
+                    name="relates" 
+                    id="relatesCanvas" 
+                    labelText="{!! __('label.relates') !!}" 
+                    class="w-1/2"
+                >
                 {{-- options were empty --}}
             </x-global::forms.select>
             <br>
@@ -42,7 +42,7 @@
                 <div id="measureGoalContainer">
                     <x-global::forms.text-input type="text" name="description"
                         value="{{ $canvasItem['description'] }}"
-                        labelText="{{ __('text.what_metric_will_you_be_using') }}" variant="title" />
+                        labelText="{{ __('text.what_metric_will_you_be_using') }}" class="w-full"/>
 
                 </div>
 
@@ -51,14 +51,14 @@
                         <x-global::forms.text-input type="number" step="0.01" name="startValue"
                             value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
                             variant="compact"
-                            class="w-20" />
+                            class="w-5" />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
                             labelText="{{ __('label.current_value') }}" variant="compact"
-                            class="w-20"
+                            class="w-5"
 {{--                            @if ($canvasItem['setting'] == 'linkAndReport')--}}
 {{--                                dataTippyContent="Current value calculated from child goals" @endif--}}
                         />
@@ -67,7 +67,7 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="endValue"
                             value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
-                            class="w-20"
+                            class="w-5"
                             variant="compact" />
 
                     </div>
@@ -111,7 +111,7 @@
                 name="status" 
                 id="statusCanvas" 
                 labelText="{!! __('label.status') !!}" 
-                style="width: 50%"
+                class="w-1/2"
             >
                 {{-- options were empty --}}
             </x-global::forms.select>

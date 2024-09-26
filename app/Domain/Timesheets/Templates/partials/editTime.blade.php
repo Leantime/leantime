@@ -72,7 +72,7 @@ $values = $tpl->get('values');
     <x-global::forms.select name="tickets" id="tickets" class="ticket-select" :labelText="__('label.ticket')">
         @foreach ($tpl->get('allTickets') as $row)
             <x-global::forms.select.select-option :class="'project_' . $row['projectId']" :data-value="$row['projectId']" :value="$row['id']" :selected="$row['id'] == $values['ticket']">
-                {!! $tpl->escape($row['headline']) !!}
+                {{$row['headline'])}}
             </x-global::forms.select.select-option>
         @endforeach
     </x-global::forms.select>

@@ -117,50 +117,54 @@
                         </select>
                     </td>
                     <td>
-                        <label for="kind"><?php echo $tpl->__("label.type")?></label>
-                        <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{{ __("label.all_types") }}</option>
-                            <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo'<option value="' . $key . '"';
-                                if ($key == $tpl->get('actKind')) {
-                                    echo ' selected="selected"';
-                                }
-                                echo'>' . $tpl->__($row) . '</option>';
-                            }
-                            ?>
 
-                        </select>
+
+                        <x-global::forms.select name="userId" id="userId" labelText="{{ __('label.all_employees') }}" style="max-width:120px;" onchange="submit();">
+                            <x-global::forms.select.select-option value="all">{{ __('label.all_employees') }}</x-global::forms.select.select-option>
+                            
+                            @foreach ($employees as $row)
+                                <x-global::forms.select.select-option 
+                                    value="{{ $row['id'] }}" 
+                                    :selected="$row['id'] == $employeeFilter">
+                                    {{ sprintf(__('text.full_name'), $row['firstname'], $row['lastname']) }}
+                                </x-global::forms.select.select-option>
+                            @endforeach
+                        </x-global::forms.select>
+
                     </td>
                     <td>
-                        <input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
-                            <?php
-                            if ($tpl->get('invEmpl') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.invoiced') }}"
+                            labelPosition="right"
+                            name="invEmpl"
+                            id="invEmpl"
+                            value="on"
+                            :checked="$tpl->get('invEmpl') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="invEmpl">{{ __("label.invoiced") }}</label>
                     </td>
                     <td>
-                        <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
-                            <?php
-                            if ($tpl->get('invComp') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.invoiced_comp') }}"
+                            labelPosition="right"
+                            name="invComp"
+                            id="invComp"
+                            value="on"
+                            :checked="$tpl->get('invComp') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="invEmpl">{{ __("label.invoiced_comp") }}</label>
                     </td>
 
                     <td>
-                        <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
-                            <?php
-                            if ($tpl->get('paid') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+                        <x-global::forms.checkbox
+                            labelText="{{ __('label.paid') }}"
+                            labelPosition="right"
+                            name="paid"
+                            id="paid"
+                            value="on"
+                            :checked="$tpl->get('paid') == '1'"
+                            onclick="submit();"
                         />
-                        <label for="paid">{{ __("label.paid") }}</label>
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
@@ -252,8 +256,12 @@
     ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                                         <?php } else { ?>
                                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
-                            value="<?php echo $row['id']; ?>" /> <?php
+                                                <x-global::forms.checkbox
+                                                    name="invoicedEmpl[]"
+                                                    :value="$row['id']"
+                                                    class="invoicedEmpl"
+                                                />
+                                 <?php
                                             } ?><?php
                                         } ?></td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
@@ -264,7 +272,11 @@
                                 <?php echo format($row['invoicedCompDate'])->date(); ?>
                             <?php } else { ?>
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
+                                    <x-global::forms.checkbox
+                                        name="invoicedComp[]"
+                                        :value="$row['id']"
+                                        class="invoicedComp"
+                                    />
                                 <?php } ?>
                             <?php } ?>
                         </td>
@@ -276,7 +288,11 @@
                                 <?php echo format($row['paidDate'])->date(); ?>
                             <?php } else { ?>
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                    <input type="checkbox" name="paid[]" class="paid" value="<?php echo $row['id']; ?>" />
+                                    <x-global::forms.checkbox
+                                        name="paid[]"
+                                        :value="$row['id']"
+                                        class="paid"
+                                    />
                                 <?php } ?>
                             <?php } ?>
                         </td>
@@ -295,16 +311,29 @@
                         </td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <input type="checkbox" id="checkAllEmpl" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?></td>
-                            <?php } ?>
-                        <td>
-                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                            <input type="checkbox"  id="checkAllComp" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllEmpl"
+                                />
                             <?php } ?>
                         </td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <input type="checkbox"  id="checkAllPaid" style="vertical-align: baseline;"/> <?php echo $tpl->__('label.select_all')?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllComp"
+                                />
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                                <x-global::forms.checkbox
+                                    labelText="{{ __('label.select_all') }}"
+                                    labelPosition="right"
+                                    id="checkAllPaid"
+                                />
                             <?php } ?>
                         </td>
                     </tr>
@@ -313,5 +342,6 @@
         </form>
     </div>
 </div>
+
 
 @endsection

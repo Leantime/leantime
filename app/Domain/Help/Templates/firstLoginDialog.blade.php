@@ -29,7 +29,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
             <p><?= $tpl->__('text.theme_choice') ?></p>
             <br />
             <br />
-            <x-global::forms.select name="theme" id="theme" style="width: 220px" :onchange="'leantime.snippets.toggleTheme(this.options[this.selectedIndex].value)'">
+            <x-global::forms.select name="theme" id="theme"  :onchange="'leantime.snippets.toggleTheme(this.options[this.selectedIndex].value)'">
                 <x-global::forms.select.select-option value="light">
                     Light Mode
                 </x-global::forms.select.select-option>

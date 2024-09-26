@@ -161,7 +161,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <x-global::forms.select name="language" id="language" style="width: 220px" :labelText="__('label.language')">
+                                    <x-global::forms.select name="language" id="language" :labelText="__('label.language')">
                                         @foreach ($languageList as $languagKey => $languageValue)
                                             <x-global::forms.select.select-option :value="$languagKey" :selected="$userLang == $languagKey">
                                                 {{ $languageValue }}
@@ -171,7 +171,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <x-global::forms.select name="date_format" id="date_format" style="width: 220px" :labelText="__('label.date_format')">
+                                    <x-global::forms.select name="date_format" id="date_format" :labelText="__('label.date_format')">
                                         @php
                                             $dateFormats = $dateTimeValues['dates'];
                                             $dateTimeNow = date_create();
@@ -186,7 +186,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <x-global::forms.select name="time_format" id="time_format" style="width: 220px" :labelText="__('label.time_format')">
+                                    <x-global::forms.select name="time_format" id="time_format" :labelText="__('label.time_format')">
                                         @php
                                             $timeFormats = $dateTimeValues['times'];
                                             $dateTimeNow = date_create();
@@ -201,7 +201,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <x-global::forms.select name="timezone" id="timezone" style="width: 220px" :labelText="__('label.timezone')">
+                                    <x-global::forms.select name="timezone" id="timezone" :labelText="__('label.timezone')">
                                         @foreach ($timezoneOptions as $tz)
                                             <x-global::forms.select.select-option :value="$tz" :selected="$timezone === $tz">
                                                 {{ $tz }}
@@ -221,7 +221,7 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <x-global::forms.select name="theme" id="themeSelect" style="width: 220px" :labelText="__('label.theme')">
+                                    <x-global::forms.select name="theme" id="themeSelect" :labelText="__('label.theme')">
                                         @foreach ($availableThemes as $key => $theme)
                                             <x-global::forms.select.select-option :value="$key" :selected="$userTheme == $key">
                                                 {!! __($theme['name']) !!}
@@ -305,7 +305,7 @@
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
                                     <span>
-                                        <x-global::forms.select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px" :labelText="__('label.choose_option')">
+                                        <x-global::forms.select name="messagesfrequency" class="input" id="messagesfrequency" :labelText="__('label.choose_option')">
                                             <x-global::forms.select.select-option value="">
                                                 --{{ __('label.choose_option') }}--
                                             </x-global::forms.select.select-option>

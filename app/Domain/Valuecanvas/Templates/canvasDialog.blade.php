@@ -64,7 +64,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <br />
     
         @if (!empty($statusLabels))
-            <x-global::forms.select name="status" id="statusCanvas" style="width: 50%" :labelText="__('label.status')">
+            <x-global::forms.select name="status" id="statusCanvas" class="w-1/2" :labelText="__('label.status')">
             </x-global::forms.select>
             <br /><br />
         @else
@@ -72,7 +72,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         @endif
         
         @if (!empty($relatesLabels))
-            <x-global::forms.select name="relates" id="relatesCanvas" style="width: 50%" :labelText="__('label.relates')">
+            <x-global::forms.select name="relates" id="relatesCanvas" class="w-1/2" :labelText="__('label.relates')">
             </x-global::forms.select>
             <br />
         @endif

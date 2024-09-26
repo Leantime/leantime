@@ -24,7 +24,7 @@ if (isset($currentArticle->id)) {
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span>{{ __("subtitles.organization") }}
                 </h4>
-                <x-global::forms.select name="parent" style="width: 100%" :labelText="'Parent'">
+                <x-global::forms.select name="parent" :labelText="'Parent'">
                     <x-global::forms.select.select-option value="0">None</x-global::forms.select.select-option>
                 
                     @foreach ($wikiHeadlines as $parent)
@@ -36,7 +36,7 @@ if (isset($currentArticle->id)) {
                     @endforeach
                 </x-global::forms.select>
                 
-                <x-global::forms.select name="status" style="width: 100%" :labelText="__('label.status')">
+                <x-global::forms.select name="status" :labelText="__('label.status')">
                     <x-global::forms.select.select-option value="draft" :selected="$currentArticle->status == 'draft'">
                         {!! __('label.draft') !!}
                     </x-global::forms.select.select-option>

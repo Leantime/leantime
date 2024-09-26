@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <span class='field'>
-                                        <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px" :labelText="__('label.choose_option')">
+                                        <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" :labelText="__('label.choose_option')">
                                             <x-global::forms.select.select-option value="">
                                                 --{!! __('label.choose_option') !!}--
                                             </x-global::forms.select.select-option>

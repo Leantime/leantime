@@ -69,7 +69,6 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware(['web'])->group(function() use ($frontController)  {
 
                 Route::any('{moduleName}/{actionName}/{id}', function (IncomingRequest $request, $moduleName, $actionName, $id) use ($frontController) {
-                    app('debugbar')->disable();
                   
                     $httpMethod = Str::lower($request->getMethod());
                     $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Controllers");
