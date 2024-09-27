@@ -92,34 +92,7 @@
                 </span>
             @endif
             <h1>{{ __('headline.goal.board') }} //
-                @if (count($allCanvas) > 0)
-                    <span class="dropdown dropdownWrapper">
-                        @php
-                            $labelText = $canvasTitle . '&nbsp;<i class="fa fa-caret-down"></i>';
-                        @endphp
-
-                        <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="header-title-dropdown" align="start"
-                            contentRole="menu">
-                            <x-slot:menu>
-                                @if ($login::userIsAtLeast($roles::$editor))
-                                    <x-global::actions.dropdown.item href="#/goalcanvas/bigRock">
-                                        {!! __('links.icon.create_new_bigrock') !!}
-                                    </x-global::actions.dropdown.item>
-                                @endif
-
-                                <li class="border"></li>
-
-                                @foreach ($allCanvas as $canvasRow)
-                                    <x-global::actions.dropdown.item
-                                        href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">
-                                        {{ $canvasRow['title'] }}
-                                    </x-global::actions.dropdown.item>
-                                @endforeach
-                            </x-slot:menu>
-                        </x-global::actions.dropdown>
-
-                    </span>
-                @endif
+                @include('goalcanvas::partials.goalBoard')
             </h1>
         </div>
     </div>
@@ -151,7 +124,7 @@
                                     $filterStatus = $filter['status'] ?? 'all';
                                     $filterRelates = $filter['relates'] ?? 'all';
                                 @endphp
-                                <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="menu">
+                                <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="ghost">
                                 <!-- Dropdown Trigger -->
                                 <x-slot:labelText>
                                     @if ($filter['status'] == 'all')
