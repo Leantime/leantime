@@ -51,14 +51,14 @@
                         <x-global::forms.text-input type="number" step="0.01" name="startValue"
                             value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
                             variant="compact"
-                            class="w-5" />
+                            class="w-1/2" />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
                             labelText="{{ __('label.current_value') }}" variant="compact"
-                            class="w-5"
+                            class="w-1/2"
 {{--                            @if ($canvasItem['setting'] == 'linkAndReport')--}}
 {{--                                dataTippyContent="Current value calculated from child goals" @endif--}}
                         />
@@ -67,7 +67,7 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="endValue"
                             value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
-                            class="w-5"
+                            class="w-1/2"
                             variant="compact" />
 
                     </div>
@@ -98,7 +98,7 @@
                         {{ __('buttons.save') }}
                     </x-global::forms.button>
 
-                    <x-global::forms.button id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();">
+                    <x-global::forms.button id="saveAndClose" content-role="secondary" onclick="leantime.goalCanvasController.setCloseModal();">
                         {{ __('buttons.save_and_close') }}
                     </x-global::forms.button>
                 @endif

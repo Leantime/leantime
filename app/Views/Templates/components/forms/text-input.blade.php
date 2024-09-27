@@ -40,7 +40,7 @@
 
     } else {
         $style= 'input-bordered  input-sm';
-        $width = 'w-full max-w-xs';
+        $width = 'w-full';
         $sizeClass = $scale ? 'input-'.$scale : '';
     }
 @endphp
