@@ -68,7 +68,7 @@
             <h5 class="accordionTitle <?= $group['class'] ?>" id="accordion_link_<?= $group['id'] ?>">
                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>"
                     onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
-                    <i class="fa fa-angle-down"></i><?= $group['label'] ?>(<?= count($group['items']) ?>)
+                    <i class="fa fa-angle-down"></i><?= $group['label']  ?> (<?= count($group['items']) ?>)
                 </a>
             </h5>
             <span><?= $group['more-info'] ?></span>
