@@ -79,7 +79,7 @@ use Leantime\Core\Support\FromFormat;
                 <div class="btn-group">
                     <x-global::actions.dropdown content-role="ghost">
                         <x-slot:label-text>
-                            {!! __('links.list_view') !!} {!! __('links.view') !!} <span class="caret"></span>
+                            {!! __('links.list_view') !!} {!! __('links.view') !!} 
                         </x-slot:label-text>
                     
                         <x-slot:menu>
