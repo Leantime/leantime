@@ -89,11 +89,6 @@
                 </x-global::content.card>
 
                 <x-global::content.card variation="content">
-                    <x-slot:card-context-buttons>
-                        <x-global::forms.button href="#/tickets/newTicket" content-role="tertiary">
-                            <i class="fa fa-plus"></i> Create To-Do
-                        </x-global::forms.button>
-                    </x-slot:card-context-buttons>
 
                     <x-slot:card-title>{{ __('headlines.latest_todos') }}</x-slot:card-title>
 

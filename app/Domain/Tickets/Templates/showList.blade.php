@@ -61,19 +61,31 @@ $size = floor(100 / $numberofColumns);
                     <form action="" method="post">
                         <x-global::forms.text-input 
                             type="text" 
-                            name="headline" 
-                            placeholder="{{ __('input.placeholders.create_task') }}" 
-                            autofocus 
-                            class="w-full" 
+                            name="headline"
+                            id="headlineInput"
+                            placeholder="Enter To-Do Title" 
+                            title="{!! $tpl->__('label.headline') !!}"
+                            autofocus
+                            variant="fullWidth"
                         />
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
                         <x-global::forms.button 
-                        type="submit"
-                        class="mb-m"
-                        name="saveTicket"
-                        style="vertical-align: top;">
-                        {{ __('buttons.save') }}
+                            type="submit"
+                            class="mb-m"
+                            name="saveTicket"
+                            style="vertical-align: top;">
+                            {{ __('buttons.save') }}
+                        </x-global::forms.button>
+
+                        <x-global::forms.button 
+                            tag="a"
+                            class="btn btn-default"
+                            content-role="secondary"
+                            href="javascript:void(0);" 
+                            onclick="cancelTask();"
+                        >
+                            {!! $tpl->__('links.cancel') !!}
                         </x-global::forms.button>
                     </form>
 
@@ -181,6 +193,10 @@ $size = floor(100 / $numberofColumns);
         <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
     });
+
+    function cancelTask() {
+        document.getElementById('headlineInput').value = '';            
+    }
 
 </script>
 @endsection

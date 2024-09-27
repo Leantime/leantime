@@ -31,57 +31,52 @@
                         
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="firstname" 
-                                        id="firstname" 
-                                        value="{{ $values['firstname'] }}" 
-                                        labelText="{{ __('label.firstname') }}"
+                                    <x-global::forms.text-input
+                                        name="firstname"
+                                        id="firstname"
                                         class="input"
-                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                        :value="$values['firstname']"
+                                        caption="{{ __('label.firstname') }}"
+                                        :disabled="session('userdata.isLdap')"
                                     />
-                                    <br/>
                                 </div>
-                        
+                            
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="lastname" 
-                                        id="lastname" 
-                                        value="{{ $values['lastname'] }}" 
-                                        labelText="{{ __('label.lastname') }}"
+                                    <x-global::forms.text-input
+                                        name="lastname"
+                                        id="lastname"
                                         class="input"
-                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                        :value="$values['lastname']"
+                                        caption="{{ __('label.lastname') }}"
+                                        :disabled="session('userdata.isLdap')"
                                     />
-                                    <br/>
                                 </div>
-                        
+                            
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="user" 
-                                        id="user" 
-                                        value="{{ $values['user'] }}" 
-                                        labelText="{{ __('label.email') }}"
+                                    <x-global::forms.text-input
+                                        name="user"
+                                        id="user"
                                         class="input"
-                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                        :value="$values['user']"
+                                        caption="{{ __('label.email') }}"
+                                        :disabled="session('userdata.isLdap')"
                                     />
-                                    <br/>
                                 </div>
-                        
+                            
                                 <div class="form-group">
-                                    <x-global::forms.text-input 
-                                        type="text" 
-                                        name="phone" 
-                                        id="phone" 
-                                        value="{{ $values['phone'] }}" 
-                                        labelText="{{ __('label.phone') }}"
+                                    <x-global::forms.text-input
+                                        name="phone"
+                                        id="phone"
                                         class="input"
-                                        {{ session('userdata.isLdap') ? 'disabled' : '' }} 
+                                        :value="$values['phone']"
+                                        caption="{{ __('label.phone') }}"
+                                        :disabled="session('userdata.isLdap')"
                                     />
-                                    <br/>
                                 </div>
                             </div>
+                            
+                            
+                            
                         
                             <p class="stdformbutton">
                                 <input type="hidden" name="profileInfo" value="1" />

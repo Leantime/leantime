@@ -1903,6 +1903,8 @@ body .widgettitle .editHeadline:hover {
     margin:0px;
     margin-top:-35px;
     margin-bottom:10px;
+    display: flex;
+    justify-content: center;
 }
 
 .profileBox .commentImage img {
