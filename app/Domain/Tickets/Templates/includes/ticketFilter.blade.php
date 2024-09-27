@@ -21,14 +21,19 @@ $taskToggle = $tpl->get("enableTaskTypeToggle");
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
            class="btn btn-link" data-tippy-content="<?=$tpl->__("popover.filter") ?>">
-            <i class="fas fa-filter"></i> Filter<?=$tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . "</span> " : "" ?>
+            <i class="fas fa-filter"></i> Filter
+            <?php if ($tpl->get('numOfFilters') > 0): ?>
+                <x-global::elements.badge content-role="primary" class="ml-2">
+                    {{ $tpl->get('numOfFilters') }}
+                </x-global::elements.badge>
+            <?php endif; ?>
             <?php /*Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance */ ?>
         </a><?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {
             ?><div class="btn-group viewDropDown">
             <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.group_by") ?>">
                 <span class="fa-solid fa-diagram-project"></span> Group By
                 <?php if ($searchCriteria["groupBy"] != 'all' && $searchCriteria["groupBy"] != '') { ?>
-                    <span class="badge badge-primary">1</span>
+                    <x-global::elements.badge content-role="primary" class="ml-2">1</x-global::elements.badge>
                 <?php } ?>
             </button>
             <ul class="dropdown-menu">
