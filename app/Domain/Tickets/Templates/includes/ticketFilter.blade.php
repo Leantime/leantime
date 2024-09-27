@@ -28,7 +28,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             {{-- @dispatchTplEvent('filters.beforeFirstBarField') --}}
 
             <div>
-                <x-global::forms.select name="users" id="userSelect" multiple
+                <x-global::forms.select name="users" id="userSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
                     title="{{ __('input.placeholders.filter_by_user') }}">
                     <x-slot:labelText>{{ __('label.user') }}</x-slot:labelText>
@@ -43,7 +43,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </div>
 
             <div>
-                <x-global::forms.select name="milestone" id="milestoneSelect" multiple
+                <x-global::forms.select name="milestone" id="milestoneSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
                     title="{{ __('input.placeholders.filter_by_milestone') }}">
                     <x-slot:labelText>{{ __('label.milestone') }}</x-slot:labelText>
@@ -58,7 +58,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </div>
 
             <div>
-                <x-global::forms.select name="type" id="typeSelect" multiple
+                <x-global::forms.select name="type" id="typeSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_type') }}"
                     title="{{ __('input.placeholders.filter_by_type') }}">
                     <x-slot:labelText>{{ __('label.todo_type') }}</x-slot:labelText>
@@ -73,7 +73,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </div>
 
             <div>
-                <x-global::forms.select name="priority" id="prioritySelect" multiple
+                <x-global::forms.select name="priority" id="prioritySelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_priority') }}"
                     title="{{ __('input.placeholders.filter_by_priority') }}">
                     <x-slot:labelText>{{ __('label.todo_priority') }}</x-slot:labelText>
@@ -88,7 +88,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </div>
 
             <div>
-                <x-global::forms.select name="searchStatus" id="statusSelect" multiple
+                <x-global::forms.select name="searchStatus" id="statusSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_status') }}">
                     <x-slot:labelText>{{ __('label.todo_status') }}</x-slot:labelText>
                     <x-global::forms.select.select-option value=""
