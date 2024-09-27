@@ -23,14 +23,14 @@ $project = $tpl->get('project');
     <input type="text" name="startDate" class="projectDateFrom" value="<?php echo format(date("Y-m-d"))->date()?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
 
     <label><?=$tpl->__('label.client_product') ?></label>
-    <select name="clientId" id="clientId">
-        <?php foreach ($tpl->get('allClients') as $row) { ?>
-            <option value="<?php echo $row['id']; ?>"
-                <?php if ($project['clientId'] == $row['id']) {
-                    ?> selected=selected
-                <?php } ?>><?php $tpl->e($row['name']); ?></option>
-        <?php } ?>
-    </select>
+    <x-global::forms.select name="clientId" id="clientId">
+        @foreach ($tpl->get('allClients') as $row)
+            <x-global::forms.select.select-option :value="$row['id']" :selected="$project['clientId'] == $row['id']">
+                {!! $tpl->escape($row['name']) !!}
+            </x-global::forms.select.select-option>
+        @endforeach
+    </x-global::forms.select>
+    
     <br />
     <x-global::forms.checkbox
         name="assignSameUsers"

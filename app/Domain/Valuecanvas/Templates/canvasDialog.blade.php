@@ -63,20 +63,20 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         />
         <br />
     
-        <?php if (!empty($statusLabels)) { ?>
-            <label><?=$tpl->__("label.status") ?></label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
-        <?php } else { ?>
-            <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
-                $hiddenStatusLabels
-            ) ?>" />
-        <?php } ?>
-
-        <?php if (!empty($relatesLabels)) { ?>
-            <label><?=$tpl->__("label.relates") ?></label>
-            <select name="relates"  style="width: 50%" id="relatesCanvas">
-            </select><br />
+        @if (!empty($statusLabels))
+            <x-global::forms.select name="status" id="statusCanvas" class="w-1/2" :labelText="__('label.status')">
+            </x-global::forms.select>
+            <br /><br />
+        @else
+            <input type="hidden" name="status" value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
+        @endif
+        
+        @if (!empty($relatesLabels))
+            <x-global::forms.select name="relates" id="relatesCanvas" class="w-1/2" :labelText="__('label.relates')">
+            </x-global::forms.select>
+            <br />
+        @endif
+    
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                 $hiddenRelatesLabels
@@ -180,19 +180,24 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                         <div class="row" id="existingMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
-                                    <option value=""></option>
-                                        <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
-                                            <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                            if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                echo" selected='selected' ";
-                                            }
-
-                                            echo">" . $milestoneRow->headline . "</option>"; ?>
-                                            <?php
-                                        }     ?>
-                                </select>
+                                <x-global::forms.select 
+                                    name="existingMilestone" 
+                                    class="user-select" 
+                                    :labelText="__('input.placeholders.filter_by_milestone')"
+                                    data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
+                                >
+                                    <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
+                                
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <x-global::forms.select.select-option 
+                                            :value="$milestoneRow->id" 
+                                            :selected="isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id"
+                                        >
+                                            {!! $milestoneRow->headline !!}
+                                        </x-global::forms.select.select-option>
+                                    @endforeach
+                                </x-global::forms.select>
+                            
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="{{ $canvasName }}canvasitemid" value="<?php echo $id; ?> " />
                                 <x-global::forms.button type="button" onclick="jQuery('#primaryCanvasSubmitButton').click()">
