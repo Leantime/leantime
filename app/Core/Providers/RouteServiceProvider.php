@@ -91,9 +91,7 @@ class RouteServiceProvider extends ServiceProvider
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
-                Route::any('{moduleName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController)  {
-                    app('debugbar')->disable();
-                    
+                Route::any('{moduleName}', function (IncomingRequest $request, $moduleName) use ($frontController)  {
                     $httpMethod = Str::lower($request->getMethod());
                     $controllerParts = $frontController->getValidControllerCall($moduleName, "index", $httpMethod, "Controllers");
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
