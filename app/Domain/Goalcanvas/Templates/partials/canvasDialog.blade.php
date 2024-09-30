@@ -2,10 +2,13 @@
 
 <div style="width:1000px">
 
-    <h1><i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
-        {{ $canvasTypes[$canvasItem['box']]['title'] }}</h1>
+     <x-global::content.modal.header>
+        <i class="fas {{ $canvasTypes[$canvasItem['box']]['icon'] }}"></i>
+        {{ $canvasTypes[$canvasItem['box']]['title'] }}        
+    </x-global::content.modal.header>
 
     <x-global::content.modal.form action="{{ BASE_URL }}/goalcanvas/editCanvasItem/{{ $id }}">
+
 
         <input type="hidden" value="{{ $currentCanvas }}" name="canvasId">
         <input type="hidden" value="{{ $canvasItem['box'] }}" name="box" id="box">

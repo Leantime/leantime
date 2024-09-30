@@ -35,7 +35,7 @@
 
         $style= 'input-bordered input-sm';
         $width = 'max-w-xs';
-        $sizeClass = $size ? 'input-'.$size : '';
+        $sizeClass = $scale ? 'input-'.$scale : '';
 
     } elseif ($variant === 'fullWidth') {
         $style= 'input-bordered  input-sm';

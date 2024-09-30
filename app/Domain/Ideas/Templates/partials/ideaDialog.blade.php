@@ -14,8 +14,13 @@
         }
     </script>
 
+    <x-global::content.modal.header>
+        Add Ideas
+    </x-global::content.modal.header>
+    
     <x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
+    
         <div class="row">
             <div class="col-md-8">
                 <input type="hidden" value="{{ $currentCanvas }}" name="canvasId" />
@@ -51,6 +56,7 @@
                     type="submit" 
                     class="btn btn-primary" 
                     value="closeModal"
+                    contentRole="ghost"
                     id="saveAndClose">
                     {!! __('buttons.save_and_close') !!}
                 </x-global::forms.button>
@@ -104,6 +110,7 @@
                                         <x-global::forms.button 
                                             tag="a"
                                             href="javascript:void(0);" 
+                                            contentRole="ghost"
                                             onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
                                          </x-global::forms.button>

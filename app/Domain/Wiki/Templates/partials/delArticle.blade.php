@@ -1,4 +1,5 @@
 
+<x-global::content.modal.modal-buttons/>
 
 <?php
 $ticket = $tpl->get('ticket');

@@ -1,4 +1,8 @@
 <x-global::content.modal.modal-buttons/>
+
+<x-global::content.modal.header>
+    Delete Goal item
+</x-global::content.modal.header>
 <h4 class="widgettitle title-light">{!! __("subtitles.delete") !!}</h4>
 <hr style="margin-top: 5px; margin-bottom: 15px;">
 

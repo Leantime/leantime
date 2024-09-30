@@ -6,6 +6,8 @@
 $id = (int) $_GET['id'];
 ?>
 
+<x-global::content.modal.modal-buttons/>
+
 <h4 class="widgettitle title-light">{{ __("subtitles.delete") }}</h4>
 
 <x-global::content.modal.form method="post" class="formModal" action="{{ BASE_URL }}/calendar/delEvent/{{ $id }}">
