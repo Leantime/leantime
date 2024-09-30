@@ -417,3 +417,4 @@ $fullReportLatest = $tpl->get('fullReportLatest');
     });
 
 </script>
+@endsection
