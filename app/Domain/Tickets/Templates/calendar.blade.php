@@ -39,14 +39,19 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
             <x-global::forms.button 
                 type="button" 
                 class="fc-next-button btn btn-default right" 
-                style="margin-right:5px;">
+                style="margin-right:5px;"
+                contentRole='secondary'
+                >
                 <span class="fc-icon fc-icon-chevron-right"></span>
             </x-global::forms.button>
             
             <x-global::forms.button 
                 type="button" 
                 class="fc-prev-button btn btn-default right" 
-                style="margin-right:5px;">
+                style="margin-right:5px;"
+                contentRole='secondary'
+
+                >
                 <span class="fc-icon fc-icon-chevron-left"></span>
             </x-global::forms.button>
             
