@@ -469,6 +469,16 @@
     overflow: hidden;
     clear: both;
     margin: 10px 15px;
+    width: 98.2%;
+}
+
+.footer-content {
+  display: flex;
+  margin-right: -10px;
+  margin-left: -10px;
+
+  align-items: center;
+  width: 100%;
 }
 
 .footer .footer-left {
