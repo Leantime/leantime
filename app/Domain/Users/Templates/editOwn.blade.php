@@ -156,71 +156,55 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="language" >{{ __('label.language') }}</label>
-                                    <span class='field'>
-                                        <select name="language" id="language" style="width: 220px">
-                                            @foreach ($languageList as $languagKey => $languageValue )
-                                                <option value="{{ $languagKey }}"
-                                                        @if ($userLang == $languagKey )
-                                                            selected='selected'
-                                                         @endif >{{ $languageValue }}</option>
-                                             @endforeach
-                                        </select>
-                                    </span>
+                                    <x-global::forms.select name="language" id="language" :labelText="__('label.language')">
+                                        @foreach ($languageList as $languagKey => $languageValue)
+                                            <x-global::forms.select.select-option :value="$languagKey" :selected="$userLang == $languagKey">
+                                                {{ $languageValue }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                                 </div>
+                                
                                 <div class="form-group">
-                                    <label for="date_format" >{{ __('label.date_format') }}</label>
-                                    <span>
-                                        <select name="date_format" id="date_format" style="width: 220px">
-                                           @php
+                                    <x-global::forms.select name="date_format" id="date_format" :labelText="__('label.date_format')">
+                                        @php
                                             $dateFormats = $dateTimeValues['dates'];
                                             $dateTimeNow = date_create();
-                                           @endphp
-
-                                            @foreach ($dateFormats as $format)
-
-                                                <option value="{{ $format }}"
-                                                        @if ($dateFormat == $format)
-                                                            selected='selected'
-                                                        @endif >{{ date_format($dateTimeNow, $format) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </span>
+                                        @endphp
+                                
+                                        @foreach ($dateFormats as $format)
+                                            <x-global::forms.select.select-option :value="$format" :selected="$dateFormat == $format">
+                                                {{ date_format($dateTimeNow, $format) }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                                 </div>
+                                
                                 <div class="form-group">
-                                    <label for="time_format" >{{ __('label.time_format') }}</label>
-                                    <span>
-                                        <select name="time_format" id="time_format" style="width: 220px">
-                                            @php
-                                                $timeFormats = $dateTimeValues['times'];
-                                                $dateTimeNow = date_create();
-                                            @endphp
-
-                                            @foreach ($timeFormats as $format)
-
-                                                <option value="{{ $format }}"
-                                                        @if ($timeFormat == $format)
-                                                            selected='selected'
-                                                        @endif>{{ date_format($dateTimeNow, $format) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </span>
+                                    <x-global::forms.select name="time_format" id="time_format" :labelText="__('label.time_format')">
+                                        @php
+                                            $timeFormats = $dateTimeValues['times'];
+                                            $dateTimeNow = date_create();
+                                        @endphp
+                                
+                                        @foreach ($timeFormats as $format)
+                                            <x-global::forms.select.select-option :value="$format" :selected="$timeFormat == $format">
+                                                {{ date_format($dateTimeNow, $format) }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                                 </div>
+                                
                                 <div class="form-group">
-                                    <label for="timezone" >{{ __('label.timezone') }}</label>
-                                    <span>
-                                        <select name="timezone" id="timezone" style="width: 220px">
-
-                                            @foreach ($timezoneOptions as $tz)
-                                                <option value="{{ $tz }}"
-                                                        @if ($timezone === $tz )
-                                                            selected='selected'
-                                                        @endif
-                                                        >{{ $tz }}</option>
-                                            @endforeach
-                                        </select>
-                                    </span>
+                                    <x-global::forms.select name="timezone" id="timezone" :labelText="__('label.timezone')">
+                                        @foreach ($timezoneOptions as $tz)
+                                            <x-global::forms.select.select-option :value="$tz" :selected="$timezone === $tz">
+                                                {{ $tz }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                                 </div>
+                                
                             </div>
                             <input type="hidden" name="saveSettings" value="1" />
                             <input type="submit" name="save" id="saveSettings" value="{{ __('buttons.save') }}" class="button"/>
@@ -232,20 +216,15 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="themeSelect" >{{ __('label.theme') }}</label>
-                                    <span class='field'>
-                                        <select name="theme" id="themeSelect" style="width: 220px">
-
-                                            @foreach ($availableThemes as $key => $theme)
-                                                <option value="{{  $key  }}"
-                                                    @if ($userTheme == $key)
-                                                     selected='selected'
-                                                   @endif >{{ __($theme['name']) }}</option>
-                                            @endforeach
-                                        </select>
-
-                                    </span>
+                                    <x-global::forms.select name="theme" id="themeSelect" :labelText="__('label.theme')">
+                                        @foreach ($availableThemes as $key => $theme)
+                                            <x-global::forms.select.select-option :value="$key" :selected="$userTheme == $key">
+                                                {!! __($theme['name']) !!}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                                 </div>
+                                
                                 <div class="row">
                                     <div class="col-md-12">
 
@@ -321,43 +300,57 @@
                                 <div class="form-group">
                                     <label for="messagesfrequency" >{{ __('label.messages_frequency') }}</label>
                                     <span>
-                                        <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
-                                            <option value="">--{{ __('label.choose_option') }}--</option>
-                                             <option value="60"
-                                                     @if ($values['messagesfrequency'] == "60" )
-                                                 selected="selected"
-                                             @endif>{{ __('label.1min') }}</option>
-                                            <option value="300" @if ($values['messagesfrequency'] == "300" )
-                                                selected="selected"
-                                                                @endif>{{ __('label.5min') }}</option>
-                                            <option value="900" @if ($values['messagesfrequency'] == "900" )
-                                                selected="selected"
-                                                                @endif>{{ __('label.15min') }}</option>
-                                            <option value="1800" @if ($values['messagesfrequency'] == "1800" )
-                                                selected="selected"
-                                                                 @endif>{{ __('label.30min') }}</option>
-                                            <option value="3600" @if ($values['messagesfrequency'] == "3600" )
-                                                selected="selected"
-                                                                 @endif>{{ __('label.1h') }}</option>
-                                            <option value="10800" @if ($values['messagesfrequency'] == "10800" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.3h') }}</option>
-                                            <option value="36000" @if ($values['messagesfrequency'] == "36000" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.6h') }}</option>
-                                            <option value="43200" @if ($values['messagesfrequency'] == "43200" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.12h') }}</option>
-                                            <option value="86400" @if ($values['messagesfrequency'] == "86400" )
-                                                selected="selected"
-                                                                  @endif>{{ __('label.24h') }}</option>
-                                            <option value="172800" @if ($values['messagesfrequency'] == "172800" )
-                                                selected="selected"
-                                                                   @endif>{{ __('label.48h') }}</option>
-                                            <option value="604800" @if ($values['messagesfrequency'] == "604800" )
-                                                selected="selected"
-                                                                   @endif>{{ __('label.1w') }}</option>
-                                        </select> <br/>
+                                        <x-global::forms.select name="messagesfrequency" class="input" id="messagesfrequency" :labelText="__('label.choose_option')">
+                                            <x-global::forms.select.select-option value="">
+                                                --{{ __('label.choose_option') }}--
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="60" :selected="$values['messagesfrequency'] == '60'">
+                                                {{ __('label.1min') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="300" :selected="$values['messagesfrequency'] == '300'">
+                                                {{ __('label.5min') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="900" :selected="$values['messagesfrequency'] == '900'">
+                                                {{ __('label.15min') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="1800" :selected="$values['messagesfrequency'] == '1800'">
+                                                {{ __('label.30min') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="3600" :selected="$values['messagesfrequency'] == '3600'">
+                                                {{ __('label.1h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="10800" :selected="$values['messagesfrequency'] == '10800'">
+                                                {{ __('label.3h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="36000" :selected="$values['messagesfrequency'] == '36000'">
+                                                {{ __('label.6h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="43200" :selected="$values['messagesfrequency'] == '43200'">
+                                                {{ __('label.12h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="86400" :selected="$values['messagesfrequency'] == '86400'">
+                                                {{ __('label.24h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="172800" :selected="$values['messagesfrequency'] == '172800'">
+                                                {{ __('label.48h') }}
+                                            </x-global::forms.select.select-option>
+                                        
+                                            <x-global::forms.select.select-option value="604800" :selected="$values['messagesfrequency'] == '604800'">
+                                                {{ __('label.1w') }}
+                                            </x-global::forms.select.select-option>
+                                        </x-global::forms.select>
+                                        <br/>
+                                        
                                     </span>
                                 </div>
                             </div>

@@ -82,39 +82,36 @@ $projects = $tpl->get('relations');
                         type="text" name="lastname" id="lastname"
                         value="<?php echo $values['lastname'] ?>" /><br />
 
-            <label for="role">{{ __("label.role") }}</label>
-            <select name="role" id="role">
-
-                <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
-                        continue;
-                    }?>
-                        <option value="<?php  echo $key; ?>"
-                        <?php if ($key == $values['role']) {
-                            ?> selected="selected" <?php
-                        } ?>>
-                        <?=$tpl->__("label.roles." . $role) ?>
-                    </option>
-                <?php } ?>
-
-            </select> <br />
-
-            <label for="client">{{ __("label.client") }}</label>
-            <select name='client' id="client">
-                <?php if ($login::userIsAtLeast("admin")) {?>
-                    <option value="0" selected="selected">{{ __("label.no_clients") }}</option>
-                <?php } ?>
-                <?php foreach ($tpl->get('clients') as $client) : ?>
-                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== session("userdata.clientId")) {
-                        continue;
-                    }
-                    ?>
-                    <option value="<?php echo $client['id'] ?>"
-                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) :
-                                ?>selected="selected"<?php
-                            endif; ?>><?php $tpl->e($client['name']) ?></option>
-                <?php endforeach; ?>
-            </select><br/>
+                        <x-global::forms.select name="role" id="role" :labelText={!!__('label.role')!!}}>
+                            @foreach ($tpl->get('roles') as $key => $role)
+                                @if (!($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30))
+                                    <x-global::forms.select.select-option :value="$key" :selected="$key == $values['role']">
+                                        {!! __('label.roles.' . $role) !!}
+                                    </x-global::forms.select.select-option>
+                                @endif
+                            @endforeach
+                        </x-global::forms.select>
+                        <br />
+                        
+                        <x-global::forms.select name="client" id="client" :labelText={!!__('label.client')!!}>
+                            @if ($login::userIsAtLeast('admin'))
+                                <x-global::forms.select.select-option value="0" selected="selected">
+                                    {{ __('label.no_clients') }}
+                                </x-global::forms.select.select-option>
+                            @endif
+                        
+                            @foreach ($tpl->get('clients') as $client)
+                                @if (!($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client['id'] !== session('userdata.clientId')))
+                                    <x-global::forms.select.select-option 
+                                        :value="$client['id']" 
+                                        :selected="$client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']">
+                                        {!! $tpl->escape($client['name']) !!}
+                                    </x-global::forms.select.select-option>
+                                @endif
+                            @endforeach
+                        </x-global::forms.select>
+                        <br/>
+                        
             <br/>
 
 

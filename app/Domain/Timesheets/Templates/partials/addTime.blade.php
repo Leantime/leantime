@@ -35,57 +35,58 @@ $values = $tpl->get('values');
                         <div class="widgetcontent" style="min-height: 460px">
 
 
-                            <label for="projects">{{ __("PROJECT") }}</label> <select
-                                    name="projects" id="projects"
-                                    onchange="removeOptions($('select#projects option:selected').val());">
-
-
-                                <option value="all">{{ __("ALL_PROJECTS") }}</option>
-
-                                <optgroup>
-                                    <?php foreach ($tpl->get('allProjects') as $row) {
-                                        $currentClientName = $row['clientName'];
-                                        if ($currentClientName != $lastClientName) {
-                                            echo '</optgroup><optgroup label="' . $currentClientName . '">';
-                                        }
-
-                                        echo '<option value="' . $row['id'] . '"';
-                                        if ($row['id'] == $values['project']) {
-                                            echo ' selected="selected" ';
-                                        }
-                                        echo '>' . $row['name'] . '</option>';
-
-                                        $lastClientName = $row['clientName'];
-                                    }
-
-                                    ?>
-                                </optgroup>
-                            </select> <br/>
-
-                            <label for="tickets">{{ __("TICKET") }}</label>
-                            <select name="tickets" id="tickets">
-
-                                <?php foreach ($tpl->get('allTickets') as $row) {
-                                    echo '<option class="' . $row['projectId'] . '" value="' . $row['projectId'] . '|' . $row['id'] . '"';
-                                    if ($row['id'] == $values['ticket']) {
-                                        echo ' selected="selected" ';
-                                    }
-                                    echo '>' . $row['headline'] . '</option>';
-                                } ?>
-
-                            </select> <br/>
+                            <label for="projects">{!! __('PROJECT') !!}</label>
+                            <x-global::forms.select name="projects" id="projects" onchange="removeOptions($('select#projects option:selected').val());">
+                                <x-global::forms.select.select-option value="all">
+                                    {!! __('ALL_PROJECTS') !!}
+                                </x-global::forms.select.select-option>
+                            
+                                @php $lastClientName = ''; @endphp
+                                @foreach ($tpl->get('allProjects') as $row)
+                                    @if ($row['clientName'] != $lastClientName)
+                                        @if ($lastClientName !== '')
+                                            </optgroup>
+                                        @endif
+                                        <optgroup label="{{ $row['clientName'] }}">
+                                    @endif
+                            
+                                    <x-global::forms.select.select-option :value="$row['id']" :selected="$row['id'] == $values['project']">
+                                        {!! $row['name'] !!}
+                                    </x-global::forms.select.select-option>
+                            
+                                    @php $lastClientName = $row['clientName']; @endphp
+                                @endforeach
+                                @if ($lastClientName !== '')
+                                    </optgroup>
+                                @endif
+                            </x-global::forms.select>
+                            
                             <br/>
-                            <label for="kind">{{ __("KIND") }}</label> <select id="kind"
-                                                                                              name="kind">
-                                <?php foreach ($tpl->get('kind') as $row) {
-                                    echo '<option value="' . $row . '"';
-                                    if ($row == $values['kind']) {
-                                        echo ' selected="selected"';
-                                    }
-                                    echo '>' . $tpl->__($row) . '</option>';
-                                } ?>
 
-                            </select><br/>
+                            <label for="tickets">{!! __('TICKET') !!}</label>
+                            <x-global::forms.select name="tickets" id="tickets">
+                                @foreach ($tpl->get('allTickets') as $row)
+                                    <x-global::forms.select.select-option 
+                                        :value="$row['projectId'] . '|' . $row['id']" 
+                                        :selected="$row['id'] == $values['ticket']"
+                                        :class="$row['projectId']">
+                                        {!! $row['headline'] !!}
+                                    </x-global::forms.select.select-option>
+                                @endforeach
+                            </x-global::forms.select>
+                            
+                            <br/>
+                            <br/>
+                            <label for="kind">{!! __('KIND') !!}</label>
+                            <x-global::forms.select id="kind" name="kind">
+                                @foreach ($tpl->get('kind') as $row)
+                                    <x-global::forms.select.select-option :value="$row" :selected="$row == $values['kind']">
+                                        {!! __($row) !!}
+                                    </x-global::forms.select.select-option>
+                                @endforeach
+                            </x-global::forms.select>
+                            <br/>
+                            
                             <label for="date">{{ __("DATE") }}</label> <input type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="<?php echo $values['date'] ?>"

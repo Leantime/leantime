@@ -31,7 +31,7 @@
     if($variant == 'chip'){
         $selectVariant = "select-chip";
     }
-
+    
     switch($contentRole){
         case 'secondary':
             $contentRoleClass = 'select-bordered';
@@ -54,7 +54,7 @@
         $sizeClass,
         $stateClass,
         "w-full",
-        "max-w-xs",
+        // "max-w-xs",
         ($leadingVisual ? 'pl-10' : '')
     ];
 
