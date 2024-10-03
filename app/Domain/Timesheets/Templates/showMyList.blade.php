@@ -25,6 +25,7 @@ use Leantime\Core\Support\FromFormat;
         @displayNotification()
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
+
             <div class="relative">
                 <x-global::actions.dropdown variant="card" content-role="ghost" cardLabel="Filter Options">
                     <x-slot:labelText>
