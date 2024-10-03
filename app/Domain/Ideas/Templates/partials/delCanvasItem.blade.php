@@ -1,6 +1,8 @@
 <x-global::content.modal.modal-buttons/>
 
-<h4 class="widgettitle title-light"><i class="fa fa-trash"></i> {!! __("buttons.delete") !!}</h4>
+<x-global::content.modal.header>
+    <i class="fa fa-trash"></i> {!! __("buttons.delete") !!}
+</x-global::content.modal.header>
 
 <x-global::content.modal.form action="{{ BASE_URL }}/ideas/delCanvasItem/{{ (int) $_GET['id'] }}">
     <p>{!! __('text.are_you_sure_delete_idea') !!}</p><br />

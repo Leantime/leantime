@@ -73,26 +73,37 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                 <br />
                                 <span class="pull-left">
                                 <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
-                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_list") ?>" title="<?=$tpl->__("input.placeholders.filter_by_list") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
-
-                                        <option value="" ><?=$tpl->__("input.placeholders.filter_by_list") ?></option>
-                                        <?php
-                                        $dates = "";
-                                        foreach ($tpl->get('allSprints') as $sprintRow) {    ?>
-                                                <?php echo"<option value='" . $sprintRow->id . "'";
-
-                                                if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
-                                                    echo " selected='selected' ";
-
-                                                    $dates = sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date());
-                                                }
-                                                echo ">";
-                                                $tpl->e($sprintRow->name);
-                                                echo "</option>";
-                                                ?>
-
-                                        <?php }     ?>
-                                    </select>
+                                    <x-global::forms.select 
+                                    data-placeholder="{!! __('input.placeholders.filter_by_list') !!}" 
+                                    title="{!! __('input.placeholders.filter_by_list') !!}" 
+                                    name="sprint" 
+                                    class="mainSprintSelector" 
+                                    onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" 
+                                    id="sprintSelect"
+                                >
+                                    <x-global::forms.select.select-option value="">
+                                        {!! __('input.placeholders.filter_by_list') !!}
+                                    </x-global::forms.select.select-option>
+                                
+                                    @php $dates = ""; @endphp
+                                
+                                    @foreach ($tpl->get('allSprints') as $sprintRow)
+                                        <x-global::forms.select.select-option :value="$sprintRow->id" :selected="$tpl->get('currentSprint') !== false && $sprintRow->id == $tpl->get('currentSprint')">
+                                            {!! $tpl->escape($sprintRow->name) !!}
+                                        </x-global::forms.select.select-option>
+                                
+                                        @if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint"))
+                                            @php
+                                                $dates = sprintf(
+                                                    __('label.date_from_date_to'),
+                                                    format($sprintRow->startDate)->date(),
+                                                    format($sprintRow->endDate)->date()
+                                                );
+                                            @endphp
+                                        @endif
+                                    @endforeach
+                                </x-global::forms.select>
+                                
                                 <?php } ?>
                             </span>
 

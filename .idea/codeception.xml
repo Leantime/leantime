@@ -7,18 +7,6 @@
           <option name="path" value="$PROJECT_DIR$/app/Plugins/Billing/tests" />
         </Configuration>
         <Configuration>
-          <option name="path" value="$PROJECT_DIR$/app/Plugins/Billing/tests" />
-        </Configuration>
-        <Configuration>
-          <option name="path" value="$PROJECT_DIR$/app/Plugins/Sentry/tests" />
-        </Configuration>
-        <Configuration>
-          <option name="path" value="$PROJECT_DIR$/app/Plugins/Billing/tests" />
-        </Configuration>
-        <Configuration>
-          <option name="path" value="$PROJECT_DIR$/app/Plugins/Sentry/tests" />
-        </Configuration>
-        <Configuration>
           <option name="path" value="$PROJECT_DIR$/app/Plugins/Sentry/tests" />
         </Configuration>
         <Configuration>
