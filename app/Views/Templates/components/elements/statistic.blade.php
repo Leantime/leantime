@@ -3,30 +3,30 @@
     'statValue' => '',
     'statDesc' => '',
     'trailingVisual' => '',
-    'statBg' => '',
+    'contentRole' => 'primary',
 ])
 
 @php
-    $bgClass = $statBg ? 'bg-'.$statBg.' text-'.$statBg.'-content' : '';
-    $textContentClass = $statBg ? 'text-'.$statBg.'-content' : '';
+    $bgClass = $contentRole ? 'bg-'.$contentRole.' text-'.$contentRole.'-content' : '';
+    $textContentClass = $contentRole ? 'text-'.$contentRole.'-content' : '';
 @endphp
 
-<div {{$attributes->merge(['class' => 'stat '.$bgClass])}} >
+<div {{$attributes->merge(['class' => 'stat '.$bgClass.' my-3'])}} >
     @if ($trailingVisual)
             <div class="stat-figure" >
             <i class="{{ $trailingVisual }}"></i>
         </div>
     @endif
 
-    @if($statTitle)
+    @isset($statTitle)
         <div {{$attributes->merge(['class' => 'stat-title '.$textContentClass])}}>{{ $statTitle }}</div>
-    @endif
+    @endisset
 
-    @if($statValue)
-        <div class="stat-value" >{{ $statValue }}</div>
-    @endif
+    @isset($statValue)
+        <div class="stat-value font-normal" >{{ $statValue }}</div>
+    @endisset
 
-    @if($statDesc)
+    @isset($statDesc)
         <div {{$attributes->merge(['class' => 'stat-desc '.$textContentClass])}}>{{ $statDesc }}</div>
-    @endif
+    @endisset
 </div>
