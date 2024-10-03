@@ -133,7 +133,7 @@
                         ?>
 
                         <td class="dropdown-cell" data-order="{{ $milestoneHeadline }}">
-                            <x-global::forms.dropdownPill
+                            <x-global::forms._archive.dropdownPill
                                 class="ticketDropdown milestoneDropdown colorized show label-default milestone"
                                 id="{{ $dropdownId }}" :style="'background-color:' . $milestoneColor" :labelText="$milestoneHeadline" type="milestone"
                                 :parentId="$row->id">
@@ -162,7 +162,7 @@
                                         </x-global::actions.dropdown.item>
                                     @endif
                                 @endforeach
-                            </x-global::forms.dropdownPill>
+                            </x-global::forms._archive.dropdownPill>
                         </td>
 
 
@@ -179,7 +179,7 @@
                         ?>
 
                         <td class="dropdown-cell" data-order="{{ $name }}">
-                            <x-global::forms.dropdownPill
+                            <x-global::forms._archive.dropdownPill
                                 class="ticketDropdown statusDropdown colorized show {{ $class }}"
                                 id="statusDropdownMenuLink{{ $row->id }}" :labelText="$name" type="status"
                                 :parentId="$row->id" :selectedKey="$selectedKey" :options="$statusLabels">
@@ -198,7 +198,7 @@
                                         {{ $tpl->escape($label['name']) }}
                                     </x-global::actions.dropdown.item>
                                 @endforeach
-                            </x-global::forms.dropdownPill>
+                            </x-global::forms._archive.dropdownPill>
                         </td>
 
 
@@ -219,7 +219,7 @@
 
                         <td class="dropdown-cell"
                             data-order="{{ $row->editorFirstname != '' ? $tpl->escape($row->editorFirstname) : $tpl->__('dropdown.not_assigned') }}">
-                            <x-global::forms.dropdownPill class="ticketDropdown userDropdown noBg show"
+                            <x-global::forms._archive.dropdownPill class="ticketDropdown userDropdown noBg show"
                                 id="{{ $dropdownId }}" :labelText="html_entity_decode($userText)" type="user" :parentId="$row->id"
                                 :selectedKey="$selectedKey" :options="$users">
                                 <x-slot name="buttonText">
@@ -242,34 +242,24 @@
                                         {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
                                     </x-global::actions.dropdown.item>
                                 @endforeach
-                            </x-global::forms.dropdownPill>
+                            </x-global::forms._archive.dropdownPill>
                         </td>
 
 
                         <td data-order="{!! $row->editFrom !!}">
-                            <x-global::forms.text-input 
-                                type="text" 
-                                name="editFrom" 
-                                value="{!! format($row->editFrom)->date() !!}" 
-                                title="{!! __('label.planned_start_date') !!}" 
-                                class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{!! $row->id !!}" 
-                                data-id="{!! $row->id !!}" 
-                                leadingVisual="{!! __('label.due_icon') !!}"
-                            />
+                            <x-global::forms.text-input type="text" name="editFrom" value="{!! format($row->editFrom)->date() !!}"
+                                title="{!! __('label.planned_start_date') !!}"
+                                class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{!! $row->id !!}"
+                                data-id="{!! $row->id !!}" leadingVisual="{!! __('label.due_icon') !!}" />
                         </td>
-                        
+
                         <td data-order="{!! $row->editTo !!}">
-                            <x-global::forms.text-input 
-                                type="text" 
-                                name="editTo" 
-                                value="{!! format($row->editTo)->date() !!}" 
-                                title="{!! __('label.planned_end_date') !!}" 
-                                class="editToDate secretInput milestoneEditToAsync toDateTicket-{!! $row->id !!}" 
-                                data-id="{!! $row->id !!}" 
-                                leadingVisual="{!! __('label.due_icon') !!}"
-                            />
+                            <x-global::forms.text-input type="text" name="editTo" value="{!! format($row->editTo)->date() !!}"
+                                title="{!! __('label.planned_end_date') !!}"
+                                class="editToDate secretInput milestoneEditToAsync toDateTicket-{!! $row->id !!}"
+                                data-id="{!! $row->id !!}" leadingVisual="{!! __('label.due_icon') !!}" />
                         </td>
-                        
+
 
                         <td data-order="<?= $row->planHours ?>">
                             <?php echo $row->planHours; ?>

@@ -68,7 +68,7 @@
             <h5 class="accordionTitle <?= $group['class'] ?>" id="accordion_link_<?= $group['id'] ?>">
                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>"
                     onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
-                    <i class="fa fa-angle-down"></i><?= $group['label'] ?>(<?= count($group['items']) ?>)
+                    <i class="fa fa-angle-down"></i><?= $group['label']  ?> (<?= count($group['items']) ?>)
                 </a>
             </h5>
             <span><?= $group['more-info'] ?></span>
@@ -152,7 +152,7 @@
                             }
                             ?>
                             <td data-order="{{ $name }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown statusDropdown colorized show {{ $class }} f-left"
                                     id="statusDropdownMenuLink{{ $row['id'] }}" :selectedKey="$selectedKey" :options="$statusLabels">
                                     <x-slot name="buttonText">
@@ -169,7 +169,7 @@
                                             {{ $label['name'] }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
 
@@ -185,7 +185,7 @@
                             ?>
 
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown milestoneDropdown colorized show label-default milestone f-left"
                                     id="{{ $milestoneDropdownId }}" :style="'background-color:' . $milestoneColor" :labelText="$milestoneHeadline" type="milestone"
                                     :parentId="$row['id']">
@@ -213,7 +213,7 @@
                                             {{ $tpl->escape($milestone->headline) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <td
@@ -225,8 +225,10 @@
                                 $dropdownId = 'effortDropdownMenuLink' . $row['id'];
                                 ?>
 
-                                <x-global::forms.dropdownPill class="label-default effort f-left" id="{{ $dropdownId }}"
-                                    :labelText="$effortText" type="effort" :parentId="$row['id']">
+
+                                <x-global::forms._archive.dropdownPill class="label-default effort f-left"
+                                    id="{{ $dropdownId }}" :labelText="$effortText" type="effort" :parentId="$row['id']">
+
                                     <x-slot name="buttonText">
                                         {{ $effortText }} <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </x-slot>
@@ -241,7 +243,7 @@
                                             {{ $effortValue }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
 
                             </td>
 
@@ -253,7 +255,7 @@
                             ?>
 
                             <td data-order="{{ $priorityText }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown priorityDropdown show label-default priority priority-bg-{{ $row['priority'] }} f-left"
                                     id="{{ $dropdownId }}" :labelText="$priorityText" type="priority" :parentId="$row['id']"
                                     :selectedKey="$row['priority']">
@@ -271,7 +273,7 @@
                                             {{ $priorityValue }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -287,7 +289,7 @@
 
                             <td
                                 data-order="{{ $row['editorFirstname'] != '' ? $tpl->escape($row['editorFirstname']) : $tpl->__('dropdown.not_assigned') }}">
-                                <x-global::forms.dropdownPill class="ticketDropdown userDropdown noBg show f-left"
+                                <x-global::forms._archive.dropdownPill class="ticketDropdown userDropdown noBg show f-left"
                                     id="{{ $dropdownId }}" :labelText="html_entity_decode($userText)" type="user" :parentId="$row['id']">
                                     <x-slot name="buttonText">
                                         {!! $userText !!} <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -309,7 +311,7 @@
                                             {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -320,7 +322,7 @@
                             ?>
 
                             <td data-order="{{ $sprintHeadline }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown sprintDropdown show label-default sprint f-left"
                                     id="{{ $dropdownId }}" :labelText="$sprintHeadline" type="sprint" :parentId="$row['id']">
                                     <x-slot name="buttonText">
@@ -342,7 +344,7 @@
                                             {{ $tpl->escape($sprint->name) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
 
@@ -374,25 +376,17 @@
                                     class="quickDueDates secretInput" data-id="<?php echo $row['id']; ?>" name="date" />
                             </td>
                             <td data-order="{{ $tpl->escape($row['planHours']) }}">
-                                <x-global::forms.text-input 
-                                    type="text" 
-                                    name="planHours" 
-                                    value="{{ $tpl->escape($row['planHours']) }}" 
-                                    class="small-input secretInput" 
-                                    onchange="leantime.ticketsController.updatePlannedHours(this, '{{ $row['id'] }}'); jQuery(this).parent().attr('data-order', jQuery(this).val());"
-                                />
+                                <x-global::forms.text-input type="text" name="planHours"
+                                    value="{{ $tpl->escape($row['planHours']) }}" class="small-input secretInput"
+                                    onchange="leantime.ticketsController.updatePlannedHours(this, '{{ $row['id'] }}'); jQuery(this).parent().attr('data-order', jQuery(this).val());" />
                             </td>
-                            
+
                             <td data-order="{{ $tpl->escape($row['hourRemaining']) }}">
-                                <x-global::forms.text-input 
-                                    type="text" 
-                                    name="remainingHours" 
-                                    value="{{ $tpl->escape($row['hourRemaining']) }}" 
-                                    class="small-input secretInput" 
-                                    onchange="leantime.ticketsController.updateRemainingHours(this, '{{ $row['id'] }}');"
-                                />
+                                <x-global::forms.text-input type="text" name="remainingHours"
+                                    value="{{ $tpl->escape($row['hourRemaining']) }}" class="small-input secretInput"
+                                    onchange="leantime.ticketsController.updateRemainingHours(this, '{{ $row['id'] }}');" />
                             </td>
-                            
+
 
                             <td data-order="<?php if ($row['bookedHours'] === null || $row['bookedHours'] == '') {
                                 echo '0';

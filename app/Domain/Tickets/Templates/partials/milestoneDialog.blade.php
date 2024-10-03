@@ -35,6 +35,7 @@ $statusLabels = $tpl->get('statusLabels');
         labelText="{!! $tpl->__('label.milestone_title') !!}"
     />
 
+
     <x-global::forms.select 
         name="projectId"
         id="projectId"

@@ -73,111 +73,117 @@ $ticketTypes = $tpl->get('ticketTypes');
 
                 <div class="form-group">
                     <label class="control-label"><?=$tpl->__('label.project') ?></label>
-                    <select name="projectId" class="w-full">
-                        <?php foreach($allAssignedprojects as $project) { ?>
-                            <option value="<?=$project['id'] ?>"
-                                <?php
-                                if($ticket->projectId == $project['id']) {
-                                    echo "selected";
-                                }else if( session("currentProject") == $project['id']){
-                                    echo "selected";
-                                }
-                                ?>
-                            ><?=$tpl->escape($project["name"]); ?></option>
-                        <?php } ?>
-                    </select>
+                    <x-global::forms.select name="projectId" class="w-full" labelText="{!! __('label.project') !!}">
+                        @foreach($allAssignedprojects as $project)
+                            <x-global::forms.select.select-option 
+                                value="{{ $project['id'] }}"
+                                :selected="$ticket->projectId == $project['id'] || session('currentProject') == $project['id']">
+                                {!! $project['name'] !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                    </x-global::forms.select>                    
                 </div>
 
                 <div class="form-group">
                     <label class="control-label">{{ __("label.related_to") }}</label>
                     <div class="">
                         <div class="form-group">
-                            <select  name="dependingTicketId"  class="span11" >
-                                <option value="">{{ __("label.not_related") }}</option>
-                                <?php
-                                if (is_array($tpl->get('ticketParents'))) {
-                                    foreach ($tpl->get('ticketParents') as $ticketRow) {
-                                        ?>
-                                        <?php echo"<option value='" . $ticketRow->id . "'";
-
-                                        if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                            echo" selected='selected' ";
-                                        }
-
-                                        echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
-
-                                        <?php
-                                    }
-                                }?>
-                            </select>
+                            <x-global::forms.select name="dependingTicketId" class="span11">
+                                <x-global::forms.select.select-option value="">
+                                    {!! __('label.not_related') !!}
+                                </x-global::forms.select.select-option>
+                            
+                                @if (is_array($ticketParents = $tpl->get('ticketParents')))
+                                    @foreach ($ticketParents as $ticketRow)
+                                        <x-global::forms.select.select-option 
+                                            value="{{ $ticketRow->id }}"
+                                            :selected="$ticket->dependingTicketId == $ticketRow->id">
+                                            {!! $tpl->escape($ticketRow->headline) !!}
+                                        </x-global::forms.select.select-option>
+                                    @endforeach
+                                @endif
+                            </x-global::forms.select>
+                            
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">{{ __("label.todo_status") }}</label>
                     <div class="">
-                        <select
-                            id="status-select"
-                            class="span11"
-                            name="status"
-                            data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]["name"] ?? '' : ''; ?>"
-                        >
-                            <?php foreach ($statusLabels as $key => $label) {?>
-                                <option value="<?php echo $key; ?>"
-                                    <?php if ($ticket->status == $key) {
-                                        echo "selected='selected'";
-                                    } ?>
-                                ><?php echo $tpl->escape($label["name"]); ?></option>
-                            <?php } ?>
-                        </select>
+                        <x-global::forms.select 
+                        id="status-select" 
+                        class="span11" 
+                        name="status" 
+                        labelText="{!! __('label.todo_status') !!}"
+                        :placeholder="isset($ticket->status) ? ($statusLabels[$ticket->status]['name'] ?? '') : ''"
+                    >
+                        @foreach ($statusLabels as $key => $label)
+                            <x-global::forms.select.select-option 
+                                value="{{ $key }}" 
+                                :selected="$ticket->status == $key">
+                                {!! $tpl->escape($label['name']) !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                    </x-global::forms.select>
+                    
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label">{{ __("label.todo_type") }}</label>
                     <div class="">
-                        <select id='type' name='type' class="span11">
-                            <?php foreach ($ticketTypes as $types) {
-                                echo "<option value='" . strtolower($types) . "' ";
-                                if (strtolower($types) == strtolower($ticket->type ?? '')) {
-                                    echo "selected='selected'";
-                                }
+                        <x-global::forms.select id="type" name="type" class="span11">
+    @foreach ($ticketTypes as $types)
+        <x-global::forms.select.select-option 
+            value="{{ strtolower($types) }}" 
+            :selected="strtolower($types) == strtolower($ticket->type ?? '')">
+            {!! __('label.' . strtolower($types)) !!}
+        </x-global::forms.select.select-option>
+    @endforeach
+</x-global::forms.select>
+<br/>
 
-                                echo ">" . $tpl->__("label." . strtolower($types)) . "</option>";
-                            } ?>
-                        </select><br/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label">{{ __("label.priority") }}</label>
                     <div class="">
-                        <select id='priority' name='priority' class="span11">
-                            <option value="">{{ __("label.priority_not_defined") }}</option>
-                            <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
-                                echo "<option value='" . $priorityKey . "' ";
-                                if ($priorityKey == $ticket->priority) {
-                                    echo "selected='selected'";
-                                }
-                                echo ">" . $priorityValue . "</option>";
-                            } ?>
-                        </select>
+                        <x-global::forms.select id="priority" name="priority" class="span11">
+                            <x-global::forms.select.select-option value="">
+                                {!! __('label.priority_not_defined') !!}
+                            </x-global::forms.select.select-option>
+                        
+                            @foreach ($tpl->get('priorities') as $priorityKey => $priorityValue)
+                                <x-global::forms.select.select-option 
+                                    value="{{ $priorityKey }}" 
+                                    :selected="$priorityKey == $ticket->priority">
+                                    {!! $priorityValue !!}
+                                </x-global::forms.select.select-option>
+                            @endforeach
+                        </x-global::forms.select>
+                        
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">{{ __("label.effort") }}</label>
-                    <div class="">
-                        <select id='storypoints' name='storypoints' class="span11">
-                            <option value="">{{ __("label.effort_not_defined") }}</option>
-                            <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
-                                echo "<option value='" . $effortKey . "' ";
-                                if ($effortKey == $ticket->storypoints) {
-                                    echo "selected='selected'";
-                                }
-                                echo ">" . $effortValue . "</option>";
-                            } ?>
-                        </select>
-                    </div>
+                    <x-global::forms.select 
+                    id="storypoints" 
+                    name="storypoints" 
+                    class="span11" 
+                    labelText="{!! __('label.effort') !!}"
+                >
+                    <x-global::forms.select.select-option value="">
+                        {!! __('label.effort_not_defined') !!}
+                    </x-global::forms.select.select-option>
+                
+                    @foreach ($tpl->get('efforts') as $effortKey => $effortValue)
+                        <x-global::forms.select.select-option 
+                            value="{{ $effortKey }}" 
+                            :selected="$effortKey == $ticket->storypoints">
+                            {!! $effortValue !!}
+                        </x-global::forms.select.select-option>
+                    @endforeach
+                </x-global::forms.select>
+                
                 </div>
             </div>
         </div>
@@ -196,44 +202,49 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
 
                     <div class="form-group">
-                        <label class="control-label">{{ __("label.milestone") }}</label>
-                        <div class="">
-                            <div class="form-group">
-                                <select  name="milestoneid"  class="span11" >
-                                    <option value="">{{ __("label.not_assigned_to_milestone") }}</option>
-                                    <?php foreach ($tpl->get('milestones') as $milestoneRow) {     ?>
-                                        <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                        if (($ticket->milestoneid == $milestoneRow->id)) {
-                                            echo" selected='selected' ";
-                                        }
-
-                                        echo">" . $tpl->escape($milestoneRow->headline) . "</option>"; ?>
-
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
+                        <x-global::forms.select 
+                        name="milestoneid" 
+                        class="span11" 
+                        labelText="{!! __('label.milestone') !!}"
+                    >
+                        <x-global::forms.select.select-option value="">
+                            {!! __('label.not_assigned_to_milestone') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        @foreach ($tpl->get('milestones') as $milestoneRow)
+                            <x-global::forms.select.select-option 
+                                value="{{ $milestoneRow->id }}" 
+                                :selected="$ticket->milestoneid == $milestoneRow->id">
+                                {!! $tpl->escape($milestoneRow->headline) !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                    </x-global::forms.select>
+                    
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label">{{ __("label.sprint") }}</label>
-                        <div class="">
-
-                            <select id="sprint-select" class="span11" name="sprint"
-                                    data-placeholder="<?php echo $ticket->sprint ?>">
-                                <option value="">{{ __("label.backlog") }}</option>
-                                <?php
-                                if ($tpl->get('sprints')) {
-                                    foreach ($tpl->get('sprints') as $sprintRow) { ?>
-                                        <option value="<?php echo $sprintRow->id; ?>"
-                                            <?php if ($ticket->sprint == $sprintRow->id) {
-                                                echo "selected='selected'";
-                                            } ?>
-                                        ><?php $tpl->e($sprintRow->name); ?></option>
-                                    <?php }
-                                } ?>
-                            </select>
+                        <x-global::forms.select 
+                        id="sprint-select" 
+                        name="sprint" 
+                        class="span11" 
+                        labelText="{!! __('label.sprint') !!}" 
+                        :placeholder="$ticket->sprint"
+                    >
+                        <x-global::forms.select.select-option value="">
+                            {!! __('label.backlog') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        @if ($tpl->get('sprints'))
+                            @foreach ($tpl->get('sprints') as $sprintRow)
+                                <x-global::forms.select.select-option 
+                                    value="{{ $sprintRow->id }}" 
+                                    :selected="$ticket->sprint == $sprintRow->id">
+                                    {!! $tpl->escape($sprintRow->name) !!}
+                                </x-global::forms.select.select-option>
+                            @endforeach
+                        @endif
+                    </x-global::forms.select>
+                    
                         </div>
                     </div>
                 </div>
@@ -263,29 +274,37 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label">{{ __("label.editor") }}</label>
-                        <div class="">
-
-                            <select data-placeholder="{{ __("label.filter_by_user") }}" style="width:175px;"
-                                    name="editorId" id="editorId" class="user-select span11">
-                                <option value="">{{ __("label.not_assigned_to_user") }}</option>
-                                <?php foreach ($tpl->get('users') as $userRow) { ?>
-                                    <?php echo "<option value='" . $userRow["id"] . "'";
-
-                                    if ($ticket->editorId == $userRow["id"]) {
-                                        echo " selected='selected' ";
-                                    }
-
-                                    echo ">" . $tpl->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
-
-                                <?php } ?>
-                            </select><br />
-                            <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session("userdata.id"); ?>).trigger('chosen:updated');">{{ __("label.assign_to_me") }}</a></small>
-                            <?php } ?>
-                        </div>
-                    </div>
-
+                        <x-global::forms.select 
+                        name="editorId" 
+                        id="editorId" 
+                        class="user-select span11" 
+                        :placeholder="__('label.filter_by_user')" 
+                        labelText="{!! __('label.editor') !!}" 
+                        style="width:175px;"
+                    >
+                        <x-global::forms.select.select-option value="">
+                            {!! __('label.not_assigned_to_user') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        @foreach ($tpl->get('users') as $userRow)
+                            <x-global::forms.select.select-option 
+                                value="{{ $userRow['id'] }}" 
+                                :selected="$ticket->editorId == $userRow['id']">
+                                {!! $tpl->escape($userRow['firstname'] . ' ' . $userRow['lastname']) !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                    </x-global::forms.select>
+                    
+                    <br />
+                    
+                    @if ($login::userIsAtLeast($roles::$editor))
+                        <small style="margin-top:-5px; display:block">
+                            <a href="javascript:void(0);" onclick="jQuery('#editorId').val({{ session('userdata.id') }}).trigger('chosen:updated');">
+                                {!! __('label.assign_to_me') !!}
+                            </a>
+                        </small>
+                    @endif
+                    
                 </div>
 
 

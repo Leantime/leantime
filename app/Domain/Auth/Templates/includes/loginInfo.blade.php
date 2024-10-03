@@ -5,7 +5,7 @@
     <x-global::actions.dropdown contentRole='ghost' position="left">
         <x-slot:labelText>
             @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
-                <a href="{{ BASE_URL }}/users/editOwn/" class="profileHandler includeLogo">
+                <a href="{{ BASE_URL }}/users/editOwn/">
                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
                     <img src="{{ session("companysettings.logoPath") }}" class="logo"/>
                     <i class="fa fa-caret-down" aria-hidden="true"></i>

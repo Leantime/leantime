@@ -1026,11 +1026,11 @@ a.barmenu:hover {
     margin-right: 5px;
 }
 
-.userloggedinfo ul li a:hover,
-.appsDropdown ul li a:hover{
+/* .userloggedinfo ul li a:hover, */
+/* .appsDropdown ul li a:hover{
     text-decoration: none;
 
-}
+} */
 
 .userloggedinfo a,
 .appsDropdown a{
@@ -1039,11 +1039,11 @@ a.barmenu:hover {
 
 
 
-.userloggedinfo a:hover {
+/* .userloggedinfo a:hover {
     background: rgba(255, 255, 255, 0.2);
     color: var(--nav-link-color);
     text-decoration: none;
-}
+} */
 
 .submenuCaret {
 
