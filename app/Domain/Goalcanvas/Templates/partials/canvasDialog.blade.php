@@ -20,9 +20,16 @@
                 <br />
 
                 @if (!empty($relatesLabels))
-                    <label>{{ __('label.relates') }}</label>
-                    <select name="relates" style="width: 50%" id="relatesCanvas">
-                    </select><br>
+                <x-global::forms.select 
+                    name="relates" 
+                    id="relatesCanvas" 
+                    labelText="{!! __('label.relates') !!}" 
+                    class="w-1/2"
+                >
+                {{-- options were empty --}}
+            </x-global::forms.select>
+            <br>
+            
                 @else
                     <input type="hidden" name="relates"
                         value="{{ $canvasItem['relates'] ?? array_key_first($hiddenRelatesLabels) }}">
@@ -35,7 +42,7 @@
                 <div id="measureGoalContainer">
                     <x-global::forms.text-input type="text" name="description"
                         value="{{ $canvasItem['description'] }}"
-                        labelText="{{ __('text.what_metric_will_you_be_using') }}" variant="title" />
+                        labelText="{{ __('text.what_metric_will_you_be_using') }}" class="w-full"/>
 
                 </div>
 
@@ -43,33 +50,45 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="startValue"
                             value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
-                            variant="compact" />
+                            variant="compact"
+                            class="w-1/2" />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
                             labelText="{{ __('label.current_value') }}" variant="compact"
-                            @if ($canvasItem['setting'] == 'linkAndReport') readonly
-                                data-tippy-content="Current value calculated from child goals" @endif />
+                            class="w-1/2"
+{{--                            @if ($canvasItem['setting'] == 'linkAndReport')--}}
+{{--                                dataTippyContent="Current value calculated from child goals" @endif--}}
+                        />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="endValue"
                             value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
+                            class="w-1/2"
                             variant="compact" />
 
                     </div>
                     <div class="col-md-3">
-                        <label>{{ __('label.type') }}</label>
-                        <select name="metricType">
-                            <option value="number" @if ($canvasItem['metricType'] == 'number') selected @endif>
-                                {{ __('label.number') }}</option>
-                            <option value="percent" @if ($canvasItem['metricType'] == 'percent') selected @endif>
-                                {{ __('label.percent') }}</option>
-                            <option value="currency" @if ($canvasItem['metricType'] == 'currency') selected @endif>
-                                {{ __('language.currency') }}</option>
-                        </select>
+                        <x-global::forms.select 
+                        name="metricType" 
+                        labelText="{!! __('label.type') !!}"
+                    >
+                        <x-global::forms.select.select-option value="number" :selected="$canvasItem['metricType'] == 'number'">
+                            {!! __('label.number') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        <x-global::forms.select.select-option value="percent" :selected="$canvasItem['metricType'] == 'percent'">
+                            {!! __('label.percent') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        <x-global::forms.select.select-option value="currency" :selected="$canvasItem['metricType'] == 'currency'">
+                            {!! __('language.currency') !!}
+                        </x-global::forms.select.select-option>
+                    </x-global::forms.select>
+                    
                     </div>
                 </div>
 
@@ -79,7 +98,7 @@
                         {{ __('buttons.save') }}
                     </x-global::forms.button>
 
-                    <x-global::forms.button id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();">
+                    <x-global::forms.button id="saveAndClose" content-role="secondary" onclick="leantime.goalCanvasController.setCloseModal();">
                         {{ __('buttons.save_and_close') }}
                     </x-global::forms.button>
                 @endif
@@ -88,9 +107,15 @@
 
             <div class="col-md-4">
                 @if (!empty($statusLabels))
-                    <label>{{ __('label.status') }}</label>
-                    <select name="status" style="width: 50%" id="statusCanvas">
-                    </select><br /><br />
+                <x-global::forms.select 
+                name="status" 
+                id="statusCanvas" 
+                labelText="{!! __('label.status') !!}" 
+                class="w-1/2"
+            >
+                {{-- options were empty --}}
+            </x-global::forms.select>
+            <br /><br />
                 @else
                     <input type="hidden" name="status"
                         value="{{ $canvasItem['status'] ?? array_key_first($hiddenStatusLabels) }}" />
@@ -149,16 +174,24 @@
 
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <select data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
-                                        name="existingMilestone" class="user-select">
-                                        <option value=""></option>
-                                        @foreach ($tpl->get('milestones') as $milestoneRow)
-                                            <option value="{{ $milestoneRow->id }}"
-                                                {{ isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id ? 'selected' : '' }}>
-                                                {{ $milestoneRow->headline }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <x-global::forms.select 
+                                    name="existingMilestone" 
+                                    class="user-select" 
+                                    :placeholder="__('input.placeholders.filter_by_milestone')"
+                                >
+                                    <x-global::forms.select.select-option value="">
+                                        {{-- Empty option for placeholder --}}
+                                    </x-global::forms.select.select-option>
+                                
+                                    @foreach ($tpl->get('milestones') as $milestoneRow)
+                                        <x-global::forms.select.select-option 
+                                            value="{{ $milestoneRow->id }}" 
+                                            :selected="isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id">
+                                            {{ $milestoneRow->headline }}
+                                        </x-global::forms.select.select-option>
+                                    @endforeach
+                                </x-global::forms.select>
+                                
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="goalcanvasitemid" value="{{ $id }}" />
                                     <x-global::forms.button content-role="primary" type="button"

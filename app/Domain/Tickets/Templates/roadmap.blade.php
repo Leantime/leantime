@@ -57,13 +57,13 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
                     <x-global::actions.dropdown 
                         class="btn dropdown-toggle"
                         id="ganttTimeControl"
-                        :label-text="$tpl->__('buttons.timeframe') . ': ' . $currentView"
+                        {{-- :label-text="$tpl->__('buttons.timeframe') . ': ' . $currentView" --}}
                         align="start"
-                        contentRole="menu"
+                        contentRole="ghost"
                     >
-                        <x-slot:trigger>
+                        <x-slot:labelText>
                             {{ $tpl->__('buttons.timeframe') }}: <span class="viewText">{{ $currentView }}</span> <span class="caret"></span>
-                        </x-slot:trigger>
+                        </x-slot:labelText>
                     
                         <x-slot:menu>
                             <x-global::actions.dropdown.item 

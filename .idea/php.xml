@@ -288,6 +288,8 @@
       <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
       <path value="$PROJECT_DIR$/vendor/leantime/leantime-documentor" />
       <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
+      <path value="$PROJECT_DIR$/vendor/codeat3/blade-google-material-design-icons" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
@@ -313,11 +315,10 @@
     <option name="level" value="1" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpStepFilterConfiguration" skip_magic_methods="true" />
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Sentry/vendor/autoload.php" />
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Billing/vendor/autoload.php" />
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Sentry/vendor/autoload.php" phpunit_phar_path="" />
     </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">

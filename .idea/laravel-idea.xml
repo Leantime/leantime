@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BladeSettings">
+    <option name="componentsAdditionalAttributes">
+      <set>
+        <option value="content-role" />
+        <option value="state" />
+        <option value="scale" />
+        <option value="variant" />
+      </set>
+    </option>
+  </component>
   <component name="LaravelIdeaMainSettings">
+    <option name="bladeComponentViewsDirectory" value="app/Views/Templates/components" />
     <option name="frameworkFound" value="true" />
     <option name="moduleSystemName" value="nwidart/laravel-modules" />
     <option name="nwidartModuleSystemRoot" value="app/Plugins" />

@@ -1,15 +1,21 @@
 @props([
-    'inputType' => 'text',
+    //Basic Definition
+    'contentRole' => '', //default, primary, secondary, tertiary (ghost), accent, link
+    'state' => '', //default, info, warning, danger, success,
+    'scale' => '',
+
+    //labels & content
+    'labelPosition' => 'top',
     'labelText' => '',
-    'labelRight' => '',
-    'size' => '',
-    'state' => '',
+    'helpText' => '',
     'leadingVisual' => '',
     'trailingVisual' => '',
     'caption' => '',
     'validationText' => '',
     'validationState' => '',
-    'variant' => '',
+    
+    //Variation options
+    'variant' => '', //default, title, compact, fullWidth
 ])
 
 @php
@@ -19,31 +25,37 @@
     $ghostClass = $variant === 'ghost' ? 'input-ghost' : '';
 
     if ($variant === 'title') {
-        $style= 'text-lg';
+
+        $style= 'text-xxl p-0 ml-[-5px] pl-[5px] hover:bg-transparent mb-4';
         $width = 'max-w-full';
         $sizeClass = 'w-full';
         $ghostClass = 'input-ghost ';
 
     } elseif ($variant === 'compact') {
+
         $style= 'input-bordered input-sm';
         $width = 'max-w-xs';
+        $sizeClass = $scale ? 'input-'.$size : '';
 
+    } elseif ($variant === 'fullWidth') {
+        $style= 'input-bordered  input-sm';
+        $width = 'w-full';
+        $sizeClass = $scale ? 'input-'.$scale : '';
     } else {
         $style= 'input-bordered  input-sm';
-        $width = 'w-full max-w-xs';
-        $sizeClass = $size ? 'input-'.$size : '';
+        $width = 'w-full';
+        $sizeClass = $scale ? 'input-'.$scale : '';
     }
 @endphp
 
-<div class='par relative form-control {{$width}}'>
-    <div>
-        @if($labelText)
-        <span class='label-text font-medium'>{!! $labelText !!}</span>
-        @endif
-        @if($labelRight)
-        <span class='label-text-alt'>{!! $labelRight !!}</span>
-        @endif
-    </div>
+<x-global::forms.field-row :label-position="$labelPosition" class="{{$width}}">
+    @if($labelText)
+        <x-slot:label-text> {!! $labelText !!}</x-slot:label-text>
+    @endif
+
+    @if($helpText)
+        <x-slot:help-text> {!! $helpText !!}</x-slot:help-text>
+    @endif
 
     @if($caption)
         <span class="label-text">{{ $caption }}</span>
@@ -66,8 +78,8 @@
     </div>
 
     @if($validationText)
-        <x-global::forms.label-row class="mt-1 transition-opacity duration-500 ease-in-out opacity-100">
-            <x-slot:label-text-right class="{{ $validationClass }}"> {!! $validationText !!}</x-slot:label-text-right>
-        </x-global::forms.label-row>
+        <x-slot:validation-text> {!! $validationText !!}</x-slot:validation-text>
     @endif
-</div>
+
+</x-global::forms.field-row>
+

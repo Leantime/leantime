@@ -12,42 +12,37 @@
 
 <div style="min-width:1400px"></div>
 
-<div class="float-left pt-[3px] pl-m pr-m">
+<div class="float-left pt-[3px] pr-1">
     <h1>#{{ $ticket->id }}</h1>
 </div>
 <div class="float-left">
-    <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" />
+    <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip"/>
 </div>
 
-<div class="float-left">
-    <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags>
-</div>
-<div class="clearall"></div>
+{{--<div class="float-left">--}}
+{{--    <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags>--}}
+{{--</div>--}}
+
+<div class="clear"></div>
 
 <div class="row">
     <div class="col-md-7">
 
-        <div class="row pb-l">
-            <div class="col-md-12">
-                <x-global::forms.text-input
-                    type="text"
-                    name="headline"
-                    value="{!! $tpl->escape($ticket->headline) !!}"
-                    placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}"
-                    variant="title"
-                    class="w-[99%]"
-                    autocomplete="off"
-                />
-            </div>
-        </div>
+        <x-global::forms.text-input
+            type="text"
+            name="headline"
+            value="{!! $tpl->escape($ticket->headline) !!}"
+            placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}"
+            variant="title"
+            class="w-[99%]"
+            autocomplete="off"
+        />
 
-        <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" />
+        <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" label-position="left" />
 
-        <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
+        <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" label-position="left" />
 
-        <x-global::forms.datepicker no-date-label="{{ __('text.anytime') }}" :value="$ticket->dateToFinish" dateName="test1">
-            <x-slot:label-text>📅 Due Date</x-slot:label-text>
-        </x-global::forms.datepicker>
+        <x-tickets::duedate :date="$ticket->dateToFinish" label-position="left" variant="input"/>
 
         {{-- <x-global::forms.select
             id="select-test"

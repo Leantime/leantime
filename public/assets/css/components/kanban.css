@@ -288,75 +288,7 @@ body .maincontent .priority-border-5 {
     border-left: 3px solid var(--dark-grey);
 }
 
-.priority-bg-1,
-body .maincontent .priority-bg-1,
-body .maincontent .ticketDropdown .priority-bg-1{
-    background:var(--dark-red);
-    color:var(--dark-red-text-color);
-}
 
-.priority-bg-2,
-body .maincontent .priority-bg-2,
-body .maincontent .ticketDropdown .priority-bg-2{
-    background: var(--red);
-    color:var(--red-text-color);
-}
-
-.priority-bg-3,
-body .maincontent .priority-bg-3,
-body .maincontent .ticketDropdown .priority-bg-3{
-    background: var(--yellow);
-    color:var(--yellow-text-color);
-}
-
-.priority-bg-4,
-body .maincontent .priority-bg-4,
-body .maincontent .ticketDropdown .priority-bg-4{
-    background:var(--green);
-    color:var(--green-text-color);
-}
-
-.priority-bg-5,
-body .maincontent .priority-bg-5,
-body .maincontent .ticketDropdown .priority-bg-5 {
-    background:var(--dark-grey);
-    color:var(--dark-grey-text-color);
-}
-
-.priority-text-1,
-body .maincontent .priority-text-1,
-body .maincontent .priority-text-1 a,
-body .maincontent .priority-text-1 a:link{
-    color:var(--dark-red);
-}
-
-.priority-text-2,
-body .maincontent .priority-text-2,
-body .maincontent .priority-text-2 a,
-body .maincontent .priority-text-2 a:link {
-    color:var(--red);
-}
-
-.priority-text-3,
-body .maincontent .priority-text-3,
-body .maincontent .priority-text-3 a,
-body .maincontent .priority-text-3 a:link {
-    color:var(--yellow);
-}
-
-.priority-text-4,
-body .maincontent .priority-text-4,
-body .maincontent .priority-text-4 a,
-body .maincontent .priority-text-4 a:link {
-    color:var(--green);
-}
-
-.priority-text-5,
-body .maincontent .priority-text-5,
-body .maincontent .priority-text-5 a,
-body .maincontent .priority-text-5 a:link {
-    color:var(--dark-grey);
-}
 
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;

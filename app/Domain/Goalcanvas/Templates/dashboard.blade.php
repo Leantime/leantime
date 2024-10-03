@@ -162,8 +162,6 @@
                                                 @endphp
                                                 <div class="col-md-4">
 
-
-                                                    <x-goalcanvas:goalcard :value="$row" :users="$users" ></x-goalcanvas:goalcard>
                                                     <div class="ticketBox" id="item_{{ $row['id'] }}">
                                                         <div class="row">
                                                             <div class="col-md-12">

@@ -1,15 +1,15 @@
 @props([
    'labelText' => false,
-   'labelRight' => false
+   'helpText' => false
 ])
 
-@if($labelText || $labelRight)
+@if($labelText || $helpText)
     <div {{ $attributes->merge(['class'=> 'label' ]) }}>
         @if($labelText)
-            <span {{ $attributes->merge(['class'=> 'label-text font-medium' ]) }}>{{ $labelText }}</span>
+            <span {{ $attributes->merge(['class'=> 'label-text' ]) }}>{{ $labelText }}</span>
         @endif
-        @if($labelRight)
-            <span {{ $attributes->merge(['class'=> 'label-text-alt' ]) }}>{{ $labelRight }}</span>
+        @if($helpText)
+            <span {{ $attributes->merge(['class'=> 'label-text-alt' ]) }}>{{ $helpText }}</span>
         @endif
     </div>
 @endif
