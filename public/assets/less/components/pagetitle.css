@@ -15,3 +15,15 @@
     }
 
 }
+
+.filterWrapper {
+    .dropdown {
+        .btn {
+            color: rgb(8, 8, 236) !important;  
+        }
+
+        .text-base-content {
+            color: blue !important;  
+        }
+    }
+}

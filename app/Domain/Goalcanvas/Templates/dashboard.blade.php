@@ -53,27 +53,10 @@
             <h5>{{ session('currentProjectClient') . ' // ' . session('currentProjectName') }}</h5>
 
             <h1>{{ __('headline.goal.dashboardboard') }} //
-                @if (count($allCanvas) > 0)
-                    <x-global::actions.dropdown label-text='All Goal Groups' contentRole="accent" position="bottom">
-                        <x-slot:menu>
-                            @if ($login::userIsAtLeast($roles::$editor))
-                                <x-global::actions.dropdown.item variant="link" href="#/goalcanvas/bigRock">
-                                    {!! __('links.icon.create_new_board') !!}
-                                </x-global::actions.dropdown.item>
-                                <x-global::actions.dropdown.item variant="border" />
-                            @endif
-                            @foreach ($allCanvas as $canvasRow)
-                                <x-global::actions.dropdown.item variant="link"
-                                    href="{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}">
-                                    {{ $tpl->escape($canvasRow['title']) }}
-                                </x-global::actions.dropdown.item>
-                            @endforeach
-                        </x-slot:menu>
-                    </x-global::actions.dropdown>
-                @endif
+                @include('goalcanvas::partials.goalBoard')
             </h1>
         </div>
-    </div><!--pageheader-->
+    </div>
 
     <div class="maincontent">
 
@@ -161,6 +144,7 @@
                                                     $nbcomments = $comments->countComments(moduleId: $row['id']);
                                                 @endphp
                                                 <div class="col-md-4">
+
                                                     <div class="ticketBox" id="item_{{ $row['id'] }}">
                                                         <div class="row">
                                                             <div class="col-md-12">

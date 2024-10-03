@@ -299,11 +299,11 @@
 
                             </div>
                             <div class="modal-footer">
-                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal" content-role="secondary">
+                                <x-global::forms.button type="button" data-dismiss="modal" content-role="secondary">
                                     {!! __('buttons.close') !!}
                                 </x-global::forms.button>
 
-                                <x-global::forms.button type="submit" class="btn btn-default" name="newCanvas">
+                                <x-global::forms.button type="submit" name="newCanvas">
                                     {!! __('buttons.create_board') !!}
                                 </x-global::forms.button>
 

@@ -18,32 +18,26 @@ if (isset($currentSprint->id)) {
 ?>
 
 <x-global::content.modal.form action="{{ BASE_URL}}/sprints/editSprint/{{ $id }}">
-<x-global::forms.text-input 
-    type="text" 
-    name="name" 
-    value="{{ $currentSprint->name }}" 
-    placeholder="{{ $tpl->__('label.sprint_name') }}" 
-    labelText="{{ $tpl->__('label.sprint_name') }}" 
-    variant="title" 
-/>
-<br />
+    <x-global::forms.text-input 
+        type="text" 
+        name="name" 
+        value="{{ $currentSprint->name }}" 
+        placeholder="{{ $tpl->__('label.sprint_name') }}" 
+        labelText="{{ $tpl->__('label.sprint_name') }}" 
+        variant="title" 
+    />
+    <br />
 
-    <label><?=$tpl->__('label.project') ?></label>
-    <select name="projectId">
-        <?php foreach($allAssignedprojects as $project) { ?>
-            <option value="<?=$project['id'] ?>"
-                    <?php
-                    if(isset($currentSprint)) {
-                        if($currentSprint->projectId == $project['id']) {
-                            echo "selected";
-                        }
-                    }elseif( session("currentProject") == $project['id']){
-                        echo "selected";
-                    }
-                    ?>
-        ><?=$tpl->escape($project["name"]); ?></option>
-        <?php } ?>
-    </select><br />
+    <x-global::forms.select name="projectId" :labelText="__('label.project')">
+        @foreach ($allAssignedprojects as $project)
+            <x-global::forms.select.select-option :value="$project['id']" 
+                :selected="(isset($currentSprint) && $currentSprint->projectId == $project['id']) || session('currentProject') == $project['id']">
+                {!! $tpl->escape($project['name']) !!}
+            </x-global::forms.select.select-option>
+        @endforeach
+    </x-global::forms.select>
+
+    <br />
 
     <br /><br />
     <p><?=$tpl->__('label.sprint_dates') ?></p><br/>

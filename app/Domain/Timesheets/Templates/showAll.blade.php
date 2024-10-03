@@ -117,19 +117,20 @@
                         </select>
                     </td>
                     <td>
-                        <label for="kind"><?php echo $tpl->__("label.type")?></label>
-                        <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
-                            <option value="all">{{ __("label.all_types") }}</option>
-                            <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo'<option value="' . $key . '"';
-                                if ($key == $tpl->get('actKind')) {
-                                    echo ' selected="selected"';
-                                }
-                                echo'>' . $tpl->__($row) . '</option>';
-                            }
-                            ?>
 
-                        </select>
+
+                        <x-global::forms.select name="userId" id="userId" labelText="{{ __('label.all_employees') }}" style="max-width:120px;" onchange="submit();">
+                            <x-global::forms.select.select-option value="all">{{ __('label.all_employees') }}</x-global::forms.select.select-option>
+                            
+                            @foreach ($employees as $row)
+                                <x-global::forms.select.select-option 
+                                    value="{{ $row['id'] }}" 
+                                    :selected="$row['id'] == $employeeFilter">
+                                    {{ sprintf(__('text.full_name'), $row['firstname'], $row['lastname']) }}
+                                </x-global::forms.select.select-option>
+                            @endforeach
+                        </x-global::forms.select>
+
                     </td>
                     <td>
                         <x-global::forms.checkbox

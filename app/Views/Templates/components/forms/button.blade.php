@@ -53,7 +53,7 @@
             {{ $leadingVisual }}
         </div>
     @endif
-    {{ $labelText }}
+    {!! $labelText !!}
     {{ $slot }}
     @if($trailingVisual)
         <div class="h-6 w-6">

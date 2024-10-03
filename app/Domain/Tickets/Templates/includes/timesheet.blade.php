@@ -21,17 +21,20 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 
                 <form method="post" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . ""?>#timesheet" class="formModal">
 
-                    <label for="kind">{{ __("label.timesheet_kind") }}</label>
-                    <span class="field">
-                    <select id="kind" name="kind">
-                    <?php foreach ($tpl->get('kind') as $key => $row) {
-                        echo'<option value="' . $key . '"';
-                        if ($row == $values['kind']) {
-                            echo ' selected="selected"';
-                        }
-                        echo'>' . $tpl->__(strtolower($row)) . '</option>';
-                    } ?>
-                    </select>
+                    <x-global::forms.select 
+                    id="kind" 
+                    name="kind" 
+                    labelText="{!! __('label.timesheet_kind') !!}"
+                >
+                    @foreach ($tpl->get('kind') as $key => $row)
+                        <x-global::forms.select.select-option 
+                            value="{{ $key }}" 
+                            :selected="$row == $values['kind']">
+                            {!! __('' . strtolower($row)) !!}
+                        </x-global::forms.select.select-option>
+                    @endforeach
+                </x-global::forms.select>
+                
                     </span>
 
                     <label for="timesheetdate">{{ __("label.date") }}:</label>
