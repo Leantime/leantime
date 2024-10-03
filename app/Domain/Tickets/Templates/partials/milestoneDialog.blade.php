@@ -34,80 +34,82 @@ $statusLabels = $tpl->get('statusLabels');
         placeholder="{!! $tpl->__('label.milestone_title') !!}" 
         labelText="{!! $tpl->__('label.milestone_title') !!}"
     />
-    <br />
+
 
     <x-global::forms.select 
-        name="projectId" 
-        class="w-full" 
-        labelText="{!! __('label.project') !!}"
+        name="projectId"
+        id="projectId"
+        labelText="{{ __('label.project') }}"
     >
         @foreach ($allAssignedprojects as $project)
-            @if (empty($project['type']) || $project['type'] == 'project')
-                <x-global::forms.select.select-option 
-                    value="{{ $project['id'] }}" 
-                    :selected="(!empty($currentMilestone->projectId) && $currentMilestone->projectId == $project['id']) || session('currentProject') == $project['id']">
-                    {!! $tpl->escape($project['name']) !!}
-                </x-global::forms.select.select-option>
+            @if (empty($project['type']) || $project['type'] == "project")
+                <x-global::forms.select.option
+                    :value="$project['id']"
+                    :selected="(!empty($currentMilestone->projectId) && $currentMilestone->projectId == $project['id']) || session('currentProject') == $project['id']"
+                >
+                    {{ $project['name'] }}
+                </x-global::forms.select.option>
             @endif
         @endforeach
     </x-global::forms.select>
 
 
     <x-global::forms.select 
-        id="status-select" 
-        name="status" 
-        class="span11" 
-        :placeholder="isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]['name'] : ''"
-        labelText="{!! __('label.todo_status') !!}"
+        name="status"
+        id="status-select"
+        labelText="{{ __('label.todo_status') }}"
+        :data-placeholder="isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]['name'] : ''"
     >
         @foreach ($statusLabels as $key => $label)
-            <x-global::forms.select.select-option 
-                value="{{ $key }}" 
-                :selected="$currentMilestone->status == $key">
-                {!! $tpl->escape($label['name']) !!}
-            </x-global::forms.select.select-option>
+                <x-global::forms.select.option
+                    :value="$key"
+                    :selected="$currentMilestone->status == $key"
+                >
+                    {{ $label["name"] }}
+                </x-global::forms.select.option>
         @endforeach
     </x-global::forms.select>
 
-    <x-global::forms.select 
-        name="dependentMilestone" 
-        class="span11" 
-        labelText="{!! __('label.dependent_on') !!}"
-    >
-        <x-global::forms.select.select-option value="">
-            {!! __('label.no_dependency') !!}
-        </x-global::forms.select.select-option>
 
-        @foreach ($tpl->get('milestones') as $milestoneRow)
+    <x-global::forms.select 
+        name="dependentMilestone"
+        id="dependentMilestone"
+        labelText="{{ __('label.dependent_on') }}"
+    >
+        <x-global::forms.select.option :value="''">
+            {{  __('label.no_dependency') }}
+        </x-global::forms.select.option>
+        @foreach ($milestones as $milestoneRow)
             @if ($milestoneRow->id !== $currentMilestone->id)
-                <x-global::forms.select.select-option 
-                    value="{{ $milestoneRow->id }}" 
-                    :selected="$currentMilestone->milestoneid == $milestoneRow->id">
-                    {!! $tpl->escape($milestoneRow->headline) !!}
-                </x-global::forms.select.select-option>
+                <x-global::forms.select.option
+                    :value="$milestoneRow->id"
+                    :selected="$currentMilestone->milestoneid == $milestoneRow->id"
+                >
+                    {{ $milestoneRow->headline }}
+                </x-global::forms.select.option>
             @endif
         @endforeach
     </x-global::forms.select>
 
-    <x-global::forms.select 
-        name="editorId" 
-        class="user-select span11" 
-        :placeholder="__('input.placeholders.filter_by_user')" 
-        labelText="{!! __('label.owner') !!}"
-    >
-        <x-global::forms.select.select-option value="">
-            {!! __('dropdown.not_assigned') !!}
-        </x-global::forms.select.select-option>
 
-        @foreach ($tpl->get('users') as $userRow)
-            <x-global::forms.select.select-option 
-                value="{{ $userRow['id'] }}" 
-                :selected="$currentMilestone->editorId == $userRow['id']">
-                {!! $tpl->escape($userRow['firstname']) . ' ' . $tpl->escape($userRow['lastname']) !!}
-            </x-global::forms.select.select-option>
+    <x-global::forms.select 
+        name="editorId"
+        id="editorId"
+        :data-placeholder="__('input.placeholders.filter_by_user')"
+        :label-text="__('label.owner')"
+    >
+        <x-global::forms.select.option :value="''">
+            {{ __('dropdown.not_assigned') }}
+        </x-global::forms.select.option>
+        @foreach ($users as $userRow)
+            <x-global::forms.select.option
+                :value="$userRow['id']"
+                :selected="$currentMilestone->editorId == $userRow['id']"
+            >
+                {!! $userRow['firstname'] !!} {!! $userRow['lastname'] !!}
+            </x-global::forms.select.option>
         @endforeach
     </x-global::forms.select>
-
 
     <x-global::forms.text-input 
         type="text" 
@@ -118,7 +120,7 @@ $statusLabels = $tpl->get('statusLabels');
         autocomplete="off" 
         class="simpleColorPicker"
     />
-    <br />
+
     <x-global::forms.text-input 
         type="text" 
         name="editFrom" 
@@ -128,7 +130,6 @@ $statusLabels = $tpl->get('statusLabels');
         labelText="{!! $tpl->__('label.planned_start_date') !!}" 
         autocomplete="off" 
     />
-    <br />
 
     <x-global::forms.text-input 
         type="text" 
