@@ -4,6 +4,9 @@
 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 ?>
 
+<x-global::content.modal.header>
+    Del {{$canvasName}}
+</x-global::content.modal.header>
 
 <h4 class="widgettitle title-light"><?=$tpl->__("subtitles.delete") ?></h4>
 

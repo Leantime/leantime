@@ -4,7 +4,9 @@
 $currentSprint = $tpl->get('sprint');
 ?>
 
-<h4 class="widgettitle title-light"><i class="fa fa-list-1-2"></i> <?=$tpl->__('label.sprint') ?> <?php echo $currentSprint->name?></h4>
+<x-global::content.modal.header class="widgettitle title-light">
+    <i class="fa fa-list-1-2"></i> <?=$tpl->__('label.sprint') ?> <?php echo $currentSprint->name?>
+</x-global::content.modal.header>
 
 @displayNotification()
 
