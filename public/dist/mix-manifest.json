@@ -118,7 +118,6 @@
     "/images/throbber.gif": "/images/throbber.gif",
     "/images/undraw_progressive_app_m9ms.png": "/images/undraw_progressive_app_m9ms.png",
     "/images/zulip-org-logo.png": "/images/zulip-org-logo.png",
-
     "/fonts/Atkinson-Hyperlegible-Bold-102.ttf": "/fonts/Atkinson-Hyperlegible-Bold-102.ttf",
     "/fonts/Atkinson-Hyperlegible-Bold-102a.woff2": "/fonts/Atkinson-Hyperlegible-Bold-102a.woff2",
     "/fonts/Atkinson-Hyperlegible-BoldItalic-102.ttf": "/fonts/Atkinson-Hyperlegible-BoldItalic-102.ttf",
@@ -183,6 +182,7 @@
     "/fonts/Hanken_Grotesk/OFL.txt": "/fonts/Hanken_Grotesk/OFL.txt",
     "/fonts/Hanken_Grotesk/README.txt": "/fonts/Hanken_Grotesk/README.txt",
     "/fonts/material-icons/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf": "/fonts/material-icons/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf",
+    "/fonts/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf": "/fonts/MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf",
     "/fonts/roboto/Google Android License.txt": "/fonts/roboto/Google Android License.txt",
     "/fonts/roboto/LICENSE.txt": "/fonts/roboto/LICENSE.txt",
     "/fonts/roboto/Roboto-Black.ttf": "/fonts/roboto/Roboto-Black.ttf",

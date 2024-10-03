@@ -225,8 +225,10 @@
                                 $dropdownId = 'effortDropdownMenuLink' . $row['id'];
                                 ?>
 
-                                <x-global::forms._archive.dropdownPill class="label-default effort f-left" id="{{ $dropdownId }}"
-                                    :labelText="$effortText" type="effort" :parentId="$row['id']">
+
+                                <x-global::forms._archive.dropdownPill class="label-default effort f-left"
+                                    id="{{ $dropdownId }}" :labelText="$effortText" type="effort" :parentId="$row['id']">
+
                                     <x-slot name="buttonText">
                                         {{ $effortText }} <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </x-slot>
