@@ -42,56 +42,30 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                                  } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-                                        <span class="headline"><?=$tpl->__("label.planned_hours")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] != null) {
-                                            echo $fullReportLatest['sum_planned_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.planned_hours') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] !== null ? $fullReportLatest['sum_planned_hours'] : 0 }}"
+                                    />
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-
-                                        <span class="headline"><?=$tpl->__("label.estimated_hours_remaining")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) {
-                                            echo $fullReportLatest['sum_estremaining_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.estimated_hours_remaining') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] !== null ? $fullReportLatest['sum_estremaining_hours'] : 0 }}"
+                                    />
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-
-                                        <span class="headline"><?=$tpl->__("label.booked_hours")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) {
-                                            echo $fullReportLatest['sum_logged_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.booked_hours') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] !== null ? $fullReportLatest['sum_logged_hours'] : 0 }}"
+                                    />
                                 </div>
 
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-                                        <span class="headline"><?=$tpl->__("label.open_todos")?></span>
-                                        <span class="value">
-                                            <?php
-                                            if ($fullReportLatest !== false) {
-                                                echo($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']);
-                                            } else {
-                                                echo 0;
-                                            }
-                                            ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.open_todos') }}"
+                                        stat-value="{{ $fullReportLatest !== false ? $fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos'] : 0 }}"
+                                    />
                                 </div>
-
-
                             </div>
 
                             <?php if ($tpl->get('allSprints') !== false) { ?>
@@ -428,4 +402,5 @@ $fullReportLatest = $tpl->get('fullReportLatest');
     });
 
 </script>
+
 @endsection
