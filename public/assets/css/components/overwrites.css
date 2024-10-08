@@ -130,7 +130,7 @@ div.tagsinput span.tag
 
 @media screen and (max-width: 480px) {
 
- .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
+ /* .userloggedinfo ul li a:hover { background-color: var(--primary-color); } */
 
   .userloggedinfo .userinfo,
   .wizard .hormenu li,

@@ -42,56 +42,30 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                                  } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-                                        <span class="headline"><?=$tpl->__("label.planned_hours")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] != null) {
-                                            echo $fullReportLatest['sum_planned_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.planned_hours') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] !== null ? $fullReportLatest['sum_planned_hours'] : 0 }}"
+                                    />
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-
-                                        <span class="headline"><?=$tpl->__("label.estimated_hours_remaining")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) {
-                                            echo $fullReportLatest['sum_estremaining_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.estimated_hours_remaining') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] !== null ? $fullReportLatest['sum_estremaining_hours'] : 0 }}"
+                                    />
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-
-
-                                        <span class="headline"><?=$tpl->__("label.booked_hours")?></span>
-                                        <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) {
-                                            echo $fullReportLatest['sum_logged_hours'];
-                                                            } else {
-                                                                echo 0;
-                                                            } ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.booked_hours') }}"
+                                        stat-value="{{ $fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] !== null ? $fullReportLatest['sum_logged_hours'] : 0 }}"
+                                    />
                                 </div>
 
                                 <div class="col-md-3">
-                                    <div class="boxedHighlight">
-                                        <span class="headline"><?=$tpl->__("label.open_todos")?></span>
-                                        <span class="value">
-                                            <?php
-                                            if ($fullReportLatest !== false) {
-                                                echo($fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos']);
-                                            } else {
-                                                echo 0;
-                                            }
-                                            ?></span>
-                                    </div>
+                                    <x-global::elements.statistic
+                                        stat-title="{{ $tpl->__('label.open_todos') }}"
+                                        stat-value="{{ $fullReportLatest !== false ? $fullReportLatest['sum_open_todos'] + $fullReportLatest['sum_progres_todos'] : 0 }}"
+                                    />
                                 </div>
-
-
                             </div>
 
                             <?php if ($tpl->get('allSprints') !== false) { ?>
@@ -99,26 +73,37 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                 <br />
                                 <span class="pull-left">
                                 <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
-                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_list") ?>" title="<?=$tpl->__("input.placeholders.filter_by_list") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
-
-                                        <option value="" ><?=$tpl->__("input.placeholders.filter_by_list") ?></option>
-                                        <?php
-                                        $dates = "";
-                                        foreach ($tpl->get('allSprints') as $sprintRow) {    ?>
-                                                <?php echo"<option value='" . $sprintRow->id . "'";
-
-                                                if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
-                                                    echo " selected='selected' ";
-
-                                                    $dates = sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date());
-                                                }
-                                                echo ">";
-                                                $tpl->e($sprintRow->name);
-                                                echo "</option>";
-                                                ?>
-
-                                        <?php }     ?>
-                                    </select>
+                                    <x-global::forms.select 
+                                    data-placeholder="{!! __('input.placeholders.filter_by_list') !!}" 
+                                    title="{!! __('input.placeholders.filter_by_list') !!}" 
+                                    name="sprint" 
+                                    class="mainSprintSelector" 
+                                    onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" 
+                                    id="sprintSelect"
+                                >
+                                    <x-global::forms.select.select-option value="">
+                                        {!! __('input.placeholders.filter_by_list') !!}
+                                    </x-global::forms.select.select-option>
+                                
+                                    @php $dates = ""; @endphp
+                                
+                                    @foreach ($tpl->get('allSprints') as $sprintRow)
+                                        <x-global::forms.select.select-option :value="$sprintRow->id" :selected="$tpl->get('currentSprint') !== false && $sprintRow->id == $tpl->get('currentSprint')">
+                                            {!! $tpl->escape($sprintRow->name) !!}
+                                        </x-global::forms.select.select-option>
+                                
+                                        @if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint"))
+                                            @php
+                                                $dates = sprintf(
+                                                    __('label.date_from_date_to'),
+                                                    format($sprintRow->startDate)->date(),
+                                                    format($sprintRow->endDate)->date()
+                                                );
+                                            @endphp
+                                        @endif
+                                    @endforeach
+                                </x-global::forms.select>
+                                
                                 <?php } ?>
                             </span>
 
@@ -417,3 +402,5 @@ $fullReportLatest = $tpl->get('fullReportLatest');
     });
 
 </script>
+
+@endsection

@@ -1,17 +1,15 @@
-<!-- resources/views/components/actions/dropdown/index.blade.php -->
-
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
+
     'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
     'state' => '',
-
-    'buttonVariant' => '',
 
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
     'cardLabel' => 'Card Title!', // Text for the card title
-    'buttonShape' => ''
+    'buttonShape' => '',
+    'buttonVariant' => '',
 ])
 
 @php
@@ -25,6 +23,8 @@
         default => 'btn', // Default to base button class
     };
 
+    $menuClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50";
+    // Determine the menu class based on the variant
     $menuClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50";
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
@@ -46,6 +46,7 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
+
 
     <!-- Dropdown Button -->
     <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant">

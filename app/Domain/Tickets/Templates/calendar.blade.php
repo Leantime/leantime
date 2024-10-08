@@ -39,14 +39,19 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
             <x-global::forms.button 
                 type="button" 
                 class="fc-next-button btn btn-default right" 
-                style="margin-right:5px;">
+                style="margin-right:5px;"
+                contentRole='secondary'
+                >
                 <span class="fc-icon fc-icon-chevron-right"></span>
             </x-global::forms.button>
             
             <x-global::forms.button 
                 type="button" 
                 class="fc-prev-button btn btn-default right" 
-                style="margin-right:5px;">
+                style="margin-right:5px;"
+                contentRole='secondary'
+
+                >
                 <span class="fc-icon fc-icon-chevron-left"></span>
             </x-global::forms.button>
             
@@ -58,12 +63,32 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
             </x-global::forms.button>
             
 
-                <select id="my-select" style="margin-right:5px;" class="right">
-                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=session("usersettings.submenuToggle.myProjectCalendarView") == 'timeGridDay' ? "selected" : '' ?>>Day</option>
-                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=session("usersettings.submenuToggle.myProjectCalendarView") == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
-                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=session("usersettings.submenuToggle.myProjectCalendarView") == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
-                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=session("usersettings.submenuToggle.myProjectCalendarView") == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
-                </select>
+            <x-global::forms.select class="right" id="my-select">
+                <x-global::forms.select.select-option 
+                    value="timeGridDay" 
+                    :selected="session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridDay'">
+                    Day
+                </x-global::forms.select.select-option>
+                
+                <x-global::forms.select.select-option 
+                    value="timeGridWeek" 
+                    :selected="session('usersettings.submenuToggle.myProjectCalendarView') == 'timeGridWeek'">
+                    Week
+                </x-global::forms.select.select-option>
+                
+                <x-global::forms.select.select-option 
+                    value="dayGridMonth" 
+                    :selected="session('usersettings.submenuToggle.myProjectCalendarView') == 'dayGridMonth'">
+                    Month
+                </x-global::forms.select.select-option>
+                
+                <x-global::forms.select.select-option 
+                    value="multiMonthYear" 
+                    :selected="session('usersettings.submenuToggle.myProjectCalendarView') == 'multiMonthYear'">
+                    Year
+                </x-global::forms.select.select-option>
+            </x-global::forms.select>
+            
 
             </div>
 

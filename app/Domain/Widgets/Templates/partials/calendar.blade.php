@@ -26,16 +26,40 @@
         </div>
         <div class="fc-right pull-right">
             <div class="fc-button-group">
-                <select class="calendarViewSelect">
-                    <option class="fc-agendaDay-button fc-button fc-state-default fc-
-           corner-right" value="multiMonthOneMonth" @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</option>
-                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-
-           corner-right" value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>Week</option>
-                    <option class="fc-agendaWeek-button fc-button fc-state-
-          default" value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</option>
-                    <option class="fc-agendaWeek-button fc-button fc-state-
-          default" value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</option>
-                </select>
+                <x-global::forms.select class="calendarViewSelect">
+                    <x-global::forms.select.select-option 
+                        class="fc-agendaDay-button fc-button fc-state-default fc-corner-right" 
+                        value="multiMonthOneMonth" 
+                        :selected="$tpl->getToggleState('dashboardCalendarView') == 'multiMonthOneMonth'"
+                    >
+                        Month
+                    </x-global::forms.select.select-option>
+                
+                    <x-global::forms.select.select-option 
+                        class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" 
+                        value="timeGridWeek" 
+                        :selected="$tpl->getToggleState('dashboardCalendarView') == 'timeGridWeek'"
+                    >
+                        Week
+                    </x-global::forms.select.select-option>
+                
+                    <x-global::forms.select.select-option 
+                        class="fc-agendaWeek-button fc-button fc-state-default" 
+                        value="timeGridDay" 
+                        :selected="$tpl->getToggleState('dashboardCalendarView') == 'timeGridDay' || empty($tpl->getToggleState('dashboardCalendarView'))"
+                    >
+                        Day
+                    </x-global::forms.select.select-option>
+                
+                    <x-global::forms.select.select-option 
+                        class="fc-agendaWeek-button fc-button fc-state-default" 
+                        value="listWeek" 
+                        :selected="$tpl->getToggleState('dashboardCalendarView') == 'listWeek'"
+                    >
+                        List
+                    </x-global::forms.select.select-option>
+                </x-global::forms.select>
+                
             </div>
         </div>
         <div class="fc-center center pt-[7px] calendarTitle">
