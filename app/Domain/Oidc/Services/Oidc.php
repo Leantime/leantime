@@ -14,6 +14,8 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
 use Symfony\Component\HttpFoundation\Response;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Math\BigInteger;
 
 /**
  *
@@ -373,10 +375,9 @@ class Oidc
             return openssl_pkey_get_public(file_get_contents($this->certificateFile));
         }
 
-
-
         $httpClient = new Client();
-        $response = $httpClient->get($this->getJwksUrl());
+        // AUTH HEADER? 
+        $response = $httpClient->get($this->getJwksUrl()); // https://cloud.lukas-sieper.de/apps/oidc/jwks
         $keys = json_decode($response->getBody()->getContents(), true);
         if (isset($keys['keys'])) {
             $keys = $keys['keys'];
@@ -394,7 +395,12 @@ class Oidc
                 $keySource = '';
                 if (isset($key['x5c'])) {
                     $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split($key['x5c'][0], 64, PHP_EOL) . '-----END CERTIFICATE-----';
-                } elseif (isset($key['n'])) {
+                } elseif (isset($key['n']) && isset($key['e'])) {
+                    // Parse the public key from n and e
+                    $modulus = $this->base64UrlDecode($key['n']);
+                    $exponent = $this->base64UrlDecode($key['e']);
+                    $keySource = $this->createPublicKey($modulus, exponent: $exponent);
+                } else {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
                 }
             }
@@ -405,6 +411,29 @@ class Oidc
         }
 
         return false;
+    }
+
+    private function base64UrlDecode(string $input): string
+    {
+        $remainder = strlen($input) % 4;
+        if ($remainder) {
+            $padlen = 4 - $remainder;
+            $input .= str_repeat('=', $padlen);
+        }
+        return base64_decode(strtr($input, '-_', '+/'));
+    }
+
+    //key to PEM
+    private function createPublicKey(string $modulus, string $exponent): string
+    {
+
+        $rsa = PublicKeyLoader::load([
+            'e' => new BigInteger($exponent, 256),
+            'n' => new BigInteger($modulus, 256),
+        ]);
+
+        return $rsa->__toString();
+
     }
 
     /**
