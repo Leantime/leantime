@@ -203,9 +203,9 @@ jQuery(document).ready(function(){
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <x-global::actions.dropdown contentRole="secondary">
+                <x-global::actions.dropdown contentRole="ghost">
                     <x-slot:label-text>
-                        {!! __('links.week_view') !!} {!! $tpl->__('links.view') !!} <span class="caret"></span>
+                        {!! __('links.week_view') !!} {!! __('links.view') !!}
                     </x-slot:label-text>
                 
                     <x-slot:menu>
@@ -297,11 +297,11 @@ jQuery(document).ready(function(){
                                 </td>
                                 <td width="10%">
                                 <?php echo $tpl->__($tpl->get('kind')[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
-                            <?php if ($timeRow['hasTimesheetOffset']) { ?>
-                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
-                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
-                                    </i>
-                            <?php } ?>
+                                <?php if ($timeRow['hasTimesheetOffset']) { ?>
+                                        <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
+                                        </i>
+                                <?php } ?>
                                 </td>
 
                             <?php foreach (array_keys($timeRow) as $dayKey) {
@@ -344,59 +344,58 @@ jQuery(document).ready(function(){
                         <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
-                                <div class="form-group" id="projectSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
-                                            <?php echo sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'client_product_format',
-                                                    '<option value="%s">%s / %s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'client_product_values',
-                                                    [
-                                                        $projectRow['id'],
-                                                        $tpl->escape($projectRow['clientName']),
-                                                        $tpl->escape($projectRow['name']),
-                                                    ]
-                                                )
-                                            ); ?>
-                                        <?php } ?>
-                                    </select>
+                                <div id="projectSelect">
+                                    <x-global::forms.select 
+                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_project') }}" 
+                                        {{-- class="project-select" --}}
+                                    >
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
+                                        
+                                        @foreach ($tpl->get('allProjects') as $projectRow)
+                                            <x-global::forms.select.select-option 
+                                                value="{{ $projectRow['id'] }}"
+                                            >
+                                                {{ $tpl->escape($projectRow['clientName']) }} / {{ $tpl->escape($projectRow['name']) }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
+
+                                    
                                 </div>
                             </td>
                             <td width="14%">
-                                <div class="form-group" id="ticketSelect">
-                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
-                                        <option value=""></option>
-                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) {
-                                            if(in_array($ticketRow['id'],$tpl->get('existingTicketIds'))) continue;
-                                            ?>
-                                            <?php echo sprintf(
-                                                $tpl->dispatchTplFilter(
-                                                    'todo_format',
-                                                    '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
-                                                ),
-                                                ...$tpl->dispatchTplFilter(
-                                                    'todo_values',
-                                                    [
-                                                        $ticketRow['id'],
-                                                        $ticketRow['projectId'],
-                                                        $tpl->escape($ticketRow['headline']),
-                                                    ]
-                                                )
-                                            ); ?>
-                                        <?php }?>
-                                    </select>
+                                <div id="ticketSelect">
+                                    <x-global::forms.select 
+                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_todo') }}" 
+                                        {{-- class="ticket-select"  --}}
+                                        name="ticketId"
+                                    >
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
+                                        
+                                        @foreach ($allTickets as $ticketRow)
+                                            @if (!in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
+                                                <x-global::forms.select.select-option 
+                                                    value="{{ $ticketRow['id'] }}" 
+                                                    data-value="{{ $ticketRow['projectId'] }}" 
+                                                    class="project_{{ $ticketRow['projectId'] }}"
+                                                >
+                                                    {{ $ticketRow['id'] }} / {{ $tpl->escape($ticketRow['headline']) }}
+                                                </x-global::forms.select.select-option>
+                                            @endif
+                                        @endforeach
+                                    </x-global::forms.select>
+                                
+                                    
                                 </div>
                             </td>
                             <td width="14%">
-                                <select class="kind-select" name="kindId">
-                                        <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
-                                            <?php echo"<option value=" . $key . ">" . $tpl->__($kindRow) . "</option>"; ?>
-                                        <?php }?>
-                                    </select>
+                                    <x-global::forms.select name="kindId">
+                                        @foreach ($tpl->get('kind') as $key => $kindRow)
+                                            <x-global::forms.select.select-option :value="$key">
+                                                {!! __($kindRow) !!}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
                             </td>
 
                             <?php
@@ -406,8 +405,13 @@ jQuery(document).ready(function(){
                                 <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                                     echo " active";
                                                             } ?>">
-                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
-                                </td>
+                                    <x-global::forms.text-input 
+                                        class="hourCell" 
+                                        name="new|GENERAL_BILLABLE|{{ $dateFrom->addDays($i)->formatDateForUser() }}|{{ $dateFrom->addDays($i)->getTimestamp() }}" 
+                                        value="0" 
+
+                                    />
+                            </td>
                                 <?php
                                 $i++;
                             } ?>
@@ -430,7 +434,9 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" value="Save" />
+                <x-global::forms.button type="submit" name="saveTimeSheet">
+                    Save
+                </x-global::forms.button>
             </div>
             <div class="clearall"></div>
         </form>

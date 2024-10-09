@@ -112,28 +112,29 @@ if (is_array($tpl->get('sprints'))) {
                     <!-- Static Menu Items -->
                     <x-global::actions.dropdown.item 
                         href="javascript:void(0);" 
-                        onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
+                        onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
                     >
                         {{ $tpl->__("links.all_todos") }}
                     </x-global::actions.dropdown.item>
-            
+                    
                     <x-global::actions.dropdown.item 
                         href="javascript:void(0);" 
-                        onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
+                        onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
                     >
                         {{ $tpl->__("links.backlog") }}
                     </x-global::actions.dropdown.item>
-            
+                
                     <!-- Dynamic Sprint Items -->
                     @foreach ($tpl->get('sprints') as $sprintRow)
                         <x-global::actions.dropdown.item 
                             href="javascript:void(0);" 
-                            onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
-                        >
+                            onclick="jQuery('#sprintSelect').val({{ $sprintRow->id }}); leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" 
+                            >
                             {{ $tpl->escape($sprintRow->name) }}<br />
                             <small>{{ sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()) }}</small>
                         </x-global::actions.dropdown.item>
                     @endforeach
+                
                 </x-slot:menu>
             </x-global::actions.dropdown>
             

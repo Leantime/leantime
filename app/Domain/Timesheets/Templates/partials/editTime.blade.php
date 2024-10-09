@@ -55,48 +55,39 @@ $values = $tpl->get('values');
 <h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> {{ __("headlines.edit_time") }}</h4>
 <x-global::content.modal.form action="{{ BASE_URL }}/timesheets/editTime/{{ $id }}" method="post" class="editTimeModal">
 
-<label for="projects"><?php echo $tpl->__('label.project')?></label>
-<select name="projects" id="projects" class="project-select">
-    <option value="all">{{ __("headline.all_projects") }}</option>
+<x-global::forms.select name="projects" id="projects" class="project-select" :labelText="__('label.project')">
+    <x-global::forms.select.select-option value="all">
+        {!! __('headline.all_projects') !!}
+    </x-global::forms.select.select-option>
 
-    <?php foreach ($tpl->get('allProjects') as $row) {
-        echo'<option value="' . $row['id'] . '"';
-        if ($row['id'] == $values['project']) {
-            echo' selected="selected" ';
-        }
-        echo'>' . $row['name'] . '</option>';
-    }
-
-    ?>
-</select> <br />
+    @foreach ($tpl->get('allProjects') as $row)
+        <x-global::forms.select.select-option :value="$row['id']" :selected="$row['id'] == $values['project']">
+            {!! $tpl->escape($row['name']) !!}
+        </x-global::forms.select.select-option>
+    @endforeach
+</x-global::forms.select>
+<br />
 
 <div id="ticketSelect">
-<label for="tickets"><?php echo $tpl->__('label.ticket')?></label>
-<select name="tickets" id="tickets" class="ticket-select">
-
-    <?php foreach ($tpl->get('allTickets') as $row) {
-        echo'<option class="project_' . $row['projectId'] . '" data-value="' . $row["projectId"] . '" value="' . $row['id'] . '"';
-        if ($row['id'] == $values['ticket']) {
-            echo' selected="selected" ';
-        }
-        echo'>' . $row['headline'] . '</option>';
-    } ?>
-
-</select> <br />
+    <x-global::forms.select name="tickets" id="tickets" class="ticket-select" :labelText="__('label.ticket')">
+        @foreach ($tpl->get('allTickets') as $row)
+            <x-global::forms.select.select-option :class="'project_' . $row['projectId']" :data-value="$row['projectId']" :value="$row['id']" :selected="$row['id'] == $values['ticket']">
+                {{$row['headline'])}}
+            </x-global::forms.select.select-option>
+        @endforeach
+    </x-global::forms.select>
+    <br />
 </div>
-    <label for="kind"><?php echo $tpl->__('label.kind')?></label> <select id="kind"
-    name="kind">
-    <?php
-    foreach ($tpl->get('kind') as $key => $row) {
-        echo'<option value="' . $key . '"';
-        if ($key == $values['kind']) {
-            echo ' selected="selected"';
-        }
-        echo'>' . $tpl->__($row) . '</option>';
-    }
-    ?>
 
-</select><br />
+<x-global::forms.select id="kind" name="kind" :labelText="__('label.kind')">
+    @foreach ($tpl->get('kind') as $key => $row)
+        <x-global::forms.select.select-option :value="$key" :selected="$key == $values['kind']">
+            {!! __($row) !!}
+        </x-global::forms.select.select-option>
+    @endforeach
+</x-global::forms.select>
+<br />
+
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="<?php echo format(value: $values['date'], fromFormat: FromFormat::DbDate)->date(); ?>" size="7" />
 <br />

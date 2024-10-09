@@ -1,5 +1,9 @@
 <x-global::content.modal.modal-buttons/>
 
+<x-global::content.modal.header>
+    Big Rock
+</x-global::content.modal.header>
+
 <h4 class="widgettitle title-light">
     <i class="fa-solid fa-mountain"></i>
     {{ empty($bigRock->title) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{ $bigRock->title }}

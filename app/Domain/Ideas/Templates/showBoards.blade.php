@@ -87,7 +87,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="accent">
+                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_wall') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>

@@ -1,5 +1,7 @@
 <x-global::content.modal.modal-buttons/>
-
+<x-global::content.modal.header>
+    Delete Goal
+</x-global::content.modal.header>
 <h4 class="widgettitle title-light">{!!__("subtitles.delete") !!}</h4>
 
 <x-global::content.modal.form method="post" action="{{ BASE_URL."/goalcanvas/delCanvas/$id" }}">

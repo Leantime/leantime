@@ -66,15 +66,13 @@ $menuTypes = $tpl->get('menuTypes');
                 <div class="col-md-12 center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
-                    <select name="type">
-                        <?php foreach ($tpl->get('projectTypes') as $key => $type) { ?>
-                            <option value="<?=$tpl->escape($key)?>"
-                            <?php if ($project['type'] == $key) {
-                                echo " selected='selected' ";
-                            } ?>
-                            ><?=$tpl->__($tpl->escape($type))?></option>
-                        <?php } ?>
-                    </select>
+                    <x-global::forms.select name="type">
+                        @foreach ($tpl->get('projectTypes') as $key => $type)
+                            <x-global::forms.select.select-option :value="$tpl->escape($key)" :selected="$project['type'] == $key">
+                                {!! __($tpl->escape($type)) !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                    </x-global::forms.select>                    
                     <br /><br />
                 </div>
                 <?php } ?>
@@ -156,16 +154,14 @@ $menuTypes = $tpl->get('menuTypes');
                     <div class="col-md-12 " style="margin-bottom: 30px;">
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-building"></span>{{ __("label.client_product") }}</h4>
-                    <select name="clientId" id="clientId">
-
-                        <?php foreach ($tpl->get('clients') as $row) { ?>
-                            <option value="<?php echo $row['id']; ?>"
-                                <?php if ($project['clientId'] == $row['id']) {
-                                    ?> selected=selected
-                                <?php } ?>><?php $tpl->e($row['name']); ?></option>
-                        <?php } ?>
-
-                    </select>
+                            <x-global::forms.select name="clientId" id="clientId">
+                                @foreach ($tpl->get('clients') as $row)
+                                    <x-global::forms.select.select-option :value="$row['id']" :selected="$project['clientId'] == $row['id']">
+                                        {!! $tpl->escape($row['name']) !!}
+                                    </x-global::forms.select.select-option>
+                                @endforeach
+                            </x-global::forms.select>
+                            
                     <?php if ($login::userIsAtLeast("manager")) { ?>
                         <br /><a href="{{ BASE_URL }}/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
                     <?php } ?>
@@ -188,16 +184,16 @@ $menuTypes = $tpl->get('menuTypes');
 
                 <label class="col-md-4 control-label" for="projectState">{{ __("label.project_state") }}</label>
                 <div class="col-md-6">
-                    <select name="projectState" id="projectState">
-                        <option value="0" <?php if ($project['state'] == 0) {
-                            ?> selected=selected
-                                          <?php } ?>>{{ __("label.open") }}</option>
-
-                        <option value="-1" <?php if ($project['state'] == -1) {
-                            ?> selected=selected
-                                           <?php } ?>>{{ __("label.closed") }}</option>
-
-                    </select>
+                    <x-global::forms.select name="projectState" id="projectState">
+                        <x-global::forms.select.select-option value="0" :selected="$project['state'] == 0">
+                            {!! __('label.open') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        <x-global::forms.select.select-option value="-1" :selected="$project['state'] == -1">
+                            {!! __('label.closed') !!}
+                        </x-global::forms.select.select-option>
+                    </x-global::forms.select>
+                    
                 </div>
             </div>
 
@@ -211,11 +207,20 @@ $menuTypes = $tpl->get('menuTypes');
                     {{ __("text.who_can_access") }}
                     <br /><br />
 
-                    <select name="globalProjectUserAccess" style="max-width:300px;">
-                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>>{{ __("labels.only_chose") }}</option>
-                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_client") }}</option>
-                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>>{{ __("labels.everyone_in_org") }}</option>
-                    </select>
+                    <x-global::forms.select name="globalProjectUserAccess">
+                        <x-global::forms.select.select-option value="restricted" :selected="$project['psettings'] == 'restricted'">
+                            {!! __('labels.only_chose') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        <x-global::forms.select.select-option value="clients" :selected="$project['psettings'] == 'clients'">
+                            {!! __('labels.everyone_in_client') !!}
+                        </x-global::forms.select.select-option>
+                    
+                        <x-global::forms.select.select-option value="all" :selected="$project['psettings'] == 'all'">
+                            {!! __('labels.everyone_in_org') !!}
+                        </x-global::forms.select.select-option>
+                    </x-global::forms.select>
+                    
 
                 </div>
             </div>

@@ -56,6 +56,8 @@
 
     </div><!-- mainwrapper -->
     <div id="modal-wrapper" hx-indicator="#global-loader">
+        <x-global::content.modal.modal-buttons/>
+
         <x-global::content.modal id="main-page-modal" />
     </div>
 

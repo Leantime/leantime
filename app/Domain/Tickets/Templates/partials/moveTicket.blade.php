@@ -23,32 +23,46 @@ $ticket = $tpl->get("ticket");
             <br /><br />
         </p>
 
-        <select id="projectSelector" name="projectId">
-        <?php
-        $i = 0;
-        $lastClient = '';
-        foreach ($tpl->get('projects') as $projectRow) {
-            if ($lastClient != $projectRow['clientName']) {
-                $lastClient = $projectRow['clientName'];
-                if ($i > 1) {
-                    echo"</optgroup>";
-                }
-                echo "<optgroup label='" . $tpl->escape($projectRow['clientName']) . "'> ";
-            }
-            echo "<option value='" . $projectRow["id"] . "'>" . $tpl->escape($projectRow["name"]) . "</option>";
-            $i++;
-        }
-        ?>
-        </select><br /><br /><br /><br />
+        <x-global::forms.select 
+            id="projectSelector" 
+            name="projectId" 
+            labelText="{!! __('label.project') !!}"
+        >
+            @php
+                $i = 0;
+                $lastClient = '';
+            @endphp
+        
+            @foreach ($tpl->get('projects') as $projectRow)
+                @if ($lastClient != $projectRow['clientName'])
+                    @if ($i > 0)
+                        </optgroup>
+                    @endif
+                    @php
+                        $lastClient = $projectRow['clientName'];
+                    @endphp
+                    <optgroup label="{{$projectRow['clientName'])}}">
+                @endif
+                <x-global::forms.select.select-option value="{{ $projectRow['id'] }}">
+                    {{$projectRow['name']) }}
+                </x-global::forms.select.select-option>
+                @php $i++; @endphp
+            @endforeach
+        
+            @if ($i > 0)
+                </optgroup>
+            @endif
+        </x-global::forms.select>
+        <br /><br /><br /><br />
         <br />
         <x-global::forms.button 
-        type="submit"
-        name="move"
-        class="button">
-        {{ __('buttons.move') }}
-    </x-global::forms.button>
+            type="submit"
+            name="move"
+            >
+            {{ __('buttons.move') }}
+        </x-global::forms.button>
             <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();">{{ __("buttons.back") }}</a>
-        <div class="clearall"></div>
+            <div class="clearall"></div>
         <br />
     </x-global::content.modal.form>
 

@@ -319,8 +319,6 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Sentry/vendor/autoload.php" phpunit_phar_path="" />
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Billing/vendor/autoload.php" phpunit_phar_path="" />
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" phpunit_phar_path="" />
     </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">

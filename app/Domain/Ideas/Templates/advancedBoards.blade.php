@@ -303,7 +303,7 @@
                                     {!! __('buttons.close') !!}
                                 </x-global::forms.button>
 
-                                <x-global::forms.button type="submit" class="btn btn-default" name="newCanvas">
+                                <x-global::forms.button type="submit" name="newCanvas">
                                     {!! __('buttons.create_board') !!}
                                 </x-global::forms.button>
 

@@ -8,6 +8,10 @@ $apiKeyValues = $tpl->get('apiKeyValues');
 ?>
 
 <div style="min-width:700px;">
+    
+    <x-global::content.modal.header>
+        New API Key
+    </x-global::content.modal.header>
 
 <h4 class="widgettitle title-light"><i class="fa fa-key"></i> {{ __("headlines.new_api_key") }}</h4>
 

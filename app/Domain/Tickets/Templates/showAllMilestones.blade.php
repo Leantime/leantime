@@ -74,7 +74,7 @@
             <h5 class="accordionTitle <?= $group['class'] ?>" id="accordion_link_<?= $group['id'] ?>">
                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>"
                     onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
-                    <i class="fa fa-angle-down"></i><?= $group['label'] ?> (<?= count($group['items']) ?>)
+                    <i class="fa fa-angle-down"></i><?= $group['label']  ?> (<?= count($group['items']) ?>)
                 </a>
             </h5>
             <div class="simpleAccordionContainer" id="accordion_content-<?= $group['id'] ?>">
@@ -159,7 +159,7 @@
                             ?>
 
                             <td data-order="{{ $milestoneHeadline }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown milestoneDropdown colorized show label-default milestone"
                                     id="{{ $dropdownId }}" :style="'background-color:' . $milestoneColor" :labelText="$milestoneHeadline" type="milestone"
                                     :parentId="$row['id']">
@@ -189,7 +189,7 @@
                                             </x-global::actions.dropdown.item>
                                         @endif
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -207,7 +207,7 @@
                             ?>
 
                             <td data-order="{{ $sortKey }}">
-                                <x-global::forms.dropdownPill
+                                <x-global::forms._archive.dropdownPill
                                     class="ticketDropdown statusDropdown colorized show {{ $class }}"
                                     id="statusDropdownMenuLink{{ $row['id'] }}" :labelText="$name" type="status"
                                     :parentId="$row['id']" :selectedKey="$selectedKey" :options="$statusLabels">
@@ -226,7 +226,7 @@
                                             {{ $tpl->escape($label['name']) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
                             <?php
@@ -242,7 +242,7 @@
 
                             <td
                                 data-order="{{ $row['editorFirstname'] != '' ? $tpl->escape($row['editorFirstname']) : $tpl->__('dropdown.not_assigned') }}">
-                                <x-global::forms.dropdownPill class="ticketDropdown userDropdown noBg show"
+                                <x-global::forms._archive.dropdownPill class="ticketDropdown userDropdown noBg show"
                                     id="{{ $dropdownId }}" :labelText="html_entity_decode($userText)" type="user" :parentId="$row['id']">
                                     <x-slot name="buttonText">
                                         {!! $userText !!} <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -264,35 +264,29 @@
                                             {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
                                         </x-global::actions.dropdown.item>
                                     @endforeach
-                                </x-global::forms.dropdownPill>
+                                </x-global::forms._archive.dropdownPill>
                             </td>
 
 
 
                             <td data-order="{{ $row['editFrom'] }}">
                                 {{ __('label.due_icon') }}
-                                <x-global::forms.text-input 
-                                    type="text" 
-                                    name="editFrom" 
-                                    value="{{ format($row['editFrom'])->date() }}" 
-                                    title="{{ __('label.planned_start_date') }}" 
-                                    class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}" 
-                                    data-id="{{ $row['id'] }}" 
-                                />
+                                <x-global::forms.text-input type="text" name="editFrom"
+                                    value="{{ format($row['editFrom'])->date() }}"
+                                    title="{{ __('label.planned_start_date') }}"
+                                    class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-{{ $row['id'] }}"
+                                    data-id="{{ $row['id'] }}" />
                             </td>
-                            
+
                             <td data-order="{{ $row['editTo'] }}">
                                 {{ __('label.due_icon') }}
-                                <x-global::forms.text-input 
-                                    type="text" 
-                                    name="editTo" 
-                                    value="{{ format($row['editTo'])->date() }}" 
-                                    title="{{ __('label.planned_end_date') }}" 
-                                    class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}" 
-                                    data-id="{{ $row['id'] }}" 
-                                />
+                                <x-global::forms.text-input type="text" name="editTo"
+                                    value="{{ format($row['editTo'])->date() }}"
+                                    title="{{ __('label.planned_end_date') }}"
+                                    class="editToDate secretInput milestoneEditToAsync toDateTicket-{{ $row['id'] }}"
+                                    data-id="{{ $row['id'] }}" />
                             </td>
-                            
+
 
                             <td data-order="<?= $row['planHours'] ?>">
                                 <?php echo $row['planHours']; ?>
