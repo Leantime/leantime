@@ -10,6 +10,7 @@
     'cardLabel' => 'Card Title!', // Text for the card title
     'buttonShape' => '',
     'buttonVariant' => '',
+    'scale' => '',
 ])
 
 @php
@@ -38,6 +39,8 @@
         'right' => 'dropdown-right',
         'top' => 'dropdown-top',
         'bottom' => 'dropdown-bottom',
+        'end' => 'dropdown-end',
+        'start' => 'dropdown-start',
         default => '', // No default class for invalid positions
     };
 
@@ -49,7 +52,7 @@
 
 
     <!-- Dropdown Button -->
-    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant">
+    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant" :scale="$scale">
         {!! $labelText !!}
     </x-global::forms.button>
 
