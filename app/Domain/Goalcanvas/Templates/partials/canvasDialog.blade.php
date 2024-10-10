@@ -53,14 +53,13 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="startValue"
                             value="{{ $canvasItem['startValue'] }}" labelText="{{ __('label.starting_value') }}"
-                            variant="compact"
                             class="w-5" />
 
                     </div>
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="currentValue"
                             id="currentValueField" value="{{ $canvasItem['currentValue'] }}"
-                            labelText="{{ __('label.current_value') }}" variant="compact"
+                            labelText="{{ __('label.current_value') }}" 
                             class="w-5"
 
 {{--                            @if ($canvasItem['setting'] == 'linkAndReport')--}}
@@ -71,9 +70,7 @@
                     <div class="col-md-3">
                         <x-global::forms.text-input type="number" step="0.01" name="endValue"
                             value="{{ $canvasItem['endValue'] }}" labelText="{{ __('label.goal_value') }}"
-
-                            class="w-5"
-                            variant="compact" />
+                            class="w-5"/>
 
                     </div>
                     <div class="col-md-3">
