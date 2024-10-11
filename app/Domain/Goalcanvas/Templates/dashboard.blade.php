@@ -6,6 +6,9 @@
         use Leantime\Domain\Comments\Repositories\Comments;
         use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 
+        $canvasSvc = app()->make(Goalcanvas::class);
+
+
         $elementName = 'goal';
         /**
          * showCanvasTop.inc template - Top part of the main canvas page
@@ -102,51 +105,19 @@
             </div>
             @if (count($allCanvas) > 0)
                 @foreach ($allCanvas as $canvasRow)
-                    <div class="row">
-                        <div class="col-md-12">
-                            <a href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasRow['id'] }}" class="btn btn-primary pull-right">
-                                <i class="fa fa-plus"></i> Create New Goal
-                            </a>
+                    @php                    
+                        $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow['id']);
+                    @endphp
 
-                            <h5 class='subtitle'><a
-                                    href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>{{ $tpl->escape($canvasRow['title']) }}</a>
-                            </h5>
-                        </div>
-                    </div>
-                    <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
-                        @php
-                            $canvasSvc = app()->make(Goalcanvas::class);
-                            $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow['id']);
-                        @endphp
-
-
-                        <div id="sortableCanvasKanban-{{ $canvasRow['id'] }}" class="sortableTicketList disabled col-md-12"
-                            style="padding-top:15px;">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        @if (!is_countable($canvasItems) || count($canvasItems) == 0)
-                                            <div class='col-md-12'>No goals on this board yet. Open the <a
-                                                    href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasRow['id'] }}'>board</a>
-                                                to start adding goals</div>
-                                        @endif
-                                        @foreach ($canvasItems as $row)
-                                            <x-goalcanvas::goal-item-card
-                                                :row="$row"
-                                                elementName="{{ $elementName }}"
-                                                :filter="$filter??[]"
-                                                :statusLabels="$statusLabels"
-                                                :relatesLabels="$relatesLabels"
-                                                :users="$users"
-                                             />
-                                    
-                                        @endforeach
-                                    </div>
-                                    <br />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <x-goalcanvas::goal-card
+                        canvasId="{{ $canvasRow['id'] }}"
+                        canvasTitle="{{ $canvasRow['title'] }}"
+                        :goalItems="$canvasItems"
+                        :statusLabels="$statusLabels"
+                        :relatesLabels="$relatesLabels"
+                        :users="$users"
+                    />
+            
                 @endforeach
             @endif
         </div>
