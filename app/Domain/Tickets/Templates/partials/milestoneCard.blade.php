@@ -1,4 +1,4 @@
-<div class="ticketBox fixed">
+<div class="ticketBox">
     <div class="row">
         <div class="col-md-8" style="margin-bottom:5px;">
             <strong><a href="{{ BASE_URL }}/tickets/showKanban?milestone={{ $milestone->id }}" >{{ $milestone->headline  }}</a></strong>
