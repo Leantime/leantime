@@ -164,49 +164,26 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle"><?=$tpl->__("headline.milestones") ?></h5>
-                        <ul class="sortableTicketList" >
-                            <?php
-                            if (count($tpl->get('milestones')) == 0) {
-                                echo"<div class='center'><br /><h4>" . $tpl->__("headlines.no_milestones") . "</h4>
-                                " . $tpl->__("text.milestones_help_organize_projects") . "<br /><br /><a href='" . BASE_URL . "/tickets/roadmap'>" . $tpl->__("links.goto_milestones") . "</a>";
-                            }
-                            ?>
-                            <?php foreach ($tpl->get('milestones') as $row) {
+                        
+                        @if (count($milestones) == 0)
+                            <div class="center">
+                                <br />
+                                <h4>{{ __('headlines.no_milestones') }}</h4>
+                                {{ __('text.milestones_help_organize_projects') }}
+                                <br /><br />
+                                <a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
+                            </div>
+                        @endif
 
-                                ?>
-                                    <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
-                                        <div class="ticketBox fixed">
+                        @foreach ($milestones as $row)
+                            @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
+                                @break
+                            @endif
+                            <x-tickets::milestone-card 
+                                :milestone="$row"
+                            />
+                        @endforeach
 
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <strong><a href="{{ BASE_URL }}/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $tpl->e($row->headline); ?></a></strong>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-
-                                                <div class="col-md-7">
-                                                    <?=$tpl->__("label.due") ?>
-                                                    <?php echo format($row->editTo)->date( $tpl->__("text.no_date_defined")); ?>
-                                                </div>
-                                                <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                            <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                <?php
-                            } ?>
-
-                        </ul>
                     </div>
                 </div>
             </div>
