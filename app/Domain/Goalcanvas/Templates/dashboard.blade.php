@@ -105,14 +105,14 @@
             </div>
             @if (count($allCanvas) > 0)
                 @foreach ($allCanvas as $canvasRow)
-                    @php                    
+                    {{-- @php                    
                         $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow['id']);
-                    @endphp
+                    @endphp --}}
 
-                    <x-goalcanvas::goal-card
-                        canvasId="{{ $canvasRow['id'] }}"
+                    <x-goalcanvas::canvas
+                        id="{{ $canvasRow['id'] }}"
                         canvasTitle="{{ $canvasRow['title'] }}"
-                        :goalItems="$canvasItems"
+                        {{-- :goalItems="$canvasItems" --}}
                         :statusLabels="$statusLabels"
                         :relatesLabels="$relatesLabels"
                         :users="$users"

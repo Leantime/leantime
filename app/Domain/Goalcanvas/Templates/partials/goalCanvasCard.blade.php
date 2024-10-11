@@ -9,7 +9,6 @@
   <x-goalcanvas::goal-card
     canvasTitle="{{ $canvas->title }}"
     canvasId = "{{ $canvas->id }}"
-    :goalItems="$canvasItems"
     :statusLabels="$statusLabels"
     :relatesLabels="$relatesLabels"
     :users="$users"
