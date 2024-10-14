@@ -153,10 +153,14 @@ class Oidc
         //echo '<pre>' . print_r($tokens, true) . '</pre>';
         if (isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
-        } elseif (isset($tokens['access_token'])) {
+        }
+
+        if ($userInfo == null && isset($tokens['access_token'])) {
             //falback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
-        } else {
+        }
+
+        if ((!isset($tokens['access_token'])) && (!isset($tokens['access_token']))) {
             $this->displayError('oidc.error.unsupportedToken');
         }
 
