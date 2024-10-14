@@ -11,23 +11,16 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ShowKanban extends Controller
     {
         private ProjectService $projectService;
+
         private TicketService $ticketService;
+
         private SprintService $sprintService;
+
         private TimesheetService $timesheetService;
 
-        /**
-         * @param ProjectService   $projectService
-         * @param TicketService    $ticketService
-         * @param SprintService    $sprintService
-         * @param TimesheetService $timesheetService
-         * @return void
-         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -39,14 +32,12 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->timesheetService = $timesheetService;
 
-            session(["lastPage" => CURRENT_URL]);
-            session(["lastTicketView" => "kanban"]);
-            session(["lastFilterdTicketKanbanView" => CURRENT_URL]);
+            session(['lastPage' => CURRENT_URL]);
+            session(['lastTicketView' => 'kanban']);
+            session(['lastFilterdTicketKanbanView' => CURRENT_URL]);
         }
 
         /**
-         * @param array $params
-         * @return Response
          * @throws \Exception
          */
         public function get(array $params): Response
@@ -60,8 +51,6 @@ namespace Leantime\Domain\Tickets\Controllers {
         }
 
         /**
-         * @param array $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post(array $params): Response
@@ -71,7 +60,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $result = $this->ticketService->quickAddTicket($params);
 
                 if (is_array($result)) {
-                    $this->tpl->setNotification($result["message"], $result["status"]);
+                    $this->tpl->setNotification($result['message'], $result['status']);
                 }
             }
 

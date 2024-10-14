@@ -1,0 +1,3 @@
+.scrolled .header {
+    @apply transition-all shadow-xl backdrop-blur-md motion-reduce:transition-none;
+}

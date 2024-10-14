@@ -7,8 +7,8 @@ namespace Leantime\Core\Support;
  *
  * An enumeration class representing various formats for date and time values.
  */
-enum FromFormat {
-
+enum FromFormat
+{
     /**
      * For value containing date time string from database in UTC
      */

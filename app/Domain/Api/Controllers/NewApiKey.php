@@ -12,27 +12,21 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class NewApiKey extends Controller
 {
     private UserRepository $userRepo;
+
     private ProjectRepository $projectsRepo;
+
     private UserService $userService;
+
     private ApiService $APIService;
 
     /**
      * init - initialize private variables
      *
-     * @access public
      *
-     * @param UserRepository    $userRepo
-     * @param ProjectRepository $projectsRepo
-     * @param UserService       $userService
-     * @param ApiService        $APIService
      *
-     * @return void
      *
      * @throws BindingResolutionException
      */
@@ -43,7 +37,7 @@ class NewApiKey extends Controller
         ApiService $APIService
     ): void {
 
-        self::dispatch_event('api_key_init', $this);
+        self::dispatchEvent('api_key_init', $this);
 
         $this->userRepo = $userRepo;
         $this->projectsRepo = $projectsRepo;
@@ -54,9 +48,7 @@ class NewApiKey extends Controller
     /**
      * run - display template and edit data
      *
-     * @access public
      *
-     * @return Response
      *
      * @throws \Exception
      */
@@ -64,22 +56,22 @@ class NewApiKey extends Controller
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-        $values = array(
-            'firstname' => "",
-            'lastname' => "",
-            'user' => "",
-            'role' => "",
-            'password' => "",
+        $values = [
+            'firstname' => '',
+            'lastname' => '',
+            'user' => '',
+            'role' => '',
+            'password' => '',
             'status' => 'a',
             'source' => 'api',
-        );
+        ];
 
         //only Admins
         if (Auth::userIsAtLeast(Roles::$admin)) {
-            $projectRelation = array();
+            $projectRelation = [];
 
             if (isset($_POST['save'])) {
-                $values = array(
+                $values = [
                     'firstname' => ($_POST['firstname']),
                     'user' => '',
                     'role' => ($_POST['role']),
@@ -87,7 +79,7 @@ class NewApiKey extends Controller
                     'pwReset' => '',
                     'status' => '',
                     'source' => 'api',
-                );
+                ];
 
                 if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                     foreach ($_POST['projects'] as $project) {
@@ -106,7 +98,7 @@ class NewApiKey extends Controller
                     }
                 }
 
-                $this->tpl->setNotification("notification.api_key_created", 'success', 'apikey_created');
+                $this->tpl->setNotification('notification.api_key_created', 'success', 'apikey_created');
 
                 $this->tpl->assign('apiKeyValues', $apiKeyValues);
             }
@@ -118,7 +110,7 @@ class NewApiKey extends Controller
 
             $this->tpl->assign('relations', $projectRelation);
 
-            return $this->tpl->displayPartial('api.newAPIKey');
+            return $this->tpl->displayPartial('api::partials.newAPIKey');
         } else {
             return $this->tpl->displayPartial('errors.error403');
         }

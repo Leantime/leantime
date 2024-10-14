@@ -6,21 +6,22 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 // Don't run the script unless using the 'run' command
-if (!isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
+if (! isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
     return;
 }
 
-if (!file_exists($composer = __DIR__ . '/../vendor/autoload.php')) {
+if (! file_exists($composer = __DIR__.'/../vendor/autoload.php')) {
     throw new RuntimeException('Please run "make build-dev" to run tests.');
 }
 
 require $composer;
 
-define('PROJECT_ROOT', realpath(__DIR__ . '/..') . '/');
-define('APP_ROOT', PROJECT_ROOT . '/');
-define('DEV_ROOT', PROJECT_ROOT . '.dev/');
+define('PROJECT_ROOT', realpath(__DIR__.'/..').'/');
+define('APP_ROOT', PROJECT_ROOT.'/');
+define('DEV_ROOT', PROJECT_ROOT.'.dev/');
 
-$bootstrapper = get_class(new class {
+$bootstrapper = get_class(new class
+{
     /**
      * @var self
      */
@@ -28,15 +29,11 @@ $bootstrapper = get_class(new class {
 
     /**
      * Get the singleton instance of this class
-     *
-     * @access public
-     *
-     * @return self
      */
     public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
-            self::$instance = new self();
+            self::$instance = new self;
         }
 
         return self::$instance;
@@ -44,10 +41,6 @@ $bootstrapper = get_class(new class {
 
     /**
      * Start the testing environment
-     *
-     * @access public
-     *
-     * @return void
      */
     public function start(): void
     {
@@ -58,10 +51,6 @@ $bootstrapper = get_class(new class {
 
     /**
      * Destroy the testing environment
-     *
-     * @access public
-     *
-     * @return void
      */
     public function destroy(): void
     {
@@ -70,10 +59,6 @@ $bootstrapper = get_class(new class {
 
     /**
      * Create the test database
-     *
-     * @access protected
-     *
-     * @return void
      */
     protected function createDatabase(): void
     {
@@ -140,10 +125,6 @@ $bootstrapper = get_class(new class {
 
     /**
      * Create a step in the output
-     *
-     * @access protected
-     * @param  string $message
-     * @return void
      */
     protected function createStep(string $message): void
     {
@@ -155,12 +136,6 @@ $bootstrapper = get_class(new class {
 
     /**
      * Execute a command
-     *
-     * @access protected
-     * @param  string|array $command
-     * @param  array        $args
-     * @param  boolean      $required
-     * @return Process|string
      */
     protected function executeCommand(
         string|array $command,
@@ -213,17 +188,10 @@ $bootstrapper = get_class(new class {
 
     /**
      * Handle command output
-     *
-     * @access private
-     *
-     * @param  string $type
-     * @param  string $buffer
-     *
-     * @return void
      */
     private function commandOutputHandler(string $type, string $buffer): void
     {
-        echo Process::ERR === $type ? "\nSTDERR: $buffer" : "\nSTDOUT: $buffer";
+        echo $type === Process::ERR ? "\nSTDERR: $buffer" : "\nSTDOUT: $buffer";
     }
 });
 

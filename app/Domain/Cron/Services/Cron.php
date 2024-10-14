@@ -11,36 +11,36 @@ namespace Leantime\Domain\Cron\Services {
     use PHPMailer\PHPMailer\Exception;
 
     /**
-     *
+     * @api
      */
     class Cron
     {
         use DispatchesEvents;
 
         private Audit $auditRepo;
+
         private Queue $queueSvc;
+
         private Environment $Environment;
+
         private Environment $environment;
+
         private Reports $reportService;
 
         private int $cronExecTimer = 60;
 
-        /**
-         * @param Audit       $auditRepo
-         * @param Queue       $queueSvc
-         * @param Environment $environment
-         */
         public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment, Reports $reportService)
         {
-            $this->auditRepo =  $auditRepo;
+            $this->auditRepo = $auditRepo;
             $this->queueSvc = $queueSvc;
             $this->environment = $environment;
             $this->reportService = $reportService;
         }
 
         /**
-         * @return bool
          * @throws Exception
+         *
+         * @api
          */
         public function runCron(): bool
         {
@@ -60,14 +60,14 @@ namespace Leantime\Domain\Cron\Services {
             if ($timeSince < $this->cronExecTimer) {
                 if ($this->environment->debug) {
                     //report("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
-                    Log::info("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
+                    Log::info('Last cron execution was on '.$lastEvent['date'].' plz come back later');
                 }
 
                 return false;
             }
 
             //Process other events
-            self::dispatch_event("addJobToBeginning", $lastEvent);
+            self::dispatchEvent('addJobToBeginning', $lastEvent);
 
             //Process Telemetry Start
             $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Cron\Services {
                 try {
                     $telemetryResponse->wait();
                 } catch (Exception $e) {
-                   report($e);
+                    report($e);
                 }
             }
 
@@ -90,7 +90,7 @@ namespace Leantime\Domain\Cron\Services {
             $this->auditRepo->pruneEvents();
 
             //Process other events
-            self::dispatch_event("addJobToEnd", $lastEvent);
+            self::dispatchEvent('addJobToEnd', $lastEvent);
 
             return true;
         }

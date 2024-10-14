@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\Template as TemplateCore;
+use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
@@ -12,12 +12,11 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 class Clients
 {
     private ProjectRepository $projectRepository;
+
     private ClientRepository $clientRepository;
 
     /**
-     * @param TemplateCore      $tpl
-     * @param ProjectRepository $projectRepository
-     * @param ClientRepository  $clientRepository
+     * @param  TemplateCore  $tpl
      */
     public function __construct(
         ProjectRepository $projectRepository,
@@ -28,8 +27,7 @@ class Clients
     }
 
     /**
-     * @param int $userId
-     * @return array
+     * @api
      */
     public function getUserClients(int $userId): array
     {
@@ -39,8 +37,8 @@ class Clients
         if (is_array($userProjects)) {
             $userClients = [];
             foreach ($userProjects as $project) {
-                if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = array("id" => $project["clientId"], "name" => $project['clientName']);
+                if (! array_key_exists($project['clientId'], $clients)) {
+                    $clients[$project['clientId']] = ['id' => $project['clientId'], 'name' => $project['clientName']];
                 }
             }
         }
@@ -49,9 +47,9 @@ class Clients
     }
 
     /**
-     * @return array
+     * @api
      */
-    public function getAll(array $searchparams = null): array
+    public function getAll(?array $searchparams = null): array
     {
         return $this->clientRepository->getAll();
     }
@@ -59,11 +57,11 @@ class Clients
     /**
      * patches the client by key.
      *
-     * @param int   $id     Id of the object to be patched
-     * @param  array $params Key=>value array where key represents the object field name and value the value.
-     * @access public
-     *
+     * @param  int  $id  Id of the object to be patched
+     * @param  array  $params  Key=>value array where key represents the object field name and value the value.
      * @return bool returns true on success, false on failure
+     *
+     * @api
      */
     public function patch(int $id, array $params): bool
     {
@@ -73,10 +71,10 @@ class Clients
     /**
      * updates the client by key.
      *
-     * @param  object|array $values expects the entire object to be updated as object or array
-     * @access public
+     * @param  object|array  $values  expects the entire object to be updated as object or array
+     * @return bool Returns true on success, false on failure
      *
-     * @return bool                 Returns true on success, false on failure
+     * @api
      */
     public function editClient(object|array $values): bool
     {
@@ -86,9 +84,10 @@ class Clients
     /**
      * Creates a new client
      *
-     * @access public
-     * @param  object|array $values Object or array to be created
-     * @return int|false                Returns id of new element or false
+     * @param  object|array  $values  Object or array to be created
+     * @return int|false Returns id of new element or false
+     *
+     * @api
      */
     public function create(object|array $values): int|false
     {
@@ -98,9 +97,10 @@ class Clients
     /**
      * Deletes a client
      *
-     * @access public
-     * @param int $id Id of the object to be deleted
-     * @return bool     Returns id of new element or false
+     * @param  int  $id  Id of the object to be deleted
+     * @return bool Returns id of new element or false
+     *
+     * @api
      */
     public function delete(int $id): bool
     {
@@ -110,9 +110,10 @@ class Clients
     /**
      * Gets 1 specific client by id
      *
-     * @access public
-     * @param int $id Id of the object to be retrieved
+     * @param  int  $id  Id of the object to be retrieved
      * @return object|array|false Returns object or array. False on failure or if item cannot be found
+     *
+     * @api
      */
     public function get(int $id): object|array|false
     {

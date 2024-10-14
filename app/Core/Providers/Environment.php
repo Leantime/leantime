@@ -3,15 +3,13 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Leantime\Core\Bootstrap\HandleExceptions;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Exceptions\HandleExceptions;
-use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\ErrorHandler\Debug;
 
 class Environment extends ServiceProvider
 {
-
-    Use DispatchesEvents;
+    use DispatchesEvents;
 
     /**
      * Register any application services.
@@ -22,17 +20,13 @@ class Environment extends ServiceProvider
     {
         $this->app->singleton(\Leantime\Core\Configuration\AppSettings::class, \Leantime\Core\Configuration\AppSettings::class);
         $this->app->singleton(\Leantime\Core\Configuration\Environment::class, \Leantime\Core\Configuration\Environment::class);
-        $this->app->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\Exceptions\ExceptionHandler::class);
-
-        $this->app->singleton(HandleExceptions::class, HandleExceptions::class);
-
-        $this->app->alias(\Leantime\Core\Configuration\Environment::class, 'config');
-        $this->app->alias(\Leantime\Core\Configuration\Environment::class, \Illuminate\Contracts\Config\Repository::class);
 
     }
 
-    public function boot() {
+    public function boot()
+    {
 
+        /*
         $config = $this->app->make(\Leantime\Core\Configuration\Environment::class);
 
         if (empty(config("env"))) {
@@ -69,27 +63,7 @@ class Environment extends ServiceProvider
         $exceptionsHandler->bootstrap($this->app);
 
 
-        self::dispatch_event('config_initialized');
-
+        self::dispatchEvent('config_initialized');
+        */
     }
-
-
-    /**
-     * @param int $debug
-     * @return void
-     */
-    private function setErrorHandler(int $debug): void
-    {
-        $incomingRequest = $this->app->make(IncomingRequest::class);
-
-        if (
-            $debug == 0
-        ) {
-            return;
-        }
-
-        Debug::enable();
-    }
-
-
 }

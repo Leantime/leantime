@@ -1,131 +1,97 @@
-.btn:hover,
-.btn:active,
-.btn.active {
-    background:var(--main-action-hover-bg);
-    color:var(--main-action-hover-color);
-    border-color:var(--main-action-hover-bg);
-    border-radius: var(--element-radius);
-}
 
 input, button, select, textarea {
-    font-family:var(--primary-font-family);
 }
 
 input:focus,
 button:focus,
-select:focus,
-textarea:focus,
-.btn:focus {
-    outline:none;
-    /* TODO: Figure out good focus outline */
-    text-decoration: none;
+textarea:focus {
 }
 
 form label{
-    padding-top:5px;
-    margin-bottom: 2px;
-    font-weight:bold;
-    opacity:0.8;
+
 }
 
 form .switchery {
     margin-top:5px;
 }
 
-tox-edit-area,
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    height: auto;
-    background-color: var(--secondary-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
+tox-edit-area, textarea,
+input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="color"], .uneditable-input {
+
 }
 
 input[type="text"]:read-only,
-input:disabled,
-.btn-primary[disabled]{
-    border:none;
-    box-shadow:none;
-    opacity:0.4;
+input:disabled {
+
 }
 
 body input:focus {
-    border-color:var(--main-border-color-hover);
+
 }
 
 
 
 /* Tags */
 
-body div.tagsinput {
-    border:1px solid transparent;
-    overflow:hidden;
-}
+/*body div.tagsinput {*/
+/*    border:1px solid transparent;*/
+/*    overflow:hidden;*/
+/*}*/
 
-body div.tagsinput:hover,
-body div.tagsinput:focus,
-body input[type=text].main-title-input.main-title-input:hover,
-body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color-hover);
-}
+/*body div.tagsinput:hover,*/
+/*body div.tagsinput:focus,*/
+/*body input[type=text].main-title-input.main-title-input:hover,*/
+/*body input[type=text].main-title-input.main-title-input:focus{*/
+/*    border: 1px solid var(--main-border-color-hover);*/
+/*}*/
 
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
+/*body div.tagsinput.readonly {*/
+/*    display:inline-block;*/
+/*    width:auto;*/
+/*    padding:0px;*/
+/*    border:0px !important;*/
+/*    height:auto !important;*/
+/*    background:none;*/
+/*}*/
 
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
+/*body .ticketBox div.tagsinput.readonly {*/
+/*    background:none !important;*/
+/*    margin-bottom:0px !important;*/
+/*}*/
 
-body div.tagsinput {
-    background-color: var(--input-background);
-    color:var(--primary-font-color);
-    font-family: var(--primary-font-family);
-    width:100% !important;
-    height:auto !important;
-    border-radius:var(--input-radius);
-    box-shadow: none;
-    padding:var(--input-padding);
-    border:0px;
-}
+/*body div.tagsinput {*/
+/*    background-color: var(--input-background);*/
+/*    color:var(--primary-font-color);*/
+/*    font-family: var(--primary-font-family);*/
+/*    width:100% !important;*/
+/*    height:auto !important;*/
+/*    border-radius:var(--input-radius);*/
+/*    box-shadow: none;*/
+/*    padding:var(--input-padding);*/
+/*    border:0px;*/
+/*}*/
 
-body div.tagsinput input {
-    font-size:var(--base-font-size);
-    color:var(--primary-font-color) !important;
-    width:auto;
-    padding:0px;
-    margin-bottom:0px;
-    font-family: var(--primary-font-family);
-}
+/*body div.tagsinput input {*/
+/*    color:var(--primary-font-color) !important;*/
+/*    width:auto;*/
+/*    padding:0px;*/
+/*    margin-bottom:0px;*/
+/*    font-family: var(--primary-font-family);*/
+/*}*/
 
-body div.tagsinput span.tag {
-    border-radius: 12px;
-    padding: 0px 10px;
-    border: 0px solid var(--primary-color);
-}
+/*body div.tagsinput span.tag {*/
+/*    border-radius: 12px;*/
+/*    padding: 0px 10px;*/
+/*    border: 0px solid var(--primary-color);*/
+/*}*/
 
-div.tagsinput span.tag {
-    font-size:var(--font-size-m);
-}
+/*div.tagsinput span.tag {*/
+/*    font-size:var(--font-size-m);*/
+/*}*/
 
-div.tagsinput span.tag a {
-    vertical-align: text-bottom;
-}
+/*div.tagsinput span.tag a {*/
+/*    vertical-align: text-bottom;*/
+/*}*/
 
 .ss-main .ss-multi-selected {
     padding:var(--input-padding);
@@ -144,22 +110,11 @@ div.tagsinput span.tag a {
     border: 0px solid var(--primary-color);
 }
 
-select {
-    min-height:30px;
-}
 
-::selection {
-    background: var(--accent1);
-    color: var(--main-action-color);
-    text-shadow: none;
-}
+
+
 
 /* Safari */
-::-moz-selection {
-    background: var(--accent1);
-    color: var(--main-action-color);
-    text-shadow: none;
-}
 
 /* Firefox */
 input:-moz-placeholder,
@@ -188,12 +143,7 @@ textarea:-ms-input-placeholder{
 }
 
 
-input, select,
-textarea, button {
-    outline: none;
-    font-size: var(--base-font-size);
 
-}
 
 .assign-container {
     height: 205px;
@@ -220,414 +170,18 @@ textarea, button {
 
 
 /* Secondary Button */
-body .btn-default,
-body .btn,
-body a.btn,
-input.btn,
-button.btn,
-body input[type='submit'].btn-default,
-.btn-group .btn,
-.btn-group>.btn:last-child,
-.btn-group>.dropdown-toggle,
-a.btn-default,
-.btn-default:link
-
-{
-    font-family: var(--primary-font-family);
-    font-size: var(--base-font-size);
-    font-weight:bold;
-    padding: var(--input-padding);
-    line-height:21px;
-    background: var(--secondary-action-bg);
-    text-shadow: none;
-    box-shadow:none;
-    color: var(--secondary-action-color);
-    display: inline-block;
-    word-spacing: 2px;
-    border:1px solid var(--secondary-action-bg);
-    border-radius:var(--element-radius) !important;
-    outline:0;
-    vertical-align: top;
-}
-
-body .btn-default:hover,
-body .btn-default.active,
-body input[type='submit'].btn-default:hover,
-.btn-group .btn:hover,
-body .btn-default:active,
-body input[type='submit'].btn-default:active,
-.btn-group .btn:active,
-.btn-group.open .btn.dropdown-toggle{
-    background:var(--secondary-action-hover-bg);
-    color:var(--secondary-action-hover-color);
-    border-color:var(--secondary-action-hover-bg);
-}
-
-body .btn-default .caret,
-body input[type='submit'].btn-default .caret,
-.btn-group .btn .caret,
-.btn-group>.btn:last-child .caret,
-.btn-group>.dropdown-toggle .caret {
-    border-top-color:var(--primary-font-color);
-}
-
-body .btn-default:hover .caret,
-body input[type='submit'].btn-default:hover .caret,
-.btn-group .btn:hover .caret,
-body .btn-default:active .caret,
-body input[type='submit'].btn-default:active .caret,
-.btn-group .btn:active .caret,
-.btn-group.open .btn.dropdown-toggle .caret{
-    border-top-color:var(--secondary-action-hover-color);
-
-}
-
-body .btn-default:active,
-body input[type='submit'].btn-default:active,
-.btn-group .btn:active,
-.btn-group.open .btn.dropdown-toggle {
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 15%), 0 1px 2px rgb(0 0 0 / 5%);
-}
-
-
-
-/*Primary button */
-
-body .btn-primary,
-body btn.btn-primary,
-body a.btn.btn-primary,
-input[type='submit'],
-.btn-primary:link,
-.btn-primary[disabled],
-.dt-button,
-.btn-group.open .btn-primary.dropdown-toggle,
-.btn-group .btn.btn-primary{
-    background:var(--main-action-bg);
-    border-radius:var(--element-radius);
-    outline:0;
-    font-size: var(--base-font-size);
-    font-weight:bold;
-    padding: var(--input-padding);
-    line-height:21px;
-    box-shadow:none;
-    text-shadow: none;
-    color: var(--main-action-color);
-    display: inline-block;
-    word-spacing: 2px;
-    border: 1px solid var(--main-action-bg);
-}
-
-body .btn-primary:hover,
-body .btn-primary:active,
-body .btn-primary:focus,
-body input[type='submit']:hover,
-body .btn-group.open .btn-primary.dropdown-toggle,
-.btn-group .btn.btn-primary:hover,
-body a.btn.btn-primary:hover{
-    background: var(--main-action-hover-bg);
-    color:var(--main-action-hover-color);
-    border:1px solid var(--main-action-hover-bg);
-}
-
-body .btn-primary .caret,
-body input[type='submit'].btn-primary .caret,
-.btn-group .btn-primary .caret,
-.btn-group>.btn-primary:last-child .caret {
-    border-top-color:var(--main-action-hover-color);
-}
-
-.btn-primary[disabled] {
-    background:var(--main-action-bg);
-    color: var(--main-action-color);
-    border: 1px solid var(--main-action-bg);
-    cursor:not-allowed;
-}
-
-
-.chosen-container-single .chosen-single {
-
-    height: auto;
-    background:none;
-    background-color: var(--secondary-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    -moz-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--input-radius);
-    padding: var(--input-padding);
-    color:var(--primary-font-color);
-}
-
-.chosen-container,
-.chosen-container-multi .chosen-choices .search-field input {
-    font-size:var(--base-font-size);
-    margin-bottom:10px;
-    min-width:175px
-
-}
-
-.chosen-container-multi .chosen-choices {
-    background-color: var(--secondary-background);
-    line-height: 21px;
-    border: 1px solid var(--main-border-color);
-    border-radius: var(--input-radius);
-}
-
-.chosen-container-active .chosen-single {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow:var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active.chosen-with-drop .chosen-single {
-    border: 1px solid var(--main-border-color);
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-image: none;
-    background-image: none;
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active .chosen-choices {
-    border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-}
-
-.chosen-container-active .chosen-choices li.search-field input[type="text"] {
-    color:var(--primary-font-color);
-}
-
-.chosen-container .chosen-drop {
-    position: absolute;
-    top: 100%;
-    z-index: 1010;
-    width: 100%;
-    border: 1px solid var(--main-border-color);
-    border-top: 0;
-    background: var(--secondary-background);
-    -webkit-box-shadow: var(--input-shadow);
-    box-shadow: var(--input-shadow);
-    clip: rect(0, 0, 0, 0);
-    -webkit-clip-path: inset(100% 100%);
-    clip-path: inset(100% 100%);
-}
-
-.chosen-container .chosen-results li.highlighted {
-    color: var(--dropdown-link-hover-color) !important;
-    background: var(--dropdown-link-hover-bg) !important;
-    background-image: none;
-
-}
-
-.chosen-container-single .chosen-search input[type="text"] {
-
-    border: 1px solid var(--main-border-color);
-
-    font-size: var(--font-size-s);
-
-    line-height: normal;
-    border-radius: 0;
-}
-
-.chosen-container-single .chosen-single div b {
-    background-image:none !important;
-}
-.chosen-container-single .chosen-single div b:after {
-    content: "⌄";
-    line-height: 25px;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice {
-    position: relative;
-    margin: 3px 5px 3px 0;
-    padding: 6px 20px 6px 5px;
-    border: 0px solid #aaa;
-    max-width: 100%;
-    border-radius: 3px;
-    background-color: var(--accent1);
-    color: var(--accent1-color);
-    background-image: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    line-height: normal;
-    cursor: default;
-}
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-    position: absolute;
-    top: 8px;
-}
-
-.btn-group>.btn {
-}
-
-.btn-file {
-    padding: var(--input-padding);
-}
-
-.btn,
-a:link.btn{
-
-}
 
 .viewText {
     padding-right:5px;
 }
 
-.btn .caret {
-    margin-left: 0px;
-}
-
-.btn-small {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: var(--element-radius);
-    font-size: var(--base-font-size);
-    text-transform: uppercase;
-}
-
-.btn-large {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: var(--element-radius);
-    font-size: var(--font-size-l);
-    padding: 10px 20px !important;
-}
 
 
-.btn.btn-danger,
-.btn.btn-danger:link {
-    background: var(--red);
-    border-color: var(--dark-red);
-    color: #fff;
-    font-weight: bold;
-}
 
-.btn.btn-danger:hover,
-.btn.btn-danger:active,
-.btn.btn-danger:focus,
-.btn.btn-group.open
-.btn.btn-danger.dropdown-toggle {
-    background: var(--dark-red);
-}
 
-.btn.btn-warning, .btn.btn-warning:link {
-    background: var(--yellow);
-    border-color: var(--yellow);
-}
 
-.btn-warning:hover, .btn-warning:active, .btn-warning:focus,
-.btn-group.open .btn-warning.dropdown-toggle {
-    background: var(--yellow);
-}
 
-.btn-success, .btn-success:link {
-    background: var(--green);
-    border-color: var(--dark-green);
-}
 
-.btn-success:hover, .btn-success:active, .btn-success:focus,
-.btn-group.open .btn-success.dropdown-toggle {
-    background: var(--dark-green);
-}
-
-.btn-info, .btn-info:link {
-    background: var(--blue);
-    border-color: var(--dark-blue);
-}
-
-.btn-info:hover, .btn-info:active, .btn-info:focus,
-.btn-group.open .btn-info.dropdown-toggle {
-    background: var(--dark-blue);
-}
-
-.btn-inverse, .btn-inverse:link {
-    background: #555;
-    border-color: #272727;
-}
-
-.btn-circle {
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
-    border-radius: 50px;
-    width: 20px;
-    padding: 5px;
-    background: none;
-    border: 2px solid #ccc;
-}
-
-.btn-circle:hover {
-    background: none;
-    color: #ccc;
-}
-
-.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
-.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled] {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    background: none !important;
-}
-
-.btn-circle.btn-danger, .btn-circle.btn-danger:hover, .btn-circle.btn-danger:focus,
-.btn-circle.btn-danger:active, .btn-circle.btn-danger.active,
-.btn-circle.btn-danger.disabled, .btn-circle.btn-danger[disabled] {
-    border-color: var(--red);
-    color: var(--red);
-    background: none;
-}
-
-.btn-circle.btn-warning, .btn-circle.btn-warning:hover, .btn-circle.btn-warning:focus,
-.btn-circle.btn-warning:active, .btn-circle.btn-warning.active,
-.btn-circle.btn-warning.disabled, .btn-circle.btn-warning[disabled] {
-    border-color: var(--yellow);
-    color: var(--yellow);
-    background: none;
-}
-
-.btn-circle.btn-success, .btn-circle.btn-success:hover, .btn-circle.btn-success:focus,
-.btn-circle.btn-success:active, .btn-circle.btn-success.active,
-.btn-circle.btn-success.disabled, .btn-circle.btn-success[disabled] {
-    border-color: var(--green);
-    color: var(--green);
-    background: none;
-}
-
-.btn-circle.btn-info, .btn-circle.btn-info:hover, .btn-circle.btn-info:focus,
-.btn-circle.btn-info:active, .btn-circle.btn-info.active,
-.btn-circle.btn-info.disabled, .btn-circle.btn-info[disabled] {
-    border-color: var(--blue);
-    color: var(--blue);
-    background: none;
-}
-
-.btn-circle.btn-inverse, .btn-circle.btn-inverse:hover, .btn-circle.btn-inverse:focus,
-.btn-circle.btn-inverse:active, .btn-circle.btn-inverse.active,
-.btn-circle.btn-inverse.disabled, .btn-circle.btn-inverse[disabled] {
-    border-color: #555;
-    color: #555;
-    background: none;
-}
-
-.btn-circle .iconsweets-white {
-
-}
-
-.btn-group+.btn-group {
-    margin-left: 0px;
-}
-
-select,
-.row-fluid [class*="span"] select {
-    min-height: 35px;
-}
 
 .row-fluid.marginBottom,
 .row.marginBottom{
@@ -639,51 +193,14 @@ select,
 }
 
 
-.filterBar select {
-    height: auto;
-    line-height: 21px;
-}
+
 
 .filterBoxLeft input[type="text"] {
     margin-right:10px;
 }
 
-.chosen-choices {
 
-}
 
-.chosen-container-multi .chosen-choices .search-choice {
-    border: 0px solid #bbb;
-    line-height: 12px;
-    padding: 1px 20px 1px 10px;
-    margin: 3px 0 2px 3px;
-    position: relative;
-    cursor: default;
-    border-radius:12px;
-    font-size:var(--font-size-s);
-}
-
-.chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    right:5px;
-}
-
-.chosen-container-multi .chosen-choices .search-field input {
-    height: auto;
-    padding: var(--input-padding);
-}
-
-.chosen-container-single .chosen-search input {
-    background:var(--input-background);
-    border-color:var(--main-border-color);
-}
-
-.chosen-container .chosen-results .no-results {
-    background:var(--input-background);
-}
-
-input[type=checkbox] {
-    margin-top:9px;
-}
 
 input[type=color] {
     height:29px;
@@ -734,73 +251,15 @@ input[type=color] {
     margin-left:5px !important;
 }
 
-
-.dropdown-toggle.full-width-select {
-    width:100%;
-    display:block;
-
-    height: auto;
-    background-color: var(--input-background);
-    line-height:21px;
-    border: 1px solid var(--main-border-color);
-
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
-    border-radius: 3px;
-    padding: 6px 12px;
-    color:var(--primary-font-color);
-}
-
-.dropdown-toggle.full-width-select:hover {
-    text-decoration:none;
-    background:var(--main-menu-link-hover-bg);
-    color:var(--main-menu-link-hover-color);
-}
-
-.dropdown-toggle.full-width-select .fa {
-    float: right;
-    vertical-align: bottom;
-    margin-top: 3px;
-}
-
-.board-select .dropdown-menu {
-    margin-left:15px;
-    margin-top:2px;
-}
-
-.board-select .dropdown-menu li.nav-header.border {
-    border-top: 1px solid var(--neutral);
-    border-bottom: 0px;
-    padding-top: 10px;
-}
-
-
 body input[type=text].main-title-input.main-title-input {
     border: 1px solid transparent;
     box-shadow:none;
-    font-size:var(--font-size-xxl);
+    font-size:var(--font-size-xxxl);
     margin-bottom:5px;
 }
 
-
-
-div.border {
-    border:1px solid var(--main-border-color);
-    border-radius: var(--box-radius);
-    padding:10px;
-}
-
-body select {
-    max-witdh:206px;
-}
-
 input.secretInput {
-    width:126px;
     border:0px;
-    margin-left:3px;
-    padding-left:3px;
     background:none;
     -webkit-box-shadow:none;
     -moz-box-shadow: none;
@@ -816,13 +275,9 @@ input.secretInput {
 input.secretInput:hover,
 input.secretInput:focus,
 input.secretInput:active {
-
+    box-shadow: var(--input-shadow);
     border: 1px solid var(--main-border-color-hover);
     text-decoration:none;
-}
-
-.fileupload .btn, .fileupload .fileupload-exists {
-    margin-left: 5px;
 }
 
 .input-append .fa-file::before {
@@ -872,10 +327,9 @@ input.secretInput:active {
     background:var(--main-action-bg);
     color:var(--main-action-color);
     border:1px solid var(--main-action-bg);
-    font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
     padding: var(--input-padding);
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     border-radius: var(--element-radius);
     vertical-align: top;
 }
@@ -954,36 +408,6 @@ input.secretInput:active {
 .profileBox.active .userName {
     color:var(--main-action-bg);
 }
-
-body .btn.btn-outline {
-    background:transparent;
-    color:var(--main-action-bg);
-    border:1px solid var(--main-action-bg);
-}
-
-body .btn.btn-outline:hover {
-    color:var(--main-action-hover-color);
-    background:var(--main-action-hover-bg);
-    border:1px solid var(--main-action-hover-bg);
-}
-
-body .btn.btn-outline.active {
-    color: var(--main-action-color);
-    background: var(--main-action-bg);
-}
-
-body .btn.btn-danger-outline {
-    background:transparent;
-    color:var(--red);
-    border:1px solid var(--red);
-}
-
-body .btn.btn-danger-outline:hover {
-    color:var(--main-action-hover-color);
-    background:var(--main-action-hover-bg);
-    border:1px solid var(--main-action-hover-bg);
-}
-
 
 .ui-autocomplete {
     z-index:99999;
@@ -1171,7 +595,7 @@ input[type=range]:focus::-ms-fill-upper {
     padding: var(--input-padding);
     border: 1px solid var(--main-border-color);
     background-color: var(--input-background);
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
@@ -1190,7 +614,7 @@ input[type=range]:focus::-ms-fill-upper {
 .ss-main .ss-multi-selected {
     min-height: auto;
     background-color: var(--input-background);
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-border-color);
     box-shadow: var(--input-shadow);
     transition: border linear .2s, box-shadow linear .2s;
@@ -1198,7 +622,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .ss-main .ss-single-selected .placeholder {
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-disabled {
@@ -1227,37 +651,6 @@ input[type=range]:focus::-ms-fill-upper {
 .ss-main .ss-single-selected .ss-arrow span.arrow-up,
 .ss-main .ss-single-selected .ss-arrow span.arrow-down {
     margin:0px;
-}
-
-
-body .btn.btn-link {
-    background:transparent;
-    color:var(--primary-font-color);
-    border:1px solid transparent;
-}
-
-body .btn.btn-link:hover {
-    color:var(--main-action-hover-color);
-    background:var(--main-action-hover-bg);
-    border:1px solid var(--main-action-hover-bg);
-    text-decoration:none;
-}
-
-body .btn.btn-link.active {
-    color: var(--main-action-color);
-    background: var(--main-action-bg);
-}
-
-body .btn.btn-link.action-link {
-    color:var(--accent1);
-}
-
-body .btn.btn-link.action-link:hover {
-    color:var(--main-action-hover-color);
-}
-
-.btn .badge {
-    top:0px;
 }
 
 input[type=text].simpleColorPicker {
@@ -1316,7 +709,6 @@ body .croppie-container {
 .stdform label.error {
     float: none;
     display: block;
-    font-size: var(--base-font-size);
     color: var(--dark-red);
     text-align: left;
     padding: 0;
@@ -1328,7 +720,6 @@ body .croppie-container {
 }
 
 .stdform small.desc {
-    font-size: var(--base-font-size);
     color: #999;
     font-style: italic;
     display: block;
@@ -1372,7 +763,6 @@ body .croppie-container {
 }
 
 .stdform2 label small {
-    font-size: var(--base-font-size);
     color: #999;
     display: block;
     font-weight: normal;
@@ -1432,7 +822,7 @@ body .croppie-container {
 
 .counter {
     display: block;
-    font-size: var(--base-font-size);
+
 }
 
 .warning {
@@ -1455,7 +845,7 @@ body .croppie-container {
 
 .selectable .selectableContent {
     border: 1px solid var(--main-border-color);
-    padding:5px 10px 2px 10px;
+    padding:10px;
     border-radius: var(--element-radius);
     background: var(--tab-background);
     color: var(--tab-color);
@@ -1466,6 +856,7 @@ body .croppie-container {
     border-radius: 50%;
     width: 60px;
     height: 60px;
+    padding:5px;
 }
 
 .selectable .selectableContent .emoji {
@@ -1476,9 +867,10 @@ body .croppie-container {
 
 .colorCircle {
     display:block;
-    width:100%;
-    height:100%;
+    width:48px; /* Account for border on parent element */
+    height:48px; /* Account for border on parent element */
     border-radius: 50%;
+    opacity:1;
 }
 
 .selectable.active .selectableContent{
@@ -1691,16 +1083,299 @@ div.tagsinput span.tag {
 .headerEditDropdown .caret {
     border-top-color:var(--main-action-color);
 }
-
-
-.commentReply.inactive {
-    border:1px solid var(--main-border-color);
-    padding:9px 14px;
-    border-radius:var(--box-radius);
-    margin-bottom:10px;
-}
-
 .round-button {
     padding:4px 0px !important;
     min-width:31px;
 }
+
+
+/* Choices.js select boxes */
+
+
+/* Date Pickers */
+#ui-datepicker-div {
+    box-shadow: var(--regular-shadow);
+}
+
+.ui-datepicker {
+    border:none;
+    margin-top:5px;
+    border-radius:var(--box-radius);
+}
+
+.ui-datepicker-calendar {
+    border-bottom-left-radius: var(--box-radius);
+    border-bottom-right-radius: var(--box-radius);
+}
+
+.ui-datepicker-header {
+    position: relative;
+    text-align: center;
+    padding: 5px;
+    color: var(--dropdown-link-hover-color);
+    background: var(--dropdown-link-hover-bg);
+    font-weight:bold;
+    border-top-left-radius: var(--box-radius);
+    border-top-right-radius: var(--box-radius);
+}
+
+.ui-datepicker-next {
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px 1px;
+}
+
+.ui-datepicker-prev {
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px -39px;
+}
+
+.ui-datepicker-calendar td a.ui-state-active {
+    background: var(--main-action-bg);
+    color: var(--main-action-color);
+}
+.ui-datepicker-calendar td a.ui-state-active:hover {
+    background: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+}
+
+.ui-datepicker-calendar td.ui-datepicker-today a {
+    background: var(--dropdown-link-hover-bg);
+    color: var(--dropdown-link-hover-color);
+}
+
+.ui-state-highlight {
+    border:none;
+}
+
+.ui-datepicker-calendar td {
+    border-color:var(--main-border-color);
+    background:transparent;
+    font-size:var(--font-size-s);
+}
+
+.ui-datepicker-calendar thead th {
+    background:none;
+    text-transform:none;
+    font-size:var(--font-size-s);
+
+}
+
+/* new datetimepicker */
+
+.xdsoft_datetimepicker
+.input-proxy {
+    box-shadow:var(--regular-shadow);
+    border:0px;
+    border-radius:var(--box-radius);
+    background:var(--secondary-background);
+    color:var(--primary-font-color);
+    font-family: var(--primary-font-family);
+    padding:var(--spacing-sm);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar {
+    border-radius:var(--box-radius);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar th {
+    background:var(--dropdown-link-hover-bg);
+    color:var(--primary-font-color);
+    border-color:var(--main-border-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td {
+    background:transparent;
+    border-color:var(--main-border-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default,
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div.xdsoft_current {
+    background:var(--main-action-bg);
+    color:var(--main-action-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default:hover,
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current:hover,
+.xdsoft_datetimepicker .xdsoft_calendar td:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box>div>div.xdsoft_current:hover {
+    background:var(--secondary-action-hover-bg) !important;
+    color:var(--secondary-action-hover-color);
+}
+
+.xdsoft_datetimepicker .xdsoft_today_button {
+    margin-left:0px;
+}
+
+.xdsoft_datetimepicker .xdsoft_month {
+    width:70px;
+    text-align:right;
+}
+
+.xdsoft_datetimepicker .xdsoft_year {
+    width:70px;
+    text-align:left;
+}
+
+.xdsoft_datetimepicker .xdsoft_next,
+.xdsoft_datetimepicker .xdsoft_prev,
+.xdsoft_datetimepicker .xdsoft_today_button {
+    opacity:0.2;
+}
+
+.flatpickr-calendar {
+
+    background:var(--secondary-background);
+    box-shadow: var(--regular-shadow);
+    border-radius: var(--box-radius);
+}
+
+.flatpickr-day {
+    color:var(--primary-font-color);
+}
+
+.flatpickr-current-month {
+    font-size:var(--font-size-l);
+    padding-top:2px;
+}
+
+.flatpickr-current-month input,
+.flatpickr-current-month select {
+    box-shadow:none;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill:var(--accent1);
+}
+
+.flatpickr-time .numInputWrapper input {
+    box-shadow:none;
+    border:none;
+    height:inherit;
+    background:transparent;
+    border-radius:none;
+}
+
+.flatpickr-current-month .numInputWrapper {
+    width:8ch;
+}
+
+input.flatpickr-input:read-only {
+    border: inherit;
+    box-shadow: inherit;
+    opacity: 1;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+    background:var(--main-action-bg);
+    border-color:var(--main-action-bg);
+}
+
+.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
+    border-top:0px;
+}
+
+.flatpickr-day {
+
+}
+
+.datetime-dropdown {
+    max-width:320px;
+    padding:10px;
+    margin-top: 5px;
+}
+
+.datetime-dropdown .form-control.input {
+
+}
+
+.datetime-dropdown > label {
+    float:left;
+    width:120px;
+    padding-top:var(--spacing-xs);
+}
+
+.datetime-dropdown .flatpickr-calendar {
+    box-shadow:none;
+}
+
+
+.input-proxy,
+a.input-proxy,
+a.input-proxy:link {
+    display:inline-block;
+    box-shadow:none;
+    min-width:150px;
+    border:1px solid transparent;
+    border-radius:var(--input-radius);
+    background:var(--secondary-background);
+    color:var(--primary-font-color);
+    font-weight:normal;
+    font-family: var(--primary-font-family);
+    padding:var(--input-padding);
+}
+
+.input-proxy:hover,
+a.input-proxy:hover {
+    box-shadow:var(--input-shadow);
+    border:1px solid var(--main-border-color);
+}
+
+.flatpickr-time .numInputWrapper,
+.flatpickr-time .flatpickr-am-pm{
+    border-radius:var(--box-radius);
+}
+
+:root {
+    --dayWidth: 30px;
+    --calWidth: calc((var(--dayWidth) + 2px) * 7)
+}
+
+/* flatpickr sizes */
+.flatpickr-day {
+    max-width: var(--dayWidth);
+    height: var(--dayWidth);
+    line-height: var(--dayWidth);
+    /*     flex-basis: 14.2857143%; for reference only */
+}
+
+.flatpickr-days,
+.flatpickr-calendar {
+    width: var(--calWidth);
+}
+
+.datetime-dropdown {
+    max-width: calc(var(--calWidth) + 22px);
+}
+
+.dayContainer {
+    width: var(--calWidth);
+    min-width: var(--calWidth);
+    max-width: var(--calWidth);
+}
+

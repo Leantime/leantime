@@ -3,15 +3,12 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Services\Users;
 
-/**
- *
- */
 class InviteTeamStep implements OnboardingSteps
 {
     use DispatchesEvents;
@@ -21,12 +18,11 @@ class InviteTeamStep implements OnboardingSteps
         private Projects $projectService,
         private Users $userService,
         private Template $tplService
-    ) {
-    }
+    ) {}
 
     public function getTitle(): string
     {
-        return "Invite your team";
+        return 'Invite your team';
     }
 
     /**
@@ -40,7 +36,7 @@ class InviteTeamStep implements OnboardingSteps
     public function getAction(): string
     {
         // TODO: Implement getAction() method.
-        return "InviteTeam";
+        return 'InviteTeam';
     }
 
     /**
@@ -53,9 +49,8 @@ class InviteTeamStep implements OnboardingSteps
      */
     public function getTemplate(): string
     {
-        return "help.inviteTeamStep";
+        return 'help.inviteTeamStep';
     }
-
 
     /**
      * Handles the given parameters for performing a specific action.
@@ -66,37 +61,36 @@ class InviteTeamStep implements OnboardingSteps
      * between the new user and the current project.
      * In the end, a success notification is set.
      *
-     * @param array $params The parameters to be handled.
+     * @param  array  $params  The parameters to be handled.
      * @return bool True if the handling was successful, false otherwise.
      */
     public function handle($params): bool
     {
 
         for ($i = 1; $i <= 3; $i++) {
-            if (isset($params['email' . $i]) && $params['email' . $i] != '') {
-                $values = array(
+            if (isset($params['email'.$i]) && $params['email'.$i] != '') {
+                $values = [
                     'firstname' => '',
                     'lastname' => '',
-                    'user' => ($params['email' . $i]),
+                    'user' => ($params['email'.$i]),
                     'phone' => '',
                     'role' => '20',
                     'password' => '',
                     'pwReset' => '',
                     'status' => '',
                     'clientId' => '',
-                );
+                ];
 
-                if (filter_var($params['email' . $i], FILTER_VALIDATE_EMAIL)) {
-                    if ($this->userService->usernameExist($params['email' . $i]) === false) {
+                if (filter_var($params['email'.$i], FILTER_VALIDATE_EMAIL)) {
+                    if ($this->userService->usernameExist($params['email'.$i]) === false) {
                         $userId = $this->userService->createUserInvite($values);
-                        $this->projectService->editUserProjectRelations($userId, array(session("currentProject")));
+                        $this->projectService->editUserProjectRelations($userId, [session('currentProject')]);
                     }
                 }
 
-                $this->tplService->setNotification(__("notification.invitation_sent"), "success", "user_invited");
+                $this->tplService->setNotification(__('notification.invitation_sent'), 'success', 'user_invited');
             }
         }
-
 
         return true;
     }

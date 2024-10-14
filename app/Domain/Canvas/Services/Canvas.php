@@ -4,25 +4,24 @@ namespace Leantime\Domain\Canvas\Services {
 
     use DOMDocument;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Illuminate\Support\Str;
-    use Illuminate\Support\Facades\App;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
     /**
-     *
+     * @api
      */
     class Canvas
     {
         /**
          * import - Import canvas from XML file
          *
-         * @access public
-         * @param string $filename   File to import
-         * @param string $canvasName
-         * @param int    $projectId  Project identifier
-         * @param int    $authorId
+         * @param  string  $filename  File to import
+         * @param  int  $projectId  Project identifier
          * @return bool|int False if import failed and the id of the newly created canvas otherwise
+         *
          * @throws BindingResolutionException
+         *
+         * @api
          */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
         {
@@ -72,7 +71,7 @@ namespace Leantime\Domain\Canvas\Services {
             $elementNodeList = $dataNodeList->item(0)->getElementsByTagName('element');
 
             foreach ($elementNodeList as $elementNode) {
-                if (!$elementNode->hasAttribute('key')) {
+                if (! $elementNode->hasAttribute('key')) {
                     return false;
                 }
                 $elementKey = $elementNode->getAttribute('key');
@@ -83,11 +82,11 @@ namespace Leantime\Domain\Canvas\Services {
                     if ($authorNodeList->count() !== 1) {
                         return false;
                     }
-                    if (!$authorNodeList->item(0)->hasAttribute('firstname')) {
+                    if (! $authorNodeList->item(0)->hasAttribute('firstname')) {
                         return false;
                     }
                     $authorFirstname = $authorNodeList->item(0)->getAttribute('firstname');
-                    if (!$authorNodeList->item(0)->hasAttribute('lastname')) {
+                    if (! $authorNodeList->item(0)->hasAttribute('lastname')) {
                         return false;
                     }
                     $authorLastname = $authorNodeList->item(0)->getAttribute('lastname');
@@ -106,7 +105,7 @@ namespace Leantime\Domain\Canvas\Services {
                     if ($statusNodeList->count() !== 1) {
                         return false;
                     }
-                    if (!$statusNodeList->item(0)->hasAttribute('key')) {
+                    if (! $statusNodeList->item(0)->hasAttribute('key')) {
                         return false;
                     }
                     $status = $statusNodeList->item(0)->getAttribute('key');
@@ -115,7 +114,7 @@ namespace Leantime\Domain\Canvas\Services {
                     if ($relatesNodeList->count() !== 1) {
                         return false;
                     }
-                    if (!$relatesNodeList->item(0)->hasAttribute('key')) {
+                    if (! $relatesNodeList->item(0)->hasAttribute('key')) {
                         return false;
                     }
                     $relates = $relatesNodeList->item(0)->getAttribute('key');
@@ -142,15 +141,15 @@ namespace Leantime\Domain\Canvas\Services {
                         $dom->saveHTML($conclusionNodeList->item(0)->firstChild);
 
                     $recordsAry[] = [
-                    'description' => $description,
-                                      'assumptions' => $assumptions,
-                                      'data' => $data,
-                                      'conclusion' => $conclusion,
-                                      'box' => $elementKey,
-                                      'author' => $author,
-                                      'status' => $status,
-                                      'relates' => $relates,
-                                      'milestoneId' => '',
+                        'description' => $description,
+                        'assumptions' => $assumptions,
+                        'data' => $data,
+                        'conclusion' => $conclusion,
+                        'box' => $elementKey,
+                        'author' => $author,
+                        'status' => $status,
+                        'relates' => $relates,
+                        'milestoneId' => '',
                     ];
                 }
             }
@@ -162,7 +161,7 @@ namespace Leantime\Domain\Canvas\Services {
 
             $canvasName = Str::studly($canvasName);
 
-            $canvasRepoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+            $canvasRepoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
             $canvasRepo = app($canvasRepoName);
 
             // Check if canvas already exists?
@@ -188,31 +187,33 @@ namespace Leantime\Domain\Canvas\Services {
         /**
          * getBoardProgress - gets the progress of canvas types. counts items in each box-type and calculates percent done if each box type has at least 1 item.
          *
-         * @access public
-         * @param string $projectId projectId (optional)
-         * @param array  $boards    Array of project board types
+         * @param  string  $projectId  projectId (optional)
+         * @param  array  $boards  Array of project board types
          * @return array List of boards with a progress percentage
+         *
          * @throws BindingResolutionException
+         *
+         * @api
          */
-        public function getBoardProgress(string $projectId = '', array $boards = array()): array
+        public function getBoardProgress(string $projectId = '', array $boards = []): array
         {
 
             $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
-            $results = array();
+            $results = [];
 
             foreach ($values as $row) {
-                if (!isset($results[$row['canvasType']])) {
-                    $results[$row['canvasType']] = array();
+                if (! isset($results[$row['canvasType']])) {
+                    $results[$row['canvasType']] = [];
                 }
 
-                if (!isset($results[$row['canvasType']][$row['canvasId']])) {
+                if (! isset($results[$row['canvasType']][$row['canvasId']])) {
                     $repoName = Str::studly($row['canvasType']);
-                    $classname = app()->getNamespace() . "Domain\\$repoName\\Repositories\\$repoName";
+                    $classname = app()->getNamespace()."Domain\\$repoName\\Repositories\\$repoName";
 
                     $canvasTypeRepo = app()->make($classname);
-                    $results[$row['canvasType']][$row['canvasId']] = array();
+                    $results[$row['canvasType']][$row['canvasId']] = [];
 
                     foreach ($canvasTypeRepo->getCanvasTypes() as $type => $box) {
                         $results[$row['canvasType']][$row['canvasId']][$type] = 0;
@@ -224,17 +225,17 @@ namespace Leantime\Domain\Canvas\Services {
                 }
             }
 
-            $progressResults = array();
+            $progressResults = [];
 
             //Once the count is done calculate progress per canvastype Id
             foreach ($results as $key => &$canvas) {
                 $repoName = Str::studly($key);
-                $classname = app()->getNamespace() . "Domain\\$key\\Repositories\\$key";
+                $classname = app()->getNamespace()."Domain\\$key\\Repositories\\$key";
                 $canvasTypeRepo = app()->make($classname);
 
                 $numOfBoxes = count($canvasTypeRepo->getCanvasTypes());
 
-                if (!isset($progressResults[$key])) {
+                if (! isset($progressResults[$key])) {
                     $progressResults[$key] = '';
                 }
 
@@ -258,19 +259,21 @@ namespace Leantime\Domain\Canvas\Services {
             return $progressResults;
         }
 
-
         /**
          * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
          *
-         * @access public
-         * @param string $projectId projectId (optional)
-         * @param array  $boards    Array of project board types
+         * @param  string  $projectId  projectId (optional)
+         * @param  array  $boards  Array of project board types
          * @return array List of boards with a progress percentage
+         *
          * @throws BindingResolutionException
+         *
+         * @api
          */
-        public function getLastUpdatedCanvas(string $projectId = '', array $boards = array()): array
+        public function getLastUpdatedCanvas(string $projectId = '', array $boards = []): array
         {
             $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
+
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
         }
     }

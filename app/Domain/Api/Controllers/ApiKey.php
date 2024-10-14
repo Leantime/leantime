@@ -17,25 +17,22 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiKey extends Controller
 {
     private ProjectRepository $projectsRepo;
+
     private UserRepository $userRepo;
+
     private ClientRepository $clientsRepo;
 
     /**
      * init - initialize private variables
      *
-     * @access public
      *
-     * @param ProjectRepository $projectsRepo
-     * @param UserRepository    $userRepo
-     * @param ClientRepository  $clientsRepo
      *
-     * @return void
      *
      * @throws BindingResolutionException
      */
     public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void
     {
-        self::dispatch_event('api_key_init', $this);
+        self::dispatchEvent('api_key_init', $this);
 
         $this->projectsRepo = $projectsRepo;
         $this->userRepo = $userRepo;
@@ -45,9 +42,7 @@ class ApiKey extends Controller
     /**
      * run - display template and edit data
      *
-     * @access public
      *
-     * @return Response
      *
      * @throws \Exception
      */
@@ -58,12 +53,12 @@ class ApiKey extends Controller
 
         // Only admins
         if (isset($_GET['id']) === true) {
-            $id = (int)($_GET['id']);
+            $id = (int) ($_GET['id']);
             $row = $this->userRepo->getUser($id);
             $edit = false;
 
             // Build values array
-            $values = array(
+            $values = [
                 'firstname' => $row['firstname'],
                 'lastname' => $row['lastname'],
                 'user' => $row['username'],
@@ -73,13 +68,13 @@ class ApiKey extends Controller
                 'hours' => $row['hours'],
                 'wage' => $row['wage'],
                 'clientId' => $row['clientId'],
-                'source' =>  $row['source'],
+                'source' => $row['source'],
                 'pwReset' => $row['pwReset'],
-            );
+            ];
 
             if (isset($_POST['save'])) {
-                if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
-                    $values = array(
+                if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+                    $values = [
                         'firstname' => ($_POST['firstname'] ?? $row['firstname']),
                         'lastname' => '',
                         'user' => $row['username'],
@@ -90,13 +85,14 @@ class ApiKey extends Controller
                         'wage' => '',
                         'clientId' => '',
                         'password' => '',
-                        'source' =>  'api',
+                        'source' => 'api',
                         'pwReset' => '',
-                    );
+                    ];
 
                     $edit = true;
+
                 } else {
-                    $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
+                    $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
                 }
             }
 
@@ -114,13 +110,18 @@ class ApiKey extends Controller
                     // If projects are not set, all project assignments have been removed.
                     $this->projectsRepo->deleteAllProjectRelations($id);
                 }
-                $this->tpl->setNotification($this->language->__("notifications.key_updated"), 'success', 'apikey_updated');
+                $this->tpl->setNotification($this->language->__('notifications.key_updated'), 'success', 'apikey_updated');
+
+                $this->tpl->closeModal();
+                $this->tpl->htmxRefresh();
+
+                return $this->tpl->emptyResponse();
             }
 
             // Get relations to projects
             $projects = $this->projectsRepo->getUserProjectRelation($id);
 
-            $projectrelation = array();
+            $projectrelation = [];
 
             foreach ($projects as $projectId) {
                 $projectrelation[] = $projectId['projectId'];
@@ -133,8 +134,8 @@ class ApiKey extends Controller
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
-            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
 
             $this->tpl->assign('values', $values);
             $this->tpl->assign('relations', $projectrelation);
@@ -142,7 +143,7 @@ class ApiKey extends Controller
             $this->tpl->assign('status', $this->userRepo->status);
             $this->tpl->assign('id', $id);
 
-            return $this->tpl->displayPartial('api.apiKey');
+            return $this->tpl->displayPartial('api::partials.apiKey');
         } else {
             return $this->tpl->display('errors.error403');
         }

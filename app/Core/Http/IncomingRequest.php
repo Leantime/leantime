@@ -3,110 +3,145 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Session\SymfonySessionDecorator;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Incoming Request information
- *
- * @package    leantime
- * @subpackage core
  */
-class IncomingRequest extends Request
+class IncomingRequest extends \Illuminate\Http\Request
 {
     /**
-     * @param array                $query      The GET parameters
-     * @param array                $request    The POST parameters
-     * @param array                $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
-     * @param array                $cookies    The COOKIE parameters
-     * @param array                $files      The FILES parameters
-     * @param array                $server     The SERVER parameters
-     * @param string|resource|null $content    The raw body data
+     * The decoded JSON content for the request.
+     *
+     * @var \Symfony\Component\HttpFoundation\InputBag|null
      */
-    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
+    protected $json;
+
+    protected $pageUrl;
+
+    protected $currentRoute;
+
+    public $headers = [];
+
+    protected $requestUri;
+
+    public $query;
+
+    public $request;
+
+    public const HEADER_FORWARDED = parent::HEADER_FORWARDED; // When using RFC 7239
+
+    public const HEADER_X_FORWARDED_FOR = parent::HEADER_X_FORWARDED_FOR;
+
+    public const HEADER_X_FORWARDED_HOST = parent::HEADER_X_FORWARDED_HOST;
+
+    public const HEADER_X_FORWARDED_PROTO = parent::HEADER_X_FORWARDED_PROTO;
+
+    public const HEADER_X_FORWARDED_PORT = parent::HEADER_X_FORWARDED_PORT;
+
+    public const HEADER_X_FORWARDED_PREFIX = parent::HEADER_X_FORWARDED_PREFIX;
+
+    public const HEADER_X_FORWARDED_AWS_ELB = parent::HEADER_X_FORWARDED_AWS_ELB; // AWS ELB doesn't send X-Forwarded-Host
+
+    public const HEADER_X_FORWARDED_TRAEFIK = parent::HEADER_X_FORWARDED_TRAEFIK; // All "X-Forwarded-*"
+
+    public static function createFromGlobals(): static
     {
-        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        return parent::createFromGlobals();
+    }
 
+    public static function capture()
+    {
+        parent::enableHttpMethodParameterOverride();
 
-        $this->setRequestDest();
+        $headers = collect(getallheaders())
+            ->mapWithKeys(fn ($val, $key) => [
+                strtolower($key) => match (true) {
+                    in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                    default => $val,
+                },
+            ])
+            ->all();
+
+        $request = match (true) {
+            isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
+            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+            defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
+            default => parent::createFromGlobals(),
+        };
+
+        $request->setUrlConstants();
+
+        return $request;
+
     }
 
     /**
-     * Sets the request destination from the path
+     * Sets the URL constants for the application.
      *
-     * @param string|null $requestUri
+     * If the BASE_URL constant is not defined, it will be set based on the value of $appUrl parameter.
+     * If $appUrl is empty or not provided, it will be set using the getSchemeAndHttpHost method of the class.
+     *
+     * The APP_URL environment variable will be set to the value of $appUrl.
+     *
+     * If the CURRENT_URL constant is not defined, it will be set by appending the getRequestUri method result to the BASE_URL.
+     *
+     * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
      * @return void
      */
-    protected function setRequestDest(?string $requestUri = null): void
+    public function setUrlConstants($appUrl = '')
     {
-        $this->query->remove('act');
-        $this->query->remove('id');
-        $this->query->remove('request_parts');
 
-        $requestUri ??= $this->getPathInfo();
-        preg_match_all('#\/([^\/]+)#', $requestUri, $uriParts);
-        $uriParts = $uriParts[1] ?? array_map('ltrim', $uriParts[0] ?? [], '/');
+        if (! defined('BASE_URL')) {
+            if (isset($appUrl) && ! empty($appUrl)) {
+                define('BASE_URL', $appUrl);
 
-        switch (count($uriParts)) {
-            case 0:
-                $act = 'dashboard.home';
-                break;
+            } else {
+                define('BASE_URL', parent::getSchemeAndHttpHost());
+            }
+        }
 
-            case 1:
-            case 2:
-                $act = join('.', $uriParts);
-                break;
+        putenv('APP_URL='.$appUrl);
 
-            default:
-                $act = join('.', [$uriParts[0], $uriParts[1]]);
-                $id = $uriParts[2];
-                isset($uriParts[3]) && $request_parts = join('.', array_slice($uriParts, 3));
-                break;
-        };
-
-        $this->query->set('act', $act);
-        isset($id) && $this->query->set('id', $id);
-        isset($request_parts) && $this->query->set('request_parts', $request_parts);
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', BASE_URL.$this->getRequestUri());
+        }
     }
 
     /**
      * Gets the full URL including request uri and protocol
-     *
-     * @return string
      */
     public function getFullUrl(): string
     {
-        return  $this->getSchemeAndHttpHost() .  $this->getBaseUrl() .  $this->getPathInfo();
+        return parent::getSchemeAndHttpHost().parent::getBaseUrl().parent::getPathInfo();
     }
 
     /**
      * Gets the request URI (path behind domain name)
      * Will adjust for subfolder installations
      *
-     * @return string
      * @throws BindingResolutionException
      */
-    public function getRequestUri(): string
+    public function getRequestUri($appUrl = ''): string
     {
 
         $requestUri = parent::getRequestUri();
 
-        $config = app()->make(Environment::class);
-
-        if (empty($config->appUrl)) {
+        if (empty($appUrl)) {
             return $requestUri;
         }
 
-        $baseUrlParts = explode('/', rtrim($config->appUrl, '/'));
+        $baseUrlParts = explode('/', rtrim($appUrl, '/'));
 
         if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
             return $requestUri;
         }
 
         $subfolderName = $baseUrlParts[3];
-        $requestUri = preg_replace('/^\/' . $subfolderName . '/', '', $requestUri);
+        $requestUri = preg_replace('/^\/'.$subfolderName.'/', '', $requestUri);
 
         $this->requestUri = $requestUri;
 
@@ -117,38 +152,25 @@ class IncomingRequest extends Request
 
     /**
      * Gets the request params
-     *
-     * @param string|null $method
-     * @return array
      */
-    public function getRequestParams(string $method = null): array
+    public function getRequestParams(?string $method = null): array
     {
-        $method ??= $this->getMethod();
+        $method ??= parent::method();
         $method = strtoupper($method);
         $patch_vars = [];
 
         if ($method == 'PATCH') {
-            parse_str($this->getContent(), $patch_vars);
+            parse_str(parent::getContent(), $patch_vars);
         }
 
-        return match ($method) {
-            'PATCH' => $patch_vars,
-            'POST' => $this->request->all(),
-            'DELETE', 'GET' => $this->query->all(),
-            default => $this->query->all(),
-        };
-    }
+        $params = $this->query->all();
 
-    /**
-     * Set the Laravel session instance.
-     *
-     * @param \Illuminate\Contracts\Session\Session $session The Laravel session instance.
-     *
-     * @return void
-     */
-    public function setLaravelSession(\Illuminate\Contracts\Session\Session $session)
-    {
-        $this->session = new SymfonySessionDecorator($session);
+        //Merge query vars wigh post or patch vars
+        return match ($method) {
+            'PATCH' => array_merge($patch_vars, $params),
+            'POST' => array_merge($this->request->all(), $params),
+            default => $params
+        };
     }
 
     /**
@@ -156,36 +178,59 @@ class IncomingRequest extends Request
      * Wrapper for Laravel
      *
      * @return string The full URL of the current request.
+     *
+     * @Override
      */
     public function fullUrl()
     {
         return $this->getFullUrl();
     }
 
+    /**
+     * Determines whether the current request is an API or Cron request.
+     *
+     * @return bool Returns true if the request is an API or Cron request, false otherwise.
+     */
     public function isApiOrCronRequest(): bool
     {
         $requestUri = $this->getRequestUri();
-        return str_starts_with($requestUri, "/api") || str_starts_with($requestUri, "/cron");
+
+        return str_starts_with($requestUri, '/api') || str_starts_with($requestUri, '/cron');
     }
 
+    /**
+     * Determines whether the current request is an Htmx request.
+     *
+     * @return bool Returns true if the request is an Htmx request, false otherwise.
+     */
     public function isHtmxRequest(): bool
     {
-        return !empty($this->headers->get('Hx-Request')) ? true : false;
+        return ! empty($this->headers->get('Hx-Request')) ? true : false;
     }
 
+    /**
+     * Determines whether the current request is a boosted htmx request.
+     *
+     * @return bool Returns true if the request is a boosted htmx request, false otherwise.
+     */
     public function isBoostedHtmxRequest(): bool
     {
-        if($this->isHtmxRequest() &&
-            this->headers->get('Hx-Boost') == 'true') {
+        if ($this->isHtmxRequest() &&
+            $this->headers->get('Hx-Boost') == 'true') {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * Determines whether the current request is an unboosted HTMX request.
+     *
+     * @return bool Returns true if the request is an unboosted HTMX request, false otherwise.
+     */
     public function isUnboostedHtmxRequest(): bool
     {
-        if($this->isHtmxRequest() &&
+        if ($this->isHtmxRequest() &&
             empty($this->headers->get('Hx-Boost'))) {
             return true;
         }
@@ -193,19 +238,67 @@ class IncomingRequest extends Request
         return false;
     }
 
-
-    /**
-     * Determine if the current request probably expects a JSON response.
-     *
-     * @return bool
-     */
-    public function expectsJson()
+    public function getCurrentRoute()
     {
-        if($this instanceof CliRequest || $this->isApiOrCronRequest()) {
-            return true;
+
+        if ($this->currentRoute == null) {
+
+            $route = '';
+            $segments = parent::segments();
+            if (count($segments) > 0) {
+                $route = implode('.', $segments);
+            }
+
+            $this->currentRoute = $route;
         }
 
-        return false;
+        return $this->currentRoute;
     }
 
+    public function setCurrentRoute($route)
+    {
+        $this->currentRoute = $route;
+    }
+
+    /**
+     * Gets the module name from the given complete name or the current route.
+     *
+     * @param  string|null  $completeName  The complete name from which to extract the module name. If not provided, the current route will be used.
+     * @return string The module name.
+     *
+     * @deprecated
+     */
+    public function getModuleName(?string $completeName = null): string
+    {
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
+
+        if (is_array($actionParts)) {
+            return $actionParts[0];
+        }
+
+        return '';
+    }
+
+    /**
+     * getActionName - split string to get actionName
+     *
+     * @throws BindingResolutionException
+     *
+     * @deprecated
+     */
+    public function getActionName(?string $completeName = null): string
+    {
+        $completeName ??= $this->getCurrentRoute();
+        $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
+
+        //If not action name was given, call index controller
+        if (is_array($actionParts) && count($actionParts) == 1) {
+            return 'index';
+        } elseif (is_array($actionParts) && count($actionParts) == 2) {
+            return $actionParts[1];
+        }
+
+        return '';
+    }
 }

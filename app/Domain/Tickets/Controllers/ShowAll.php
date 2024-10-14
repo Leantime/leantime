@@ -10,23 +10,16 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private ProjectService $projectService;
+
         private TicketService $ticketService;
+
         private SprintService $sprintService;
+
         private TimesheetService $timesheetService;
 
-        /**
-         * @param ProjectService   $projectService
-         * @param TicketService    $ticketService
-         * @param SprintService    $sprintService
-         * @param TimesheetService $timesheetService
-         * @return void
-         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -39,18 +32,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->timesheetService = $timesheetService;
 
-            session(["lastPage" => CURRENT_URL]);
-            session(["lastTicketView" => "table"]);
-            session(["lastFilterdTicketTableView" => CURRENT_URL]);
+            session(['lastPage' => CURRENT_URL]);
+            session(['lastTicketView' => 'table']);
+            session(['lastFilterdTicketTableView' => CURRENT_URL]);
 
-            if (!session()->exists("currentProjectName")) {
-                Frontcontroller::redirect(BASE_URL . "/");
+            if (! session()->exists('currentProjectName')) {
+                Frontcontroller::redirect(BASE_URL.'/');
             }
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws \Exception
          */
         public function get($params): Response

@@ -9,19 +9,12 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private UserRepository $userRepo;
+
         private LdapService $ldapService;
 
-        /**
-         * @param UserRepository $userRepo
-         * @param LdapService    $ldapService
-         * @return void
-         */
         public function init(UserRepository $userRepo, LdapService $ldapService): void
         {
             $this->userRepo = $userRepo;
@@ -29,7 +22,6 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
         /**
-         * @return Response
          * @throws \Exception
          */
         public function get(): Response
@@ -53,10 +45,6 @@ namespace Leantime\Domain\Users\Controllers {
             }
         }
 
-        /**
-         * @param $params
-         * @return Response
-         */
         public function post($params): Response
         {
             return $this->tpl->displayJson(['status' => 'Not Implemented']);

@@ -15,16 +15,12 @@
 
 .dropdown-menu > li > a,
 .bigMenu ul li a{
-    font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0;
     padding: 5px 10px;
     border-radius: 0px;
 }
-.pagetitle .dropdown-menu > li > a {
-    color:var(--primary-font-color);
-    text-decoration:none;
-}
+
 
 
 .dropdown-menu>.active>a,
@@ -211,14 +207,18 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .ticketDropdown a.label-warning,
 .nyroModalCont .ticketDropdown a.label-warning,
 .label-warning,
-.label-yellow{
+.label-yellow,
+.simpleStatus-bg-yellow,
+.dropdown-menu > li > a.simpleStatus-bg-yellow {
     background:var(--yellow);
     color:var(--yellow-text-color);
 }
 
 .chosen-results li.label-info,
 .maincontent .ticketDropdown a.label-info,
-.nyroModalCont .ticketDropdown a.label-info{
+.nyroModalCont .ticketDropdown a.label-info,
+.simpleStatus-bg-blue,
+.dropdown-menu > li > a.simpleStatus-bg-blue {
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
@@ -226,7 +226,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .chosen-results li.label-important,
 .maincontent .ticketDropdown a.label-important,
 .nyroModalCont .ticketDropdown a.label-important,
-.label-important{
+.label-important {
     background:var(--red);
     color:var(--red-text-color);
 }
@@ -235,7 +235,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .ticketDropdown a.label-danger,
 .nyroModalCont .ticketDropdown a.label-danger,
 .label-danger,
-.label-red{
+.label-red,
+.simpleStatus-bg-red,
+.dropdown-menu > li > a.simpleStatus-bg-red {
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
@@ -244,7 +246,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontent .ticketDropdown a.label-success,
 .nyroModalCont .ticketDropdown a.label-success,
 .label-success,
-.label-green {
+.label-green,
+.simpleStatus-bg-green,
+.dropdown-menu > li > a.simpleStatus-bg-green {
     background:var(--green);
     color:var(--green-text-color);
 }
@@ -252,7 +256,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .chosen-results li.label-default,
 .maincontent .ticketDropdown a.label-default,
 .nyroModalCont .ticketDropdown a.label-default,
-.label-default{
+.label-default,
+.simpleStatus-bg-none,
+.dropdown-menu > li > a.simpleStatus-bg-none {
     background: var(--grey);
     color:var(--grey-text-color);
 }
@@ -515,56 +521,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:none;
 }
 
-.btn-group .btn.titleIconPicker {
-    font-size: var(--font-size-xl);
-    line-height: 21px;
-    padding: 5px 6px;
-    color: var(--primary-font-color);
-    background-color: var(--secondary-background);
-    border: 1px solid var(--secondary-background);
-    border-radius: 3px;
-}
-
-.btn-group .btn.titleIconPicker:hover {
-    border: 1px solid var(--main-border-color);
-}
-
-.btn-group .btn.titleIconPicker .caret,
-.btn-group .btn.titleIconPicker .caret,
-.btn-group .btn.titleIconPicker:last-child .caret,
-.btn-group >.btn.titleIconPicker.dropdown-toggle .caret {
-    border-top-color: var(--primary-font-color);
-}
-
-.btn-group .btn.titleIconPicker:hover .caret,
-.btn-group .btn.titleIconPicker:hover .caret,
-.btn-group .btn.titleIconPicker:last-child:hover .caret,
-.btn-group >.btn.titleIconPicker.dropdown-toggle:hover .caret {
-    border-top-color: var(--secondary-action-hover-color);
-}
-
 .inlineDropDownContainerLeft {
     float:left;
     display:inline-block;
-}
-
-.pagetitle .header-title-dropdown {
-    border: 1px solid transparent;
-    display:inline-block;
-    background:transparent;
-    width:auto;
-    color: var(--main-titles-color);
-    text-decoration:underline;
-    padding:0px 3px ;
-    border-radius: var(--box-radius-small);
-}
-
-.pagetitle .header-title-dropdown .fa {
-    padding-left:10px;
-}
-
-.pagetitle .header-title-dropdown:hover {
-    border: 1px solid var(--main-titles-color);
 }
 
 .dropdownWrapper {
@@ -578,13 +537,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .headerEditDropdown {
     float:right;
     padding-top:20px;
-}
-
-.pagetitle .btn-transparent {
-    background:transparent;
-    color:var(--main-titles-color);
-    border:1px solid var(--main-action-color);
-    font-size:var(--font-size-l);
 }
 
 .headerEditDropdown .dropdown-toggle {
@@ -670,4 +622,18 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .grid-stack-item-content.maincontentinner .inlineDropDownContainer .ticketDropDown,
 .grid-stack-item-content.maincontentinner .grid-handler-top {
     color: var(--interactive-icon-color);
+}
+
+.inlineLabelDropdown {
+
+}
+
+.inlineLabelDropdown label {
+    display:inline-block;
+    float:left;
+    margin-right:5px;
+}
+
+.inlineLabelDropdown .dropdown {
+    padding-top:5px;
 }

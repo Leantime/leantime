@@ -9,9 +9,7 @@ use Tests\Support\Page\Acceptance\Login;
 
 class LoginCest
 {
-    public function _before(AcceptanceTester $I)
-    {
-    }
+    public function _before(AcceptanceTester $I) {}
 
     #[Group('login')]
     #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
@@ -29,7 +27,7 @@ class LoginCest
         $I->fillField(['name' => 'username'], 'test@leantime.io');
         $I->fillField(['name' => 'password'], 'WrongPassword');
         $I->click('Login');
-        $I->waitForElementVisible(".login-alert");
+        $I->waitForElementVisible('.login-alert');
 
         $I->see('Username or password incorrect!');
     }

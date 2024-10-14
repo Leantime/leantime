@@ -24,7 +24,7 @@ min-width: 1200px
     }
 
     .mainwrapper.menuclosed .bigProjectSelector .fa {
-        font-size:var(--base-font-size);
+
         line-height: 50px;
     }
 
@@ -105,24 +105,11 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
-    }
-
     .fc-header {
         margin-top:50px;
     }
 
-    .maincontentinner .btn,
-    .maincontentinner .btn-group{
 
-        margin-bottom:5px;
-    }
-
-    .maincontentinner .simpleButtons .btn,
-    .maincontentinner .simpleButtons .btn-group{
-        width:auto;
-    }
 
     .maincontentinner .simpleButtons {
         width:auto;
@@ -418,9 +405,6 @@ min-width: 1200px
         padding: 10px 25px;
     }
 
-    .amountdue .btn {
-        width: 225px;
-    }
     .hidden-gt-sm {
         display:block!important;
     }
@@ -503,10 +487,6 @@ min-width: 1200px
 
     .leftmenu .nav-tabs.nav-stacked li a {
         font-size: 13px;
-    }
-
-    .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-        font-size: 12px;
     }
 
 
@@ -638,14 +618,6 @@ min-width: 1200px
     /* bootstrap */
     .tabbable > .tab-content {
         padding: 15px;
-    }
-
-    .btn-circle {
-        width: 6px;
-    }
-
-    .btn-circle i {
-        margin-left: -3px;
     }
 
     .input-append .btn, .input-prepend .btn {
@@ -825,19 +797,11 @@ min-width: 1200px
         width:100%;
     }
 
-    .dropdown-menu {
-        width:100%;
-    }
 
     .fc-header {
         margin-top:50px;
     }
 
-    .maincontentinner .btn,
-    .maincontentinner .btn-group{
-        width:100%;
-        margin-bottom:5px;
-    }
 
     .currentSprint {
         margin:0px;
@@ -1353,9 +1317,7 @@ min-width: 1200px
     }
 
     /* bootstrap */
-    .btn {
-        padding: 4px 12px;
-    }
+
 
     .ticketBox {
         width: 100% !important;

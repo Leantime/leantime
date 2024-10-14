@@ -11,19 +11,23 @@ namespace Leantime\Domain\Notifications\Services {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
     /**
-     *
+     * @api
      */
     class Notifications
     {
         private DbCore $db;
+
         private NotificationRepository $notificationsRepo;
+
         private UserRepository $userRepository;
+
         private LanguageCore $language;
 
         /**
          * __construct - get database connection
          *
-         * @access public
+         *
+         * @api
          */
         public function __construct(
             DbCore $db,
@@ -38,31 +42,19 @@ namespace Leantime\Domain\Notifications\Services {
         }
 
         /**
-         * @param $userId
-         * @param $showNewOnly
-         * @param $limitStart
-         * @param $limitEnd
-         * @param $filterOptions
-         * @return array|false
+         * @api
          */
         /**
-         * @param $userId
-         * @param int    $showNewOnly
-         * @param int    $limitStart
-         * @param int    $limitEnd
-         * @param array  $filterOptions
-         * @return array|false
+         * @api
          */
-        public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
+        public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = []): false|array
         {
 
             return $this->notificationsRepo->getAllNotifications($userId, $showNewOnly, $limitStart, $limitEnd, $filterOptions);
         }
 
-
         /**
-         * @param array $notifications
-         * @return bool|null
+         * @api
          */
         public function addNotifications(array $notifications): ?bool
         {
@@ -71,19 +63,15 @@ namespace Leantime\Domain\Notifications\Services {
         }
 
         /**
-         * @param $id
-         * @param $userId
-         * @return bool
+         * @api
          */
         /**
-         * @param $id
-         * @param $userId
-         * @return bool
+         * @api
          */
         public function markNotificationRead($id, $userId): bool
         {
 
-            if ($id == "all") {
+            if ($id == 'all') {
                 return $this->notificationsRepo->markAllNotificationRead($userId);
             } else {
                 return $this->notificationsRepo->markNotificationRead($id);
@@ -91,22 +79,18 @@ namespace Leantime\Domain\Notifications\Services {
         }
 
         /**
-         * @param string $content
-         * @param string $module
-         * @param int    $moduleId
-         * @param int    $authorId
-         * @param string $url
-         * @return void
          * @throws BindingResolutionException
+         *
+         * @api
          */
         public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
         {
 
-            $dom = new DOMDocument();
+            $dom = new DOMDocument;
 
             //Content may not be well formatted. Suppress warnings.
             @$dom->loadHTML($content);
-            $links = $dom->getElementsByTagName("a");
+            $links = $dom->getElementsByTagName('a');
 
             $author = $this->userRepository->getUser($authorId);
             $authorName = $author['firstname'] ?? $this->language->__('label.team_mate');
@@ -121,23 +105,23 @@ namespace Leantime\Domain\Notifications\Services {
                         false,
                         0,
                         10,
-                        array("type" => "mention", "module" => $module, "moduleId" => $moduleId)
+                        ['type' => 'mention', 'module' => $module, 'moduleId' => $moduleId]
                     );
 
                     if ($userMentions === false || (is_array($userMentions) && count($userMentions) == 0)) {
-                        $notification = array(
-                            "userId" => $taggedUser,
-                            "read" => '0',
-                            "type" => 'mention',
-                            "module" => $module,
-                            "moduleId" => $moduleId,
-                            "message" => sprintf($this->language->__('text.x_mentioned_you'), $authorName),
-                            "datetime" => date("Y-m-d H:i:s"),
-                            "url" => $url,
-                            "authorId" => $authorId,
-                        );
+                        $notification = [
+                            'userId' => $taggedUser,
+                            'read' => '0',
+                            'type' => 'mention',
+                            'module' => $module,
+                            'moduleId' => $moduleId,
+                            'message' => sprintf($this->language->__('text.x_mentioned_you'), $authorName),
+                            'datetime' => date('Y-m-d H:i:s'),
+                            'url' => $url,
+                            'authorId' => $authorId,
+                        ];
 
-                        $this->addNotifications(array($notification));
+                        $this->addNotifications([$notification]);
 
                         //send email
                         $mailer = app()->make(MailerCore::class);
@@ -146,12 +130,12 @@ namespace Leantime\Domain\Notifications\Services {
                         $subject = sprintf($this->language->__('text.x_mentioned_you'), $authorName);
                         $mailer->setSubject($subject);
 
-                        $emailMessage = $subject . " " . sprintf($this->language->__('text.click_here'), $url);
+                        $emailMessage = $subject.' '.sprintf($this->language->__('text.click_here'), $url);
                         $mailer->setHtml($emailMessage);
 
                         $taggedUserObject = $this->userRepository->getUser($taggedUser);
                         if (isset($taggedUserObject['username'])) {
-                            $mailer->sendMail(array($taggedUserObject['username']), $authorName);
+                            $mailer->sendMail([$taggedUserObject['username']], $authorName);
                         }
                     }
                 }

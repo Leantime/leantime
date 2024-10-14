@@ -1,76 +1,47 @@
-leantime.wikiController = (function () {
+import jQuery from 'jquery';
 
-
-    //Functions
-    var initTree = function (id, selectedId) {
-
-        jQuery(id).jstree({
-            "core": {
-                "expand_selected_onload":true,
-                "themes": {
-                    "dots":false
-                }
-            },
-            "state" : {
-                "key" : "tree_state",
-
-            },
-            "types" : {
-                "default": {
-                    "icon": "far fa-file-alt"
-                },
-            },
-            "plugins" : ["wholerow", "types", "state"]
-        }).bind("loaded.jstree", function (e, data) {
-            jQuery(id).jstree("select_node", "treenode_" + selectedId + "", true);
-        });
-
-        jQuery(id).on('activate_node.jstree', function (e, data) {
-
-            jQuery(id).jstree("save_state");
-
-            if (data == undefined || data.node == undefined || data.node.id == undefined) {
-                return;
+//Functions
+export const initTree = function (id, selectedId) {
+    jQuery(id).jstree({
+        "core": {
+            "expand_selected_onload":true,
+            "themes": {
+                "dots":false
             }
+        },
+        "state" : {
+            "key" : "tree_state",
 
-            window.location.href = data.node.a_attr.href;
-        });
-
-
-
-    }
-
-    var wikiModal = function () {
-
-        var wikiModalConfig = {
-            sizes: {
-                minW: 400,
-                minH: 350
+        },
+        "types" : {
+            "default": {
+                "icon": "far fa-file-alt"
             },
-            resizable: true,
-            autoSizable: true,
-            callbacks: {
-                afterShowCont: function () {
+        },
+        "plugins" : ["wholerow", "types", "state"]
+    });
 
-                    jQuery(".formModal").nyroModal(wikiModalConfig);
-                },
-                beforeClose: function () {
-                    location.reload();
-                }
+    jQuery(id).on("ready.jstree", function (e, data) {
 
+        jQuery(this).jstree("deselect_all");
+        jQuery(this).jstree("select_node", "treenode_" + selectedId + "", true);
+        jQuery(this).jstree("save_state");
 
-            },
-            titleFromIframe: true
-        };
-        jQuery(".wikiModal").nyroModal(wikiModalConfig);
+    })
 
-    }
+    jQuery(id).on('activate_node.jstree', function (e, data) {
 
+        jQuery(this).jstree("save_state");
 
-    // Make public what you want to have public, everything else is private
-    return {
-        initTree: initTree,
-        wikiModal:wikiModal,
+        if (data == undefined || data.node == undefined || data.node.id == undefined) {
+            return;
+        }
 
-    };
-})();
+        window.location.href = data.node.a_attr.href;
+    });
+}
+
+// Make public what you want to have public, everything else is private
+export default {
+    initTree: initTree,
+};

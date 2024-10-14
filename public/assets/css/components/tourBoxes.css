@@ -19,7 +19,7 @@
 
 .shepherd-title,
 .shepherd-text {
-    font-size:var(--base-font-size);
+
     padding:15px;
 }
 
@@ -39,7 +39,7 @@
     border-radius: var(--input-radius);
     padding: 4px 14px;
     font-weight:bold;
-    line-height:21px;
+    line-height: var(--form-element-line-height);
     border: 1px solid var(--main-action-bg);
 }
 

@@ -13,9 +13,6 @@ namespace Leantime\Domain\Menu\Repositories {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
-    /**
-     *
-     */
     class Menu
     {
         use DispatchesEvents;
@@ -24,7 +21,7 @@ namespace Leantime\Domain\Menu\Repositories {
         public const DEFAULT_MENU = 'default';
 
         // Menu structures
-        private array $menuStructures = [
+        public array $menuStructures = [
             'default' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
                 10 => [
@@ -61,7 +58,7 @@ namespace Leantime\Domain\Menu\Repositories {
                     'submenu' => [
                         11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'icon' => 'fa fa-fw fa-home', 'tooltip' => 'menu.dashboard_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
                         21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.milestones_tooltip','href' => '/tickets/roadmap', 'active' => ['roadmap']],
+                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.milestones_tooltip', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas'],
                     ],
                 ],
@@ -109,7 +106,7 @@ namespace Leantime\Domain\Menu\Repositories {
             'projecthub' => [
                 10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa-solid fa-house-flag', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
             ],
-            "company" => [
+            'company' => [
                 10 => [
                     'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
                     'submenu' => [
@@ -132,15 +129,7 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
         ];
 
-        private array $companyMenuStructure = [];
 
-        /**
-         * @param SettingRepository $settingsRepo
-         * @param LanguageCore      $language
-         * @param EnvironmentCore   $config
-         * @param TicketService     $ticketsService
-         * @param AuthService       $authService
-         */
         public function __construct(
             /** @var SettingRepository */
             private SettingRepository $settingsRepo,
@@ -150,24 +139,21 @@ namespace Leantime\Domain\Menu\Repositories {
             private EnvironmentCore $config,
             /** @var TicketService */
             private TicketService $ticketsService,
-            /** @var AuthService */
-            private AuthService $authService,
         ) {
-            if (session()->exists("usersettings.submenuToggle") === false && session()->exists("userdata") === true) {
+            if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
                 $setting = $this->settingsRepo;
                 session([
-                    "usersettings.submenuToggle" => unserialize(
-                        $setting->getSetting("usersetting." . session("userdata.id") . ".submenuToggle")
+                    'usersettings.submenuToggle' => unserialize(
+                        $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle')
                     ),
-                    ]);
+                ]);
             }
         }
 
         /**
          * getMenuTypes - Return an array of a currently supported menu types
          *
-         * @access public
-         * @return array  Array of supported menu types
+         * @return array Array of supported menu types
          */
         public function getMenuTypes(): array
         {
@@ -175,7 +161,7 @@ namespace Leantime\Domain\Menu\Repositories {
             $config = $this->config;
 
             if (! isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
-                return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
+                return [self::DEFAULT_MENU => $language->__('label.menu_type.'.self::DEFAULT_MENU)];
             }
 
             $menuTypes = [];
@@ -190,92 +176,104 @@ namespace Leantime\Domain\Menu\Repositories {
         /**
          * setSubmenuState - Set the state of the submenu (open or closed)
          *
-         * @access public
-         * @param  string $submenu Submenu identifier
-         * @param  string $state   New state (open / closed)
+         * @param  string  $submenu  Submenu identifier
+         * @param  string  $state  New state (open / closed)
          */
         public function setSubmenuState(string $submenu, string $state): void
         {
 
-            if (session()->exists("usersettings.submenuToggle") && is_array(session("usersettings.submenuToggle")) && $submenu !== false) {
-                session(["usersettings.submenuToggle." . $submenu => $state]);
+            if (session()->exists('usersettings.submenuToggle') && is_array(session('usersettings.submenuToggle')) && $submenu !== false) {
+                session(['usersettings.submenuToggle.'.$submenu => $state]);
             }
 
             $setting = $this->settingsRepo;
-            $setting->saveSetting("usersetting." . session("userdata.id") . ".submenuToggle", serialize(session("usersettings.submenuToggle")));
+            $setting->saveSetting('usersetting.'.session('userdata.id').'.submenuToggle', serialize(session('usersettings.submenuToggle')));
         }
 
         /**
          * getSubmenuState - Gets the state of the submenu (open or closed)
          *
-         * @access public
-         * @param  string $submenu Submenu identifier
+         * @param  string  $submenu  Submenu identifier
          */
         public function getSubmenuState(string $submenu)
         {
             $setting = $this->settingsRepo;
-            $subStructure = $setting->getSetting("usersetting." . session("userdata.id") . ".submenuToggle");
+            $subStructure = $setting->getSetting('usersetting.'.session('userdata.id').'.submenuToggle');
 
-            session(["usersettings.submenuToggle" => unserialize($subStructure)]);
+            session(['usersettings.submenuToggle' => unserialize($subStructure)]);
 
-            return session("usersettings.submenuToggle." . $submenu) ?? false;
+            return session('usersettings.submenuToggle.'.$submenu) ?? false;
         }
 
-        protected function buildMenuStructure(array $menuStructure, string $filter): array
+        /**
+         * Builds the menu structure recursively.
+         *
+         * @param array &$menuStructure The menu structure to build. Passed by reference.
+         * @param string $filter The filter to apply to the menu structure.
+         *
+         * @return array The built menu structure.
+         */
+        protected function buildMenuStructure(array &$menuStructure, string $filter): array
         {
-            return collect($menuStructure)
-                ->map(function ($menuItem) use ($filter) {
-                    if ($menuItem['type'] !== 'submenu') {
-                        return $menuItem;
-                    }
 
-                    $filter = $filter . '.' . $menuItem['id'];
-                    $menuItem['submenu'] = self::dispatch_filter(
-                        hook: $filter,
-                        payload: $this->buildMenuStructure($menuItem['submenu'], $filter),
-                        function: 'getMenuStructure'
-                    );
+            foreach($menuStructure as &$menuItem) {
 
-                    return $menuItem;
-                })->all();
+                if ($menuItem['type'] !== 'submenu') {
+                    continue;
+                }
+
+                $menuItem['submenu'] = $this->buildMenuStructure($menuItem['submenu'], $filter);
+
+                $filter = $filter . '.' . $menuItem['id'];
+
+                return self::dispatchFilter(
+                    hook: $filter,
+                    payload:  $menuItem['submenu'],
+                    function: 'getMenuStructure'
+                );
+
+            }
+
+            return $menuStructure;
         }
 
         /**
          * getMenu - Return a specific menu structure
          *
-         * @access public
-         * @param  string $menuType Menu type to return
-         * @return array  Array of menu structrue
+         * @param  string  $menuType  Menu type to return
+         * @return array Array of menu structrue
          */
         public function getMenuStructure(string $menuType = ''): array
         {
-            $language = $this->language;
-            $filter = "menuStructures.$menuType";
 
-            $menuCollection =  collect($this->menuStructures)->map(
-                function ($menu) use ($menuType, $filter) {
-                    return self::dispatch_filter(
-                        $filter,
-                        $this->buildMenuStructure($menu, $filter),
-                        'getMenuStructure'
-                    );
-                }
-            )->all();
-
-            $this->menuStructures = self::dispatch_filter(
-                'menuStructures',
-                $menuCollection,
-                ['menuType' => $menuType]
-            );
-
-            if (! isset($this->menuStructures[$menuType]) || empty($menuType)) {
+            if (empty($menuType)) {
                 $menuType = self::DEFAULT_MENU;
             }
 
+            $this->menuStructures = self::dispatchFilter(
+                'menuStructures',
+                $this->menuStructures,
+                ['menuType' => $menuType]
+            );
+
+            //If menu structure cannot be found, don't return anything
+            if(! isset($this->menuStructures[$menuType])) {
+                return [];
+            }
+
+            $language = $this->language;
+            $filter = "menuStructures.$menuType";
+
+            $this->menuStructures[$menuType] = self::dispatchFilter(
+                        $filter,
+                        $this->menuStructures[$menuType],
+                        ['menuType' => $menuType]
+                    );
+
             $menuStructure = $this->menuStructures[$menuType];
 
-            if (session()->exists("usersettings.submenuToggle") === false || is_array(session("usersettings.submenuToggle")) === false) {
-                session(["usersettings.submenuToggle" => array()]);
+            if (session()->exists('usersettings.submenuToggle') === false || is_array(session('usersettings.submenuToggle')) === false) {
+                session(['usersettings.submenuToggle' => []]);
             }
 
             ksort($menuStructure);
@@ -306,8 +304,8 @@ namespace Leantime\Domain\Menu\Repositories {
                         if ($element['visual'] == 'always') {
                             $menuStructure[$key]['visual'] = 'open';
                         } else {
-                            $submenuState = session("usersettings.submenuToggle." . $element['id']) ?? $element['visual'];
-                            session(["usersettings.submenuToggle." . $element['id'] => $submenuState]);
+                            $submenuState = session('usersettings.submenuToggle.'.$element['id']) ?? $element['visual'];
+                            session(['usersettings.submenuToggle.'.$element['id'] => $submenuState]);
                         }
                         $menuStructure[$key]['visual'] = $submenuState;
 
@@ -325,14 +323,14 @@ namespace Leantime\Domain\Menu\Repositories {
                                     break;
 
                                 default:
-                                    die("Cannot proceed due to invalid submenu element: '" . $subelement['type'] . "'");
+                                    exit("Cannot proceed due to invalid submenu element: '".$subelement['type']."'");
                             }
                         }
 
                         break;
 
                     default:
-                        die("Cannot proceed due to invalid menu element: '" . $element['type'] . "'");
+                        exit("Cannot proceed due to invalid menu element: '".$element['type']."'");
                 }
             }
 
@@ -341,17 +339,13 @@ namespace Leantime\Domain\Menu\Repositories {
             return $menuStructure;
         }
 
-        /**
-         * @param $element
-         * @param $structure
-         * @return void
-         */
         public function processMenuItem($element, &$structure): void
         {
 
             //ModuleManager Check
             if (false) {
                 $structure['type'] = 'disabled';
+
                 return;
             }
 
@@ -359,7 +353,7 @@ namespace Leantime\Domain\Menu\Repositories {
             if (isset($element['role'])) {
                 $accessGranted = AuthService::userIsAtLeast($element['role'], true);
 
-                if (!$accessGranted) {
+                if (! $accessGranted) {
                     $structure['type'] = 'disabled';
                 }
             }
@@ -370,7 +364,6 @@ namespace Leantime\Domain\Menu\Repositories {
                 }
             }
 
-            return;
         }
 
         /**
@@ -382,7 +375,8 @@ namespace Leantime\Domain\Menu\Repositories {
             $ticketService = $this->ticketsService;
 
             //Removing base URL from here since it is being added in the menu for loop in the template
-            $base_url = !empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
+            $base_url = ! empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
+
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
@@ -392,57 +386,53 @@ namespace Leantime\Domain\Menu\Repositories {
             $ticketService = $this->ticketsService;
 
             //Removing base URL from here since it is being added in the menu for loop in the template
-            $base_url = !empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
+            $base_url = ! empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
+
             return str_replace($base_url, '', $ticketService->getLastTimelineViewUrl());
         }
 
-
-
-        /**
-         * @return string
-         */
         public function getIdeaMenu(): string
         {
-            $url = "/ideas/showBoards";
-            if (session()->exists("lastIdeaView")) {
-                if (session("lastIdeaView") == 'kanban') {
-                    $url = "/ideas/advancedBoards";
+            $url = '/ideas/showBoards';
+            if (session()->exists('lastIdeaView')) {
+                if (session('lastIdeaView') == 'kanban') {
+                    $url = '/ideas/advancedBoards';
                 }
             }
 
             return $url;
         }
 
-        public function getSectionMenuType($currentRoute, $default = "default")
+        public function getSectionMenuType($currentRoute, $default = 'default')
         {
             $sections = [
-                "dashboard.home" => "personal",
-                "projects.showMy" => "personal",
-                "timesheets.showMy" => "personal",
-                "calendar.showMyCalendar" => "personal",
-                "calendar.showMyList" => "personal",
-                "tickets.roadmapAll" => "personal",
-                "notes.showNotes" => "personal",
-                "notes.showNotesList" => "personal",
-                "tickets.showAllMilestonesOverview" => "personal",
-                "users.editOwn" => "personal",
-                "setting.editCompanySettings" => "company",
-                "timesheets.showAll" => "company",
-                "projects.showAll" => "company",
-                "clients.showAll" => "company",
-                "clients.newClient" => "company",
-                "clients.showClient" => "company",
-                "users.showAll" => "company",
-                "plugins.show" => "company",
-                "plugins.marketplace" => "company",
-                "plugins.myapps" => "company",
-                "connector.show" => "company",
-                "billing.subscriptions" => "company",
-                "llamadorian.statusCollector" => "personal",
+                'dashboard.home' => 'personal',
+                'projects.showMy' => 'personal',
+                'timesheets.showMy' => 'personal',
+                'timesheets.showMyList' => 'personal',
+                'calendar.showMyCalendar' => 'personal',
+                'calendar.showMyList' => 'personal',
+                'tickets.roadmapAll' => 'personal',
+                'notes.showNotes' => 'personal',
+                'notes.showNotesList' => 'personal',
+                'tickets.showAllMilestonesOverview' => 'personal',
+                'users.editOwn' => 'personal',
+                'setting.editCompanySettings' => 'company',
+                'timesheets.showAll' => 'company',
+                'projects.showAll' => 'company',
+                'clients.showAll' => 'company',
+                'clients.newClient' => 'company',
+                'clients.showClient' => 'company',
+                'users.showAll' => 'company',
+                'plugins.show' => 'company',
+                'plugins.marketplace' => 'company',
+                'plugins.myapps' => 'company',
+                'connector.show' => 'company',
+                'billing.subscriptions' => 'company',
+                'llamadorian.statusCollector' => 'personal',
             ];
 
-            $sections = self::dispatch_filter('menuSections', $sections, array("currentRoute" => $currentRoute, "default" => $default));
-
+            $sections = self::dispatchFilter('menuSections', $sections, ['currentRoute' => $currentRoute, 'default' => $default]);
 
             if (isset($sections[$currentRoute])) {
                 return $sections[$currentRoute];

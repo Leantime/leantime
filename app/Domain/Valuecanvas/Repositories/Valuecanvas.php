@@ -8,9 +8,6 @@ namespace Leantime\Domain\Valuecanvas\Repositories {
 
     use Leantime\Domain\Canvas\Repositories\Canvas;
 
-    /**
-     *
-     */
     class Valuecanvas extends Canvas
     {
         /**
@@ -34,7 +31,6 @@ namespace Leantime\Domain\Valuecanvas\Repositories {
          */
         protected string $disclaimer = '';
 
-
         protected array $dataLabels = [
             1 => ['title' => 'label.valueCanvas.assumptions', 'field' => 'assumptions', 'active' => true],
             2 => ['title' => 'label.valueCanvas.data',        'field' => 'data',        'active' => true],
@@ -45,14 +41,12 @@ namespace Leantime\Domain\Valuecanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
-            'customersegment'  => ['icon' => 'fa-user', 'title' => 'box.lean.customersegment'],
-            'problem'          => ['icon' => 'fa-lock', 'title' => 'box.lean.problem'],
-            'solution'         => ['icon' => 'fa-key', 'title' => 'box.lean.solution'],
-            'uniquevalue'      => ['icon' => 'fa-gift', 'title' => 'box.value.benefit'],
-
+            'customersegment' => ['icon' => 'fa-user', 'title' => 'box.lean.customersegment'],
+            'problem' => ['icon' => 'fa-lock', 'title' => 'box.lean.problem'],
+            'solution' => ['icon' => 'fa-key', 'title' => 'box.lean.solution'],
+            'uniquevalue' => ['icon' => 'fa-gift', 'title' => 'box.value.benefit'],
 
         ];
 
@@ -60,7 +54,6 @@ namespace Leantime\Domain\Valuecanvas\Repositories {
          * relatesLabels - Relates to label
          *
          * @acces public
-         * @var   array
          */
         protected array $relatesLabels = [];
     }

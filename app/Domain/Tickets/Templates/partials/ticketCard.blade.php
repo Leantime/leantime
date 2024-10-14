@@ -6,7 +6,7 @@
 >
 
     <form
-        hx-post="{{BASE_URL}}/tickets/ticket-card/save/{{ $row['id'] }}"
+        hx-post="{{BASE_URL}}/hx/tickets/ticket-card/save/{{ $row['id'] }}"
         hx-target="#ticketbox-{{ $row['id'] }}"
         id="ticketboxForm{{ $row['id'] }}"
         hx-ext="debug"
@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
 
                 <small>{{ $row['projectName'] }}</small><br />
                 @if($row['dependingTicketId'] > 0)
@@ -28,9 +28,9 @@
         <div class="row">
             <div class="col-md-4" style="padding:0 15px;">
                 @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                    <i class="fa-solid fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
+                    <i class="fa-solid fa-calendar-check infoIcon mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
                 @else
-                    <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                    <i class="fa-regular fa-calendar-xmark infoIcon mr-sm" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
                 @endif
                 <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
                 <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />

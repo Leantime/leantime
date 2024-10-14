@@ -25,13 +25,13 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
-            </x-global::undrawSvg>
+            <x-global::elements.undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
+            </x-global::elements.undrawSvg>
 
         @endif
 
         <div id="myProjectsHub"
-             hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
+             hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
              hx-trigger="HTMX.updateProjectList from:body"
              hx-target="#myProjectsHub"
              hx-swap="outerHTML transition:true">
@@ -53,7 +53,7 @@
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"
-                                    hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
+                                    hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                     hx-target="#myProjectsHub"
                                     hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
                             </li>
@@ -75,7 +75,7 @@
                 </div>
             @endif
 
-            <x-global::accordion id="myProjectsHub-favorites" class="noBackground">
+            <x-global::content.accordion id="myProjectsHub-favorites" class="noBackground">
                 <x-slot name="title">
                     ⭐ My Favorites
                 </x-slot>
@@ -87,7 +87,7 @@
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == true)
                                 <div class="col-md-4">
-                                    @include("projects::partials.projectCard", ["project" => $project,  "type" => "detailed"])
+                                    @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
                                 </div>
                                 @php
                                     $hasFavorites = true;
@@ -101,10 +101,10 @@
                         @endif
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-global::content.accordion>
 
 
-            <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
+            <x-global::content.accordion id="myProjectsHub-otherProjects" class="noBackground">
                 <x-slot name="title">
                     {{ __("text.all_assigned_projects")  }}
                 </x-slot>
@@ -115,14 +115,14 @@
                             @if($project['isFavorite'] == false)
 
                                 <div class="col-md-3">
-                                    @include("projects::partials.projectCard", ["project" => $project, "type" => "detailed"])
+                                    @include("projects::includes.projectCard", ["project" => $project, "type" => "detailed"])
                                 </div>
 
                             @endif
                         @endforeach
                     </div>
                 </x-slot>
-            </x-global::accordion>
+            </x-global::content.accordion>
         </div>
     </div>
 @endsection

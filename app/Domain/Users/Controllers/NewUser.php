@@ -10,19 +10,16 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
 
-    /**
-     *
-     */
     class NewUser extends Controller
     {
         private UserRepository $userRepo;
+
         private ProjectRepository $projectsRepo;
+
         private UserService $userService;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
          */
         public function init(
             UserRepository $userRepo,
@@ -36,33 +33,31 @@ namespace Leantime\Domain\Users\Controllers {
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
         public function run()
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-            $values = array(
-                'firstname' => "",
-                'lastname' => "",
-                'user' => "",
-                'phone' => "",
-                'role' => "",
-                'password' => "",
-                'clientId' => "",
+            $values = [
+                'firstname' => '',
+                'lastname' => '',
+                'user' => '',
+                'phone' => '',
+                'role' => '',
+                'password' => '',
+                'clientId' => '',
                 'jobTitle' => '',
                 'jobLevel' => '',
                 'department' => '',
 
-            );
+            ];
 
             //only Admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
-                $projectrelation = array();
+                $projectrelation = [];
 
                 if (isset($_POST['save'])) {
-                    $values = array(
+                    $values = [
                         'firstname' => ($_POST['firstname']),
                         'lastname' => ($_POST['lastname']),
                         'user' => ($_POST['user']),
@@ -74,8 +69,8 @@ namespace Leantime\Domain\Users\Controllers {
                         'jobTitle' => ($_POST['jobTitle']),
                         'jobLevel' => ($_POST['jobLevel']),
                         'department' => ($_POST['department']),
-                        'clientId' => Auth::userHasRole(Roles::$manager) ? session("userdata.clientId") : $_POST['client'],
-                    );
+                        'clientId' => Auth::userHasRole(Roles::$manager) ? session('userdata.clientId') : $_POST['client'],
+                    ];
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                         foreach ($_POST['projects'] as $project) {
                             $projectrelation[] = $project;
@@ -96,15 +91,15 @@ namespace Leantime\Domain\Users\Controllers {
                                     }
                                 }
 
-                                $this->tpl->setNotification("notification.user_invited_successfully", 'success', 'user_invited');
+                                $this->tpl->setNotification('notification.user_invited_successfully', 'success', 'user_invited');
                             } else {
-                                $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
+                                $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
                             }
                         } else {
-                            $this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
+                            $this->tpl->setNotification($this->language->__('notification.no_valid_email'), 'error');
                         }
                     } else {
-                        $this->tpl->setNotification($this->language->__("notification.enter_email"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.enter_email'), 'error');
                     }
                 }
 
@@ -112,7 +107,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $clients = app()->make(ClientRepository::class);
 
                 if (isset($_GET['preSelectProjectId'])) {
-                    $preSelected = explode(",", $_GET['preSelectProjectId']);
+                    $preSelected = explode(',', $_GET['preSelectProjectId']);
 
                     foreach ($preSelected as $item) {
                         $projectrelation[] = (int) $item;
@@ -121,9 +116,8 @@ namespace Leantime\Domain\Users\Controllers {
 
                 $preSelectedClient = '';
                 if (isset($_GET['preSelectedClient'])) {
-                    $preSelectedClient = (int)$_GET['preSelectedClient'];
+                    $preSelectedClient = (int) $_GET['preSelectedClient'];
                 }
-
 
                 $this->tpl->assign('preSelectedClient', $preSelectedClient);
                 $this->tpl->assign('clients', $clients->getAll());
@@ -132,7 +126,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 $this->tpl->assign('relations', $projectrelation);
 
-                return $this->tpl->displayPartial('users.newUser');
+                return $this->tpl->displayPartial('users::partials.newUser');
             } else {
                 return $this->tpl->displayPartial('errors.error403');
             }

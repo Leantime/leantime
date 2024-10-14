@@ -26,7 +26,6 @@ package: clean build
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/config
-	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
 	touch $(TARGET_DIR)/logs/error.log
@@ -52,7 +51,6 @@ package: clean build
 
 	# Remove DeepL.com and mltranslate engine (not needed in production)
 	rm -rf $(TARGET_DIR)/vendor/mpdf/mpdf/ttfonts
-	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/src/fonts
 	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/tests/fonts
 
 	# Remove local configuration, if any
@@ -87,9 +85,12 @@ gendocs: # Requires github CLI (brew install gh)
 	git clone $(DOCS_REPO) $(DOCS_DIR)
 
 	# Generate the docs
-	phpDocumentor
+	phpDocumentor --config=phpdoc.xml
+	phpDocumentor --config=phpdoc-api.xml
+
 	php vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
 
+pushdocs:
 	# create pull request
 	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)"
 	cd $(DOCS_DIR) && git add -A
@@ -119,20 +120,23 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept build
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
-codesniffer:
-	./vendor/squizlabs/php_codesniffer/bin/phpcs app
+test-code-style:
+	./vendor/bin/pint --test --config .pint/pint.json
 
-codesniffer-fix:
-	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
+fix-code-style:
+	./vendor/bin/pint --config .pint/pint.json
 
 get-version:
 	@echo $(VERSION)
 
-phpstan: build-dev
-	./vendor/bin/phpstan analyse --memory-limit 512M
+phpstan:
+	./vendor/bin/phpstan analyse -c .phpstan/phpstan.neon -v --debug --memory-limit 2G
 
 update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php
+
+clear-cache:
+	php ./bin/leantime
 
 .PHONY: install-deps build package clean run-dev
 

@@ -16,8 +16,16 @@
       <tool tool_name="Codeception">
         <cache>
           <versions>
-            <info id="Local" version="5.0.11" />
-            <info id="$PROJECT_DIR$/vendor/codeception/codeception/codecept" version="5.0.11" />
+            <info id="Local/Volumes/Source/leantime-oss/vendor/codeception/codeception/codecept" version="5.1.2" />
+          </versions>
+        </cache>
+      </tool>
+      <tool tool_name="PHPUnit">
+        <cache>
+          <versions>
+            <info id="Local/Volumes/Source/leantime-oss/app/Plugins/Billing/vendor/autoload.php" version="PHPUnit version can't be detected. Default PHP interpreter is not local" />
+            <info id="Local/Volumes/Source/leantime-oss/app/Plugins/Sentry/vendor/autoload.php" version="PHPUnit version can't be detected. Default PHP interpreter is not local" />
+            <info id="Local/Volumes/Source/leantime-oss/vendor/autoload.php" version="9.6.20" />
           </versions>
         </cache>
       </tool>

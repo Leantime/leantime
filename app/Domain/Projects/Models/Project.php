@@ -2,21 +2,26 @@
 
 namespace Leantime\Domain\Projects\Models {
 
-    /**
-     *
-     */
     class Project
     {
         public int|string $id;
+
         public $name;
+
         public null|int|string $clientId;
 
         public $start;
+
         public $end;
+
         public int|string $projectId;
+
         public $type;
+
         public $state;
+
         public $menuType;
+
         public $numberOfTickets;
 
         public $sortIndex;
@@ -31,11 +36,11 @@ namespace Leantime\Domain\Projects\Models {
 
         public $status;
 
+        public $clientName;
 
+        public $isFavorite;
 
-        public function __construct()
-        {
-        }
+        public function __construct() {}
     }
 
 }

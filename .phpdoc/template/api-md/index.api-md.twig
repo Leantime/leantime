@@ -1,0 +1,35 @@
+{% import "include/macros.twig" as macros %}
+{% block content %}
+---
+title: {{project.name}}
+{% include 'config/frontmatter.twig' %}
+---
+
+# {{ project.name|raw }} JsonRPC 2.0 namespaces
+
+For an introduction into connecting to the Leantime API please see [Api Usage](https://docs.leantime.io/#/api/usage)
+
+RPC Methods are the primary endpoint definition and follow the structure
+`leantime.rpc`.`Module`.`Service`.`Method`
+
+If `Module` and `Service` have the same name they can be summarized to `leantime.rpc`.`servicee`.`method`
+
+{% for namespace in project.indexes.namespaces|sort((a,b) => a.FullyQualifiedStructuralElementName <=> b.FullyQualifiedStructuralElementName) %}
+{% if namespace.classes|length > 0%}
+
+## `{{ namespace.FullyQualifiedStructuralElementName|replace({"\\": "."})|replace({".Leantime.Domain.": "leantime.rpc."})|replace({".Services": ""}) }}`
+
+{% if namespace.classes|length > 0 %}
+
+| Available Services | Description |
+|---    |---          |
+{% for class in namespace.classes|sort((a,b) => a.FullyQualifiedStructuralElementName <=> b.FullyQualifiedStructuralElementName) %}
+| {{ macros.mdClassLink(class) }} | {{ class.summary|replace({'|': '&#124;'})|nl2br|replace({"\n": "", "\r": "", "\t": ""})|raw }}|
+{% endfor %}{# for class #}
+{% endif %}{# if classes.length #}
+{% endif %}{# if classes, traits, interfaces length #}
+{% endfor %}{# for namespace #}
+
+{% include 'config/footer.md.twig' %}
+{% endblock %}
+

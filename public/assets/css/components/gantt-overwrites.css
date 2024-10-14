@@ -1,5 +1,5 @@
 body .gantt-container {
-    font-size: var(--base-font-size);
+
     overflow-x:visible;
     height:calc(100vh - 375px);
 }
@@ -18,7 +18,7 @@ body .gantt-container {
 body .gantt .bar-label,
 body .gantt .lower-text,
 body .gantt .upper-text {
-    font-size: var(--base-font-size);
+
 }
 
 body .gantt .upper-text {
@@ -32,7 +32,7 @@ body .gantt .upper-text {
 }
 
 body .gantt #details .details-container p {
-    font-size: var(--base-font-size);
+
 }
 
 

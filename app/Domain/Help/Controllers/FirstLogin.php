@@ -9,11 +9,7 @@ namespace Leantime\Domain\Help\Controllers {
     use Leantime\Domain\Help\Contracts\OnboardingSteps;
     use Leantime\Domain\Help\Services\Helper;
     use Leantime\Domain\Setting\Repositories\Setting;
-    use Spatie\FlareClient\Http\Response;
 
-    /**
-     *
-     */
     class FirstLogin extends Controller
     {
         private Helper $helperService;
@@ -25,9 +21,6 @@ namespace Leantime\Domain\Help\Controllers {
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
@@ -37,10 +30,10 @@ namespace Leantime\Domain\Help\Controllers {
 
             $currentStepKey = collect($allSteps)->keys()->first();
 
-            if (isset($_GET['step']) && $_GET['step'] == "end") {
-                $content = "  <script>
+            if (isset($_GET['step']) && $_GET['step'] == 'end') {
+                $content = '  <script>
                     jQuery.nmTop().close();
-                </script>";
+                </script>';
 
                 return new \Illuminate\Http\Response($content);
             }
@@ -52,20 +45,16 @@ namespace Leantime\Domain\Help\Controllers {
             $currentStep = $allSteps[$currentStepKey];
 
             /** @var OnboardingSteps $stepObject */
-            $nextStepObject = app()->make($currentStep["class"]);
-
+            $nextStepObject = app()->make($currentStep['class']);
 
             $this->tpl->assign('currentStep', $currentStepKey);
-            $this->tpl->assign('nextStep', $currentStep["next"]);
+            $this->tpl->assign('nextStep', $currentStep['next']);
 
             return $this->tpl->displayPartial($nextStepObject->getTemplate());
         }
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
@@ -78,19 +67,19 @@ namespace Leantime\Domain\Help\Controllers {
             if (isset($params['currentStep']) && is_numeric($params['currentStep']) && isset($allSteps[$params['currentStep']])) {
                 $currentStep = $allSteps[$params['currentStep']];
             } else {
-                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin");
+                return Frontcontroller::redirect(BASE_URL.'/help/firstLogin');
             }
 
             /** @var OnboardingSteps $stepObject */
-            $currentStepObject = app()->make($currentStep["class"]);
+            $currentStepObject = app()->make($currentStep['class']);
 
             $result = $currentStepObject->handle($params);
 
             if ($result) {
-                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=" . $currentStep['next']);
+                return Frontcontroller::redirect(BASE_URL.'/help/firstLogin?step='.$currentStep['next']);
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=" . $params['currentStep']);
+            return Frontcontroller::redirect(BASE_URL.'/help/firstLogin?step='.$params['currentStep']);
 
         }
     }

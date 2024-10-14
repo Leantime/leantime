@@ -2,15 +2,15 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+    <x-global::content.pageheader :icon="'fa fa-puzzle-piece'">
         <h1>My Apps</h1>
-    </x-global::pageheader>
+    </x-global::content.pageheader>
 
     @displayNotification()
 
     <div class="maincontent">
 
-        @include('plugins::partials.plugintabs',  ["currentUrl" => "installed"])
+        @include('plugins::includes.plugintabs',  ["currentUrl" => "installed"])
 
         <div class="maincontentinner">
 
@@ -24,7 +24,7 @@
 
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
-                                <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
+                                <span class="block px-4 mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif
                     </div>
                 </div>
@@ -63,9 +63,9 @@
                                 </li>
                             @endforeach
                         @else
-                            <x-global::undrawSvg image="undraw_empty_cart_co35.svg" headline="Nothing New">
+                            <x-global::elements.undrawSvg image="undraw_empty_cart_co35.svg" headline="Nothing New">
                                 We couldn't discover any new plugins in your plugin folder, please make sure the plugin is unzipped and contains a composer.json file.
-                            </x-global::undrawSvg>
+                            </x-global::elements.undrawSvg>
                         @endif
                     </ul>
                 </div>

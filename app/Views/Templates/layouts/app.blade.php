@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body>
+<body hx-ext="preload" data-theme="leantime">
 
     @include('global::sections.appAnnouncement')
 
@@ -30,9 +30,10 @@
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
+            <div id="global-loader" class="full-width-loader">
+                <div class="indeterminate" style=""></div>
+            </div>
         </div><!-- header -->
-
-
 
         <div class="" style="position: relative">
             <div class="leftpanel">
@@ -54,10 +55,15 @@
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->
+    <div id="modal-wrapper" hx-indicator="#global-loader">
+        <x-global::content.modal.modal-buttons/>
+
+        <x-global::content.modal id="main-page-modal" />
+    </div>
 
     @include('global::sections.pageBottom')
     @stack('scripts')
-    @include('help::helpermodal')
+    @include('help::includes.helpermodal')
 </body>
 
 </html>

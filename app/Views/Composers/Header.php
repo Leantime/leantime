@@ -4,8 +4,8 @@ namespace Leantime\Views\Composers;
 
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Composer;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Composer;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
 
 class Header extends Composer
@@ -15,18 +15,13 @@ class Header extends Composer
     ];
 
     private Environment $config;
+
     private Theme $themeCore;
+
     private AppSettings $appSettings;
+
     private Setting $settingsRepo;
 
-    /**
-     * @param Setting     $settingsRepo
-     * @param Environment $config
-     * @param AppSettings $appSettings
-     * @param Theme       $themeCore
-     *
-     * @return void
-     */
     public function init(
         Setting $settingsRepo,
         Environment $config,
@@ -39,28 +34,25 @@ class Header extends Composer
         $this->themeCore = $themeCore;
     }
 
-    /**
-     * @return array
-     */
     public function with(): array
     {
         $theme = $this->themeCore->getActive();
         $colorMode = $this->themeCore->getColorMode();
         $colorScheme = $this->themeCore->getColorScheme();
         $themeFont = $this->themeCore->getFont();
-
+        $sitename = '';
         // Set colors to use
-        if (! session()->exists("companysettings.sitename")) {
-            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+        if (! session()->exists('companysettings.sitename')) {
+            $sitename = $this->settingsRepo->getSetting('companysettings.sitename');
             if ($sitename !== false) {
-                session(["companysettings.sitename" => $sitename]);
+                session(['companysettings.sitename' => $sitename]);
             } else {
-                session(["companysettings.sitename" => $this->config->sitename]);
+                session(['companysettings.sitename' => $this->config->sitename]);
             }
         }
 
         return [
-            'sitename' => session("companysettings.sitename") ?? '',
+            'sitename' => session('companysettings.sitename') ?? '',
             'primaryColor' => $this->themeCore->getPrimaryColor(),
             'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',

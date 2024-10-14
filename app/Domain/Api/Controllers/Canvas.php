@@ -33,32 +33,21 @@ class Canvas extends Controller
     /**
      * constructor - initialize private variables
      *
-     * @access public
      *
-     * @param ProjectRepository $projects
      *
-     * @return void
-
      * @throws BindingResolutionException
      */
     public function init(ProjectRepository $projects): void
     {
         // @TODO: project are never used in this class?
         $this->projects = $projects;
-        $canvasName = Str::studly(static::CANVAS_NAME) . 'canvas';
-        $repoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+        $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
+        $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
         $this->canvasRepo = app()->make($repoName);
     }
 
-
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -67,12 +56,6 @@ class Canvas extends Controller
 
     /**
      * post - handle post requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function post(array $params): Response
     {
@@ -81,18 +64,12 @@ class Canvas extends Controller
 
     /**
      * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
         if (
-            !isset($params['id'])
-            || !$this->canvasRepo->patchCanvasItem($params['id'], $params)
+            ! isset($params['id'])
+            || ! $this->canvasRepo->patchCanvasItem($params['id'], $params)
         ) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
@@ -102,12 +79,6 @@ class Canvas extends Controller
 
     /**
      * delete - handle delete requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function delete(array $params): Response
     {

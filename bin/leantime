@@ -1,14 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-define('ROOT', dirname(__FILE__, 2)."/public");
-define('APP_ROOT', dirname(__FILE__, 2));
+use Leantime\Core\Console\ConsoleKernel;
 define('LEAN_CLI', true);
 
-if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
-    throw new RuntimeException('Install dependencies to run this Leantime CLI.');
-}
+require __DIR__.'/../vendor/autoload.php';
 
-require $composer;
+//Get the application once.
+//Loads everything up once and then let's the bootloader manage it
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
-\Leantime\Core\Bootstrap\Bootloader::getInstance()->boot();
+$kernel = $app->make(ConsoleKernel::class);
+
+$status = $kernel->handle(
+        $input = new \Symfony\Component\Console\Input\ArgvInput,
+        new \Symfony\Component\Console\Output\ConsoleOutput
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);

@@ -2,8 +2,8 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\Controller\Composer;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Composer;
+use Leantime\Core\UI\Theme;
 
 class Entry extends Composer
 {
@@ -13,26 +13,18 @@ class Entry extends Composer
 
     private Theme $themeCore;
 
-    /**
-     * @param Theme $themeCore
-     *
-     * @return void
-     */
     public function init(Theme $themeCore): void
     {
         $this->themeCore = $themeCore;
     }
 
-    /**
-     * @return array
-     */
     public function with(): array
     {
         $this->themeCore->getActive();
         $logoUrl = $this->themeCore->getLogoUrl();
 
         return [
-            'logoPath' =>  $logoUrl ?: BASE_URL . "/dist/images/logo.svg",
+            'logoPath' => $logoUrl ?: BASE_URL.'/dist/images/logo.svg',
         ];
     }
 }

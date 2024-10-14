@@ -1,0 +1,41 @@
+.full-width-loader {
+  opacity:0;
+  position:fixed;
+  z-index: 100;
+  bottom:0px;
+  left:0px;
+  height: 5px;
+  width:100%;
+  background-color: transparent
+}
+
+
+.full-width-loader .indeterminate {
+  width:20%;
+  background:var(--element-gradient);
+  width:50%;
+  height:5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  box-shadow:var(--regular-shadow);
+
+}
+
+@keyframes progressBar {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+
+.full-width-loader.htmx-request {
+  display:block;
+  opacity:1;
+}
+
+.full-width-loader.htmx-request .indeterminate {
+  animation: progressBar 3s ease-in-out;
+  animation-fill-mode: both;
+}
+
+
+

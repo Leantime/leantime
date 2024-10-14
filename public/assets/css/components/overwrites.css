@@ -13,7 +13,6 @@
 .wizard .hormenu li a.done,
 .wizard .hormenu li a.selected,
 .actionBar a:hover, .actionBar a:hover,
-.wizard .tabbedmenu, .nav-tabs > .active > a:focus,
 .tabbable > .nav-tabs,
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus,
@@ -25,7 +24,6 @@
 .tabs-left .nav-tabs,
 .tabs-left > .nav-tabs > li > a,
 .progress-primary .bar,
-.ui-datepicker-calendar td.ui-datepicker-today a,
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus,
@@ -53,8 +51,6 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 }
 
 /* color */
-
-a,a:hover,a:link,a:active,a:focus,
 .userlist li .uinfo h5,
 .messagemenu ul li.active a,
 .msglist li h4,
@@ -63,9 +59,6 @@ a,a:hover,a:link,a:active,a:focus,
 .wizard .tabbedmenu li a.selected,
 .wizard .tabbedmenu li a.done,
 .tabbable > .nav-tabs > li.active > a,
-.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
-.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .tabs-right > .nav-tabs .active > a,
 .tabs-right > .nav-tabs .active > a:hover,
 .tabs-right > .nav-tabs .active > a:focus,
@@ -79,33 +72,15 @@ a,a:hover,a:link,a:active,a:focus,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
-.viewDropDown .dropdown-menu li a.active,
 .paginate_button.current:hover
 { color: var(--primary-color); }
 
 
-input[type='submit'],
-button,
-.paginate_button.current
-{ background-color:  var(--main-action-bg);  }
-
-input[type='submit']:hover,
-button:hover {
-    background-color:  var(--main-action-hover-bg);
-    color:#fff;
-}
 
 .chosen-container-multi .chosen-choices .search-choice {
     color:#fff;
 }
 
-.btn-white {
-    background:#fff;
-}
-
-span.btn-white:hover{
-    background:#fff;
-}
 
 
 /* border color */
@@ -124,9 +99,6 @@ span.btn-white:hover{
 .tabbable > .nav-tabs,
 .tabbable > .tab-content,
 .nav-tabs.nav-stacked > li > a:focus,
-.btn-circle.btn-primary, .btn-circle.btn-primary:hover, .btn-circle.btn-primary:focus,
-.btn-circle.btn-primary:active, .btn-circle.btn-primary.active,
-.btn-circle.btn-primary.disabled, .btn-circle.btn-primary[disabled],
 .nav-tabs,
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus,
 .tabs-below .tab-content,
@@ -145,9 +117,6 @@ div.tagsinput span.tag
 { border-color: var(--main-border-color) }
 
 
-.ui-datepicker-header { background-color: var(--primary-color) !important; }
-.ui-datepicker { border-color: var(--main-border-color) !important; }
-
 
 /* extras */
 
@@ -161,7 +130,7 @@ div.tagsinput span.tag
 
 @media screen and (max-width: 480px) {
 
- .userloggedinfo ul li a:hover { background-color: var(--primary-color); }
+ /* .userloggedinfo ul li a:hover { background-color: var(--primary-color); } */
 
   .userloggedinfo .userinfo,
   .wizard .hormenu li,
@@ -247,12 +216,6 @@ label.inline {
     padding-top:6px;
 }
 
-.loading {
-    position:absolute;
-    width:100%;
-    height:40px;
-}
-
 body .widgettitle.title-light {
     color:var(--primary-color);
     padding-left:0px;
@@ -283,36 +246,6 @@ body .tox .tox-toolbar-overlord{
 }
 
 
-.ui-datepicker-next {
-    cursor: pointer;
-    position: absolute;
-    top: 8px;
-    right: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px 1px;
-}
-
-.ui-datepicker-prev {
-    cursor: pointer;
-    position: absolute;
-    top: 8px;
-    left: 5px;
-    background: url(~images/calarrow.png) no-repeat 3px -39px;
-}
-
-.ui-datepicker-header {
-    position: relative;
-    text-align: center;
-    padding: 5px;
-    color: #fff;
-    background: var(--primary-color);
-    text-transform: uppercase;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.ui-datepicker {
-    border-radius:5px;
-}
 
 
 div.growl,
@@ -321,7 +254,7 @@ div.growl div.growl-closer {
     background:var(--secondary-background);
     color:var(--primary-font-color);
     padding:20px;
-    font-size:var(--base-font-size);
+
     width:250px;
     opacity:1;
     border-radius:var(--box-radius);
@@ -332,7 +265,7 @@ div.growl div.growl-closer {
 
 div.growl growl-close {
     color:var(--primary-font-color);
-    font-size:var(--base-font-size);
+
 }
 
 div.growl.growl-default,
@@ -355,7 +288,7 @@ div.growl .growl-title {
 }
 
 div.growl .growl-message {
-    font-size: var(--base-font-size);
+
     line-height: 18px;
     font-family: var(--primary-font-family);
 }

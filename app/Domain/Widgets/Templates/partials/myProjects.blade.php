@@ -5,7 +5,7 @@
 ])
 
 <div id="myProjectsWidget"
-     hx-get="{{BASE_URL}}/widgets/myProjects/get"
+     hx-get="{{BASE_URL}}/hx/widgets/myProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML transition:true">
@@ -23,7 +23,7 @@
     @endif
     <div class="clearall"></div>
 
-    <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
+    <x-global::content.accordion id="myProjectWidget-favorites" class="{{ $background }}">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -36,7 +36,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -48,10 +48,10 @@
                 @endif
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 
 
-    <x-global::accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
+    <x-global::content.accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -62,7 +62,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
                         </div>
 
                     @endif
@@ -70,7 +70,7 @@
                 @endforeach
             </div>
         </x-slot>
-    </x-global::accordion>
+    </x-global::content.accordion>
 
 </div>
 

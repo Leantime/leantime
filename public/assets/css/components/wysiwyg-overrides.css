@@ -8,7 +8,7 @@ body.mce-content-body{
 }
 
 .mce-content-body  {
-    font-size:var(--base-font-size);
+
     max-width:980px;
     text-align:left;
 }
@@ -22,7 +22,7 @@ body.mce-content-body{
 }
 
 .commentContent .mce-content-body {
-    background: var(--col-title-bg);
+    background: transparent;
 }
 
 
@@ -65,14 +65,17 @@ body.mce-content-body{
 .tox .tox-form .tox-toolbar-label,
 .tox .tox-form :not(svg)
 {
-    font-size:var(--base-font-size);
+
     font-family: var(--primary-font-family);
     color:var(--primary-font-color);
 }
 
 body .tox-tinymce {
-    border-radius:3px;
-    z-index: 8;
+    z-index: var(--zlayer-1);
+    border:0px;
+    border-radius:var(--box-radius);
+    box-shadow:var(--min-shadow);
+    margin-bottom: 15px;
 }
 
 body .tox .tox-toolbar,
@@ -95,12 +98,7 @@ body .tox .tox-toolbar__primary {
     display:none;
 }
 
-body .tox-tinymce {
-    border:0px;
-    border-radius:10px 10px 0px 0px;
-    box-shadow:var(--min-shadow);
-    margin-bottom: 15px;
-}
+
 
 body .tox-editor-header {
     border:0px solid var(--main-border-color) !important;
@@ -117,7 +115,7 @@ body .tox-edit-area {
 
 body .tox .tox-mbtn,
 body .tox .tox-collection__item-label {
-    font-size:var(--base-font-size);
+
     font-family: var(--primary-font-family);
 }
 
@@ -176,15 +174,15 @@ body.mce-content-body {
     font-weight: bold;
     line-height: normal;
     color:var(--primary-color);
-    margin-top:25px;
+    margin-top:5px;
 }
 
 
 .mce-content-body  h1 { font-size:var(--font-size-xxl); padding:5px 0px 10px 0px;}
 .mce-content-body  h2 { font-size:var(--font-size-xl); padding:5px 0px 10px 0px;}
 .mce-content-body  h3 { font-size:var(--font-size-l); padding:5px 0px 10px 0px;}
-.mce-content-body  h4 { font-size:var(--base-font-size); font-weight:bold; padding:5px 0px 5px 0px;}
-.mce-content-body  h5 { font-size:var(--base-font-size); font-weight:bold; padding:5px 0px 5px 0px;}
+.mce-content-body  h4 {  font-weight:bold; padding:5px 0px 5px 0px;}
+.mce-content-body  h5 {  font-weight:bold; padding:5px 0px 5px 0px;}
 
 .mce-content-body  ol,
 .mce-content-body  ul {
@@ -225,7 +223,7 @@ body.mce-content-body {
     padding: 7px 10px 5px 10px;
     font-weight: bold;
     text-transform:none;
-    font-size: var(--base-font-size);
+
     background:var(--col-title-bg);
 }
 
@@ -355,7 +353,6 @@ body .tox .tox-dialog-wrap__backdrop {
 
 .maincontentinner .tinyPlaceholder,
 .commentContent .tinyPlaceholder{
-    display:none;
 }
 
 .mce-content-body ul {

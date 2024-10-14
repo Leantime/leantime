@@ -1,0 +1,16 @@
+.input-shadow {
+    @apply shadow-md;
+}
+
+.input,
+.select {
+    &:hover {
+        @apply shadow-md bg-neutral;
+    }
+
+    &-bordered {
+        &:hover {
+            @apply border-base-content/50 bg-none;
+        }
+    }
+}

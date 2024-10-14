@@ -2,7 +2,6 @@
 
 /**
  * editEvent Class - Add a new client
- *
  */
 
 namespace Leantime\Domain\Calendar\Controllers;
@@ -15,19 +14,12 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class EditEvent extends Controller
 {
     private CalendarService $calendarService;
 
     /**
      * init - initialize private variables
-     *
-     * @param CalendarService $calendarService
-     *
-     * @return void
      */
     public function init(CalendarService $calendarService): void
     {
@@ -37,12 +29,6 @@ class EditEvent extends Controller
 
     /**
      * retrieves edit calendar event page data
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -50,17 +36,11 @@ class EditEvent extends Controller
 
         $this->tpl->assign('values', $values);
 
-        return $this->tpl->displayPartial('calendar.editEvent');
+        return $this->tpl->displayPartial('calendar::partials.editEvent');
     }
 
     /**
      * sets, creates, and updates edit calendar event page data
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function post(array $params): Response
     {
@@ -78,6 +58,6 @@ class EditEvent extends Controller
             $this->tpl->setNotification('notification.please_enter_title', 'error');
         }
 
-        return Frontcontroller::redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
+        return Frontcontroller::redirect(BASE_URL.'/calendar/editEvent/'.$params['id']);
     }
 }

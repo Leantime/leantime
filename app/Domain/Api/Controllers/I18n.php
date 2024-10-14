@@ -17,11 +17,7 @@ class I18n extends Controller
      *
      * @todo refactor to remove user timezone and timeformat and move to user settings
      *
-     * @access public
-     *
-     * @param array $params or body of the request.
-     *
-     * @return Response
+     * @param  array  $params  or body of the request.
      *
      * @throws \Exception
      */
@@ -40,7 +36,7 @@ class I18n extends Controller
         }
 
         //Fullcalendar and other scripts can handle local to use the browser timezone
-        $languageIni["usersettings.timezone"] = session("usersettings.timezone") ?? "local";
+        $languageIni['usersettings.timezone'] = session('usersettings.timezone') ?? 'local';
 
         $decodedString = json_encode($languageIni);
 
@@ -48,18 +44,16 @@ class I18n extends Controller
         $response = new Response(
             <<<JS
             var leantime = leantime || {};
-            var leantime = {
-                i18n: {
-                    dictionary: $result,
-                    __: function(index){ return leantime.i18n.dictionary[index];  }
-                }
+            leantime.i18n = {
+                dictionary: $result,
+                __: (index) => leantime.i18n.dictionary[index],
             };
             JS,
             200
         );
 
         $response->headers->set('Content-Type', 'application/javascript');
-        $response->headers->set("Pragma", 'public');
+        $response->headers->set('Pragma', 'public');
 
         //Disable cache for this file since datetime format settings is stored in here as well.
         //Need to find a better cache busting option for this.

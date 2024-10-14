@@ -250,11 +250,6 @@
     padding-bottom:0px;
 }
 
- .ticketBox .timerContainer .btn{
-    padding-top:1px;
-    padding-bottom:1px;
-}
-
 .sortableTicketList .empty {
     text-align:center;
     color:#999;
@@ -262,95 +257,44 @@
 }
 
 
+.priority-border-1,
 body .maincontent .priority-border-1,
-body .maincontent .commentStatus-red{
+body .maincontent .commentStatus-red,
+body .commentContent.statusUpdate.commentStatus-red{
     border-left: 3px solid var(--dark-red)
 }
 
+.priority-border-2,
 body .maincontent .priority-border-2 {
     border-left: 3px solid var(--red);
 }
 
+.priority-border-3,
 body .maincontent .priority-border-3,
-body .maincontent .commentStatus-yellow{
+body .maincontent .commentStatus-yellow,
+body .commentContent.statusUpdate.commentStatus-yellow {
     border-left: 3px solid var(--yellow)
 }
 
+.priority-border-4,
 body .maincontent .priority-border-4,
-body .maincontent .commentStatus-green{
+body .maincontent .commentStatus-green,
+body .commentContent.statusUpdate.commentStatus-green {
     border-left: 3px solid var(--green);
 }
 
+.priority-border-5,
 body .maincontent .priority-border-5 {
     border-left: 3px solid var(--dark-grey);
 }
 
-body .maincontent .priority-bg-1,
-body .maincontent .ticketDropdown .priority-bg-1{
-    background:var(--dark-red);
-    color:var(--dark-red-text-color);
-}
 
-body .maincontent .priority-bg-2,
-body .maincontent .ticketDropdown .priority-bg-2{
-    background: var(--red);
-    color:var(--red-text-color);
-}
-
-body .maincontent .priority-bg-3,
-body .maincontent .ticketDropdown .priority-bg-3{
-    background: var(--yellow);
-    color:var(--yellow-text-color);
-}
-
-body .maincontent .priority-bg-4,
-body .maincontent .ticketDropdown .priority-bg-4{
-    background:var(--green);
-    color:var(--green-text-color);
-}
-
-body .maincontent .priority-bg-5,
-body .maincontent .ticketDropdown .priority-bg-5{
-    background:var(--dark-grey);
-    color:var(--dark-grey-text-color);
-}
-
-
-body .maincontent .priority-text-1,
-body .maincontent .priority-text-1 a,
-body .maincontent .priority-text-1 a:link{
-    color:var(--dark-red);
-}
-
-body .maincontent .priority-text-2,
-body .maincontent .priority-text-2 a,
-body .maincontent .priority-text-2 a:link {
-    color:var(--red);
-}
-
-body .maincontent .priority-text-3,
-body .maincontent .priority-text-3 a,
-body .maincontent .priority-text-3 a:link {
-    color:var(--yellow);
-}
-
-body .maincontent .priority-text-4,
-body .maincontent .priority-text-4 a,
-body .maincontent .priority-text-4 a:link {
-    color:var(--green);
-}
-
-body .maincontent .priority-text-5,
-body .maincontent .priority-text-5 a,
-body .maincontent .priority-text-5 a:link {
-    color:var(--dark-grey);
-}
 
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
     padding: 10px 15px;
-    font-size: var(--base-font-size);
+
     line-height:17px;
     font-weight: bold;
     border-bottom-width:3px;
@@ -395,16 +339,10 @@ body .maincontent .priority-text-5 a:link {
     border-bottom: 1px solid var(--neutral);
     color: var(--kanban-col-title-color);
     padding: 10px 10px;
-    font-size: var(--base-font-size);
+
     padding-top:0px;
 }
 
-.kanbanBoard .ticketDropdown a.dropdown-toggle {
-    font-size: var(--base-font-size);
-    max-width: 145px; /*min column width is 150px*/
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 
 .sortableTicketList {

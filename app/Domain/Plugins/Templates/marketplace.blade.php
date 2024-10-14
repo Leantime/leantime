@@ -2,26 +2,26 @@
 
 @section('content')
 
-    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+    <x-global::content.pageheader :icon="'fa fa-puzzle-piece'">
         <h1>App Marketplace</h1>
-    </x-global::pageheader>
+    </x-global::content.pageheader>
 
     @displayNotification()
 
     <div class="maincontent">
 
-        @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
+        @include('plugins::includes.plugintabs',  ["currentUrl" => "marketplace"])
 
        <div class="maincontentinner">
 
-           <div class="tw-w-full"
+           <div class="w-full"
                 hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist"
                 hx-trigger="load"
                 hx-target="#pluginList"
                 hx-indicator=".htmx-indicator, .htmx-loaded-content"
                 hx-swap="outerHTML"
            >
-                @include('plugins::partials.pluginlist', [])
+                @include('plugins::includes.pluginlist', [])
            </div>
 
        </div>

@@ -50,7 +50,7 @@
 
 .dataTable th,
 .dataTable td {
-    font-size: var(--base-font-size);
+
 }
 
 .dataTables_wrapper {
@@ -196,7 +196,7 @@
 .maincontentinner .table tr.dtrg-group td{
     font-weight: normal;
     text-transform:none;
-    font-size: var(--base-font-size);
+
     border-top: 0;
 
     font-weight: normal;
@@ -412,7 +412,7 @@
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
     padding: 4px 14px;
-    line-height: 21px;
+    line-height: var(--form-element-line-height);
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;
@@ -476,42 +476,6 @@ table td{
 /*fake height to allow divs in tds to fill out space */
 .table tr {
     height:1px;
-}
-
-.table td.dropdown-cell {
-    padding:0px;
-    font-weight: 400;
-    height: inherit;
-}
-
-.table td.dropdown-cell .dropdown {
-    width:100%;
-    height:100%;
-    border-radius:0px !important;
-    display:block;
-
-}
-
-.table td.dropdown-cell .dropdown > a {
-    width:100%;
-    height:100%;
-    border-radius:0px !important;
-    padding: 5px 10px 3px 10px !important;
-    line-height: 32px;
-    font-size:var(--base-font-size);
-    box-shadow:none;
-    display:inline-block;
-}
-
-.table td.dropdown-cell .dropdown > a .text {
-}
-.table td.dropdown-cell .dropdown > a i {
-    float:right;
-    line-height:31px;
-}
-
-.table td.dropdown-cell .dropdown.ticketDropdown ul {
-    top:35px;
 }
 
 .listStyleTable td {

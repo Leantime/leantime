@@ -21,7 +21,6 @@ namespace Leantime\Domain\Auth\Models {
             public CarbonImmutable $createdOn,
             public CarbonImmutable $modified,
         ) {}
-
     }
 
 }

@@ -1,7 +1,6 @@
 span.arrow-up, span.arrow-down {
 	font-family: var(--fa-style-family, "Font Awesome 6 Free");
 	font-weight: var(--fa-style, 900);
-	font-size: 1em;
 	transform: none !important;
 	border-width: 0 !important;
 }

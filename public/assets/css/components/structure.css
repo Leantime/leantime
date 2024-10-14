@@ -1,38 +1,6 @@
 /***** RESET BROWSER STYLE *****/
 /*******************************/
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, font, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
-    background: transparent;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-    line-height: 1.5;
-    outline: none;
-}
-
-html {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -ms-overflow-style: scrollbar
-}
-
-body {
-    color:var(--primary-font-color);
-}
-
-*, ::after, ::before {
-    -webkit-box-sizing: inherit;
-    box-sizing: inherit
-}
-
 .container {
     position: relative;
     margin-left: auto;
@@ -409,7 +377,6 @@ body {
 
 .leftpanel {
     width: 240px;
-    color: #fff;
     float: left;
     clear: both;
     background:var(--left-panel-bg);
@@ -419,8 +386,8 @@ body {
     display: flex;
     flex-direction: column;
     top:70px;
-    margin-top:20px;
-    left:10px;
+    margin-top:5px;
+    left:0px;
     border-radius: var(--box-radius-large);
 
     overflow:hidden;
@@ -433,10 +400,6 @@ body {
     top:0px;
     z-index: 15;
     width: 100%;
-    box-shadow: var(--large-shadow);
-    backdrop-filter: var(--glass-blur);
-    background:var(--header-bg-color);
-
 }
 
 .header .headmenu > li > a {
@@ -506,6 +469,16 @@ body {
     overflow: hidden;
     clear: both;
     margin: 10px 15px;
+    width: 98.2%;
+}
+
+.footer-content {
+  display: flex;
+  margin-right: -10px;
+  margin-left: -10px;
+
+  align-items: center;
+  width: 100%;
 }
 
 .footer .footer-left {

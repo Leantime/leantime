@@ -7,8 +7,17 @@
                 <p>{!!  __('text.get_organized_with_projects') !!}</p>
                 <br />
                 <label>{{ __('label.start_with_project_title') }}</label>
-                <input type="text" id="projectName" name="projectname" value="" placeholder="" style="width:100%;"/><br />
-
+                <x-global::forms.text-input 
+                    type="text" 
+                    id="projectName" 
+                    name="projectname" 
+                    value="" 
+                    placeholder="" 
+                    variant="title" 
+                    class="w-full" 
+                />
+            <br />
+            
             </div>
             <div class="col-md-4">
                 <div class='svgContainer' style="width:300px; margin-top:40px;">
@@ -17,7 +26,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12 tw-text-right">
+            <div class="col-md-12 text-right">
                 <input type="submit" value="{{ __('buttons.next') }}" />
             </div>
         </div>

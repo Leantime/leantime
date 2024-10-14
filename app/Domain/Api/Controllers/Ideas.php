@@ -15,17 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 class Ideas extends Controller
 {
     private ProjectRepository $projects;
+
     private IdeaRepository $ideaAPIRepo;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     * @param ProjectRepository $projects
-     * @param IdeaRepository    $ideaAPIRepo
-     *
-     * @return void
      */
     public function init(ProjectRepository $projects, IdeaRepository $ideaAPIRepo): void
     {
@@ -36,12 +30,6 @@ class Ideas extends Controller
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -50,16 +38,10 @@ class Ideas extends Controller
 
     /**
      * post - handle post requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function post(array $params): Response
     {
-        if (isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
+        if (isset($params['action']) && $params['action'] == 'ideaSort' && isset($params['payload']) === true) {
             if (! $this->ideaAPIRepo->updateIdeaSorting($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
@@ -67,8 +49,8 @@ class Ideas extends Controller
             return $this->tpl->displayJson(['status' => 'ok']);
         }
 
-        if (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
-            if (! $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"])) {
+        if (isset($params['action']) && $params['action'] == 'statusUpdate' && isset($params['payload']) === true) {
+            if (! $this->ideaAPIRepo->bulkUpdateIdeaStatus($params['payload'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -80,16 +62,10 @@ class Ideas extends Controller
 
     /**
      * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
-        if (!isset($params['id']) || !$this->ideaAPIRepo->patchCanvasItem($params['id'], $params)) {
+        if (! isset($params['id']) || ! $this->ideaAPIRepo->patchCanvasItem($params['id'], $params)) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
@@ -98,12 +74,6 @@ class Ideas extends Controller
 
     /**
      * delete - handle delete requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function delete(array $params): Response
     {

@@ -16,18 +16,19 @@ class Installed
     /**
      * Check if Leantime is installed
      *
-     * @param \Closure(IncomingRequest): Response $next
+     * @param  \Closure(IncomingRequest): Response  $next
+     *
      * @throws BindingResolutionException
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        $session_says = session()->exists("isInstalled") && session("isInstalled");
+        $session_says = session()->exists('isInstalled') && session('isInstalled');
         $config_says = app()->make(SettingRepository::class)->checkIfInstalled();
 
         if (! $session_says && ! $config_says) {
             $this->setUninstalled();
 
-            if (! $response = $this->redirectToInstall()) {
+            if (! $response = $this->redirectToInstall($request)) {
                 return $next($request);
             }
 
@@ -37,7 +38,7 @@ class Installed
         if ($session_says && ! $config_says) {
             $this->setUninstalled();
 
-            if (! $response = $this->redirectToInstall()) {
+            if (! $response = $this->redirectToInstall($request)) {
                 return $next($request);
             }
 
@@ -48,12 +49,12 @@ class Installed
             $this->setInstalled();
         }
 
-        self::dispatch_event('after_install');
+        self::dispatchEvent('after_install');
 
-        $route = Frontcontroller::getCurrentRoute();
+        $route = $request->getCurrentRoute();
 
-        if($session_says && $route == "install") {
-            return Frontcontroller::redirect(BASE_URL . "/auth/logout");
+        if ($session_says && $route == 'install') {
+            return Frontcontroller::redirect(BASE_URL.'/auth/logout');
         }
 
         return $next($request);
@@ -61,46 +62,43 @@ class Installed
 
     /**
      * Set installed
-     *
-     * @return void
      */
     private function setInstalled(): void
     {
-        session(["isInstalled" => true]);
+        session(['isInstalled' => true]);
     }
 
     /**
      * Set uninstalled
-     *
-     * @return void
      */
     private function setUninstalled(): void
     {
-        session(["isInstalled" => false]);
+        session(['isInstalled' => false]);
 
-        if (session()->exists("userdata")) {
-            session()->forget("userdata");
+        if (session()->exists('userdata')) {
+            session()->forget('userdata');
         }
     }
 
     /**
      * Redirect to install
      *
-     * @return Response|false
      * @throws BindingResolutionException
      */
-    private function redirectToInstall(): Response|false
+    private function redirectToInstall(IncomingRequest $request): Response|false
     {
         $frontController = app()->make(Frontcontroller::class);
 
         $allowedRoutes = ['install', 'install.update', 'api.i18n'];
-        $allowedRoutes = self::dispatch_filter("allowedRoutes", $allowedRoutes);
-        if (in_array($frontController::getCurrentRoute(), $allowedRoutes)) {
+        $allowedRoutes = self::dispatchFilter('allowedRoutes', $allowedRoutes);
+        $route = $request->getCurrentRoute();
+        if (in_array($request->getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 
-        $route = BASE_URL . "/install";
-        $route = self::dispatch_filter("redirectroute", $route);
+        $route = BASE_URL.'/install';
+        $route = self::dispatchFilter('redirectroute', $route);
+
         return $frontController::redirect($route);
     }
 }

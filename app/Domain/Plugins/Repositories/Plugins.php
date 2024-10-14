@@ -6,30 +6,21 @@ namespace Leantime\Domain\Plugins\Repositories {
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use PDO;
 
-    /**
-     *
-     */
     class Plugins
     {
         private DbCore $db;
 
         /**
          * __construct - get database connection
-         *
-         * @access public
          */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        /**
-         * @param $enabledOnly
-         * @return array|false
-         */
         public function getAllPlugins(bool $enabledOnly = true): false|array
         {
-            $query = "SELECT
+            $query = 'SELECT
                 id,
                 name,
                 enabled,
@@ -41,13 +32,13 @@ namespace Leantime\Domain\Plugins\Repositories {
                 authors,
                 format,
                 license
-            FROM zp_plugins";
+            FROM zp_plugins';
 
             if ($enabledOnly) {
-                $query .= " WHERE enabled = true";
+                $query .= ' WHERE enabled = true';
             }
 
-            $query .= " GROUP BY name ";
+            $query .= ' GROUP BY name ';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -62,14 +53,10 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $allPlugins;
         }
 
-        /**
-         * @param int $id
-         * @return \Leantime\Domain\Plugins\Models\InstalledPlugin|false
-         */
         public function getPlugin(int $id): InstalledPlugin|false
         {
 
-            $query = "SELECT
+            $query = 'SELECT
                     id,
                   name,
                   enabled,
@@ -82,8 +69,7 @@ namespace Leantime\Domain\Plugins\Repositories {
                   license,
                   format
 
-                FROM zp_plugins WHERE id = :id";
-
+                FROM zp_plugins WHERE id = :id';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -96,14 +82,10 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $plugin;
         }
 
-        /**
-         * @param \Leantime\Domain\Plugins\Models\InstalledPlugin $plugin
-         * @return false|string
-         */
         public function addPlugin(\Leantime\Domain\Plugins\Models\InstalledPlugin $plugin): false|string
         {
 
-            $sql = "INSERT INTO zp_plugins (
+            $sql = 'INSERT INTO zp_plugins (
                 name,
                 enabled,
                 description,
@@ -125,7 +107,7 @@ namespace Leantime\Domain\Plugins\Repositories {
                 :authors,
                 :license,
                 :format
-            )";
+            )';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':name', $plugin->name, PDO::PARAM_STR);
@@ -147,17 +129,13 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $id;
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
         public function enablePlugin(int $id): bool
         {
 
-            $sql = "UPDATE zp_plugins
+            $sql = 'UPDATE zp_plugins
                    SET enabled = 1
                 WHERE id = :id
-            ";
+            ';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -169,21 +147,13 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
-        /**
-         * @param int $id
-         * @return bool
-         */
         public function disablePlugin(int $id): bool
         {
 
-            $sql = "UPDATE zp_plugins
+            $sql = 'UPDATE zp_plugins
                    SET enabled = 0
                 WHERE id = :id
-            ";
+            ';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -195,20 +165,12 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
-        /**
-         * @param int $id
-         * @return bool
-         */
         public function removePlugin(int $id): bool
         {
 
-            $sql = "DELETE FROM zp_plugins
+            $sql = 'DELETE FROM zp_plugins
                 WHERE id = :id LIMIT 1
-            ";
+            ';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);

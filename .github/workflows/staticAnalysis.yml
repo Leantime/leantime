@@ -2,7 +2,7 @@ name: Static Analysis
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "*.*-dev" ]
 
 jobs:
   phpstan:
@@ -11,6 +11,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: make build-dev
+      
+    - name: Run Tests
+      run: make build-dev
+
+    - name: Run Code Style Tests
+      run: make test-code-style
 
     - name: Run Tests
       run: make phpstan

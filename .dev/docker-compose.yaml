@@ -2,8 +2,8 @@ version: "3.9"
 
 networks:
   leantime:
-      external: false
-      driver: bridge
+    external: false
+    driver: bridge
 
 volumes:
   mysql:
@@ -13,19 +13,18 @@ services:
   leantime-dev:
     build: .
     ports:
-      - "8888:8080"
-      - "8443:443"
+      - "8001:8080" #Using ports that are hopefully available. format is: 80XX
+      - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     volumes:
-     - "../:/var/www/html"
-     - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
-     - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
-     # - ".env:/var/www/html/config/.env"
+      - "../:/var/www/html"
+      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
+      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
     environment:
-      LEAN_DB_HOST: 'db'
-      LEAN_DB_USER: 'leantime'
-      LEAN_DB_PASSWORD: 'leantime'
-      LEAN_DB_DATABASE: 'leantime'
-      LEAN_DB_PORT: '3306'
+      LEAN_DB_HOST: "db"
+      LEAN_DB_USER: "leantime"
+      LEAN_DB_PASSWORD: "leantime"
+      LEAN_DB_DATABASE: "leantime"
+      LEAN_DB_PORT: "3306"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -45,10 +44,10 @@ services:
     ports:
       - "3306"
     environment:
-      MYSQL_ROOT_PASSWORD: 'leantime'
-      MYSQL_USER: 'leantime'
-      MYSQL_PASSWORD: 'leantime'
-      MYSQL_DATABASE: 'leantime'
+      MYSQL_ROOT_PASSWORD: "leantime"
+      MYSQL_USER: "leantime"
+      MYSQL_PASSWORD: "leantime"
+      MYSQL_DATABASE: "leantime"
     networks:
       - leantime
     volumes:

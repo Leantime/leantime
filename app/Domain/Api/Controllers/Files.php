@@ -7,23 +7,14 @@ use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class Files extends Controller
 {
     private UserService $userService;
+
     private FileRepository $fileRepo;
 
     /**
      * init - initialize private variables
-     *
-     * @access public
-     *
-     * @param FileRepository $fileRepo
-     * @param UserService    $userService
-     *
-     * @return void
      */
     public function init(FileRepository $fileRepo, UserService $userService): void
     {
@@ -33,12 +24,6 @@ class Files extends Controller
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -48,11 +33,8 @@ class Files extends Controller
     /**
      * post - handle post requests
      *
-     * @access public
      *
-     * @param array $params
      *
-     * @return Response
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
@@ -67,11 +49,11 @@ class Files extends Controller
         }
 
         if (isset($_FILES['file'])) {
-            $_FILES['file']['name'] = "pastedImage.png";
-            $file = $this->fileRepo->upload($_FILES, 'project', session("currentProject"));
+            $_FILES['file']['name'] = 'pastedImage.png';
+            $file = $this->fileRepo->upload($_FILES, 'project', session('currentProject'));
 
-            return new Response(BASE_URL . '/files/get?'
-                . http_build_query([
+            return new Response(BASE_URL.'/files/get?'
+                .http_build_query([
                     'encName' => $file['encName'],
                     'ext' => $file['extension'],
                     'realName' => $file['realName'],
@@ -83,18 +65,12 @@ class Files extends Controller
 
     /**
      * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
         if (
-            !isset($params['patchModalSettings'])
-            || !$this->userService->updateUserSettings("modals", $params['settings'], 1)
+            ! isset($params['patchModalSettings'])
+            || ! $this->userService->updateUserSettings('modals', $params['settings'], 1)
         ) {
             return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
@@ -104,12 +80,6 @@ class Files extends Controller
 
     /**
      * delete - handle delete requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function delete(array $params): Response
     {

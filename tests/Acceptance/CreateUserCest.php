@@ -35,7 +35,7 @@ class CreateUserCest
         $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_user', [
-            'username' => 'john@doe.com'
+            'username' => 'john@doe.com',
         ]);
     }
 

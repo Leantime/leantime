@@ -5,27 +5,28 @@ namespace Leantime\Domain\Notifications\Services;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use League\HTMLToMarkdown\HtmlConverter;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
 
-/**
- *
- */
 class Messengers
 {
     private Client $httpClient;
+
     private SettingRepository $settingsRepo;
+
     private LanguageCore $language;
-    private array $supportedMessengers = array("slack", "discord", "mattermost", "zulip");
+
+    private array $supportedMessengers = ['slack', 'discord', 'mattermost', 'zulip'];
+
     private string $projectName = '';
 
     /**
      * __construct - get database connection
      *
-     * @access public
+     *
+     * @api
      */
     public function __construct(
         Client $httpClient,
@@ -38,22 +39,16 @@ class Messengers
     }
 
     /**
-     * @param NotificationModel $notification
-     * @param $projectName
-     * @param array|string $messengers
-     * @return void
+     * @api
      */
     /**
-     * @param NotificationModel $notification
-     * @param $projectName
-     * @param array|string      $messengers
-     * @return void
+     * @api
      */
-    public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = "all"): void
+    public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = 'all'): void
     {
         $this->projectName = $projectName;
 
-        $messengersToSend = array();
+        $messengersToSend = [];
         if (is_string($messengers) && $messengers == 'all') {
             $messengersToSend = $this->supportedMessengers;
         } elseif (is_array($messengers)) {
@@ -65,26 +60,27 @@ class Messengers
         }
 
         foreach ($messengersToSend as $messenger) {
-            $this->{"" . $messenger . "Webhook"}($notification);
+            $this->{''.$messenger.'Webhook'}($notification);
         }
     }
 
     /**
      * slackWebhook
      *
-     * @access public
+     *
+     * @api
      */
     private function slackWebhook(NotificationModel $notification): bool
     {
         $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
 
-        if ($slackWebhookURL !== "" && $slackWebhookURL !== false) {
+        if ($slackWebhookURL !== '' && $slackWebhookURL !== false) {
             $message = $this->prepareMessage($notification);
 
-            $data = array(
-                'text'        => '',
+            $data = [
+                'text' => '',
                 'attachments' => $message,
-            );
+            ];
 
             $data_string = json_encode($data);
 
@@ -108,7 +104,8 @@ class Messengers
     /**
      * mattermostWebhook
      *
-     * @access public
+     *
+     * @api
      */
     private function mattermostWebhook(NotificationModel $notification): bool
     {
@@ -118,12 +115,12 @@ class Messengers
         if ($mattermostWebhookURL !== '' && $mattermostWebhookURL !== false) {
             $message = $this->prepareMessage($notification);
 
-            $data = array(
-                'username' => "Leantime",
+            $data = [
+                'username' => 'Leantime',
                 'icon_url' => '',
                 'text' => '',
                 'attachments' => $message,
-            );
+            ];
 
             $data_string = json_encode($data);
 
@@ -146,32 +143,33 @@ class Messengers
     /**
      *  zulipWebhook
      *
-     * @access public
+     *
+     * @api
      */
     private function zulipWebhook(NotificationModel $notification): bool
     {
         $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.zulipHook");
 
-        if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== "") {
+        if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== '') {
             $zulipWebhook = unserialize($zulipWebhookSerialized);
 
             $botEmail = $zulipWebhook['zulipEmail'];
             $botKey = $zulipWebhook['zulipBotKey'];
-            $botURL = $zulipWebhook['zulipURL'] . "/api/v1/messages";
+            $botURL = $zulipWebhook['zulipURL'].'/api/v1/messages';
 
-            $prepareChatMessage = "**Project: " . $this->projectName . "** \n\r" . $notification->message;
+            $prepareChatMessage = '**Project: '.$this->projectName."** \n\r".$notification->message;
             if ($notification->url !== false) {
-                $prepareChatMessage .= " " . $notification->url['url'] . "";
+                $prepareChatMessage .= ' '.$notification->url['url'].'';
             }
 
-            $data = array(
+            $data = [
                 'type' => 'stream',
                 'to' => $zulipWebhook['zulipStream'],
                 'topic' => $zulipWebhook['zulipTopic'],
                 'content' => $prepareChatMessage,
-            );
+            ];
 
-            $curlUrl = $botURL . '?' . http_build_query($data);
+            $curlUrl = $botURL.'?'.http_build_query($data);
 
             $data_string = json_encode($data);
 
@@ -199,29 +197,30 @@ class Messengers
     /**
      * mattermostWebhook
      *
-     * @access public
+     *
+     * @api
      */
     public function discordWebhook(NotificationModel $notification): bool
     {
         $ticketService = app()->make(Tickets::class);
 
-        for ($i = 1; 3 >= $i; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             $discordWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.discordWebhookURL{$i}");
             if ($discordWebhookURL !== '' && $discordWebhookURL !== false) {
                 $fields = [
                     [
-                        'name' => $this->language->__("label.project"),
+                        'name' => $this->language->__('label.project'),
                         'value' => $this->projectName,
-                        'inline' => true
+                        'inline' => true,
                     ],
                 ];
 
                 $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
-                if (!empty($notification->entity->status) && !empty($statusLabelsArray[$notification->entity->status])) {
+                if (! empty($notification->entity->status) && ! empty($statusLabelsArray[$notification->entity->status])) {
                     $fields[] = [
-                        'name' => $this->language->__("label.todo_status"),
+                        'name' => $this->language->__('label.todo_status'),
                         'value' => $statusLabelsArray[$notification->entity->status]['name'],
-                        'inline' => true
+                        'inline' => true,
                     ];
                 }
 
@@ -242,7 +241,7 @@ class Messengers
                             'url' => $url_link,
                             'timestamp' => date('c', strtotime('now')),
                             'fields' => $fields,
-                        ]
+                        ],
                     ],
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
@@ -263,8 +262,9 @@ class Messengers
     }
 
     /**
-     * @param NotificationModel $notification
      * @return array[]
+     *
+     * @api
      */
     public function prepareMessage(NotificationModel $notification): array
     {
@@ -278,20 +278,20 @@ class Messengers
         }
 
         $fields = [
-            'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
+            'title' => $this->language->__('headlines.project_with_name').' '.$this->projectName,
             'short' => false,
         ];
 
         $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
-        if (!empty($statusLabelsArray[$status])) {
-            $fields['value'] = $this->language->__("label.todo_status") . ': '. $statusLabelsArray[$status]['name'];
+        if (! empty($statusLabelsArray[$status])) {
+            $fields['value'] = $this->language->__('label.todo_status').': '.$statusLabelsArray[$status]['name'];
         }
 
         $message = [
             [
-                'color'    => '#1b75bb',
+                'color' => '#1b75bb',
                 'fallback' => $notification->message,
-                'pretext'  => $notification->message,
+                'pretext' => $notification->message,
                 'title' => $headline,
                 'title_link' => $notification->url['url'],
                 'fields' => $fields,

@@ -9,32 +9,20 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
-/**
- *
- */
 class ProjectSelector extends HtmxController
 {
-    Use DispatchesEvents;
+    use DispatchesEvents;
 
-    /**
-     * @var string
-     */
     protected static string $view = 'menu::partials.projectSelector';
 
-    /**
-     * @var Timesheets
-     */
     private Timesheets $timesheetService;
+
     private Menu $menuService;
+
     private \Leantime\Domain\Menu\Repositories\Menu $menuRepo;
 
     /**
      * Controller constructor
-     *
-     * @param Timesheets                              $timesheetService
-     * @param Menu                                    $menuService
-     * @param \Leantime\Domain\Menu\Repositories\Menu $menuRepo
-     * @return void
      */
     public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo): void
     {
@@ -44,7 +32,6 @@ class ProjectSelector extends HtmxController
     }
 
     /**
-     * @return void
      * @throws BindingResolutionException
      */
     public function updateMenu(): void
@@ -56,7 +43,7 @@ class ProjectSelector extends HtmxController
         $favoriteProjects =
         $clients =
         $allAvailableProjectsHierarchy =
-        $allAssignedprojectsHierarchy  =
+        $allAssignedprojectsHierarchy =
         $returnVars = [];
 
         $currentClient = '';
@@ -64,25 +51,25 @@ class ProjectSelector extends HtmxController
         $projectType = '';
         $menuType = 'project';
 
-        $projectSelectFilter = array(
-            "groupBy" => $_POST['groupBy'] ?? "none",
-            "client" => (int)$_POST['client'] ?? null,
-        );
+        $projectSelectFilter = [
+            'groupBy' => $_POST['groupBy'] ?? 'none',
+            'client' => (int) $_POST['client'] ?? null,
+        ];
 
-        session(["usersettings.projectSelectFilter"=> $projectSelectFilter]);
+        session(['usersettings.projectSelectFilter' => $projectSelectFilter]);
 
-        if (session()->exists("userdata")) {
+        if (session()->exists('userdata')) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
-            $projectVars = $this->menuService->getUserProjectList(session("userdata.id"), $projectSelectFilter["client"]);
+            $projectVars = $this->menuService->getUserProjectList(session('userdata.id'), $projectSelectFilter['client']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
-            $allAvailableProjects  = $projectVars['availableProjects'];
-            $allAvailableProjectsHierarchy  = $projectVars['availableProjectsHierarchy'];
-            $allAssignedprojectsHierarchy  = $projectVars['assignedHierarchy'];
-            $currentClient  = $projectVars['currentClient'];
-            $menuType  = $projectVars['menuType'];
-            $projectType  = $projectVars['projectType'];
-            $recentProjects  = $projectVars['recentProjects'];
+            $allAvailableProjects = $projectVars['availableProjects'];
+            $allAvailableProjectsHierarchy = $projectVars['availableProjectsHierarchy'];
+            $allAssignedprojectsHierarchy = $projectVars['assignedHierarchy'];
+            $currentClient = $projectVars['currentClient'];
+            $menuType = $projectVars['menuType'];
+            $projectType = $projectVars['projectType'];
+            $recentProjects = $projectVars['recentProjects'];
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
             $currentProject = $projectVars['currentProject'];
@@ -105,7 +92,7 @@ class ProjectSelector extends HtmxController
             'settingsTooltip' => '',
         ];
 
-        if($menuType == "project" || $menuType == "default") {
+        if ($menuType == 'project' || $menuType == 'default') {
             $settingsLink = [
                 'label' => __('menu.project_settings'),
                 'module' => 'projects',
@@ -115,7 +102,7 @@ class ProjectSelector extends HtmxController
             ];
         }
 
-        $newProjectUrl = self::dispatch_filter("startSomething", "#/projects/createnew");
+        $newProjectUrl = self::dispatchFilter('startSomething', '#/projects/createnew');
 
         $this->tpl->assign('currentClient', $currentClient);
         $this->tpl->assign('module', FrontcontrollerCore::getModuleName());
@@ -140,10 +127,5 @@ class ProjectSelector extends HtmxController
 
     }
 
-    /**
-     * @return void
-     */
-    public function filter(): void
-    {
-    }
+    public function filter(): void {}
 }

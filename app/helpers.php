@@ -4,9 +4,9 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\Factory;
-use Leantime\Core\Bootstrap\Application;
-use Leantime\Core\Bootstrap\Bootloader;
+use Illuminate\Support\Str;
+use Leantime\Core\Application;
+use Leantime\Core\Bootloader;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -18,13 +18,12 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
      *
-     * @param string $abstract
-     * @param array  $parameters
      *
      * @return mixed|Application
      *
@@ -34,7 +33,7 @@ if (! function_exists('app')) {
     {
         $app = Application::getInstance();
 
-        return !empty($abstract) ? $app->make($abstract, $parameters) : $app;
+        return ! empty($abstract) ? $app->make($abstract, $parameters) : $app;
     }
 }
 
@@ -72,15 +71,15 @@ if (! function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
-     * @return Application
      *
      * @throws BindingResolutionException
      */
     function bootstrap_minimal_app(): Application
     {
-        $app = app()::setInstance(new Application())::setHasBeenBootstrapped();
+        $app = app()::setInstance(new Application)::setHasBeenBootstrapped();
         $app_inst = Bootloader::getInstance($app)->getApplication();
         $app_inst->make(AppSettings::class)->loadSettings();
+
         return $app_inst;
     }
 }
@@ -89,9 +88,6 @@ if (! function_exists('__')) {
     /**
      * Translate a string.
      *
-     * @param string $index
-     * @param string $default
-     * @return string
      * @throws BindingResolutionException
      */
     function __(string $index, string $default = ''): string
@@ -102,15 +98,22 @@ if (! function_exists('__')) {
 
 if (! function_exists('view')) {
     /**
-     * Get the view factory instance.
+     * Get the evaluated view contents for the given view.
      *
-     * @return Factory
-     *
-     * @throws BindingResolutionException
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
      */
-    function view(): Factory
+    function view($view = null, $data = [], $mergeData = [])
     {
-        return app()->make(Factory::class);
+        $factory = app(\Illuminate\View\Factory::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->make($view, $data, $mergeData);
     }
 }
 
@@ -118,10 +121,7 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array  $array
-     * @param string $sortyBy
-     *
-     * @return array
+     * @param  string  $sortyBy
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
@@ -141,27 +141,21 @@ if (! function_exists('array_sort')) {
 if (! function_exists('do_once')) {
     /**
      * Execute a callback only once.
-     *
-     * @param Closure $callback
-     * @param bool    $across_requests
-     * @param string  $key
-     *
-     * @return void
      */
     function do_once(string $key, Closure $callback, bool $across_requests = false): void
     {
         $key = "do_once_{$key}";
 
         if ($across_requests) {
-            if (session()->exists("do_once") === false) {
-                session(["do_once" => []]);
+            if (session()->exists('do_once') === false) {
+                session(['do_once' => []]);
             }
 
-            if (session("do_once." . $key) ?? false) {
+            if (session('do_once.'.$key) ?? false) {
                 return;
             }
 
-            session(["do_once." . $key => true]);
+            session(['do_once.'.$key => true]);
         } else {
             static $do_once;
             $do_once ??= [];
@@ -182,8 +176,6 @@ if (! function_exists('config')) {
      * Get / set the specified configuration value.
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
-     * @param array|string|null $key
-     * @param mixed             $default
      *
      * @return mixed|Application
      *
@@ -208,9 +200,7 @@ if (! function_exists('config')) {
 if (! function_exists('build')) {
     /**
      * Turns any object into a builder object
-     * @param object $object
      *
-     * @return Build
      **/
     function build(object $object): Build
     {
@@ -222,13 +212,10 @@ if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
      *
-     * @param string|int|float|DateTime|Carbon|null $value
-     * @param string|int|float|DateTime|null        $value2
-     * @param FromFormat|null                       $fromFormat
-     *
-     * @return Format|string
+     * @param  string|int|float|DateTime|Carbon|null  $value
+     * @param  string|int|float|DateTime|null  $value2
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format|string
     {
         return new Format($value, $value2, $fromFormat);
     }
@@ -238,11 +225,10 @@ if (! function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
-     * @param mixed  $obj              The object to be cast.
-     * @param string $to_class         The class to which the object should be cast.
-     * @param array  $construct_params Optional parameters to pass to the constructor.
-     * @param array  $mappings         Make sure certain sub properties are casted to specific types.
-     *
+     * @param  mixed  $obj  The object to be cast.
+     * @param  string  $to_class  The class to which the object should be cast.
+     * @param  array  $construct_params  Optional parameters to pass to the constructor.
+     * @param  array  $mappings  Make sure certain sub properties are casted to specific types.
      * @return mixed The casted object, or throws an exception on failure.
      *
      * @throws \InvalidArgumentException If the class does not exist.
@@ -271,16 +257,13 @@ if (! function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
-     * @param string $path
-     * @param string $manifestDirectory
-     * @return Mix|string
      *
      * @throws BindingResolutionException
      */
     function mix(string $path = '', string $manifestDirectory = ''): Mix|string
     {
         if (! ($app = app())->bound(Mix::class)) {
-            $app->instance(Mix::class, new Mix());
+            $app->instance(Mix::class, new Mix);
         }
 
         $mix = $app->make(Mix::class);
@@ -297,13 +280,12 @@ if (! function_exists('dtHelper')) {
     /**
      * Get a singleton instance of the DateTimeHelper class.
      *
-     * @return DateTimeHelper|null
      *
      * @throws BindingResolutionException
      */
     function dtHelper(): ?DateTimeHelper
     {
-        if (!app()->bound(DateTimeHelper::class)) {
+        if (! app()->bound(DateTimeHelper::class)) {
             app()->singleton(DateTimeHelper::class);
         }
 
@@ -315,8 +297,8 @@ if (! function_exists('session')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
-     * @param string $path
-     * @param string $manifestDirectory
+     * @param  string  $path
+     * @param  string  $manifestDirectory
      * @return Mix|string
      *
      * @throws BindingResolutionException
@@ -348,8 +330,8 @@ if (! function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
      *
-     * @param  list<string>|string|null $key
-     * @param  mixed                    $default
+     * @param  list<string>|string|null  $key
+     * @param  mixed  $default
      * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
      */
     function request($key = null, $default = null)
@@ -372,11 +354,83 @@ if (! function_exists('report')) {
     /**
      * Report an exception.
      *
-     * @param  \Throwable|string $exception
+     * @param  \Throwable|string  $exception
      * @return void
      */
     function report($exception)
     {
         Log::critical($exception);
     }
+}
+
+if (! function_exists('base_path')) {
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return app()->basePath($path);
+    }
+}
+
+if (! function_exists('redirect')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $url
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
+    {
+        return new RedirectResponse(
+            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
+            $http_response_code
+        );
+    }
+}
+
+if (! function_exists('currentRoute')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $to
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     */
+
+    function currentRoute()
+    {
+
+        return app('request')->getCurrentRoute();
+
+    }
+}
+
+if (! function_exists('get_domain_key')) {
+
+    /**
+     * Gets a unique instance key determined by domain
+     *
+     */
+    function get_domain_key()
+    {
+
+        //Now that we know where the instance is bing called from
+        //Let's add a domain level cache.
+        $domainCacheName = 'localhost';
+        if (! app()->runningInConsole()) {
+            $domainCacheName = md5(Str::slug(app('request')->host().app('request')['key']));
+        }
+
+        return $domainCacheName;
+
+    }
+
 }

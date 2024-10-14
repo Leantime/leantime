@@ -3,17 +3,11 @@
 namespace Leantime\Core\Db;
 
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Console\CliRequest;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\IncomingRequest;
 use PDO;
-use PDOException;
 
 /**
  * Database Class - Very simple abstraction layer for pdo connection
- *
- * @package    leantime
- * @subpackage core
  */
 class Db
 {
@@ -52,50 +46,28 @@ class Db
     /**
      * __construct - connect to database and select db
      *
-     * @param Environment $config
      * @return void
      */
-    public function __construct(Environment $config)
+    public function __construct()
     {
+
+        $config = app('config');
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;
         $this->databaseName = $config->dbDatabase;
-        $this->host = $config->dbHost ?? "localhost";
-        $this->port = $config->dbPort ?? "3306";
+        $this->host = $config->dbHost ?? 'localhost';
+        $this->port = $config->dbPort ?? '3306';
 
-        try {
-            $this->database = new PDO(
-                dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
-                username: $this->user,
-                password: $this->password,
-                options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
-            );
-            $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-        } catch (PDOException $e) {
-            $newline = app()->make(IncomingRequest::class) instanceof CliRequest ? "\n" : "<br />\n";
-            echo "No database connection, check your database credentials in your configuration file.$newline";
-            $found_errors = [];
+        $this->database = new PDO(
+            dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
+            username: $this->user,
+            password: $this->password,
+            options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
+        );
+        $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+        $this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-            if (!extension_loaded('PDO')) {
-                $found_errors[] = "php-PDO is required, but not installed";
-            }
-
-            if (!extension_loaded('pdo_mysql')) {
-                $found_errors[] = "php-pdo_mysql is required, but not installed";
-            }
-
-            if (! empty($found_errors)) {
-                echo "Checking common issues:$newline";
-                foreach ($found_errors as $error) {
-                    echo "- $error$newline";
-                }
-            }
-
-            report($e);
-
-            exit();
-        }
     }
 
     /**
@@ -104,18 +76,14 @@ class Db
      *
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
-     *
-     * @param string $name
-     * @param int    $count
-     * @return string
      */
     public static function arrayToPdoBindingString(string $name, int $count): string
     {
-        $bindingStatement = "";
+        $bindingStatement = '';
         for ($i = 0; $i < $count; $i++) {
-            $bindingStatement .= ":" . $name . $i;
+            $bindingStatement .= ':'.$name.$i;
             if ($i != $count - 1) {
-                $bindingStatement .= ",";
+                $bindingStatement .= ',';
             }
         }
 
@@ -125,13 +93,9 @@ class Db
     /**
      * Sanitizes a string to only contain letters, numbers and underscore.
      * Used for patch statements with variable column keys values
-     *
-     *
-     * @param string $string
-     * @return string
      */
     public static function sanitizeToColumnString(string $string): string
     {
-        return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $string);
     }
 }

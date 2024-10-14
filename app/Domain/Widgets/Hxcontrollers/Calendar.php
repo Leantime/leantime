@@ -13,23 +13,26 @@ use Leantime\Domain\Users\Services\Users as UserService;
 
 class Calendar extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'widgets::partials.calendar';
 
     private ProjectService $projectsService;
+
     private TicketService $ticketsService;
+
     private UserService $usersService;
+
     private TimesheetService $timesheetsService;
+
     private ReportService $reportsService;
+
     private SettingRepository $settingRepo;
+
     private CalendarRepository $calendarRepo;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param  \Leantime\Domain\Projects\Services\Projects  $projectService  The projects domain service.
      * @return void
      */
     public function init(
@@ -49,13 +52,13 @@ class Calendar extends HtmxController
         $this->settingRepo = $settingRepo;
         $this->calendarRepo = $calendarRepo;
 
-        session(["lastPage" => BASE_URL . "/dashboard/home"]);
+        session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
     public function get()
     {
 
-        $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars(session("userdata.id")));
-        $this->tpl->assign('calendar', $this->calendarRepo->getCalendar(session("userdata.id")));
+        $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars(session('userdata.id')));
+        $this->tpl->assign('calendar', $this->calendarRepo->getCalendar(session('userdata.id')));
     }
 }

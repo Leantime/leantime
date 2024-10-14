@@ -2,46 +2,35 @@
 
 namespace Leantime\Domain\Menu\Services;
 
-    use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Template as TemplateCore;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Setting\Services\Setting;
-    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Users\Services\Users;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Setting\Services\Setting;
+use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Users\Services\Users;
 
-    /**
-     *
-     */
 class Menu
 {
     use DispatchesEvents;
 
-    private TemplateCore $tpl;
-    private LanguageCore $language;
-    private EnvironmentCore $config;
-    private ProjectRepository $projectRepository;
-    private TicketRepository $ticketRepository;
-    private TimesheetRepository $timesheetsRepo;
-    private SettingRepository $settingsRepo;
     private ProjectService $projectService;
+
     private TimesheetService $timesheetService;
+
     private SprintService $sprintService;
+
     private Users $userService;
+
     private Setting $settingSvc;
 
     /**
-     * @param TemplateCore        $tpl
-     * @param LanguageCore        $language
-     * @param EnvironmentCore     $config
-     * @param ProjectRepository   $projectRepository
-     * @param TicketRepository    $ticketRepository
      * @param TimesheetRepository $timesheetsRepo
      * @param SettingRepository   $settingsRepo
      * @param ProjectService      $projectService
@@ -51,26 +40,13 @@ class Menu
      * @param Setting             $settingSvc
      */
     public function __construct(
-        TemplateCore $tpl,
-        LanguageCore $language,
-        EnvironmentCore $config,
-        ProjectRepository $projectRepository,
-        TicketRepository $ticketRepository,
-        TimesheetRepository $timesheetsRepo,
-        SettingRepository $settingsRepo,
         ProjectService $projectService,
         TimesheetService $timesheetService,
         SprintService $sprintService,
         Users $userService,
         Setting $settingSvc
     ) {
-        $this->tpl = $tpl;
-        $this->language = $language;
-        $this->config = $config;
-        $this->projectRepository = $projectRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->timesheetsRepo = $timesheetsRepo;
-        $this->settingsRepo = $settingsRepo;
+
         $this->projectService = $projectService;
         $this->timesheetService = $timesheetService;
         $this->sprintService = $sprintService;
@@ -78,10 +54,6 @@ class Menu
         $this->settingSvc = $settingSvc;
     }
 
-    /**
-     * @param int $userId
-     * @return array
-     */
     public function getUserProjectList(int $userId, null|int|string $client = null): array
     {
 
@@ -104,7 +76,7 @@ class Menu
 
         $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open', $client);
 
-        $recent = $this->settingSvc->getSetting("usersettings." . $userId . ".recentProjects");
+        $recent = $this->settingSvc->getSetting('usersettings.'.$userId.'.recentProjects');
         $recentArr = unserialize($recent);
 
         //Make sure the suer has access to the project
@@ -118,15 +90,14 @@ class Menu
             }
         }
 
-
-        $projectType = "project";
+        $projectType = 'project';
         $project = [];
         if ($currentProjectId = $this->projectService->getCurrentProjectId()) {
             $project = $this->projectService->getProject($currentProjectId);
 
             $projectType = ($project !== false && isset($project['type']))
                 ? $project['type']
-                : "project";
+                : 'project';
 
             if ($projectType != '' && $projectType != 'project') {
                 $menuType = $projectType;
@@ -134,8 +105,8 @@ class Menu
                 $menuType = \Leantime\Domain\Menu\Repositories\Menu::DEFAULT_MENU;
             }
 
-            if ($project !== false && isset($project["clientId"])) {
-                $currentClient = $project["clientId"];
+            if ($project !== false && isset($project['clientId'])) {
+                $currentClient = $project['clientId'];
             } else {
                 $currentClient = '';
             }
@@ -145,49 +116,43 @@ class Menu
         }
 
         return [
-            "assignedProjects" => $allAssignedprojects,
-            "availableProjects" => $allAvailableProjects,
-            "assignedHierarchy" => $allAssignedprojectsHierarchy,
-            "availableProjectsHierarchy" => $allAvailableProjectsHierarchy,
-            "currentClient" => $currentClient,
-            "menuType" => $menuType,
-            "recentProjects" => $recentProjects,
-            "projectType" => $projectType,
-            "favoriteProjects" => $favoriteProjects,
-            "clients" => $clients,
-            "currentProject" => $project,
+            'assignedProjects' => $allAssignedprojects,
+            'availableProjects' => $allAvailableProjects,
+            'assignedHierarchy' => $allAssignedprojectsHierarchy,
+            'availableProjectsHierarchy' => $allAvailableProjectsHierarchy,
+            'currentClient' => $currentClient,
+            'menuType' => $menuType,
+            'recentProjects' => $recentProjects,
+            'projectType' => $projectType,
+            'favoriteProjects' => $favoriteProjects,
+            'clients' => $clients,
+            'currentProject' => $project,
 
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getProjectTypeAvatars(): array
     {
 
         $projectTypeAvatars = [
-            "project" => "avatar",
-            "strategy" => "fa fa-chess",
-            "program" => "fa fa-layer-group",
+            'project' => 'avatar',
+            'strategy' => 'fa fa-chess',
+            'program' => 'fa fa-layer-group',
         ];
 
-        return self::dispatch_filter('projectTypeAvatars', $projectTypeAvatars);
+        return self::dispatchFilter('projectTypeAvatars', $projectTypeAvatars);
     }
 
-    /**
-     * @return array
-     */
     public function getProjectSelectorGroupingOptions(): array
     {
 
         $projectSelectGrouping =
             [
-                "structure" => "Group by Project Structure",
-                "client" => "Group by Client",
-                "none" => "No Grouping",
+                'structure' => 'Group by Project Structure',
+                'client' => 'Group by Client',
+                'none' => 'No Grouping',
             ];
 
-        return self::dispatch_filter('projectSelectorGrouping', $projectSelectGrouping);
+        return self::dispatchFilter('projectSelectorGrouping', $projectSelectGrouping);
     }
 }

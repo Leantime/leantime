@@ -9,19 +9,12 @@ use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class ShowAll extends Controller
 {
     private FileRepository $filesRepo;
+
     private FileService $filesService;
 
-    /**
-     * @param FileRepository $filesRepo
-     * @param FileService    $filesService
-     * @return void
-     */
     public function init(
         FileRepository $filesRepo,
         FileService $filesService
@@ -31,7 +24,6 @@ class ShowAll extends Controller
     }
 
     /**
-     * @return Response
      * @throws BindingResolutionException
      */
     public function run(): Response
@@ -44,8 +36,8 @@ class ShowAll extends Controller
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
-                $this->filesRepo->upload($_FILES, 'project', session("currentProject"));
-                $this->tpl->setNotification('notifications.file_upload_success', 'success', "file_uploaded");
+                $this->filesRepo->upload($_FILES, 'project', session('currentProject'));
+                $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_uploaded');
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
             }
@@ -55,17 +47,19 @@ class ShowAll extends Controller
             $result = $this->filesService->deleteFile($_GET['delFile']);
 
             if ($result === true) {
-                $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "file_deleted");
-                return Frontcontroller::redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
+                $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success', 'file_deleted');
+
+                return Frontcontroller::redirect(BASE_URL.'/files/showAll'.($_GET['modalPopUp'] ?? '') ? '?modalPopUp=true' : '');
             } else {
-                $this->tpl->setNotification($result["msg"], "success");
+                $this->tpl->setNotification($result['msg'], 'success');
             }
         }
 
         $this->tpl->assign('currentModule', $currentModule);
-        $this->tpl->assign('modules', $this->filesRepo->getModules(session("userdata.id")));
-        $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", session("currentProject"), session("userdata.id")));
-        return $this->tpl->displayPartial('files.showAll');
+        $this->tpl->assign('modules', $this->filesRepo->getModules(session('userdata.id')));
+        $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+        $this->tpl->assign('files', $this->filesRepo->getFilesByModule('project', session('currentProject'), session('userdata.id')));
+
+        return $this->tpl->displayPartial('files::partials.showAll');
     }
 }

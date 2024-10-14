@@ -9,9 +9,7 @@ use Tests\Support\Page\Acceptance\Install;
 
 class InstallCest
 {
-    public function _before(AcceptanceTester $I)
-    {
-    }
+    public function _before(AcceptanceTester $I) {}
 
     #[Group('install')]
     public function installPageWorks(AcceptanceTester $I): void

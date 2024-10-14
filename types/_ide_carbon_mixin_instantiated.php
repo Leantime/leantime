@@ -40,22 +40,22 @@ namespace Carbon
 {
     class CarbonImmutable
     {
-        public function formatDateForUser(): String
+        public function formatDateForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:59
         }
 
-        public function formatTimeForUser(): String
+        public function formatTimeForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:77
         }
 
-        public function format24HTimeForUser(): String
+        public function format24HTimeForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:95
         }
 
-        public function formatDateTimeForDb(): String
+        public function formatDateTimeForDb(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:113
         }
@@ -79,22 +79,22 @@ namespace Illuminate\Support
 
     class Carbon
     {
-        public function formatDateForUser(): String
+        public function formatDateForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:59
         }
 
-        public function formatTimeForUser(): String
+        public function formatTimeForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:77
         }
 
-        public function format24HTimeForUser(): String
+        public function format24HTimeForUser(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:95
         }
 
-        public function formatDateTimeForDb(): String
+        public function formatDateTimeForDb(): string
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:113
         }

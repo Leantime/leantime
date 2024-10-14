@@ -10,19 +10,16 @@ namespace Leantime\Domain\Install\Controllers {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Update extends Controller
     {
         private InstallRepository $installRepo;
+
         private SettingRepository $settingsRepo;
+
         private AppSettingCore $appSettings;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
          */
         public function init(
             InstallRepository $installRepo,
@@ -37,23 +34,21 @@ namespace Leantime\Domain\Install\Controllers {
         /**
          * get - handle get requests
          *
-         * @access public
          * @params parameters or body of the request
          */
         public function get($params)
         {
-            $dbVersion = $this->settingsRepo->getSetting("db-version");
+            $dbVersion = $this->settingsRepo->getSetting('db-version');
             if ($this->appSettings->dbVersion == $dbVersion) {
-                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
             }
 
-            $updatePage = self::dispatch_filter('customUpdatePage', 'install.update');
-            return $this->tpl->display($updatePage, "entry");
+            $updatePage = self::dispatchFilter('customUpdatePage', 'install.update');
+
+            return $this->tpl->display($updatePage, 'entry');
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -63,11 +58,12 @@ namespace Leantime\Domain\Install\Controllers {
 
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
-                        $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
+                        $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
                         //report($errorMessage);
                     }
-                    $this->tpl->setNotification("There was a problem updating your database. Please check your error logs to verify your database is up to date.", "error");
-                    return FrontcontrollerCore::redirect(BASE_URL . "/install/update");
+                    $this->tpl->setNotification('There was a problem updating your database. Please check your error logs to verify your database is up to date.', 'error');
+
+                    return FrontcontrollerCore::redirect(BASE_URL.'/install/update');
                 }
 
                 if ($success === true) {
@@ -75,8 +71,9 @@ namespace Leantime\Domain\Install\Controllers {
                 }
             }
 
-            $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
-            return FrontcontrollerCore::redirect(BASE_URL . "/install/update");
+            $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
+
+            return FrontcontrollerCore::redirect(BASE_URL.'/install/update');
         }
     }
 }

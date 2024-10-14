@@ -12,7 +12,7 @@
 <div class="clear">
     <div class="row" id="yourToDoContainer">
         <div class="col-md-12">
-            <div class="tw-mb-l">
+            <div class="mb-l">
                 @if($allAssignedprojects)
                     <form method="get">
                     @dispatchEvent("beforeTodoWidgetGroupByDropdown")
@@ -30,7 +30,7 @@
                                     <input type="radio" name="groupBy"
                                            @if($groupBy == "time") checked='checked' @endif
                                            value="time" id="groupByDate"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -44,7 +44,7 @@
                                            name="groupBy"
                                            @if($groupBy == "project") checked='checked' @endif
                                            value="project" id="groupByProject"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -60,7 +60,7 @@
                                            name="groupBy"
                                            @if($groupBy == "priority") checked='checked' @endif
                                            value="priority" id="groupByPriority"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                            hx-trigger="click"
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
@@ -86,7 +86,7 @@
                                     class='active'
                                 @endif
                             ><a href=""
-                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                 hx-trigger="click"
                                 hx-target="#yourToDoContainer"
                                 hx-swap="outerHTML"
@@ -104,7 +104,7 @@
                                             class='active'
                                         @endif
                                     ><a href=""
-                                        hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                        hx-get="{{BASE_URL}}/hx/widgets/myToDos/get"
                                         hx-trigger="click"
                                         hx-target="#yourToDoContainer"
                                         hx-swap="outerHTML"
@@ -125,41 +125,47 @@
             <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
 
                 <form method="post"
-                      hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
+                      hx-post="{{ BASE_URL }}/hx/widgets/myToDos/addTodo"
                       hx-target="#yourToDoContainer"
                       hx-swap="outerHTML"
                       hx-indicator="#ticket_new .htmx-indicator-small"
                 >
                     <input type="hidden" name="quickadd" value="1"/>
                     <div class="flex" style="display:flex; column-gap: 10px;">
-                        <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
-
-                        <label style="padding-top: 8px;">Project</label>
-                        <select name="projectId">
+                        <x-global::forms.text-input 
+                            type="text" 
+                            name="headline" 
+                            placeholder="Enter To-Do Title" 
+                            title="{!! $tpl->__('label.headline') !!}" 
+                            variant="title" 
+                            class="w-full" 
+                        />
+                        <br />
+                    
+                        <x-global::forms.select name="projectId" :labelText="'Project'">
                             @foreach($allAssignedprojects as $project)
-                                <option value="{{ $project['id']  }}"
-                                @if($groupBy == 'sprint')
-                                    {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
-                                    @else
-                                    {{ session("currentProject") == $project['id'] ? 'selected' : '' }}
-                                    @endif
-                                >{{ $project["name"]  }}</option>
+                                <x-global::forms.select.select-option :value="$project['id']"
+                                    :selected="($groupBy == 'sprint' && explode('-', $ticketGroup['groupValue'])[1] == $project['id']) || (session('currentProject') == $project['id'])"
+                                >
+                                    {{ $project['name'] }}
+                                </x-global::forms.select.select-option>
                             @endforeach
-                        </select>
+                        </x-global::forms.select>
+                        
                     </div>
                     <input type="submit" value="Save" name="quickadd" />
                     <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
                         <?=$tpl->__("links.cancel") ?>
                     </a>
                     <div class="htmx-indicator-small">
-                        <x-global::loader id="loadingthis" size="25px" />
+                        <x-global::elements.loader id="loadingthis" size="25px" />
                     </div>
                 </form>
 
                 <div class="clearfix"></div>
             </div>
             <div class="htmx-indicator">
-                <x-global::loadingText type="card" count="5" />
+                <x-global::elements.loadingText type="card" count="5" />
             </div>
             <div class="htmx-indicator htmx-loaded-content">
                 @if($tickets !== null && count($tickets) == 0)
@@ -195,7 +201,7 @@
 
                     @endphp
 
-                    <x-global::accordion id="ticketBox1-{{ $loop->index }}">
+                    <x-global::content.accordion id="ticketBox1-{{ $loop->index }}">
                         <x-slot name="title">
 
 
@@ -225,12 +231,12 @@
                                                 </div>
                                                 <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
-                                                    @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
+                                                    @include("tickets::includes.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
                                                     <div class="scheduler pull-right">
                                                         @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                                                            <i class="fa-solid fa-calendar-check infoIcon tw-mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
+                                                            <i class="fa-solid fa-calendar-check infoIcon mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
                                                         @else
-                                                            <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                                                            <i class="fa-regular fa-calendar-xmark infoIcon mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -297,7 +303,7 @@
                                                         </div>
                                                     */ ?>
 
-                                                    <div class="dropdown ticketDropdown milestoneDropdown colorized show right tw-mr-sm">
+                                                    <div class="dropdown ticketDropdown milestoneDropdown colorized show right mr-sm">
                                                             <a style="background-color:{{ $row['milestoneColor'] }}"
                                                                class="dropdown-toggle f-left  label-default milestone"
                                                                href="javascript:void(0);"
@@ -349,7 +355,7 @@
                                 @endforeach
                             </ul>
                         </x-slot>
-                    </x-global::accordion>
+                    </x-global::content.accordion>
                 @endforeach
                 @dispatchEvent("afterTodoListWidgetBox")
             </div>
