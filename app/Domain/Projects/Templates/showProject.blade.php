@@ -266,7 +266,7 @@
                     <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Slack</h4>
                     <div class="row">
                         <div class="col-md-3">
-                            <img src="https://cdn.cdnlogo.com/logos/s/52/slack.svg" width="200" />
+                            <img src="<?=BASE_URL ?>/dist/images/slack.svg" width="200"/>
                         </div>
 
                         <div class="col-md-5">
