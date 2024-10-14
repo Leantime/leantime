@@ -74,8 +74,10 @@ $redirectUrl = $tpl->get('redirectUrl');
     <?php if ($tpl->get('oidcEnabled')) { ?>
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
         <div class="">
-            <br /><center class="uppercase"><?php echo $tpl->language->__("label.or"); ?></center><br />
-            
+            <?php if (false === $tpl->get('noLoginForm')) { ?>
+                <br /><center class="uppercase"><?php echo $tpl->language->__("label.or"); ?></center><br />
+            <?php } ?>
+
             <x-global::forms.button onclick="window.location.href = '{{ BASE_URL }}/oidc/login'" content-role="primary" name="oidclogin" class="w-full">
                 {{ $tpl->language->__('buttons.oidclogin') }}
             </x-global::forms.button>
