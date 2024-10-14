@@ -775,7 +775,7 @@ leantime.ticketsController = (function () {
 
     var initDueDateTimePickers = function () {
         // Reset due date by clicking a button on the task in the dashboard
-        jQuery("#reset-date").on('click', function ( e, settings, column, state ) {
+        jQuery("#reset-date").on('click', function () {
             // Ticket id for api patch call
             const id = jQuery(this).attr("data-id");
             // Set date to null to reset
@@ -785,7 +785,6 @@ leantime.ticketsController = (function () {
                 // Notify user that due date is updated
                 jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
             });
-
         });
         leantime.dateController.initDatePicker(".quickDueDates, .duedates", function(date, instance) {
             //TODO: Update to use htmx, this is awful
