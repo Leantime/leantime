@@ -3,7 +3,7 @@
 <meta name="description" content="{{ $sitename }}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="theme-color" content="{{ $primaryColor }}">
 <meta name="color-scheme" content="{{ $themeColorMode }}">
@@ -63,8 +63,8 @@
 <style id="colorSchemeSetter">
     @foreach ($accents as $accent)
         @if($accent !== false)
-           :root {
-        --accent {{ $loop->iteration }}: {{{ $accent }}};
+    :root {
+        --accent{{ $loop->iteration }}: {{{ $accent }}};
     }
     @endif
     @endforeach
@@ -75,3 +75,8 @@
     }</style>
 
 @dispatchEvent('afterThemeColors')
+
+
+<script>
+    window.leantime.currentProject = '{{ session("currentProject") }}';
+</script>

@@ -60,7 +60,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id);
 
             } else {
-            //New
+                //New
                 $wiki->title = $params['title'];
                 $wiki->projectId = session("currentProject");
                 $wiki->author = session("userdata.id");

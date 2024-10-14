@@ -2,13 +2,17 @@
 
 namespace Leantime\Domain\Calendar\Services;
 
+use Illuminate\Support\Str;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Ramsey\Uuid\Uuid;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
 use Spatie\IcalendarGenerator\Enums\Display;
@@ -22,15 +26,26 @@ class Calendar
     private CalendarRepository $calendarRepo;
     private LanguageCore $language;
 
+    private Setting $settingsRepo;
+
+    private Environment $config;
+
     /**
      * @param CalendarRepository $calendarRepo
      * @param LanguageCore       $language
      *
      */
-    public function __construct(CalendarRepository $calendarRepo, LanguageCore $language)
+    public function __construct(
+        CalendarRepository $calendarRepo,
+        LanguageCore $language,
+        Setting $settingsRepo,
+        Environment $config,
+    )
     {
         $this->calendarRepo = $calendarRepo;
         $this->language = $language;
+        $this->settingsRepo = $settingsRepo;
+        $this->config = $config;
     }
 
     /**
@@ -261,18 +276,24 @@ class Calendar
 
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
 
-        $eventObjects = [];
+        if(!$calendarEvents) {
+            throw new \Exception("Calendar could not be retrieved");
+        }
 
+        $eventObjects = [];
         //Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
 
             try {
+
+                $description = str_replace("\r\n", "\\n", strip_tags($event['description']));
+
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL . '/dist/images/favicon.png', 'image/png', Display::badge())
                     ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
                     ->endsAt(dtHelper()->parseDbDateTime($event['dateTo'])->setToUserTimezone())
                     ->name($event['title'])
-                    ->description($event['description'] ?? '')
+                    ->description($description)
                     ->uniqueIdentifier($event['id'])
                     ->url($event['url'] ?? '');
 
@@ -410,6 +431,37 @@ class Calendar
         }
 
         return $newValues;
+    }
+
+    public function getICalUrl() {
+
+        $userId = -1;
+        if(!empty(session("userdata.id"))) {
+            $userId = session("userdata.id");
+        }
+
+        $userHash = hash('sha1', $userId . $this->config->sessionPassword);
+        $icalHash = $this->settingsRepo->getSetting("usersettings." . $userId. ".icalSecret");
+
+        if(empty($icalHash)) {
+            throw new \Exception("User has no ical hash");
+        }
+
+        return  BASE_URL . "/calendar/ical/" . $icalHash . "_" . $userHash;
+
+    }
+
+    public function generateIcalHash() {
+
+        if(empty(session("userdata.id"))) {
+            throw new \Exception("Session id is not set.");
+        }
+
+        $uuid = Uuid::uuid4();
+        $icalHash = $uuid->toString();
+
+        $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".icalSecret", $icalHash);
+
     }
 
     /**

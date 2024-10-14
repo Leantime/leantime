@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- *
+ * Keeping the session alive when not active
+ * @Deprecated With laravels new session management we should not need this anymore
  */
 class KeepAlive extends Controller
 {

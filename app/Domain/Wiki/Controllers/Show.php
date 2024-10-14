@@ -40,124 +40,76 @@ namespace Leantime\Domain\Wiki\Controllers {
             $currentArticle = '';
             $wikiHeadlines = array();
 
-
+            //Get all project wikis, creates one if none exists
             $wikis = $this->wikiService->getAllProjectWikis(session("currentProject"));
-            if (!$wikis || count($wikis) == 0) {
-                $wiki = app()->make(Wiki::class);
-                $wiki->title = $this->language->__("label.default");
-                $wiki->projectId = session("currentProject");
-                $wiki->author = session("userdata.id");
 
-                $id = $this->wikiService->createWiki($wiki);
-                $wikis = $this->wikiService->getAllProjectWikis(session("currentProject"));
-            }
-
-            //Option 1: Setting wiki (active action), set wiki, headlines and current Article
+            //Special case: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {
-                session()->forget("lastArticle");
+
                 $wikiId = (int)$_GET['setWiki'];
 
-                $wiki = $this->wikiService->getWiki($wikiId);
+                return $this->setWikiAndRedirect($wikiId);
 
-                if ($wiki) {
-                    session(["currentWiki" => $wikiId]);
-                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        $wikiId,
-                        session("userdata.id")
-                    );
-
-
-                    if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
-                        $currentArticle = $this->wikiService->getArticle(
-                            $wikiHeadlines[0]->id,
-                            session("currentProject")
-                        );
-
-                        session(["lastArticle" => $currentArticle->id]);
-                    } else {
-                        $currentArticle = false;
-                    }
-                }
-            } elseif (isset($params['id'])) {
-                $currentArticle = $this->wikiService->getArticle($params['id'], session("currentProject"));
-
-                if ($currentArticle && $currentArticle->id != null) {
-                    session(["currentWiki" => $currentArticle->canvasId]);
-                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        session("currentWiki"),
-                        session("userdata.id")
-                    );
-
-                    session(["lastArticle" => $currentArticle->id]);
-                } else {
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/show");
-                }
-            } elseif (session()->exists("lastArticle") && session("lastArticle") != '') {
-                $currentArticle = $this->wikiService->getArticle(session("lastArticle"), session("currentProject"));
-
-                if ($currentArticle) {
-                    session(["currentWiki" => $currentArticle->canvasId]);
-
-                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        session("currentWiki"),
-                        session("userdata.id")
-                    );
-
-                    session(["lastArticle" => $currentArticle->id]);
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
-                }
-            } elseif (session()->exists("currentWiki") && session("currentWiki") > 0) {
-                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
-
-                if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
-                    $currentArticle = $this->wikiService->getArticle(
-                        $wikiHeadlines[0]->id,
-                        session("currentProject")
-                    );
-
-                    session(["lastArticle" => $currentArticle->id]);
-                } else {
-                    $currentArticle = false;
-                }
-
-
-                //Last Article is set
-
-
-                //Nothing is set
-            } else {
-                if (is_array($wikis) && count($wikis) > 0) {
-                    session(["currentWiki" => $wikis[0]->id]);
-                } else {
-                    session(["currentWiki" => '']);
-                }
-
-                if (session("currentWiki") != '') {
-                    $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        session("currentWiki"),
-                        session("userdata.id")
-                    );
-                } else {
-                    $wikiHeadlines = array();
-                }
-
-                if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
-                    $currentArticle = $this->wikiService->getArticle(
-                        $wikiHeadlines[0]->id,
-                        session("currentProject")
-                    );
-
-                    session(["lastArticle" => $currentArticle->id]);
-                } else {
-                    $currentArticle = false;
-                    session(["lastArticle" => '']);
-                }
             }
 
-            if (session()->exists("currentWiki") && session("currentWiki") != '') {
-                $currentWiki = $this->wikiService->getWiki(session("currentWiki"));
-            } else {
-                $currentWiki = false;
+
+            if(isset($params['id'])) {
+
+                $currentArticle = $this->wikiService->setCurrentArticle($params['id'], session('usersettings.id'));
+
+                if($currentArticle == false) {
+                    $this->wikiService->clearWikiCache();
+                    return Frontcontroller::redirect(BASE_URL."/errors/error404");
+                }
+
+            }else if (
+                session()->exists("lastArticle") &&
+                session("lastArticle") != '' &&
+                ! isset($params['id'])) {
+
+                $currentArticle = $this->wikiService->setCurrentArticle(session("lastArticle"), session('usersettings.id'));
+
+                if($currentArticle) {
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
+                }
+
+            //If neither session is set nor the params id we are coming in fresh. Grab the article from wiki if there is one
+            }else{
+
+                //False is okay, just an empty wiki
+                $success = $this->wikiService->setCurrentWiki(session("currentWiki"));
+                if ($success === false) {
+
+                    //Try getting the first wiki
+                    $success = $this->wikiService->setCurrentWiki($wikis[0]->id);
+
+                    if ($success === false) {
+                        $this->wikiService->clearWikiCache();
+                        return Frontcontroller::redirect(BASE_URL."/errors/error404");
+                    }
+                }
+
+                $defaultArticle = $this->wikiService->getDefaultArticleForWiki(session("currentWiki"), session('userdata.id'));
+                if ($defaultArticle !== false) {
+                    session(["lastArticle" => $defaultArticle->id]);
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $defaultArticle->id);
+                }
+                //If not it's really just empty.
+
+            }
+
+            //At this point we should have a currentWiki. Even if non exist
+            $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
+            if(!$wikiHeadlines) {
+                $wikiHeadlines = array();
+            }
+
+            //Get the actual wiki content
+            $currentWiki = $this->wikiService->getWiki(session("currentWiki"));
+            if(empty($currentWiki)) {
+                $this->wikiService->clearWikiCache();
+                //If we can't find a current wiki at this point something went wrong
+                return Frontcontroller::redirect(BASE_URL."/errors/error404");
             }
 
 
@@ -170,26 +122,19 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success", "wikicomment_deleted");
             }
 
-
-            if (isset($params['id'])) {
-                $comment = $this->commentService->getComments('article', $_GET['id'], 0);
-            } elseif (isset($currentArticle->id)) {
+            if (isset($currentArticle->id)) {
                 $comment = $this->commentService->getComments('article', $currentArticle->id, 0);
             } else {
                 $comment = array();
             }
 
+
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', count($comment));
-
-
-
-
             $this->tpl->assign('currentArticle', $currentArticle);
             $this->tpl->assign('currentWiki', $currentWiki);
             $this->tpl->assign('wikis', $wikis);
             $this->tpl->assign('wikiHeadlines', $wikiHeadlines);
-
 
             return $this->tpl->display("wiki.show");
         }
@@ -222,6 +167,27 @@ namespace Leantime\Domain\Wiki\Controllers {
             }
 
             return Frontcontroller::redirect(BASE_URL . "/wiki/show/");
+        }
+
+        protected function setWikiAndRedirect($id) {
+
+            $this->wikiService->clearWikiCache();
+
+            $success = $this->wikiService->setCurrentWiki($id);
+
+            if ($success === false) {
+                $this->wikiService->clearWikiCache();
+                return Frontcontroller::redirect(BASE_URL."/errors/error404");
+            }
+
+            $defaultArticle = $this->wikiService->getDefaultArticleForWiki($id, session('userdata.id'));
+            if ($defaultArticle !== false) {
+                session(["lastArticle" => $defaultArticle->id]);
+                return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $defaultArticle->id);
+            }
+
+            return Frontcontroller::redirect(BASE_URL . "/wiki/show/");
+
         }
     }
 

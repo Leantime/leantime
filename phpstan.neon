@@ -16,12 +16,13 @@ parameters:
     scanDirectories:
         - vendor
         - config
-    ignoreErrors:
+    #ignoreErrors:
             # Rules for level 1. Templates use variables through include which are not detected by phpstan
-            -
-                messages:
-                    - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
+            #-
+            #    messages:
+            #        - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
             #        - '#Variable \$__data might not be defined\.#'
+            #        - '#Variable \$tpl might not be defined\.#'
             #        - '#Constant BASE_URL not found\.#'
             #        - '#Constant CURRENT_URL not found\.#'
             #        - '#Variable \$login might not be defined\.#'
@@ -37,3 +38,5 @@ parameters:
             - redirect
             - display
             - displayPartial
+
+

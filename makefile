@@ -122,15 +122,15 @@ acceptance-test-ci: build-dev
 	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
 codesniffer:
-	./vendor/squizlabs/php_codesniffer/bin/phpcs app
+	./vendor/squizlabs/php_codesniffer/bin/phpcs app -d memory_limit=1048M
 
 codesniffer-fix:
-	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
+	./vendor/squizlabs/php_codesniffer/bin/phpcbf app -d memory_limit=1048M
 
 get-version:
 	@echo $(VERSION)
 
-phpstan: build-dev
+phpstan:
 	./vendor/bin/phpstan analyse --memory-limit 512M
 
 update-carbon-macros:

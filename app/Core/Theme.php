@@ -94,14 +94,19 @@ class Theme
     private Environment $config;
 
     /**
-     * @var appSettings
+     * @var Setting
      */
-    private AppSettings $settings;
+    private Setting $settingsRepo;
 
     /**
      * @var language
      */
     private Language $language;
+
+    /**
+     * @var language
+     */
+    private AppSettings $appSettings;
 
     /**
      * @var array|false
@@ -136,15 +141,17 @@ class Theme
      * __construct - Constructor
      */
     public function __construct(
-        environment $config,
-        appSettings $settings,
+        Environment $config,
+        Setting $settingsRepo,
         Language $language,
-        array $iniData = []
+        AppSettings $appSettings,
     ) {
         $this->config = $config;
-        $this->settings = $settings;
+        $this->settingsRepo = $settingsRepo;
         $this->iniData = [];
         $this->language = $language;
+        $this->appSettings = $appSettings;
+
     }
 
     /**
@@ -164,10 +171,9 @@ class Theme
             "secondaryColor" => $this->iniData["general"]["secondaryColor"] ?? $this->colorSchemes["leantime2_0"]["secondaryColor"],
         );
 
-        $settingsRepo = app()->make(Setting::class);
-        $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor") ? $settingsRepo->getSetting("companysettings.primarycolor") : null;
-        $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor") ? $settingsRepo->getSetting("companysettings.secondarycolor") : null;
-        ;
+        $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor") ?  $this->settingsRepo->getSetting("companysettings.primarycolor") : null;
+        $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor") ?  $this->settingsRepo->getSetting("companysettings.secondarycolor") : null;
+
         $parsedColorSchemes["companyColors"] = array(
             "name" => "label.companyColors",
             "primaryColor" => $primaryColor ?? $this->config->primarycolor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
@@ -204,8 +210,7 @@ class Theme
         //This is an active logged in session.
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
-            $settingsRepo = app()->make(Setting::class);
-            $theme = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".theme");
+            $theme = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".theme");
             if ($theme !== false) {
                 $this->setActive($theme);
                 return $theme;
@@ -246,8 +251,7 @@ class Theme
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
-            $settingsRepo = app()->make(Setting::class);
-            $colorMode = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorMode");
+            $colorMode = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorMode");
             if ($colorMode !== false) {
                 $this->setColorMode($colorMode);
                 return $colorMode;
@@ -284,8 +288,8 @@ class Theme
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
-            $settingsRepo = app()->make(Setting::class);
-            $colorScheme = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorScheme");
+
+            $colorScheme = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorScheme");
             if ($colorScheme !== false) {
                 $this->setColorScheme($colorScheme);
                 return $colorScheme;
@@ -297,9 +301,16 @@ class Theme
             return $_COOKIE['colorScheme'];
         }
 
-        //Return default
-        $this->setColorScheme('themeDefault');
-        return 'themeDefault';
+        if(!empty($this->config->primarycolor) && !empty($this->config->secondarycolor)) {
+            //Return default
+            $this->setColorScheme('companyColors');
+            return 'companyColors';
+        }else{
+            //Return default
+            $this->setColorScheme('themeDefault');
+            return 'themeDefault';
+        }
+
     }
 
     /**
@@ -318,9 +329,9 @@ class Theme
         }
 
         if (Auth::isLoggedIn()) {
+
             //User is logged in, we don't have a theme yet, check settings
-            $settingsRepo = app()->make(Setting::class);
-            $themeFont = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".themeFont");
+            $themeFont = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".themeFont");
             if ($themeFont !== false) {
                 $this->setFont($themeFont);
                 return $themeFont;
@@ -624,11 +635,11 @@ class Theme
         }
 
         if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType)) {
-            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType . '?v=' . $this->settings->appVersion;
+            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType . '?v=' . $this->appSettings->appVersion;
         }
 
         if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.' . $assetType)) {
-            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.' . $assetType . '?v=' . $this->settings->appVersion;
+            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.' . $assetType . '?v=' . $this->appSettings->appVersion;
         }
 
         return false;
@@ -704,8 +715,8 @@ class Theme
 
         $logoPath = false;
         if (session()->exists("companysettings.logoPath") === false || session("companysettings.logoPath") == '') {
-            $settingsRepo = app()->make(Setting::class);
-            $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
+
+            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
 
             if (
                 $logoPath !== false &&
@@ -776,8 +787,8 @@ class Theme
     {
 
         if (! session()->exists("usersettings.colors.primaryColor")) {
-            $settingsRepo = app()->make(Setting::class);
-            $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor");
+
+            $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
 
             if ($primaryColor !== false) {
                 session(["usersettings.colors.primaryColor" => $primaryColor]);
@@ -787,7 +798,7 @@ class Theme
                 session(["usersettings.colors.secondaryColor" => $this->config->secondaryColor]);
             }
 
-            $secondaryColor = $settingsRepo->getSetting("companysettings.secondaryColor");
+            $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondaryColor");
             if ($secondaryColor !== false) {
                 session(["usersettings.colors.secondaryColor" => $secondaryColor]);
             }

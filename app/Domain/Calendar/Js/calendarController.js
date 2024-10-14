@@ -359,6 +359,7 @@ leantime.calendarController = (function () {
                             title: jQuery(eventEl).find(".titleContainer strong").text(),
                             borderColor: 'var(--accent2)',
                             enitityType: "ticket",
+                            dateContext: "edit",
                             duration: '01:00',
                             url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
                         };

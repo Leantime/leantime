@@ -71,7 +71,7 @@ if (isset($currentArticle->id)) {
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> " />
                                     <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
-                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
+                                    <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
@@ -118,7 +118,7 @@ if (isset($currentArticle->id)) {
                                     <?=$tpl->__("label.loading_milestone") ?>
                                 </div>
                             </div>
-                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?=$currentArticle->milestoneId ?>" class="formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
 
                         </li>
                     <?php } ?>
@@ -151,7 +151,7 @@ if (isset($currentArticle->id)) {
             <br />
             <input type="text" value="<?php $tpl->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+            <textarea class="complexEditor" rows="20" cols="80" id="wikiArticleContentEditor"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
 
 
                 <div class="row">
@@ -160,9 +160,7 @@ if (isset($currentArticle->id)) {
                         <input type="hidden" name="saveTicket" value="1" />
                         <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
                         <input type="submit" name="saveArticle" value="<?php echo $tpl->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
-                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
-
-
+                        <input type="submit" class="btn btn-outline" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
 
                     </div>
                     <div class="col-md-2 align-right padding-top-sm">
@@ -187,11 +185,9 @@ if (isset($currentArticle->id)) {
 
 <script>
 
-
-    jQuery("#articleContentEditor").show();
-    leantime.editorController.initComplexEditor();
-
     jQuery(document).ready(function(){
+
+        leantime.editorController.initComplexEditor();
 
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();

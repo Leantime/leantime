@@ -133,11 +133,13 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
             backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
             borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
             enitityType: "event",
+            dateContext: '<?= $calendar['dateContext'] ?? "plan" ?>',
             <?php else : ?>
             url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
             backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
             borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
             enitityType: "ticket",
+            dateContext: '<?= $calendar['dateContext'] ?? "edit" ?>',
             <?php endif; ?>
         },
         <?php endforeach; ?>
@@ -203,14 +205,28 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                 eventDrop: function (event) {
 
                     if(event.event.extendedProps.enitityType == "ticket") {
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : {
+
+                        let dataVal = {};
+
+                        if(event.event.extendedProps.dateContext == "due") {
+
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                dateToFinish: event.event.startStr
+                            }
+
+                        }else{
+                            dataVal = {
                                 id: event.event.extendedProps.enitityId,
                                 editFrom: event.event.startStr,
                                 editTo: event.event.endStr
                             }
+                        }
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : dataVal
                         });
 
                     }else if(event.event.extendedProps.enitityType == "event") {
@@ -229,15 +245,31 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                 eventResize: function (event) {
 
                     if(event.event.extendedProps.enitityType == "ticket") {
-                        jQuery.ajax({
-                            type : 'PATCH',
-                            url  : leantime.appUrl + '/api/tickets',
-                            data : {
+
+                        let dataVal = {};
+
+                        if(event.event.extendedProps.dateContext == "due") {
+
+                            dataVal = {
+                                id: event.event.extendedProps.enitityId,
+                                dateToFinish: event.event.startStr
+                            }
+
+                        }else{
+                            dataVal = {
                                 id: event.event.extendedProps.enitityId,
                                 editFrom: event.event.startStr,
                                 editTo: event.event.endStr
                             }
-                        })
+                        }
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : dataVal
+                        });
+
+
                     }else if(event.event.extendedProps.enitityType == "event") {
 
                         jQuery.ajax({
