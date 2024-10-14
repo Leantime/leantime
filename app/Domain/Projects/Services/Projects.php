@@ -244,7 +244,7 @@ class Projects
         {
 
             //Filter notifications
-            $notification = EventCore::dispatchFilter('notificationFilter', $notification);
+            $notification = self::dispatchFilter('notificationFilter', $notification);
 
         //Email
         $users = $this->getUsersToNotify($notification->projectId);
@@ -329,7 +329,7 @@ class Projects
                 );
             }
 
-            EventCore::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
+            self::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
         }
 
         /**
