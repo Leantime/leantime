@@ -30,6 +30,7 @@ class Oidc
     private bool $configLoaded = false;
 
     private string $providerUrl = '';
+    private string $autoDiscoverUrl = '';
     private string $clientId = '';
     private string $clientSecret = '';
     private string $authUrl = '';
@@ -77,6 +78,7 @@ class Oidc
         $providerUrl = $this->config->get('oidcProviderUrl');
 
         $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
+        $this->autoDiscoverUrl = $this->config->get('oidcAutoDiscoverUrl', '');
         $this->clientId = $this->config->get('oidcClientId', '');
         $this->clientSecret = $this->config->get('oidcClientSecret', '');
         $this->authUrl = $this->config->get('oidcAuthUrl', '');
@@ -155,7 +157,7 @@ class Oidc
         if (isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
         } elseif (isset($tokens['access_token'])) {
-            //falback to OAuth userinfo endpoint
+            //fallback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         } else {
             $this->displayError("oidc.error.unsupportedToken");
@@ -473,7 +475,9 @@ class Oidc
 
         $httpClient = new Client();
         try {
-            $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
+            // $uri = strlen() ? $this->autoDiscoverUrl : $this->providerUrl;
+            $uri = empty($this->autoDiscoverUrl) ? $this->providerUrl : $this->autoDiscoverUrl;
+            $response = $httpClient->get($uri . '/.well-known/openid-configuration');
             $endpoints = json_decode($response->getBody()->getContents(), true);
         }catch(\Exception $e) {
             report($e);
