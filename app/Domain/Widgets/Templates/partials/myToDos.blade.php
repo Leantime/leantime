@@ -237,9 +237,9 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4" style="padding:0 15px;">
-
-                                                   <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
-                                                   <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
+                                                    <i class="fa-solid fa-business-time infoIcon" data-tippy-content="{{ __("label.due") }}"></i>
+                                                    <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
+                                                    <button class="my-to-dos-reset-date-button" data-id="{{ $row['id'] }}" id="reset-date"><span class="sr-only">{{ __("language.resetDate") }}</span><i class="fa fa-close"></i></button>
                                                 </div>
                                                 <div class="col-md-8 dropdownContainer" style="padding-top:5px;">
                                                     <div class="dropdown ticketDropdown statusDropdown colorized show right ">

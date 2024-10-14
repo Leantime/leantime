@@ -92,6 +92,10 @@ body .ticketBox div.tagsinput.readonly {
     margin-bottom:0px !important;
 }
 
+body .ticketBox .my-to-dos-reset-date-button {
+    all: unset;
+}
+
 body div.tagsinput {
     background-color: var(--input-background);
     color:var(--primary-font-color);
