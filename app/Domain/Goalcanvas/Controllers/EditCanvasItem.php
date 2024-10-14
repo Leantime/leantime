@@ -135,7 +135,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['id'],
+                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['canvasId'],
                 'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = $canvasItem;

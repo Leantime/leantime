@@ -213,38 +213,38 @@ class Projects
         return $to;
     }
 
-        /**
-         * @api
-         */
-        public function getAllUserInfoToNotify($projectId): array
-        {
+    /**
+     * @api
+     */
+    public function getAllUserInfoToNotify($projectId): array
+    {
 
-        $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+      $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-            $to = [];
+      $to = [];
 
-            //Only users that actually want to be notified
-            foreach ($users as $user) {
-                if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
-                    $to[] = $user;
-                }
-            }
+      //Only users that actually want to be notified
+      foreach ($users as $user) {
+          if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
+              $to[] = $user;
+          }
+      }
 
-        return $to;
+      return $to;
     }
 
     //TODO Split and move to notifications
 
-        /**
-         * @throws BindingResolutionException
-         *
-         * @api
-         */
-        public function notifyProjectUsers(Notification $notification): void
-        {
+    /**
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function notifyProjectUsers(Notification $notification): void
+    {
 
-            //Filter notifications
-            $notification = self::dispatchFilter('notificationFilter', $notification);
+        //Filter notifications
+        $notification = self::dispatchFilter('notificationFilter', $notification);
 
         //Email
         $users = $this->getUsersToNotify($notification->projectId);
@@ -254,22 +254,10 @@ class Projects
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
 
-        /*
-        $mailer = app()->make(MailerCore::class);
-        $mailer->setContext('notify_project_users');
-        $mailer->setSubject($notification->subject);
-
-
-        $mailer->setHtml($emailMessage);
-        //$mailer->sendMail($users, session("userdata.name"));
-        *
- * @api
- */
-
-            $emailMessage = $notification->message;
-            if ($notification->url !== false) {
-                $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
-            }
+        $emailMessage = $notification->message;
+        if ($notification->url !== false) {
+            $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
+        }
 
         // NEW Queuing messaging system
         $queue = app()->make(QueueRepository::class);
@@ -278,68 +266,68 @@ class Projects
         //Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
 
-            //Notify users about mentions
-            //Fields that should be parsed for mentions
-            $mentionFields = [
-                'comments' => ['text'],
-                'projects' => ['details'],
-                'tickets' => ['description'],
-                'canvas' => ['description', 'data', 'conclusion', 'assumptions'],
-            ];
+        //Notify users about mentions
+        //Fields that should be parsed for mentions
+        $mentionFields = [
+            'comments' => ['text'],
+            'projects' => ['details'],
+            'tickets' => ['description'],
+            'canvas' => ['description', 'data', 'conclusion', 'assumptions'],
+        ];
 
-            $contentToCheck = '';
-            //Find entity ID & content
-            //Todo once all entities are models this if statement can be reduced
-            if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
-                $entityId = $notification->entity['id'];
+        $contentToCheck = '';
+        //Find entity ID & content
+        //Todo once all entities are models this if statement can be reduced
+        if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
+            $entityId = $notification->entity['id'];
 
-            if (isset($mentionFields[$notification->module])) {
-                $fields = $mentionFields[$notification->module];
+        if (isset($mentionFields[$notification->module])) {
+            $fields = $mentionFields[$notification->module];
 
-                foreach ($fields as $field) {
-                    if (isset($notification->entity[$field])) {
-                        $contentToCheck .= $notification->entity[$field];
-                    }
+            foreach ($fields as $field) {
+                if (isset($notification->entity[$field])) {
+                    $contentToCheck .= $notification->entity[$field];
                 }
             }
-        } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-            $entityId = $notification->entity->id;
+        }
+    } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+        $entityId = $notification->entity->id;
 
-            if (isset($mentionFields[$notification->module])) {
-                $fields = $mentionFields[$notification->module];
+        if (isset($mentionFields[$notification->module])) {
+            $fields = $mentionFields[$notification->module];
 
-                foreach ($fields as $field) {
-                    if (isset($notification->entity->$field)) {
-                        $contentToCheck .= $notification->entity->$field;
-                    }
+            foreach ($fields as $field) {
+                if (isset($notification->entity->$field)) {
+                    $contentToCheck .= $notification->entity->$field;
                 }
             }
-        } else {
-            //Entity id not set use project id
-            $entityId = $notification->projectId;
+        }
+    } else {
+        //Entity id not set use project id
+        $entityId = $notification->projectId;
+    }
+
+        if ($contentToCheck != '') {
+            $this->notificationService->processMentions(
+                $contentToCheck,
+                $notification->module,
+                (int) $entityId,
+                $notification->authorId,
+                $notification->url['url']
+            );
         }
 
-            if ($contentToCheck != '') {
-                $this->notificationService->processMentions(
-                    $contentToCheck,
-                    $notification->module,
-                    (int) $entityId,
-                    $notification->authorId,
-                    $notification->url['url']
-                );
-            }
+        self::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
+    }
 
-            self::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
-        }
-
-        /**
-         * @param $projectId
-         * @return mixed|void
-         *
+    /**
+     * @param $projectId
+     * @return mixed|void
+     *
      * @api
      */
-        public function getProjectName($projectId)
-        {
+    public function getProjectName($projectId)
+    {
 
         $project = $this->projectRepository->getProject($projectId);
         if ($project) {
