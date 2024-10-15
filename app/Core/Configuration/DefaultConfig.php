@@ -385,6 +385,11 @@ class DefaultConfig
     public string $oidcClientSecret = '';
 
     /**
+     * @var string Custom Auto discover URL
+     */
+    public string $oidcAutoDiscoverUrl = '';
+
+    /**
      * @var string OIDC Auth URL
      */
     public string $oidcAuthUrl = '';

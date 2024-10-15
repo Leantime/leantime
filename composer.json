@@ -33,7 +33,6 @@
         "ext-pdo": "*",
         "ext-zip": "*",
         "ext-fileinfo": "*",
-
         "guzzlehttp/guzzle": "^7.9.2",
         "aws/aws-sdk-php": "^3.314",
         "phpmailer/phpmailer": "6.6.0",
@@ -83,7 +82,9 @@
 
         "ext-fileinfo": "*",
         "sentry/sdk": "^3.5",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "phpseclib/phpseclib": "~3.0"
+
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",

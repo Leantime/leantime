@@ -65,6 +65,7 @@ class Environment implements ArrayAccess, ConfigContract
         'ldapDomain' => 'LEAN_LDAP_LDAP_DOMAIN',
         'oidcClientId' => 'LEAN_OIDC_CLIENT_ID',
         'oidcClientSecret' => 'LEAN_OIDC_CLIENT_SECRET',
+        'oidcAutoDiscoverUrl' => 'LEAN_OIDC_AUTO_DISCOVER',
         'oidcAuthUrl' => 'LEAN_OIDC_AUTH_URL_OVERRIDE',
         'oidcTokenUrl' => 'LEAN_OIDC_TOKEN_URL_OVERRIDE',
         'oidcJwksUrl' => 'LEAN_OIDC_JWKS_URL_OVERRIDE',
