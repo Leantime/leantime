@@ -8,7 +8,7 @@
     'caption' => ''
 ])
 
-<div {{ $attributes->merge(['class'=> 'relative md:flex md:items-center mb-1' ]) }}>
+<div {{ $attributes->merge(['class'=> 'relative md:flex md:items-center mb-1' ]) }} >
 
     @if($labelPosition == 'left')
         <div class="md:w-1/3">

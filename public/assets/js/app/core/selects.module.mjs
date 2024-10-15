@@ -1,41 +1,37 @@
-import Choices from "choices.js"
+import Choices from "choices.js";
 import { appUrl } from "./instance-info.module.mjs";
-import {decode} from 'html-entities';
-import jQuery from 'jquery';
-
+import { decode } from "html-entities";
+import jQuery from "jquery";
 
 function getOptions(selectElement) {
-    const items = [];
+  const items = [];
 
-    if (jQuery(selectElement).children()) {
-
-        jQuery(selectElement).children().each(function(option) {
-
-            var optionClone = jQuery(this).clone();
-            items.push({
-                value: optionClone.val(),
-                label: decode(optionClone.html()),
-                selected: optionClone.attr("selected"),
-                disabled: optionClone.attr("disabled"),
-            });
-
-            jQuery(this).remove();
-
+  if (jQuery(selectElement).children()) {
+    jQuery(selectElement)
+      .children()
+      .each(function (option) {
+        var optionClone = jQuery(this).clone();
+        items.push({
+          value: optionClone.val(),
+          label: decode(optionClone.html()),
+          selected: optionClone.attr("selected"),
+          disabled: optionClone.attr("disabled"),
         });
 
-    }
+        jQuery(this).remove();
+      });
+  }
 
-    return items;
+  return items;
 }
 
 export const initSelect = function (element, enableSearch, additionalClasses) {
+  let outerClasses = ["select"];
 
-    let outerClasses = ["select"];
-
-    if(additionalClasses !== '') {
-        const selectClasses = additionalClasses.trim().split(" ");
-        outerClasses = selectClasses;
-    }
+  if (additionalClasses !== "") {
+    const selectClasses = additionalClasses.trim().split(" ");
+    outerClasses = selectClasses;
+  }
 
   const select = new Choices(element, {
     editItems: false,
@@ -59,102 +55,15 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-        containerOuter: outerClasses,
-        containerInner: ["choices__inner"],
-        input: ["choices__input"],
-        inputCloned: [
-            "choices__input--cloned",
-        ],
-        list: ["choices__list"],
-        listItems: ["choices__list--multiple"],
-        listSingle: ["choices__list--single"],
-        listDropdown: ["dropdown-content", "menu"],
-
-        item: ["choices__item"],
-        itemSelectable: ["choices__item--selectable"],
-        itemDisabled: ["choices__item--disabled"],
-        itemChoice: ["choices__item--choice"],
-        description: ["choices__description"],
-        placeholder: ["choices__placeholder"],
-        group: ["choices__group"],
-        groupHeading: ["choices__heading"],
-        button: ["choices__button"],
-        activeState: ["is-active"],
-        focusState: ["is-focused"],
-        openState: ["is-open"],
-        disabledState: ["is-disabled"],
-        highlightedState: ["is-highlighted"],
-        selectedState: ["is-selected"],
-        flippedState: ["is-flipped"],
-        loadingState: ["is-loading"],
-        notice: ["choices__notice"],
-        addChoice: ["choices__item--selectable"],
-        noResults: ["has-no-results"],
-        noChoices: ["has-no-choices"],
-    },
-  });
-
-  select.passedElement.element.addEventListener(
-    "addItem",
-    function (event) {
-      // do something creative here...
-    },
-    false
-  );
-
-  select.passedElement.element.addEventListener(
-    "addChoice",
-    function (event) {
-      // do something creative here...
-    },
-    false
-  );
-};
-
-export const initTags = function (element, enableSearch, autoCompleteTags, additionalClasses) {
-
-    let outerClasses = ["select"];
-
-    if(additionalClasses !== '') {
-        const selectClasses = additionalClasses.trim().split(" ");
-        outerClasses = selectClasses;
-    }
-
-  const select = new Choices(element, {
-    editItems: false,
-    addItems: true,
-    allowHTML: true,
-    addChoices: true,
-    searchEnabled: enableSearch,
-    duplicateItemsAllowed: false,
-    addItemText: (value) => {
-      return `Press Enter to add "${value}"`;
-    },
-    placeholderValue: "🏷️ Add a tag",
-    renderSelectedChoices: "auto",
-    loadingText: "Loading...",
-    noResultsText: "No results found",
-    noChoicesText: "No choices to choose from",
-    itemSelectText: "",
-    uniqueItemText: "Only unique values can be added",
-    customAddItemText:
-      "Only values matching specific conditions " + "can be added",
-    searchPlaceholderValue: "Search for tags",
-    removeItemButton: true,
-    maxItemText: (maxItemCount) => {
-      return `Only ${maxItemCount} values can be added`;
-    },
-    classNames: {
       containerOuter: outerClasses,
       containerInner: ["choices__inner"],
       input: ["choices__input"],
-      inputCloned: [
-        "choices__input--cloned",
-      ],
-      list: ["dropdown-content","menu"],
+      inputCloned: ["choices__input--cloned"],
+      list: ["choices__list"],
       listItems: ["choices__list--multiple"],
       listSingle: ["choices__list--single"],
-      listDropdown: ["dropdown-content","menu"],
+      listDropdown: ["dropdown-content", "menu"],
+
       item: ["choices__item"],
       itemSelectable: ["choices__item--selectable"],
       itemDisabled: ["choices__item--disabled"],
@@ -176,6 +85,95 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
       addChoice: ["choices__item--selectable"],
       noResults: ["has-no-results"],
       noChoices: ["has-no-choices"],
+    },
+  });
+
+  select.passedElement.element.addEventListener(
+    "addItem",
+    function (event) {
+      // do something creative here...
+    },
+    false
+  );
+
+  select.passedElement.element.addEventListener(
+    "addChoice",
+    function (event) {
+      // do something creative here...
+    },
+    false
+  );
+};
+
+export const initTags = function (
+  element,
+  enableSearch,
+  autoCompleteTags,
+  additionalClasses,
+  maxItemCount = 4
+) {
+  let outerClasses = ["select"];
+
+  if (additionalClasses !== "") {
+    const selectClasses = additionalClasses.trim().split(" ");
+    outerClasses = selectClasses;
+  }
+
+  const select = new Choices(element, {
+    editItems: true,
+    addItems: true,
+    allowHTML: true,
+    addChoices: true,
+    searchEnabled: enableSearch,
+    duplicateItemsAllowed: false,
+    addItemText: (value) => {
+      return `Press Enter to add "${value}"`;
+    },
+    placeholderValue: "🏷️ Add a tag",
+    // renderSelectedChoices: "auto",
+    // loadingText: "Loading...",
+    // noResultsText: "No results found",
+    noChoicesText: "No choices option",
+    // itemSelectText: "",
+    uniqueItemText: "Only unique values can be added",
+    // customAddItemText:
+    //   "Only values matching specific conditions " + "can be added",
+    searchPlaceholderValue: "Search for tags",
+    removeItemButton: true,
+    maxItemCount: maxItemCount,
+    maxItemText: (maxItemCount) => {
+      return `Only ${maxItemCount} values can be added`;
+    },
+    classNames: {
+      // containerOuter: outerClasses,
+      // containerInner: ["choices__inner"],
+      // input: ["choices__input"],
+      // inputCloned: ["choices__input--cloned"],
+      // list: ["dropdown-content", "menu"],
+      // listItems: ["choices__list--multiple"],
+      // listSingle: ["choices__list--single"],
+      // listDropdown: ["dropdown-content", "menu"],
+      // item: ["choices__item"],
+      // itemSelectable: ["choices__item--selectable"],
+      // itemDisabled: ["choices__item--disabled"],
+      // itemChoice: ["choices__item--choice"],
+      // description: ["choices__description"],
+      // placeholder: ["choices__placeholder"],
+      // group: ["choices__group"],
+      // groupHeading: ["choices__heading"],
+      // button: ["choices__button"],
+      // activeState: ["is-active"],
+      // focusState: ["is-focused"],
+      // openState: ["is-open"],
+      // disabledState: ["is-disabled"],
+      // highlightedState: ["is-highlighted"],
+      // selectedState: ["is-selected"],
+      // flippedState: ["is-flipped"],
+      // loadingState: ["is-loading"],
+      // notice: ["choices__notice"],
+      // addChoice: ["choices__item--selectable"],
+      // noResults: ["has-no-results"],
+      // noChoices: ["has-no-choices"],
     },
   });
 
@@ -214,5 +212,5 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
 
 export default {
   initSelect: initSelect,
-  initTags: initSelect
+  initTags: initTags,
 };

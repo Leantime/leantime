@@ -1,6 +1,6 @@
 
 .select {
-    @apply select-sm text-sm w-full max-w-xs relative;
+    @apply select-sm text-sm w-full relative;
 
     &.select-ghost {
         @apply bg-none;

@@ -35,16 +35,34 @@
                     type="text" 
                     name="description" 
                     value="{{ $canvasItem->description }}" 
-                    labelText="{{ __('input.placeholders.short_name') }}" 
-                    class="main-title-input" 
+                    placeholder="{{ __('input.placeholders.short_name') }}" 
+                    class="main-title-input mt-4"
                 />
+
+                <x-global::forms.select name="tags" id="tags" variant="tags" maxItemCount=4 >
+                    @php
+                        $tags = is_array($canvasItem->tags) ? $canvasItem->tags : explode(',', $canvasItem->tags);
+                    @endphp
+
+                   @if(! empty($tags) )
+
+                        @foreach ($tags as $key => $label)
+
+                            <x-global::forms.select.select-option 
+                                value="{{ $key }}" :selected="$tags == $key"
+                            >
+
+                                {!! __($label) !!}
+
+                            </x-global::forms.select.select-option>
+                        
+                        @endforeach
+                        
+                   @endif
+                        
+                </x-global::forms.select>
+
                 
-                <x-global::forms.text-input 
-                    type="text" 
-                    name="tags" 
-                    id="tags" 
-                    value="{{ $canvasItem->tags }}" 
-                />
                 <textarea rows="3" cols="10" name="data" class="complexEditor" placeholder="">{!! htmlentities($canvasItem->data) !!}</textarea><br />
 
                 <x-global::forms.button 
