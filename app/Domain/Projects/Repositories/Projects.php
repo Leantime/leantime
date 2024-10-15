@@ -120,26 +120,12 @@ namespace Leantime\Domain\Projects\Repositories {
                 WHERE
 				    zp_relationuserproject.projectId = :projectId
 				    AND !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
-                    AND
-				    zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                        OR zp_projects.psettings = 'all'
-                        OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
-                        OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
                     AND zp_user.id IS NOT NULL
 				GROUP BY zp_user.id
                 ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
-
-            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-
-            if (session()->exists('userdata')) {
-                $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
-            } else {
-                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
-            }
 
             $stmn->execute();
             $values = $stmn->fetchAll();

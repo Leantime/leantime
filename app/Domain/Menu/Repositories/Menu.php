@@ -139,6 +139,7 @@ namespace Leantime\Domain\Menu\Repositories {
             private EnvironmentCore $config,
             /** @var TicketService */
             private TicketService $ticketsService,
+
         ) {
             if (session()->exists('usersettings.submenuToggle') === false && session()->exists('userdata') === true) {
                 $setting = $this->settingsRepo;
@@ -250,10 +251,11 @@ namespace Leantime\Domain\Menu\Repositories {
                 $menuType = self::DEFAULT_MENU;
             }
 
-            $this->menuStructures = self::dispatchFilter(
+            $this->menuStructures =
+                self::dispatchFilter(
                 'menuStructures',
-                $this->menuStructures,
-                ['menuType' => $menuType]
+                    $this->menuStructures,
+                    ['menuType' => $menuType]
             );
 
             //If menu structure cannot be found, don't return anything

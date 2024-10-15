@@ -214,5 +214,5 @@ export const initTags = function (element, enableSearch, autoCompleteTags, addit
 
 export default {
   initSelect: initSelect,
-  initTags: initSelect
+  initTags: initTags
 };

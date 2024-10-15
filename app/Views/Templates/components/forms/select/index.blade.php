@@ -31,7 +31,7 @@
     if($variant == 'chip'){
         $selectVariant = "select-chip";
     }
-    
+
     switch($contentRole){
         case 'secondary':
             $contentRoleClass = 'select-bordered';
@@ -101,9 +101,8 @@
 </x-global::forms.field-row>
 
 <script>
-
     @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}',  {{ $search }}, {{ $autocompleteTags }}, '{{ $selectClassBuilder }}');
+        leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}');
     @else
         leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
     @endif

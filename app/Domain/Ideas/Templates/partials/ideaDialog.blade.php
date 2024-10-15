@@ -18,10 +18,10 @@
     <x-global::content.modal.header>
         Add Ideas
     </x-global::content.modal.header>
-    
+
     <x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
-    
+
         <div class="row">
             <div class="col-md-8">
                 <input type="hidden" value="{{ $currentCanvas }}" name="canvasId" />
@@ -31,37 +31,47 @@
                 <input type="hidden" name="milestoneId" value="{{ $canvasItem->milestoneId }}" />
                 <input type="hidden" name="changeItem" value="1" />
 
-                <x-global::forms.text-input 
-                    type="text" 
-                    name="description" 
-                    value="{{ $canvasItem->description }}" 
-                    labelText="{{ __('input.placeholders.short_name') }}" 
-                    class="main-title-input" 
+                <x-global::forms.text-input
+                    type="text"
+                    name="description"
+                    value="{{ $canvasItem->description }}"
+                    labelText="{{ __('input.placeholders.short_name') }}"
+                    class="main-title-input"
                 />
-                
-                <x-global::forms.text-input 
-                    type="text" 
-                    name="tags" 
-                    id="tags" 
-                    value="{{ $canvasItem->tags }}" 
-                />
+
+
+
+
+                <x-global::forms.select name="tags" id="tags" variant="tags" >
+
+                   @if(! empty($canvasItem->tags) )
+                        @foreach ($canvasItem->tags as $key => $label)
+                            <x-global::forms.select.select-option value="{{ $key }}" :selected="$canvasItem['tags'] == $key">
+                                {!! __($label) !!}
+                            </x-global::forms.select.select-option>
+                        @endforeach
+                   @endif
+                </x-global::forms.select>
+
+
+
                 <textarea rows="3" cols="10" name="data" class="complexEditor" placeholder="">{!! htmlentities($canvasItem->data) !!}</textarea><br />
 
-                <x-global::forms.button 
-                    type="submit" 
+                <x-global::forms.button
+                    type="submit"
                     id="primaryCanvasSubmitButton">
                     {!! __('buttons.save') !!}
                  </x-global::forms.button>
-            
-                <x-global::forms.button 
-                    type="submit" 
-                    class="btn btn-primary" 
+
+                <x-global::forms.button
+                    type="submit"
+                    class="btn btn-primary"
                     value="closeModal"
                     contentRole="ghost"
                     id="saveAndClose">
                     {!! __('buttons.save_and_close') !!}
                 </x-global::forms.button>
-            
+
 
                 @if ($id !== '')
                     <br />
@@ -101,16 +111,16 @@
                                         <textarea name="newMilestone"></textarea><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
-                                        <x-global::forms.button 
-                                            type="button" 
-                                            onclick="jQuery('#primaryCanvasSubmitButton').click()" 
+                                        <x-global::forms.button
+                                            type="button"
+                                            onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                             class="btn btn-primary">
                                             {!! __('buttons.save') !!}
                                         </x-global::forms.button>
-                                    
-                                        <x-global::forms.button 
+
+                                        <x-global::forms.button
                                             tag="a"
-                                            href="javascript:void(0);" 
+                                            href="javascript:void(0);"
                                             contentRole="ghost"
                                             onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
                                             <i class="fas fa-times"></i> {!! __('links.cancel') !!}
