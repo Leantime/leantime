@@ -19,7 +19,8 @@
     'addChoices' => 'false',
     'autocompleteTags' => false,
     'formHash' => md5(CURRENT_URL."selectChoices".mt_rand(0,100)),
-    'value' => ''
+    'value' => '',
+    'maxItemCount' => ''
 ])
 
 @php
@@ -77,7 +78,7 @@
         <span class="label-text">{{ $caption }}</span>
     @endif
 
-    <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block' : '')])}}>
+    <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block w-full' : '')])}} >
         @if($leadingVisual)
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 {{ $leadingVisual }}>
@@ -102,29 +103,8 @@
 
 <script>
     @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}');
+        leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}', {{ $maxItemCount }});
     @else
         leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
     @endif
 </script>
-
-
-
-
-{{-- @props([
-    "type" => "select-one", //select-one, select-multiple, tags
-    "search" => 'true',
-    "addChoices" => 'false',
-    "style" => "standard", //standard, tags, pill
-    "formHash" => md5(CURRENT_URL."selectChoices".mt_rand(0,100))
-])
-
-<div id="select-wrapper-{{ $formHash }}" hx-target="#select-wrapper-{{ $formHash }}" {{ $attributes->merge([ 'class' => "inline-block" ]) }}>
-    <select class="select-{{ $formHash }}" {{ $type == "multiple" ? "multiple" : "" }}>
-    </select>
-</div>
-
-<script>
-
-    leantime.selects.initSelect('.select-{{ $formHash }}', [{{ $slot }}], {{ $search }});
-</script> --}}

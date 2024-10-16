@@ -31,7 +31,7 @@
             break;
         case 'tertiary':
         case 'ghost':
-            $typeClass = 'btn-ghost text-base-content hover:bg-neutral';
+            $typeClass = 'btn-ghost text-base-content hover:bg-ghost';
             break;
         case 'link':
             $typeClass = 'btn-link text-primary hover:bg-primary/20 ';

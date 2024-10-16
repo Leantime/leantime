@@ -203,7 +203,7 @@ jQuery(document).ready(function(){
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <x-global::actions.dropdown contentRole="ghost">
+                <x-global::actions.dropdown contentRole="ghost" align="end" >
                     <x-slot:label-text>
                         {!! __('links.week_view') !!} {!! __('links.view') !!}
                     </x-slot:label-text>

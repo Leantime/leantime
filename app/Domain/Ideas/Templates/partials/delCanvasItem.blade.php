@@ -1,10 +1,17 @@
+@extends($layout)
+@section('content')
+
+@php
+    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+@endphp
+
 <x-global::content.modal.modal-buttons/>
 
 <x-global::content.modal.header>
     <i class="fa fa-trash"></i> {!! __("buttons.delete") !!}
 </x-global::content.modal.header>
 
-<x-global::content.modal.form action="{{ BASE_URL }}/ideas/delCanvasItem/{{ (int) $_GET['id'] }}">
+<x-global::content.modal.form action="{{ BASE_URL }}/ideas/delCanvasItem/{{ $id }}">
     <p>{!! __('text.are_you_sure_delete_idea') !!}</p><br />
     <x-global::forms.button type="submit" name="del" class="button">
         {!! __('buttons.yes_delete') !!}
