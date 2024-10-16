@@ -39,17 +39,14 @@
                     class="main-title-input mt-4"
                 />
 
-                <x-global::forms.select name="tags" id="tags" variant="tags" maxItemCount=4 >
-                    @php
-                        $tags = is_array($canvasItem->tags) ? $canvasItem->tags : explode(',', $canvasItem->tags);
-                    @endphp
+                <x-global::forms.select name="tags[]" id="tags" variant="tags" maxItemCount=4 >
 
-                   @if(! empty($tags) )
+                   @if(! empty($canvasItem->tags) )
 
-                        @foreach ($tags as $key => $label)
+                        @foreach ($canvasItem->tags as $label)
 
                             <x-global::forms.select.select-option
-                                value="{{ $key }}" :selected="$tags == $key"
+                                value="{{ $label }}" selected="selected"
                             >
 
                                 {!! __($label) !!}
@@ -201,7 +198,6 @@
     jQuery(document).ready(function() {
 
         leantime.editorController.initComplexEditor();
-        leantime.ticketsController.initTagsInput();
 
         @if (!$login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly(".nyroModalCont");
