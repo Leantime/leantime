@@ -28,6 +28,8 @@
 <script src="{!! BASE_URL !!}/dist/js/vendor.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
 
+<script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
+
 
 
 @dispatchEvent('afterMainScriptTag')

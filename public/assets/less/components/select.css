@@ -68,6 +68,7 @@
 .choices.is-disabled .choices__input {
 
 }
+
 .choices.is-disabled .choices__item {
     cursor: not-allowed;
 }
@@ -352,7 +353,9 @@
 }
 
 .choices__input {
+
 }
+
 .choices__input:focus {
     outline: 0;
 }

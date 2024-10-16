@@ -7,7 +7,6 @@ use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;

@@ -116,9 +116,9 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 </x-global::forms.button>
             </div>
 
-
-        </x-slot:cardContent>
-    </x-global::actions.dropdown>
+            </div>
+        </div>
+    </div>
 
 
     <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
@@ -160,8 +160,6 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
     <div class="clearall"></div>
 
     <?php $tpl->dispatchTplEvent('filters.beforeBar'); ?>
-
-
 
     <?php $tpl->dispatchTplEvent('filters.beforeFormClose'); ?>
 </form>
