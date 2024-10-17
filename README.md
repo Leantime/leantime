@@ -179,9 +179,10 @@ Head to [leantime.io](https://leantime.io/) for more information.
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
 
-Please note: We currently only support the official Leantime docker compose and standard installations. We only offer support for the most recent version. 
+Please note: We currently only support the official Leantime docker compose and standard installations. 
+We only offer support for the most recent version. 
 
-We do not offer support for Cloudron, Elastio, Turnkey, or other external distribution platforms sharing unofficial versions of Leantime. 
+We do not offer support for Cloudron, Elestio, Turnkey, or other external distribution platforms sharing unofficial versions of Leantime. 
 
 ## Contributing
 
