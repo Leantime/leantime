@@ -151,7 +151,7 @@ class ConsoleKernel implements ConsoleKernelContract
                 array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabledOnly: true)),
             )));
 
-        $commands = collect(Arr::flatten(session("commands")))
+        $commands = collect(Arr::flatten(Cache::store('installation')->many(["commands.core", "commands.plugins"])))
             ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
 
         /**
