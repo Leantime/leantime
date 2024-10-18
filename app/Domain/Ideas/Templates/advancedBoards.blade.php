@@ -30,16 +30,16 @@
                             '<a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>';
                     @endphp
 
-                    <x-global::content.context-menu :labelText="$labelText" align="start" contentRole="menu">
+                    <x-global::content.context-menu>
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
-                                {!! __('links.icon.edit') !!}
-                            </x-global::actions.dropdown.item>
+                        <x-global::actions.dropdown.item>
+                            {!! __('links.icon.edit') !!}
+                        </x-global::actions.dropdown.item>
 
-                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                                class="delete">
-                                {!! __('links.icon.delete') !!}
-                            </x-global::actions.dropdown.item>
+                        <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                            class="delete">
+                            {!! __('links.icon.delete') !!}
+                        </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
 
@@ -102,8 +102,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown class="btn btn-default dropdown-toggle" align="start"
-                                contentRole="ghost">
+                            <x-global::actions.dropdown contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>
@@ -147,9 +146,9 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         @if ($login::userIsAtLeast($roles::$editor))
-                                                            <div class="inlineDropDownContainer" style="float:right;">
+                                                            <div style="float:right;">
                                                                 <x-global::content.context-menu>
-                                                                    <x-global::actions.dropdown.item class="header">
+                                                                    <x-global::actions.dropdown.item>
                                                                         {!! __('subtitles.edit') !!}
                                                                     </x-global::actions.dropdown.item>
                                                                     <x-global::actions.dropdown.item
@@ -282,20 +281,17 @@
                     <div class="modal-content">
                         <form action="" method="post">
                             <div class="modal-header">
-                                <x-global::forms.button  type="button" class="close" data-dismiss="modal" aria-hidden="true" content-role="secondary">
+                                <x-global::forms.button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true" content-role="secondary">
                                     &times;
                                 </x-global::forms.button>
 
                                 <h4 class="modal-title">{!! __('headlines.start_new_idea_board') !!}</h4>
                             </div>
                             <div class="modal-body">
-                                <x-global::forms.text-input
-                                type="text"
-                                name="canvastitle"
-                                placeholder="{{ __('input.placeholders.name_for_idea_board') }}"
-                                labelText="{{ __('label.topic_idea_board') }}"
-                                variant="title"
-                            />
+                                <x-global::forms.text-input type="text" name="canvastitle"
+                                    placeholder="{{ __('input.placeholders.name_for_idea_board') }}"
+                                    labelText="{{ __('label.topic_idea_board') }}" variant="title" />
 
                             </div>
                             <div class="modal-footer">
@@ -326,13 +322,9 @@
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
-                                <x-global::forms.text-input
-                                type="text"
-                                name="canvastitle"
-                                value="{{ $canvasTitle }}"
-                                labelText="{{ __('label.title_idea_board') }}"
-                                variant="title"
-                            />
+                                <x-global::forms.text-input type="text" name="canvastitle"
+                                    value="{{ $canvasTitle }}" labelText="{{ __('label.title_idea_board') }}"
+                                    variant="title" />
 
                             </div>
                             <div class="modal-footer">
