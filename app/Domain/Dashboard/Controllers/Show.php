@@ -134,11 +134,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($currentProjectId));
-            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
-            $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
 
             return $this->tpl->display('dashboard.show');
         }

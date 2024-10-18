@@ -256,6 +256,7 @@ namespace Leantime\Domain\Ideas\Services {
 
             $canvasItem = $this->ideasRepository->getSingleCanvasItem($params['id']);
             $canvasItem->box = $canvasItem->box === '0' ? 'idea' : $canvasItem->box;
+            $canvasItem->tags = explode(",", $canvasItem->tags);
 
             $result['canvasItem'] = $canvasItem;
             // $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem->id);
@@ -383,7 +384,7 @@ namespace Leantime\Domain\Ideas\Services {
                 'assumptions' => '',
                 'data' => $params['data'],
                 'conclusion' => '',
-                'tags' => $params['tags'] ?? '',
+                'tags' => is_array($params['tags'] ?? '') ? implode(",", $params['tags'] ) : "",
                 'itemId' => $params['itemId'] ?? '',
                 'canvasId' => (int) session('currentIdeaCanvas'),
                 'milestoneId' => $params['milestoneId'] ?? '',

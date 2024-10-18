@@ -192,7 +192,7 @@
 
                             </div>
                             <div class="modal-footer">
-                                <x-global::forms.button type="button" data-dismiss="modal" content-role="secondary">
+                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal" content-role="secondary">
                                     {!! __('buttons.close') !!}
                                 </x-global::forms.button>
 
