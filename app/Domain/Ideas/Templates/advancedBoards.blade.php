@@ -141,13 +141,13 @@
                                 </h4>
                                 <div class="contentInner status_{{ $key }}">
                                     @foreach ($canvasItems as $row)
-                                    <x-ideas::idea-item 
-                                        :row="$row" 
-                                        :key="$key" 
-                                        {{-- :roles="$roles" 
-                                        :login="$login"  --}}
-                                        :users="$users" 
-                                    />
+                                        <x-ideas::idea-item 
+                                            :row="$row" 
+                                            :key="$key" 
+                                            {{-- :roles="$roles" 
+                                            :login="$login"  --}}
+                                            :users="$users" 
+                                        />
                                 
                                     @endforeach
                                 </div>

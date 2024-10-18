@@ -334,52 +334,88 @@ namespace Leantime\Domain\Ideas\Repositories {
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
 
             $stmn->closeCursor();
-
             return $values;
         }
-
-        public function getSingleCanvasItem($id): mixed
+        public function getCanvasItemsIdById($id): false|array
         {
 
             $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
 
-            $sql = 'SELECT
-						zp_canvas_items.id,
-						zp_canvas_items.description,
-						zp_canvas_items.assumptions,
-						zp_canvas_items.data,
-						zp_canvas_items.conclusion,
-						zp_canvas_items.box,
-						zp_canvas_items.author,
-						zp_canvas_items.created,
-						zp_canvas_items.modified,
-						zp_canvas_items.canvasId,
-						zp_canvas_items.sortindex,
-						zp_canvas_items.status,
-						zp_canvas_items.tags,
-						zp_canvas_items.milestoneId,
-						t1.firstname AS authorFirstname,
-						t1.lastname AS authorLastname,
-						zp_canvas_items.milestoneId,
-						milestone.headline as milestoneHeadline,
-						milestone.editTo as milestoneEditTo
+            $sql = "SELECT
+						zp_canvas_items.id
 				FROM
 				zp_canvas_items
-			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-				WHERE zp_canvas_items.id = :id
-				';
+			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
+				WHERE zp_canvas_items.canvasId = :id
+				GROUP BY zp_canvas_items.id
+				ORDER BY zp_canvas_items.sortindex";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
+            $stmn->execute();
+            // $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll();
+
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getSingleCanvasItem($id, $key = ''): mixed
+        {
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
+        
+            // Base SQL query
+            $sql = 'SELECT
+                        zp_canvas_items.id,
+                        zp_canvas_items.description,
+                        zp_canvas_items.assumptions,
+                        zp_canvas_items.data,
+                        zp_canvas_items.conclusion,
+                        zp_canvas_items.box,
+                        zp_canvas_items.author,
+                        zp_canvas_items.created,
+                        zp_canvas_items.modified,
+                        zp_canvas_items.canvasId,
+                        zp_canvas_items.sortindex,
+                        zp_canvas_items.status,
+                        zp_canvas_items.tags,
+                        zp_canvas_items.milestoneId,
+                        t1.firstname AS authorFirstname,
+                        t1.lastname AS authorLastname,
+                        zp_canvas_items.milestoneId,
+                        milestone.headline as milestoneHeadline,
+                        milestone.editTo as milestoneEditTo
+                    FROM
+                        zp_canvas_items
+                    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+                    LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
+                    WHERE zp_canvas_items.id = :id';
+        
+            if (!empty($key)) {
+                $sql .= ' AND zp_canvas_items.box = :key';
+            }
+        
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+        
+            if (!empty($key)) {
+                $stmn->bindValue(':key', $key, PDO::PARAM_STR);
+            }
+        
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, IdeasModel::class);
             $value = $stmn->fetch();
             $stmn->closeCursor();
-
+        
+            dd($value);
             return $value;
         }
+        
 
         public function addCanvasItem($values): false|string
         {

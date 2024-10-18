@@ -37,7 +37,7 @@ class IdeaItem extends HtmxController
     $key = (int) ($params['key']);
 
     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
-    $this->tpl->assign('canvasItems', $this->ideaRepo->getSingleCanvasItem($id));
+    $this->tpl->assign('canvasItems', $this->ideaRepo->getSingleCanvasItem($id, $key));
     $this->tpl->assign('key', $key);
   }
 }

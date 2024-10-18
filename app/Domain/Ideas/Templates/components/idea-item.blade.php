@@ -10,7 +10,7 @@
 
 @if (empty($id) == false)
 
-    <div hx-get="{{ BASE_URL }}/hx/ideas/ideaItem?id={{ $id }}?key={{ $key }}" hx-trigger="load"
+    <div hx-get="{{ BASE_URL }}/hx/ideas/ideaItem?id={{ $id }}&key={{ $key }}" hx-trigger="load"
         hx-swap="innerHtml">
         loading..
     </div>
