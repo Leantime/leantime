@@ -22,8 +22,10 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
                 ?>
 
-                @include("tickets::includes.ticketNewBtn")
-                @include("tickets::includes.ticketFilter")
+                <div class="row p-2">
+                    @include("tickets::includes.ticketNewBtn")
+                    @include("tickets::includes.ticketFilter")
+                </div>
 
                 <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
