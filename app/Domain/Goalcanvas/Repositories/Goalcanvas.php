@@ -360,6 +360,38 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             return $values;
         }
 
+        public function getAllCanvasId($projectId, $type = null): false|array
+        {
+
+            if ($type == null || $type == '') {
+                $canvasType = static::CANVAS_NAME.'canvas';
+            } else {
+                $canvasType = $type;
+            }
+
+            $sql = 'SELECT
+                        zp_canvas.id,
+                        zp_canvas.title
+                FROM
+                    zp_canvas
+                    LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                    LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
+                WHERE type = :type AND projectId = :projectId
+                GROUP BY
+					zp_canvas.id, zp_canvas.title, zp_canvas.created
+                ORDER BY zp_canvas.title, zp_canvas.created';
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
         public function deleteCanvas($id): void
         {
 
