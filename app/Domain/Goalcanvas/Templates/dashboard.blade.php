@@ -111,11 +111,11 @@
 
                     <x-goalcanvas::canvas
                         id="{{ $canvasRow['id'] }}"
-                        canvasTitle="{{ $canvasRow['title'] }}"
+                        {{-- canvasTitle="{{ $canvasRow['title'] }}" --}}
                         {{-- :goalItems="$canvasItems" --}}
-                        :statusLabels="$statusLabels"
+                        {{-- :statusLabels="$statusLabels"
                         :relatesLabels="$relatesLabels"
-                        :users="$users"
+                        :users="$users" --}}
                     />
             
                 @endforeach
