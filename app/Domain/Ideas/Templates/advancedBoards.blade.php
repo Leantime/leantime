@@ -29,8 +29,7 @@
                         $labelText =
                             '<a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>';
                     @endphp
-
-                    <x-global::content.context-menu :labelText="$labelText" align="start" contentRole="menu">
+                    <x-global::content.context-menu :labelText="$labelText" align="start" contentRole="ghost">
                         @if ($login::userIsAtLeast($roles::$editor))
                             <x-global::actions.dropdown.item href="javascript:void(0)" class="editCanvasLink">
                                 {!! __('links.icon.edit') !!}
@@ -42,7 +41,6 @@
                             </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
-
                 </span>
             @endif
             <h1>{!! __('headlines.idea_management') !!}
@@ -86,10 +84,10 @@
         <div class="maincontentinner">
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4 mb-2 pb-2">
                     @if ($login::userIsAtLeast($roles::$editor))
                         @if (count($allCanvas) > 0)
-                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment">
+                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-sm btn-primary" id="customersegment">
                                 <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}
                             </a>
                         @endif
@@ -102,7 +100,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown class="btn btn-default dropdown-toggle" align="start"
+                            <x-global::actions.dropdown  align="start"
                                 contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
@@ -189,7 +187,7 @@
                                                             @endphp
 
                                                             <x-global::actions.dropdown class="f-left" align="start"
-                                                                contentRole="menu">
+                                                                contentRole="ghost">
                                                                 <!-- Dropdown Trigger -->
                                                                 <x-slot:labelText>
                                                                     <span class="text">
