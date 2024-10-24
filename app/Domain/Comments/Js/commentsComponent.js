@@ -53,7 +53,8 @@ export const toggleCommentBoxes = function (parentId, formHash, commentId, editC
 
     // Add the textarea for the current comment
     jQuery('#commentReplyBox-' + formHash + '-' + parentId + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" id="editor-' + formHash + '-' + parentId + '" class="tinymceSimple">' + content + '</textarea>');
-    
+    $('#commentReplyBox-' + formHash + '-' + parentId).removeClass('hidden').show();
+
     console.log(formHash, parentId, commentId, editComment, isReply);
     // Initialize the editor
     initSimpleEditor();

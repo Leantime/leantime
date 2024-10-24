@@ -145,7 +145,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             // $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            // dd($values);
             return $values;
         }
 
@@ -412,7 +411,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             $value = $stmn->fetch();
             $stmn->closeCursor();
         
-            dd($value);
             return $value;
         }
         
