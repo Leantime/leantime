@@ -23,8 +23,11 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
                 ?>
 
-                @include("tickets::includes.ticketNewBtn")
-                @include("tickets::includes.ticketFilter")
+                <div class="row p-2">
+
+                    @include("tickets::includes.ticketNewBtn")
+                    @include("tickets::includes.ticketFilter")
+                </div>
 
                 <?php
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
@@ -55,7 +58,6 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
                     ?>
                     
                     <x-global::actions.dropdown 
-                        class="btn dropdown-toggle"
                         id="ganttTimeControl"
                         {{-- :label-text="$tpl->__('buttons.timeframe') . ': ' . $currentView" --}}
                         align="start"
