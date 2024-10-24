@@ -115,8 +115,35 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     {{ __('buttons.search') }}
                 </x-global::forms.button>
             </div>
-    
+
+
         </x-slot:cardContent>
+    </x-global::actions.dropdown>
+
+
+    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
+    <x-global::actions.dropdown contentRole="ghost">
+        <x-slot:labelText>
+            {{ __('popover.group_by') }}
+            <span class="fa-solid fa-diagram-project"></span>
+            @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
+                <span class="badge badge-primary">1</span>
+            @endif
+            </button>
+        </x-slot:labelText>
+
+        <x-slot:menu>
+            @foreach ($groupBy as $input)
+                <x-global::actions.dropdown.item>
+                    <span>
+                        <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
+                            value="{{ $input['field'] }}" id="{{ $input['id'] }}"
+                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
+                        <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
+                    </span>
+                </x-global::actions.dropdown.item>
+            @endforeach
+        </x-slot:menu>
     </x-global::actions.dropdown>
     
     @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")

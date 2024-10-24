@@ -24,13 +24,19 @@
         default => 'btn', // Default to base button class
     };
 
-    $menuClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50";
     // Determine the menu class based on the variant
-    $menuClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-52 z-50";
+    $menuClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-60 z-50";
     // Determine the menu class based on the variant
     $menuClass = match($variant) {
         'card' => 'card card-compact '.$menuClassBase, // Card variant class
         default => 'menu '.$menuClassBase, // Default to regular menu
+    };
+
+    $cardClassBase = "dropdown-content rounded-element bg-base-100 p-2 shadow w-fit z-50";
+    // Determine the menu class based on the variant
+    $cardClass = match($variant) {
+        'card' => 'card card-compact '.$cardClassBase, // Card variant class
+        default => 'menu '.$cardClassBase, // Default to regular menu
     };
 
     // Determine the dropdown position class
@@ -58,7 +64,7 @@
 
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
-        <div tabindex="0" class="{{ $menuClass }}">
+        <div tabindex="0" class="{{ $cardClass }}">
             <div class="card-body">
                 @if($cardLabel)
                     <h3 class="card-title">{{ $cardLabel }}</h3>
