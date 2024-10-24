@@ -61,8 +61,8 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             $this->tpl->assign('id', '');
             $this->tpl->assign('currentCanvas', $currentCanvasId);
-            $this->tpl->assign('comments', $result['comments']);
-            $this->tpl->assign('numComments', $result['numComments'] ?? 0);
+            // $this->tpl->assign('comments', $result['comments']);
+            // $this->tpl->assign('numComments', $result['numComments'] ?? 0);
             $this->tpl->assign('milestones', $result['milestones']);
             $this->tpl->assign('canvasTypes', $result['canvasTypes']);
             $this->tpl->assign('canvasItem', $result['canvasItem']);

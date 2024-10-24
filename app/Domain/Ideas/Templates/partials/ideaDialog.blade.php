@@ -84,7 +84,7 @@
                     <input type="hidden" name="comment" value="1" />
 
                     <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
-                    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . '/ideas/ideaDialog/' . $id])
+                    <x-comments::list :module="'idea'" :statusUpdates="'false'" :moduleId="$id" />
                 @endif
             </div>
 

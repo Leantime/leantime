@@ -1052,7 +1052,8 @@ export const initTicketKanban = function (ticketStatusListParameter) {
             tolerance: 'intersect',
             placeholder: "ui-state-highlight",
             forcePlaceholderSize: true,
-            cancel: ".portlet-toggle,:input,a,input",
+            cancel: ".portlet-toggle, :input,a,input, .dropdown-toggle, .dropdown-menu, .inlineDropDownContainer, .dropdown-bottom",
+
             distance: 10,
 
             start: function (event, ui) {

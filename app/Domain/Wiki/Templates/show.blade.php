@@ -60,21 +60,20 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
             <h5><?php $tpl->e(session('currentProjectClient')); ?></h5>
 
             <?php if (count($wikis) > 0) {?>
-            <x-global::actions.dropdown class="dropdownWrapper headerEditDropdown" button-class="btn btn-transparent"
-                icon="fa-solid fa-ellipsis-v" align="start">
-                <x-slot:menu class="editCanvasDropdown">
-                    @if ($login::userIsAtLeast($roles::$editor) && $currentWiki)
-                        <x-global::actions.dropdown.item>
-                            <a class="inlineEdit"
-                                href="#/wiki/wikiModal/{{ $currentWiki->id }}">{{ __('link.edit_wiki') }}</a>
-                        </x-global::actions.dropdown.item>
-                        <x-global::actions.dropdown.item>
-                            <a class="delete" href="#/wiki/delWiki/{{ $currentWiki->id }}"><i class="fa fa-trash"></i>
-                                {{ __('links.delete_wiki') }}</a>
-                        </x-global::actions.dropdown.item>
-                    @endif
-                </x-slot:menu>
-            </x-global::actions.dropdown>
+                <div class="inlineDropDownContainer" style="float:right;">
+
+                    <x-global::content.context-menu>
+                        @if ($login::userIsAtLeast($roles::$editor) && $currentWiki)
+                            <x-global::actions.dropdown.item  href="#/wiki/wikiModal/{{ $currentWiki->id }}">
+                                {!! __('link.edit_wiki') !!}
+                            </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item  href="#/wiki/delWiki/{{ $currentWiki->id }}">
+                                    <i class="fa fa-trash"></i>
+                                    {!! __('links.delete_wiki') !!}
+                            </x-global::actions.dropdown.item>
+                        @endif
+                    </x-global::content.context-menu>
+                </div>
 
             <?php } ?>
 
@@ -82,24 +81,23 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                 <?php if (count($wikis) > 0) {?>
                 //
-                <x-global::actions.dropdown class="dropdownWrapper" button-class="header-title-dropdown"
-                    icon="fa fa-caret-down" align="start">
-                    <x-slot:button-text>
+                <x-global::actions.dropdown contentRole="ghost" class="header-title-dropdown" align="start">
+                    <x-slot:labelText>
                         @if ($currentWiki !== false)
                             {{ $currentWiki->title }}
                         @else
                             {{ __('label.select_board') }}
                         @endif
-                    </x-slot:button-text>
+                        <i class="fa fa-caret-down"></i>
+                    </x-slot:labelText>
 
                     <x-slot:menu>
-                        <x-global::actions.dropdown.item>
-                            <a class="inlineEdit" href="#/wiki/wikiModal/">{{ __('link.new_wiki') }}</a>
+                        <x-global::actions.dropdown.item variant='link' href="#/wiki/wikiModal/">
+                            {!! __('link.new_wiki') !!}
                         </x-global::actions.dropdown.item>
-                        <li class='nav-header border'></li>
                         @foreach ($wikis as $wiki)
-                            <x-global::actions.dropdown.item>
-                                <a href="{{ BASE_URL . '/wiki/show?setWiki=' . $wiki->id }}">{{ $wiki->title }}</a>
+                            <x-global::actions.dropdown.item variant='link' href="{{ BASE_URL . '/wiki/show?setWiki=' . $wiki->id }}">
+                                {!! $wiki->title !!}
                             </x-global::actions.dropdown.item>
                         @endforeach
                     </x-slot:menu>
@@ -237,7 +235,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                     <form method="post" action="{{ BASE_URL }}/wiki/show/<?php echo $currentArticle->id; ?>#comment">
                                         <input type="hidden" name="comment" value="1" />
-                                        @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/wiki/show/" . $currentArticle->id ])
+                                        <x-comments::list :module="'wiki'" :statusUpdates="'false'" :moduleId="$currentArticle->id" />
                                     </form>
                                 </div>
                             </div>
