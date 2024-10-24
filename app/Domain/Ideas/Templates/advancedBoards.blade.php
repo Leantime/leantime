@@ -42,7 +42,6 @@
                         </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
-
                 </span>
             @endif
             <h1>{!! __('headlines.idea_management') !!}
@@ -86,10 +85,10 @@
         <div class="maincontentinner">
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4 mb-2 pb-2">
                     @if ($login::userIsAtLeast($roles::$editor))
                         @if (count($allCanvas) > 0)
-                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment">
+                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-sm btn-primary" id="customersegment">
                                 <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}
                             </a>
                         @endif
@@ -102,7 +101,8 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown contentRole="ghost">
+                            <x-global::actions.dropdown  align="start"
+                                contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>

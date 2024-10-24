@@ -98,8 +98,8 @@ export const setKanbanHeights = function () {
 
 export const initIdeaKanban = function (statusList) {
 
-    jQuery("#sortableIdeaKanban").disableSelection();
-
+    // jQuery("#sortableIdeaKanban").disableSelection();
+    console.log('update');
     jQuery("#sortableIdeaKanban .ticketBox").hover(function () {
         jQuery(this).css("background", "var(--kanban-card-hover)");
     },function () {
@@ -112,7 +112,7 @@ export const initIdeaKanban = function (statusList) {
         tolerance: 'pointer',
         placeholder: "ui-state-highlight",
         forcePlaceholderSize: true,
-        cancel: ".portlet-toggle",
+        cancel: ".portlet-toggle, .dropdown-toggle, .dropdown-menu, .inlineDropDownContainer, .dropdown-bottom",
         start: function (event, ui) {
             ui.item.addClass('tilt');
             tilt_direction(ui.item);
@@ -174,7 +174,6 @@ export const initIdeaKanban = function (statusList) {
         icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
         icon.closest(".portlet").find(".portlet-content").toggle();
     });
-
 };
 
 // Make public what you want to have public, everything else is private
