@@ -116,9 +116,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 </x-global::forms.button>
             </div>
 
-            </div>
-        </div>
-    </div>
+        </x-slot:cardContent>
+    </x-global::actions.dropdown>
 
 
     <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
@@ -135,7 +134,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         <x-slot:menu>
             @foreach ($groupBy as $input)
                 <x-global::actions.dropdown.item>
-                    <span class="radio">
+                    <span>
                         <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                             value="{{ $input['field'] }}" id="{{ $input['id'] }}"
                             onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />

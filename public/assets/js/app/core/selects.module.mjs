@@ -38,6 +38,7 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
     addChoices: false,
     addItems: false,
     allowHTML: true,
+    removeItemButton: true,
     searchEnabled: enableSearch,
     duplicateItemsAllowed: false,
     choices: getOptions(element),
@@ -55,15 +56,14 @@ export const initSelect = function (element, enableSearch, additionalClasses) {
       return `Only ${maxItemCount} values can be added`;
     },
     classNames: {
-      containerOuter: outerClasses,
+      // containerOuter: outerClasses,
       containerInner: ["choices__inner"],
       input: ["choices__input"],
       inputCloned: ["choices__input--cloned"],
       list: ["choices__list"],
       listItems: ["choices__list--multiple"],
       listSingle: ["choices__list--single"],
-      listDropdown: ["dropdown-content", "menu"],
-
+      listDropdown: ["choices__list--dropdown"],
       item: ["choices__item"],
       itemSelectable: ["choices__item--selectable"],
       itemDisabled: ["choices__item--disabled"],

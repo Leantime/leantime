@@ -31,8 +31,10 @@
                     $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
                     ?>
 
-                    @include('tickets::includes.ticketNewBtn')
-                    @include('tickets::includes.ticketFilter')
+                    <div class="flex mb-2 gap-3">
+                        @include('tickets::includes.ticketNewBtn')
+                        @include('tickets::includes.ticketFilter')
+                    </div>
 
                     <?php
                     $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
