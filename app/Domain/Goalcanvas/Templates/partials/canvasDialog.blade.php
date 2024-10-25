@@ -237,9 +237,7 @@
         <br /><br /><br />
         <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
-        @include('comments::includes.generalComment', [
-            'formUrl' => BASE_URL . '/goalcanvas/editCanvasItem/' . $id,
-        ])
+        <x-comments::list :module="'goalcanvas'" :moduleId="$id"  :statusUpdates="'false'"/> 
     @endif
 
 </div>

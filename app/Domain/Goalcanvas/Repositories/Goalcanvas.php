@@ -374,8 +374,6 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                         zp_canvas.title
                 FROM
                     zp_canvas
-                    LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
-                    LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
                 WHERE type = :type AND projectId = :projectId
                 GROUP BY
 					zp_canvas.id, zp_canvas.title, zp_canvas.created
