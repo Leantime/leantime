@@ -145,3 +145,5 @@ clear-storage:
 	find storage/framework/cache -mindepth 1 -not -name '.gitignore' -delete
 	find storage/framework/sessions -mindepth 1 -not -name '.gitignore' -delete
 	find storage/framework/views -mindepth 1 -not -name '.gitignore' -delete
+	# rm-rf bootstrap/cache/packages.php
+	# rm-rf bootstrap/cache/services.php
