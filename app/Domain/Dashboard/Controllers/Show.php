@@ -159,12 +159,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
             }
 
             // Manage Post comment
-            $comments = app()->make(CommentRepository::class);
             if (isset($_POST['comment']) === true) {
                 $currentProjectId = $this->projectService->getCurrentProjectId();
                 $project = $this->projectService->getProject($currentProjectId);
 
-                if ($project && $this->commentService->addComment($_POST, 'project', $currentProjectId, $project)) {
+                if ($project && $this->commentService->addComment($_POST, 'project', $currentProjectId )) {
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success', 'dashboardcomment_created');
                 } else {
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
