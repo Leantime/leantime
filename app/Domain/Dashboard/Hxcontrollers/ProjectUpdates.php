@@ -46,7 +46,7 @@ class ProjectUpdates extends HtmxController
   public function post($params): void
   {
     // Manage Post comment
-    $currentProjectId = $this->projectService->getCurrentProjectId();
+    $currentProjectId = $this->projectService->getCurrentProjectId() ?? $_GET['id'];
     $project = $this->projectService->getProject($currentProjectId);
 
     if ($project && $this->commentService->addComment($_POST, 'project', $currentProjectId)) {
@@ -57,7 +57,6 @@ class ProjectUpdates extends HtmxController
   public function fetchComments($project_id)
   {
     $comments = app()->make(abstract: CommentRepository::class);
-
     $comment = array_map(function ($comment) use ($comments) {
       $comment['replies'] = $comments->getReplies($comment['id']);
 
