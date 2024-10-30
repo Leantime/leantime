@@ -214,9 +214,11 @@
         <br />
         <input type="hidden" name="comment" value="1" />
         <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{{ __('subtitles.discussion') }}</h4>
-        @include('comments::includes.generalComment', [
+        <x-comments::list :module="$module" :statusUpdates="'false'" :moduleId="$id" />
+
+        {{-- @include('comments::includes.generalComment', [
             'formUrl' => $canvasName . 'canvas/editCanvasItem/' . $id,
-        ])
+        ]) --}}
 
         <?php } ?>
     </div>

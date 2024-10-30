@@ -6,7 +6,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     use DateTime;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -18,7 +17,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     {
         private TicketService $ticketService;
 
-        private CommentService $commentsService;
 
         private ProjectService $projectService;
 
@@ -31,13 +29,11 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function init(
             TicketService $ticketService,
-            CommentService $commentsService,
             ProjectService $projectService,
             TicketRepository $ticketRepo,
             ProjectRepository $projectRepo
         ) {
             $this->ticketService = $ticketService;
-            $this->commentsService = $commentsService;
             $this->projectService = $projectService;
             $this->ticketRepo = $ticketRepo;
             $this->projectRepo = $projectRepo;
@@ -49,13 +45,6 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
             if (isset($params['id'])) {
-                //Delete comment
-                if (isset($params['delComment']) === true) {
-                    $commentId = (int) ($params['delComment']);
-                    $this->commentsService->deleteComment($commentId);
-
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
-                }
 
                 $milestone = $this->ticketRepo->getTicket($params['id']);
                 $milestone = (object) $milestone;
@@ -73,7 +62,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$milestone->id);
                 }
 
-                $comments = $this->commentsService->getComments('ticket', $params['id']);
             } else {
                 $milestone = app()->make(TicketModel::class);
                 $milestone->status = 3;
@@ -87,14 +75,12 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 $milestone->editTo = $next_week->format('Y-m-d');
 
-                $comments = [];
             }
 
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
-            $this->tpl->assign('comments', $comments);
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
@@ -113,44 +99,6 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
                 $params['id'] = (int) $_GET['id'];
                 $milestone = $this->ticketRepo->getTicket($params['id']);
-
-                if (isset($params['comment']) === true) {
-                    $values = [
-                        'text' => $params['text'],
-                        'date' => date('Y-m-d H:i:s'),
-                        'userId' => (session('userdata.id')),
-                        'moduleId' => $params['id'],
-                        'father' => ($params['father']),
-                    ];
-
-                    $messageId = $this->commentsService->addComment($values, 'ticket', $params['id'], $milestone);
-                    $values['id'] = $messageId;
-                    if ($messageId) {
-                        $this->tpl->setNotification($this->language->__('notifications.comment_added_successfully'), 'success');
-
-                        $subject = $this->language->__('email_notifications.new_comment_milestone_subject');
-                        $actual_link = BASE_URL.'/tickets/editMilestone/'.(int) $_GET['id'];
-                        $message = sprintf($this->language->__('email_notifications.new_comment_milestone_message'), session('userdata.name'));
-
-                        $notification = app()->make(NotificationModel::class);
-                        $notification->url = [
-                            'url' => $actual_link,
-                            'text' => $this->language->__('email_notifications.new_comment_milestone_cta'),
-                        ];
-                        $notification->entity = $values;
-                        $notification->module = 'comments';
-                        $notification->projectId = session('currentProject');
-                        $notification->subject = $subject;
-                        $notification->authorId = session('userdata.id');
-                        $notification->message = $message;
-
-                        $this->projectService->notifyProjectUsers($notification);
-                    } else {
-                        $this->tpl->setNotification($this->language->__('notifications.problem_saving_your_comment'), 'error');
-                    }
-
-                    return Frontcontroller::redirect(BASE_URL.'/tickets/editMilestone/'.$params['id']);
-                }
 
                 if (isset($params['headline']) === true) {
                     if ($this->ticketService->quickUpdateMilestone($params)) {

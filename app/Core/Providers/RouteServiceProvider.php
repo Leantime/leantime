@@ -39,8 +39,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->any('api/jsonrpc', function (IncomingRequest $request) use ($frontController) {
 
-                    app('debugbar')->disable();
-
                     $httpMethod = Str::lower($request->getMethod());
                     return $frontController->executeAction(Jsonrpc::class, $httpMethod);
                 });
@@ -51,16 +49,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(function() use ($frontController) {
 
                     Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController) {
-                        app('debugbar')->disable();
                         $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, "Hxcontrollers");
                         return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                     });
 
                     Route::any('{moduleName}/{actionName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController) {
-                        app('debugbar')->disable();
                         $httpMethod = Str::lower($request->getMethod());
                         $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Hxcontrollers");
-                        return $frontController->executeAction($controller, $httpMethod);
+                        return $frontController->executeAction($controllerParts['class'], $httpMethod);
                     });
 
                 });
@@ -77,14 +73,13 @@ class RouteServiceProvider extends ServiceProvider
                 });
 
                 Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController)  {
-                    app('debugbar')->disable();
                     
                     $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, "Controllers");
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
                 Route::any('{moduleName}/{actionName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController)  {
-                    app('debugbar')->disable();
+                    
                     
                     $httpMethod = Str::lower($request->getMethod());
                     $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Controllers");
@@ -100,7 +95,7 @@ class RouteServiceProvider extends ServiceProvider
             });
 
             Route::any('', function (IncomingRequest $request) use ($frontController) {
-                app('debugbar')->disable();
+                
                
                 return $frontController->redirect(self::HOME);
             });
