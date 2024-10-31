@@ -42,9 +42,9 @@
                             </x-global::content.context-menu>
                         </div>
                     @endif
-                    <span class="name">{{ printf($tpl->__('text.full_name'), $tpl->escape($comment->firstname), $tpl->escape($comment->lastname)) }}</span>
+                    <span class="name">{{ printf(__('text.full_name'), $tpl->escape($comment->firstname), $tpl->escape($comment->lastname)) }}</span>
                     <div class="text mce-content-body" id="commentText-{{ $formHash }}-{{ $comment->id }}">
-                        {!! $tpl->escapeMinimal($comment->text) !!}
+                        {!! $comment->text !!}
                     </div>
                 </div>
                 <div class="commentLinks">

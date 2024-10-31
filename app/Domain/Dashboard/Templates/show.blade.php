@@ -180,16 +180,39 @@
                         @endforeach
 
                     </div>
-                </x-global::content.card>
-            </div>
-
+            </x-global::content.card>
         </div>
+
     </div>
+</div>
 </div>
 
 @once @push('scripts')
 <script>
     @dispatchEvent('scripts.afterOpen')
+
+    document.body.addEventListener("htmx:responseError", function(event) {
+        const loader = event.target.querySelector('#htmx-loader');
+        const errorElement = event.target.querySelector('.error-message');
+        if (loader) {
+            loader.style.display = 'none'; // Hide the loader
+        }
+        if (errorElement) {
+            errorElement.style.display = 'block'; // Show the error message
+        }
+    });
+
+    document.body.addEventListener("htmx:beforeRequest", function(event) {
+        const loader = event.target.querySelector('#htmx-loader');
+        const errorElement = event.target.querySelector('.error-message');
+        if (loader) {
+            loader.style.display = 'flex'; // Show the loader
+        }
+        if (errorElement) {
+            errorElement.style.display = 'none'; // Hide the error message
+        }
+    });
+
 
     leantime.editorController.initSimpleEditor();
 

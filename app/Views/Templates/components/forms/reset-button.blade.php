@@ -5,7 +5,7 @@
 ])
 
 <div class="inline float-left">
-    <x-global::forms.button type="reset" name="{{ $name }}" content-role="secondary" {{ $attributes->merge(['class' => 'float-left mr-xs']) }}>
+    <x-global::forms.button type="reset" name="{{ $name }}" content-role="ghost" {{ $attributes->merge(['class' => 'float-left mr-xs']) }}>
         {{ $value }}
     </x-global::forms.button>
     @if($htmxIndicator)

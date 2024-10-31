@@ -62,8 +62,10 @@ class ProjectUpdates extends HtmxController
 
       return $comment;
     }, $comments->getComments('project', $project_id, 0));
+    // dd($comment);
 
     $this->tpl->assign('comments', $comment);
+    $this->tpl->assign('project_id', $project_id);
     $this->tpl->assign('numComments', $comments->countComments('project', $project_id));
   }
 }
