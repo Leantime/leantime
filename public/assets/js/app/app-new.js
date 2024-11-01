@@ -148,7 +148,6 @@ import initializeHtmx from './htmx';
 
 
 addToGlobalScope({
-  initializeHtmx: initializeHtmx,
   usersService: usersService,
   wikiController: wikiController,
   authController: authController,

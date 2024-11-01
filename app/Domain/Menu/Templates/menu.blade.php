@@ -110,8 +110,6 @@
                 jQuery(document).ready(function() {
                     leantime.menuController.initProjectSelector();
                     leantime.menuController.initLeftMenuHamburgerButton();
-                    leantime.initializeHtmx();
-                    // console.log(leantime);
                 });
             </script>
         @endpush

@@ -10,20 +10,22 @@ function hideElement(element) {
 
 function toggleLoader(event, action) {
   const loader = event.target.querySelector('.htmx-loader');
-  action === 'show' 
-    ? loader.style.display = 'flex' 
+  if (!loader) return;
+  action === 'show'
+    ? loader.style.display = 'flex'
     : hideElement(loader);
 }
 
 function toggleErrorMessage(event, action, message = '') {
   const errorElement = event.target.querySelector('.error-message');
-  
+
   if (event.detail.boosted && action === 'show' && !event.detail._errorHandled) {
-    alert(message);
+    jQuery.growl({ message: message, style: "error" });
+
     event.detail._errorHandled = true;
   } else if (errorElement) {
-    action === 'show' 
-      ? showElement(errorElement) 
+    action === 'show'
+      ? showElement(errorElement)
       : hideElement(errorElement);
   } else if (action === 'show') {
     const errorDiv = document.createElement('div');
@@ -46,11 +48,13 @@ function initializeHtmx() {
   document.body.addEventListener('htmx:responseError', event => {
     toggleLoader(event, 'hide');
     toggleErrorMessage(
-      event, 
-      'show', 
+      event,
+      'show',
       "There is an issue loading the section. Please try again later."
     );
   });
 }
 
-export default initializeHtmx;
+jQuery(function () {
+  initializeHtmx();
+})
