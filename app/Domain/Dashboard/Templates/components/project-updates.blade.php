@@ -10,10 +10,10 @@
     <div hx-get="{{ BASE_URL }}/hx/dashboard/projectUpdates/get?id={{ $id }}" hx-trigger="load"
         hx-swap="innerHtml">
         <x-global::content.card variation="content">
-            <div id='htmx-loader' class="justify-center align-center">
+            <div id='htmx-loader' class="justify-center align-center htmx-loader">
                 <x-global::elements.loader id="loadingthis" size="25px" />
             </div>
-            <div class="error-message" style="display: none;">There is an error loading this section. Please try again.
+            <div class="error-message" style="display: none; ">There is an error loading this section. Please try again.
             </div>
         </x-global::content.card>
 

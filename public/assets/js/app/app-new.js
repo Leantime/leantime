@@ -87,16 +87,16 @@ import snippets from './core/snippets.module';
 import selects from './core/selects.module.mjs';
 
 addToGlobalScope({
-    dateHelper: dateHelper,
-    editorController: editorController,
-    getLatestGrowl: getLatestGrowl,
-    handleAsyncResponse: handleAsyncResponse,
-    instanceInfo: instanceInfo,
-    modals: modals,
-    replaceSVGColors: replaceSVGColors,
-    snippets: snippets,
-    selects: selects,
-    datePickers: datePickers
+  dateHelper: dateHelper,
+  editorController: editorController,
+  getLatestGrowl: getLatestGrowl,
+  handleAsyncResponse: handleAsyncResponse,
+  instanceInfo: instanceInfo,
+  modals: modals,
+  replaceSVGColors: replaceSVGColors,
+  snippets: snippets,
+  selects: selects,
+  datePickers: datePickers
 });
 
 jQuery(document).ready(onDocumentReady);
@@ -144,8 +144,11 @@ import risksCanvasController from "domain/Riskscanvas/Js/risksCanvasController";
 import retroCanvasController from "domain/Retroscanvas/Js/retroCanvasController";
 import minempathyCanvasController from "domain/Minempathycanvas/Js/risksCanvasController";
 import insightsCanvasController from "domain/Insightscanvas/Js/insightsCanvasController";
+import initializeHtmx from './htmx';
+
 
 addToGlobalScope({
+  initializeHtmx: initializeHtmx,
   usersService: usersService,
   wikiController: wikiController,
   authController: authController,
