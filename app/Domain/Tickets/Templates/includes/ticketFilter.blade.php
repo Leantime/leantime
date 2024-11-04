@@ -116,9 +116,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 </x-global::forms.button>
             </div>
 
-            </div>
-        </div>
-    </div>
+        </x-slot:cardContent>
+    </x-global::actions.dropdown>
 
 
     <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
