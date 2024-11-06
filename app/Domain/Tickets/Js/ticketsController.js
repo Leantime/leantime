@@ -1176,16 +1176,19 @@ export const initTicketsTable = function (groupBy) {
                 }
 
             },
-            "dom": '<"top">rt<"bottom"><"clear">',
-            "searching": false,
-            "stateSave": true,
+            "dom": '<"top"f>rt<"bottom"lip><"clear">',
+            "pagingType": "full_numbers",
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "searching": true,
+            "stateSave": false,
             "displayLength":100,
             "order": defaultOrder,
             "columnDefs": [
-                    { "visible": false, "targets": 10 },
-                    { "visible": false, "targets": 11 },
+                    { "visible": false, "targets": 10, "searchable": false },
+                    { "visible": false, "targets": 11, "searchable": false },
                     { "target": "no-sort", "orderable": false},
-                ],
+            ],
             "footerCallback": function ( row, data, start, end, display ) {
                 var api = this.api(), data;
 
@@ -1198,7 +1201,6 @@ export const initTicketsTable = function (groupBy) {
                 };
 
                 // computing column Total of the complete result
-
 
                 var plannedHours = api
                     .column(10)
@@ -1262,6 +1264,29 @@ export const initTicketsTable = function (groupBy) {
 
         });
 
+        function format(d) {
+            return "foo";
+            // d[6];
+        }
+
+        // Add event listener for opening and closing child row
+        jQuery('.ticketTable tbody').on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
+            // let tr = jQuery(this).closest('tr');
+            let row = allTickets.row(tr);
+            
+            console.log("Row data is", row.data());
+            
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+
+
         var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
             buttons: [
                 {
@@ -1309,6 +1334,31 @@ export const initTicketsTable = function (groupBy) {
             allTickets.draw();
 
         });
+
+        // Testing add row
+        function addNewRow() {
+            allTickets.row
+                .add([
+                    "col 1",
+                    "col 2",
+                    "col 3",
+                    "col 4",
+                    "col 5",
+                    "col 6",
+                    "col 7",
+                    "col 8",
+                    "col 9",
+                    "col 10",
+                    "col 11",
+                    "col 12",
+                ])
+                .draw(false);
+         
+        }
+
+        // document.querySelector('#addRow').addEventListener('click', addNewRow);
+        jQuery('#addRow').on('click', addNewRow);
+
     });
 };
 

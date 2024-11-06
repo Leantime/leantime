@@ -1,25 +1,24 @@
 @props([
     'header',
     'body',
-    'footer'
+    'footer',
+    'extraClass' => ''
 ])
 
-<table {{ $attributes->merge(['class' => 'table table-bordered']) }}>
+<table {{ $attributes->merge(['class' => 'table table-bordered min-w-full bg-white border-separate border-spacing-0 '.$extraClass ]) }}>
     @if(isset($header))
-        <thead>
+        <thead class="bg-gray-50">
             {{ $header }}
         </thead>
     @endif
-    <tbody >
+    
+    <tbody class="bg-white divide-y divide-gray-200">
         {{ $body }}
     </tbody>
+    
     @if(isset($footer))
-        <tfoot>
+        <tfoot class="bg-gray-50">
             {{ $footer }}
         </tfoot>
     @endif
 </table>
-  
-    
-{{-- <div {{ $attributes->merge(['class' => 'overflow-x-auto']) }}> --}}
-{{-- </div> --}}

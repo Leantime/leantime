@@ -62,8 +62,8 @@
                 $allTickets = $allTicketGroups['all']['items'];
             }
             ?>
-
-            <x-global::elements.table class="display ticketTable" style="width:100%">
+            
+            <x-global::elements.table extraClass="ticketTable display" style="width:100%">
                 <x-slot:header>
                     @foreach ($allTicketGroups as $group)
                         @if ($group['label'] != 'all')
@@ -172,13 +172,17 @@
                                 <x-global::elements.table.cell>
                                     @if ($row['dependingTicketId'] > 0)
                                         <small>
-                                            <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">
+                                            <a 
+                                                href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}"
+                                            >
                                                 {{ $tpl->escape($row['parentHeadline']) }}
                                             </a>
                                         </small>
                                         <br />
                                     @endif
-                                    <a class='ticketModal' href="#/tickets/showTicket/{{ $tpl->e($row['id']) }}">
+                                    <a class='ticketModal' 
+                                        href="#/tickets/showTicket/{{ $tpl->e($row['id']) }}"
+                                    >
                                         {{ $tpl->e($row['headline']) }}
                                     </a>
                                 </x-global::elements.table.cell>
@@ -403,7 +407,16 @@
                                         name="remainingHours"
                                         :value="$tpl->escape($row['hourRemaining'])" 
                                         class="small-input secretInput"
-                                        :onchange="'leantime.ticketsController.updateRemainingHours(this, \'' . $row['id'] . '\');'" />
+                                        :onchange="'leantime.ticketsController.updateRemainingHours(this, \'' . $row['id'] . '\');'" 
+                                        
+                                        {{-- hx-post="/api/tickets"
+                                        hx-trigger="change"
+                                        hx-swap="innerHTML"
+                                        :hx-vals="'{
+                                            \"id\": \"' . $row['id'] . '\",
+                                            \"hourRemaining\": this.value
+                                        }'" --}}
+                                    />
                                 </x-global::elements.table.cell>
             
                                 <x-global::elements.table.cell data-order="{{ $row['bookedHours'] === null || $row['bookedHours'] == '' ? '0' : $row['bookedHours'] }}">
@@ -437,92 +450,10 @@
                     </x-global::elements.table.footer>
                 </x-slot:footer>
             </x-global::elements.table>
+
+            {{-- button to add row --}}
+            {{-- <p><button type="button" id="addRow">Add new row</button></p> --}}
             
-            
-            
-
-                {{-- display ticketTable --}}
-            {{-- <x-global::elements.table class="display ticketTable" style="width:100%">
-                <x-slot:header>
-                    <x-global::elements.table.header>
-                        <x-global::elements.table.header-cell>Name</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell>Email</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell>Role</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell>Serial</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell>Column A</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell>Column B</x-global::elements.table.header-cell>
-                        <x-global::elements.table.header-cell class="hidden">Column B</x-global::elements.table.header-cell>
-                    </x-global::elements.table.header>
-                </x-slot:header>
-                <x-slot:body>
-                    <x-global::elements.table.row data-id="1" >
-                        <x-global::elements.table.cell class="dt-control"><span class="expand-icon">+</span>Foo Bar</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>foo@gmail.com</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>Admin</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>A3</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>B2</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>C2</x-global::elements.table.cell>
-                        <x-global::elements.table.cell class="hidden">
-                            <x-global::elements.table class="display ticketTable" style="width:100%">
-                                <x-slot:header>
-                                    <x-global::elements.table.header>
-                                        <x-global::elements.table.header-cell>Name</x-global::elements.table.header-cell>
-                                        <x-global::elements.table.header-cell>Email</x-global::elements.table.header-cell>
-                                        <x-global::elements.table.header-cell>Role</x-global::elements.table.header-cell>
-                                        <x-global::elements.table.header-cell>Serial</x-global::elements.table.header-cell>
-                                    </x-global::elements.table.header>
-                                </x-slot:header>
-                                <x-slot:body>
-                                    <x-global::elements.table.row>
-                                        <x-global::elements.table.cell>XYZ</x-global::elements.table.cell>
-                                        <x-global::elements.table.cell>xyz@gmail.com</x-global::elements.table.cell>
-                                        <x-global::elements.table.cell>Sub-Admin</x-global::elements.table.cell>
-                                        <x-global::elements.table.cell>C2</x-global::elements.table.cell>
-                                    </x-global::elements.table.row>
-                                </x-slot:body>
-                            </x-global::elements.table>
-                        </x-global::elements.table.cell>
-                    </x-global::elements.table.row>
-
-                    <x-global::elements.table.row>
-                        <x-global::elements.table.cell>Jack Main</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>jack@gmail.com</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>User</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>A2</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>B3</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>C1</x-global::elements.table.cell>
-                        <x-global::elements.table.cell class="hidden">D2</x-global::elements.table.cell>
-                    </x-global::elements.table.row>
-                    <x-global::elements.table.row>
-                        <x-global::elements.table.cell>Mark Johnson</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>mark@gmail.com</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>Customer</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>A4</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>B1</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>C4</x-global::elements.table.cell>
-                        <x-global::elements.table.cell class="hidden">D3</x-global::elements.table.cell>
-                    </x-global::elements.table.row>
-                    <x-global::elements.table.row>
-                        <x-global::elements.table.cell>John Doe</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>john@gmail.com</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>Customer</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>A3</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>B4</x-global::elements.table.cell>
-                        <x-global::elements.table.cell>C3</x-global::elements.table.cell>
-                        <x-global::elements.table.cell class="hidden">D4</x-global::elements.table.cell>
-                    </x-global::elements.table.row>
-                </x-slot:body>
-            
-                <x-slot:footer>
-                    <x-global::elements.table.footer align="right">
-                        <x-global::elements.table.cell>Total Users: 4</x-global::elements.table.cell>
-                    </x-global::elements.table.footer>
-                </x-slot:footer>
-            </x-global::elements.table> --}}
-
-
-
-
         </div>
     </div>
 
