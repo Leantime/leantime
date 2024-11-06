@@ -2,15 +2,8 @@
 
 @section('content')
     <?php
-    $tickets = $tpl->get('tickets');
-    $sprints = $tpl->get('sprints');
-    $searchCriteria = $tpl->get('searchCriteria');
-    $currentSprint = $tpl->get('currentSprint');
     
-    $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
-    $efforts = $tpl->get('efforts');
-    $priorities = $tpl->get('priorities');
+    // $todoTypeIcons = $tpl->get('ticketTypeIcons');
     
     $allTicketGroups = $tpl->get('allTickets');
     
@@ -51,10 +44,11 @@
             <div class="clearfix"></div>
 
 
-            <?php if (isset($allTicketGroups['all'])) {
-                $allTickets = $allTicketGroups['all']['items'];
-            }
-            ?>
+            @if (isset($allTicketGroups['all']))
+                @php
+                    $allTickets = $allTicketGroups['all']['items'];
+                @endphp
+            @endif
             <div class=""
                 style="
             display: flex;
@@ -149,257 +143,16 @@
                 @endif
 
                 <div class="sortableTicketList kanbanBoard" id="kanboard-{{ $group['id'] }}" style="margin-top:-5px;">
-
                     <div class="row-fluid">
 
-                        @foreach ($tpl->get('allKanbanColumns') as $key => $statusRow)
-                            <div class="column">
-                                <div class="contentInner status_{{ $key }}">
-                                    @foreach ($allTickets as $row)
-                                        @if ($row['status'] == $key)
-                                            <div class="ticketBox moveable container priority-border-{{ $row['priority'] }}"
-                                                id="ticket_{{ $row['id'] }}">
-
-                                                <div class="row">
-
-                                                    <div class="col-md-12">
-
-                                                        @include('tickets::includes.ticketsubmenu', [
-                                                            'ticket' => $row,
-                                                            'onTheClock' => $onTheClock,
-                                                        ])
-
-                                                        @if ($row['dependingTicketId'] > 0)
-                                                            <small><a
-                                                                    href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}"
-                                                                    class="form-modal">{{ $tpl->escape($row['parentHeadline']) }}</a></small>
-                                                            //
-                                                        @endif
-                                                        <small><i
-                                                                class="fa {{ $todoTypeIcons[strtolower($row['type'])] }}"></i>
-                                                            {{ $tpl->__('label.' . strtolower($row['type'])) }}</small>
-                                                        <small>#{{ $row['id'] }}</small>
-                                                        <div class="kanbanCardContent">
-                                                            <h4><a
-                                                                    href="#/tickets/showTicket/{{ $row['id'] }}">{{ $row['headline'] }}</a>
-                                                            </h4>
-
-                                                            <div class="kanbanContent" style="margin-bottom: 20px">
-                                                                {!! $tpl->escapeMinimal($row['description']) !!}
-                                                            </div>
-
-                                                        </div>
-                                                        @if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00')
-                                                            <x-global::forms.text-input type="text" name="date"
-                                                                value="{!! format($row['dateToFinish'])->date() !!}"
-                                                                title="{{ __('label.due') }}" class="duedates secretInput"
-                                                                style="margin-left: 0px;" data-id="{{ $row['id'] }}"
-                                                                leadingVisual="{!! $tpl->__('label.due_icon') !!}" />
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <div class="clearfix" style="padding-bottom: 8px;"></div>
-
-                                                <div class="timerContainer " id="timerContainer-{{ $row['id'] }}">
-
-                                                    <div
-                                                        class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown">
-                                                        @php
-                                                            $milestoneLabelText = '<span class="text">';
-                                                            if ($row['milestoneid'] != '' && $row['milestoneid'] != 0) {
-                                                                $milestoneLabelText .= $tpl->escape(
-                                                                    $row['milestoneHeadline'],
-                                                                );
-                                                            } else {
-                                                                $milestoneLabelText .= $tpl->__('label.no_milestone');
-                                                            }
-                                                            $milestoneLabelText .=
-                                                                '</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>';
-                                                        @endphp
-
-                                                        <x-global::actions.dropdown :label-text="$milestoneLabelText" contentRole="link"
-                                                            position="bottom" align="start">
-                                                            <x-slot:menu>
-                                                                <li class="nav-header border">
-                                                                    {{ $tpl->__('dropdown.choose_milestone') }}</li>
-                                                                <x-global::actions.dropdown.item
-                                                                    style="background-color: #b0b0b0"
-                                                                    href="javascript:void(0);"
-                                                                    data-label="{{ $tpl->__('label.no_milestone') }}"
-                                                                    data-value="{{ $row['id'] . '_0_#b0b0b0' }}">
-                                                                    {{ $tpl->__('label.no_milestone') }}
-                                                                </x-global::actions.dropdown.item>
-                                                                @foreach ($tpl->get('milestones') as $milestone)
-                                                                    <x-global::actions.dropdown.item
-                                                                        href="javascript:void(0);"
-                                                                        data-label="{{ $tpl->escape($milestone->headline) }}"
-                                                                        data-value="{{ $row['id'] . '_' . $milestone->id . '_' . $tpl->escape($milestone->tags) }}"
-                                                                        id="ticketMilestoneChange{{ $row['id'] . $milestone->id }}"
-                                                                        style="background-color: {{ $tpl->escape($milestone->tags) }}">
-                                                                        {{ $tpl->escape($milestone->headline) }}
-                                                                    </x-global::actions.dropdown.item>
-                                                                @endforeach
-                                                            </x-slot:menu>
-                                                        </x-global::actions.dropdown>
-
-                                                    </div>
-
-                                                    @if ($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                        @php
-                                                            $effortLabelText = '<span class="text">';
-                                                            if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                $effortLabelText .=
-                                                                    $efforts['' . $row['storypoints']] ??
-                                                                    $row['storypoints'];
-                                                            } else {
-                                                                $effortLabelText .= $tpl->__(
-                                                                    'label.story_points_unkown',
-                                                                );
-                                                            }
-                                                            $effortLabelText .=
-                                                                '</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>';
-                                                        @endphp
-
-                                                        <x-global::actions.dropdown :label-text="$effortLabelText" contentRole="link"
-                                                            position="bottom" align="start">
-                                                            <x-slot:menu>
-                                                                <li class="nav-header border">
-                                                                    {{ $tpl->__('dropdown.how_big_todo') }}</li>
-                                                                @foreach ($efforts as $effortKey => $effortValue)
-                                                                    <x-global::actions.dropdown.item
-                                                                        href="javascript:void(0);"
-                                                                        data-value="{{ $row['id'] . '_' . $effortKey }}"
-                                                                        id="ticketEffortChange{{ $row['id'] . $effortKey }}">
-                                                                        {{ $effortValue }}
-                                                                    </x-global::actions.dropdown.item>
-                                                                @endforeach
-                                                            </x-slot:menu>
-                                                        </x-global::actions.dropdown>
-                                                    @endif
-
-                                                    <div class="dropdown ticketDropdown priorityDropdown show">
-                                                        @php
-                                                            $priorityLabelText = '<span class="text">';
-                                                            if ($row['priority'] != '' && $row['priority'] > 0) {
-                                                                $priorityLabelText .= $priorities[$row['priority']];
-                                                            } else {
-                                                                $priorityLabelText .= $tpl->__('label.priority_unkown');
-                                                            }
-                                                            $priorityLabelText .=
-                                                                '</span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>';
-                                                        @endphp
-
-                                                        <x-global::actions.dropdown :label-text="$priorityLabelText" contentRole="link"
-                                                            position="bottom" align="start">
-                                                            <x-slot:menu>
-                                                                <li class="nav-header border">
-                                                                    {{ $tpl->__('dropdown.select_priority') }}</li>
-                                                                @foreach ($priorities as $priorityKey => $priorityValue)
-                                                                    <x-global::actions.dropdown.item
-                                                                        href="javascript:void(0);"
-                                                                        class="priority-bg-{{ $priorityKey }}"
-                                                                        data-value="{{ $row['id'] . '_' . $priorityKey }}"
-                                                                        id="ticketPriorityChange{{ $row['id'] . $priorityKey }}">
-                                                                        {{ $priorityValue }}
-                                                                    </x-global::actions.dropdown.item>
-                                                                @endforeach
-                                                            </x-slot:menu>
-                                                        </x-global::actions.dropdown>
-                                                    </div>
-
-                                                    <div
-                                                        class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                                        @php
-                                                            $userLabelText = '<span class="text">';
-                                                            if ($row['editorFirstname'] != '') {
-                                                                $userLabelText .=
-                                                                    "<span id='userImage" .
-                                                                    $row['id'] .
-                                                                    "'><img src='" .
-                                                                    BASE_URL .
-                                                                    '/api/users?profileImage=' .
-                                                                    $row['editorId'] .
-                                                                    "' width='25' style='vertical-align: middle;'/></span>";
-                                                            } else {
-                                                                $userLabelText .=
-                                                                    "<span id='userImage" .
-                                                                    $row['id'] .
-                                                                    "'><img src='" .
-                                                                    BASE_URL .
-                                                                    "/api/users?profileImage=false' width='25' style='vertical-align: middle;'/></span>";
-                                                            }
-                                                            $userLabelText .= '</span>';
-                                                        @endphp
-
-                                                        <x-global::actions.dropdown :label-text="$userLabelText" contentRole="link"
-                                                            position="bottom" align="start">
-                                                            <x-slot:menu>
-                                                                <li class="nav-header border">
-                                                                    {{ $tpl->__('dropdown.choose_user') }}</li>
-                                                                @if (is_array($tpl->get('users')))
-                                                                    @foreach ($tpl->get('users') as $user)
-                                                                        <x-global::actions.dropdown.item
-                                                                            href="javascript:void(0);"
-                                                                            data-label="{{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}"
-                                                                            data-value="{{ $row['id'] . '_' . $user['id'] . '_' . $user['profileId'] }}"
-                                                                            id="userStatusChange{{ $row['id'] . $user['id'] }}">
-                                                                            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}"
-                                                                                width="25"
-                                                                                style="vertical-align: middle; margin-right:5px;" />
-                                                                            {{ sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])) }}
-                                                                        </x-global::actions.dropdown.item>
-                                                                    @endforeach
-                                                                @endif
-                                                            </x-slot:menu>
-                                                        </x-global::actions.dropdown>
-                                                    </div>
-                                                </div>
-                                                <div class="clearfix"></div>
-
-                                                @if ($row['commentCount'] > 0 || $row['subtaskCount'] > 0 || $row['tags'] != '')
-                                                    <div class="row">
-                                                        <div class="col-md-12 border-top" style="white-space: nowrap;">
-                                                            @if ($row['commentCount'] > 0)
-                                                                <a href="#/tickets/showTicket/{{ $row['id'] }}"><span
-                                                                        class="fa-regular fa-comments"></span>
-                                                                    {{ $row['commentCount'] }}</a>&nbsp;
-                                                            @endif
-
-                                                            @if ($row['subtaskCount'] > 0)
-                                                                <a id="subtaskLink_{{ $row['id'] }}"
-                                                                    href="#/tickets/showTicket/{{ $row['id'] }}"
-                                                                    class="subtaskLineLink">
-                                                                    <span class="fa fa-diagram-successor"></span>
-                                                                    {{ $row['subtaskCount'] }}</a>&nbsp;
-                                                            @endif
-
-                                                            @if ($row['tags'] != '')
-                                                                @php $tagsArray = explode(',', $row['tags']); @endphp
-                                                                <a href="javascript:void(0);" class="dropdown-toggle"
-                                                                    data-toggle="dropdown">
-                                                                    <i class="fa fa-tags" aria-hidden="true"></i>
-                                                                    {{ count($tagsArray) }}
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li style="padding:10px">
-                                                                        <div class='tagsinput readonly'>
-                                                                            @foreach ($tagsArray as $tag)
-                                                                                <span
-                                                                                    class='tag'><span>{{ $tpl->escape($tag) }}</span></span>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
+                        @foreach ($allKanbanColumns as $key => $statusRow)
+                            <x-tickets::ticket-column :status="$key" {{-- :allTickets="$allTickets"
+                                :ticketTypeIcons="$ticketTypeIcons"
+                                :priorities="$priorities"
+                                :efforts="$efforts"
+                                :milestones="$milestones"
+                                :users="$users"
+                                :onTheClock="$onTheClock" --}} />
                         @endforeach
                         <div class="clearfix"></div>
                     </div>
@@ -416,103 +169,81 @@
 
     <script type="text/javascript">
         jQuery(document).ready(function() {
+            console.log("ready after settle");
+            document.body.addEventListener('htmx:afterSettle', function() {
+               console.log("something");
+                // @if ($login::userIsAtLeast($roles::$editor))
+                    leantime.ticketsController.initUserDropdown();
+                    leantime.ticketsController.initMilestoneDropdown();
+                    leantime.ticketsController.initDueDateTimePickers();
+                    leantime.ticketsController.initEffortDropdown();
+                    leantime.ticketsController.initPriorityDropdown();
 
-            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.ticketsController.initUserDropdown();
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initPriorityDropdown();
+                    var ticketStatusList = [
+                        @foreach ($tpl->get('allTicketStates') as $key => $statusRow)
+                            '{{ $key }}',
+                        @endforeach
+                    ];
+                    leantime.ticketsController.initTicketKanban(ticketStatusList);
+                // @else
+                    leantime.authController.makeInputReadonly(".maincontentinner");
+                // @endif
 
+                leantime.ticketsController.setUpKanbanColumns();
 
-            var ticketStatusList = [<?php foreach ($tpl->get('allTicketStates') as $key => $statusRow) {
-                echo "'" . $key . "',";
-            } ?>];
-            leantime.ticketsController.initTicketKanban(ticketStatusList);
+                @if (isset($_GET['showTicketModal']))
+                    @php
+                        $modalUrl = $_GET['showTicketModal'] == '' ? '' : '/' . (int) $_GET['showTicketModal'];
+                    @endphp
+                @endif
 
-            <?php } else { ?>
-            leantime.authController.makeInputReadonly(".maincontentinner");
-            <?php } ?>
+                @foreach ($allTicketGroups as $group)
+                    @foreach ($group['items'] as $ticket)
+                        @if ($ticket['dependingTicketId'] > 0)
+                            var startElement = document.getElementById('subtaskLink_{{ $ticket['dependingTicketId'] }}');
+                            var endElement = document.getElementById('ticket_{{ $ticket['id'] }}');
 
-            leantime.ticketsController.setUpKanbanColumns();
+                            if (startElement != undefined && endElement != undefined) {
+                                var startAnchor = LeaderLine.mouseHoverAnchor({
+                                    element: startElement,
+                                    showEffectName: 'draw',
+                                    style: {
+                                        background: 'none',
+                                        backgroundColor: 'none'
+                                    },
+                                    hoverStyle: {
+                                        background: 'none',
+                                        backgroundColor: 'none',
+                                        cursor: 'pointer'
+                                    }
+                                });
 
-            <?php if (isset($_GET['showTicketModal'])) {
-            if ($_GET['showTicketModal'] == "") {
-                $modalUrl = "";
-            } else {
-                $modalUrl = "/" . (int)$_GET['showTicketModal'];
-            }
-            ?>
+                                var line{{ $ticket['id'] }} = new LeaderLine(startAnchor, endElement, {
+                                    startPlugColor: 'var(--accent1)',
+                                    endPlugColor: 'var(--accent2)',
+                                    gradient: true,
+                                    size: 2,
+                                    path: "grid",
+                                    startSocket: 'bottom',
+                                    endSocket: 'auto'
+                                });
 
-            <?php } ?>
+                                jQuery("#ticket_{{ $ticket['id'] }}").mousedown(function() {})
+                                    .mousemove(function() {})
+                                    .mouseup(function() {
+                                        line{{ $ticket['id'] }}.position();
+                                    });
 
-
-            <?php foreach ($allTicketGroups as $group) {
-
-            foreach ($group['items'] as $ticket) {
-                if ($ticket['dependingTicketId'] > 0) {
-                    ?>
-            var startElement = document.getElementById('subtaskLink_<?= $ticket['dependingTicketId'] ?>');
-            var endElement = document.getElementById('ticket_<?= $ticket['id'] ?>');
-
-
-            if (startElement != undefined && endElement != undefined) {
-
-                var startAnchor = LeaderLine.mouseHoverAnchor({
-                    element: startElement,
-                    showEffectName: 'draw',
-                    style: {
-                        background: 'none',
-                        backgroundColor: 'none'
-                    },
-                    hoverStyle: {
-                        background: 'none',
-                        backgroundColor: 'none',
-                        cursor: 'pointer'
-                    }
-                });
-
-                var line<?= $ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
-                    startPlugColor: 'var(--accent1)',
-                    endPlugColor: 'var(--accent2)',
-                    gradient: true,
-                    size: 2,
-                    path: "grid",
-                    startSocket: 'bottom',
-                    endSocket: 'auto'
-                });
-
-                jQuery("#ticket_<?= $ticket['id'] ?>").mousedown(function() {
-
-                    })
-                    .mousemove(function() {
-
-                    })
-                    .mouseup(function() {
-                        line<?= $ticket['id'] ?>.position();
-                    });
-
-                jQuery("#ticket_<?= $ticket['dependingTicketId'] ?>").mousedown(function() {
-
-                    })
-                    .mousemove(function() {
-
-
-                    })
-                    .mouseup(function() {
-                        line<?= $ticket['id'] ?>.position();
-
-                    });
-
-            }
-
-            <?php }
-            }
-        } ?>
-
-
-
-
+                                jQuery("#ticket_{{ $ticket['dependingTicketId'] }}").mousedown(function() {})
+                                    .mousemove(function() {})
+                                    .mouseup(function() {
+                                        line{{ $ticket['id'] }}.position();
+                                    });
+                            }
+                        @endif
+                    @endforeach
+                @endforeach
+            });
         });
     </script>
 @endsection

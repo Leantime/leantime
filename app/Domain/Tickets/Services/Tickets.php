@@ -207,7 +207,6 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function getPriorityLabels(): array
         {
-
             return $this->ticketRepository->priority;
         }
 

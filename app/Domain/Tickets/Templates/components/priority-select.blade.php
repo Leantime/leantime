@@ -13,7 +13,7 @@
     </x-slot:label-text>
 
     <x-global::forms.select.option :value="''">
-        {{  __('label.priority_not_defined') }}
+        {!!  __('label.priority_not_defined') !!}
     </x-global::forms.select.option>
 
     @foreach ($priorities as $priorityKey => $priorityValue)
@@ -22,7 +22,7 @@
             :selected="strtolower($priorityKey) == strtolower( $ticket->priority ?? '') ? 'true' : 'false'">
 
             <span class="priority-text-{{ $priorityKey }} ">
-                <x-global::content.icon icon="local_fire_department" /> {{ $priorityValue }}
+                <x-global::content.icon icon="local_fire_department" /> {!! $priorityValue !!}
             </span>
 
         </x-global::forms.select.option>
