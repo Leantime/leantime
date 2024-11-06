@@ -334,7 +334,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
          */
         public function handleDashboardGetRequest($params): array
         {
-            $allCanvas = $this->goalRepository->getAllCanvas(session('currentProject'));
+            $allCanvas = $this->goalRepository->getAllCanvasId(session('currentProject'));
 
             if (empty($allCanvas)) {
                 $allCanvas = $this->createDefaultCanvas();

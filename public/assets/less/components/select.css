@@ -14,7 +14,7 @@
        @apply bg-none leading-6 min-h-6 h-6 w-auto px-0.5 rounded-full ps-1.5 pe-1.5 bg-none text-xs leading-6 min-h-6 h-6 align-sub;
 
        .choices__inner {
-            margin-top:-1px;
+            margin-top:2px;
        }
    }
 }
@@ -154,7 +154,7 @@
 .choices__inner {
     display: inline-block;
     width: 100%;
-    overflow: hidden;
+    overflow-y:auto;
 }
 .is-focused .choices__inner, .is-open .choices__inner {}
 .is-open .choices__inner {}

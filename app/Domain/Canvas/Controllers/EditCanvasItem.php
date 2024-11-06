@@ -122,6 +122,7 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
+        $this->tpl->assign('module', static::CANVAS_NAME.'canvas'.'item');
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas::partials.canvasDialog');
     }

@@ -162,7 +162,8 @@ $statusLabels = $tpl->get('statusLabels');
         ?>
     <br />
     <input type="hidden" name="comment" value="1" />
-    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/tickets/editMilestone/" . $currentMilestone->id])
+    {{-- @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/tickets/editMilestone/" . $currentMilestone->id]) --}}
+    <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$currentMilestone->id" />
 
     <?php } ?>
 

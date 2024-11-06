@@ -259,8 +259,8 @@ namespace Leantime\Domain\Ideas\Services {
             $canvasItem->tags = explode(",", $canvasItem->tags);
 
             $result['canvasItem'] = $canvasItem;
-            $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem->id);
-            $result['numComments'] = $this->commentRepository->countComments('ideas', $canvasItem->id);
+            // $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem->id);
+            // $result['numComments'] = $this->commentRepository->countComments('ideas', $canvasItem->id);
 
             return $result;
         }
@@ -290,11 +290,10 @@ namespace Leantime\Domain\Ideas\Services {
         public function processPostRequest($params)
         {
 
-            if (isset($params['comment']) && ! empty($params['text'])) {
-                $result = $this->handleCommentSubmission($params);
-
-                return $result;
-            }
+            // if (isset($params['comment']) && ! empty($params['text'])) {
+            //     $result = $this->handleCommentSubmission($params);
+            //     return $result;
+            // }
 
             if (isset($params['changeItem'])) {
 
@@ -303,7 +302,7 @@ namespace Leantime\Domain\Ideas\Services {
 
             return [
                 'canvasTypes' => $this->ideasRepository->canvasTypes,
-                'canvasItem' => $this->ideasRepository->getSingleCanvasItem($_GET['id']),
+                'canvasItem' => $this->ideasRepository->getSingleCanvasItem($params['id']),
             ];
         }
 
@@ -317,7 +316,7 @@ namespace Leantime\Domain\Ideas\Services {
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
                 'userId' => session('userdata.id'),
-                'moduleId' => (int) $_GET['id'],
+                'moduleId' => (int) $params['id'],
                 'commentParent' => $params['father'],
             ];
 
@@ -326,7 +325,7 @@ namespace Leantime\Domain\Ideas\Services {
 
             return [
                 'notification' => ['message' => $this->language->__('notifications.comment_create_success'), 'type' => 'success'],
-                'redirect' => BASE_URL.'/ideas/ideaDialog/'.(int) $_GET['id'],
+                'redirect' => BASE_URL.'/ideas/ideaDialog/advancedBoards#/ideas/ideaDialog/'.(int) $params['id'],
             ];
         }
 
@@ -416,7 +415,7 @@ namespace Leantime\Domain\Ideas\Services {
             $notification = $this->createNotification(
                 $this->language->__('email_notifications.new_comment_idea_subject'),
                 sprintf($this->language->__('email_notifications.new_comment_idea_message'), session('userdata.name')),
-                BASE_URL.'/ideas/ideaDialog/'.(int) $_GET['id'],
+                BASE_URL.'/ideas/ideaDialog/'.(int) $values['id'],
                 $this->language->__('email_notifications.new_comment_idea_cta'),
                 $values,
                 'comments'
