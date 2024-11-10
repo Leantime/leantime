@@ -32,10 +32,10 @@ class HandleExceptions
     /**
      * Bootstrap the given application.
      *
-     * @param  \Leantime\Core\Bootstrap\Application  $app
+     * @param  \Leantime\Core\Application  $app
      * @return void
      */
-    public function bootstrap(\Leantime\Core\Bootstrap\Application $app)
+    public function bootstrap(\Leantime\Core\Application $app)
     {
         static::$reservedMemory = str_repeat('x', 32768);
 

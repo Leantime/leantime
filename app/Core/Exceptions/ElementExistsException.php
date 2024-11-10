@@ -5,7 +5,7 @@ namespace Leantime\Core\Exceptions;
 use Exception;
 use Throwable;
 
-class MissingParameterException extends Exception
+class ElementExistsException extends Exception
 {
     /**
      * Construct the exception. Note: The message is NOT binary safe.
@@ -16,9 +16,9 @@ class MissingParameterException extends Exception
      * @param  Throwable|null  $previous  [optional] The previous throwable used for the exception chaining.
      * @param  int  $code  [optional] The Exception code.
      */
-    public function __construct(string $message = '', int $code = 422)
+    public function __construct(string $message = '', int $code = 409, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
         $this->message = "$message";
         $this->code = $code;
     }
