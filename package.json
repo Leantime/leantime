@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
@@ -24,12 +24,13 @@
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
     "fullcalendar": "^6.1.11",
-    "gridstack": "^10.1.2",
+    "gridstack": "^11.0.1",
     "htmx.org": "^1.9.12",
     "ical.js": "^1.5.0",
     "imagesloaded": "^5.0.0",
     "isotope-layout": "^3.0.6",
     "jquery": "3.7.1",
+    "jquery-is-in-viewport": "^1.0.5",
     "jquery-ui-dist": "1.13.2",
     "jquery-ui-touch-punch": "^0.2.3",
     "jstree": "^3.3.16",

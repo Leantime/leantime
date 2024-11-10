@@ -13,10 +13,10 @@ $currentArticle = $tpl->get('currentArticle');
  * @param $currentParent
  * @param int                          $currLevel
  * @param int                          $prevLevel
- * @param \Leantime\Core\Template|null $tplObject
+ * @param \Leantime\Core\UI\Template|null $tplObject
  * @return void
  */
-function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\Template $tplObject = null): void
+function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\UI\Template $tplObject = null): void
 {
 
     foreach ($array as $headline) {

@@ -88,7 +88,7 @@
                     <div class="right">
                         <div class="dropdown ticketDropdown effortDropdown show">
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0)
+                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0 && isset($efforts[$subticket['storypoints']]))
                                                                                         {{ $efforts[$subticket['storypoints']] }}
                                                                                    @else
                                                                                            {{ __("label.story_points_unkown") }}

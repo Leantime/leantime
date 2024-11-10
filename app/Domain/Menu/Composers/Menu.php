@@ -9,9 +9,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
-/**
- *
- */
 class Menu extends Composer
 {
     use DispatchesEvents;
@@ -21,15 +18,11 @@ class Menu extends Composer
     ];
 
     private MenuRepository $menuRepo;
+
     private IncomingRequestCore $incomingRequest;
+
     private \Leantime\Domain\Menu\Services\Menu $menuService;
 
-    /**
-     * @param MenuRepository                      $menuRepo
-     * @param \Leantime\Domain\Menu\Services\Menu $menuService
-     * @param IncomingRequestCore                 $request
-     * @return void
-     */
     public function init(
         MenuRepository $menuRepo,
         \Leantime\Domain\Menu\Services\Menu $menuService,
@@ -41,13 +34,13 @@ class Menu extends Composer
     }
 
     /**
-     * @param array $data
-     * @return array
+     * @param  array  $data
+     *
      * @throws BindingResolutionException
      */
     public function with(): array
     {
-        $allAssignedprojects =
+        $allAssignedprojects = $showSettingsIndicator = false;
         $allAvailableProjects =
         $recentProjects =
         $favoriteProjects =
@@ -60,14 +53,14 @@ class Menu extends Composer
         $projectType = '';
         $menuType = 'default';
 
-        $projectSelectFilter = session("usersettings.projectSelectFilter") ?? array(
-            "groupBy" => "structure",
-            "client" => null,
-        );
+        $projectSelectFilter = session('usersettings.projectSelectFilter') ?? [
+            'groupBy' => 'structure',
+            'client' => null,
+        ];
 
-        if (session()->exists("userdata")) {
+        if (session()->exists('userdata')) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
-            $projectVars = $this->menuService->getUserProjectList(session("userdata.id"), $projectSelectFilter["client"]);
+            $projectVars = $this->menuService->getUserProjectList(session('userdata.id'), $projectSelectFilter['client']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects = $projectVars['availableProjects'];
@@ -80,6 +73,13 @@ class Menu extends Composer
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
             $currentProject = $projectVars['currentProject'];
+        }
+
+        // Check for new widgets to show settings indicator
+        if (session()->exists('userdata')) {
+            $widgetService = app()->make(\Leantime\Domain\Widgets\Services\Widgets::class);
+            $newWidgets = $widgetService->getNewWidgets(session('userdata.id'));
+            $showSettingsIndicator = !empty($newWidgets);
         }
 
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
@@ -97,9 +97,9 @@ class Menu extends Composer
             'action' => '',
             'settingsIcon' => '',
             'settingsTooltip' => '',
-            ];
+        ];
 
-        if ($menuType == "project" || $menuType == "default") {
+        if ($menuType == 'project' || $menuType == 'default') {
             $settingsLink = [
                 'label' => __('menu.project_settings'),
                 'module' => 'projects',
@@ -109,7 +109,9 @@ class Menu extends Composer
             ];
         }
 
-        $newProjectUrl = self::dispatch_filter("startSomething", "#/projects/createnew");
+        $settingsLink = self::dispatch_filter('settingsLink', $settingsLink, ["type" => $menuType]);
+
+        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
 
         return [
             'currentClient' => $currentClient,
@@ -132,6 +134,7 @@ class Menu extends Composer
             'projectSelectFilter' => $projectSelectFilter,
             'clients' => $clients,
             'startSomethingUrl' => $newProjectUrl,
+            'showSettingsIndicator' => $showSettingsIndicator,
         ];
     }
 }

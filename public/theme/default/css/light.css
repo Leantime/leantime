@@ -13,31 +13,28 @@
 
     --tab-background: transparent;
     --tab-color: var(--accent1);
+    --tab-active-background: rgba(245, 245, 245, 1);
+    --tab-active-color: #333;
 
-    --tab-active-background:  rgba(230, 230, 230, 1);
-    --tab-active-color: #555;
-
-    --primary-content-bg-opacity: 0.2;
-
+    --primary-content-bg-opacity: 0.15;
     --main-titles-color: #fff;
 
     --primary-background: rgba(255, 255, 255, 0.8);
     --secondary-background: rgba(255, 255, 255, 1);
-
     --layered-background: rgba(255, 255, 255, 0.9);
     --light-layered-background: rgba(255, 255, 255, 0.4);
 
-    --primary-font-color: #555;
+    --primary-font-color: #333333;
     --secondary-font-color: #000;
 
-    --neutral:rgba(240, 240, 240, 0.8);
-    --solid-neutral:rgba(200, 200, 200, 1);
-    --neutral-background: rgba(240, 240, 240, 0.5);
+    --neutral: rgba(230, 230, 230, 0.8);
+    --solid-neutral: rgba(220, 220, 220, 1);
+    --neutral-background: rgba(240, 240, 240, 0.7);
 
     --col-title-bg: rgb(255, 255, 255, 1);
     --col-content-bg:  rgba(255,255,255, 0.8);
-    --col-hover-bg: rgba(199, 199, 209, 0.5);
-    --col-row-striped:rgba(255,255,255,0.3);
+    --col-hover-bg: rgba(245, 245, 245, 0.7);
+    --col-row-striped: rgba(250, 250, 250, 0.5);
 
     --primary-color: var(--accent1);
     --secondary-color: var(--accent2);
@@ -46,9 +43,9 @@
     --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
-    --glass-blur: blur( 4px );
-    --glass-background: rgba(255,255,255,0.9);
-    --glass-border: 1px solid rgba(255,255,255,1);
+    --glass-blur: blur( 8px );
+    --glass-background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.70) 50%, rgba(255,255,255,0.50) 100%);
+    --glass-border: 1px solid rgba(255,255,255,0.9);
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -103,14 +100,18 @@
 
     --main-border-color:rgba(220,220,220, 1);
     --main-border-color-hover:rgba(200,200,200, 0.9);
-    --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 0px 1px rgba(0 0 0 / 5%);
-    --regular-shadow: 0px 1px 3px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 10%);
-    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
-    --box-radius-large:20px;
-    --box-radius: 10px;
-    --box-radius-small:5px;
-    --element-radius: 15px;
-    --input-radius: 15px;
+
+    /* Softer shadows */
+    --min-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+    --regular-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+    --large-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+
+    --box-radius-large: 24px;
+    --box-radius: 16px;
+    --box-radius-small: 8px;
+    --element-radius: 16px;
+    --input-radius: 12px;
+
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
     --input-padding: 4px 14px;
 
@@ -126,28 +127,28 @@
 
     --interactive-icon-color: #777;
 
-    --dark-red:#821219;
-    --dark-red-text-color:#fff;
+    --dark-red: #c41e3a;
+    --dark-red-text-color: #fff;
 
-    --red: #BB1B25;
+    --red: #d64045;
     --red-text-color: #fff;
 
-    --green: #75BB1B;
+    --green: #2e7d32;
     --green-text-color: #fff;
 
-    --dark-green: #4B7811;
-    --dark-green-text-color:#fff;
+    --dark-green: #1b5e20;
+    --dark-green-text-color: #fff;
 
-    --yellow: #fdab3d;
-    --yellow-text-color: #fff;
+    --yellow: #f9a825;
+    --yellow-text-color: #000;
 
-    --blue: #1B75BB;
+    --blue: #1976d2;
     --blue-text-color: #fff;
 
-    --dark-blue:#124F7D;
+    --dark-blue: #0d47a1;
     --dark-blue-text-color: #fff;
 
-    --darker-blue:#082236;
+    --darker-blue: #002171;
     --darker-blue-text-color: #fff;
 
     --purple:#5F0F40;

@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body>
+<body class="">
 
     @include('global::sections.appAnnouncement')
 

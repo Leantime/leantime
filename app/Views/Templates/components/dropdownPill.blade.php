@@ -4,8 +4,8 @@
     'selectedKey' => '',
     'parentId' => '',
     'options' => [],
-    'extraClass',
-    'linkStyle',
+    'extraClass' => '',
+    'linkStyle'  => '',
     'submit' => "false"
 ])
 

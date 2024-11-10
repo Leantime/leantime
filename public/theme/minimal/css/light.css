@@ -189,3 +189,7 @@
     color: white;
     background-color: var(--accent1) !important;
 }
+
+.row .regLeft {
+    background:var(--accent1);
+}

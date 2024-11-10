@@ -26,6 +26,7 @@ form label{
     margin-bottom: 2px;
     font-weight:bold;
     opacity:0.8;
+    padding-bottom:5px;
 }
 
 form .switchery {
@@ -90,10 +91,6 @@ body div.tagsinput.readonly {
 body .ticketBox div.tagsinput.readonly {
     background:none !important;
     margin-bottom:0px !important;
-}
-
-body .ticketBox .my-to-dos-reset-date-button {
-    all: unset;
 }
 
 body div.tagsinput {
@@ -630,7 +627,6 @@ a:link.btn{
 
 select,
 .row-fluid [class*="span"] select {
-    min-height: 35px;
 }
 
 .row-fluid.marginBottom,
@@ -800,9 +796,11 @@ body select {
     max-witdh:206px;
 }
 
-input.secretInput {
+input.secretInput,
+select.secretInput {
     width:126px;
     border:0px;
+    height: 21px;
     margin-left:3px;
     padding-left:3px;
     background:none;
@@ -817,11 +815,17 @@ input.secretInput {
 
 }
 
-input.secretInput:hover,
-input.secretInput:focus,
-input.secretInput:active {
+select.secretInput:hover,
+input.secretInput:hover {
 
     border: 1px solid var(--main-border-color-hover);
+    text-decoration:none;
+}
+
+select.secretInput:focus,
+input.secretInput:focus {
+
+    border: 1px solid var(--accent1);
     text-decoration:none;
 }
 
@@ -1466,10 +1470,25 @@ body .croppie-container {
     margin:auto;
 }
 
+.selectable .selectableContent label {
+    font-weight:normal;
+    padding-bottom:0px;
+
+}
+
 .selectable.circle .selectableContent {
     border-radius: 50%;
     width: 60px;
     height: 60px;
+}
+
+.selectable.circle .selectableContent label {
+    line-height:30px;
+
+}
+
+.selectable.compact .selectableContent {
+    padding:3px 10px;
 }
 
 .selectable .selectableContent .emoji {
@@ -1487,9 +1506,9 @@ body .croppie-container {
 
 .selectable.active .selectableContent{
     background: var(--col-hover-bg);
-    color: var(--tab-active-color);
 }
 
+.selectable.active .selectableContent label,
 .selectable.active .selectableContent{
     font-weight:bold;
 }
@@ -1502,6 +1521,10 @@ body .croppie-container {
 .selectable:hover .selectableContent{
     background:var(--col-hover-bg);
     color: var(--main-menu-link-active-color);
+}
+
+.selectable.pushed {
+    transform:scale(0.9);
 }
 
 
@@ -1707,4 +1730,48 @@ div.tagsinput span.tag {
 .round-button {
     padding:4px 0px !important;
     min-width:31px;
+}
+
+input.input-line {
+    background:none;
+    box-shadow:none;
+    border-radius:0;
+    border:none;
+    margin-left: 10px;
+    padding-left:0px;
+    border-bottom:1px solid var(--main-border-color);
+}
+
+input.input-line:hover,
+input.input-line:active,
+input.input-line:focus {
+    border-bottom:1px solid var(--accent1);
+}
+
+label .fa,
+label .fa-regular,
+label .fa-solid {
+    width:16px;
+}
+
+.date-picker-form-control {
+    position:relative;
+    display:inline-block;
+}
+
+.date-picker-form-control .reset-button {
+    display:none;
+    background:none;
+    outline:0;
+    border:none;
+    position:absolute;
+    top:2px;
+    right:5px;
+    color:var(--primary-font-color);
+    cursor:pointer;
+    opacity:0.5;
+}
+
+.date-picker-form-control:hover .reset-button {
+    display:block;
 }

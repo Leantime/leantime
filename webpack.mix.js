@@ -75,6 +75,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/jquery.form.js",
         "./public/assets/js/libs/jquery.tagsinput.min.js",
         "./public/assets/js/libs/bootstrap-fileupload.min.js",
+        "./node_modules/jquery-is-in-viewport/dist/isInViewport.jquery.js",
     ], `public/dist/js/compiled-framework-plugins.${version}.min.js`)
     .combine([
         "./node_modules/luxon/build/global/luxon.js",
@@ -97,6 +98,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/leader-line/leader-line.min.js",
         "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
         "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
+        "./node_modules/@lottiefiles/lottie-player/dist/lottie-player.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
         "./node_modules/ical.js/build/ical.min.js",
@@ -151,6 +153,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
+        "./public/assets/js/libs/tinymce-plugins/llamadorian/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",

@@ -35,7 +35,7 @@
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
                                            hx-indicator="#todos .htmx-indicator"
-                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "time" }'
+                                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
                                         />
                                     <label for="groupByDate">{!! __("label.dates") !!}</label></span></li>
                             <li>
@@ -49,7 +49,7 @@
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
                                            hx-indicator="#todos .htmx-indicator"
-                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "project" }'
+                                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
                                     />
                                     <label for="groupByProject">{!! __("label.project") !!}</label>
                                 </span>
@@ -65,7 +65,7 @@
                                            hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
                                            hx-indicator="#todos .htmx-indicator"
-                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "priority" }'
+                                           hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
                                     />
                                     <label for="groupByPriority">{!! __("label.priority") !!}</label>
                                 </span>
@@ -237,9 +237,11 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4" style="padding:0 15px;">
-                                                    <i class="fa-solid fa-business-time infoIcon" data-tippy-content="{{ __("label.due") }}"></i>
-                                                    <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
-                                                    <button class="my-to-dos-reset-date-button" data-id="{{ $row['id'] }}" id="reset-date"><span class="sr-only">{{ __("language.resetDate") }}</span><i class="fa fa-close"></i></button>
+                                                    <div class="date-picker-form-control">
+                                                        <i class="fa-solid fa-business-time infoIcon" data-tippy-content="{{ __("label.due") }}"></i>
+                                                        <input id="due-date-picker-{{ $row['id'] }}" type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
+                                                        <button class="reset-button" data-id="{{ $row['id'] }}" id="reset-date-{{ $row['id'] }}"><span class="sr-only">{{ __("language.resetDate") }}</span><i class="fa fa-close"></i></button>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-8 dropdownContainer" style="padding-top:5px;">
                                                     <div class="dropdown ticketDropdown statusDropdown colorized show right ">

@@ -8,7 +8,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
-use Leantime\Core\Theme;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
@@ -99,5 +99,5 @@ class ThemeTest extends Unit
         $this->assertEquals("themeDefault", $colorScheme);
 
     }
-    
+
 }

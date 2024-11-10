@@ -21,7 +21,7 @@
 
     --main-titles-color: #fff;
 
-    --primary-background: rgba(0, 0, 0, 0.6);
+    --primary-background: rgba(0, 0, 0, 0.9);
     --secondary-background: rgba(30, 30, 30, 1);
 
     --layered-background: rgba(0, 0, 0, 0.9);
@@ -47,7 +47,7 @@
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
-    --glass-background: rgba(0,0,0,0.4);
+    --glass-background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%,  rgba(0,0,0,0.55) 50%,  rgba(0,0,0,0.4) 70%,  rgba(0,0,0,0.4) 100%);
     --glass-border: 1px solid rgba(0,0,0,1);
 
     --main-action-bg: var(--accent1);
@@ -105,10 +105,10 @@
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
     --regular-shadow: 0px 2px 6px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 20%);
     --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 30%);
-    --box-radius-large: 10px;
-    --box-radius: 5px;
-    --box-radius-small: 3px;
-    --element-radius: 5px;
+    --box-radius-large:20px;
+    --box-radius: 10px;
+    --box-radius-small:5px;
+    --element-radius: 15px;
     --input-radius: 15px;
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
     --input-padding: 4px 14px;
@@ -120,7 +120,8 @@
     --kanban-card-hover: var(--col-title-bg);
 
     --accordion-header-bg: var(--secondary-action-bg);
-    --accordion-header-radius: 5px;
+    --accordion-header-radius: 10px;
+    --accordion-header-radius: 10px;
 
     --interactive-icon-color: #aaa;
 
@@ -174,7 +175,8 @@
     opacity:0.1;
 }
 
-.primaryContent {
+.primaryContent,
+.row .regLeft:before {
     background: rgba(0,0,0, 0.7);
 }
 

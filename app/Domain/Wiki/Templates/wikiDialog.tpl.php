@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Leantime\Core\Template $tpl */
+/** @var \Leantime\Core\UI\Template $tpl */
 /** @var string BASE_URL */
 /** @var array $__data */
 /** @var \Leantime\Domain\Auth\Services\Auth $login */

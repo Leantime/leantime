@@ -19,8 +19,6 @@
         </div>
     </div>
 
-
-
     @dispatchEvent('beforeFooterClose')
 
 </div>

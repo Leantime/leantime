@@ -1,4 +1,3 @@
-
 .nav-tabs.nav-stacked>li>a {
     border:none;
 }
@@ -357,6 +356,15 @@ a.barmenu:hover {
     cursor:default;
 }
 
+.showMenuIndicator::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-left: 5px;
+}
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
     background-repeat: no-repeat;
@@ -527,7 +535,7 @@ a.barmenu:hover {
     background-repeat: no-repeat;
 }
 
-.headmenu > li > a .head-icon {
+.headmenu > li >  a .head-icon {
     font-size: var(--base-font-size);
     line-height: 50px;
     padding-right:0;
@@ -1394,3 +1402,4 @@ a.barmenu:hover {
     font-size: var(--base-font-size);
     text-transform: uppercase;
 }
+

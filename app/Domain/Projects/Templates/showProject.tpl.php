@@ -67,16 +67,22 @@ $state = $tpl->get('state');
                                 <?php foreach ($project['assignedUsers'] as $userId => $assignedUser) {?>
                                     <div class="col-md-4">
                                         <div class="userBox">
-                                            <input type='checkbox' name='editorId[]' id="user-<?php echo $userId ?>" value='<?php echo $userId ?>'
+                                            <input type='checkbox' name='editorId[]' id="user-<?php echo $assignedUser['id'] ?>" value='<?php echo $assignedUser['id'] ?>'
                                                 checked="checked"
                                                 />
                                             <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>&v=<?=format($assignedUser['modified'])->timestamp() ?>"/>
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$assignedUser['id'] ?>&v=<?=format($assignedUser['modified'])->timestamp() ?>"/>
                                             </div>
-                                            <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
+                                            <label for="user-<?php echo $assignedUser['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
                                                 <?php if ($assignedUser['jobTitle'] != '') { ?>
                                                     <small>
                                                         <?= $tpl->escape($assignedUser['jobTitle']) ?>
+                                                    </small>
+                                                    <br/>
+                                                <?php } ?>
+                                                <?php if ($assignedUser['source'] == 'api') { ?>
+                                                    <small>
+                                                        API Access
                                                     </small>
                                                     <br/>
                                                 <?php } ?>
@@ -88,7 +94,7 @@ $state = $tpl->get('state');
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
                                                 <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
                                             <?php } else { ?>
-                                                <select name="userProjectRole-<?php echo $userId ?>">
+                                                <select name="userProjectRole-<?php echo $assignedUser['id'] ?>">
                                                     <option value="inherit">Inherit</option>
                                                     <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
                                                         <?php if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
@@ -131,7 +137,7 @@ $state = $tpl->get('state');
 
                              <div class="row">
                                 <?php foreach ($tpl->get('availableUsers') as $row) { ?>
-                                    <?php if (!isset($project['assignedUsers'][$row['id']])) { ?>
+                                    <?php if (collect($project['assignedUsers'])->where("id", $row['id'])->isEmpty()) { ?>
                                         <div class="col-md-4">
                                             <div class="userBox">
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />

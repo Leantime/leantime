@@ -27,7 +27,7 @@
 
         </a>
 
-        <div class='dropdown-menu tw-p-m' id='newsDropdown'>
+        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>

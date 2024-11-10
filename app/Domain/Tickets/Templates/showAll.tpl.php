@@ -290,7 +290,7 @@ foreach ($__data as $var => $val) {
                             if ($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1) {
                                 $sprintHeadline = $tpl->escape($row['sprintName']);
                             } else {
-                                $sprintHeadline = $tpl->__("links.no_list");
+                                $sprintHeadline = $tpl->__("label.not_assigned_to_sprint");
                             }?>
 
                             <td  data-order="<?=$sprintHeadline?>">
@@ -301,8 +301,8 @@ foreach ($__data as $var => $val) {
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_list")?></li>
-                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$tpl->__("label.not_assigned_to_list")?>" data-value='<?=$row['id'] . "_0"?>'> <?=$tpl->__("label.not_assigned_to_list")?> </a></li>
+                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_sprint")?></li>
+                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$tpl->__("label.not_assigned_to_sprint")?>" data-value='<?=$row['id'] . "_0"?>'> <?=$tpl->__("label.not_assigned_to_sprint")?> </a></li>
                                         <?php if ($tpl->get('sprints')) {
                                             foreach ($tpl->get('sprints') as $sprint) {
                                                 echo "<li class='dropdown-item'>
