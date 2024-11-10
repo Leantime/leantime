@@ -8,7 +8,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectsService;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +19,7 @@ class ApiAuth
     /**
      * Handle an incoming request
      *
-     * @param IncomingRequest                     $request
-     * @param \Closure(IncomingRequest): Response $next
+     * @param  \Closure(IncomingRequest): Response  $next
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
@@ -29,7 +27,7 @@ class ApiAuth
             return $next($request);
         }
 
-        self::dispatch_event("before_api_request", ['application' => app()]);
+        self::dispatchEvent('before_api_request', ['application' => app()]);
 
         $apiKey = $request->getAPIKey();
         $apiUser = app()->make(ApiService::class)->getAPIKeyUser($apiKey);

@@ -47,7 +47,6 @@ class Api
         $apiKeyParts = explode("_", $apiKey);
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
-            report("Not a valid API Key format");
             return false;
         }
 
@@ -56,8 +55,6 @@ class Api
         $key = $apiKeyParts[2];
 
         if ($namespace != "lt") {
-            report("Unknown namespace for API request");
-
             return false;
         }
 
@@ -200,7 +197,7 @@ class Api
      */
     public function getCaseCorrectPathFromManifest(string $filepath): string|false
     {
-        $manifest = mix()->getManifest();
+        $manifest = mix('')->getManifest();
         $clone = array_change_key_case(collect(Arr::dot($manifest))
             ->mapWithKeys(fn ($value, $key) => [Str::of($key)->replaceFirst('./', '/')->lower()->toString() => $value])
             ->all());
