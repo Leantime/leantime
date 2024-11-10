@@ -2,11 +2,9 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Container\Container;
-use Illuminate\Log;
 use Illuminate\Support\ServiceProvider;
 
-class Logging extends ServiceProvider
+class Plugins extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -15,10 +13,6 @@ class Logging extends ServiceProvider
      */
     public function register()
     {
-
-        $this->app->singleton('log', function ($app) {
-            return new Log\LogManager($app);
-        });
-
+        $this->app->singleton(\Leantime\Domain\Plugins\Services\Plugins::class, \Leantime\Domain\Plugins\Services\Plugins::class);
     }
 }

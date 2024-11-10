@@ -2,12 +2,12 @@
 
 namespace Leantime\Core\Controller;
 
-use Error;
+use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Template;
+use Leantime\Core\Language;
+use Leantime\Core\UI\Template;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,20 +20,18 @@ abstract class HtmxController
 {
     use DispatchesEvents;
 
-    /** @var Response $response */
     protected Response $response;
 
-    /** @var string $view */
     protected static string $view;
 
-    /** @var array $headers */
     protected array $headers = [];
 
     /**
      * constructor - initialize private variables
      *
-     * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param Template        $tpl             The template to be initialized.
+     * @param  IncomingRequest  $incomingRequest  The request to be initialized.
+     * @param  Template  $tpl  The template to be initialized.
+     *
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -41,63 +39,33 @@ abstract class HtmxController
         protected IncomingRequest $incomingRequest,
 
         /** @var Template $tpl */
-        protected Template $tpl,
+        public Template $tpl,
+
+        /** @var Template $tpl */
+        public Language $language,
+
     ) {
-        self::dispatch_event('begin');
+        self::dispatchEvent('begin');
 
         $this->incomingRequest = $incomingRequest;
         $this->tpl = $tpl;
+        $this->response = app()->make(Response::class);
 
         // initialize
-        $this->executeActions();
-
-        self::dispatch_event('end', $this);
-    }
-
-    /**
-     * Allows hooking into all controllers with events
-     *
-     * @return void
-     * @throws BindingResolutionException
-     * @throws Error
-     * @throws LogicException
-     */
-    private function executeActions(): void
-    {
-        self::dispatch_event('before_init', ['controller' => $this]);
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
-
-        self::dispatch_event('before_action', ['controller' => $this]);
 
         if (! property_exists($this, 'view')) {
             throw new LogicException('HTMX Controllers must include the "$view" static property');
         }
 
-        $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
-
-        if (! method_exists($this, $action) && ! method_exists($this, 'run')) {
-            throw new Error("Method $action doesn't exist and no fallback method.");
-        }
-
-        $fragment = method_exists($this, $action) ? $this->$action() : $this->run();
-
-        $this->response = tap(
-            $this->tpl->displayFragment($this::$view, $fragment ?? ''),
-            function (Response $response): void {
-                foreach ($this->headers as $key => $value) {
-                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
-                }
-            },
-        );
+        self::dispatchEvent('end', $this);
     }
 
     /**
      * Sets the response header to trigger an htmx event
      *
-     * @param string $eventName
-     * @return void
      **/
     public function setHTMXEvent(string $eventName): void
     {
@@ -108,11 +76,46 @@ abstract class HtmxController
     /**
      * Gets the response
      *
-     * @return Response
      **/
-    public function getResponse(): Response
+    public function getResponse($fragment): Response
     {
+        $this->response = tap(
+            $this->tpl->displayFragment($this::$view, $fragment ?? ''),
+            function (Response $response): void {
+                foreach ($this->headers as $key => $value) {
+                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                }
+            },
+        );
+
         return $this->response;
     }
-}
 
+    /**
+     * Execute an action on the controller.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function callAction($method, $parameters)
+    {
+        return $this->{$method}($parameters);
+    }
+
+    /**
+     * Handle calls to missing methods on the controller.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+        throw new BadMethodCallException(sprintf(
+            'Method %s::%s does not exist.', static::class, $method
+        ));
+    }
+}

@@ -199,6 +199,9 @@ abstract class Repository
      */
     public function patch(int $id, array $params): bool
     {
+
+        unset($params["act"]);
+
         if ($this->entity == '') {
             report("Patch not implemented for this entity");
             return false;

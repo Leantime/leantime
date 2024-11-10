@@ -5,11 +5,11 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Contracts\Session\Session;
-use Illuminate\Routing\Route;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -36,8 +36,6 @@ class StartSession
     /**
      * Create a new session middleware.
      *
-     * @param  \Illuminate\Session\SessionManager $manager
-     * @param  callable|null                      $cacheFactoryResolver
      * @return void
      */
     public function __construct(SessionManager $manager, ?callable $cacheFactoryResolver = null)
@@ -49,59 +47,68 @@ class StartSession
     /**
      * Handle an incoming request.
      *
-     * @param  IncomingRequest $request
-     * @param  \Closure        $next
      * @return mixed
      */
     public function handle(IncomingRequest $request, Closure $next)
     {
+
         if (! $this->sessionConfigured()) {
             return $next($request);
         }
 
         $session = $this->getSession($request);
 
-        self::dispatch_event('session_initialized');
+        self::dispatchEvent('session_initialized');
 
-        return $this->handleRequestWhileBlocking($request, $session, $next);
+        if ($this->shouldLockSession($request)) {
+            return $this->handleRequestWhileBlocking($request, $session, $next);
+        }
+
+        return $this->handleStatefulRequest($request, $session, $next);
+
     }
 
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
-     * @param  \Closure                              $next
+     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return mixed
      */
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
-        $lockFor = $this->manager->defaultRouteBlockLockSeconds();
+        //Locking session for 2 seconds
+        // How long the lock should be held once acquired
+        $holdLockFor = 3; // Hold lock for x seconds after acquiring
 
-        $lock = $this->cache("installation")
-            ->lock('session:' . $session->getId(), $lockFor)
+        // Maximum time to wait for acquiring the lock if already held
+        $maxWaitForLock = 10; // Wait for up to y seconds to acquire the lock
+
+        $lock = $this->cache("sessions")
+            ->lock('session_lock_'.$session->getId(), $holdLockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-            //Acquire lock every 50ms for 20 seconds
-            $lock->block(20);
+
+            $lock->block($maxWaitForLock);
+
             return $this->handleStatefulRequest($request, $session, $next);
-        } catch (LockTimeoutException $e) {
-            $lock->block(60);
+
+        } catch(LockTimeoutException $e) {
+
+            Log::error($e);
+
             return $this->handleStatefulRequest($request, $session, $next);
+
         } finally {
             $lock?->release();
         }
     }
 
-
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
-     * @param  \Closure                              $next
+     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return mixed
      */
     protected function handleStatefulRequest(IncomingRequest $request, $session, Closure $next)
@@ -134,8 +141,7 @@ class StartSession
     /**
      * Start the session for the given request.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return \Illuminate\Contracts\Session\Session
      */
     protected function startSession(IncomingRequest $request, $session)
@@ -150,11 +156,16 @@ class StartSession
     /**
      * Get the session implementation from the manager.
      *
-     * @param  IncomingRequest $request
      * @return \Illuminate\Contracts\Session\Session
      */
     public function getSession(IncomingRequest $request)
     {
+        //Non logged in cookies will be reduced to 60min.
+        //Extend Session Lifetime
+        if(! $request->cookies->has("esl")) {
+            app('config')->set('session.lifetime', 60);
+        }
+
         return tap($this->manager->driver(), function ($session) use ($request) {
             $session->setId($request->cookies->get($session->getName()));
         });
@@ -163,7 +174,6 @@ class StartSession
     /**
      * Remove the garbage from the session if necessary.
      *
-     * @param  \Illuminate\Contracts\Session\Session $session
      * @return void
      */
     protected function collectGarbage(Session $session)
@@ -181,7 +191,6 @@ class StartSession
     /**
      * Determine if the configuration odds hit the lottery.
      *
-     * @param  array $config
      * @return bool
      */
     protected function configHitsLottery(array $config)
@@ -192,16 +201,14 @@ class StartSession
     /**
      * Store the current URL for the request if necessary.
      *
-     * @param  IncomingRequest                       $request
-     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param  \Illuminate\Contracts\Session\Session  $session
      * @return void
      */
     protected function storeCurrentUrl(IncomingRequest $request, $session)
     {
         if (
             $request->isMethod('GET')
-            && !$request->isApiOrCronRequest()
-            && !$request->isUnboostedHtmxRequest()
+            && $this->shouldLockSession($request)
         ) {
             $fullUrl = $request->fullUrl();
             $session->setPreviousUrl($request->fullUrl());
@@ -211,8 +218,6 @@ class StartSession
     /**
      * Add the session cookie to the application response.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response $response
-     * @param  \Illuminate\Contracts\Session\Session      $session
      * @return void
      */
     protected function addCookieToResponse(Response $response, Session $session)
@@ -236,12 +241,25 @@ class StartSession
     /**
      * Save the session data to storage.
      *
-     * @param  IncomingRequest $request
      * @return void
      */
     protected function saveSession(IncomingRequest $request)
     {
-        $this->manager->driver()->save();
+        if($this->shouldLockSession($request)) {
+
+            $this->manager->driver()->save();
+        }
+    }
+
+    protected function shouldLockSession(IncomingRequest $request) {
+
+        if (
+            $request->isApiOrCronRequest() === false
+        ) {
+             return true;
+        }
+
+        return false;
     }
 
     /**
@@ -281,7 +299,6 @@ class StartSession
     /**
      * Determine if the configured session driver is persistent.
      *
-     * @param  array|null $config
      * @return bool
      */
     protected function sessionIsPersistent(?array $config = null)
@@ -294,7 +311,7 @@ class StartSession
     /**
      * Resolve the given cache driver.
      *
-     * @param  string $driver
+     * @param  string  $driver
      * @return \Illuminate\Cache\Store
      */
     protected function cache($driver)

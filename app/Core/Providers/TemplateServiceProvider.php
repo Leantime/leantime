@@ -2,11 +2,10 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Container\Container;
-use Illuminate\Log;
 use Illuminate\Support\ServiceProvider;
+use Leantime\Core\UI\Template;
 
-class Logging extends ServiceProvider
+class TemplateServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -15,10 +14,6 @@ class Logging extends ServiceProvider
      */
     public function register()
     {
-
-        $this->app->singleton('log', function ($app) {
-            return new Log\LogManager($app);
-        });
-
+        $this->app->singleton(Template::class, Template::class);
     }
 }

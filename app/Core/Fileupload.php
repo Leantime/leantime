@@ -7,6 +7,7 @@ use Aws\S3\S3Client;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -289,7 +290,7 @@ class Fileupload
 
                 return $url;
             } catch (S3Exception $e) {
-                report($e);
+                Log::error($e);
                 return false;
             }
         } else {
@@ -298,7 +299,7 @@ class Fileupload
                     return "/userfiles/" . $this->file_name;
                 }
             } catch (Exception $e) {
-                report($e);
+                Log::error($e);
                 return false;
             }
         }
@@ -330,10 +331,10 @@ class Fileupload
 
             return true;
         } catch (S3Exception $e) {
-            report($e);
+            Log::error($e);
             return false;
         } catch (RequestException $e) {
-            report($e);
+            Log::error($e);
             return false;
         }
     }
@@ -352,7 +353,7 @@ class Fileupload
                 return true;
             }
         } catch (Exception $e) {
-            report($e);
+            Log::error($e);
             return false;
         }
 

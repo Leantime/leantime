@@ -3,7 +3,10 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\Controller\Frontcontroller;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -17,80 +20,115 @@ class Auth
 
     /**
      * Public actions
-     *
-     * @var array
      */
-    private array $publicActions = array(
-        "auth.login",
-        "auth.resetPw",
-        "auth.userInvite",
-        "install",
-        "install.update",
-        "errors.error404",
-        "errors.error500",
-        "api.i18n",
-        "api.static-asset",
-        "calendar.ical",
-        "oidc.login",
-        "oidc.callback",
-        "cron.run",
-    );
+    private array $publicActions = [
+        'auth.login',
+        'auth.resetPw',
+        'auth.userInvite',
+        'install',
+        'install.update',
+        'errors.error404',
+        'errors.error500',
+        'api.i18n',
+        'api.static-asset',
+        'calendar.ical',
+        'oidc.login',
+        'oidc.callback',
+        'cron.run',
+    ];
 
     public function __construct(
-        private Frontcontroller $frontController,
         private AuthService $authService,
         private ProjectsService $projectsService,
     ) {
-        $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions, ['bootloader' => $this]);
+        $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
     }
 
     /**
      * Redirect with origin
      *
-     * @param string $route
-     * @param string $origin
      * @return Response|RedirectResponse
+     *
      * @throws BindingResolutionException
      */
-    public function redirectWithOrigin(string $route, string $origin,): false|RedirectResponse
+    public function redirectWithOrigin(string $route, string $origin, IncomingRequest $request): false|RedirectResponse
     {
-        $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
-        $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
 
-        if ($this->frontController::getCurrentRoute() == $route) {
+        $uri = ltrim(str_replace('.', '/', $route), '/');
+        $destination = BASE_URL.'/'.$uri;
+        $originClean = Str::replaceStart("/", "", $origin);
+        $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $originClean]) : '';
+
+        if ($request->getCurrentRoute() == $route) {
             return false;
         }
 
-        return new RedirectResponse($destination . $queryParams);
+        return new RedirectResponse($destination.$queryParams);
     }
 
     /**
      * Handle the request
-     *
-     * @param IncomingRequest $request
-     * @param Closure $next
-     * @return Response
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
 
-        if (in_array($this->frontController::getCurrentRoute(), $this->publicActions)) {
+        if ($this->isPublicController($request->getCurrentRoute())) {
             return $next($request);
         }
 
-
-
         if (! $this->authService->loggedIn()) {
-            return $this->redirectWithOrigin('auth.login', $request->getRequestUri()) ?: $next($request);
+            $loginRedirect = self::dispatch_filter("loginRoute", 'auth.login', ["request" => $request]);
+            return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
         }
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
-        if (session("userdata.twoFAEnabled") && ! session("userdata.twoFAVerified")) {
-            return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? "") ?: $next($request);
+        if (session('userdata.twoFAEnabled') && ! session('userdata.twoFAVerified')) {
+            return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
         }
 
-        self::dispatch_event("logged_in", ['application' => $this]);
+        self::dispatchEvent('logged_in', ['application' => $this]);
 
-        return $next($request);
+        $response = $next($request);
+
+        if ($this->authService->loggedIn()) {
+
+            //Set cookie to increase session timeout
+            $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
+                'esl', //Extend Session Lifetime
+                'true',
+                Date::instance(
+                    Carbon::now()->addRealMinutes(app('config')['session']['lifetime'])
+                ),
+                app('config')['session']['path'],
+                app('config')['session']['domain'],
+                false,
+                app('config')['session']['http_only'] ?? true,
+                false,
+                app('config')['session']['same_site'] ?? null,
+                app('config')['session']['partitioned'] ?? false
+            ));
+        }
+
+        return $response;
+    }
+
+    public function isPublicController($currentPath ) {
+
+        //path comes in with dots as separator.
+        //We only need to compare the first 2 segments
+        $currentPath = explode(".", $currentPath);
+
+        //Todo: We may want to take out hx if we have public htmx paths
+        if(! is_array($currentPath) || count($currentPath) < 2){
+            return false;
+        }
+
+        $controllerPath = $currentPath[0].".".$currentPath[1];
+        if(in_array($controllerPath, $this->publicActions)){
+            return true;
+        }
+
+        return false;
+
     }
 }
