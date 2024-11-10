@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Calendar\Services;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
@@ -313,7 +314,7 @@ class Calendar
 
             }catch(\Exception $e) {
                 //Do not include event in ical
-                report($e);
+                Log::error($e);
             }
         }
 

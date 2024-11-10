@@ -432,26 +432,19 @@ leantime.calendarController = (function () {
         calendar.setOption('locale', leantime.i18n.__("language.code"));
         calendar.render();
 
-        jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
-
         jQuery('.minCalendar .fc-prev-button').click(function () {
             calendar.prev();
             calendar.getCurrentData()
-            jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
         jQuery('.minCalendar .fc-next-button').click(function () {
             calendar.next();
-            jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
         jQuery('.minCalendar .fc-today-button').click(function () {
             calendar.today();
-            jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
         jQuery(".minCalendar .calendarViewSelect").on("change", function (e) {
 
             calendar.changeView(jQuery(".minCalendar .calendarViewSelect option:selected").val());
-
-            jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
 
             jQuery.ajax({
                 type : 'PATCH',

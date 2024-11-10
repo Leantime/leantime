@@ -44,10 +44,10 @@ class ExternalCal extends Controller
      *
      * @throws BindingResolutionException
      */
-    public function run(): void
+    public function run($params): void
     {
 
-        $calId = $_GET['id'];
+        $calId = $params['id'];
 
         if (!session()->exists("calendarCache")) {
             session(["calendarCache" => []]);
