@@ -8,6 +8,7 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
 use ReflectionClass;
@@ -328,7 +329,7 @@ class Jsonrpc extends Controller
                 try {
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
-                    report($e);
+                    Log::error($e);
                     throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
                 }
             }
