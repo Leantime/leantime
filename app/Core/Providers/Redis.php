@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Contracts\Redis\Factory;
 use Illuminate\Redis\RedisManager;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,60 +20,54 @@ class Redis extends ServiceProvider
          *  then memcached if available,
          *  then fileStore
          */
-        $this->app->singleton(RedisManager::class, function ($app) {
+        $this->app->singleton('redis', function ($app) {
 
+            $cacheConfig = $app['config']['redis']['default'];
+            $cacheConfig['prefix'] = 'leantime_cache';
 
-            app('config')['redis'] = [
-                'client' => 'predis',
-                'options' => [
-                    'cluster' =>  app('config')->redisCluster ?? 'redis',
-                    'prefix' =>  app('config')->redisPrefix ?? 'ltRedis',
-                ],
-                'default' => [
-                    'url' =>  app('config')->redisUrl ?? '',
-                    'host' =>  app('config')->redisHost ?? '127.0.0.1',
-                    'password' =>   app('config')->redisPassword ?? null,
-                    'port' =>  app('config')->redisPort ?? '6379',
-                    'database' => '0',
-                    'prefix' => 'c:'
-                ],
-                'session' => [
-                    'url' =>  app('config')->redisUrl ?? '',
-                    'host' =>  app('config')->redisHost ?? '127.0.0.1',
-                    'password' =>   app('config')->redisPassword ?? null,
-                    'port' =>  app('config')->redisPort ?? '6379',
-                    'database' => '0',
-                    'prefix' => 's:'
-                ],
-            ];
+            $installationConfig = $app['config']['redis']['default'];
+            $installationConfig['prefix'] = 'leantime_cache:installation';
 
-            $redisManager = new RedisManager(app(), 'predis', app('config')['redis']);
+            $sessionsConfig = $app['config']['redis']['default'];
+            $sessionsConfig['prefix'] = 'leantime_sessions';
+
+            if ($app['config']->useCluster) {
+
+                $app['config']['redis']['clusters'] = [
+                    'cache' => [$cacheConfig],
+                    'installation' => [$installationConfig],
+                    'sessions' => [$sessionsConfig],
+                ];
+
+            } else {
+
+                $app['config']['redis'] = [
+                    'cache' => $cacheConfig,
+                    'installation' => $installationConfig,
+                    'sessions' => $sessionsConfig,
+                ];
+
+            }
+
+            $redisManager = new RedisManager($app, 'phpredis', $app['config']['redis']);
+
             return $redisManager;
 
         });
 
-        $this->app->alias(RedisManager::class, 'redis');
-        $this->app->alias(RedisManager::class, Factory::class);
         $this->app->bind('redis.connection', function ($app) {
             return $app['redis']->connection();
         });
 
     }
 
-    public function boot() {
-
-
+    public function provides()
+    {
+        return ['redis', 'redis.connection'];
     }
 
     /**
      * Manages the instance cache.
-     *
-     * @return void
      */
-    public function checkCacheVersion(): void
-    {
-
-
-    }
-
+    public function checkCacheVersion(): void {}
 }

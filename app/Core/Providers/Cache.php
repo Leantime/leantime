@@ -2,15 +2,13 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Cache\MemcachedConnector;
-use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Configuration\AppSettings;
-use Leantime\Core\Console\CliRequest;
-use Leantime\Core\Events\EventDispatcher;
-use Leantime\Core\Http\IncomingRequest;
-use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Illuminate\Cache\RateLimiter;
+use Illuminate\Support\Str;
+use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
-class Cache extends ServiceProvider
+class Cache extends CacheServiceProvider
 {
     /**
      * Register any application services.
@@ -20,87 +18,70 @@ class Cache extends ServiceProvider
     public function register()
     {
 
-        /**
-         * @todo the following should eventually automatically turn caches into redis if available,
-         *  then memcached if available,
-         *  then fileStore
-         */
-        $this->app->singleton(\Illuminate\Cache\CacheManager::class, function () {
+        $this->app->singleton('cache', function ($app) {
 
-            //installation cache is per server
-            app('config')['cache.stores.installation'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
-                'connection' => 'default',
-                'path' => APP_ROOT . '/cache/installation',
-            ];
+            //Now that we know where the instance is bing called from
+            //Let's add a domain level cache.
+            $domainCacheName = get_domain_key();
 
-            //Instance is per company id
-            $instanceStore = fn () =>
-            app('config')['cache.stores.instance'] = [
-                'driver' => !empty(app('config')->useRedis) && (bool)app('config')->useRedis === true ? 'redis' : 'file',
-                'connection' => 'default',
-                'path' => APP_ROOT . "/cache/" . app()->make(SettingsService::class)->getCompanyId(),
-            ];
+            $app['config']->set('cache.stores.'.$domainCacheName, [
+                'driver' => 'file',
+                'path' => storage_path('framework/cache/'.$domainCacheName.'/data'),
+            ]);
 
-            if (app()->make(IncomingRequest::class) instanceof CliRequest) {
-                if (empty(app()->make(SettingsService::class)->getCompanyId())) {
-                    throw new \RuntimeException('You can\'t run this CLI command until you have installed Leantime.');
-                }
+            //If redis is set up let's use redis as cache
+            if ($app['config']['useRedis']) {
 
-                $instanceStore();
-            } else {
-                //Initialize instance cache store only after install was successfull
-                EventDispatcher::add_event_listener(
-                    'leantime.core.middleware.installed.handle.after_install',
-                    function () use ($instanceStore) {
-                        if (! session("isInstalled")) {
-                            return;
-                        }
-                        $instanceStore();
-                    }
-                );
+                //Default driver just in case it is being asked for
+                $app['config']->set('cache.stores.redis.driver', 'redis');
+                $app['config']->set('cache.stores.redis.connection', 'cache');
+                $app['config']->set('cache.stores.redis.prefix', 'leantime_cache');
+
+                //Only needed when using sessions with redis
+                $app['config']->set('cache.stores.sessions.driver', 'redis');
+                $app['config']->set('cache.stores.sessions.connection', 'sessions');
+                $app['config']->set('cache.stores.sessions.prefix', 'leantime_sessions');
+
+                $app['config']->set('cache.stores.installation.driver', 'redis');
+                $app['config']->set('cache.stores.installation.connection', 'installation');
+                $app['config']->set('cache.stores.installation.prefix', 'leantime_cache:installation');
+
+                $app['config']->set('cache.stores.'.$domainCacheName.'.driver', 'redis');
+                $app['config']->set('cache.stores.'.$domainCacheName.'.connection', 'cache');
+                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', 'leantime_cache:'.$domainCacheName.'');
+
             }
 
-            $cacheManager = new \Illuminate\Cache\CacheManager(app());
-
-            $cacheManager->setDefaultDriver('instance');
+            $cacheManager = new \Illuminate\Cache\CacheManager($app);
+            $cacheManager->setDefaultDriver($domainCacheName);
 
             return $cacheManager;
         });
 
+        $this->app->singleton('cache.store', function ($app) {
+            return $app['cache']->driver();
+        });
 
-        $this->app->singleton('cache.store', fn () => app('cache')->driver());
-        $this->app->singleton('cache.psr6', fn () => new \Symfony\Component\Cache\Adapter\Psr16Adapter(app('cache.store')));
-        $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
+        $this->app->singleton('cache.psr6', function ($app) {
+            return new Psr16Adapter($app['cache.store']);
+        });
 
-        $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
-        $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
+        $this->app->singleton('memcached.connector', function () {
+            return new MemcachedConnector;
+        });
 
-
-    }
-
-    public function boot() {
-
-        $currentVersion = app()->make(AppSettings::class)->appVersion;
-        $cachedVersion = \Illuminate\Support\Facades\Cache::store('installation')->rememberForever('version', fn () => $currentVersion);
-
-        if ($currentVersion == $cachedVersion) {
-            return;
-        }
-
-        \Illuminate\Support\Facades\Cache::store('installation')->flush();
+        $this->app->singleton(RateLimiter::class, function ($app) {
+            return new RateLimiter($app->make('cache')->driver(
+                $app['config']->get('cache.limiter')
+            ));
+        });
 
     }
 
-    /**
-     * Manages the instance cache.
-     *
-     * @return void
-     */
-    public function checkCacheVersion(): void
+    public function provides()
     {
-
-
+        return [
+            'cache', 'cache.store', 'cache.psr6', RateLimiter::class,
+        ];
     }
-
 }

@@ -2,6 +2,9 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Session\SessionManager;
 use Illuminate\Session\SymfonySessionDecorator;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,57 +17,59 @@ class Session extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function () {
 
-            $configKey =  app('config')->sessionPassword;
+        $this->app->singleton('session', function ($app) {
 
-            if (strlen($configKey) > 32) {
-                $configKey = substr($configKey, 0, 32);
+            if (! empty($app['config']['useRedis']) && (bool) $app['config']['useRedis'] === true) {
+
+                $app['config']->set('session.driver', 'redis');
+                $app['config']->set('session.connection', 'sessions');
+
+            } else {
+
+                $sessionDir = storage_path('framework/sessions/'.get_domain_key());
+
+                //domain key was created as file. Let's remove that
+                if (file_exists($sessionDir) && ! is_dir($sessionDir)) {
+                    unlink($sessionDir);
+                }
+
+                if (! is_dir($sessionDir) && ! mkdir($sessionDir) && ! is_dir($sessionDir)) {
+                    throw new \RuntimeException(sprintf('Could not create session directory %s', $sessionDir));
+                }
+
+                $app['config']->set('session.files', $sessionDir);
             }
 
-            if (strlen($configKey) < 32) {
-                $configKey =  str_pad($configKey, 32, "x", STR_PAD_BOTH);
+            //Now that we know where the instance is bing called from
+            //Let's add a domain level cache.
+            $domain = 'localhost';
+            if (! $app->runningInConsole()) {
+                $domain = $app['request']->getFullUrl();
             }
 
-            app('config')['app_key'] = $configKey;
+            //Most of this is set in the config but some things aren't clear until we get here.
 
-            $encrypter = new \Illuminate\Encryption\Encrypter(app('config')['app_key'], "AES-256-CBC");
-            return $encrypter;
-        });
-
-        $this->app->singleton(\Illuminate\Session\SessionManager::class, function () {
-
-
-            app('config')['session'] = array(
-                'driver' => !empty( app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'redis' : 'file',
-                'lifetime' =>  app('config')->sessionExpiration,
-                'connection' => !empty(app('config')->useRedis) && (bool) app('config')->useRedis === true ? 'session' : null,
-                'expire_on_close' => false,
-                'encrypt' => true,
-                'files' => APP_ROOT . '/cache/sessions',
-                'store' => "installation",
-                'block_store' => 'installation',
-                'block_lock_seconds' => 10,
-                'block_wait_seconds' => 10,
-                'lottery' => [2, 100],
-                'cookie' => "ltid",
-                'path' => "/",
-                'domain' => is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null,
-                'secure' => true,
-                'http_only' => true,
-                'same_site' => "Lax",
-            );
-
-            $sessionManager = new \Illuminate\Session\SessionManager(app());
+            $sessionManager = new \Illuminate\Session\SessionManager($app);
 
             return $sessionManager;
         });
 
-        $this->app->singleton('session.store', fn() =>  app('session')->driver());
+        $this->app->singleton('session.store', function ($app) {
+            // First, we will create the session manager which is responsible for the
+            // creation of the various session drivers when they are needed by the
+            // application instance, and will resolve them on a lazy load basis.
+            return $app->make('session')->driver();
+        });
+
+        $this->app->singleton(StartSession::class, function ($app) {
+
+            return new StartSession($app->make(SessionManager::class), function () use ($app) {
+                return $app->make(CacheFactory::class);
+            });
+        });
+
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
-        $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
 
     }
-
-
 }
