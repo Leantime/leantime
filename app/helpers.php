@@ -4,9 +4,9 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\Factory;
-use Leantime\Core\Bootstrap\Application;
-use Leantime\Core\Bootstrap\Bootloader;
+use Illuminate\Support\Str;
+use Leantime\Core\Application;
+use Leantime\Core\Bootloader;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
@@ -18,13 +18,12 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
      *
-     * @param string $abstract
-     * @param array  $parameters
      *
      * @return mixed|Application
      *
@@ -89,9 +88,6 @@ if (! function_exists('__')) {
     /**
      * Translate a string.
      *
-     * @param string $index
-     * @param string $default
-     * @return string
      * @throws BindingResolutionException
      */
     function __(string $index, string $default = ''): string
@@ -102,15 +98,22 @@ if (! function_exists('__')) {
 
 if (! function_exists('view')) {
     /**
-     * Get the view factory instance.
+     * Get the evaluated view contents for the given view.
      *
-     * @return Factory
-     *
-     * @throws BindingResolutionException
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
      */
-    function view(): Factory
+    function view($view = null, $data = [], $mergeData = [])
     {
-        return app()->make(Factory::class);
+        $factory = app(\Illuminate\View\Factory::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->make($view, $data, $mergeData);
     }
 }
 
@@ -380,3 +383,76 @@ if (! function_exists('report')) {
         Log::critical($exception);
     }
 }
+
+if (! function_exists('base_path')) {
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return app()->basePath($path);
+    }
+}
+
+if (! function_exists('redirect')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $url
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     */
+    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
+    {
+        return new RedirectResponse(
+            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
+            $http_response_code
+        );
+    }
+}
+
+if (! function_exists('currentRoute')) {
+    /**
+     * Get an instance of the redirector.
+     *
+     * @param  string|null  $to
+     * @param  int  $status
+     * @param  array  $headers
+     * @param  bool|null  $secure
+     */
+
+    function currentRoute()
+    {
+
+        return app('request')->getCurrentRoute();
+
+    }
+}
+
+if (! function_exists('get_domain_key')) {
+
+    /**
+     * Gets a unique instance key determined by domain
+     *
+     */
+    function get_domain_key()
+    {
+
+        //Now that we know where the instance is bing called from
+        //Let's add a domain level cache.
+        $domainCacheName = 'localhost';
+        if (! app()->runningInConsole()) {
+            $domainCacheName = md5(\Illuminate\Support\Str::slug(app('request')->host().app('request')['key']));
+        }
+
+        return $domainCacheName;
+
+    }
+
+}
+

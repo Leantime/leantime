@@ -2,12 +2,18 @@
 
 namespace Leantime\Core\Events;
 
+use Illuminate\Cache\Events\CacheEvent;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Events\QueuedClosure;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\Traits\ReflectsClosures;
+use Illuminate\View\View;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 /**
  * EventDispatcher class - Handles all events and filters
@@ -17,6 +23,10 @@ use Leantime\Core\Controller\Frontcontroller;
  */
 class EventDispatcher implements Dispatcher
 {
+
+    use Macroable;
+    use ReflectsClosures;
+
     /**
      * Registry of all events added to a hook
      *
@@ -54,11 +64,14 @@ class EventDispatcher implements Dispatcher
      * @throws BindingResolutionException
      */
     public static function dispatch_event(
-        string $eventName,
+        $eventName,
         mixed $payload = [],
         string $context = ''
     ): void {
-        $eventName = "$context.$eventName";
+
+        if (! empty($context)) {
+            $eventName = "$context.$eventName";
+        }
 
         if (!in_array($eventName, self::$available_hooks['events'])) {
             self::$available_hooks['events'][] = $eventName;
@@ -69,7 +82,7 @@ class EventDispatcher implements Dispatcher
             return;
         }
 
-        $payload = self::defineParams($payload);
+        $payload = self::defineParams($payload, $eventName);
 
         self::executeHandlers($matchedEvents, "events", $eventName, $payload);
     }
@@ -82,6 +95,23 @@ class EventDispatcher implements Dispatcher
 
         if($eventName instanceof MessageLogged) {
             $this->dispatch_event($eventName->message, $payload, $context);
+            return;
+        }
+
+        if($eventName instanceof CacheEvent) {
+            $this->dispatch_event(get_class($eventName), $eventName, $context);
+            return;
+        }
+
+        if($eventName instanceof ViewEvent) {
+            $this->dispatch_event($eventName, $payload, $context);
+            return;
+        }
+
+        if(is_object($eventName)){
+
+            $eventName = get_class($eventName);
+            $this->dispatch_event($eventName, [$eventName], $context);
             return;
         }
 
@@ -161,7 +191,7 @@ class EventDispatcher implements Dispatcher
             return $payload;
         }
 
-        $available_params = self::defineParams($available_params);
+        $available_params = self::defineParams($available_params, $filtername);
 
         return self::executeHandlers($matchedEvents, "filters", $filtername, $payload, $available_params);
     }
@@ -175,7 +205,7 @@ class EventDispatcher implements Dispatcher
      * @return void
      * @throws BindingResolutionException
      */
-    public static function discover_listeners(): void
+    public static function discoverListeners(): void
     {
         static $discovered;
         $discovered ??= false;
@@ -321,6 +351,14 @@ class EventDispatcher implements Dispatcher
         self::$filterRegistry[$filtername][] = array("handler" => $handler, "priority" => $priority);
     }
 
+    public static function addFilterListener(
+        string $filtername,
+        string|callable|object $handler,
+        int $priority = 10
+    ): void {
+        self::add_filter_listener($filtername, $handler, $priority);
+    }
+
     /**
      * Gets all registered listeners
      *
@@ -387,7 +425,7 @@ class EventDispatcher implements Dispatcher
      * @return array|object
      * @throws BindingResolutionException
      */
-    private static function defineParams(mixed $paramAttr): array|object
+    private static function defineParams(mixed $paramAttr, string $eventName): array|object
     {
         // make this static so we only have to call once
         static $default_params;
@@ -395,8 +433,11 @@ class EventDispatcher implements Dispatcher
         if (!isset($default_params)) {
             $default_params = [
                 'current_route' => Frontcontroller::getCurrentRoute(),
+                'currentEvent' => ''
             ];
         }
+
+        $default_params['currentEvent'] = $eventName;
 
         $finalParams = [];
 
@@ -452,6 +493,7 @@ class EventDispatcher implements Dispatcher
 
             // class with handle function
             if (is_object($handler) && method_exists($handler, "handle")) {
+
                 if ($isEvent) {
                     $handler->handle($payload);
                     continue;
@@ -466,7 +508,51 @@ class EventDispatcher implements Dispatcher
 
             // anonymous functions
             if (is_callable($handler)) {
+
+                if(class_exists($hookName) && is_array($payload)) {
+
+                    if($payload[0] instanceof CacheEvent) {
+
+                        $payload = $payload[0];
+
+                        $handler($payload);
+                        continue;
+                    }
+                }
+
+                if(is_array($payload) && isset($payload[0])) {
+
+                    if($payload[0] instanceof View) {
+
+                        if($handler instanceof \Closure) {
+                            $info = new \ReflectionFunction($handler);
+                            $numParams = $info->getNumberOfParameters();
+                            $closure = $info->getClosure();
+                            $filename = $info->getFileName();
+
+                            if( $numParams == 2) {
+                                $handler($hookName, $payload);
+                                continue;
+                            }
+
+                        }
+
+                        $handler($payload[0]);
+                        continue;
+
+                    }
+                }
+
                 if ($isEvent) {
+
+                    if($handler instanceof \Closure) {
+                        $info = new \ReflectionFunction($handler);
+                        $numParams = $info->getNumberOfParameters();
+                        $closure = $info->getClosure();
+                        $filename = $info->getFileName();
+
+                    }
+
                     $handler($payload);
                     continue;
                 }
@@ -526,7 +612,26 @@ class EventDispatcher implements Dispatcher
     }
 
 
-    public function listen($events, $listener = null) {}
+    public function listen($events, $listener = null) {
+
+        if ($events instanceof \Closure) {
+            return collect($this->firstClosureParameterTypes($events))
+                ->each(function ($event) use ($events) {
+                    $this->listen($event, $events);
+                });
+        } elseif ($events instanceof QueuedClosure) {
+            return collect($this->firstClosureParameterTypes($events->closure))
+                ->each(function ($event) use ($events) {
+                    $this->listen($event, $events->resolve());
+                });
+        } elseif ($listener instanceof QueuedClosure) {
+            $listener = $listener->resolve();
+        }
+
+        foreach ((array) $events as $event) {
+            $this->add_event_listener($event, $listener);
+        }
+    }
 
     /**
      * Determine if a given event has listeners.
@@ -535,8 +640,8 @@ class EventDispatcher implements Dispatcher
      * @return bool
      */
     public function hasListeners($eventName) {
-        throw new \Exception("Not implemented");
-        return false;
+        return array_key_exists($eventName, $this->eventRegistry);
+
     }
 
     /**
@@ -546,7 +651,7 @@ class EventDispatcher implements Dispatcher
      * @return void
      */
     public function subscribe($subscriber) {
-        throw new \Exception("Not implemented");
+
     }
 
     /**
@@ -558,6 +663,20 @@ class EventDispatcher implements Dispatcher
      */
     public function until($event, $payload = []) {
         throw new \Exception("Not implemented");
+    }
+
+    /**
+     * Get all of the listeners for a given event name.
+     *
+     * @param  string  $eventName
+     * @return array
+     */
+    public function getListeners($eventName)
+    {
+        $listeners = $this->findEventListeners($eventName, $this->getEventRegistry());
+        $list = array_map(fn ($item) => $item['handler'], $listeners);
+
+        return $list;
     }
 
 
@@ -601,3 +720,4 @@ class EventDispatcher implements Dispatcher
         throw new \Exception("Not implemented");
     }
 }
+

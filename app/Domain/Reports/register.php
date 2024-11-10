@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Reports;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\EventDispatcher;
 
 EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedule.cron', function ($params) {
@@ -25,7 +26,7 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
             $response = $telemetry->wait();
 
         } catch (\Throwable $e) {
-            report($e);
+            Log::error($e);
         }
 
     })->everyMinute();

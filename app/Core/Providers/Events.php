@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core;
 
@@ -14,11 +15,34 @@ class Events extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Core\Events\EventDispatcher::class, Core\Events\EventDispatcher::class);
+
+        $this->app->singleton('events', function ($app) {
+            return new Core\Events\EventDispatcher();
+        });
+
+        $this->booting(function () {
+
+            //Core\Events\EventDispatcher::discover_listeners();
+
+            /*
+
+            foreach ($this->subscribe as $subscriber) {
+                Event::subscribe($subscriber);
+            }
+
+            foreach ($this->observers as $model => $observers) {
+                $model::observe($observers);
+            }*/
+
+        });
+
+        /*
+        $this->booted(function () {
+            $this->configureEmailVerification();
+        });
+        */
+
     }
 
-    public function boot()
-    {
-
-    }
+    public function boot() {}
 }

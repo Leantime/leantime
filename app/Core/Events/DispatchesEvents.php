@@ -28,6 +28,13 @@ namespace Leantime\Core\Events {
             EventDispatcher::dispatch_event($hook, $available_params, static::get_event_context($function));
         }
 
+        // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
+        //Temporary for backwards compatibility
+        public static function dispatchEvent(string $hook, mixed $available_params = [], string|int $function = null): void
+        {
+            EventDispatcher::dispatch_event($hook, $available_params, static::get_event_context($function));
+        }
+
         /**
          * dispatches a filter with context
          *
@@ -41,6 +48,13 @@ namespace Leantime\Core\Events {
          * @throws BindingResolutionException
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
+        {
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
+        }
+
+        // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
+        //Temporary for backwards compatibility
+        public static function dispatchFilter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {
             return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
         }
@@ -59,11 +73,22 @@ namespace Leantime\Core\Events {
                 self::$event_context = static::set_class_context();
             }
 
-            $function = !empty($function) && is_string($function) && !is_numeric($function)
-                ? $function
-                : static::get_function_context(is_numeric($function) ? (int) $function : null);
+            $eventContext = self::$event_context .".";
 
-            return self::$event_context . '.' . $function;
+            if(!empty($function) && is_string($function) && !is_numeric($function)){
+
+                $function = $function;
+
+                //If context starts with leantime, the full context was provided by caller
+                if(str_starts_with($function, "leantime.")) {
+                    $eventContext = "";
+                }
+
+            }else {
+                $function = static::get_function_context(is_numeric($function) ? (int) $function : null);
+            }
+
+            return $eventContext . $function;
         }
 
         /**
