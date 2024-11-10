@@ -4,7 +4,7 @@ namespace Leantime\Domain\Sprints\Services {
 
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;

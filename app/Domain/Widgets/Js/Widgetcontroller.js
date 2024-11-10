@@ -1,27 +1,61 @@
 leantime.widgetController = (function () {
-
     var grid = [];
+
+    // Helper function to find next available position
+    var findAvailablePosition = function(widget, grid) {
+        let x = widget.gridX || 0;
+        let y = widget.gridY || 0;
+        let width = widget.gridWidth || 2;
+        let height = widget.gridHeight || 2;
+
+        // Try the preferred position first
+        if (grid.willItFit({x, y, width, height})) {
+            return { x: x, y: y };
+        }
+
+        // If preferred position is occupied, find next available spot
+        let maxY = Math.max(...grid.engine.nodes.map(n => n.y + n.h), 0);
+
+        // Try positions from top to bottom
+        for (let newY = 0; newY <= maxY + 1; newY++) {
+            for (let newX = 0; newX <= 12 - width; newX++) {
+                if (grid.willItFit({newX, newY, width, height})) {
+                    return { x: newX, y: newY };
+                }
+            }
+        }
+        return { x: 0, y: maxY + 1 }; // Fallback to bottom
+    };
+
+    // Implement safe HTML rendering callback
+    GridStack.renderCB = function(el, w) {
+        if (w.content) {
+            // Using DOMPurify to sanitize content if available
+            if (typeof DOMPurify !== 'undefined') {
+                el.innerHTML = DOMPurify.sanitize(w.content);
+            }
+        }
+    };
 
 
     var initGrid = function () {
-
         grid = GridStack.init({
-            columnOpts: {
-                breakpointForWindow: true,  // test window vs grid size
-                breakpoints: [{w:700, c:1},{w:850, c:6},{w:950, c:8},{w:1100, c:12}],
-            },
             margin: '0px 15px 15px 0px',
             handle: ".grid-handler-top",
-            minRow: 2, // don't let it collapse when empty
+            minRow: 2,
             cellHeight: '30px',
-            float:false,
+            float: false,
             animate: false,
+            disableOneColumnMode: true,
             draggable: {
                 handle: '.grid-handler-top',
                 appendTo: 'body',
-                scroll: false
+                scroll: true,
+                scrollSensitivity: 20,
+                scrollSpeed: 10
             },
-            disableAutoScroll: true,
+            lazyLoad: false,
+            disableAutoScroll: false,
         });
 
         grid.on('dragstop', function(event, item) {
@@ -29,7 +63,6 @@ leantime.widgetController = (function () {
         });
 
         grid.on('resizestop', function(Event, item) {
-
             saveGrid();
         });
 
@@ -49,11 +82,23 @@ leantime.widgetController = (function () {
     };
 
     var saveGrid = function() {
-
         let items = grid.save();
 
-        items.forEach(function(item) {
+        // Sort items by Y position first, then X position
+        items.sort((a, b) => {
+            return a.y === b.y ? a.x - b.x : a.y - b.y;
+        });
 
+        let visibilityData = null;
+
+        if(arguments.length > 0 && arguments[0].action === "toggleWidget") {
+            visibilityData = {
+                widgetId: arguments[0].widgetId,
+                visible: arguments[0].visible
+            };
+        }
+
+        items.forEach(function(item) {
             //get hx links
             let htmxElement = jQuery(item.content).find("[hx-get]").first();
 
@@ -82,24 +127,21 @@ leantime.widgetController = (function () {
             item.gridHeight = item.h;
 
             item.content = '';
-
         });
 
-        GridStack.Utils.sort(items);
 
         jQuery.post(leantime.appUrl+"/widgets/widgetManager",
             {
                 action: "saveGrid",
-                data: items
+                data: items,
+                visibilityData: visibilityData
             },
             function(data, status){
-
             });
     };
 
 
     var removeWidget = function (el) {
-
         el.remove();
         grid.removeWidget(el, true);
         saveGrid();
@@ -112,37 +154,47 @@ leantime.widgetController = (function () {
     }
 
     var toggleWidgetVisibility = function(id, element, widget) {
-
         let grid = document.querySelector('.grid-stack').gridstack;
+        let visible = jQuery(element).is(":checked");
 
-        //When we click on a checked checkbox, the checked status will change
-        //Then it will get here. So once it is here it is already unchecked
-        //which means that we need to check if it is not checked to remove the widget
-        if (!jQuery(element).is(":checked")){
+        // Find the next available position
+        let position = findAvailablePosition(widget, grid);
 
+        if (!visible) {
             removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
-
         } else {
+            // Create the widget structure using DOM methods
+            const widgetNode = document.createElement('div');
+            widgetNode.className = 'grid-stack-item';
 
-            grid.addWidget(buildWidget(widget), {
-                w: widget.gridWidth,
-                h: widget.gridHeight,
-                minW: widget.gridMinWidth,
-                minH: widget.gridMinHeight,
-                x: widget.gridX,
-                y: widget.gridY
+            // Create the content container
+            const contentDiv = document.createElement('div');
+            contentDiv.className = `grid-stack-item-content tw-p-none ${
+                widget.widgetBackground == "default" ? "maincontentinner" : widget.background
+            }`;
+
+            // Set the inner structure
+            contentDiv.innerHTML = buildWidget(widget);
+            widgetNode.appendChild(contentDiv);
+
+            // Add to grid and make it a widget
+            grid.el.appendChild(widgetNode);
+            grid.makeWidget(widgetNode, {
+                x: widget.gridX || 0,
+                y: widget.gridY || 50,
+                w: widget.gridWidth || 2,
+                h: widget.gridHeight || 2
             });
-            htmx.process(document.body);
-            saveGrid();
 
+            // Initialize HTMX
+            htmx.process(widgetNode);
+
+            saveGrid({action: "toggleWidget", widgetId: id, visible: visible});
         }
-
     }
 
     var buildWidget = function(widget) {
-
-        var widgetHtml = '<div class="grid-stack-item">\n' +
-            '    <div class="grid-stack-item-content tw-p-none ' + (widget.widgetBackground == "default" ? "maincontentinner" : widget.background) + '">\n' +
+        return '<div class="widgetInner">' +
             '        <div class="' + (widget.widgetBackground == "default" ? "tw-pb-l" : "") + '">\n' +
             '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
             '               <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">\n' +
@@ -165,11 +217,7 @@ leantime.widgetController = (function () {
             '        </div>\n' +
             '       </div>\n' +
             '        <div class="clear"></div>\n' +
-            '    </div>\n' +
-            '</div>\n';
-
-        return jQuery(widgetHtml)[0];
-
+            '    </div>\n';
     }
 
     // Make public what you want to have public, everything else is private

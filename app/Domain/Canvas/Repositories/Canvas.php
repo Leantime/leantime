@@ -456,14 +456,14 @@ namespace Leantime\Domain\Canvas\Repositories {
 
             $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':id', $values['itemId'], PDO::PARAM_STR);
+            $stmn->bindValue(':id', $values['itemId'] ?? $values['id'], PDO::PARAM_STR);
             $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
@@ -499,6 +499,10 @@ namespace Leantime\Domain\Canvas\Repositories {
          */
         public function patchCanvasItem($id, $params): bool
         {
+
+            if(isset($params['act'])){
+                unset($params['act']);
+            }
 
             $sql = "UPDATE zp_canvas_items SET";
 

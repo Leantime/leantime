@@ -140,7 +140,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return array|bool
          *
          */
-        public function getUsersAssignedToProject($id, $teamOnly = false): array|bool
+        public function getUsersAssignedToProject($id, $includeApiUsers = false): array|bool
         {
 
             $query = "SELECT
@@ -150,44 +150,29 @@ namespace Leantime\Domain\Projects\Repositories {
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
+					zp_user.jobTitle,
+					zp_user.source,
                     zp_user.status,
                     zp_user.modified,
+                    zp_user.role,
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
                 WHERE
-				    zp_relationuserproject.projectId = :projectId
-				    AND !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL";
+                        zp_relationuserproject.projectId = :projectId
+                        AND zp_user.id IS NOT NULL ";
 
-            if($teamOnly === false) {
+                if($includeApiUsers === false) {
+				    $query .= " AND !(zp_user.source <=> 'api') ";
+                }
 
-                $query .= " AND
-				    zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                        OR zp_projects.psettings = 'all'
-                        OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
-                        OR (:requesterRole = 'admin' OR :requesterRole = 'manager')";
-            }
-
-            $query .= " AND zp_user.id IS NOT NULL
-				GROUP BY zp_user.id
-                ORDER BY zp_user.lastname";
+                $query .= "
+				    GROUP BY zp_user.id
+                    ORDER BY zp_user.lastname";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
-
-            if($teamOnly === false) {
-
-                $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
-                $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
-
-                if (session()->exists("userdata")) {
-                    $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
-                } else {
-                    $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
-                }
-
-            }
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -735,7 +720,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
-            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
             $stmn->bindValue('created', date("Y-m-d H:i:s"), PDO::PARAM_STR);
@@ -1086,54 +1071,6 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
         /**
-         * @param $id
-         * @return array
-         */
-        /**
-         * @param $id
-         * @return array
-         */
-        public function getProjectUserRelation($id): array
-        {
-
-            $query = "SELECT
-				zp_relationuserproject.userId,
-				zp_relationuserproject.projectId,
-				zp_relationuserproject.projectRole,
-				zp_projects.name,
-				zp_projects.modified,
-				zp_user.username,
-				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
-				zp_user.lastname,
-				zp_user.id,
-				zp_user.jobTitle,
-				zp_user.jobLevel,
-				zp_user.department,
-				zp_user.profileId,
-				zp_user.role,
-				zp_user.status,
-                zp_user.modified
-			FROM zp_relationuserproject
-			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
-			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-			WHERE projectId = :id AND zp_user.id IS NOT NULL";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $results = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $users = array();
-            foreach ($results as $row) {
-                $users[$row['userId']] = $row;
-            }
-
-            return $users;
-        }
-
-        /**
          * getUserProjectRelation - get all projects related to a user
          *
          * @access public
@@ -1296,6 +1233,8 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         public function patch($id, $params): bool
         {
+
+            unset($params["act"]);
 
             $sql = "UPDATE zp_projects SET ";
 

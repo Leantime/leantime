@@ -13,7 +13,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -159,6 +159,8 @@ namespace Leantime\Domain\Tickets\Services {
                 }
 
                 session()->forget("projectsettings.ticketlabels");
+
+                self::dispatchEvent("statusLabels_updated");
 
                 return $this->settingsRepo->saveSetting("projectsettings." . session("currentProject") . ".ticketlabels", serialize($statusArray));
             } else {
@@ -414,7 +416,6 @@ namespace Leantime\Domain\Tickets\Services {
 
             $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
 
-
             if ($status != '' && is_array($tickets)) {
                 $ticketCounter = 0;
                 $projectStatusLabels = [];
@@ -461,14 +462,18 @@ namespace Leantime\Domain\Tickets\Services {
             if (is_array($tickets)) {
                 $ticketCounter = 0;
                 $projectStatusLabels = [];
-                foreach ($tickets as $ticket) {
-                    if (!isset($projectStatusLabels[$ticket['projectId']])) {
-                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
-                    }
 
-                    if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
-                        $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE") {
-                        $ticketArray[] = $ticket;
+                foreach ($tickets as $ticket) {
+
+                    if($ticket['type'] !== "milestone") {
+                        if (!isset($projectStatusLabels[$ticket['projectId']])) {
+                            $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                        }
+
+                        if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                            $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE") {
+                            $ticketArray[] = $ticket;
+                        }
                     }
                 }
             }
@@ -847,7 +852,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getOpenUserTicketsByPriority($userId, $projectId): array
         {
 
-            $searchCriteria = $this->prepareTicketSearchArray(array("users" => $userId, "status" => "", "sprint" => ""));
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint" => ""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: "priority",
@@ -864,7 +869,14 @@ namespace Leantime\Domain\Tickets\Services {
                     isset($statusLabels[$row['projectId']][$row['status']]) &&
                     $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE"
                 ) {
-                    $label = $this->ticketRepository->priority[$row['priority']];
+
+                    if(empty($row['priority'])) {
+                        $row['priority'] = 999;
+                        $label = "Unset";
+                    }else{
+                        $label = $this->ticketRepository->priority[$row['priority']];
+                    }
+
                     if (isset($tickets[$row['priority']])) {
                         $tickets[$row['priority']]['tickets'][] = $row;
                     } else {
@@ -875,7 +887,7 @@ namespace Leantime\Domain\Tickets\Services {
                         $tickets[$row['priority']] = array(
                             "labelName" => $label,
                             "tickets" => array($row),
-                            "groupValue" => $row['time'],
+                            "groupValue" => $row['priority'],
                         );
                     }
                 }
@@ -1234,6 +1246,8 @@ namespace Leantime\Domain\Tickets\Services {
 
             $result = $this->ticketRepository->addTicket($values);
 
+            self::dispatchEvent("ticket_created");
+
             if ($result > 0) {
                 $values['id'] = $result;
                 $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $result;
@@ -1299,6 +1313,8 @@ namespace Leantime\Domain\Tickets\Services {
                 $error = array("status" => "error", "message" => "Headline Missing");
                 return $error;
             }
+
+            self::dispatchEvent("milestone_created");
 
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->addTicket($values);
@@ -1378,6 +1394,9 @@ namespace Leantime\Domain\Tickets\Services {
 
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
+
+                self::dispatchEvent("ticket_created");
+
                 if ($addTicketResponse !== false) {
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
@@ -1498,6 +1517,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 $this->projectService->notifyProjectUsers($notification);
 
+                self::dispatchEvent("ticket_updated");
 
                 return true;
             }
@@ -1519,10 +1539,13 @@ namespace Leantime\Domain\Tickets\Services {
 
             //$params is an array of field names. Exclude id
             unset($params["id"]);
+            unset($params["act"]);
 
             $params = $this->prepareTicketDates($params);
 
             $return = $this->ticketRepository->patchTicket($id, $params);
+
+            self::dispatchEvent("ticket_updated");
 
             //Todo: create events and move notification logic to notification module
             if (isset($params['status']) && $return) {
@@ -1576,6 +1599,8 @@ namespace Leantime\Domain\Tickets\Services {
                     }
                 }
 
+                self::dispatchEvent("ticket_updated");
+
                 //Update ticket
                 return $this->patch($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
             }
@@ -1623,6 +1648,8 @@ namespace Leantime\Domain\Tickets\Services {
 
             $values = $this->prepareTicketDates($values);
 
+            self::dispatchEvent("milestone_updated");
+
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->updateTicket($values, $params["id"]);
         }
@@ -1669,13 +1696,20 @@ namespace Leantime\Domain\Tickets\Services {
                 if (!$this->ticketRepository->addTicket($values)) {
                     return false;
                 }
+
+                self::dispatchEvent("ticket_created");
+
             } else {
                 //Update Ticket
 
                 if (!$this->ticketRepository->updateTicket($values, $subtaskId)) {
                     return false;
                 }
+
+                self::dispatchEvent("ticket_updated");
             }
+
+
 
             return true;
         }
@@ -1696,6 +1730,8 @@ namespace Leantime\Domain\Tickets\Services {
                     return false;
                 }
             }
+
+            self::dispatchEvent("ticket_updated");
 
             return true;
         }
@@ -1758,6 +1794,7 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
+            self::dispatchEvent("ticket_updated");
 
 
             return true;
@@ -1781,6 +1818,8 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if ($this->ticketRepository->delticket($id)) {
+
+                self::dispatchEvent("ticket_deleted");
                 return true;
             }
 
@@ -1822,6 +1861,7 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if ($this->ticketRepository->delMilestone($id)) {
+                self::dispatchEvent("milestone_deleted");
                 return true;
             }
 
@@ -1942,7 +1982,7 @@ namespace Leantime\Domain\Tickets\Services {
                     'id' => 'sprint',
                     'field' => 'sprint',
                     'class' => '',
-                    'label' => 'list',
+                    'label' => 'sprint',
                 ],
 
                 /*
@@ -2048,9 +2088,8 @@ namespace Leantime\Domain\Tickets\Services {
          * @param $params
          * @return array
          * @throws BindingResolutionException
-         * @api
-*
-*/
+        *
+        */
         public function getTicketTemplateAssignments($params): array
         {
 

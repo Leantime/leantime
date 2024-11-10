@@ -174,12 +174,12 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            if (Cache::store("installation")->has("enabledPlugins")) {
-                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", Cache::store("installation")->get("enabledPlugins"), array("enabledOnly" => true));
+            if (Cache::store("installation")->has("plugins.enabledPlugins")) {
+                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", Cache::store("installation")->get("plugins.enabledPlugins"), array("enabledOnly" => true));
                 return $enabledPlugins;
             }
 
-            Cache::store("installation")->set("enabledPlugins", $this->getAllPlugins(enabledOnly: true));
+            Cache::store("installation")->set("plugins.enabledPlugins", $this->getAllPlugins(enabledOnly: true));
 
             /**
              * Filters session array of enabled plugins before returning
@@ -188,7 +188,7 @@ namespace Leantime\Domain\Plugins\Services {
              */
             return self::dispatch_filter(
                 hook: "beforeReturnCachedPlugins",
-                payload: Cache::store("installation")->get("enabledPlugins"),
+                payload: Cache::store("installation")->get("plugins.enabledPlugins"),
                 available_params: array("enabledOnly" => true));
 
         }
@@ -608,7 +608,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             Cache::store('installation')->forget("domainEvents");
             Cache::store('installation')->forget("commands");
-            Cache::store('installation')->forget("enabledPlugins");
+            Cache::store('installation')->forget("plugins.enabledPlugins");
 
             session()->forget("template_paths");
             session()->forget("composers");

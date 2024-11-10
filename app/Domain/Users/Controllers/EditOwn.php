@@ -5,7 +5,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Theme as ThemeCore;
+    use Leantime\Core\UI\Theme as ThemeCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;

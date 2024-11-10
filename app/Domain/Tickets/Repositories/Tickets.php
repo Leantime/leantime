@@ -538,6 +538,8 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
             } elseif ($sort == "duedate") {
                 $query .= " ORDER BY (zp_tickets.dateToFinish = '0000-00-00 00:00:00'), zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            } elseif ($sort == "priority") {
+                $query .= " ORDER BY zp_tickets.priority ASC, zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             } elseif ($sort == "date") {
                 $query .= " ORDER BY zp_tickets.date DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }
@@ -665,13 +667,13 @@ namespace Leantime\Domain\Tickets\Repositories {
                     zp_projects.details AS projectDescription
                 FROM
                     zp_tickets
-                LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-                LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-                  WHERE (
-                    zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                    OR zp_projects.psettings = 'all'
-                    OR (requestor.role >= 40)
-                )
+                    LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+                      WHERE (
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (requestor.role >= 40)
+                    )
             SQL;
 
             //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)

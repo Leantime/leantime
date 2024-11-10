@@ -51,9 +51,11 @@ namespace Leantime\Domain\Widgets\Controllers {
         {
             $availableWidgets = $this->widgetService->getAll();
             $activeWidgets = $this->widgetService->getActiveWidgets(session("userdata.id"));
+            $newWidgets = $this->widgetService->getNewWidgets(session("userdata.id"));
 
             $this->tpl->assign("availableWidgets", $availableWidgets);
             $this->tpl->assign("activeWidgets", $activeWidgets);
+            $this->tpl->assign("newWidgets", $newWidgets);
 
             return $this->tpl->displayPartial('widgets.widgetManager');
         }
@@ -66,8 +68,24 @@ namespace Leantime\Domain\Widgets\Controllers {
          */
         public function post(array $params): HttpFoundation\Response
         {
-            if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
-                $this->settingRepo->saveSetting("usersettings." . session("userdata.id") . ".dashboardGrid", serialize($params['data']));
+            if (isset($params['action'])) {
+                switch($params['action']) {
+                    case 'saveGrid':
+                        if (isset($params['data']) && $params['data'] != '') {
+
+                            $this->widgetService->saveGrid($params['data'], session("userdata.id"));
+
+                            if (isset($params['visibilityData']) && $params['visibilityData'] !== null) {
+                                if ($params['visibilityData']['visible']) {
+                                    $this->widgetService->markWidgetAsSeen(
+                                        session("userdata.id"),
+                                        $params['visibilityData']['widgetId']
+                                    );
+                                }
+                            }
+                        }
+                        break;
+                }
             }
             return new \Symfony\Component\HttpFoundation\Response();
         }

@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Clients\Services;
 
-use Leantime\Core\Template as TemplateCore;
+use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 

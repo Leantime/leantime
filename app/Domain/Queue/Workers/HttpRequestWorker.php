@@ -41,6 +41,9 @@ class HttpRequestWorker {
 
             } catch (GuzzleException $e) {
                 report($e);
+
+                //Temp to clear out http requests
+                $this->queue->deleteMessageInQueue($request['msghash']);
             }
 
         }

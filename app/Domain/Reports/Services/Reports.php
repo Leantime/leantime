@@ -11,7 +11,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\UI\Template as TemplateCore;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
@@ -140,8 +140,8 @@ namespace Leantime\Domain\Reports\Services {
          * @param $projectId
          * @return array|false
          *
-     * @api
-     */
+         * @api
+         */
         public function getFullReport($projectId): false|array
         {
             return $this->reportRepository->getFullReport($projectId);
@@ -306,13 +306,14 @@ namespace Leantime\Domain\Reports\Services {
          * @return bool|PromiseInterface
          * @throws BindingResolutionException
          *
-     * @api
-     */
+         * @api
+         */
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
             //Only send once a day
-            $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
+
+            $allowTelemetry = app('config')->allowTelemetry ?? true;
 
             if ($allowTelemetry === true) {
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
@@ -327,6 +328,7 @@ namespace Leantime\Domain\Reports\Services {
                     $httpClient = new Client();
 
                     try {
+
                         $data_string = json_encode($telemetry);
 
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
@@ -339,6 +341,7 @@ namespace Leantime\Domain\Reports\Services {
                         });
 
                         return $promise;
+
                     } catch (\Exception $e) {
                         report($e);
                         return false;

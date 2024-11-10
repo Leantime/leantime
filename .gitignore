@@ -118,3 +118,9 @@ config/.env
 
 # Local Dev Files
 .dev/docker-compose.local.yaml
+
+#codebuddy files
+.codebuddy
+
+#vscode
+.vscode

@@ -22,7 +22,6 @@ class Subtasks extends HtmxController
      */
     private Tickets $ticketService;
 
-    private Language $language;
 
     /**
      * Controller constructor
@@ -30,10 +29,9 @@ class Subtasks extends HtmxController
      * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Tickets $ticketService, Language $language): void
+    public function init(Tickets $ticketService): void
     {
         $this->ticketService = $ticketService;
-        $this->language = $language;
     }
 
     /**

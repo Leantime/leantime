@@ -143,6 +143,7 @@ namespace Leantime\Domain\Setting\Repositories {
 
                 session(["isInstalled" => true]);
                 return true;
+
             } catch (Exception $e) {
                 report($e);
                 session(["isInstalled" => false]);

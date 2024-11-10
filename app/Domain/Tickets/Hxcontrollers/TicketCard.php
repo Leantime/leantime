@@ -20,6 +20,7 @@ class TicketCard extends HtmxController
      * @var Tickets
      */
     private Tickets $ticketService;
+    private Timesheets $timesheetService;
 
     /**
      * Controller constructor
@@ -27,9 +28,10 @@ class TicketCard extends HtmxController
      * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Tickets $ticketService): void
+    public function init(Tickets $ticketService, Timesheets $timesheetService): void
     {
         $this->ticketService = $ticketService;
+        $this->timesheetService = $timesheetService;
     }
 
     /**
@@ -56,6 +58,7 @@ class TicketCard extends HtmxController
             "type" => "milestone",
             "currentProject" => session("currentProject"),
         ]);
+
         $this->tpl->assign('milestones', $allProjectMilestones);
 
 
@@ -67,8 +70,26 @@ class TicketCard extends HtmxController
     public function get($params): void
     {
 
-        $id = (int)($params['id']);
+        $id = $params['id'] ?? $params['ticketId'] ?? null;
+        $cardType = $params['type'] ?? "full";
+
         $ticket = $this->ticketService->getTicket($id);
+        $onTheClock = $this->timesheetService->isClocked(session("userdata.id"));
+
+        $this->tpl->assign('cardType', $cardType);
+        $this->tpl->assign('onTheClock', $onTheClock);
+        $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
+        $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
+        $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
+
+        $allProjectMilestones = $this->ticketService->getAllMilestones([
+            "sprint" => '',
+            "type" => "milestone",
+            "currentProject" => $ticket->projectId,
+        ]);
+        $this->tpl->assign('milestones', $allProjectMilestones);
+
+        $this->tpl->assign('row', (array)$ticket);
 
     }
 }

@@ -12,7 +12,6 @@ parameters:
         - bin/
     excludePaths:
         - app/Plugins/*/vendor/*
-        - app/Plugins/*
     scanDirectories:
         - vendor
         - config

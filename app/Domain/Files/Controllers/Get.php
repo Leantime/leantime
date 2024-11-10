@@ -118,7 +118,7 @@ class Get extends Controller
                     $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
                     $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
                 }else{
-                    error_log("not caching");
+                    Log::warning("Not caching");
                 }
 
                 $oStreamResponse->setCallback(function () use ($fullPath) {

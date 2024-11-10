@@ -13,10 +13,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Reactions\Models\Reactions;
     use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
-    use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Domain\Setting\Services\Setting;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Users\Services\Users as UserService;
+    use Symfony\Component\HttpFoundation\RedirectResponse;
     use Symfony\Component\HttpFoundation\Response;
 
     /**
@@ -30,7 +31,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private TimesheetService $timesheetService;
         private CommentService $commentService;
         private ReactionService $reactionsService;
-        private Setting $settingRepo;
+        private Setting $settingsSvc;
 
         /**
          * @param ProjectService   $projectService
@@ -50,7 +51,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             TimesheetService $timesheetService,
             CommentService $commentService,
             ReactionService $reactionsService,
-            Setting $settingRepo
+            Setting $settingsSvc
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -58,7 +59,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->timesheetService = $timesheetService;
             $this->commentService = $commentService;
             $this->reactionsService = $reactionsService;
-            $this->settingRepo = $settingRepo;
+            $this->settingsSvc = $settingsSvc;
 
             session(["lastPage" => BASE_URL . "/dashboard/show"]);
         }
@@ -88,7 +89,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign("progressSteps", $progressSteps);
             $this->tpl->assign("percentDone", $percentDone);
 
-            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($currentProjectId);
+            $project['assignedUsers'] = $this->projectService->getUsersAssignedToProject($currentProjectId);
             $this->tpl->assign('project', $project);
 
             $userReaction = $this->reactionsService->getUserReactions(session("userdata.id"), 'project', $currentProjectId, Reactions::$favorite);
@@ -134,7 +135,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $currentProjectId));
 
-            $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
+            $completedOnboarding = $this->settingsSvc->onboardingHandler();
+            if($completedOnboarding instanceof RedirectResponse) {
+                return $completedOnboarding;
+            }
+
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
             // TICKETS

@@ -10,7 +10,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Core\Template as TemplateCore;
+use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
@@ -1301,19 +1301,6 @@ class Projects
     }
 
     /**
-     * Retrieves the relation between a project and its users.
-     *
-     * @param int $id The ID of the project.
-     * @return array The relation between the project and its users.
-     *
-     * @api
-     */
-    public function getProjectUserRelation($id): array
-    {
-        return $this->projectRepository->getProjectUserRelation($id);
-    }
-
-    /**
      * Updates a project with the given parameters.
      *
      * @param int $id The ID of the project.
@@ -1609,8 +1596,12 @@ class Projects
      *
      *  @api
      */
-    public function getProjectIdbyName($allProjects, $projectName)
+    public function getProjectIdbyName(?array $allProjects, string $projectName)
     {
+        if($allProjects == null) {
+            $allProjects = $this->getAll();
+        }
+
         foreach ($allProjects as $project) {
             if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
                 return $project['id'];

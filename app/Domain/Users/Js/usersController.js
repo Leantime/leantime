@@ -166,13 +166,13 @@ leantime.usersController = (function () {
         function StrengthChecker(PasswordParameter)
         {
             if (strongPassword.test(PasswordParameter)) {
-                strengthBadge.style.backgroundColor = "#468847";
+                strengthBadge.style.backgroundColor = "#107530";
                 strengthBadge.textContent = leantime.i18n.__('label.strong');
             } else if (mediumPassword.test(PasswordParameter)) {
-                strengthBadge.style.backgroundColor = '#f89406';
+                strengthBadge.style.backgroundColor = '#C5850D';
                 strengthBadge.textContent = leantime.i18n.__('label.medium');
             } else {
-                strengthBadge.style.backgroundColor = '#b94a48';
+                strengthBadge.style.backgroundColor = '#CC6B6B';
                 strengthBadge.textContent = leantime.i18n.__('label.weak');
             }
         }

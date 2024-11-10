@@ -72,21 +72,6 @@ $companySettings = $tpl->get('companySettings');
                                 </div>
                             </div>
                             <br />
-
-                            <?php $tpl->dispatchTplEvent('beforeTelemetrySettings'); ?>
-
-                            <div class="row" id="telemetryContainer">
-                                <div class="col-md-2">
-                                    <label><?=$tpl->__("label.send_telemetry")?></label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive"  <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '';?> />
-
-                                    <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
-                                    <div class="clearall"></div><br />
-                                </div>
-                            </div>
-                                    <br />
                             <h4 class="widgettitle title-light"><span
                                     class="fa fa-cog"></span><?php echo $tpl->__('subtitles.defaults'); ?>
                             </h4>

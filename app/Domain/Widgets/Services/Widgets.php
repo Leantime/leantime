@@ -2,9 +2,12 @@
 
 namespace Leantime\Domain\Widgets\Services;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Widgets\Models\Widget;
+use Leantime\Domain\Users\Services\Users;
 
 /**
  *
@@ -33,6 +36,9 @@ class Widgets
      * @api
      */
     public Setting $settingRepo;
+
+    private const WIDGET_HISTORY_KEY = "usersettings.%d.widgetHistory";
+    private const ACTIVE_WIDGETS_KEY = "usersettings.%d.dashboardGrid";
 
     /**
      * __construct method.
@@ -124,6 +130,30 @@ class Widgets
     }
 
     /**
+     * Register a new widget.
+     *
+     * @param Widget $widget The widget to register.
+     * @return void
+     *
+     * @api
+     */
+    public function registerWidget(Widget $widget): void
+    {
+        $this->availableWidgets[$widget->id] = $widget;
+
+        // Update widget history for all users
+        $users = app()->make(Users::class)->getAll(true);
+        foreach($users as $user) {
+            $widgetHistory = $this->getWidgetHistory($user['id']);
+            // Don't add to history during registration - let users discover it
+            if(!isset($widgetHistory[$widget->id])) {
+                $widget->isNew = true;
+                continue;
+            }
+        }
+    }
+
+    /**
      * Retrieves all available widgets.
      *
      * @return array The array of available widgets.
@@ -146,23 +176,26 @@ class Widgets
     public function getActiveWidgets(int $userId): array
     {
 
-        $activeWidgets = $this->settingRepo->getSetting("usersettings." . $userId . ".dashboardGrid");
+        $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
+        if(Cache::has($activeWidgetKey)) {
+            return Cache::get($activeWidgetKey);
+        }
+
+        $activeWidgets = $this->settingRepo->getSetting($activeWidgetKey);
+        $widgetHistory = $this->getWidgetHistory($userId);
         $widgets = $this->defaultWidgets;
 
         if ($activeWidgets && $activeWidgets != '') {
             $unserializedData =  unserialize($activeWidgets);
-            if (is_array($unserializedData)) {
-                $unserializedData = array_sort($unserializedData, function ($a, $b) {
-
-                    $first = intval($a['y'] . $a['x']);
-                    $second = intval(($b['y'] ?? 0) . ($b['x'] ?? 0));
-                    return $first - $second;
-                });
-            }
 
             $widgets = array();
             foreach ($unserializedData as $key => $widget) {
+                // Check if this widget exists in available widgets but not in user's stored widgets
+                if (isset($this->availableWidgets[$widget["id"]]) && !isset($widgetHistory[$widget["id"]])) {
+                    $widget["isNew"] = true;
+                }
+
                 if (isset($this->availableWidgets[$widget["id"]])) {
                     $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
                     $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
@@ -177,6 +210,11 @@ class Widgets
             }
         }
 
+        //Sort Widgets
+        $widgets = array_sort($widgets, [['gridY', 'asc'],['gridX', 'asc']]);
+
+        Cache::set($activeWidgetKey, $widgets, CarbonImmutable::now()->addDays(30));
+
         return $widgets;
     }
 
@@ -190,6 +228,71 @@ class Widgets
      */
     public function resetDashboard(int $userId): void
     {
-        $this->settingRepo->deleteSetting("usersettings." . $userId . ".dashboardGrid");
+
+        $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
+
+        Cache::forget($activeWidgetKey);
+        $this->settingRepo->deleteSetting($activeWidgetKey);
+    }
+
+    /**
+     * Get new widgets for the user.
+     *
+     * @param int $userId The ID of the user.
+     * @return array An array of new widgets.
+     *
+     * @api
+     */
+    public function getNewWidgets(int $userId): array
+    {
+        $availableWidgets = $this->getAll();
+        $widgetHistory = $this->getWidgetHistory($userId);
+        $activeWidgets = $this->getActiveWidgets($userId);
+
+        $newWidgets = [];
+
+        foreach ($availableWidgets as $widgetId => $widget) {
+            if (!isset($widgetHistory[$widgetId]) && !isset($activeWidgets[$widgetId])) {
+                $widget->isNew = true;
+                $newWidgets[$widgetId] = $widget;
+            }
+        }
+        return $newWidgets;
+    }
+
+    /**
+     * Get widget history for a user
+     *
+     * @param int $userId
+     * @return array
+     */
+    private function getWidgetHistory(int $userId): array
+    {
+        $historyKey = sprintf(self::WIDGET_HISTORY_KEY, $userId);
+        $history = $this->settingRepo->getSetting($historyKey);
+        return $history ? unserialize($history) : [];
+    }
+
+    /**
+     * Mark a widget as seen by a user
+     *
+     * @param int $userId
+     * @param string $widgetId
+     */
+    public function markWidgetAsSeen(int $userId, string $widgetId): void
+    {
+        $historyKey = sprintf(self::WIDGET_HISTORY_KEY, $userId);
+        $history = $this->getWidgetHistory($userId);
+        $history[$widgetId] = time();
+        $this->settingRepo->saveSetting($historyKey, serialize($history));
+    }
+
+    public function saveGrid($data, $userId) {
+        $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
+        Cache::forget($activeWidgetKey);
+        $this->settingRepo->saveSetting($activeWidgetKey,
+            serialize($data)
+        );
+
     }
 }
