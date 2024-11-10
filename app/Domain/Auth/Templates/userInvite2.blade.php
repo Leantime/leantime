@@ -2,64 +2,10 @@
 
 @section('content')
 
-<div class="projectSteps">
-    <div class="progressWrapper">
-        <div class="progress">
-            <div
-                id="progressChecklistBar"
-                class="progress-bar progress-bar-success tx-transition"
-                role="progressbar"
-                aria-valuenow="0"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 37%"
-            ><span class="sr-only">50%</span></div>
-        </div>
+    @include("auth::partials.onboardingProgress", ['percentComplete' => 37, 'current' => 'theme', 'completed' => ['account']])
 
-
-        <div class="step complete" style="left: 12%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 1
-                </span>
-            </a>
-        </div>
-
-        <div class="step current" style="left: 37%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle"></i> Step 2
-                </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 62%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle"></i> Step 3
-                </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 88%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle"></i> Step 4
-                </span>
-            </a>
-        </div>
-
-    </div>
-</div>
-<br /><br /><br />
-
-
-<h2>{{ __("text.point_to_where_it_hurts") }}</h2>
-
+<h2>👀 Determining A Visual Experience</h2>
+<p>You can choose a theme and font that is easy on your brain.</p>
 
 <div class="regcontent">
 
@@ -68,34 +14,46 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <p>{{ __("text.challenges_brings_you_here") }}<br /><br /></p>
+        <div class="row-fluid">
+            <div class="form-group">
+                <label for="themeSelect">Optimal Stimulation</label>
+                <span class='field tw-flex'>
 
+                     <?php
+                     $themeAll = $themeCore->getAll();
+                     foreach ($themeAll as $key => $theme) { ?>
+                         <x-global::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw-w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
+                            <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px;" />
+                                 <br /><?= $tpl->__($theme['name']) ?>
+                         </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'organization'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">🤯</span> I have too many things to manage and organize
-        </x-global::selectable>
+                    <?php } ?>
+                </span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label>Readability</label>
+                <div class="tw-flex">
+                    @foreach($availableFonts as $key => $font)
 
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'progress'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">📉</span> I don't feel like I'm making progress
-        </x-global::selectable>
+                        <x-global::selectable  data-tippy-content="{{ $fontTooltips[$key] }}" :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
+                            <label for="selectable-{{ $key }}" class="font tw-w-[150px]"
+                                   style="font-family:'{{ $font }}'; font-size:16px;">
+                                The quick brown fox jumps over the lazy dog
+                            </label>
+                        </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'adoption'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji"> 👥</span> I need a tool that my team will actually use
-        </x-global::selectable>
+                    @endforeach
+                </div>
 
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'price'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">💰</span> My current tool is too expensive
-        </x-global::selectable>
+            </div>
 
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'brain'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji"> 🧠</span> The other tools don't organize the way my brain does
-        </x-global::selectable>
-
-        <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'collaboration'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji"> 🥸</span> I was just invited to collaborate
-        </x-global::selectable>
-        <br /> <br />
-        <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+        </div>
+        <br />
+        <div class="tw-text-right">
+            <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
+            <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+        </div>
 
 
     </form>

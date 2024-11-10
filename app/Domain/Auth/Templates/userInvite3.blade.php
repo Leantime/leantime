@@ -2,64 +2,10 @@
 
 @section('content')
 
-<div class="projectSteps">
-    <div class="progressWrapper">
-        <div class="progress">
-            <div
-                id="progressChecklistBar"
-                class="progress-bar progress-bar-success tx-transition"
-                role="progressbar"
-                aria-valuenow="0"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 62%"
-            ><span class="sr-only">62%</span></div>
-        </div>
+@include("auth::partials.onboardingProgress", ['percentComplete' => 64, 'current' => 'personalization', 'completed' => ['account', 'theme']])
 
-
-        <div class="step complete" style="left: 12%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 1
-                </span>
-            </a>
-        </div>
-
-        <div class="step complete" style="left: 37%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 2
-                </span>
-            </a>
-        </div>
-
-        <div class="step current" style="left: 62%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle"></i> Step 3
-                </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 88%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    <i class="fa-regular fa-circle"></i> Step 4
-                </span>
-            </a>
-        </div>
-
-    </div>
-</div>
-<br /><br /><br />
-
-
-<h2>Managing work is about more than long To Do lists,<br />
-    it's about reaching goals and making impact</h2>
+<h2>🎨 Creating A Comfortable View</h2>
+<p>Your favorite color mode and scheme.<br /></p>
 
 <div class="regcontent">
 
@@ -68,35 +14,44 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <p>
-            How will your life change if you solve your current challenges?<br /><br /></p>
 
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'accomplish'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">🚀</span> I feel like I get to accomplish something
-        </x-global::selectable>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="colormode" >{{ __('label.colormode') }}</label>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'manageable'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">💪</span> Things will feel manageable
-        </x-global::selectable>
+                <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
+                    <label for="colormode-light" class="tw-w-[200px]">
+                        <i class="fa-solid fa-sun tw-font-xxl"></i>
+                    </label>
+                </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'teamWork'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji"> 👥</span>  My team will work better together
-        </x-global::selectable>
+                <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
+                    <label for="colormode-light" class="tw-w-[200px]">
+                        <i class="fa-solid fa-moon tw-font-xxl"></i>
+                    </label>
+                </x-global::selectable>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <label>Color Scheme</label>
+                @foreach($availableColorSchemes as $key => $scheme )
+                    <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
+                        <label for="color-{{ $key }}" class="colorCircle"
+                               style="background:linear-gradient(135deg, {{ $scheme["primaryColor"] }} 20%, {{ $scheme["secondaryColor"] }} 100%);">
+                        </label>
+                    </x-global::selectable>
+                @endforeach
 
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'safeMoney'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">💰</span> I will safe money
-        </x-global::selectable>
-
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'relateTasks'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji">🎯</span> I will be able to relate my tasks to the goals I have
-        </x-global::selectable>
-
-        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'justWork'" :label="''" class="tw-w-full tw-text-left">
-            <span class="emoji"> 🥸</span> I just work here
-        </x-global::selectable>
+            </div>
+        </div>
         <br /> <br />
-        <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+        <div class="tw-text-right">
+            <a href="{{BASE_URL}}/auth/userInvite/{{$inviteId}}?step=2" class="btn btn-secondary" style="width:auto; margin-right:10px">Back</a>
+            <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+        </div>
 
 
     </form>

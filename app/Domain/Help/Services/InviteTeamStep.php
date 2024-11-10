@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Setting\Repositories\Setting;
