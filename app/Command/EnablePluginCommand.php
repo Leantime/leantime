@@ -2,8 +2,8 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -20,8 +20,6 @@ class EnablePluginCommand extends AbstractPluginCommand
 {
     /**
      * {@inheritdoc}
-     *
-     * @return void
      */
     protected function configure(): void
     {
@@ -30,15 +28,13 @@ class EnablePluginCommand extends AbstractPluginCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     protected function executeCommand(): int
     {
         $name = $this->input->getArgument('plugin');
         $plugin = $this->getPlugin($name);
 
-        if (!isset($plugin->id)) {
+        if (! isset($plugin->id)) {
             throw new RuntimeException(sprintf('Plugin %s is not installed', $plugin->name));
         }
 
@@ -46,7 +42,7 @@ class EnablePluginCommand extends AbstractPluginCommand
             throw new RuntimeException(sprintf('Plugin %s is already enabled', $plugin->name));
         }
 
-        if (!$this->confirm(sprintf('Enable plugin %s', $plugin->name))) {
+        if (! $this->confirm(sprintf('Enable plugin %s', $plugin->name))) {
             return Command::SUCCESS;
         }
 

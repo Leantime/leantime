@@ -2,14 +2,14 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * Class SaveSettingCommand
@@ -22,21 +22,16 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 class SaveSettingCommand extends Command
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         parent::configure();
-        $this->addOption('key', null, InputOption::VALUE_REQUIRED, "Setting Key")
-             ->addOption('value', null, InputOption::VALUE_REQUIRED, "Setting Value");
+        $this->addOption('key', null, InputOption::VALUE_REQUIRED, 'Setting Key')
+            ->addOption('value', null, InputOption::VALUE_REQUIRED, 'Setting Value');
     }
 
     /**
      * Execute the command
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      *
      * @return int 0 if everything went fine, or an exit code.
      *
@@ -44,21 +39,21 @@ class SaveSettingCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        !defined('BASE_URL') && define('BASE_URL', "");
-        !defined('CURRENT_URL') && define('CURRENT_URL', "");
+        ! defined('BASE_URL') && define('BASE_URL', '');
+        ! defined('CURRENT_URL') && define('CURRENT_URL', '');
 
         $io = new SymfonyStyle($input, $output);
         $key = $input->getOption('key');
         $value = $input->getOption('value');
 
         if ($key == '') {
-            $io->error("key parameter needs to be set");
+            $io->error('key parameter needs to be set');
 
             return Command::INVALID;
         }
 
         if ($value == '') {
-            $io->error("value parameter needs to be set");
+            $io->error('value parameter needs to be set');
 
             return Command::INVALID;
         }
@@ -67,8 +62,8 @@ class SaveSettingCommand extends Command
             $setting = app()->make(Setting::class);
             $result = $setting->saveSetting($key, $value);
 
-            if (!$result) {
-                $io->error("Failed to save setting");
+            if (! $result) {
+                $io->error('Failed to save setting');
 
                 return Command::FAILURE;
             }
@@ -78,7 +73,7 @@ class SaveSettingCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->success("Saved Successfully");
+        $io->success('Saved Successfully');
 
         return Command::SUCCESS;
     }

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Cron\Controllers {
 
     use Illuminate\Support\Facades\Log;
     use Leantime\Core\Configuration\Environment;
+    use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Events\EventDispatcher;
     use PHPMailer\PHPMailer\Exception;
@@ -49,15 +50,14 @@ namespace Leantime\Domain\Cron\Controllers {
 
                     register_shutdown_function(function () use ($output) {
                         if ($this->config->debug) {
-
                             Log::info("Command Output: " . $output->fetch());
                             Log::info("Cron run finished");
-
                         }
                     });
 
                 /** @return never **/
-                (new \Leantime\Core\Console\ConsoleKernel())->call('schedule:run', [], $output);
+                $consoleKernel = app()->make(ConsoleKernel::class);
+                $consoleKernel->call('schedule:run', [], $output);
 
 
             });
