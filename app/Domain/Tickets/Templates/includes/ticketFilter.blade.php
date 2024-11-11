@@ -115,8 +115,6 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     {{ __('buttons.search') }}
                 </x-global::forms.button>
             </div>
-
-
         </x-slot:cardContent>
     </x-global::actions.dropdown>
 
