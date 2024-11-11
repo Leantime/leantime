@@ -4,6 +4,8 @@ namespace Leantime\Domain\Plugins\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
 
@@ -36,6 +38,7 @@ class Registration
         EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () use ($pluginId, $languages) {
 
             $language = app()->make(Language::class);
+            $config = app()->make(Environment::class);
 
             try {
                 $languageArray = Cache::store('installation')->get($pluginId.'.languageArray', []);
@@ -55,7 +58,7 @@ class Registration
                 $languageArray += parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini', true);
             }
 
-            if ((($language = session('usersettings.language') ?? $this->config->language) !== 'en-US') && in_array($language, $languages)) {
+            if ((($language = session('usersettings.language') ?? $config->language) !== 'en-US') && in_array($language, $languages)) {
 
                 if (! Cache::store('installation')->has($pluginId.'.language.'.$language)) {
                     Cache::store('installation')->put(
@@ -80,7 +83,7 @@ class Registration
                 Log::error($e);
             }
 
-            $this->language->ini_array = array_merge($this->language->ini_array, $languageArray);
+            $language->ini_array = array_merge($language->ini_array, $languageArray);
 
         }, 5);
 

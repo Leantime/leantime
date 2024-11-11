@@ -91,7 +91,8 @@ class Language
      * @param  Environment  $config  The configuration environment.
      * @param  ApiRequest  $request  The API request object.
      */
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->config = app('config');
         $this->request = app('request');
@@ -167,9 +168,9 @@ class Language
             return $this->language;
         }
 
-        $language = \Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
-        $language = str_replace("_", "-", $language);
-        if($language && $this->isValidLanguage($language)) {
+        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', 0, 2);
+        $language = str_replace('_', '-', $language);
+        if ($language && $this->isValidLanguage($language)) {
             return $this->language;
         }
 

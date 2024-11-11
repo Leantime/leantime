@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CodebuddyPersistentProjectState">
+    <option name="promptHistory">
+      <list>
+        <option value="Trying to run my unit tests for the theme class. Unfortunately the tests fail with 1) ThemeTest: Get default color scheme with color env set&#10; Test  tests/Unit/app/Core/UI/ThemeTest.php:testGetDefaultColorSchemeWithColorEnvSet&#10;                                                                                                      &#10;  [Illuminate\Contracts\Container\BindingResolutionException] Target class [session] does not exist. " />
+        <option value="Trying to run unit tests for this laravel application but it seems to be failing. How do I need to configure codeception to run these tests with my application?" />
+        <option value="Can you fill out the .env.test file with appropriate environment variables especially given our custom configuration management" />
+        <option value="I'm getting the following error message: Codeception PHP Testing Framework v5.1.2 https://stand-with-ukraine.pp.ua&#10;&#10;In Macroable.php line 86:&#10;                                                                            &#10;  [BadMethodCallException]                                                  &#10;  Method Leantime\Core\Application::setHasBeenBootstrapped does not exist. " />
+        <option value="Actually, I realized that the &quot;bootstrap_minimal&quot; function was probably not the right way to go about it. Can you refactor the test suite and application classes to make it work the &quot;laravel way&quot; " />
+        <option value="Please continue with the rest" />
+        <option value="I am still struggling to get this to work. Our database is managed a little differently than Laravel's but the testCase set up is attempting to load the laravel database transaction which leads to the following error message: &#10;1) ApiClientTest: O auth2&#10; Test  tests/Unit/app/Core/ApiClientTest.php:testOAuth2&#10;                                                                        &#10;  [ErrorException] Trying to access array offset on value of type null  &#10;                                                                        &#10;/Volumes/Source/leantime-oss/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:255&#10;/Volumes/Source/leantime-oss/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php:402&#10;/Volumes/Source/leantime-oss/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php:145&#10;/Volumes/Source/leantime-oss/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php:92&#10;&#10;I'd like to try to set up the test case without laravel's db for now since this will be added at a later time. What would be the best way to go about that? " />
+      </list>
+    </option>
     <option name="selectedModel" value="codebuddy:CLAUDE_3.5_SONNET_V7" />
+    <option name="ttsEnabled" value="false" />
   </component>
 </project>

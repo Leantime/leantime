@@ -78,9 +78,9 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
-        "codeception/codeception": "^5.0",
+        "codeception/codeception": "^5.1",
         "codeception/module-phpbrowser": "*",
-        "codeception/module-asserts": "*",
+        "codeception/module-asserts": "^3.0",
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
         "phpcsstandards/phpcsextra": "^1.2.1",
@@ -88,7 +88,9 @@
         "phpstan/phpstan": "^1.10",
         "codeception/stub": "^4.1",
         "laravel/pint": "^1.17",
-        "leantime/leantime-documentor": "dev-main"
+        "leantime/leantime-documentor": "dev-main",
+        "codeception/module-laravel": "^3.1",
+        "codeception/module-rest": "^3.4"
 
     },
     "provide": {
@@ -147,6 +149,9 @@
         "psr-4": {
             "Leantime\\": [
                 "app/"
+            ],
+            "Unit\\": [
+                "tests/Unit/"
             ],
             "": "app/"
         },

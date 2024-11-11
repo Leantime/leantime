@@ -4,9 +4,8 @@ namespace Test\Unit;
 
 use GuzzleHttp\HandlerStack;
 use Leantime\Core\Http\Client\ApiClient;
-use PHPUnit\Framework\TestCase;
 
-class ApiClientTest extends TestCase
+class ApiClientTest extends \Unit\TestCase
 {
     public function testOAuth2(): void
     {

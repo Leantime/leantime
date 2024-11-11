@@ -11,12 +11,12 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\Finder;
 
 #[AsCommand(
-    name: 'events:check-listeners',
+    name: 'event:check-listeners',
     description: 'Validate event listener paths against available events',
 )]
 class CheckEventListeners extends Command
 {
-    protected $signature = 'events:check-listeners {--debug : Show detailed debug information} {--clear-cache : Clear the event cache}';
+    protected $signature = 'event:check-listeners {--debug : Show detailed debug information} {--clear-cache : Clear the event cache}';
 
     protected $description = 'Check if all registered event listeners match existing events';
 

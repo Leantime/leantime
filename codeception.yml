@@ -1,5 +1,4 @@
 namespace: Tests
-bootstrap: bootstrap.php
 support_namespace: Support
 paths:
   tests: tests
@@ -7,7 +6,21 @@ paths:
   data: tests/Support/Data
   support: tests/Support
   envs: tests/_envs
+  log: tests/_log
 actor_suffix: Tester
 extensions:
   enabled:
     - Codeception\Extension\RunFailed
+settings:
+  bootstrap: ../../bootstrap/app.php
+  memory_limit: 1024M
+  colors: true
+  error_level: E_ALL & ~E_DEPRECATED
+
+coverage:
+  enabled: true
+  include:
+    - app/*
+
+params:
+  - tests/_envs/.env.test

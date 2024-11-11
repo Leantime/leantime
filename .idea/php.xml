@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BladeDebugConfiguration">
-    <cachePath>$PROJECT_DIR$/cache/views</cachePath>
+    <cachePath>$PROJECT_DIR$/storage/framework/views</cachePath>
   </component>
   <component name="LaravelPint">
     <laravel_pint_settings>
@@ -31,7 +31,7 @@
     </phpcs_settings>
   </component>
   <component name="PhpExternalFormatter">
-    <option name="externalFormatter" value="PHP_CS_FIXER" />
+    <option name="externalFormatter" value="LARAVEL_PINT" />
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
@@ -298,6 +298,11 @@
       <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
       <path value="$PROJECT_DIR$/vendor/stripe/stripe-php" />
       <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/vendor/codeception/module-laravel" />
+      <path value="$PROJECT_DIR$/vendor/codeception/lib-xml" />
+      <path value="$PROJECT_DIR$/vendor/codeception/module-rest" />
+      <path value="$PROJECT_DIR$/vendor/softcreatr/jsonpath" />
+      <path value="$PROJECT_DIR$/vendor/justinrainbow/json-schema" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
@@ -321,11 +326,6 @@
     <option name="autoload" value="$PROJECT_DIR$/vendor/autoload.php" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
-  </component>
-  <component name="PhpUnit">
-    <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/Plugins/Billing/vendor/autoload.php" />
-    </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />

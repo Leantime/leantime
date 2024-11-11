@@ -2,7 +2,6 @@
 
 namespace Unit\app\Domain\Menu\Repositories;
 
-use Codeception\Test\Unit;
 use Leantime\Config\Config;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
@@ -10,10 +9,10 @@ use Leantime\Core\Language;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Unit\TestCase;
 
 
-
-class MenuRepositoryTest extends Unit
+class MenuRepositoryTest extends TestCase
 {
 
     use \Codeception\Test\Feature\Stub;
@@ -25,8 +24,10 @@ class MenuRepositoryTest extends Unit
      */
     protected $menu;
 
-    protected function _before()
+    protected function setUp():void
     {
+
+        parent::setUp();
 
         //Mock classes
         $settingsRepo =  $this->make(Setting::class);

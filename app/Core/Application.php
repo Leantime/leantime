@@ -33,6 +33,13 @@ class Application extends \Illuminate\Foundation\Application
     use DispatchesEvents;
 
     /**
+     * Application bootstrap status
+     *
+     * @var bool
+     */
+    private static bool $bootstrapped = false;
+
+    /**
      * Constructor for the class.
      *
      * @param  string  $basePath  The base path for the application.
@@ -154,5 +161,17 @@ class Application extends \Illuminate\Foundation\Application
 
         self::dispatchEvent('afterBootingServiceProviders');
 
+    }
+
+    /**
+     * Set the application as having been bootstrapped
+     *
+     * @return Application
+     */
+    public static function setHasBeenBootstrapped(): self
+    {
+        self::$bootstrapped = true;
+
+        return self::getInstance();
     }
 }

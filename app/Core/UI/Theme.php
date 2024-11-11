@@ -114,8 +114,6 @@ class Theme
      */
     private AppSettings $appSettings;
 
-    private IncomingRequest $request;
-
     /**
      * @var array|false
      */
@@ -154,8 +152,7 @@ class Theme
         Environment $config,
         Setting $settingsRepo,
         Language $language,
-        AppSettings $appSettings,
-        IncomingRequest $request,
+        AppSettings $appSettings
     ) {
         $this->config = $config;
         $this->settingsRepo = $settingsRepo;

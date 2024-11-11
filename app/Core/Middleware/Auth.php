@@ -26,6 +26,7 @@ class Auth
         'auth.resetPw',
         'auth.userInvite',
         'install',
+        'install.index',
         'install.update',
         'errors.error404',
         'errors.error500',
@@ -56,7 +57,7 @@ class Auth
 
         $uri = ltrim(str_replace('.', '/', $route), '/');
         $destination = BASE_URL.'/'.$uri;
-        $originClean = Str::replaceStart("/", "", $origin);
+        $originClean = Str::replaceStart('/', '', $origin);
         $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $originClean]) : '';
 
         if ($request->getCurrentRoute() == $route) {
@@ -77,7 +78,8 @@ class Auth
         }
 
         if (! $this->authService->loggedIn()) {
-            $loginRedirect = self::dispatch_filter("loginRoute", 'auth.login', ["request" => $request]);
+            $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
+
             return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
         }
 
@@ -112,19 +114,28 @@ class Auth
         return $response;
     }
 
-    public function isPublicController($currentPath ) {
+    public function isPublicController($currentPath)
+    {
 
         //path comes in with dots as separator.
         //We only need to compare the first 2 segments
-        $currentPath = explode(".", $currentPath);
+        $currentPath = explode('.', $currentPath);
 
         //Todo: We may want to take out hx if we have public htmx paths
-        if(! is_array($currentPath) || count($currentPath) < 2){
+        if (! is_array($currentPath)) {
             return false;
         }
 
-        $controllerPath = $currentPath[0].".".$currentPath[1];
-        if(in_array($controllerPath, $this->publicActions)){
+        if (count($currentPath) == 1) {
+            if (in_array($currentPath[0], $this->publicActions)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        $controllerPath = $currentPath[0].'.'.$currentPath[1];
+        if (in_array($controllerPath, $this->publicActions)) {
             return true;
         }
 

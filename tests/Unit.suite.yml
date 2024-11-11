@@ -9,6 +9,5 @@ modules:
   enabled:
     - Asserts
 
-# The step_decorators attribute can be used to enhance or modify the behavior of steps.
-step_decorators:
-  - Codeception\Step\ConditionalAssertion
+coverage:
+  enabled: true

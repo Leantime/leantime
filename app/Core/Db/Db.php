@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Db;
 
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
@@ -9,7 +10,7 @@ use PDO;
 /**
  * Database Class - Very simple abstraction layer for pdo connection
  */
-class Db
+class Db extends DatabaseManager
 {
     use DispatchesEvents;
 
