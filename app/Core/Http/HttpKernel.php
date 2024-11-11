@@ -42,12 +42,11 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-
         \Leantime\Core\Middleware\Auth::class,
         \Leantime\Core\Middleware\ApiAuth::class,
         \Leantime\Core\Middleware\Localization::class,
         \Leantime\Core\Middleware\CurrentProject::class,
-
+        \Leantime\Core\Middleware\LoadPlugins::class,
     ];
 
     /**
@@ -104,6 +103,8 @@ class HttpKernel extends Kernel
         //Can savely assume events are available here.
         self::dispatch_event("request_started", ['request' => $request]);
 
+        //This filter only works for system plugins
+        //Regular plugins are not available until after install verification
         $this->middleware = self::dispatch_filter('plugins_middleware', $this->middleware, ['request' => $request]);
 
         return (new \Illuminate\Routing\Pipeline($this->app))
