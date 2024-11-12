@@ -265,19 +265,7 @@ class Projects
         $users = array_filter($users, function ($user) use ($notification) {
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
-
-        /*
-        $mailer = app()->make(MailerCore::class);
-        $mailer->setContext('notify_project_users');
-        $mailer->setSubject($notification->subject);
-
-
-        $mailer->setHtml($emailMessage);
-        //$mailer->sendMail($users, session("userdata.name"));
-        *
- * @api
- */
-
+        
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
             $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
@@ -409,9 +397,9 @@ class Projects
      *
      * @api
      */
-    public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
+    public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null, string $projectTypes = 'all'): array
     {
-        $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, projectStatus: $projectStatus, clientId: $clientId, projectTypes: $projectTypes);
 
         if ($projects) {
             return $projects;
