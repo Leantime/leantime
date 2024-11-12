@@ -49,8 +49,6 @@ class Session extends ServiceProvider
             return $sessionManager;
         });
 
-
-
         $this->app->singleton('session.store', function ($app) {
             // First, we will create the session manager which is responsible for the
             // creation of the various session drivers when they are needed by the

@@ -99,7 +99,7 @@ namespace Leantime\Domain\Notifications\Services {
             if (function_exists('simplexml_load_string')) {
                 $responseXml = simplexml_load_string($response);
             } else {
-                throw new \Exception("Simple XML extension is not installed");
+                throw new \Exception('Simple XML extension is not installed');
             }
 
             return $responseXml;

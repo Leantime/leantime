@@ -45,7 +45,7 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $sprint->endDate = $endDate;
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(userId: session('userdata.id'), projectStatus: 'open', projectTypes: "project");
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(userId: session('userdata.id'), projectStatus: 'open', projectTypes: 'project');
 
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
             $this->tpl->assign('sprint', $sprint);

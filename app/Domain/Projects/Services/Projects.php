@@ -265,7 +265,7 @@ class Projects
         $users = array_filter($users, function ($user) use ($notification) {
             return $user != $notification->authorId;
         }, ARRAY_FILTER_USE_BOTH);
-        
+
         $emailMessage = $notification->message;
         if ($notification->url !== false) {
             $emailMessage .= " <a href='".$notification->url['url']."'>".$notification->url['text'].'</a>';
