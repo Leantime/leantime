@@ -10,15 +10,23 @@ if (!isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
     return;
 }
 
-if (!file_exists($composer = __DIR__ . '/../vendor/autoload.php')) {
+if (!file_exists($composer = __DIR__ . '/../../vendor/autoload.php')) {
+    dd($composer);
     throw new RuntimeException('Please run "make build-dev" to run tests.');
 }
 
 require $composer;
 
-define('PROJECT_ROOT', realpath(__DIR__ . '/..') . 'bootstrap.php/');
-define('APP_ROOT', PROJECT_ROOT . '/');
+
+
+use Leantime\Core\Application;
+
+define('PROJECT_ROOT', realpath(__DIR__ . '/../../').'/');
 define('DEV_ROOT', PROJECT_ROOT . '.dev/');
+
+$app = require __DIR__ . '/../../bootstrap/app.php';
+$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
 
 $bootstrapper = get_class(new class {
     /**

@@ -30,11 +30,11 @@ class TicketsCest
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible("#tinymce", 120);
         $I->wait(5);
-        $I->click("#tinymce");
+        $I->click('body');
         $I->type('Test Description');
         $I->switchToIFrame();
-        $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 120);
-        $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
+        $I->waitForElementClickable('.saveTicketBtn', 120);
+        $I->click('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
@@ -58,11 +58,11 @@ class TicketsCest
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible("#tinymce", 120);
         $I->wait(5);
-        $I->click("#tinymce");
+        $I->click('body');
         $I->type('Test Description Edited');
         $I->switchToIFrame();
-        $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 120);
-        $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
+        $I->waitForElementClickable('.saveTicketBtn', 120);
+        $I->click('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->seeInDatabase('zp_tickets', [

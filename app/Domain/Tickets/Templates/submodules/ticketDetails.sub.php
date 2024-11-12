@@ -43,7 +43,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <input type="hidden" id="saveAndCloseButton" name="saveAndCloseTicket" value="0" />
 
 
-                <input type="submit" name="saveTicket" value="<?php echo $tpl->__('buttons.save'); ?>"/>
+                <input type="submit" name="saveTicket" class="saveTicketBtn" value="<?php echo $tpl->__('buttons.save'); ?>"/>
                 <input type="submit" name="saveAndCloseTicket" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
             </div>
         </div>

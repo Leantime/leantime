@@ -12,7 +12,6 @@ extensions:
   enabled:
     - Codeception\Extension\RunFailed
 settings:
-  bootstrap: ../../bootstrap/app.php
   memory_limit: 1024M
   colors: true
   error_level: E_ALL & ~E_DEPRECATED

@@ -427,7 +427,7 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" value="Save" />
+                <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
             </div>
             <div class="clearall"></div>
         </form>

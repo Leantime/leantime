@@ -59,11 +59,11 @@ services:
       retries: 20
 
   selenium:
-    image: selenium/standalone-firefox
+    image: selenium/standalone-chromium
     shm_size: 2gb
     environment:
-      - SCREEN_WIDTH=1920
-      - SCREEN_HEIGHT=1080
+      - SCREEN_WIDTH=2560
+      - SCREEN_HEIGHT=1440
     ports:
       - "4444"
       - "7900"

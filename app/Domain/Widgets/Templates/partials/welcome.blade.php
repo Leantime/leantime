@@ -9,7 +9,7 @@
     'totalTodayCount' => 0,
 ])
 
-<div class="">
+<div class="welcome-widget">
 
     <div style="padding:10px 0px">
 

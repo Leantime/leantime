@@ -26,39 +26,42 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
         // Select project.
-        $I->waitForElementNotVisible(".project-select", 120);
+        $I->waitForElementNotVisible('.project-select', 120);
         $I->click('#projectSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
         $I->click('#projectSelect .chosen-results .active-result');
 
         // Select ticket.
-        $I->waitForElementNotVisible(".ticket-select", 120);
+        $I->waitForElementNotVisible('.ticket-select', 120);
         $I->click('#ticketSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
         $I->click('#ticketSelect .chosen-results .active-result');
 
         // Select type.
-        $I->waitForElementVisible(".kind-select", 120);
+        $I->waitForElementVisible('.kind-select', 120);
         $I->selectOption('.kind-select', 'General, billable');
 
         // Set hours in active
         $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->click('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+
+        $I->wait(3);
+
+        $I->seeInSource('<td id="finalSum">3</td>');
         $I->seeInDatabase('zp_timesheets', [
             'id' => 1,
             'hours' => 1,
-            'kind' => 'GENERAL_BILLABLE'
+            'kind' => 'GENERAL_BILLABLE',
         ]);
         $I->seeInDatabase('zp_timesheets', [
             'id' => 2,
             'hours' => 2,
-            'kind' => 'GENERAL_BILLABLE'
+            'kind' => 'GENERAL_BILLABLE',
         ]);
     }
 
@@ -89,7 +92,7 @@ class TimesheetCest
         // Set hours.
         $I->fillField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->click('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
         $I->wait(10);
@@ -99,7 +102,8 @@ class TimesheetCest
         $I->seeInField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', '2');
 
-        $I->see('6', '#finalSum');
+        $I->seeInSource('<td id="finalSum">6</td>');
+
     }
 
     #[Group('timesheet')]
@@ -113,10 +117,10 @@ class TimesheetCest
         // Set hours in active
         $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->click('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
-        $I->see('6', '#finalSum');
+        $I->seeInSource('<td id="finalSum">6</td>');
     }
 
     /**
@@ -131,7 +135,7 @@ class TimesheetCest
         $I->wantTo('Save the timesheet once more to ensure number do not change');
 
         $I->amOnPage('/timesheets/showMy');
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->click('.saveTimesheetBtn');
         $I->waitForElement('.growl', 120);
         $I->see('Timesheet saved successfully');
 
@@ -141,7 +145,8 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('6', '#finalSum');
+
+        $I->seeInSource('<td id="finalSum">6</td>');
     }
 
     #[Group('timesheet')]
@@ -158,7 +163,8 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('6', '#finalSum');
+
+        $I->seeInSource('<td id="finalSum">6</td>');
 
         // Switch back.
         $this->changeUsersTimeZone($I);
@@ -184,7 +190,6 @@ class TimesheetCest
             'id' => '1',
             'hours' => 2,
         ]);
-
 
         // Close modal.
         $I->waitForElementVisible('.nyroModalClose');
@@ -215,7 +220,7 @@ class TimesheetCest
         // Go and see if the total is correct.
         $I->amOnPage('/timesheets/showMy');
         $I->waitForElementVisible('#finalSum');
-        $I->see('11', '#finalSum');
+        $I->seeInSource('<td id="finalSum">11</td>');
     }
 
     #[Group('timesheet')]
@@ -283,17 +288,16 @@ class TimesheetCest
     /**
      * Change the timezone for the logged-in user.
      *
-     * @param AcceptanceTester $I The AcceptanceTester object representing the test runner.
-     * @param string           $timezone The timezone to be set. Defaults to 'America/Los_Angeles'.
-     *
-     * @return void
+     * @param  AcceptanceTester  $I  The AcceptanceTester object representing the test runner.
+     * @param  string  $timezone  The timezone to be set. Defaults to 'America/Los_Angeles'.
      */
     private function changeUsersTimeZone(AcceptanceTester $I, string $timezone = 'America/Los_Angeles'): void
     {
         $I->amOnPage('/users/editOwn#settings');
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
-        $I->click('#saveSettings');
+        $I->waitForElementClickable('#saveSettings');
+        $I->click(['css' => '.saveSettingsBtn']);
 
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
