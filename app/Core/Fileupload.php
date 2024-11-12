@@ -337,7 +337,6 @@ class Fileupload
             'jpeg' => 'image/jpg',
             'gif' => 'image/gif',
             'png' => 'image/png',
-            'svg' => 'image/svg+xml',
         ];
 
         $responseFailure = new Response(file_get_contents(ROOT.'/dist/images/doc.png'));
@@ -388,7 +387,7 @@ class Fileupload
         $path_parts = pathinfo($fullPath);
         $ext = $path_parts['extension'];
 
-        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'svg'])) {
+        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png'])) {
             throw new HttpResponseException($responseFailure);
         }
 
