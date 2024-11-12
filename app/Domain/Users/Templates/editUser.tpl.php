@@ -27,11 +27,11 @@ $projects = $tpl->get('relations');
 
                     <label for="firstname"><?php echo $tpl->__('label.firstname'); ?></label> <input
                         type="text" name="firstname" id="firstname"
-                        value="<?php echo $values['firstname'] ?>" /><br />
+                        value="<?php echo $tpl->escape($values['firstname']) ?>" /><br />
 
                     <label for="lastname"><?php echo $tpl->__('label.lastname'); ?></label> <input
                         type="text" name="lastname" id="lastname"
-                        value="<?php echo $values['lastname'] ?>" /><br />
+                        value="<?php echo $tpl->escape($values['lastname']) ?>" /><br />
 
 
 
@@ -106,22 +106,22 @@ $projects = $tpl->get('relations');
                         <h4 class="widgettitle title-light"><?php echo $tpl->__('label.contact_information'); ?></h4>
 
                         <label for="user"><?php echo $tpl->__('label.email'); ?></label> <input
-                            type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
+                            type="text" name="user" id="user" value="<?php echo $tpl->escape($values['user']) ?>" /><br />
 
                         <label for="phone"><?php echo $tpl->__('label.phone'); ?></label> <input
                             type="text" name="phone" id="phone"
-                            value="<?php echo $values['phone'] ?>" /><br /><br />
+                            value="<?php echo $tpl->escape($values['phone']) ?>" /><br /><br />
 
 
                         <h4 class="widgettitle title-light"><?php echo $tpl->__('label.employee_information'); ?></h4>
                         <label for="jobTitle"><?php echo $tpl->__('label.jobTitle'); ?></label> <input
-                            type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
+                            type="text" name="jobTitle" id="jobTitle" value="<?php echo $tpl->escape($values['jobTitle']) ?>" /><br />
 
                         <label for="jobLevel"><?php echo $tpl->__('label.jobLevel'); ?></label> <input
-                            type="text" name="jobLevel" id="jobLevel" value="<?php echo $values['jobLevel'] ?>" /><br />
+                            type="text" name="jobLevel" id="jobLevel" value="<?php echo $tpl->escape($values['jobLevel']) ?>" /><br />
 
                         <label for="department"><?php echo $tpl->__('label.department'); ?></label> <input
-                            type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
+                            type="text" name="department" id="department" value="<?php echo $tpl->escape($values['department']) ?>" /><br />
 
 
 
