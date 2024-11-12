@@ -160,7 +160,7 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="<?= BASE_URL?>/timesheets/delTime/<?= $_GET['id']?>"><?= $tpl->__('links.delete') ?></a>
+        <a class="delete editTimeModal pull-right" href="<?= BASE_URL?>/timesheets/delTime/<?= $tpl->escape($_GET['id']) ?>"><?= $tpl->__('links.delete') ?></a>
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>

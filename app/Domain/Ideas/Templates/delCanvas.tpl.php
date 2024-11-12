@@ -17,7 +17,7 @@ foreach ($__data as $var => $val) {
     <div class="maincontentinner">
         <h4 class="widget widgettitle"><?php echo $tpl->__('subtitles.delete') ?></h4>
         <div class="widgetcontent">
-            <form method="post" action="<?= BASE_URL ?>/ideas/delCanvas/<?php echo $_GET['id']?>">
+            <form method="post" action="<?= BASE_URL ?>/ideas/delCanvas/<?php echo $tpl->escape($_GET['id']) ?>">
                 <p><?php echo $tpl->__('text.are_you_sure_delete_idea_board') ?></p>
                 <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete')?>" name="del" class="button" />
                 <a class="btn btn-secondary" href="<?= BASE_URL ?>/ideas/showBoards"><?php echo $tpl->__('buttons.back') ?></a>
