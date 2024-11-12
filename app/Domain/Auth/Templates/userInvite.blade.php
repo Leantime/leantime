@@ -28,7 +28,7 @@
         </div>
         <div class="">
             <label for="password"><?php echo $tpl->language->__("label.password"); ?></label>
-            <input type="password" name="password" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
+            <input type="password" name="password" autocomplete="off" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />

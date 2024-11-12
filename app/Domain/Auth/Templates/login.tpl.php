@@ -30,7 +30,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         </div>
         <div class="">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_password'); ?>" value=""/>
+            <input type="password" name="password" id="password" autocomplete="off" class="form-control" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_password'); ?>" value=""/>
             <div class="forgotPwContainer">
                 <a href="<?= BASE_URL ?>/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__('links.forgot_password'); ?></a>
             </div>

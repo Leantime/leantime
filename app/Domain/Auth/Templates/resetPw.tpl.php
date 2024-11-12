@@ -22,11 +22,11 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
         <p><?php echo $tpl->language->__('text.enter_new_password'); ?><br /><br /></p>
 
         <div class="">
-            <input type="password" name="password" id="password" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_new_password'); ?>" />
+            <input type="password" autocomplete="off" name="password" id="password" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_new_password'); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <div class=" ">
-            <input type="password" name="password2" id="password2" placeholder="<?php echo $tpl->language->__('input.placeholders.confirm_password'); ?>" />
+            <input type="password" autocomplete="off" name="password2" id="password2" placeholder="<?php echo $tpl->language->__('input.placeholders.confirm_password'); ?>" />
         </div>
         <small><?= $tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
