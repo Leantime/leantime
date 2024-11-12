@@ -1,13 +1,12 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
-
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu pull-right" hx-boost="true" hx-indicator="#global-loader">
+<ul class="headmenu pull-right">
     @dispatchEvent('insideHeadMenu')
 
-    @include('timesheets::includes.stopwatch', [
+    {{-- @include('timesheets::partials.stopwatch', [
                'progressSteps' => $onTheClock
-           ])
+           ]) --}}
     @if ($login::userIsAtLeast("admin"))
         <li class="appsLink">
             <a href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
@@ -16,7 +15,7 @@
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
-            hx-get="{{ BASE_URL }}/hx/notifications/news/get"
+            hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-indicator"
             hx-trigger="click"
@@ -24,11 +23,11 @@
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/hx/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
 
         </a>
 
-        <div class='dropdown-menu p-m' id='newsDropdown'>
+        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator">
                 <x-global::elements.loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -150,7 +149,7 @@
 
 </ul>
 
-<ul class="headmenu" hx-boost="true" hx-indicator="#global-loader">
+<ul class="headmenu">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
