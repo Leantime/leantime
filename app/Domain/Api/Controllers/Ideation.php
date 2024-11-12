@@ -13,17 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 class Ideation extends Controller
 {
     private ProjectRepository $projects;
+
     private IdeationRepository $ideationAPIRepo;
 
     /**
      * constructor - initialize private variables
-     *
-     * @access public
-     *
-     * @param ProjectRepository  $projects
-     * @param IdeationRepository $ideationAPIRepo
-     *
-     * @return void
      */
     public function init(ProjectRepository $projects, IdeationRepository $ideationAPIRepo): void
     {
@@ -34,12 +28,6 @@ class Ideation extends Controller
 
     /**
      * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function get(array $params): Response
     {
@@ -48,18 +36,12 @@ class Ideation extends Controller
 
     /**
      * post - handle post requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function post(array $params): Response
     {
         if (
-            !isset($params['action'], $params['payload'])
-            || !in_array($params['action'], ['ideationSort', 'statusUpdate'])
+            ! isset($params['action'], $params['payload'])
+            || ! in_array($params['action'], ['ideationSort', 'statusUpdate'])
         ) {
             return $this->tpl->displayJson(['status' => 'failure'], 400);
         }
@@ -67,8 +49,8 @@ class Ideation extends Controller
         // @TODO: The two update functions do not seam to exists in ideas repository class?
         foreach (
             [
-            'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
-            'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]),
+                'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
+                'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params['payload']),
             ] as $param => $callback
         ) {
             if ($param !== $params['action']) {
@@ -87,12 +69,6 @@ class Ideation extends Controller
 
     /**
      * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function patch(array $params): Response
     {
@@ -105,12 +81,6 @@ class Ideation extends Controller
 
     /**
      * delete - handle delete requests
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
      */
     public function delete(array $params): Response
     {

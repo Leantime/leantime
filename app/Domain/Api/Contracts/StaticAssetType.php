@@ -79,8 +79,7 @@ enum StaticAssetType: string
     /**
      * Retrieves the MIME type by extension.
      *
-     * @param StaticAssetType $extension The file extension to get the MIME type for.
-     *
+     * @param  StaticAssetType  $extension  The file extension to get the MIME type for.
      * @return string The MIME type associated with the given extension.
      */
     public static function getMimeTypeByExtension(StaticAssetType $extension): string

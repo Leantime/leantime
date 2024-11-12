@@ -10,8 +10,8 @@ $currentSprint = $tpl->get('sprint');
     <div class="row">
         <div class="col-md-12">
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_new_ideas_jdea.svg");
-                echo"</div>";?>
+                <?php echo file_get_contents(ROOT.'/dist/images/svg/undraw_new_ideas_jdea.svg');
+echo '</div>'; ?>
             <h3 class="primaryColor"><?php echo $tpl->__('headlines.welcome_to_idea_board') ?></h3><br />
             <p><?php echo $tpl->__('text.idea_board_helper_content') ?><br /></p>
             <br /><br />

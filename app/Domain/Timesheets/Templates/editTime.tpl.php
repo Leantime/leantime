@@ -1,6 +1,6 @@
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 
 use Leantime\Core\Support\FromFormat;
 
@@ -56,21 +56,21 @@ $values = $tpl->get('values');
 <?php echo $tpl->displayNotification() ?>
 
 <h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_time'); ?></h4>
-<form action="<?=BASE_URL?>/timesheets/editTime/<?=(int)$_GET['id']?>" method="post" class="editTimeModal">
+<form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
 <label for="projects"><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
     <option value="all"><?php echo $tpl->__('headline.all_projects'); ?></option>
 
     <?php foreach ($tpl->get('allProjects') as $row) {
-        echo'<option value="' . $row['id'] . '"';
+        echo '<option value="'.$row['id'].'"';
         if ($row['id'] == $values['project']) {
-            echo' selected="selected" ';
+            echo ' selected="selected" ';
         }
-        echo'>' . $row['name'] . '</option>';
+        echo '>'.$row['name'].'</option>';
     }
 
-    ?>
+?>
 </select> <br />
 
 <div id="ticketSelect">
@@ -78,11 +78,11 @@ $values = $tpl->get('values');
 <select name="tickets" id="tickets" class="ticket-select">
 
     <?php foreach ($tpl->get('allTickets') as $row) {
-        echo'<option class="project_' . $row['projectId'] . '" data-value="' . $row["projectId"] . '" value="' . $row['id'] . '"';
+        echo '<option class="project_'.$row['projectId'].'" data-value="'.$row['projectId'].'" value="'.$row['id'].'"';
         if ($row['id'] == $values['ticket']) {
-            echo' selected="selected" ';
+            echo ' selected="selected" ';
         }
-        echo'>' . $row['headline'] . '</option>';
+        echo '>'.$row['headline'].'</option>';
     } ?>
 
 </select> <br />
@@ -91,13 +91,13 @@ $values = $tpl->get('values');
     name="kind">
     <?php
     foreach ($tpl->get('kind') as $key => $row) {
-        echo'<option value="' . $key . '"';
+        echo '<option value="'.$key.'"';
         if ($key == $values['kind']) {
             echo ' selected="selected"';
         }
-        echo'>' . $tpl->__($row) . '</option>';
+        echo '>'.$tpl->__($row).'</option>';
     }
-    ?>
+?>
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
@@ -160,7 +160,7 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="<?=BASE_URL?>/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
+        <a class="delete editTimeModal pull-right" href="<?= BASE_URL?>/timesheets/delTime/<?= $_GET['id']?>"><?= $tpl->__('links.delete') ?></a>
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>

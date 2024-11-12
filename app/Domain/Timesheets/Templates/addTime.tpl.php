@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -27,7 +27,7 @@ $values = $tpl->get('values');
         <div class="fail"><?php if ($tpl->get('info') != '') {
             ?> <span
                     class="info"><?php echo $tpl->displayNotification() ?></span> <?php
-                          } ?>
+        } ?>
 
         </div>
 
@@ -54,19 +54,19 @@ $values = $tpl->get('values');
                                     <?php foreach ($tpl->get('allProjects') as $row) {
                                         $currentClientName = $row['clientName'];
                                         if ($currentClientName != $lastClientName) {
-                                            echo '</optgroup><optgroup label="' . $currentClientName . '">';
+                                            echo '</optgroup><optgroup label="'.$currentClientName.'">';
                                         }
 
-                                        echo '<option value="' . $row['id'] . '"';
+                                        echo '<option value="'.$row['id'].'"';
                                         if ($row['id'] == $values['project']) {
                                             echo ' selected="selected" ';
                                         }
-                                        echo '>' . $row['name'] . '</option>';
+                                        echo '>'.$row['name'].'</option>';
 
                                         $lastClientName = $row['clientName'];
                                     }
 
-                                    ?>
+?>
                                 </optgroup>
                             </select> <br/>
 
@@ -74,11 +74,11 @@ $values = $tpl->get('values');
                             <select name="tickets" id="tickets">
 
                                 <?php foreach ($tpl->get('allTickets') as $row) {
-                                    echo '<option class="' . $row['projectId'] . '" value="' . $row['projectId'] . '|' . $row['id'] . '"';
+                                    echo '<option class="'.$row['projectId'].'" value="'.$row['projectId'].'|'.$row['id'].'"';
                                     if ($row['id'] == $values['ticket']) {
                                         echo ' selected="selected" ';
                                     }
-                                    echo '>' . $row['headline'] . '</option>';
+                                    echo '>'.$row['headline'].'</option>';
                                 } ?>
 
                             </select> <br/>
@@ -86,11 +86,11 @@ $values = $tpl->get('values');
                             <label for="kind"><?php echo $tpl->__('KIND') ?></label> <select id="kind"
                                                                                               name="kind">
                                 <?php foreach ($tpl->get('kind') as $row) {
-                                    echo '<option value="' . $row . '"';
+                                    echo '<option value="'.$row.'"';
                                     if ($row == $values['kind']) {
                                         echo ' selected="selected"';
                                     }
-                                    echo '>' . $tpl->__($row) . '</option>';
+                                    echo '>'.$tpl->__($row).'</option>';
                                 } ?>
 
                             </select><br/>

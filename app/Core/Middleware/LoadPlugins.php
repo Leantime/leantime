@@ -34,7 +34,7 @@ class LoadPlugins
             ->then(function ($request) use ($next) {
 
                 //Good event to use for all kinds of plugin events that should run early on like adding language files
-                self::dispatchEvent('pluginsEvents', ['request' => $request], "leantime.core.middleware.loadplugins.handle");
+                self::dispatchEvent('pluginsEvents', ['request' => $request], 'leantime.core.middleware.loadplugins.handle');
 
                 return $next($request);
             });

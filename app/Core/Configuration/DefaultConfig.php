@@ -45,7 +45,7 @@ class DefaultConfig
 
     /**
      * @var string Send anonymous data <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>More Info</a>.
-     * No personal identifieble data will be sent and it will be impossible for us to track individual users.
+     *             No personal identifieble data will be sent and it will be impossible for us to track individual users.
      */
     public bool $allowTelemetry = true;
 
@@ -197,7 +197,6 @@ class DefaultConfig
     /**
      * @var int How many minutes after inactivity should we logout?  480min = 8hours
      */
-
     public int $sessionExpiration = 480;
 
     /**
@@ -525,7 +524,6 @@ class DefaultConfig
      */
     #[LaravelConfig('redis.default.tls')]
     public string $redisScheme = 'tls';
-
 
     // Security/Rate Limiting Settings ===============================================================================
     /**

@@ -11,7 +11,6 @@ use Unit\TestCase;
 
 class CalendarServiceTest extends TestCase
 {
-
     use \Codeception\Test\Feature\Stub;
 
     protected $calendarRepository;
@@ -36,17 +35,17 @@ class CalendarServiceTest extends TestCase
 
         parent::setUp();
 
-        if (!defined('BASE_URL')) {
+        if (! defined('BASE_URL')) {
             define('BASE_URL', 'http://localhost');
         }
 
         $this->calendarRepository = $this->make(CalendarRepository::class);
         $this->language = $this->make(Language::class);
-        $this->settingsRepository =  $this->make(Setting::class, [
-            "getSetting" => "secret"
+        $this->settingsRepository = $this->make(Setting::class, [
+            'getSetting' => 'secret',
         ]);
         $this->config = $this->make(Environment::class, [
-            "sessionPassword" => "123abc"
+            'sessionPassword' => '123abc',
         ]);
 
         //Load class to be tested
@@ -57,8 +56,6 @@ class CalendarServiceTest extends TestCase
             config: $this->config
 
         );
-
-
 
     }
 
@@ -72,17 +69,14 @@ class CalendarServiceTest extends TestCase
     /**
      * Test GetMenuTypes method
      */
-    public function testGetICalUrl() {
-
-
+    public function testGetICalUrl()
+    {
 
         //Sha is generated from id -1 and sessionpassword 123abc
-        $sha = "ba62fbd0d08f6607d6b3213dcccc1b50f4d82f19";
+        $sha = 'ba62fbd0d08f6607d6b3213dcccc1b50f4d82f19';
         $url = $this->calendar->getICalUrl(1);
 
-        $this->assertEquals(BASE_URL . "/calendar/ical/secret_" . $sha, $url, 'hash is not correct');
+        $this->assertEquals(BASE_URL.'/calendar/ical/secret_'.$sha, $url, 'hash is not correct');
 
     }
-
-
 }

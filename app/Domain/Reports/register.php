@@ -20,7 +20,9 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
 
         $telemetry = $reportService->sendAnonymousTelemetry();
 
-        if($telemetry === false) return;
+        if ($telemetry === false) {
+            return;
+        }
 
         try {
             $response = $telemetry->wait();

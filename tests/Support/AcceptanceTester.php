@@ -9,6 +9,7 @@ use Facebook\WebDriver\Exception\StaleElementReferenceException;
 
 /**
  * Inherited Methods
+ *
  * @method void wantTo($text)
  * @method void wantToTest($text)
  * @method void execute($callable)
@@ -31,11 +32,12 @@ class AcceptanceTester extends \Codeception\Actor
                 $this->waitForElementClickable($selector, $timeout);
 
                 // Scroll element into view
-                $this->executeJS("document.querySelector('" . $selector . "').scrollIntoView({behavior: 'smooth', block: 'center'});");
+                $this->executeJS("document.querySelector('".$selector."').scrollIntoView({behavior: 'smooth', block: 'center'});");
                 $this->wait(1); // Small wait after scroll
 
                 // Try to click
                 $this->click($selector);
+
                 return;
             } catch (ElementClickInterceptedException|StaleElementReferenceException $e) {
                 if ($attempt === $maxAttempts) {
@@ -52,6 +54,6 @@ class AcceptanceTester extends \Codeception\Actor
      */
     public function _failed(\Codeception\TestInterface $test, $fail)
     {
-        $this->makeScreenshot('failed_' . $test->getName());
+        $this->makeScreenshot('failed_'.$test->getName());
     }
 }

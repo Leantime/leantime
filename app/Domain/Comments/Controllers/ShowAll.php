@@ -10,21 +10,21 @@ namespace Leantime\Domain\Comments\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private ProjectService $projectService;
+
         private CommentService $commentService;
+
         private $module;
+
         private $id;
+
         private $entity;
 
         /**
          * init - initialize private variables
          *
-         * @access public
          * @throws Exception
          */
         public function init(
@@ -36,14 +36,12 @@ namespace Leantime\Domain\Comments\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws Exception
          */
         public function get($params): Response
         {
-            if (!isset($params['module'], $params['entitiyId'], $params['entity'])) {
-                throw new Exception("comments module needs to be initialized with module, entity id and entity");
+            if (! isset($params['module'], $params['entitiyId'], $params['entity'])) {
+                throw new Exception('comments module needs to be initialized with module, entity id and entity');
             }
 
             $this->module = $params['module'];
@@ -57,13 +55,14 @@ namespace Leantime\Domain\Comments\Controllers {
 
             //Delete comment
             if (isset($params['delComment']) === true) {
-                $commentId = (int)($params['delComment']);
+                $commentId = (int) ($params['delComment']);
 
                 if ($this->commentService->deleteComment($commentId)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+
+                    return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$this->id);
                 } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted_error'), 'error');
                 }
             }
 
@@ -71,21 +70,19 @@ namespace Leantime\Domain\Comments\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
         {
             if (isset($params['comment']) === true) {
                 if ($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
                 } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
                 }
             }
 
-            return new Response();
+            return new Response;
         }
     }
 

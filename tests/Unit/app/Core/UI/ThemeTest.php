@@ -4,7 +4,6 @@ namespace Unit\app\Core\UI;
 
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -50,7 +49,6 @@ class ThemeTest extends \Unit\TestCase
             'appVersion' => '123',
         ]);
 
-
     }
 
     protected function _after()
@@ -73,7 +71,6 @@ class ThemeTest extends \Unit\TestCase
             config: $this->configMock,
             appSettings: $this->appSettingsMock
         );
-
 
         $colorScheme = $this->theme->getColorScheme();
         $this->assertEquals('companyColors', $colorScheme);

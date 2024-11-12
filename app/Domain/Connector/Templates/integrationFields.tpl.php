@@ -2,15 +2,15 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$providerFields = $tpl->get("providerFields");
-$provider = $tpl->get("provider");
-$leantimeFields = $tpl->get("leantimeFields");
-$numberOfFields = $tpl->get("maxFields");
-$flags = $tpl->get("flags");
+$providerFields = $tpl->get('providerFields');
+$provider = $tpl->get('provider');
+$leantimeFields = $tpl->get('leantimeFields');
+$numberOfFields = $tpl->get('maxFields');
+$flags = $tpl->get('flags');
 $urlAppend = '';
 
 if (isset($integrationId) && is_numeric($integrationId)) {
-    $urlAppend = "&integrationId=" . $integrationId;
+    $urlAppend = '&integrationId='.$integrationId;
 }
 ?>
 
@@ -19,7 +19,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.connector"); ?> // <?=$provider->name ?></h1>
+                <h1><?php echo $tpl->__('headlines.connector'); ?> // <?= $provider->name ?></h1>
             </div>
         </div>
     </div>
@@ -52,7 +52,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
                                 <td class="center">
                                     <select class="form-control" name="field_<?= md5($entity) ?>">
                                         <?php foreach ($leantimeFields as $key2 => $fields) { ?>
-                                            <option value="<?= $entity ?>|<?= $key2 ?>" <?= $entity == $fields['name'] ? "selected='selected'" : "" ?>>
+                                            <option value="<?= $entity ?>|<?= $key2 ?>" <?= $entity == $fields['name'] ? "selected='selected'" : '' ?>>
                                                 <?= $fields['name'] ?>
                                             </option>
                                         <?php } ?>

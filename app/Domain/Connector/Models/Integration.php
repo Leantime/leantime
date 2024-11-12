@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Connector\Models {
 
-    /**
-     *
-     */
     class Integration
     {
         public int $id;
@@ -31,10 +28,7 @@ namespace Leantime\Domain\Connector\Models {
 
         public ?string $lastSync;
 
-
-        public function __construct()
-        {
-        }
+        public function __construct() {}
     }
 
 }

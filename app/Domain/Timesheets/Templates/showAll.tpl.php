@@ -1,6 +1,6 @@
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -54,7 +54,7 @@ foreach ($__data as $var => $val) {
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
         <div class="pagetitle">
-        <h1><?php echo $tpl->__("headlines.all_timesheets") ?></h1>
+        <h1><?php echo $tpl->__('headlines.all_timesheets') ?></h1>
     </div>
 </div>
 <!-- page header -->
@@ -75,24 +75,24 @@ foreach ($__data as $var => $val) {
                     <td>
                         <label for="clients"><?php echo $tpl->__('label.client'); ?></label>
                         <select name="clientId">
-                            <option value="-1"><?php echo strip_tags($tpl->__("menu.all_clients")) ?></option>
+                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_clients')) ?></option>
                             <?php foreach ($tpl->get('allClients') as $client) {?>
-                                <option value="<?=$client['id'] ?>"
+                                <option value="<?= $client['id'] ?>"
                                     <?php if ($tpl->get('clientFilter') == $client['id']) {
                                         echo "selected='selected'";
-                                    } ?>><?=$tpl->escape($client['name'])?></option>
+                                    } ?>><?= $tpl->escape($client['name'])?></option>
                             <?php } ?>
                         </select>
                     </td>
                     <td>
                         <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
                         <select name="project" style="max-width:120px;">
-                            <option value="-1"><?php echo strip_tags($tpl->__("menu.all_projects")) ?></option>
+                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
                             <?php foreach ($tpl->get('allProjects') as $project) {?>
-                                <option value="<?=$project['id'] ?>"
+                                <option value="<?= $project['id'] ?>"
                                     <?php if ($tpl->get('projectFilter') == $project['id']) {
                                         echo "selected='selected'";
-                                    } ?>><?=$tpl->escape($project['name'])?></option>
+                                    } ?>><?= $tpl->escape($project['name'])?></option>
                             <?php } ?>
                         </select>
                     </td>
@@ -105,65 +105,65 @@ foreach ($__data as $var => $val) {
                         <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
                         value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
                     <td>
-                    <label for="userId"><?php echo $tpl->__("label.employee"); ?></label>
+                    <label for="userId"><?php echo $tpl->__('label.employee'); ?></label>
                         <select name="userId" id="userId" onchange="submit();" style="max-width:120px;">
-                            <option value="all"><?php echo $tpl->__("label.all_employees"); ?></option>
+                            <option value="all"><?php echo $tpl->__('label.all_employees'); ?></option>
 
                             <?php foreach ($tpl->get('employees') as $row) {
-                                echo'<option value="' . $row['id'] . '"';
+                                echo '<option value="'.$row['id'].'"';
                                 if ($row['id'] == $tpl->get('employeeFilter')) {
-                                    echo' selected="selected" ';
+                                    echo ' selected="selected" ';
                                 }
-                                echo'>' . sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])) . '</option>';
+                                echo '>'.sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])).'</option>';
                             }
-                            ?>
+?>
                         </select>
                     </td>
                     <td>
-                        <label for="kind"><?php echo $tpl->__("label.type")?></label>
+                        <label for="kind"><?php echo $tpl->__('label.type')?></label>
                         <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
-                            <option value="all"><?php echo $tpl->__("label.all_types"); ?></option>
+                            <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
                             <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo'<option value="' . $key . '"';
+                                echo '<option value="'.$key.'"';
                                 if ($key == $tpl->get('actKind')) {
                                     echo ' selected="selected"';
                                 }
-                                echo'>' . $tpl->__($row) . '</option>';
+                                echo '>'.$tpl->__($row).'</option>';
                             }
-                            ?>
+?>
 
                         </select>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
                             <?php
-                            if ($tpl->get('invEmpl') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+if ($tpl->get('invEmpl') == '1') {
+    echo ' checked="checked"';
+}
+?>
                         />
-                        <label for="invEmpl"><?php echo $tpl->__("label.invoiced"); ?></label>
+                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced'); ?></label>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
                             <?php
-                            if ($tpl->get('invComp') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+if ($tpl->get('invComp') == '1') {
+    echo ' checked="checked"';
+}
+?>
                         />
-                        <label for="invEmpl"><?php echo $tpl->__("label.invoiced_comp"); ?></label>
+                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced_comp'); ?></label>
                     </td>
 
                     <td>
                         <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
                             <?php
-                            if ($tpl->get('paid') == '1') {
-                                echo ' checked="checked"';
-                            }
-                            ?>
+if ($tpl->get('paid') == '1') {
+    echo ' checked="checked"';
+}
+?>
                         />
-                        <label for="paid"><?php echo $tpl->__("label.paid"); ?></label>
+                        <label for="paid"><?php echo $tpl->__('label.paid'); ?></label>
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
@@ -203,9 +203,9 @@ foreach ($__data as $var => $val) {
                         <th><?php echo $tpl->__('label.project'); ?></th>
                         <th><?php echo $tpl->__('label.client'); ?></th>
                         <th><?php echo $tpl->__('label.employee'); ?></th>
-                        <th><?php echo $tpl->__("label.type")?></th>
-                        <th><?php echo $tpl->__("label.milestone") ?></th>
-                        <th><?php echo $tpl->__("label.tags") ?></th>
+                        <th><?php echo $tpl->__('label.type')?></th>
+                        <th><?php echo $tpl->__('label.milestone') ?></th>
+                        <th><?php echo $tpl->__('label.tags') ?></th>
                         <th><?php echo $tpl->__('label.description'); ?></th>
                         <th><?php echo $tpl->__('label.invoiced'); ?></th>
                         <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
@@ -218,41 +218,41 @@ foreach ($__data as $var => $val) {
                 <?php
 
                 $sum = 0;
-                $billableSum = 0;
+$billableSum = 0;
 
-                foreach ($tpl->get('allTimesheets') as $row) {
-                    $sum = $sum + $row['hours'];?>
+foreach ($tpl->get('allTimesheets') as $row) {
+    $sum = $sum + $row['hours']; ?>
                     <tr>
-                        <td data-order="<?=$tpl->e($row['id']); ?>">
+                        <td data-order="<?= $tpl->e($row['id']); ?>">
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $tpl->__('label.edit'); ?> </a>
+                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $row['id']?>" class="editTimeModal">#<?= $row['id'].' - '.$tpl->__('label.edit'); ?> </a>
                                 <?php } else { ?>
-                                #<?=$row['id']?>
+                                #<?= $row['id']?>
                                 <?php } ?>
                         </td>
-                        <td data-order="<?=$tpl->escape($row['workDate']); ?>">
+                        <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
-                        <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
-                        <td data-order="<?=$tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
+                        <td data-order="<?= $diff; ?>"><?php echo $diff; ?></td>
+                        <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 
-                        <td data-order="<?=$tpl->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
-                        <td data-order="<?=$tpl->e($row['clientName']); ?>"><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
+                        <td data-order="<?= $tpl->e($row['name']); ?>"><a href="<?= BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
+                        <td data-order="<?= $tpl->e($row['clientName']); ?>"><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
 
-                        <td><?php printf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row['lastname'])); ?></td>
+                        <td><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></td>
                         <td><?php echo $tpl->__($tpl->get('kind')[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?></td>
 
-                        <td><?php echo $tpl->escape($row["milestone"]); ?></td>
-                        <td><?php echo $tpl->escape($row["tags"]); ?></td>
+                        <td><?php echo $tpl->escape($row['milestone']); ?></td>
+                        <td><?php echo $tpl->escape($row['tags']); ?></td>
 
                         <td><?php $tpl->e($row['description']); ?></td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
                             echo format($row['invoicedEmplDate'])->date();
-                                        }?>"><?php if ($row['invoicedEmpl'] == '1') {
-    ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
+                        }?>"><?php if ($row['invoicedEmpl'] == '1') {
+                            ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                                         <?php } else { ?>
                                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                 <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
@@ -261,7 +261,7 @@ foreach ($__data as $var => $val) {
                                         } ?></td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
                             echo format($row['invoicedCompDate'])->date();
-                                        }?>">
+                        }?>">
 
                             <?php if ($row['invoicedComp'] == '1') {?>
                                 <?php echo format($row['invoicedCompDate'])->date(); ?>
@@ -273,7 +273,7 @@ foreach ($__data as $var => $val) {
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
                             echo format($row['paidDate'])->date();
-                                        }?>">
+                        }?>">
 
                             <?php if ($row['paid'] == '1') {?>
                                 <?php echo format($row['paidDate'])->date(); ?>
@@ -288,7 +288,7 @@ foreach ($__data as $var => $val) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2"><strong><?php echo $tpl->__("label.total_hours")?></strong></td>
+                        <td colspan="2"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
                         <td colspan="10"><strong><?php echo $sum; ?></strong></td>
 
                         <td>

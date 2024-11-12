@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserInvite extends Controller
 {
-
     use DispatchesEvents;
 
     private AuthService $authService;
@@ -24,8 +23,6 @@ class UserInvite extends Controller
     private Setting $settingService;
 
     private Theme $themeCore;
-
-
 
     /**
      * init - initializes the objects for the class
@@ -210,7 +207,7 @@ class UserInvite extends Controller
         //Step 1
         if (isset($_POST['saveAccount']) && isset($_POST['step'])) {
 
-            if (! $this->userService->checkPasswordStrength($_POST['password'] ?? "")) {
+            if (! $this->userService->checkPasswordStrength($_POST['password'] ?? '')) {
                 $this->tpl->setNotification(
                     $this->language->__('notification.password_not_strong_enough'),
                     'error'
@@ -252,8 +249,8 @@ class UserInvite extends Controller
             $this->themeCore->setFont($themeFont);
             $this->themeCore->clearCache();
 
-            self::dispatchEvent("onboarding_themechoice_".$postTheme);
-            self::dispatchEvent("onboarding_themechoice_".$themeFont);
+            self::dispatchEvent('onboarding_themechoice_'.$postTheme);
+            self::dispatchEvent('onboarding_themechoice_'.$themeFont);
 
             return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.$invitationId.'?step=3');
         }
@@ -266,8 +263,8 @@ class UserInvite extends Controller
             $this->settingService->saveSetting('usersettings.'.$userInvite['id'].'.colorMode', $postColorMode);
             $this->settingService->saveSetting('usersettings.'.$userInvite['id'].'.colorScheme', $postColorScheme);
 
-            self::dispatchEvent("onboarding_colorchoice_".$postColorMode);
-            self::dispatchEvent("onboarding_colorchoice_".$postColorScheme);
+            self::dispatchEvent('onboarding_colorchoice_'.$postColorMode);
+            self::dispatchEvent('onboarding_colorchoice_'.$postColorScheme);
 
             $this->themeCore->clearCache();
             $this->themeCore->setColorMode($postColorMode);
@@ -284,7 +281,7 @@ class UserInvite extends Controller
             $daySchedule = [
                 'wakeup' => '',
                 'workStart' => $_POST['daySchedule-workStart'] ?? '',
-                'lunch' => $_POST['daySchedule-lunch']  ?? '',
+                'lunch' => $_POST['daySchedule-lunch'] ?? '',
                 'workEnd' => $_POST['daySchedule-workEnd'] ?? '',
                 'bed' => '',
             ];
@@ -302,9 +299,9 @@ class UserInvite extends Controller
                     ];
                 }
             }*/
-            self::dispatchEvent("onboarding_schedule_start_".$daySchedule['workStart']);
-            self::dispatchEvent("onboarding_schedule_lunch_".$daySchedule['lunch']);
-            self::dispatchEvent("onboarding_schedule_end_".$daySchedule['workEnd']);
+            self::dispatchEvent('onboarding_schedule_start_'.$daySchedule['workStart']);
+            self::dispatchEvent('onboarding_schedule_lunch_'.$daySchedule['lunch']);
+            self::dispatchEvent('onboarding_schedule_end_'.$daySchedule['workEnd']);
 
             $this->settingService->saveSetting('usersettings.'.$userInvite['id'].'.daySchedule', serialize($daySchedule));
 
@@ -319,7 +316,7 @@ class UserInvite extends Controller
 
             $result = $this->userService->editUser($userInvite, $userInvite['id']);
 
-            self::dispatchEvent("onboarding_finished");
+            self::dispatchEvent('onboarding_finished');
 
             $this->tpl->setNotification(
                 $this->language->__('notifications.you_are_active'),

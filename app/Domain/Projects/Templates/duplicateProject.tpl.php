@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -10,15 +10,15 @@ $project = $tpl->get('project');
 
 <?php echo $tpl->displayNotification(); ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/projects/duplicateProject/<?php echo $project['id'];?>">
+<form class="formModal" method="post" action="<?= BASE_URL ?>/projects/duplicateProject/<?php echo $project['id']; ?>">
 
-    <label><?=$tpl->__('label.newProjectName') ?></label>
-    <input type="text" name="projectName" value="<?=$tpl->__('label.copy_of')?> <?php $tpl->e($project['name'])?>" /><br />
+    <label><?= $tpl->__('label.newProjectName') ?></label>
+    <input type="text" name="projectName" value="<?= $tpl->__('label.copy_of')?> <?php $tpl->e($project['name'])?>" /><br />
 
-    <label><?=$tpl->__('label.planned_start_date') ?></label>
-    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo format(date("Y-m-d"))->date()?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
+    <label><?= $tpl->__('label.planned_start_date') ?></label>
+    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo format(date('Y-m-d'))->date()?>" placeholder="<?= $tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
 
-    <label><?=$tpl->__('label.client_product') ?></label>
+    <label><?= $tpl->__('label.client_product') ?></label>
     <select name="clientId" id="clientId">
         <?php foreach ($tpl->get('allClients') as $row) { ?>
             <option value="<?php echo $row['id']; ?>"
@@ -36,7 +36,7 @@ $project = $tpl->get('project');
 
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$tpl->__('buttons.duplicate') ?>"/>
+            <input type="submit" value="<?= $tpl->__('buttons.duplicate') ?>"/>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
 

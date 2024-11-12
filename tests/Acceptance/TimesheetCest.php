@@ -4,7 +4,6 @@ namespace Acceptance;
 
 use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
-use Codeception\Util\Locator;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -180,7 +179,7 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->see('#1 - Edit');
 
-        $I->clickWithRetry("#editTimesheet-1");
+        $I->clickWithRetry('#editTimesheet-1');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 2);
         $I->clickWithRetry('.stdformbutton .button');
@@ -272,7 +271,7 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->see('#1 - Edit');
 
-        $I->clickWithRetry("#editTimesheet-1");
+        $I->clickWithRetry('#editTimesheet-1');
         $I->waitForElementVisible('.delete');
         $I->clickWithRetry('.stdformbutton .delete');
 

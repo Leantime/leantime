@@ -24,9 +24,8 @@ class EventsTest extends Unit
         $available_hooks = EventDispatcher::get_available_hooks();
 
         // Test that the dispatched event has been registered in available_hooks
-        $this->assertContains("$context.$eventName", $available_hooks["events"]);
+        $this->assertContains("$context.$eventName", $available_hooks['events']);
     }
-
 
     /**
      * This test will check the findEventListeners method of the EventDispatcher class.
@@ -39,8 +38,7 @@ class EventsTest extends Unit
         $context = 'testContext';
         $eventListeners = [$listenerName => [$payload]];
 
-        EventDispatcher::add_event_listener($listenerName, function () {
-        }, 10);
+        EventDispatcher::add_event_listener($listenerName, function () {}, 10);
         // Test that the event listener has been found
         $this->assertEquals([$payload], EventDispatcher::findEventListeners($listenerName, $eventListeners));
     }
@@ -56,12 +54,10 @@ class EventsTest extends Unit
         $filterName = 'filter.test.name';
 
         // Add an event listener
-        EventDispatcher::add_event_listener($eventName, function () {
-        }, 10);
+        EventDispatcher::add_event_listener($eventName, function () {}, 10);
 
         // Add a filter listener
-        EventDispatcher::add_filter_listener($filterName, function () {
-        }, 10);
+        EventDispatcher::add_filter_listener($filterName, function () {}, 10);
 
         // Get registries
         $registries = EventDispatcher::get_registries();

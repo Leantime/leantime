@@ -7,32 +7,19 @@ namespace Leantime\Domain\Queue\Repositories {
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
-    /**
-     *
-     */
     class Queue
     {
         private DbCore $db;
+
         private UserRepo $users;
 
-        /**
-         * @param DbCore   $db
-         * @param UserRepo $users
-         */
         public function __construct(DbCore $db, UserRepo $users)
         {
             $this->db = $db;
             $this->users = $users;
         }
 
-        /**
-         * @param $recipients
-         * @param $message
-         * @param string     $subject
-         * @param int        $projectId
-         * @return void
-         */
-        public function queueMessageToUsers($recipients, $message, string $subject = "", int $projectId = 0): void
+        public function queueMessageToUsers($recipients, $message, string $subject = '', int $projectId = 0): void
         {
 
             $sql = 'INSERT INTO zp_queue (msghash,channel,userId,subject,message,thedate,projectId) VALUES (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
@@ -53,13 +40,13 @@ namespace Leantime\Domain\Queue\Repositories {
                 }
 
                 //User might not be set because it's a new user
-                if (!$theuser) {
+                if (! $theuser) {
                     continue;
                 }
 
                 $userId = $theuser['id'];
                 $userEmail = $theuser['username'];
-                $msghash = md5($thedate . $subject . $message . $userEmail . $projectId);
+                $msghash = md5($thedate.$subject.$message.$userEmail.$projectId);
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
@@ -73,7 +60,7 @@ namespace Leantime\Domain\Queue\Repositories {
                 try {
                     $stmn->execute();
                 } catch (\PDOException  $e) {
-                   report($e);
+                    report($e);
                 }
 
                 $stmn->closeCursor();
@@ -83,10 +70,7 @@ namespace Leantime\Domain\Queue\Repositories {
         // TODO later : lists messages per user or per project ?
 
         /**
-         * @param string     $channel
-         * @param $recipients
-         * @param int        $projectId
-         * @return array|false
+         * @param  string  $channel
          */
         public function listMessageInQueue(Workers $channel, $recipients = null, int $projectId = 0): false|array
         {
@@ -105,15 +89,11 @@ namespace Leantime\Domain\Queue\Repositories {
             return $values;
         }
 
-        /**
-         * @param $msghashes
-         * @return bool
-         */
         public function deleteMessageInQueue($msghashes): bool
         {
             // NEW : Allowing one hash or an array of them
             if (is_string($msghashes)) {
-                $thehashes = array($msghashes);
+                $thehashes = [$msghashes];
             } else {
                 $thehashes = $msghashes;
             }
@@ -130,13 +110,9 @@ namespace Leantime\Domain\Queue\Repositories {
             return $result;
         }
 
-
         /**
-         * @param $recipients
-         * @param $message
-         * @param string     $subject
-         * @param int        $projectId
-         * @return void
+         * @param  $recipients
+         * @param  string  $subject
          */
         public function addMessageToQueue($channel, $subject, $message, $userId, int $projectId = 0): void
         {
@@ -147,7 +123,7 @@ namespace Leantime\Domain\Queue\Repositories {
                         (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
 
             $thedate = date('Y-m-d H:i:s');
-            $msghash = md5($thedate . $subject . $message . $projectId);
+            $msghash = md5($thedate.$subject.$message.$projectId);
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
@@ -167,6 +143,5 @@ namespace Leantime\Domain\Queue\Repositories {
             $stmn->closeCursor();
 
         }
-
     }
 }

@@ -79,7 +79,7 @@ class Menu extends Composer
         if (session()->exists('userdata')) {
             $widgetService = app()->make(\Leantime\Domain\Widgets\Services\Widgets::class);
             $newWidgets = $widgetService->getNewWidgets(session('userdata.id'));
-            $showSettingsIndicator = !empty($newWidgets);
+            $showSettingsIndicator = ! empty($newWidgets);
         }
 
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
@@ -109,7 +109,7 @@ class Menu extends Composer
             ];
         }
 
-        $settingsLink = self::dispatch_filter('settingsLink', $settingsLink, ["type" => $menuType]);
+        $settingsLink = self::dispatch_filter('settingsLink', $settingsLink, ['type' => $menuType]);
 
         $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
 

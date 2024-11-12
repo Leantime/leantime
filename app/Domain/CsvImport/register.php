@@ -5,6 +5,6 @@ use Leantime\Domain\CsvImport\Listeners\AddCSVImportProvider;
 
 //Register event listener
 EventDispatcher::add_filter_listener(
-    "leantime.domain.connector.services.providers.loadProviders.providerList",
-    new AddCSVImportProvider()
+    'leantime.domain.connector.services.providers.loadProviders.providerList',
+    new AddCSVImportProvider
 );

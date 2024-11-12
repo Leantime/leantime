@@ -74,7 +74,7 @@ class RequestRateLimiter
             $keyModifier = session('userdata.id');
         }
 
-        $key = "ratelimit-".md5($request->getClientIp()).'-'.$keyModifier;
+        $key = 'ratelimit-'.md5($request->getClientIp()).'-'.$keyModifier;
 
         //General Limit per minute
         $limit = $rateLimitGeneral;
@@ -85,8 +85,6 @@ class RequestRateLimiter
             $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
             $limit = $rateLimitApi;
         }
-
-
 
         if ($route == 'auth.login') {
             $limit = $rateLimitAuth;
@@ -112,6 +110,7 @@ class RequestRateLimiter
 
         if ($this->limiter->tooManyAttempts($key, $limit)) {
             Log::warning('too many requests per minute: '.$key);
+
             return new Response(
                 json_encode(['error' => 'Too many requests per minute.']),
                 Response::HTTP_TOO_MANY_REQUESTS,

@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -11,7 +11,7 @@ $values = $tpl->get('values');
 
 <h4 class="widgettitle title-light"><?php echo $tpl->__('subtitles.event'); ?></h4>
 
-<form action="<?=BASE_URL?>/calendar/addEvent/" method="post" class='formModal'>
+<form action="<?= BASE_URL?>/calendar/addEvent/" method="post" class='formModal'>
 
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 

@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -70,7 +70,7 @@ $projects = $tpl->get('relations');
 
 <?php echo $tpl->displayNotification() ?>
 
-<form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
+<form action="<?= BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 
@@ -91,11 +91,11 @@ $projects = $tpl->get('relations');
                     <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
                         continue;
                     }?>
-                        <option value="<?php  echo $key; ?>"
+                        <option value="<?php echo $key; ?>"
                         <?php if ($key == $values['role']) {
                             ?> selected="selected" <?php
                         } ?>>
-                        <?=$tpl->__("label.roles." . $role) ?>
+                        <?= $tpl->__('label.roles.'.$role) ?>
                     </option>
                 <?php } ?>
 
@@ -103,19 +103,19 @@ $projects = $tpl->get('relations');
 
             <label for="client"><?php echo $tpl->__('label.client') ?></label>
             <select name='client' id="client">
-                <?php if ($login::userIsAtLeast("admin")) {?>
+                <?php if ($login::userIsAtLeast('admin')) {?>
                     <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                 <?php } ?>
-                <?php foreach ($tpl->get('clients') as $client) : ?>
-                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== session("userdata.clientId")) {
+                <?php foreach ($tpl->get('clients') as $client) { ?>
+                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client['id'] !== session('userdata.clientId')) {
                         continue;
                     }
                     ?>
                     <option value="<?php echo $client['id'] ?>"
-                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) :
+                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) {
                                 ?>selected="selected"<?php
-                            endif; ?>><?php $tpl->e($client['name']) ?></option>
-                <?php endforeach; ?>
+                            } ?>><?php $tpl->e($client['name']) ?></option>
+                <?php } ?>
             </select><br/>
             <br/>
 
@@ -155,25 +155,25 @@ $projects = $tpl->get('relations');
                 <div class="scrollableItemList">
                     <?php
                     $currentClient = '';
-                    $i = 0;
-                    foreach ($tpl->get('allProjects') as $row) {
-                        if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row["clientId"] !== session("userdata.clientId")) {
-                            continue;
-                        }
+$i = 0;
+foreach ($tpl->get('allProjects') as $row) {
+    if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row['clientId'] !== session('userdata.clientId')) {
+        continue;
+    }
 
-                        if ($row['clientName'] == '') {
-                            $row['clientName'] = "Not assigned to client";
-                        }
-                        if ($currentClient != $row['clientName']) {
-                            if ($i > 0) {
-                                echo"</div>";
-                            }
-                            echo "<h3 id='accordion_link_" . $i . "'>
-                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
+    if ($row['clientName'] == '') {
+        $row['clientName'] = 'Not assigned to client';
+    }
+    if ($currentClient != $row['clientName']) {
+        if ($i > 0) {
+            echo '</div>';
+        }
+        echo "<h3 id='accordion_link_".$i."'>
+                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$tpl->escape($row['clientName'])."</a>
                             </h3>
-                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
-                            $currentClient = $row['clientName'];
-                        } ?>
+                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+        $currentClient = $row['clientName'];
+    } ?>
                             <div class="item" style="padding:10px 0px;">
                                 <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
                                 <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
@@ -181,7 +181,7 @@ $projects = $tpl->get('relations');
                                 } ?>
                                 />
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
+                                    <img src='<?= BASE_URL ?>/api/projects?projectAvatar=<?= $row['id'] ?>&v=<?= format($row['modified'])->timestamp() ?>' />
                                 </span>
 
                                 <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">

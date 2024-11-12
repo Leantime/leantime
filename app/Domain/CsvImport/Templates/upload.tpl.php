@@ -5,8 +5,8 @@ use Leantime\Core\Fileupload;
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $maxSize = Fileupload::getMaximumFileUploadSize();
-    $moduleId = $_GET['id'] ?? '';
+$maxSize = Fileupload::getMaximumFileUploadSize();
+$moduleId = $_GET['id'] ?? '';
 ?>
 
 <div id="fileManager">
@@ -22,7 +22,7 @@ foreach ($__data as $var => $val) {
 
         <div class="extra" style="margin-top:5px;"></div>
         <div class="fileUploadDrop">
-            <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
+            <p><i><?= $tpl->__('text.drop_files'); ?></i></p>
             <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
         </div>
 
@@ -48,7 +48,7 @@ foreach ($__data as $var => $val) {
             debug: false,
             autoProceed: true,
             restrictions: {
-                maxFileSize: <?=$maxSize?>
+                maxFileSize: <?= $maxSize?>
             }
         });
 
@@ -65,7 +65,7 @@ foreach ($__data as $var => $val) {
         });
 
         uppy.use(Uppy.XHRUpload, {
-            endpoint: '<?=BASE_URL ?>/csvImport/upload',
+            endpoint: '<?= BASE_URL ?>/csvImport/upload',
             formData: true,
             fieldName: 'file'
         });
@@ -116,7 +116,7 @@ foreach ($__data as $var => $val) {
 
             jQuery(".input-error").text('');
 
-            window.location.href = "<?=BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
+            window.location.href = "<?= BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
 
         });
 

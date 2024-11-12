@@ -10,21 +10,18 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
-    /**
-     *
-     */
     class IdeaDialog extends Controller
     {
         private IdeaRepository $ideaRepo;
+
         private CommentRepository $commentsRepo;
+
         private TicketService $ticketService;
+
         private ProjectService $projectService;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
-         *
          */
         public function init(
             IdeaRepository $ideaRepo,
@@ -40,109 +37,103 @@ namespace Leantime\Domain\Ideas\Controllers {
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
             if (isset($params['id'])) {
                 //Delete comment
                 if (isset($params['delComment']) === true) {
-                    $commentId = (int)($params['delComment']);
+                    $commentId = (int) ($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), "success", "ideacomment_deleted");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'ideacomment_deleted');
                 }
 
                 //Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
-                    $milestoneId = (int)($params['removeMilestone']);
-                    $this->ideaRepo->patchCanvasItem($params['id'], array("milestoneId" => ''));
-                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                    $milestoneId = (int) ($params['removeMilestone']);
+                    $this->ideaRepo->patchCanvasItem($params['id'], ['milestoneId' => '']);
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
                 }
 
                 $canvasItem = $this->ideaRepo->getSingleCanvasItem($params['id']);
-                if ($canvasItem['box'] == "0") {
-                    $canvasItem['box'] = "idea";
+                if ($canvasItem['box'] == '0') {
+                    $canvasItem['box'] = 'idea';
                 }
                 $comments = $this->commentsRepo->getComments('idea', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('ideas', $canvasItem['id']));
 
             } else {
 
-                $type = $params['type'] ?? "idea";
+                $type = $params['type'] ?? 'idea';
 
-                $canvasItem = array(
-                    "id" => "",
-                    "box" => $type,
-                    "tags" => '',
-                    "description" => "",
-                    "status" => "idea",
-                    "assumptions" => "",
-                    "data" => "",
-                    "conclusion" => "",
-                    "milestoneHeadline" => "",
-                    "milestoneId" => "",
-                );
+                $canvasItem = [
+                    'id' => '',
+                    'box' => $type,
+                    'tags' => '',
+                    'description' => '',
+                    'status' => 'idea',
+                    'assumptions' => '',
+                    'data' => '',
+                    'conclusion' => '',
+                    'milestoneHeadline' => '',
+                    'milestoneId' => '',
+                ];
 
                 $comments = [];
             }
 
             $this->tpl->assign('comments', $comments);
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
+
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
 
             if (isset($params['comment']) === true) {
                 if ($params['text'] != '') {
-                    $values = array(
+                    $values = [
                         'text' => $params['text'],
-                        'date' => date("Y-m-d H:i:s"),
-                        'userId' => (session("userdata.id")),
-                        'moduleId' => (int)$_GET['id'],
+                        'date' => date('Y-m-d H:i:s'),
+                        'userId' => (session('userdata.id')),
+                        'moduleId' => (int) $_GET['id'],
                         'commentParent' => ($params['father']),
-                    );
+                    ];
 
                     $message = $this->commentsRepo->addComment($values, 'idea');
-                    $values["id"] = $message;
-                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), "success");
+                    $values['id'] = $message;
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
 
                     $subject = $this->language->__('email_notifications.new_comment_idea_subject');
-                    $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id'];
+                    $actual_link = BASE_URL.'/ideas/ideaDialog/'.(int) $_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.new_comment_idea_message'),
-                        session("userdata.name")
+                        session('userdata.name')
                     );
-
 
                     $notification = app()->make(NotificationModel::class);
-                    $notification->url = array(
-                        "url" => $actual_link,
-                        "text" => $this->language->__('email_notifications.new_comment_idea_cta'),
-                    );
+                    $notification->url = [
+                        'url' => $actual_link,
+                        'text' => $this->language->__('email_notifications.new_comment_idea_cta'),
+                    ];
                     $notification->entity = $values;
-                    $notification->module = "comments";
-                    $notification->projectId = session("currentProject");
+                    $notification->module = 'comments';
+                    $notification->projectId = session('currentProject');
                     $notification->subject = $subject;
-                    $notification->authorId = session("userdata.id");
+                    $notification->authorId = session('userdata.id');
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id']);
+                    return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $_GET['id']);
                 }
             }
 
@@ -150,27 +141,27 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) === true) {
-                        $currentCanvasId = (int)session("currentIdeaCanvas");
+                        $currentCanvasId = (int) session('currentIdeaCanvas');
 
-                        $canvasItem = array(
-                            "box" => $params['box'],
-                            "author" => session("userdata.id"),
-                            "description" => $params['description'],
-                            "status" => $params['status'],
-                            "assumptions" => "",
-                            "data" => $params['data'],
-                            "conclusion" => "",
-                            "tags" => $params['tags'],
-                            "itemId" => $params['itemId'],
-                            "canvasId" => $currentCanvasId,
-                            "milestoneId" => $params['milestoneId'],
-                            "id" => $params['itemId'],
-                        );
+                        $canvasItem = [
+                            'box' => $params['box'],
+                            'author' => session('userdata.id'),
+                            'description' => $params['description'],
+                            'status' => $params['status'],
+                            'assumptions' => '',
+                            'data' => $params['data'],
+                            'conclusion' => '',
+                            'tags' => $params['tags'],
+                            'itemId' => $params['itemId'],
+                            'canvasId' => $currentCanvasId,
+                            'milestoneId' => $params['milestoneId'],
+                            'id' => $params['itemId'],
+                        ];
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
-                            $milestone = array();
+                            $milestone = [];
                             $milestone['headline'] = $params['newMilestone'];
-                            $milestone['tags'] = "#ccc";
+                            $milestone['tags'] = '#ccc';
                             $milestone['editFrom'] = dtHelper()->userNow()->formatDateForUser();
                             $milestone['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                             $id = $this->ticketService->quickAddMilestone($milestone);
@@ -195,103 +186,92 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.idea_edited'), 'success');
 
                         $subject = $this->language->__('email_notifications.idea_edited_subject');
-                        $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId'];
+                        $actual_link = BASE_URL.'/ideas/ideaDialog/'.(int) $params['itemId'];
                         $message = sprintf(
                             $this->language->__('notification.idea_edited'),
-                            session("userdata.name"),
+                            session('userdata.name'),
                             $params['description']
                         );
 
-
                         $notification = app()->make(NotificationModel::class);
-                        $notification->url = array(
-                            "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_edited_cta'),
-                        );
+                        $notification->url = [
+                            'url' => $actual_link,
+                            'text' => $this->language->__('email_notifications.idea_edited_cta'),
+                        ];
 
                         $notification->entity = $canvasItem;
-                        $notification->module = "ideas";
-                        $notification->projectId = session("currentProject");
+                        $notification->module = 'ideas';
+                        $notification->projectId = session('currentProject');
                         $notification->subject = $subject;
-                        $notification->authorId = session("userdata.id");
+                        $notification->authorId = session('userdata.id');
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
+                        return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $params['itemId']);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
                 } else {
                     if (isset($_POST['description']) === true) {
-                        $currentCanvasId = (int)session("currentIdeaCanvas");
+                        $currentCanvasId = (int) session('currentIdeaCanvas');
 
-                        $canvasItem = array(
-                            "box" => $params['box'],
-                            "author" => session("userdata.id"),
-                            "description" => $params['description'],
-                            "status" => $params['status'],
-                            "assumptions" => "",
-                            "data" => $params['data'],
-                            "conclusion" => "",
-                            "canvasId" => $currentCanvasId,
-                        );
+                        $canvasItem = [
+                            'box' => $params['box'],
+                            'author' => session('userdata.id'),
+                            'description' => $params['description'],
+                            'status' => $params['status'],
+                            'assumptions' => '',
+                            'data' => $params['data'],
+                            'conclusion' => '',
+                            'canvasId' => $currentCanvasId,
+                        ];
 
                         $id = $this->ideaRepo->addCanvasItem($canvasItem);
-                        $canvasItem["id"] = $id;
+                        $canvasItem['id'] = $id;
 
                         $subject = $this->language->__('email_notifications.idea_created_subject');
-                        $actual_link = BASE_URL . "/ideas/ideaDialog/" . $id;
-                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), session("userdata.name"), $params['description']);
-
+                        $actual_link = BASE_URL.'/ideas/ideaDialog/'.$id;
+                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), session('userdata.name'), $params['description']);
 
                         $notification = app()->make(NotificationModel::class);
-                        $notification->url = array(
-                            "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_created_subject'),
-                        );
+                        $notification->url = [
+                            'url' => $actual_link,
+                            'text' => $this->language->__('email_notifications.idea_created_subject'),
+                        ];
                         $notification->entity = $canvasItem;
-                        $notification->module = "ideas";
-                        $notification->projectId = session("currentProject");
+                        $notification->module = 'ideas';
+                        $notification->projectId = session('currentProject');
                         $notification->subject = $subject;
-                        $notification->authorId = session("userdata.id");
+                        $notification->authorId = session('userdata.id');
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
 
-                        return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
+                        return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $id);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
                 }
             }
 
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $this->ideaRepo->getSingleCanvasItem($_GET['id']));
+
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 
         /**
          * put - handle put requests
-         *
-         * @access public
-         *
          */
-        public function put($params)
-        {
-        }
+        public function put($params) {}
 
         /**
          * delete - handle delete requests
-         *
-         * @access public
-         *
          */
-        public function delete($params)
-        {
-        }
+        public function delete($params) {}
     }
 
 }

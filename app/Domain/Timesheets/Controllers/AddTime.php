@@ -12,34 +12,16 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class AddTime extends Controller
 {
-    /**
-     * @var TimesheetRepository $timesheetsRepo
-     */
     private TimesheetRepository $timesheetsRepo;
 
-    /**
-     * @var ProjectRepository $projects
-     */
     private ProjectRepository $projects;
 
-    /**
-     * @var TicketRepository $tickets
-     */
     private TicketRepository $tickets;
 
     /**
      * init - initialize private variables
-     *
-     * @param TimesheetRepository $timesheetsRepo
-     * @param ProjectRepository   $projects
-     * @param TicketRepository    $tickets
-     *
-     * @return void
      */
     public function init(
         TimesheetRepository $timesheetsRepo,
@@ -54,9 +36,7 @@ class AddTime extends Controller
     /**
      * run - display template and edit data
      *
-     * @access public
      *
-     * @return Response
      *
      * @throws BindingResolutionException
      */
@@ -67,8 +47,8 @@ class AddTime extends Controller
         $info = '';
         //Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
-            $values = array(
-                'userId' => session("userdata.id"),
+            $values = [
+                'userId' => session('userdata.id'),
                 'ticket' => '',
                 'project' => '',
                 'date' => '',
@@ -81,7 +61,7 @@ class AddTime extends Controller
                 'invoicedCompDate' => '',
                 'paid' => '',
                 'paidDate' => '',
-            );
+            ];
 
             if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
                 if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
@@ -93,57 +73,55 @@ class AddTime extends Controller
                     $values['ticket'] = $tempArr[1];
                 }
 
-                if (!empty($_POST['kind'])) {
+                if (! empty($_POST['kind'])) {
                     $values['kind'] = ($_POST['kind']);
                 }
 
-                if (!empty($_POST['date'])) {
-                    $values['date'] = (new Carbon($_POST['date'], session("usersettings.timezone")))->setTimezone('UTC');
+                if (! empty($_POST['date'])) {
+                    $values['date'] = (new Carbon($_POST['date'], session('usersettings.timezone')))->setTimezone('UTC');
                 }
 
-                if (!empty($_POST['hours'])) {
+                if (! empty($_POST['hours'])) {
                     $values['hours'] = ($_POST['hours']);
                 }
 
-                if (!empty($_POST['invoicedEmpl'])) {
+                if (! empty($_POST['invoicedEmpl'])) {
                     if ($_POST['invoicedEmpl'] == 'on') {
                         $values['invoicedEmpl'] = 1;
                     }
 
-                    if (!empty($_POST['invoicedEmplDate'])) {
-                        $values['invoicedEmplDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                    if (! empty($_POST['invoicedEmplDate'])) {
+                        $values['invoicedEmplDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                     }
                 }
 
-                if (!empty($_POST['invoicedComp'])) {
+                if (! empty($_POST['invoicedComp'])) {
                     if (Auth::userIsAtLeast(Roles::$manager)) {
                         if ($_POST['invoicedComp'] == 'on') {
                             $values['invoicedComp'] = 1;
                         }
 
-                        if (!empty($_POST['invoicedCompDate'])) {
-                            $values['invoicedCompDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                        if (! empty($_POST['invoicedCompDate'])) {
+                            $values['invoicedCompDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                         }
                     }
                 }
 
-                if (!empty($_POST['paid'])) {
+                if (! empty($_POST['paid'])) {
                     if (Auth::userIsAtLeast(Roles::$manager)) {
                         if ($_POST['paid'] == 'on') {
                             $values['paid'] = 1;
                         }
 
-                        if (!empty($_POST['paidDate'])) {
-                            $values['paidDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
+                        if (! empty($_POST['paidDate'])) {
+                            $values['paidDate'] = Carbon::now(session('usersettings.timezone'))->setTimezone('UTC');
                         }
                     }
                 }
 
-
-                if (!empty($_POST['description'])) {
+                if (! empty($_POST['description'])) {
                     $values['description'] = ($_POST['description']);
                 }
-
 
                 if ($values['ticket'] != '' && $values['project'] != '') {
                     if ($values['kind'] != '') {
@@ -167,8 +145,8 @@ class AddTime extends Controller
                 if (isset($_POST['save']) === true) {
                     $this->tpl->assign('values', $values);
                 } elseif (isset($_POST['saveNew']) === true) {
-                    $values = array(
-                        'userId' => session("userdata.id"),
+                    $values = [
+                        'userId' => session('userdata.id'),
                         'ticket' => '',
                         'project' => '',
                         'date' => '',
@@ -181,7 +159,7 @@ class AddTime extends Controller
                         'invoicedCompDate' => '',
                         'paid' => '',
                         'paidDate' => '',
-                    );
+                    ];
 
                     $this->tpl->assign('values', $values);
                 }

@@ -130,6 +130,12 @@ phpstan:
 update-carbon-macros:
 	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php
 
+test-code-style:
+	./vendor/bin/pint --test --config .pint/pint.json
+
+fix-code-style:
+	./vendor/bin/pint --config .pint/pint.json
+
 clear-cache:
 	rm -rf ./bootstrap/cache/*.php
 	rm -rf ./storage/framework/composerPaths.php

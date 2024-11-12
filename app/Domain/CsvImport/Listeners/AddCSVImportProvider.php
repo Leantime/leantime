@@ -12,8 +12,6 @@ use Leantime\Domain\CsvImport\Services;
 class AddCSVImportProvider
 {
     /**
-     * @param mixed $payload
-     * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function handle(mixed $payload): mixed

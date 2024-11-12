@@ -14,8 +14,8 @@ use Leantime\Core\Support\Attributes\LaravelConfig;
 
 class LoadConfig extends LoadConfiguration
 {
-
     use DispatchesEvents;
+
     protected $ignoreFiles = [
         'configuration.sample.php',
         'configuration.php',

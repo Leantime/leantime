@@ -9,9 +9,6 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use PDO;
 
-    /**
-     *
-     */
     class Goalcanvas extends Canvas
     {
         /**
@@ -31,17 +28,15 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
          * canvasTypes - Must be extended
          *
          * @acces protected
-         * @var   array
          */
         protected array $canvasTypes = [
-            'goal' =>     ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
+            'goal' => ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
         ];
 
         /**
          * statusLabels - Status labels (may be extended)
          *
          * @acces protected
-         * @var   array
          */
         protected array $statusLabels = [
             'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
@@ -50,15 +45,12 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
         ];
 
-
         protected array $relatesLabels = [];
-
 
         /**
          * dataLabels - Data labels (may be extended)
          *
          * @acces protected
-         * @var   array
          */
         protected array $dataLabels = [
             1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
@@ -67,12 +59,8 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
         ];
 
-
         /**
          * Gets all goals related to a milestone
-         *
-         * @param $milestoneId
-         * @return array|false
          */
         public function getGoalsByMilestone(int $milestoneId): false|array
         {
@@ -125,13 +113,10 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
+
             return $values;
         }
 
-        /**
-         * @param $canvasId
-         * @return array|false
-         */
         public function getSingleCanvas($canvasId): false|array
         {
             $sql = "SELECT
@@ -147,7 +132,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 FROM
                 zp_canvas
                 LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
-                WHERE type = '" . static::CANVAS_NAME . "canvas' AND zp_canvas.id = :canvasId
+                WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
@@ -162,8 +147,6 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
         /**
          * Gets all goals related to a milestone
-         *
-         * @return array|false
          */
         public function getAllAccountGoals(?int $projectId, ?int $boardId): false|array
         {
@@ -216,47 +199,44 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 )
             ";
 
-            if (isset($projectId) && $projectId  > 0) {
-                $sql .= " AND (zp_canvas.projectId = :projectId)";
+            if (isset($projectId) && $projectId > 0) {
+                $sql .= ' AND (zp_canvas.projectId = :projectId)';
             }
 
-            if (isset($boardId) && $boardId  > 0) {
-                $sql .= " AND (zp_canvas.id = :boardId)";
+            if (isset($boardId) && $boardId > 0) {
+                $sql .= ' AND (zp_canvas.id = :boardId)';
             }
 
             $stmn = $this->db->database->prepare($sql);
 
-            if (session()->exists("userdata")) {
-                $stmn->bindValue(':requesterRole', session("userdata.role"), PDO::PARAM_INT);
+            if (session()->exists('userdata')) {
+                $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
             }
 
-            $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
-            $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
+            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
 
-            if (isset($projectId) && $projectId  > 0) {
+            if (isset($projectId) && $projectId > 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            if (isset($boardId) && $boardId  > 0) {
+            if (isset($boardId) && $boardId > 0) {
                 $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
             }
 
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
+
             return $values;
         }
 
-        /**
-         * @param $values
-         * @return false|string
-         */
         public function createGoal($values): false|string
         {
 
-            $query = "INSERT INTO zp_canvas_items (
+            $query = 'INSERT INTO zp_canvas_items (
                         description,
                             title,
                         assumptions,
@@ -316,7 +296,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                         :endValue,
                         :parent,
                         :tags
-                )";
+                )';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -330,7 +310,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
@@ -354,6 +334,5 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
             return $id;
         }
-
     }
 }

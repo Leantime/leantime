@@ -8,9 +8,9 @@ $formUrl = CURRENT_URL;
 //Controller may not redirect. Make sure delComment is only added once
 if (str_contains($formUrl, '?delComment=')) {
     $urlParts = explode('?delComment=', $formUrl);
-    $deleteUrlBase = $urlParts[0] . "?delComment=";
+    $deleteUrlBase = $urlParts[0].'?delComment=';
 } else {
-    $deleteUrlBase = $formUrl . "?delComment=";
+    $deleteUrlBase = $formUrl.'?delComment=';
 }
 ?>
 
@@ -39,19 +39,19 @@ if (str_contains($formUrl, '?delComment=')) {
 
     <div id="comments">
         <div>
-            <?php foreach ($tpl->get('comments') as $row) : ?>
+            <?php foreach ($tpl->get('comments') as $row) { ?>
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
-                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?=format($row['userModified'])->timestamp() ?>"
+                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?= format($row['userModified'])->timestamp() ?>"
                          style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                     <div class="right"><?php printf(
                         $tpl->__('text.written_on'),
                         format($row['date'])->date(),
                         format($row['date'])->time()
-                                       ); ?></div>
+                    ); ?></div>
                     <strong>
                     <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>
-                    <div style="margin-left:60px;"><?php echo($row['text']); ?></div>
+                    <div style="margin-left:60px;"><?php echo $row['text']; ?></div>
                     <div class="clear"></div>
                     <div style="padding-left:60px">
                         <a href="javascript:void(0);" class="replyButton"
@@ -59,9 +59,9 @@ if (str_contains($formUrl, '?delComment=')) {
                             <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                         </a>
 
-                        <?php if ($row['userId'] == session("userdata.id")) { ?>
+                        <?php if ($row['userId'] == session('userdata.id')) { ?>
                             |
-                            <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
+                            <a href="<?php echo $deleteUrlBase.$row['id'] ?>"
                                class="deleteComment">
                                 <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                             </a>
@@ -77,8 +77,8 @@ if (str_contains($formUrl, '?delComment=')) {
                     <div class="clear"></div>
                 </div>
 
-                <?php if ($comments->getReplies($row['id'])) : ?>
-                    <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
+                <?php if ($comments->getReplies($row['id'])) { ?>
+                    <?php foreach ($comments->getReplies($row['id']) as $comment) { ?>
                         <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
                             <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?= $comment['userModified'] ?>"
                                  style="float:left; width:50px; margin-right:10px; padding:2px;"/>
@@ -97,8 +97,8 @@ if (str_contains($formUrl, '?delComment=')) {
                                 <div class="clear"></div>
 
                                 <div style="padding-left:60px">
-                                    <?php if ($comment['userId'] == session("userdata.id")) { ?>
-                                        <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
+                                    <?php if ($comment['userId'] == session('userdata.id')) { ?>
+                                        <a href="<?php echo $deleteUrlBase.$comment['id'] ?>"
                                            class="deleteComment">
                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                         </a>
@@ -106,15 +106,15 @@ if (str_contains($formUrl, '?delComment=')) {
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            <?php endforeach; ?>
+                    <?php } ?>
+                <?php } ?>
+            <?php } ?>
         </div>
 
         <?php if (count($tpl->get('comments')) == 0) { ?>
             <div class="text-center">
                 <div style='width:33%' class='svgContainer'>
-                    <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
+                    <?php echo file_get_contents(ROOT.'/dist/images/svg/undraw_real_time_collaboration_c62i.svg'); ?>
                     <?php $tpl->e($language->__('text.no_comments')) ?>
                 </div>
             </div>

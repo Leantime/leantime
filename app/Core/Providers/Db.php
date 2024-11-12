@@ -14,6 +14,6 @@ class Db extends ServiceProvider
     public function register()
     {
         $this->app->singleton(\Leantime\Core\Db\Db::class, \Leantime\Core\Db\Db::class);
-        $this->app->alias(\Leantime\Core\Db\Db::class, "db");
+        $this->app->alias(\Leantime\Core\Db\Db::class, 'db');
     }
 }

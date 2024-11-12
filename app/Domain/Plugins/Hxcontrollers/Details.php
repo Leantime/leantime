@@ -8,24 +8,12 @@ use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 
-/**
- *
- */
 class Details extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'plugins::plugindetails';
 
-    /**
-     * @var PluginService
-     */
     private PluginService $pluginService;
 
-    /**
-     * @return void
-     */
     public function init(
         PluginService $pluginService,
     ): void {
@@ -33,7 +21,6 @@ class Details extends HtmxController
     }
 
     /**
-     * @return string
      * @throws BindingResolutionException
      */
     public function install(): string
@@ -41,7 +28,7 @@ class Details extends HtmxController
         $pluginProps = $this->incomingRequest->request->all()['plugin'];
         $version = $pluginProps['version'];
         unset($pluginProps['version']);
-        $builder = build(new MarketplacePlugin());
+        $builder = build(new MarketplacePlugin);
 
         foreach ($pluginProps as $key => $value) {
 
@@ -63,20 +50,23 @@ class Details extends HtmxController
         } catch (RequestException $e) {
 
             //Parse and clean up error message
-            $errorJson = str_replace("HTTP request returned status code 500:", "", $e->getMessage());
+            $errorJson = str_replace('HTTP request returned status code 500:', '', $e->getMessage());
             $errors = json_decode(trim($errorJson));
             report($e);
 
-            $this->tpl->assign('formError', $errors->error ?? "There was an error installing the plugin");
+            $this->tpl->assign('formError', $errors->error ?? 'There was an error installing the plugin');
+
             return 'plugin-installation';
         }
 
         if ($this->pluginService->isEnabled($pluginModel->identifier)) {
             $this->tpl->assign('formNotification', __('marketplace.updated'));
+
             return 'plugin-installation';
         }
 
         $this->tpl->assign('formNotification', sprintf(__('marketplace.installed'), '/plugins/myapps'));
+
         return 'plugin-installation';
     }
 }

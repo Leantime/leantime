@@ -10,19 +10,12 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Show extends Controller
     {
         private WikiService $wikiService;
+
         private CommentService $commentService;
 
-        /**
-         * @param WikiService    $wikiService
-         * @param CommentService $commentService
-         * @return void
-         */
         public function init(WikiService $wikiService, CommentService $commentService): void
         {
             $this->wikiService = $wikiService;
@@ -30,54 +23,52 @@ namespace Leantime\Domain\Wiki\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get($params): Response
         {
 
             $currentArticle = '';
-            $wikiHeadlines = array();
+            $wikiHeadlines = [];
 
             //Get all project wikis, creates one if none exists
-            $wikis = $this->wikiService->getAllProjectWikis(session("currentProject"));
+            $wikis = $this->wikiService->getAllProjectWikis(session('currentProject'));
 
             //Special case: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {
 
-                $wikiId = (int)$_GET['setWiki'];
+                $wikiId = (int) $_GET['setWiki'];
 
                 return $this->setWikiAndRedirect($wikiId);
 
             }
 
-
-            if(isset($params['id'])) {
+            if (isset($params['id'])) {
 
                 $currentArticle = $this->wikiService->setCurrentArticle($params['id'], session('usersettings.id'));
 
-                if($currentArticle == false) {
+                if ($currentArticle == false) {
                     $this->wikiService->clearWikiCache();
-                    return Frontcontroller::redirect(BASE_URL."/errors/error404");
+
+                    return Frontcontroller::redirect(BASE_URL.'/errors/error404');
                 }
 
-            }else if (
-                session()->exists("lastArticle") &&
-                session("lastArticle") != '' &&
+            } elseif (
+                session()->exists('lastArticle') &&
+                session('lastArticle') != '' &&
                 ! isset($params['id'])) {
 
-                $currentArticle = $this->wikiService->setCurrentArticle(session("lastArticle"), session('usersettings.id'));
+                $currentArticle = $this->wikiService->setCurrentArticle(session('lastArticle'), session('usersettings.id'));
 
-                if($currentArticle) {
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
+                if ($currentArticle) {
+                    return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$currentArticle->id);
                 }
 
-            //If neither session is set nor the params id we are coming in fresh. Grab the article from wiki if there is one
-            }else{
+                //If neither session is set nor the params id we are coming in fresh. Grab the article from wiki if there is one
+            } else {
 
                 //False is okay, just an empty wiki
-                $success = $this->wikiService->setCurrentWiki(session("currentWiki"));
+                $success = $this->wikiService->setCurrentWiki(session('currentWiki'));
                 if ($success === false) {
 
                     //Try getting the first wiki
@@ -85,49 +76,50 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                     if ($success === false) {
                         $this->wikiService->clearWikiCache();
-                        return Frontcontroller::redirect(BASE_URL."/errors/error404");
+
+                        return Frontcontroller::redirect(BASE_URL.'/errors/error404');
                     }
                 }
 
-                $defaultArticle = $this->wikiService->getDefaultArticleForWiki(session("currentWiki"), session('userdata.id'));
+                $defaultArticle = $this->wikiService->getDefaultArticleForWiki(session('currentWiki'), session('userdata.id'));
                 if ($defaultArticle !== false) {
-                    session(["lastArticle" => $defaultArticle->id]);
-                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $defaultArticle->id);
+                    session(['lastArticle' => $defaultArticle->id]);
+
+                    return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$defaultArticle->id);
                 }
                 //If not it's really just empty.
 
             }
 
             //At this point we should have a currentWiki. Even if non exist
-            $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
-            if(!$wikiHeadlines) {
-                $wikiHeadlines = array();
+            $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session('currentWiki'), session('userdata.id'));
+            if (! $wikiHeadlines) {
+                $wikiHeadlines = [];
             }
 
             //Get the actual wiki content
-            $currentWiki = $this->wikiService->getWiki(session("currentWiki"));
-            if(empty($currentWiki)) {
+            $currentWiki = $this->wikiService->getWiki(session('currentWiki'));
+            if (empty($currentWiki)) {
                 $this->wikiService->clearWikiCache();
-                //If we can't find a current wiki at this point something went wrong
-                return Frontcontroller::redirect(BASE_URL."/errors/error404");
-            }
 
+                //If we can't find a current wiki at this point something went wrong
+                return Frontcontroller::redirect(BASE_URL.'/errors/error404');
+            }
 
             //Delete comment
             if (isset($_GET['delComment']) === true) {
-                $commentId = (int)($_GET['delComment']);
+                $commentId = (int) ($_GET['delComment']);
 
                 $this->commentService->deleteComment($commentId);
 
-                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success", "wikicomment_deleted");
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'wikicomment_deleted');
             }
 
             if (isset($currentArticle->id)) {
                 $comment = $this->commentService->getComments('article', $currentArticle->id, 0);
             } else {
-                $comment = array();
+                $comment = [];
             }
-
 
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', count($comment));
@@ -136,40 +128,39 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->assign('wikis', $wikis);
             $this->tpl->assign('wikiHeadlines', $wikiHeadlines);
 
-            return $this->tpl->display("wiki.show");
+            return $this->tpl->display('wiki.show');
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
         {
 
             if (isset($_GET['id']) === true) {
-                $id = (int)($_GET['id']);
-                $currentArticle = $this->wikiService->getArticle($id, session("currentProject"));
+                $id = (int) ($_GET['id']);
+                $currentArticle = $this->wikiService->getArticle($id, session('currentProject'));
 
                 if (isset($_POST['comment']) === true) {
-                    if ($this->commentService->addComment($_POST, "article", $id, $currentArticle)) {
+                    if ($this->commentService->addComment($_POST, 'article', $id, $currentArticle)) {
                         $this->tpl->setNotification(
-                            $this->language->__("notifications.comment_create_success"),
-                            "success",
-                            "wikicomment_created"
+                            $this->language->__('notifications.comment_create_success'),
+                            'success',
+                            'wikicomment_created'
                         );
                     } else {
-                        $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                        $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
                     }
                 }
 
-                return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $id);
+                return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$id);
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/wiki/show/");
+            return Frontcontroller::redirect(BASE_URL.'/wiki/show/');
         }
 
-        protected function setWikiAndRedirect($id) {
+        protected function setWikiAndRedirect($id)
+        {
 
             $this->wikiService->clearWikiCache();
 
@@ -177,16 +168,18 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             if ($success === false) {
                 $this->wikiService->clearWikiCache();
-                return Frontcontroller::redirect(BASE_URL."/errors/error404");
+
+                return Frontcontroller::redirect(BASE_URL.'/errors/error404');
             }
 
             $defaultArticle = $this->wikiService->getDefaultArticleForWiki($id, session('userdata.id'));
             if ($defaultArticle !== false) {
-                session(["lastArticle" => $defaultArticle->id]);
-                return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $defaultArticle->id);
+                session(['lastArticle' => $defaultArticle->id]);
+
+                return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$defaultArticle->id);
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/wiki/show/");
+            return Frontcontroller::redirect(BASE_URL.'/wiki/show/');
 
         }
     }

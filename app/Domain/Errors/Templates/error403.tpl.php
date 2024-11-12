@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -13,7 +13,7 @@ foreach ($__data as $var => $val) {
     <span class="animate3 bounceIn">3</span>
     <div class="errorbtns animate4 fadeInUp">
         <a onclick="history.back()" class="btn btn-default"><?php echo $tpl->__('buttons.back') ?></a>
-        <a href="<?=BASE_URL ?>" class="btn btn-primary"><?php echo $tpl->__('links.dashboard') ?></a>
+        <a href="<?= BASE_URL ?>" class="btn btn-primary"><?php echo $tpl->__('links.dashboard') ?></a>
     </div><br/><br/><br/><br/>
 
 </div>

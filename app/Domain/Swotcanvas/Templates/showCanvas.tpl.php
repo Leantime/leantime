@@ -3,8 +3,7 @@
 /**
  * Template
  */
-
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -23,12 +22,12 @@ $canvasName = 'swot';
             <div class="row canvas-row">
                 <div class="column" style="width: 50%">
                   <h4 class="widgettitle title-primary center canvas-title-only">
-                    <large><i class="far fa-thumbs-up"></i> <?=$tpl->__('box.header.swot.helpful') ?></large>
+                    <large><i class="far fa-thumbs-up"></i> <?= $tpl->__('box.header.swot.helpful') ?></large>
                   </h4>
                 </div>
                 <div class="column" style="width: 50%">
                   <h4 class="widgettitle title-primary center" style="border-radius: var(--box-radius-small);">
-                    <large><i class="far fa-thumbs-down"></i> <?=$tpl->__('box.header.swot.harmful') ?></large>
+                    <large><i class="far fa-thumbs-down"></i> <?= $tpl->__('box.header.swot.harmful') ?></large>
                   </h4>
                 </div>
             </div>

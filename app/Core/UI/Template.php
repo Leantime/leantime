@@ -6,9 +6,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
-use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Compilers\Compiler;
-use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\View;
 use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
@@ -48,7 +46,7 @@ class Template
 
     public $viewFactory;
 
-    public array $picture = array(
+    public array $picture = [
         'calendar' => 'fa-calendar',
         'clients' => 'fa-people-group',
         'dashboard' => 'fa-th-large',
@@ -61,8 +59,7 @@ class Template
         'timesheets' => 'fa-table',
         'users' => 'fa-people-group',
         'default' => 'fa-off',
-    );
-
+    ];
 
     /**
      * __construct - get instance of frontcontroller
@@ -157,7 +154,7 @@ class Template
             'language' => $this->language,
             'dateTimeInfoEnum' => DateTimeInfoEnum::class,
             'tpl' => $this,
-            'request' => $this->incomingRequest
+            'request' => $this->incomingRequest,
         ]);
 
         $this->viewFactory = app('view');
@@ -275,7 +272,7 @@ class Template
 
         //app('view')->share([]);
 
-        $this->hookContext = "tpl.".$templateParts['module'].".".$templateParts['path'];
+        $this->hookContext = 'tpl.'.$templateParts['module'].'.'.$templateParts['path'];
 
         $viewFactory = app('view');
 
@@ -287,7 +284,7 @@ class Template
         $this->setHookContext($templateParts, $path);
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
-        if (str_ends_with($path, "blade.php")) {
+        if (str_ends_with($path, 'blade.php')) {
             $view->with(array_merge(
                 $this->vars,
                 ['layout' => $layout]
@@ -307,18 +304,15 @@ class Template
     /**
      * displaySubmodule - display a submodule for a given module
      *
-     * @access public
-     * @param string $alias
-     * @return void
      * @throws Exception
      */
     public function displaySubmodule(string $alias): void
     {
         if (! str_contains($alias, '-')) {
-            throw new Exception("Submodule alias must be in the format module-submodule");
+            throw new Exception('Submodule alias must be in the format module-submodule');
         }
 
-        [$module, $submodule] = explode("-", $alias);
+        [$module, $submodule] = explode('-', $alias);
 
         $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
@@ -381,17 +375,15 @@ class Template
     {
         $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
 
-
         app('view')->share(['tpl' => $this]);
 
         /** @var View $view */
         $view = app('view')->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
 
         $path = $view->getPath();
-        $viewPathExplode = explode("::", $viewPath);
+        $viewPathExplode = explode('::', $viewPath);
 
-        $this->setHookContext(["module" => $viewPathExplode[0] ?? '', "path" => $viewPathExplode[1] ?? ''], $path);
-
+        $this->setHookContext(['module' => $viewPathExplode[0] ?? '', 'path' => $viewPathExplode[1] ?? ''], $path);
 
         return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
@@ -918,8 +910,6 @@ class Template
     /**
      * getModulePicture - get module picture
      *
-     * @access public
-     * @return string
      * @throws BindingResolutionException
      */
     public function getModulePicture(): string
@@ -934,12 +924,13 @@ class Template
         return $picture;
     }
 
-    protected function setHookContext($templateParts, $path) {
+    protected function setHookContext($templateParts, $path)
+    {
 
-        if(str_contains($path, "app/Plugins")) {
-            $this->hookContext = "leantime.plugins.".$templateParts['module'].".templates.".$templateParts['path'];
-        }else{
-            $this->hookContext = "leantime.domain.".$templateParts['module'].".templates.".$templateParts['path'];
+        if (str_contains($path, 'app/Plugins')) {
+            $this->hookContext = 'leantime.plugins.'.$templateParts['module'].'.templates.'.$templateParts['path'];
+        } else {
+            $this->hookContext = 'leantime.domain.'.$templateParts['module'].'.templates.'.$templateParts['path'];
         }
 
     }

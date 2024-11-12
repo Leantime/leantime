@@ -8,17 +8,12 @@ namespace Leantime\Domain\Sprints\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
 
-    /**
-     *
-     */
     class DelSprint extends Controller
     {
         private SprintRepository $sprintRepo;
 
         /**
          * init - initialize private variables
-         *
-         * @access private
          */
         public function init(SprintRepository $sprintRepo)
         {
@@ -27,8 +22,6 @@ namespace Leantime\Domain\Sprints\Controllers {
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
         public function run()
         {
@@ -38,24 +31,25 @@ namespace Leantime\Domain\Sprints\Controllers {
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
                 if (isset($_GET['id'])) {
-                    $id = (int)($_GET['id']);
+                    $id = (int) ($_GET['id']);
                 }
 
                 if (isset($_POST['del'])) {
                     $this->sprintRepo->delSprint($id);
 
-                    $this->tpl->setNotification($this->language->__('notifications.sprint_deleted_successfully'), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.sprint_deleted_successfully'), 'success');
 
-                    session(["currentSprint" => ""]);
+                    session(['currentSprint' => '']);
 
-                    if (session()->exists("lastPage")) {
-                        return Frontcontroller::redirect(session("lastPage"));
+                    if (session()->exists('lastPage')) {
+                        return Frontcontroller::redirect(session('lastPage'));
                     } else {
-                        return Frontcontroller::redirect(BASE_URL . "/tickets/showKanban");
+                        return Frontcontroller::redirect(BASE_URL.'/tickets/showKanban');
                     }
                 }
 
                 $this->tpl->assign('id', $id);
+
                 return $this->tpl->displayPartial('sprints.delSprint');
             } else {
                 return $this->tpl->displayPartial('errors.error403', responseCode: 403);

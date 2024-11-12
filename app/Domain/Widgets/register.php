@@ -2,14 +2,14 @@
 
 use Leantime\Core\Events\EventDispatcher;
 
-EventDispatcher::add_filter_listener("leantime.domain.menu.composers.menu.with.settingsLink", function ($settingsLink, $params) {
+EventDispatcher::add_filter_listener('leantime.domain.menu.composers.menu.with.settingsLink', function ($settingsLink, $params) {
 
-    if(isset($params['type']) && $params['type'] == "personal") {
+    if (isset($params['type']) && $params['type'] == 'personal') {
         return [
-            "module" => "widgets",
-            "action" => "widgetManager",
-            "url" => CURRENT_URL . "#/widgets/widgetManager",
-            "label" => "links.dashboard_settings",
+            'module' => 'widgets',
+            'action' => 'widgetManager',
+            'url' => CURRENT_URL.'#/widgets/widgetManager',
+            'label' => 'links.dashboard_settings',
         ];
     }
 

@@ -2,7 +2,6 @@
 
 /**
  * showAll Class - show My Calender
- *
  */
 
 namespace Leantime\Domain\Tickets\Controllers {
@@ -14,15 +13,16 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
-    /**
-     *
-     */
     class ShowProjectCalendar extends Controller
     {
         private CalendarRepository $calendarRepo;
+
         private ProjectRepository $projectsRepo;
+
         private SprintService $sprintService;
+
         private TicketService $ticketService;
+
         private ProjectService $projectService;
 
         /**
@@ -41,16 +41,13 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
 
-            session(["lastPage" => CURRENT_URL]);
-            session(["lastMilestoneView" => "calendar"]);
+            session(['lastPage' => CURRENT_URL]);
+            session(['lastMilestoneView' => 'calendar']);
 
         }
 
         /**
          * get - handle get requests
-         *
-         * @access public
-         *
          */
         public function get($params)
         {
@@ -65,14 +62,12 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * post - handle post requests
-         *
-         * @access public
-         *
          */
         public function post($params)
         {
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
             return $this->tpl->display('tickets.roadmap');
         }
     }

@@ -2,7 +2,7 @@
 
 use Leantime\Core\UI\Theme;
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -40,12 +40,12 @@ $user = $tpl->get('user');
                     <div id="myProfile">
                         <form action="" method="post">
 
-                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                            <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="firstname" ><?php echo $tpl->__('label.firstname'); ?></label>
                                     <span>
-                                        <input type="text" class="input" name="firstname" id="firstname" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" class="input" name="firstname" id="firstname" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['firstname']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -53,7 +53,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="lastname" ><?php echo $tpl->__('label.lastname'); ?></label>
                                     <span>
-                                        <input type="text" name="lastname" class="input" id="lastname" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="lastname" class="input" id="lastname" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['lastname']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -61,7 +61,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="user" ><?php echo $tpl->__('label.email'); ?></label>
                                     <span>
-                                        <input type="text" name="user" class="input" id="user" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="user" class="input" id="user" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['user']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -69,7 +69,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="phone" ><?php echo $tpl->__('label.phone'); ?></label>
                                     <span>
-                                        <input type="text" name="phone" class="input" id="phone" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="phone" class="input" id="phone" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['phone']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -86,18 +86,18 @@ $user = $tpl->get('user');
 
                     <div id="security">
                         <h4 class="widgettitle title-light">
-                            <?=$tpl->__('headlines.change_password'); ?>
+                            <?= $tpl->__('headlines.change_password'); ?>
                         </h4>
-                        <?php if (session("userdata.isLdap")) {
-                            echo "<strong>" . $tpl->__("text.account_managed_ldap") . "</strong><br /><br />";
+                        <?php if (session('userdata.isLdap')) {
+                            echo '<strong>'.$tpl->__('text.account_managed_ldap').'</strong><br /><br />';
                         } ?>
                         <form method="post">
-                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                            <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="currentPassword" ><?php echo $tpl->__('label.old_password') ?></label>
                                     <span>
-                                        <input type='password' value="" name="currentPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type='password' value="" name="currentPassword" class="input" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                id="currentPassword"/><br/>
                                     </span>
                                 </div>
@@ -105,7 +105,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="newPassword" ><?php echo $tpl->__('label.new_password') ?></label>
                                     <span>
-                                        <input type='password' value="" name="newPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type='password' value="" name="newPassword" class="input" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                id="newPassword"/>
                                         <span id="pwStrength"></span>
 
@@ -115,44 +115,44 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="confirmPassword" ><?php echo $tpl->__('label.password_repeat') ?></label>
                                     <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
+                                        <input type="password" value="" name="confirmPassword" class="input" <?= session('userdata.isLdap') ? "disabled='disabled'" : ''; ?>
                                                id="confirmPassword"/><br/>
-                                        <?php if (!session("userdata.isLdap")) {?>
-                                        <small><?=$tpl->__('label.passwordRequirements') ?></small>
+                                        <?php if (! session('userdata.isLdap')) {?>
+                                        <small><?= $tpl->__('label.passwordRequirements') ?></small>
                                         <?php } ?>
                                     </span>
 
                                 </div>
                             </div>
-                            <?php if (!session("userdata.isLdap")) {?>
+                            <?php if (! session('userdata.isLdap')) {?>
                             <input type="hidden" name="savepw" value="1" />
                             <input type="submit" name="save" id="savePw" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
                             <?php }?>
                         </form>
                         <br /><br />
                         <h4 class="widgettitle title-light">
-                            <i class="fa-solid fa-shield-halved"></i> <?=$tpl->__('headlines.twoFA'); ?>
+                            <i class="fa-solid fa-shield-halved"></i> <?= $tpl->__('headlines.twoFA'); ?>
                         </h4>
                         <?php if ($values['twoFAEnabled']) { ?>
                             <p><?php echo $tpl->__('text.twoFA_enabled'); ?></p>
                         <?php } else { ?>
                             <p><?php echo $tpl->__('text.twoFA_disabled'); ?></p>
                         <?php } ?>
-                        <p><a href="<?=BASE_URL ?>/twoFA/edit"><?php echo $tpl->__('text.twoFA_manage'); ?></a></p>
+                        <p><a href="<?= BASE_URL ?>/twoFA/edit"><?php echo $tpl->__('text.twoFA_manage'); ?></a></p>
                     </div>
 
                     <div id="settings">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                            <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="language" ><?php echo $tpl->__('label.language') ?></label>
                                     <span class='field'>
                                         <select name="language" id="language" style="width: 220px">
-                                            <?php foreach ($tpl->get("languageList") as $languagKey => $languageValue) {?>
-                                                <option value="<?=$languagKey?>" <?php if ($tpl->get('userLang') == $languagKey) {
+                                            <?php foreach ($tpl->get('languageList') as $languagKey => $languageValue) {?>
+                                                <option value="<?= $languagKey?>" <?php if ($tpl->get('userLang') == $languagKey) {
                                                     echo "selected='selected'";
-                                                               } ?>><?=$languageValue?></option>
+                                                } ?>><?= $languageValue?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -163,13 +163,13 @@ $user = $tpl->get('user');
                                         <select name="date_format" id="date_format" style="width: 220px">
                                             <?php
                                             $dateFormats = $tpl->get('dateTimeValues')['dates'];
-                                            $dateTimeNow = date_create();
+$dateTimeNow = date_create();
 
-                                            foreach ($dateFormats as $format) {
-                                                ?>
-                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('dateFormat') == $format) {
-                                                                                            echo "selected='selected'";
-                                                               } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+foreach ($dateFormats as $format) {
+    ?>
+                                                <option value="<?php echo $format; ?>" <?php if ($tpl->get('dateFormat') == $format) {
+                                                    echo "selected='selected'";
+                                                } ?>><?php echo date_format($dateTimeNow, $format); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -180,13 +180,13 @@ $user = $tpl->get('user');
                                         <select name="time_format" id="time_format" style="width: 220px">
                                             <?php
                                             $timeFormats = $tpl->get('dateTimeValues')['times'];
-                                            $dateTimeNow = date_create();
+$dateTimeNow = date_create();
 
-                                            foreach ($timeFormats as $format) {
-                                                ?>
-                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('timeFormat') == $format) {
-                                                                                            echo "selected='selected'";
-                                                               } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+foreach ($timeFormats as $format) {
+    ?>
+                                                <option value="<?php echo $format; ?>" <?php if ($tpl->get('timeFormat') == $format) {
+                                                    echo "selected='selected'";
+                                                } ?>><?php echo date_format($dateTimeNow, $format); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -197,13 +197,13 @@ $user = $tpl->get('user');
                                         <select name="timezone" id="timezone" style="width: 220px">
                                             <?php
                                             $userTZ = $tpl->get('timezone');
-                                            $TZlist = $tpl->get('timezoneOptions');
+$TZlist = $tpl->get('timezoneOptions');
 
-                                            foreach ($TZlist as $tz) {
-                                                ?>
-                                                <option value="<?php echo ($tz); ?>" <?php if ($userTZ === $tz) {
-                                                                                            echo "selected='selected'";
-                                                               } ?>><?php echo ($tz); ?></option>
+foreach ($TZlist as $tz) {
+    ?>
+                                                <option value="<?php echo $tz; ?>" <?php if ($userTZ === $tz) {
+                                                    echo "selected='selected'";
+                                                } ?>><?php echo $tz; ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -216,7 +216,7 @@ $user = $tpl->get('user');
 
                     <div id="theme">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                            <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="themeSelect" ><?php echo $tpl->__('label.theme') ?></label>
@@ -224,12 +224,12 @@ $user = $tpl->get('user');
                                         <select name="theme" id="themeSelect" style="width: 220px">
                                             <?php
                                             $themeCore = app()->make(Theme::class);
-                                            $themeAll = $themeCore->getAll();
-                                            foreach ($themeAll as $key => $theme) {
-                                                ?>
+$themeAll = $themeCore->getAll();
+foreach ($themeAll as $key => $theme) {
+    ?>
                                                 <option value="<?= $key ?>" <?php if ($tpl->get('userTheme') == $key) {
                                                     echo "selected='selected'";
-                                                               } ?>><?= $tpl->__($theme['name']) ?></option>
+                                                } ?>><?= $tpl->__($theme['name']) ?></option>
                                             <?php } ?>
                                         </select>
 
@@ -239,12 +239,12 @@ $user = $tpl->get('user');
                                     <div class="col-md-12">
                                         <label for="colormode" ><?php echo $tpl->__('label.colormode') ?></label>
                                         <select name="colormode" id="colormode">
-                                           <option value="light" <?php if ($tpl->get('userColorMode') == "light") {
-                                                echo "selected='selected'";
-                                                                 } ?>><?= $tpl->__('label.light') ?></option>
-                                           <option value="dark" <?php if ($tpl->get('userColorMode') == "dark") {
-                                                echo "selected='selected'";
-                                                                } ?>><?= $tpl->__('label.dark') ?></option>
+                                           <option value="light" <?php if ($tpl->get('userColorMode') == 'light') {
+                                               echo "selected='selected'";
+                                           } ?>><?= $tpl->__('label.light') ?></option>
+                                           <option value="dark" <?php if ($tpl->get('userColorMode') == 'dark') {
+                                               echo "selected='selected'";
+                                           } ?>><?= $tpl->__('label.dark') ?></option>
                                         </select>
                                     </div>
                                 </div>
@@ -254,15 +254,15 @@ $user = $tpl->get('user');
                                         <label>Font</label>
                                         <?php foreach ($tpl->get('availableFonts') as $key => $font) { ?>
                                             <div class="font-preview">
-                                                <label for="font-<?=$key?>" class="font"
-                                                       style="font-family:'<?=$font ?>'; ">
+                                                <label for="font-<?= $key?>" class="font"
+                                                       style="font-family:'<?= $font ?>'; ">
                                                     The quick brown fox jumps over the lazy dog
                                                 </label>
                                                 <span class="font-name">
-                                                    <input type="radio" name="themeFont" id="font-<?=$key?>" value="<?=$font ?>" <?php if ($tpl->get('themeFont') == $key) {
+                                                    <input type="radio" name="themeFont" id="font-<?= $key?>" value="<?= $font ?>" <?php if ($tpl->get('themeFont') == $key) {
                                                         echo "checked='checked'";
-                                                                                                  } ?>/>
-                                                    <label for="color-<?=$key?>"><?=$font ?></label>
+                                                    } ?>/>
+                                                    <label for="color-<?= $key?>"><?= $font ?></label>
                                             </div>
                                         <?php } ?>
 
@@ -274,14 +274,14 @@ $user = $tpl->get('user');
                                         <label>Color Scheme</label>
                                         <?php foreach ($tpl->get('availableColorSchemes') as $key => $scheme) { ?>
                                             <div class="color-circle">
-                                                <label for="color-<?=$key?>" class="color"
-                                                      style="background:linear-gradient(135deg, <?=$scheme["primaryColor"] ?> 20%, <?=$scheme["secondaryColor"] ?> 100%);">
+                                                <label for="color-<?= $key?>" class="color"
+                                                      style="background:linear-gradient(135deg, <?= $scheme['primaryColor'] ?> 20%, <?= $scheme['secondaryColor'] ?> 100%);">
                                                 </label>
                                                 <span class="color-name">
-                                                    <input type="radio" name="colorscheme" id="color-<?=$key?>" value="<?=$key ?>" <?php if ($tpl->get('userColorScheme') == $key) {
+                                                    <input type="radio" name="colorscheme" id="color-<?= $key?>" value="<?= $key ?>" <?php if ($tpl->get('userColorScheme') == $key) {
                                                         echo "checked='checked'";
-                                                                                                     } ?>/>
-                                                    <label for="color-<?=$key?>"><?=$tpl->__($scheme["name"]) ?></label>
+                                                    } ?>/>
+                                                    <label for="color-<?= $key?>"><?= $tpl->__($scheme['name']) ?></label>
                                             </div>
                                         <?php } ?>
 
@@ -295,15 +295,15 @@ $user = $tpl->get('user');
 
                     <div id="notifications">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                            <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="notifications" ><?php echo $tpl->__('label.receive_notifications') ?></label>
                                     <span>
                                         <input type="checkbox" value="" name="notifications" class="input"
-                                               id="notifications" <?php if ($values['notifications'] == "1") {
-                                                    echo " checked='checked' ";
-                                                                  } ?>/> <br/>
+                                               id="notifications" <?php if ($values['notifications'] == '1') {
+                                                   echo " checked='checked' ";
+                                               } ?>/> <br/>
                                     </span>
                                 </div>
                                 <div class="form-group">
@@ -311,39 +311,39 @@ $user = $tpl->get('user');
                                     <span>
                                         <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
-                                             <option value="60" <?php if ($values['messagesfrequency'] == "60") {
-                                                    echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.1min') ?></option>
-                                            <option value="300" <?php if ($values['messagesfrequency'] == "300") {
-                                                echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.5min') ?></option>
-                                            <option value="900" <?php if ($values['messagesfrequency'] == "900") {
-                                                echo " selected ";
-                                                                } ?>><?php echo $tpl->__('label.15min') ?></option>
-                                            <option value="1800" <?php if ($values['messagesfrequency'] == "1800") {
-                                                echo " selected ";
-                                                                 } ?>><?php echo $tpl->__('label.30min') ?></option>
-                                            <option value="3600" <?php if ($values['messagesfrequency'] == "3600") {
-                                                echo " selected ";
-                                                                 } ?>><?php echo $tpl->__('label.1h') ?></option>
-                                            <option value="10800" <?php if ($values['messagesfrequency'] == "10800") {
-                                                echo " selected ";
-                                                                  } ?>><?php echo $tpl->__('label.3h') ?></option>
-                                            <option value="36000" <?php if ($values['messagesfrequency'] == "36000") {
-                                                echo " selected ";
-                                                                  } ?>><?php echo $tpl->__('label.6h') ?></option>
-                                            <option value="43200" <?php if ($values['messagesfrequency'] == "43200") {
-                                                echo " selected ";
-                                                                  } ?>><?php echo $tpl->__('label.12h') ?></option>
-                                            <option value="86400" <?php if ($values['messagesfrequency'] == "86400") {
-                                                echo " selected ";
-                                                                  } ?>><?php echo $tpl->__('label.24h') ?></option>
-                                            <option value="172800" <?php if ($values['messagesfrequency'] == "172800") {
-                                                echo " selected ";
-                                                                   } ?>><?php echo $tpl->__('label.48h') ?></option>
-                                            <option value="604800" <?php if ($values['messagesfrequency'] == "604800") {
-                                                echo " selected ";
-                                                                   } ?>><?php echo $tpl->__('label.1w') ?></option>
+                                             <option value="60" <?php if ($values['messagesfrequency'] == '60') {
+                                                 echo ' selected ';
+                                             } ?>><?php echo $tpl->__('label.1min') ?></option>
+                                            <option value="300" <?php if ($values['messagesfrequency'] == '300') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.5min') ?></option>
+                                            <option value="900" <?php if ($values['messagesfrequency'] == '900') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.15min') ?></option>
+                                            <option value="1800" <?php if ($values['messagesfrequency'] == '1800') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.30min') ?></option>
+                                            <option value="3600" <?php if ($values['messagesfrequency'] == '3600') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.1h') ?></option>
+                                            <option value="10800" <?php if ($values['messagesfrequency'] == '10800') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.3h') ?></option>
+                                            <option value="36000" <?php if ($values['messagesfrequency'] == '36000') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.6h') ?></option>
+                                            <option value="43200" <?php if ($values['messagesfrequency'] == '43200') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.12h') ?></option>
+                                            <option value="86400" <?php if ($values['messagesfrequency'] == '86400') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.24h') ?></option>
+                                            <option value="172800" <?php if ($values['messagesfrequency'] == '172800') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.48h') ?></option>
+                                            <option value="604800" <?php if ($values['messagesfrequency'] == '604800') {
+                                                echo ' selected ';
+                                            } ?>><?php echo $tpl->__('label.1w') ?></option>
                                         </select> <br/>
                                     </span>
                                 </div>
@@ -357,7 +357,7 @@ $user = $tpl->get('user');
         </div>
         <div class="col-md-4">
             <div class="maincontentinner center">
-                <img src='<?=BASE_URL?>/api/users?profileImage=<?=$user['id']; ?>?v=<?=format($user['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                <img src='<?= BASE_URL?>/api/users?profileImage=<?= $user['id']; ?>?v=<?= format($user['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                 <div id="profileImg">
                 </div>
 

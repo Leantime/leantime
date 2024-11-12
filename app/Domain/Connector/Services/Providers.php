@@ -2,13 +2,9 @@
 
 namespace Leantime\Domain\Connector\Services {
 
-    use Leantime\Domain\CsvImport\Services\CsvImport;
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Connector\Models\Provider;
 
-    /**
-     *
-     */
     class Providers
     {
         use DispatchesEvents;
@@ -20,9 +16,6 @@ namespace Leantime\Domain\Connector\Services {
             $this->loadProviders();
         }
 
-        /**
-         * @return void
-         */
         public function loadProviders(): void
         {
 
@@ -34,20 +27,12 @@ namespace Leantime\Domain\Connector\Services {
             $this->providers = self::dispatch_filter('providerList', $this->providers);
         }
 
-        /**
-         * @return array
-         */
-        /**
-         * @return array
-         */
         public function getProviders(): array
         {
             return $this->providers;
         }
 
         /**
-         * @param $providerId
-         * @return Provider
          * @throws \Exception
          */
         public function getProvider($providerId): provider
@@ -55,7 +40,7 @@ namespace Leantime\Domain\Connector\Services {
             if (isset($this->providers[$providerId])) {
                 return $this->providers[$providerId];
             } else {
-                throw new \Exception("Provider does not exist");
+                throw new \Exception('Provider does not exist');
             }
         }
     }

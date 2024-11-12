@@ -306,12 +306,12 @@ class Format
     public function diffForHumans(): string
     {
         if ($this->value->isToday()) {
-            return $this->language->__("dates.today");
-        } elseif($this->value->isYesterday()) {
-            return $this->language->__("dates.yesterday");
-        } elseif($this->value->isTomorrow()) {
-            return $this->language->__("dates.tomorrow");
-        }else{
+            return $this->language->__('dates.today');
+        } elseif ($this->value->isYesterday()) {
+            return $this->language->__('dates.yesterday');
+        } elseif ($this->value->isTomorrow()) {
+            return $this->language->__('dates.tomorrow');
+        } else {
             return $this->value->endOfDay()->diffForHumans();
         }
     }

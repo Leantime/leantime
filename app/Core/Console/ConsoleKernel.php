@@ -7,11 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -93,10 +90,9 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         $this->load(APP_ROOT.'/app/Command/');
         $this->load(APP_ROOT.'/app/Domain/**/Command/');
 
-        foreach($ltPluginCommands as $pluginPath) {
+        foreach ($ltPluginCommands as $pluginPath) {
             $this->load($pluginPath);
         }
-
 
         $commandsLoaded = true;
     }

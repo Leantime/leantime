@@ -2,13 +2,11 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
-use GuzzleHttp\Client;
 use PHPUnit\Exception;
 
 class DefaultWorker
@@ -18,8 +16,7 @@ class DefaultWorker
         private Setting $settingsRepo,
         private Queue $queue,
         private Client $client
-    ) {
-    }
+    ) {}
 
     public function handleQueue($messages)
     {
@@ -35,9 +32,10 @@ class DefaultWorker
 
                 if ($result) {
                     $this->queue->deleteMessageInQueue($message['msghash']);
+
                     return true;
-                }else{
-                    Log::error("Worker was not successful");
+                } else {
+                    Log::error('Worker was not successful');
                 }
 
             } catch (Exception $e) {

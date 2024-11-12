@@ -99,7 +99,7 @@ class CheckEventListeners extends Command
                     $this->info("Found event: {$context}");
                 }
 
-                if(!in_array($context, $this->events)) {
+                if (! in_array($context, $this->events)) {
                     $this->events[] = $context;
                 }
 

@@ -153,6 +153,7 @@ class Auth
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
 
             Log::info('Check for invalid role detected: '.$roleToCheck);
+
             return false;
         }
 
@@ -239,6 +240,7 @@ class Auth
                 } else {
 
                     Log::info('Could not retrieve user by email');
+
                     return false;
                 }
             }

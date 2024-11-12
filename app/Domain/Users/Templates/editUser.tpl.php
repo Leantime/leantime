@@ -18,7 +18,7 @@ $projects = $tpl->get('relations');
 </div><!--pageheader-->
 
 <form action="" method="post" class="stdform userEditModal">
-        <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+        <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
         <div class="maincontent">
             <div class="row">
                 <div class="col-md-7">
@@ -39,11 +39,11 @@ $projects = $tpl->get('relations');
                     <select name="role" id="role">
 
                         <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                            <option value="<?php  echo $key; ?>"
+                            <option value="<?php echo $key; ?>"
                                 <?php if ($key == $values['role']) {
                                     ?> selected="selected" <?php
                                 } ?>>
-                                <?=$tpl->__("label.roles." . $role) ?>
+                                <?= $tpl->__('label.roles.'.$role) ?>
                             </option>
                         <?php } ?>
 
@@ -53,36 +53,36 @@ $projects = $tpl->get('relations');
                     <select name="status" id="status" class="pull-left">
 
                         <option value="a"
-                            <?php if (strtolower($values['status']) == "a") {
+                            <?php if (strtolower($values['status']) == 'a') {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.active") ?>
+                            <?= $tpl->__('label.active') ?>
                         </option>
 
                         <option value="i"
-                            <?php if (strtolower($values['status']) == "i") {
+                            <?php if (strtolower($values['status']) == 'i') {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.invited") ?>
+                            <?= $tpl->__('label.invited') ?>
                         </option>
 
                         <option value=""
-                            <?php if (strtolower($values['status']) == "") {
+                            <?php if (strtolower($values['status']) == '') {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.deactivated") ?>
+                            <?= $tpl->__('label.deactivated') ?>
                         </option>
 
 
                     </select>
                         <?php if ($values['status'] == 'i') { ?>
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
-                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$tpl->__("label.copyinviteLink") ?></a>
+                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?= BASE_URL ?>/auth/userInvite/<?= $values['pwReset'] ?>"><i class="fa fa-link"></i> <?= $tpl->__('label.copyinviteLink') ?></a>
                             <div class="dropdown-menu padding-md noClickProp">
-                                <input type="text" id="inviteURL" value="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>" />
-                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?=$tpl->__('links.copy_url') ?></button>
+                                <input type="text" id="inviteURL" value="<?= BASE_URL ?>/auth/userInvite/<?= $values['pwReset'] ?>" />
+                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?= $tpl->__('links.copy_url') ?></button>
                             </div>
-                            <a href="<?=BASE_URL?>/users/editUser/<?=$values['id'] ?>?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?=$tpl->__('buttons.resend_invite') ?></a>
+                            <a href="<?= BASE_URL?>/users/editUser/<?= $values['id'] ?>?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?= $tpl->__('buttons.resend_invite') ?></a>
                         </div>
                         <?php } ?>
                         <div class="clearfix"></div>
@@ -92,14 +92,14 @@ $projects = $tpl->get('relations');
 
                     <label for="client"><?php echo $tpl->__('label.client') ?></label>
                     <select name='client' id="client">
-                        <?php if ($login::userIsAtLeast("manager")) {?>
+                        <?php if ($login::userIsAtLeast('manager')) {?>
                             <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                         <?php } ?>
-                        <?php foreach ($tpl->get('clients') as $client) : ?>
-                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                        <?php foreach ($tpl->get('clients') as $client) { ?>
+                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) {
                                 ?>selected="selected"<?php
-                                           endif; ?>><?php $tpl->e($client['name']) ?></option>
-                        <?php endforeach; ?>
+                            } ?>><?php $tpl->e($client['name']) ?></option>
+                        <?php } ?>
                     </select><br/>
                         <br/>
 
@@ -137,21 +137,21 @@ $projects = $tpl->get('relations');
                     <div class="scrollableItemList">
                         <?php
                         $currentClient = '';
-                        $i = 0;
-                        foreach ($tpl->get('allProjects') as $row) {
-                            if ($row['clientName'] == null) {
-                                $row['clientName'] = "Not assigned to client";
-                            }
-                            if ($currentClient != $row['clientName']) {
-                                if ($i > 0) {
-                                    echo"</div>";
-                                }
-                                echo "<h3 id='accordion_link_" . $i . "'>
-                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
+$i = 0;
+foreach ($tpl->get('allProjects') as $row) {
+    if ($row['clientName'] == null) {
+        $row['clientName'] = 'Not assigned to client';
+    }
+    if ($currentClient != $row['clientName']) {
+        if ($i > 0) {
+            echo '</div>';
+        }
+        echo "<h3 id='accordion_link_".$i."'>
+                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$tpl->escape($row['clientName'])."</a>
                             </h3>
-                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
-                                $currentClient = $row['clientName'];
-                            } ?>
+                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+        $currentClient = $row['clientName'];
+    } ?>
                             <div class="item" style="padding:10px 0px;">
                                 <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
                                     <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
@@ -159,7 +159,7 @@ $projects = $tpl->get('relations');
                                     } ?>
                                 />
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
+                                    <img src='<?= BASE_URL ?>/api/projects?projectAvatar=<?= $row['id'] ?>&v=<?= format($row['modified'])->timestamp() ?>' />
                                 </span>
 
                                 <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">

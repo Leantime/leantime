@@ -3,7 +3,6 @@
 /**
  * modals.inc template - Generic template for create / edit / clone modals
  */
-
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -136,4 +135,4 @@ $canvasTitle = $tpl->get('canvasTitle');
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-*/ ?>
+*/

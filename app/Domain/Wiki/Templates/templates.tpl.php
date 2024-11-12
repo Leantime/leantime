@@ -6,31 +6,31 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $today = date($tpl->__('language.dateformat'));
-$author = session("userdata.name") . ' (' . session("userdata.mail") . ')';
+$author = session('userdata.name').' ('.session('userdata.mail').')';
 
-    //Templates for tinymce templates
-    //All Templates require title, description, content
+//Templates for tinymce templates
+//All Templates require title, description, content
 
-    $templates = array();
+$templates = [];
 
-    $prdTpl = app()->make(Template::class);
+$prdTpl = app()->make(Template::class);
 
-    $prdTpl->title = $tpl->__("templates.prd.title");
-    $prdTpl->description = $tpl->__("templates.prd.description");
-    $prdTpl->category = $tpl->__("templates.documents");
-    $prdTpl->content = '
-<h1><strong>' . $tpl->__("templates.prd.title_for_prd") . '<br /></strong></h1>
-<p>' . $tpl->__("templates.author") . ' ' . $author . '<br />
-' . $tpl->__("templates.dates") . ' ' . $today . '<br />
-' . $tpl->__("templates.status") . ' <span class="label label-default">' . $tpl->__("templates.status.draft") . '</span><br />
+$prdTpl->title = $tpl->__('templates.prd.title');
+$prdTpl->description = $tpl->__('templates.prd.description');
+$prdTpl->category = $tpl->__('templates.documents');
+$prdTpl->content = '
+<h1><strong>'.$tpl->__('templates.prd.title_for_prd').'<br /></strong></h1>
+<p>'.$tpl->__('templates.author').' '.$author.'<br />
+'.$tpl->__('templates.dates').' '.$today.'<br />
+'.$tpl->__('templates.status').' <span class="label label-default">'.$tpl->__('templates.status.draft').'</span><br />
 
 <table style="border-collapse: collapse; width: 100%;" border="1">
 <thead>
 <tr>
-<td style="width: 23.3025%;">' . $tpl->__("templates.prd.responsible") . '</td>
-<td style="width: 23.3025%;">' . $tpl->__("templates.prd.approve") . '</td>
-<td style="width: 23.3025%;">' . $tpl->__("templates.prd.consulted") . '</td>
-<td style="width: 23.3025%;">' . $tpl->__("templates.prd.informed") . '</td>
+<td style="width: 23.3025%;">'.$tpl->__('templates.prd.responsible').'</td>
+<td style="width: 23.3025%;">'.$tpl->__('templates.prd.approve').'</td>
+<td style="width: 23.3025%;">'.$tpl->__('templates.prd.consulted').'</td>
+<td style="width: 23.3025%;">'.$tpl->__('templates.prd.informed').'</td>
 </tr>
 </thead>
 <tbody>
@@ -42,12 +42,12 @@ $author = session("userdata.name") . ' (' . session("userdata.mail") . ')';
 </tr>
 </tbody>
 </table>
-<h1>' . $tpl->__("templates.summary") . '</h1>
-<h2>' . $tpl->__("templates.overview") . '</h2>
-<p>' . $tpl->__("templates.prd.overview_description") . '</p>
+<h1>'.$tpl->__('templates.summary').'</h1>
+<h2>'.$tpl->__('templates.overview').'</h2>
+<p>'.$tpl->__('templates.prd.overview_description').'</p>
 
-<h2>' . $tpl->__("templates.problem") . '</h2>
-<p>' . $tpl->__("templates.prd.problem_description") . '</p>
+<h2>'.$tpl->__('templates.problem').'</h2>
+<p>'.$tpl->__('templates.prd.problem_description').'</p>
 
 <h2 >Goals (What are we working towards?</h2>
 <p>1. Goal</p>
@@ -158,13 +158,13 @@ $templates[] = $prdTpl;
 
 //Project Outline
 $projectOutline = app()->make(Template::class);
-$projectOutline->title = "Project Outline";
-$projectOutline->category = $tpl->__("templates.documents");
-$projectOutline->description = "";
+$projectOutline->title = 'Project Outline';
+$projectOutline->category = $tpl->__('templates.documents');
+$projectOutline->description = '';
 $projectOutline->content = '
 <h1><strong>Project Outline<br /></strong></h1>
-<p>Author: ' . $author . '<br />
-Date: ' . $today . '<br />
+<p>Author: '.$author.'<br />
+Date: '.$today.'<br />
 Status: <span class="label label-default">Draft</span><br />
 <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
 <tbody>
@@ -257,12 +257,11 @@ Status: <span class="label label-default">Draft</span><br />
 </table>';
 $templates[] = $projectOutline;
 
-
 //User Story
 $userStoryTpl = app()->make(Template::class);
-$userStoryTpl->title = "User Story";
-$userStoryTpl->category = $tpl->__("templates.todos");
-$userStoryTpl->description = "A template for an agile user story";
+$userStoryTpl->title = 'User Story';
+$userStoryTpl->category = $tpl->__('templates.todos');
+$userStoryTpl->description = 'A template for an agile user story';
 $userStoryTpl->content = '
 <table style="border-collapse: collapse; width: 100.049%;" border="1">
 <thead>
@@ -291,11 +290,10 @@ $userStoryTpl->content = '
 </table>';
 $templates[] = $userStoryTpl;
 
-
 $bugTpl = app()->make(Template::class);
-$bugTpl->title = "Bug";
-$bugTpl->category = $tpl->__("templates.todos");
-$bugTpl->description = "A template for a bug report";
+$bugTpl->title = 'Bug';
+$bugTpl->category = $tpl->__('templates.todos');
+$bugTpl->description = 'A template for a bug report';
 $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
  <tbody>
  <tr data-mce-active="1">
@@ -336,11 +334,10 @@ $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" b
 
 $templates[] = $bugTpl;
 
-
 $featureTpl = app()->make(Template::class);
-$featureTpl->title = "Feature Request";
-$featureTpl->category = $tpl->__("templates.todos");
-$featureTpl->description = "A template for a feature request";
+$featureTpl->title = 'Feature Request';
+$featureTpl->category = $tpl->__('templates.todos');
+$featureTpl->description = 'A template for a feature request';
 $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
 <tbody>
 <tr>
@@ -364,11 +361,10 @@ $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%
 
 $templates[] = $featureTpl;
 
-
 $layout48 = app()->make(Template::class);
-$layout48->title = $tpl->__("templates.side_left");
-$layout48->category = $tpl->__("templates.layouts");
-$layout48->description = $tpl->__("templates.titles.side_left_description");
+$layout48->title = $tpl->__('templates.side_left');
+$layout48->category = $tpl->__('templates.layouts');
+$layout48->description = $tpl->__('templates.titles.side_left_description');
 
 $layout48->content = '
 <div class="row">
@@ -378,9 +374,9 @@ $layout48->content = '
 $templates[] = $layout48;
 
 $layout84 = app()->make(Template::class);
-$layout84->title = $tpl->__("templates.side_right");
-$layout84->category = $tpl->__("templates.layouts");
-$layout84->description = $tpl->__("templates.titles.side_right_description");
+$layout84->title = $tpl->__('templates.side_right');
+$layout84->category = $tpl->__('templates.layouts');
+$layout84->description = $tpl->__('templates.titles.side_right_description');
 $layout84->content = '
 <div class="row">
 <div class="col-md-8"><p>Content Left</p></div>
@@ -389,9 +385,9 @@ $layout84->content = '
 $templates[] = $layout84;
 
 $layout363 = app()->make(Template::class);
-$layout363->title = $tpl->__("templates.side_m_side");
-$layout363->category = $tpl->__("templates.layouts");
-$layout363->description = $tpl->__("templates.titles.side_m_side_description");
+$layout363->title = $tpl->__('templates.side_m_side');
+$layout363->category = $tpl->__('templates.layouts');
+$layout363->description = $tpl->__('templates.titles.side_m_side_description');
 $layout363->content = '
 <div class="row">
 <div class="col-md-3"><p>Sidebar Left</p></div>
@@ -400,11 +396,10 @@ $layout363->content = '
 </div>';
 $templates[] = $layout363;
 
-
 $layout66 = app()->make(Template::class);
-$layout66->title = $tpl->__("templates.titles.2_col");
-$layout66->category = $tpl->__("templates.layouts");
-$layout66->description = $tpl->__("templates.titles.2_col_description");
+$layout66->title = $tpl->__('templates.titles.2_col');
+$layout66->category = $tpl->__('templates.layouts');
+$layout66->description = $tpl->__('templates.titles.2_col_description');
 $layout66->content = '
 <div class="row">
 <div class="col-md-6"><p>Column 1</div>
@@ -413,9 +408,9 @@ $layout66->content = '
 $templates[] = $layout66;
 
 $layout444 = app()->make(Template::class);
-$layout444->title = $tpl->__("templates.titles.3_col");
-$layout444->category = $tpl->__("templates.layouts");
-$layout444->description = $tpl->__("templates.titles.3_col_description");
+$layout444->title = $tpl->__('templates.titles.3_col');
+$layout444->category = $tpl->__('templates.layouts');
+$layout444->description = $tpl->__('templates.titles.3_col_description');
 $layout444->content = '
 <div class="row">
 <div class="col-md-4"><p>Column 1</p></div>
@@ -425,9 +420,9 @@ $layout444->content = '
 $templates[] = $layout444;
 
 $layout3333 = app()->make(Template::class);
-$layout3333->title = $tpl->__("templates.titles.4_col");
-$layout3333->category = $tpl->__("templates.layouts");
-$layout3333->description = $tpl->__("templates.titles.4_col_description");
+$layout3333->title = $tpl->__('templates.titles.4_col');
+$layout3333->category = $tpl->__('templates.layouts');
+$layout3333->description = $tpl->__('templates.titles.4_col_description');
 $layout3333->content = '
 <div class="row">
 <div class="col-md-3"><p>Column 1</p></div>
@@ -438,34 +433,33 @@ $layout3333->content = '
 $templates[] = $layout3333;
 
 $labelGreen = app()->make(Template::class);
-$labelGreen->title = $tpl->__("templates.titles.green_status");
-$labelGreen->category = $tpl->__("templates.elements");
-$labelGreen->description = $tpl->__("templates.titles.green_status_description");
+$labelGreen->title = $tpl->__('templates.titles.green_status');
+$labelGreen->category = $tpl->__('templates.elements');
+$labelGreen->description = $tpl->__('templates.titles.green_status_description');
 $labelGreen->content = '<span class="label label-success">Green</span>';
 $templates[] = $labelGreen;
 
 $labelYellow = app()->make(Template::class);
-$labelYellow->title = $tpl->__("templates.titles.yellow_status");
-$labelYellow->category = $tpl->__("templates.elements");
-$labelYellow->description = $tpl->__("templates.titles.yellow_status_description");
+$labelYellow->title = $tpl->__('templates.titles.yellow_status');
+$labelYellow->category = $tpl->__('templates.elements');
+$labelYellow->description = $tpl->__('templates.titles.yellow_status_description');
 $labelYellow->content = '<span class="label label-warning">Yellow</span>';
 $templates[] = $labelYellow;
 
 $labelRed = app()->make(Template::class);
-$labelRed->title = $tpl->__("templates.titles.red_status");
-$labelRed->category = $tpl->__("templates.elements");
-$labelRed->description = $tpl->__("templates.titles.red_status_description");
+$labelRed->title = $tpl->__('templates.titles.red_status');
+$labelRed->category = $tpl->__('templates.elements');
+$labelRed->description = $tpl->__('templates.titles.red_status_description');
 $labelRed->content = '<span class="label label-danger">Red</span>';
 $templates[] = $labelRed;
 
 $labelGray = app()->make(Template::class);
-$labelGray->title = $tpl->__("templates.titles.gray_status");
-$labelGray->category = $tpl->__("templates.elements");
-$labelGray->description = $tpl->__("templates.titles.gray_status_description");
+$labelGray->title = $tpl->__('templates.titles.gray_status');
+$labelGray->category = $tpl->__('templates.elements');
+$labelGray->description = $tpl->__('templates.titles.gray_status_description');
 $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
-
-$templates = $tpl->dispatch_filter("documentTemplates", $templates);
+$templates = $tpl->dispatch_filter('documentTemplates', $templates);
 
 echo json_encode($templates);

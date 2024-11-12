@@ -101,7 +101,7 @@ class HttpKernel extends Kernel
 
         //Events are discovered and available as part of bootstrapping the providers.
         //Can savely assume events are available here.
-        self::dispatch_event("request_started", ['request' => $request]);
+        self::dispatch_event('request_started', ['request' => $request]);
 
         //This filter only works for system plugins
         //Regular plugins are not available until after install verification
@@ -140,7 +140,6 @@ class HttpKernel extends Kernel
         self::dispatchEvent('request_terminated', [$request, $response]);
 
         parent::terminate($request, $response);
-
 
     }
 }

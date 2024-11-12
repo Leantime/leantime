@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -22,7 +22,7 @@ $roles = $tpl->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <a href="<?=BASE_URL ?>/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
+                <a href="<?= BASE_URL ?>/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?= $tpl->__('buttons.add_user') ?> </a>
             </div>
             <div class="col-md-6 align-right">
 
@@ -54,24 +54,24 @@ $roles = $tpl->get('roles');
             <?php foreach ($tpl->get('allUsers') as $row) { ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                             <a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])); ?></a>
+                             <a href="<?= BASE_URL ?>/users/editUser/<?= $row['id']?>"><?= sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></a>
                         </td>
-                        <td><a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=$tpl->escape($row['username']); ?></a></td>
-                        <td><?=$tpl->escape($row['clientName']); ?></td>
-                        <td><?=$tpl->__("label.roles." . $roles[$row['role']]); ?></td>
+                        <td><a href="<?= BASE_URL ?>/users/editUser/<?= $row['id']?>"><?= $tpl->escape($row['username']); ?></a></td>
+                        <td><?= $tpl->escape($row['clientName']); ?></td>
+                        <td><?= $tpl->__('label.roles.'.$roles[$row['role']]); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
                             echo $tpl->__('label.active');
-                            } elseif (strtolower($row['status']) == 'i') {
-                                echo $tpl->__('label.invited');
-                            } else {
-                                echo $tpl->__('label.deactivated');
-                            } ?></td>
+                        } elseif (strtolower($row['status']) == 'i') {
+                            echo $tpl->__('label.invited');
+                        } else {
+                            echo $tpl->__('label.deactivated');
+                        } ?></td>
                         <td><?php if ($row['twoFAEnabled']) {
                             echo $tpl->__('label.yes');
-                            } else {
-                                echo $tpl->__('label.no');
-                            } ?></td>
-                        <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
+                        } else {
+                            echo $tpl->__('label.no');
+                        } ?></td>
+                        <td><a href="<?= BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?= $tpl->__('links.delete'); ?></a></td>
                     </tr>
             <?php } ?>
             </tbody>

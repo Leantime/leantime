@@ -17,20 +17,20 @@ namespace Leantime\Domain\Widgets\Controllers {
     class WidgetManager extends Controller
     {
         /**
-         * @var SettingRepository $settingRepo
+         * @var SettingRepository
          */
         private Setting $settingRepo;
 
         /**
-         * @var WidgetService $widgetService
+         * @var WidgetService
          */
         private Widgets $widgetService;
 
         /**
          * Initializes the object.
          *
-         * @param Setting $settingRepo   The setting repository object.
-         * @param Widgets $widgetService The widget service object.
+         * @param  Setting  $settingRepo  The setting repository object.
+         * @param  Widgets  $widgetService  The widget service object.
          * @return void
          */
         public function init(Setting $settingRepo, Widgets $widgetService)
@@ -44,18 +44,18 @@ namespace Leantime\Domain\Widgets\Controllers {
         /**
          * Returns an HTTP response.
          *
-         * @param array $params An array of parameters.
+         * @param  array  $params  An array of parameters.
          * @return HttpFoundation\Response The HTTP response.
          */
         public function get(array $params): HttpFoundation\Response
         {
             $availableWidgets = $this->widgetService->getAll();
-            $activeWidgets = $this->widgetService->getActiveWidgets(session("userdata.id"));
-            $newWidgets = $this->widgetService->getNewWidgets(session("userdata.id"));
+            $activeWidgets = $this->widgetService->getActiveWidgets(session('userdata.id'));
+            $newWidgets = $this->widgetService->getNewWidgets(session('userdata.id'));
 
-            $this->tpl->assign("availableWidgets", $availableWidgets);
-            $this->tpl->assign("activeWidgets", $activeWidgets);
-            $this->tpl->assign("newWidgets", $newWidgets);
+            $this->tpl->assign('availableWidgets', $availableWidgets);
+            $this->tpl->assign('activeWidgets', $activeWidgets);
+            $this->tpl->assign('newWidgets', $newWidgets);
 
             return $this->tpl->displayPartial('widgets.widgetManager');
         }
@@ -63,22 +63,22 @@ namespace Leantime\Domain\Widgets\Controllers {
         /**
          * Posts data and returns an HTTP response.
          *
-         * @param array $params An array of parameters.
+         * @param  array  $params  An array of parameters.
          * @return HttpFoundation\Response|null The HTTP response, or null if the parameters are invalid.
          */
         public function post(array $params): HttpFoundation\Response
         {
             if (isset($params['action'])) {
-                switch($params['action']) {
+                switch ($params['action']) {
                     case 'saveGrid':
                         if (isset($params['data']) && $params['data'] != '') {
 
-                            $this->widgetService->saveGrid($params['data'], session("userdata.id"));
+                            $this->widgetService->saveGrid($params['data'], session('userdata.id'));
 
                             if (isset($params['visibilityData']) && $params['visibilityData'] !== null) {
                                 if ($params['visibilityData']['visible']) {
                                     $this->widgetService->markWidgetAsSeen(
-                                        session("userdata.id"),
+                                        session('userdata.id'),
                                         $params['visibilityData']['widgetId']
                                     );
                                 }
@@ -87,7 +87,8 @@ namespace Leantime\Domain\Widgets\Controllers {
                         break;
                 }
             }
-            return new \Symfony\Component\HttpFoundation\Response();
+
+            return new \Symfony\Component\HttpFoundation\Response;
         }
     }
 

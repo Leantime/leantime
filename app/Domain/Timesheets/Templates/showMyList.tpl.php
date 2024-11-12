@@ -1,6 +1,6 @@
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 use Leantime\Core\Support\FromFormat;
 
 foreach ($__data as $var => $val) {
@@ -13,7 +13,7 @@ foreach ($__data as $var => $val) {
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('headline.overview'); ?></h5>
-        <h1><?php echo $tpl->__("headline.my_timesheets") ?></h1>
+        <h1><?php echo $tpl->__('headline.my_timesheets') ?></h1>
     </div>
 </div>
 <!-- page header -->
@@ -23,11 +23,11 @@ foreach ($__data as $var => $val) {
     <div class="maincontentinner">
         <?php
         echo $tpl->displayNotification();
-        ?>
+?>
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__("links.filter") ?> (1)</a>
+                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__('links.filter') ?> (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
@@ -42,22 +42,22 @@ foreach ($__data as $var => $val) {
                                id="dateTo"
                                class="dateTo"
                                name="dateTo"
-                               value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
+                               value="<?php echo $tpl->get('dateTo')->formatDateForUser(); ?>"
                                style="margin-bottom:10px; width:90px" />
                     </div>
 
                     <div class="filterBoxLeft">
-                        <label for="kind"><?php echo $tpl->__("label.type")?></label>
+                        <label for="kind"><?php echo $tpl->__('label.type')?></label>
                         <select id="kind" name="kind" onchange="submit();">
-                            <option value="all"><?php echo $tpl->__("label.all_types"); ?></option>
+                            <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
                             <?php foreach ($tpl->get('kind') as $key => $row) {
-                                echo'<option value="' . $key . '"';
+                                echo '<option value="'.$key.'"';
                                 if ($key == $tpl->get('actKind')) {
                                     echo ' selected="selected"';
                                 }
-                                echo'>' . $tpl->__($row) . '</option>';
+                                echo '>'.$tpl->__($row).'</option>';
                             }
-                            ?>
+?>
 
                         </select>
                     </div>
@@ -70,10 +70,10 @@ foreach ($__data as $var => $val) {
             </div>
             <div class="pull-right">
                 <div class="btn-group viewDropDown">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.list_view") ?> <?=$tpl->__("links.view") ?></button>
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?= $tpl->__('links.list_view') ?> <?= $tpl->__('links.view') ?></button>
                     <ul class="dropdown-menu">
-                        <li><a href="<?=BASE_URL?>/timesheets/showMy" ><?=$tpl->__("links.week_view") ?></a></li>
-                        <li><a href="<?=BASE_URL?>/timesheets/showMyList" class="active"><?=$tpl->__("links.list_view") ?></a></li>
+                        <li><a href="<?= BASE_URL?>/timesheets/showMy" ><?= $tpl->__('links.week_view') ?></a></li>
+                        <li><a href="<?= BASE_URL?>/timesheets/showMyList" class="active"><?= $tpl->__('links.list_view') ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -109,7 +109,7 @@ foreach ($__data as $var => $val) {
                         <th><?php echo $tpl->__('label.ticket'); ?></th>
                         <th><?php echo $tpl->__('label.project'); ?></th>
                         <th><?php echo $tpl->__('label.employee'); ?></th>
-                        <th><?php echo $tpl->__("label.type")?></th>
+                        <th><?php echo $tpl->__('label.type')?></th>
                         <th><?php echo $tpl->__('label.description'); ?></th>
                         <th><?php echo $tpl->__('label.invoiced'); ?></th>
                         <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
@@ -122,13 +122,13 @@ foreach ($__data as $var => $val) {
                 <?php
 
                 $sum = 0;
-                $billableSum = 0;
+$billableSum = 0;
 
-                foreach ($tpl->get('allTimesheets') as $row) {
-                    $sum = $sum + $row['hours'];?>
+foreach ($tpl->get('allTimesheets') as $row) {
+    $sum = $sum + $row['hours']; ?>
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
+                            <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a></td>
                         <td data-order="<?php echo format($row['workDate'])->date(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
@@ -161,29 +161,29 @@ foreach ($__data as $var => $val) {
                         </td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
                             echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
-                                        }?>">
+                        }?>">
                             <?php if ($row['invoicedEmpl'] == '1') {
                                 echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
-                                echo $tpl->__("label.pending");
+                                echo $tpl->__('label.pending');
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
                             echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
-                                        }?>">
+                        }?>">
                             <?php if ($row['invoicedComp'] == '1') {
                                 echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
-                                echo $tpl->__("label.pending");
+                                echo $tpl->__('label.pending');
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
                             echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
-                                        }?>">
+                        }?>">
                             <?php if ($row['paid'] == '1') {
                                 echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
-                                echo $tpl->__("label.pending");
+                                echo $tpl->__('label.pending');
                             } ?>
                         </td>
                     </tr>
@@ -192,7 +192,7 @@ foreach ($__data as $var => $val) {
                 <tfoot>
                     <tr>
                         <td></td>
-                        <td colspan="1"><strong><?php echo $tpl->__("label.total_hours")?></strong></td>
+                        <td colspan="1"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
                         <td colspan="11"><strong><?php echo $sum; ?></strong></td>
                     </tr>
                 </tfoot>

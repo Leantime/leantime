@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -10,7 +10,7 @@ $values = $tpl->get('values');
 
 <h4 class="widgettitle title-light"><?php echo $tpl->__('subtitles.event'); ?></h4>
 
-<form action="<?=BASE_URL?>/calendar/editEvent/<?=$values['id'] ?>" method="post" class="formModal">
+<form action="<?= BASE_URL?>/calendar/editEvent/<?= $values['id'] ?>" method="post" class="formModal">
 
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
@@ -48,7 +48,7 @@ $values = $tpl->get('values');
 
     <div class="clear"></div>
     <br />
-    <a href="<?=BASE_URL?>/calendar/delEvent/<?=(int)$_GET['id'] ?>" class="formModal delete right"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete')?></a>
+    <a href="<?= BASE_URL?>/calendar/delEvent/<?= (int) $_GET['id'] ?>" class="formModal delete right"><i class="fa fa-trash"></i> <?= $tpl->__('links.delete')?></a>
     <input type="hidden" value="1" name="save" />
     <input type="submit" name="saveEvent" id="save" value="<?php echo $tpl->__('buttons.save') ?>" class="button" />
 

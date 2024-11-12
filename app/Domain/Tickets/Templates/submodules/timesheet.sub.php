@@ -19,17 +19,17 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                 <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $tpl->__('headline.add_time_entry', false); ?></h4>
                 <br />
 
-                <form method="post" action="<?=BASE_URL . "/tickets/showTicket/" . $ticket->id . ""?>#timesheet" class="formModal">
+                <form method="post" action="<?= BASE_URL.'/tickets/showTicket/'.$ticket->id.''?>#timesheet" class="formModal">
 
                     <label for="kind"><?php echo $tpl->__('label.timesheet_kind') ?></label>
                     <span class="field">
                     <select id="kind" name="kind">
                     <?php foreach ($tpl->get('kind') as $key => $row) {
-                        echo'<option value="' . $key . '"';
+                        echo '<option value="'.$key.'"';
                         if ($row == $values['kind']) {
                             echo ' selected="selected"';
                         }
-                        echo'>' . $tpl->__(strtolower($row)) . '</option>';
+                        echo '>'.$tpl->__(strtolower($row)).'</option>';
                     } ?>
                     </select>
                     </span>
@@ -73,17 +73,17 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
         var labels = [];
         <?php
         $sum = 0;
-        $ticketHours = $tpl->get('ticketHours');
-        foreach ($ticketHours as $hours) {
-            $sum = $sum + $hours['summe'];
+$ticketHours = $tpl->get('ticketHours');
+foreach ($ticketHours as $hours) {
+    $sum = $sum + $hours['summe'];
 
-            echo"labels.push('" . date("Y-m-d", strtotime($hours['utc']??'')) . "');
+    echo "labels.push('".date('Y-m-d', strtotime($hours['utc'] ?? ''))."');
                     ";
-            echo"d2.push(" . $sum . ");
-                    ";
-            echo "d3.push(" . $ticket->planHours . ");
-                    ";
-        } ?>
+    echo 'd2.push('.$sum.');
+                    ';
+    echo 'd3.push('.$ticket->planHours.');
+                    ';
+} ?>
 
         leantime.ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")
 

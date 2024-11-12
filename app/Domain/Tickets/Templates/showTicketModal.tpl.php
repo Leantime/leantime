@@ -5,14 +5,14 @@ foreach ($__data as $var => $val) {
 }
 $ticket = $tpl->get('ticket');
 $projectData = $tpl->get('projectData');
-$todoTypeIcons  = $tpl->get("ticketTypeIcons");
+$todoTypeIcons = $tpl->get('ticketTypeIcons');
 
 ?>
 <script type="text/javascript">
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
+            location.href="<?= BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
         }
     }
 </script>
@@ -20,14 +20,14 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 <div style="min-width:90%">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
-        <small><a href="#/tickets/showTicket/<?=$ticket->dependingTicketId ?>"><?=$tpl->escape($ticket->parentHeadline) ?></a></small> //
+        <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
-    <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
 
     <?php echo $tpl->displayNotification(); ?>
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
-        $clockedIn = $tpl->get("onTheClock");
+        $clockedIn = $tpl->get('onTheClock');
 
         ?>
         <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
@@ -36,40 +36,40 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
             </a>
             <ul class="dropdown-menu">
-                <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
-                <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
-                <li id="timerContainer-<?php echo $ticket->id;?>" class="timerContainer">
+                <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
+                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
+                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
+                <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
+                <li id="timerContainer-<?php echo $ticket->id; ?>" class="timerContainer">
                     <a
                         class="punchIn"
                         href="javascript:void(0);"
                         data-value="<?php echo $ticket->id; ?>"
                         <?php if ($clockedIn !== false) {
-                            echo"style='display:none;'";
+                            echo "style='display:none;'";
                         }?>
-                    ><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
+                    ><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('links.start_work'); ?></a>
                     <a
                         class="punchOut"
                         href="javascript:void(0);"
                         data-value="<?php echo $ticket->id; ?>"
-                        <?php if ($clockedIn === false || $clockedIn["id"] != $ticket->id) {
-                            echo"style='display:none;'";
+                        <?php if ($clockedIn === false || $clockedIn['id'] != $ticket->id) {
+                            echo "style='display:none;'";
                         }?>
                     >
                         <span class="fa fa-stop"></span>
                         <?php if (is_array($clockedIn)) {
-                            echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
+                            echo sprintf($tpl->__('links.stop_work_started_at'), date($tpl->__('language.timeformat'), $clockedIn['since']));
                         } else {
-                            echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
+                            echo sprintf($tpl->__('links.stop_work_started_at'), date($tpl->__('language.timeformat'), time()));
                         }?>
                     </a>
                     <span
                         class='working'
-                        <?php if ($clockedIn === false || $clockedIn["id"] === $ticket->id) {
-                            echo"style='display:none;'";
+                        <?php if ($clockedIn === false || $clockedIn['id'] === $ticket->id) {
+                            echo "style='display:none;'";
                         }?>
-                    ><?php echo $tpl->__("text.timer_set_other_todo"); ?></span>
+                    ><?php echo $tpl->__('text.timer_set_other_todo'); ?></span>
                 </li>
             </ul>
         </div>
@@ -77,16 +77,16 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
     <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
         <ul>
-            <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
-            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__("tabs.files") ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
+            <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__('tabs.ticketDetails') ?></a></li>
+            <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__('tabs.files') ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__("tabs.time_tracking") ?></a></li>
+                <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__('tabs.time_tracking') ?></a></li>
             <?php } ?>
             <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
 
         <div id="ticketdetails">
-            <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
+            <form class="formModal" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                 <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
             </form>
         </div>

@@ -1,6 +1,6 @@
 <?php
 
-define("RESTRICTED", true);
+define('RESTRICTED', true);
 
 require __DIR__.'/../vendor/autoload.php';
 

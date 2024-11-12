@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -24,7 +24,7 @@ foreach ($__data as $var => $val) {
 
         <?php
         if ($login::userIsAtLeast('manager')) { ?>
-             <a class="btn btn-primary" href="<?=BASE_URL ?>/clients/newClient"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_client') ?></a>
+             <a class="btn btn-primary" href="<?= BASE_URL ?>/clients/newClient"><i class='fa fa-plus'></i> <?= $tpl->__('link.new_client') ?></a>
         <?php } ?>
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
@@ -47,7 +47,7 @@ foreach ($__data as $var => $val) {
                 <tr>
                     <td><?php echo $row['id']; ?></td>
                     <td>
-                        <a class="" href="<?=BASE_URL ?>/clients/showClient/<?=$row['id'] ?>"><i class='fa fa-plus'></i> <?=$tpl->escape($row['name'])?></a>
+                        <a class="" href="<?= BASE_URL ?>/clients/showClient/<?= $row['id'] ?>"><i class='fa fa-plus'></i> <?= $tpl->escape($row['name'])?></a>
                     </td>
                     <td><a href="<?php $tpl->e($row['internet']); ?>" target="_blank"><?php $tpl->e($row['internet']); ?></a></td>
                     <td><?php echo $row['numberOfProjects']; ?></td>

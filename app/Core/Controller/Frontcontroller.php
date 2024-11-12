@@ -4,13 +4,11 @@ namespace Leantime\Core\Controller;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HtmxRequest;
 use Leantime\Core\Http\IncomingRequest;
-use PHPUnit\Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -50,7 +48,8 @@ class Frontcontroller
      * @param  IncomingRequest  $incomingRequest
      * @return void
      */
-    public function __construct(IncomingRequest $request) {
+    public function __construct(IncomingRequest $request)
+    {
         $this->incomingRequest = $request;
         $this->config = config();
     }
@@ -88,6 +87,7 @@ class Frontcontroller
     public static function dispatch_request(IncomingRequest $request): Response
     {
         $frontcontroller = new self($request);
+
         return $frontcontroller->dispatch($request);
     }
 
@@ -138,7 +138,7 @@ class Frontcontroller
         //If not numeric, it's quite likely this is a method name
         //But it needs to be double checked.
         if (isset($segments[2]) &&
-            ! (is_numeric($segments[2]) || Str::isUuid($segments[2]) )
+            ! (is_numeric($segments[2]) || Str::isUuid($segments[2]))
         ) {
             $method = $segments[2];
         }
@@ -146,7 +146,7 @@ class Frontcontroller
         $this->incomingRequest->query->set('act', $moduleName.'.'.$controllerName.'.'.$method);
         $this->incomingRequest->setCurrentRoute($moduleName.'.'.$controllerName);
 
-        if(!empty($id)){
+        if (! empty($id)) {
             $this->incomingRequest->query->set('id', $id);
         }
 
@@ -178,7 +178,6 @@ class Frontcontroller
         //Expecting a response object but can accept a string to a fragment.
         return $response instanceof Response ? $response : $controllerClass->getResponse($response);
     }
-
 
     /**
      * Retrieves the type of controller based on the incoming request.
@@ -218,9 +217,9 @@ class Frontcontroller
         $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
         $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
 
-        if($this->config->debug == false) {
-            if(Cache::store("installation")->has("routes.".$routepath.".".$methodName)){
-                return Cache::store("installation")->get("routes.".$routepath.".".$methodName);
+        if ($this->config->debug == false) {
+            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodName)) {
+                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodName);
             }
         }
 
@@ -268,15 +267,15 @@ class Frontcontroller
         }
 
         if (! $pluginEnabled) {
-           return false;
+            return false;
         }
 
-        if(class_exists($classname)) {
+        if (class_exists($classname)) {
             return $classname;
         }
 
         $classname = 'Leantime\\Plugins\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
-        if(class_exists($classname)) {
+        if (class_exists($classname)) {
             return $classname;
         }
 
@@ -320,7 +319,7 @@ class Frontcontroller
             return 'run';
         }
 
-        throw new NotFoundHttpException("Can't find valid method for". strip_tags($method) ." in ".strip_tags($controllerClass));
+        throw new NotFoundHttpException("Can't find valid method for".strip_tags($method).' in '.strip_tags($controllerClass));
     }
 
     /**

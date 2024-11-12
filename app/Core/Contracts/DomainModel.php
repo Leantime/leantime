@@ -2,6 +2,4 @@
 
 namespace Leantime\Core\Contracts;
 
-interface DomainModel
-{
-}
+interface DomainModel {}

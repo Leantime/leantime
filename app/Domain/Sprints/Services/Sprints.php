@@ -2,42 +2,35 @@
 
 namespace Leantime\Domain\Sprints\Services {
 
-    use Leantime\Core\Support\DateTimeHelper;
-    use Leantime\Core\Support\FromFormat;
-    use Leantime\Core\UI\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
-    use Leantime\Domain\Sprints\Models;
+    use DateInterval;
     use DatePeriod;
     use DateTime;
-    use DateInterval;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Core\Support\FromFormat;
+    use Leantime\Core\UI\Template as TemplateCore;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
+    use Leantime\Domain\Sprints\Models;
+    use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
     /**
-     *
-     *
      * @api
      */
     class Sprints
     {
         private TemplateCore $tpl;
+
         private LanguageCore $language;
+
         private ProjectRepository $projectRepository;
+
         private SprintRepository $sprintRepository;
+
         private TicketRepository $ticketRepository;
+
         private ReportRepository $reportRepository;
 
-        /**
-         * @param TemplateCore      $tpl
-         * @param LanguageCore      $language
-         * @param ProjectRepository $projectRepository
-         * @param SprintRepository  $sprintRepository
-         * @param TicketRepository  $ticketRepository
-         * @param ReportRepository  $reportRepository
-         *
-     */
         public function __construct(
             TemplateCore $tpl,
             LanguageCore $language,
@@ -55,11 +48,10 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $id
          * @return array|false
          *
-     * @api
-     */
+         * @api
+         */
         public function getSprint($id): false|Models\Sprints
         {
 
@@ -75,16 +67,14 @@ namespace Leantime\Domain\Sprints\Services {
         /**
          * getCurrentSprintId returns the ID of the current sprint in the project provided
          *
-         * @param $projectId
-         * @return int|bool
          *
-     * @api
-     */
+         * @api
+         */
         public function getCurrentSprintId($projectId): bool|int
         {
 
-            if (session()->exists("currentSprint") && session("currentSprint") != "") {
-                return session("currentSprint");
+            if (session()->exists('currentSprint') && session('currentSprint') != '') {
+                return session('currentSprint');
             }
 
             //$sprint = $this->sprintRepository->getCurrentSprint($projectId);
@@ -94,17 +84,14 @@ namespace Leantime\Domain\Sprints\Services {
             //    return $sprint->id;
             //}
 
-            session(["currentSprint" => ""]);
+            session(['currentSprint' => '']);
 
             return false;
         }
 
         /**
-         * @param $projectId
-         * @return array|false
-         *
-     * @api
-     */
+         * @api
+         */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -118,11 +105,8 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $projectId
-         * @return array
-         *
-     * @api
-     */
+         * @api
+         */
         public function getAllSprints($projectId = null): array
         {
 
@@ -137,11 +121,8 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $projectId
-         * @return array|false
-         *
-     * @api
-     */
+         * @api
+         */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -155,11 +136,8 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $params
-         * @return false|object
-         *
-     * @api
-     */
+         * @api
+         */
         public function addSprint($params): object|false
         {
 
@@ -167,7 +145,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
-            $sprint->projectId = $params['projectId'] ?? session("currentProject");
+            $sprint->projectId = $params['projectId'] ?? session('currentProject');
 
             $result = $this->sprintRepository->addSprint($sprint);
 
@@ -179,11 +157,8 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $params
-         * @return false|object
-         *
-     * @api
-     */
+         * @api
+         */
         public function editSprint($params): object|false
         {
 
@@ -191,7 +166,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
-            $sprint->projectId = $params['projectId'] ?? session("currentProject");
+            $sprint->projectId = $params['projectId'] ?? session('currentProject');
 
             $result = $this->sprintRepository->editSprint($sprint);
 
@@ -203,21 +178,19 @@ namespace Leantime\Domain\Sprints\Services {
         }
 
         /**
-         * @param $sprint
-         * @return array|false
          * @throws \Exception
          *
-     * @api
-     */
+         * @api
+         */
         public function getSprintBurndown($sprint): false|array
         {
 
-            if (!is_object($sprint)) {
+            if (! is_object($sprint)) {
                 return false;
             }
 
             $sprintValues = $this->reportRepository->getSprintReport($sprint->id);
-            $sprintData = array();
+            $sprintData = [];
             foreach ($sprintValues as $row) {
                 if (is_object($row)) {
                     $sprintData[$row->date] = $row;
@@ -238,9 +211,8 @@ namespace Leantime\Domain\Sprints\Services {
                 $plannedEffortStart = 0;
             }
 
-            $dateStart =  dtHelper()->parseDbDateTime($sprint->startDate)->startOfDay();
-            $dateEnd =  dtHelper()->parseDbDateTime($sprint->endDate)->endOfDay();
-
+            $dateStart = dtHelper()->parseDbDateTime($sprint->startDate)->startOfDay();
+            $dateEnd = dtHelper()->parseDbDateTime($sprint->endDate)->endOfDay();
 
             $sprintLength = $dateStart->diffInDays($dateEnd);
 
@@ -258,35 +230,35 @@ namespace Leantime\Domain\Sprints\Services {
                 $burnDown[$i]['date'] = $value->format('Y-m-d');
 
                 if ($i == 0) {
-                    $burnDown[$i]["plannedHours"] = $plannedHoursStart;
-                    $burnDown[$i]["plannedNum"] = $plannedNumStart;
-                    $burnDown[$i]["plannedEffort"] = $plannedEffortStart;
+                    $burnDown[$i]['plannedHours'] = $plannedHoursStart;
+                    $burnDown[$i]['plannedNum'] = $plannedNumStart;
+                    $burnDown[$i]['plannedEffort'] = $plannedEffortStart;
                 } else {
-                    $burnDown[$i]["plannedHours"] = $burnDown[$i - 1]["plannedHours"] - $dailyHoursPlanned;
-                    $burnDown[$i]["plannedNum"] = $burnDown[$i - 1]["plannedNum"] - $dailyNumPlanned;
-                    $burnDown[$i]["plannedEffort"] = $burnDown[$i - 1]["plannedEffort"] - $dailyEffortPlanned;
+                    $burnDown[$i]['plannedHours'] = $burnDown[$i - 1]['plannedHours'] - $dailyHoursPlanned;
+                    $burnDown[$i]['plannedNum'] = $burnDown[$i - 1]['plannedNum'] - $dailyNumPlanned;
+                    $burnDown[$i]['plannedEffort'] = $burnDown[$i - 1]['plannedEffort'] - $dailyEffortPlanned;
                 }
 
-                if (isset($sprintData[$value->format('Y-m-d') . " 00:00:00"])) {
-                    $burnDown[$i]["actualHours"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_estremaining_hours;
-                    $burnDown[$i]["actualNum"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_open_todos + $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_progres_todos;
-                    $burnDown[$i]["actualEffort"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_points_open + $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_points_progress;
+                if (isset($sprintData[$value->format('Y-m-d').' 00:00:00'])) {
+                    $burnDown[$i]['actualHours'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_estremaining_hours;
+                    $burnDown[$i]['actualNum'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_open_todos + $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_progres_todos;
+                    $burnDown[$i]['actualEffort'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_points_open + $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_points_progress;
                 } else {
                     if ($i == 0) {
-                        $burnDown[$i]["actualHours"] = $plannedHoursStart;
-                        $burnDown[$i]["actualNum"] =  $plannedNumStart;
-                        $burnDown[$i]["actualEffort"] = $plannedEffortStart;
+                        $burnDown[$i]['actualHours'] = $plannedHoursStart;
+                        $burnDown[$i]['actualNum'] = $plannedNumStart;
+                        $burnDown[$i]['actualEffort'] = $plannedEffortStart;
                     } else {
                         //If the date is in the future. Set to 0
-                        $today = new DateTime();
+                        $today = new DateTime;
                         if ($value->format('Ymd') < $today->format('Ymd')) {
-                            $burnDown[$i]["actualHours"] =  $burnDown[$i - 1]["actualHours"];
-                            $burnDown[$i]["actualNum"] =  $burnDown[$i - 1]["actualNum"];
-                            $burnDown[$i]["actualEffort"] = $burnDown[$i - 1]["actualEffort"];
+                            $burnDown[$i]['actualHours'] = $burnDown[$i - 1]['actualHours'];
+                            $burnDown[$i]['actualNum'] = $burnDown[$i - 1]['actualNum'];
+                            $burnDown[$i]['actualEffort'] = $burnDown[$i - 1]['actualEffort'];
                         } else {
-                            $burnDown[$i]["actualHours"] =  '';
-                            $burnDown[$i]["actualNum"] = '';
-                            $burnDown[$i]["actualEffort"] = '';
+                            $burnDown[$i]['actualHours'] = '';
+                            $burnDown[$i]['actualNum'] = '';
+                            $burnDown[$i]['actualEffort'] = '';
                         }
                     }
                 }
@@ -297,25 +269,21 @@ namespace Leantime\Domain\Sprints\Services {
             return $burnDown;
         }
 
-
         /**
-         * @param $project
-         * @return array|false
          * @throws \Exception
          *
-     * @api
-     */
+         * @api
+         */
         public function getCummulativeReport($project): false|array
         {
 
-            if (!($project)) {
+            if (! ($project)) {
                 return false;
             }
 
             $sprintValues = $this->reportRepository->getFullReport($project);
 
-
-            $sprintData = array();
+            $sprintData = [];
             foreach ($sprintValues as $row) {
                 $sprintData[$row->date] = $row;
             }
@@ -329,68 +297,67 @@ namespace Leantime\Domain\Sprints\Services {
             $period = new DatePeriod(
                 new DateTime($allKeys[count($allKeys) - 1]),
                 new DateInterval('P1D'),
-                new DateTime()
+                new DateTime
             );
 
             $burnDown = [];
             $i = 0;
 
-
             foreach ($period as $key => $value) {
                 $burnDown[$i]['date'] = $value->format('Y-m-d');
 
-                if (isset($sprintData[$value->format('Y-m-d') . " 00:00:00"])) {
-                    $burnDown[$i]["open"]["actualHours"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_estremaining_hours;
-                    $burnDown[$i]["open"]["actualNum"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_open_todos;
-                    $burnDown[$i]["open"]["actualEffort"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_points_open;
+                if (isset($sprintData[$value->format('Y-m-d').' 00:00:00'])) {
+                    $burnDown[$i]['open']['actualHours'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_estremaining_hours;
+                    $burnDown[$i]['open']['actualNum'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_open_todos;
+                    $burnDown[$i]['open']['actualEffort'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_points_open;
 
-                    $burnDown[$i]["progress"]["actualHours"] = 0;
-                    $burnDown[$i]["progress"]["actualNum"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_progres_todos;
-                    $burnDown[$i]["progress"]["actualEffort"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_points_progress;
+                    $burnDown[$i]['progress']['actualHours'] = 0;
+                    $burnDown[$i]['progress']['actualNum'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_progres_todos;
+                    $burnDown[$i]['progress']['actualEffort'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_points_progress;
 
-                    $burnDown[$i]["done"]["actualHours"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_logged_hours;
-                    $burnDown[$i]["done"]["actualNum"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_closed_todos;
-                    $burnDown[$i]["done"]["actualEffort"] = $sprintData[$value->format('Y-m-d') . " 00:00:00"]->sum_points_done;
+                    $burnDown[$i]['done']['actualHours'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_logged_hours;
+                    $burnDown[$i]['done']['actualNum'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_closed_todos;
+                    $burnDown[$i]['done']['actualEffort'] = $sprintData[$value->format('Y-m-d').' 00:00:00']->sum_points_done;
                 } else {
                     if ($i == 0) {
-                        $burnDown[$i]["open"]["actualHours"] = 0;
-                        $burnDown[$i]["open"]["actualNum"] =  0;
-                        $burnDown[$i]["open"]["actualEffort"] = 0;
+                        $burnDown[$i]['open']['actualHours'] = 0;
+                        $burnDown[$i]['open']['actualNum'] = 0;
+                        $burnDown[$i]['open']['actualEffort'] = 0;
 
-                        $burnDown[$i]["progress"]["actualHours"] = 0;
-                        $burnDown[$i]["progress"]["actualNum"] =  0;
-                        $burnDown[$i]["progress"]["actualEffort"] = 0;
+                        $burnDown[$i]['progress']['actualHours'] = 0;
+                        $burnDown[$i]['progress']['actualNum'] = 0;
+                        $burnDown[$i]['progress']['actualEffort'] = 0;
 
-                        $burnDown[$i]["done"]["actualHours"] = 0;
-                        $burnDown[$i]["done"]["actualNum"] =  0;
-                        $burnDown[$i]["done"]["actualEffort"] = 0;
+                        $burnDown[$i]['done']['actualHours'] = 0;
+                        $burnDown[$i]['done']['actualNum'] = 0;
+                        $burnDown[$i]['done']['actualEffort'] = 0;
                     } else {
                         //If the date is in the future. Set to 0
-                        $today = new DateTime();
+                        $today = new DateTime;
                         if ($value->format('Ymd') < $today->format('Ymd')) {
-                            $burnDown[$i]["open"]["actualHours"] =  $burnDown[$i - 1]["open"]["actualHours"];
-                            $burnDown[$i]["open"]["actualNum"] =  $burnDown[$i - 1]["open"]["actualNum"];
-                            $burnDown[$i]["open"]["actualEffort"] = $burnDown[$i - 1]["open"]["actualEffort"];
+                            $burnDown[$i]['open']['actualHours'] = $burnDown[$i - 1]['open']['actualHours'];
+                            $burnDown[$i]['open']['actualNum'] = $burnDown[$i - 1]['open']['actualNum'];
+                            $burnDown[$i]['open']['actualEffort'] = $burnDown[$i - 1]['open']['actualEffort'];
 
-                            $burnDown[$i]["progress"]["actualHours"] =  $burnDown[$i - 1]["progress"]["actualHours"];
-                            $burnDown[$i]["progress"]["actualNum"] =  $burnDown[$i - 1]["progress"]["actualNum"];
-                            $burnDown[$i]["progress"]["actualEffort"] = $burnDown[$i - 1]["progress"]["actualEffort"];
+                            $burnDown[$i]['progress']['actualHours'] = $burnDown[$i - 1]['progress']['actualHours'];
+                            $burnDown[$i]['progress']['actualNum'] = $burnDown[$i - 1]['progress']['actualNum'];
+                            $burnDown[$i]['progress']['actualEffort'] = $burnDown[$i - 1]['progress']['actualEffort'];
 
-                            $burnDown[$i]["done"]["actualHours"] =  $burnDown[$i - 1]["done"]["actualHours"];
-                            $burnDown[$i]["done"]["actualNum"] =  $burnDown[$i - 1]["done"]["actualNum"];
-                            $burnDown[$i]["done"]["actualEffort"] = $burnDown[$i - 1]["done"]["actualEffort"];
+                            $burnDown[$i]['done']['actualHours'] = $burnDown[$i - 1]['done']['actualHours'];
+                            $burnDown[$i]['done']['actualNum'] = $burnDown[$i - 1]['done']['actualNum'];
+                            $burnDown[$i]['done']['actualEffort'] = $burnDown[$i - 1]['done']['actualEffort'];
                         } else {
-                            $burnDown[$i]["open"]["actualHours"] =  '';
-                            $burnDown[$i]["open"]["actualNum"] = '';
-                            $burnDown[$i]["open"]["actualEffort"] = '';
+                            $burnDown[$i]['open']['actualHours'] = '';
+                            $burnDown[$i]['open']['actualNum'] = '';
+                            $burnDown[$i]['open']['actualEffort'] = '';
 
-                            $burnDown[$i]["progress"]["actualHours"] =  '';
-                            $burnDown[$i]["progress"]["actualNum"] = '';
-                            $burnDown[$i]["progress"]["actualEffort"] = '';
+                            $burnDown[$i]['progress']['actualHours'] = '';
+                            $burnDown[$i]['progress']['actualNum'] = '';
+                            $burnDown[$i]['progress']['actualEffort'] = '';
 
-                            $burnDown[$i]["done"]["actualHours"] =  '';
-                            $burnDown[$i]["done"]["actualNum"] = '';
-                            $burnDown[$i]["done"]["actualEffort"] = '';
+                            $burnDown[$i]['done']['actualHours'] = '';
+                            $burnDown[$i]['done']['actualNum'] = '';
+                            $burnDown[$i]['done']['actualEffort'] = '';
                         }
                     }
                 }

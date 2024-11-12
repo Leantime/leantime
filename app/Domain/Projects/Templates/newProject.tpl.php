@@ -1,6 +1,6 @@
 
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -39,7 +39,7 @@ $project = $tpl->get('project');
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
+                                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?= $tpl->__('input.placeholders.enter_title_of_project')?>"/>
                                     </div>
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
 
@@ -58,11 +58,11 @@ $project = $tpl->get('project');
                                 </div>
                             </div>
                             <div class="padding-top">
-                                <?php if (isset($project['id']) && $project['id'] != '') : ?>
+                                <?php if (isset($project['id']) && $project['id'] != '') { ?>
                                     <div class="pull-right padding-top">
-                                        <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
+                                        <a href="<?= BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
                                     </div>
-                                <?php endif; ?>
+                                <?php } ?>
                                 <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
 
                             </div>
@@ -75,17 +75,17 @@ $project = $tpl->get('project');
                                 <p>The type of the project. This will determine which features are available.</p>
                                 <select name="type">
                                     <?php foreach ($tpl->get('projectTypes') as $key => $type) { ?>
-                                        <option value="<?=$tpl->escape($key)?>"
+                                        <option value="<?= $tpl->escape($key)?>"
                                             <?php if ($project['type'] == $key) {
                                                 echo " selected='selected' ";
                                             } ?>
-                                        ><?=$tpl->__($tpl->escape($type))?></option>
+                                        ><?= $tpl->__($tpl->escape($type))?></option>
                                     <?php } ?>
                                 </select>
                                 <br /><br />
                             <?php } ?>
 
-                            <?php $tpl->dispatchTplEvent("beforeClientPicker", $project) ?>
+                            <?php $tpl->dispatchTplEvent('beforeClientPicker', $project) ?>
 
                             <div style="margin-bottom: 30px;">
                                 <h4 class="widgettitle title-light tw-block"><span
@@ -94,13 +94,13 @@ $project = $tpl->get('project');
                                     <label><?php echo $tpl->__('label.project_start'); ?></label>
                                     <div class="">
                                         <input type="text" class="dates dateFrom" style="width:100px;" name="start" autocomplete="off"
-                                               value="<?php echo $project['start']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                               value="<?php echo $project['start']; ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                                     </div>
                                     <label ><?php echo $tpl->__('label.project_end'); ?></label>
                                     <div class="">
                                         <input type="text" class="dates dateTo" style="width:100px;" name="end" autocomplete="off"
-                                               value="<?php echo $project['end']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                               value="<?php echo $project['end']; ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                                     </div>
                                 </div>
@@ -122,8 +122,8 @@ $project = $tpl->get('project');
                                         <?php } ?>
 
                                     </select>
-                                    <?php if ($login::userIsAtLeast("manager")) { ?>
-                                        <br /><a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
+                                    <?php if ($login::userIsAtLeast('manager')) { ?>
+                                        <br /><a href="<?= BASE_URL?>/clients/newClient" target="_blank"><?= $tpl->__('label.client_not_listed'); ?></a>
                                     <?php } ?>
 
 
@@ -138,9 +138,9 @@ $project = $tpl->get('project');
                                     <br /><br />
 
                                     <select name="globalProjectUserAccess" style="max-width:300px;">
-                                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $tpl->__("labels.only_chose"); ?></option>
-                                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_client"); ?></option>
-                                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_org"); ?></option>
+                                        <option value="restricted" <?= $project['psettings'] == 'restricted' ? "selected='selected'" : '' ?>><?php echo $tpl->__('labels.only_chose'); ?></option>
+                                        <option value="clients" <?= $project['psettings'] == 'clients' ? "selected='selected'" : ''?>><?php echo $tpl->__('labels.everyone_in_client'); ?></option>
+                                        <option value="all" <?= $project['psettings'] == 'all' ? "selected='selected'" : ''?>><?php echo $tpl->__('labels.everyone_in_org'); ?></option>
                                     </select>
 
                                 </div>

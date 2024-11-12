@@ -3,8 +3,8 @@
 namespace Tests\Support\Helper;
 
 use Codeception\Module;
-use Leantime\Core\Application;
 use Illuminate\Support\Facades\Session;
+use Leantime\Core\Application;
 
 class Acceptance extends Module
 {
@@ -12,9 +12,9 @@ class Acceptance extends Module
 
     public function _initialize()
     {
-        $this->app = require dirname(__DIR__, 2) . '/bootstrap.php';
+        $this->app = require dirname(__DIR__, 2).'/bootstrap.php';
 
-        if(! defined("BASE_URL")) {
+        if (! defined('BASE_URL')) {
             define('BASE_URL', 'http://localhost');
         }
     }

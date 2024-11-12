@@ -3,7 +3,6 @@
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Providers\Redis;
 use Leantime\Core\Providers\Session;
-use Leantime\Core\Providers\Views;
 
 return [
     'app' => [
@@ -31,13 +30,10 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             //\Illuminate\Queue\QueueServiceProvider::class,
 
-
             //\Illuminate\Redis\RedisServiceProvider::class,
-
 
             //\Illuminate\Session\SessionServiceProvider::class,
             \Leantime\Core\Providers\Session::class,
-
 
             //\Illuminate\Translation\TranslationServiceProvider::class,
             \Illuminate\Validation\ValidationServiceProvider::class,
@@ -52,7 +48,6 @@ return [
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
-
 
         ],
     ],
@@ -77,7 +72,7 @@ return [
             'STRIPE_KEY',
             'ACCOUNTS_DB_PASSWORD',
             'STRIPE_SECRET',
-            'MAINKEY'
+            'MAINKEY',
         ],
         '_POST' => [
             'password',
@@ -401,13 +396,13 @@ return [
             'compression' => 3, // Redis::COMPRESSION_LZ4
         ],
         'default' => [
-                'url' => '',
-                'scheme' => 'tls',
-                'host' => '',
-                'password' => null,
-                'port' => '6379',
-                'database' => '0',
-                'prefix' => 'leantime_cache',
+            'url' => '',
+            'scheme' => 'tls',
+            'host' => '',
+            'password' => null,
+            'port' => '6379',
+            'database' => '0',
+            'prefix' => 'leantime_cache',
         ],
     ],
     'database' => [
@@ -453,6 +448,6 @@ return [
                 ]) : [],
 
             ],
-        ]
-    ]
+        ],
+    ],
 ];

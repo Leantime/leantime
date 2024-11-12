@@ -10,6 +10,7 @@ use Tests\Support\AcceptanceTester;
 class Install
 {
     protected AcceptanceTester $I;
+
     protected $app;
 
     public function __construct(AcceptanceTester $I)
@@ -32,12 +33,12 @@ class Install
         $this->I->fillField(['name' => 'company'], $company);
         $this->I->click('Install');
 
-        $this->I->waitForElementVisible(".login-alert");
+        $this->I->waitForElementVisible('.login-alert');
 
         $this->I->see('The installation was successful');
 
         // Disable all on-boarding modal popups.
-        $this->app->make(\Leantime\Domain\Setting\Repositories\Setting::class)->saveSetting("companysettings.completedOnboarding", 0);
+        $this->app->make(\Leantime\Domain\Setting\Repositories\Setting::class)->saveSetting('companysettings.completedOnboarding', 0);
 
         Fixtures::add('installed', true);
     }

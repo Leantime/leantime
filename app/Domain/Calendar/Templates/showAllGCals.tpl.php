@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -40,7 +40,7 @@ foreach ($__data as $var => $val) {
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
-    <form action="<?=BASE_URL ?>/index.php?act=tickets.showAll" method="post" class="searchbar">
+    <form action="<?= BASE_URL ?>/index.php?act=tickets.showAll" method="post" class="searchbar">
         <input type="text" name="term" placeholder="To search type and hit enter..." />
     </form>
 
@@ -75,8 +75,8 @@ foreach ($__data as $var => $val) {
 
                 <?php foreach ($tpl->get('allCalendars') as $row) { ?>
                     <tr>
-                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['id'], array('id' => $row['id'])) ?></td>
-                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['name'], array('id' => $row['id'])) ?></a></td>
+                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['id'], ['id' => $row['id']]) ?></td>
+                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['name'], ['id' => $row['id']]) ?></a></td>
                         <td><?php echo $row['url']; ?></a></td>
                         <td><span class="color: <?php echo $row['colorClass']; ?>" style="padding:2px;"><?php echo $row['colorClass']; ?></span></td>
                     </tr>

@@ -2,7 +2,7 @@
 
 use Leantime\Domain\Menu\Repositories\Menu;
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -21,7 +21,7 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
+                        <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?= $tpl->__('input.placeholders.enter_title_of_project')?>"/>
                     </div>
                 </div>
             </div>
@@ -54,11 +54,11 @@ $menuTypes = $tpl->get('menuTypes');
                     <p>The type of the project. This will determine which features are available.</p>
                     <select name="type">
                         <?php foreach ($tpl->get('projectTypes') as $key => $type) { ?>
-                            <option value="<?=$tpl->escape($key)?>"
+                            <option value="<?= $tpl->escape($key)?>"
                             <?php if ($project['type'] == $key) {
                                 echo " selected='selected' ";
                             } ?>
-                            ><?=$tpl->__($tpl->escape($type))?></option>
+                            ><?= $tpl->__($tpl->escape($type))?></option>
                         <?php } ?>
                     </select>
                     <br /><br />
@@ -74,7 +74,7 @@ $menuTypes = $tpl->get('menuTypes');
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
 
-                    <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>&v=<?=format($project['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                    <img src='<?= BASE_URL?>/api/projects?projectAvatar=<?= $project['id']; ?>&v=<?= format($project['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                     <div id="projectAvatar">
                     </div>
 
@@ -110,7 +110,7 @@ $menuTypes = $tpl->get('menuTypes');
 
             </div>
 
-                <?php $tpl->dispatchTplEvent("afterProjectAvatar", $project) ?>
+                <?php $tpl->dispatchTplEvent('afterProjectAvatar', $project) ?>
 
                 <div class="row marginBottom" style="margin-bottom: 30px;">
                     <div class="col-md-12">
@@ -121,13 +121,13 @@ $menuTypes = $tpl->get('menuTypes');
                         <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
-                                   value="<?php echo format($project['start'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo format($project['start'])->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                         </div>
                         <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
-                                   value="<?php echo format($project['end'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo format($project['end'])->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                         </div>
                     </div>
@@ -150,8 +150,8 @@ $menuTypes = $tpl->get('menuTypes');
                         <?php } ?>
 
                     </select>
-                    <?php if ($login::userIsAtLeast("manager")) { ?>
-                        <br /><a href="<?=BASE_URL?>/clients/newClient" target="_blank"><?=$tpl->__('label.client_not_listed'); ?></a>
+                    <?php if ($login::userIsAtLeast('manager')) { ?>
+                        <br /><a href="<?= BASE_URL?>/clients/newClient" target="_blank"><?= $tpl->__('label.client_not_listed'); ?></a>
                     <?php } ?>
 
 
@@ -196,9 +196,9 @@ $menuTypes = $tpl->get('menuTypes');
                     <br /><br />
 
                     <select name="globalProjectUserAccess" style="max-width:300px;">
-                        <option value="restricted" <?=$project['psettings'] == "restricted" ? "selected='selected'" : '' ?>><?php echo $tpl->__("labels.only_chose"); ?></option>
-                        <option value="clients" <?=$project['psettings'] == "clients" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_client"); ?></option>
-                        <option value="all" <?=$project['psettings'] == "all" ? "selected='selected'" : ''?>><?php echo $tpl->__("labels.everyone_in_org"); ?></option>
+                        <option value="restricted" <?= $project['psettings'] == 'restricted' ? "selected='selected'" : '' ?>><?php echo $tpl->__('labels.only_chose'); ?></option>
+                        <option value="clients" <?= $project['psettings'] == 'clients' ? "selected='selected'" : ''?>><?php echo $tpl->__('labels.everyone_in_client'); ?></option>
+                        <option value="all" <?= $project['psettings'] == 'all' ? "selected='selected'" : ''?>><?php echo $tpl->__('labels.everyone_in_org'); ?></option>
                     </select>
 
                 </div>

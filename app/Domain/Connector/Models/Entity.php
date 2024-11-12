@@ -2,9 +2,6 @@
 
 namespace Leantime\Domain\Connector\Models {
 
-    /**
-     *
-     */
     class Entity
     {
         public int $id;
@@ -24,10 +21,7 @@ namespace Leantime\Domain\Connector\Models {
         //External domain object
         public mixed $providerEntity;
 
-
-        public function __construct()
-        {
-        }
+        public function __construct() {}
     }
 
 }

@@ -1,10 +1,10 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
-    session(["usersettings.submenuToggle.myCalendarView" => "dayGridMonth"]);
+if (! session()->exists('usersettings.submenuToggle.myCalendarView')) {
+    session(['usersettings.submenuToggle.myCalendarView' => 'dayGridMonth']);
 }
 ?>
 
@@ -45,12 +45,12 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="#/calendar/editExternal/<?=$calendars['id']?>"><i class="fa-solid fa-pen-to-square"></i> <?=$tpl->__('links.edit_calendar')?></a>
+                                    <a href="#/calendar/editExternal/<?= $calendars['id']?>"><i class="fa-solid fa-pen-to-square"></i> <?= $tpl->__('links.edit_calendar')?></a>
                                 </li>
-                                <li><a href="#/calendar/delExternalCalendar/<?=$calendars['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_external_calendar')?></a></li>
+                                <li><a href="#/calendar/delExternalCalendar/<?= $calendars['id']?>" class="delete"><i class="fa fa-trash"></i> <?= $tpl->__('links.delete_external_calendar')?></a></li>
                             </ul>
                         </div>
-                        <span class="indicatorCircle" style="background:<?=$calendars['colorClass'] ?>"></span><?=$calendars['name'] ?>
+                        <span class="indicatorCircle" style="background:<?= $calendars['colorClass'] ?>"></span><?= $calendars['name'] ?>
 
                     </li>
                 <?php } ?>
@@ -64,7 +64,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
             <div class="maincontentinner">
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
+                        <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?= $tpl->__('buttons.add_event')?></a>
                     </div>
                     <div class="col-md-4">
                         <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -84,10 +84,10 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 
 
                         <select id="my-select" style="margin-right:5px;" class="right">
-                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=session("usersettings.submenuToggle.myCalendarView") == 'timeGridDay' ? "selected" : '' ?>>Day</option>
-                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=session("usersettings.submenuToggle.myCalendarView") == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
-                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=session("usersettings.submenuToggle.myCalendarView") == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
-                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=session("usersettings.submenuToggle.myCalendarView") == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
+                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?= session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay' ? 'selected' : '' ?>>Day</option>
+                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?= session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek' ? 'selected' : '' ?>>Week</option>
+                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?= session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth' ? 'selected' : '' ?>>Month</option>
+                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?= session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear' ? 'selected' : '' ?>>Year</option>
                         </select>
                     </div>
                 </div>
@@ -114,48 +114,48 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
     var eventSources = [];
 
     var events = {events: [
-        <?php foreach ($tpl->get('calendar') as $calendar) : ?>
+        <?php foreach ($tpl->get('calendar') as $calendar) { ?>
         {
             title: <?php echo json_encode($calendar['title']); ?>,
 
             start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
-            <?php if (isset($calendar['dateTo'])) : ?>
+            <?php if (isset($calendar['dateTo'])) { ?>
             end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
-            <?php endif; ?>
-            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
+            <?php } ?>
+            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) { ?>
             allDay: true,
-            <?php else : ?>
+            <?php } else { ?>
             allDay: false,
-            <?php endif; ?>
+            <?php } ?>
             enitityId: <?php echo $calendar['id'] ?>,
-            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-            url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
-            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') { ?>
+            url: '<?= CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
+            backgroundColor: '<?= $calendar['backgroundColor'] ?? 'var(--accent2)' ?>',
+            borderColor: '<?= $calendar['borderColor'] ?? 'var(--accent2)' ?>',
             enitityType: "event",
-            dateContext: '<?= $calendar['dateContext'] ?? "plan" ?>',
-            <?php else : ?>
-            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
-            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+            dateContext: '<?= $calendar['dateContext'] ?? 'plan' ?>',
+            <?php } else { ?>
+            url: '<?= CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
+            backgroundColor: '<?= $calendar['backgroundColor'] ?? 'var(--accent2)' ?>',
+            borderColor: '<?= $calendar['borderColor'] ?? 'var(--accent2)' ?>',
             enitityType: "ticket",
-            dateContext: '<?= $calendar['dateContext'] ?? "edit" ?>',
-            <?php endif; ?>
+            dateContext: '<?= $calendar['dateContext'] ?? 'edit' ?>',
+            <?php } ?>
         },
-        <?php endforeach; ?>
+        <?php } ?>
     ]};
 
     eventSources.push(events);
 
     <?php
-    $externalCalendars = $tpl->get("externalCalendars");
+    $externalCalendars = $tpl->get('externalCalendars');
 
-    foreach ($externalCalendars as $externalCalendar) { ?>
+foreach ($externalCalendars as $externalCalendar) { ?>
         eventSources.push(
             {
-                url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                url: '<?= BASE_URL ?>/calendar/externalCal/<?= $externalCalendar['id'] ?>',
                 format: 'ics',
-                color: '<?=$externalCalendar['colorClass'] ?>',
+                color: '<?= $externalCalendar['colorClass'] ?>',
                 editable: false,
             }
         );
@@ -171,7 +171,7 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
                 height:heightWindow,
-                initialView: '<?=session("usersettings.submenuToggle.myCalendarView") ?>',
+                initialView: '<?= session('usersettings.submenuToggle.myCalendarView') ?>',
                 eventSources:eventSources,
                 editable: true,
                 headerToolbar: false,

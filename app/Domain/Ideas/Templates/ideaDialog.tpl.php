@@ -5,7 +5,7 @@ foreach ($__data as $var => $val) {
 $canvasItem = $tpl->get('canvasItem');
 $canvasTypes = $tpl->get('canvasTypes');
 
-$id = "";
+$id = '';
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
@@ -15,7 +15,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function () {
         if (!window.jQuery) {
             //It's not a modal
-            location.href = "<?=BASE_URL ?>/ideas/showBoards?showIdeaModal=<?php echo $canvasItem['id']; ?>";
+            location.href = "<?= BASE_URL ?>/ideas/showBoards?showIdeaModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -23,7 +23,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 <?php echo $tpl->displayNotification(); ?>
 
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
+<form class="formModal" method="post" action="<?= BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
 
 
 <div class="row">
@@ -39,16 +39,16 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1"/>
 
         <input type="text" name="description" class="main-title-input" style="width:99%;" value="<?php $tpl->e($canvasItem['description']); ?>"
-               placeholder="<?php echo $tpl->__("input.placeholders.short_name") ?>"/><br/>
+               placeholder="<?php echo $tpl->__('input.placeholders.short_name') ?>"/><br/>
 
         <input type="text" value="<?php $tpl->e($canvasItem['tags']); ?>" name="tags" id="tags" />
 
 
         <textarea rows="3" cols="10" name="data" class="complexEditor"
-                  placeholder=""><?=htmlentities($canvasItem['data']) ?></textarea><br/>
+                  placeholder=""><?= htmlentities($canvasItem['data']) ?></textarea><br/>
 
-        <input type="submit" value="<?php echo $tpl->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
-        <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose"><?php echo $tpl->__("buttons.save_and_close")?></button>
+        <input type="submit" value="<?php echo $tpl->__('buttons.save')?>" id="primaryCanvasSubmitButton"/>
+        <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose"><?php echo $tpl->__('buttons.save_and_close')?></button>
 
         <?php if ($id !== '') { ?>
             <br/>
@@ -57,7 +57,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
             <?php
-            $tpl->assign("formUrl", BASE_URL . "/ideas/ideaDialog/" . $id . "");
+            $tpl->assign('formUrl', BASE_URL.'/ideas/ideaDialog/'.$id.'');
 
             $tpl->displaySubmodule('comments-generalComment'); ?>
         <?php } ?>
@@ -68,21 +68,21 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if ($id !== '') { ?>
             <br/><br/>
             <h4 class="widgettitle title-light"><span
-                    class="fa fa-link"></span> <?php echo $tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
+                    class="fa fa-link"></span> <?php echo $tpl->__('headlines.linked_milestone') ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?= $tpl->__('tooltip.link_milestones_tooltip') ?>"></i></h4>
 
 
             <ul class="sortableTicketList" style="width:99%">
                 <?php if ($canvasItem['milestoneId'] == '') { ?>
                     <li class="ui-state-default center" id="milestone_0">
-                        <h4><?php echo $tpl->__("headlines.no_milestone_link") ?></h4>
-                        <?php echo $tpl->__("text.use_milestone_to_track_idea") ?><br/>
+                        <h4><?php echo $tpl->__('headlines.no_milestone_link') ?></h4>
+                        <?php echo $tpl->__('text.use_milestone_to_track_idea') ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div class="col-md-12">
                                     <a href="javascript:void(0);"
-                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $tpl->__("links.create_link_milestone") ?></a>
+                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $tpl->__('links.create_link_milestone') ?></a>
                                     | <a href="javascript:void(0);"
-                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $tpl->__("links.link_existing_milestone") ?></a>
+                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $tpl->__('links.link_existing_milestone') ?></a>
                                 </div>
                             <?php } ?>
                         </div>
@@ -91,37 +91,37 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <textarea name="newMilestone"></textarea><br/>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> "/>
-                                <input type="button" value="<?php echo $tpl->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
+                                <input type="button" value="<?php echo $tpl->__('buttons.save')?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
                                    onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
-                                    <i class="fas fa-times"></i> <?php echo $tpl->__("links.cancel") ?>
+                                    <i class="fas fa-times"></i> <?php echo $tpl->__('links.cancel') ?>
                                 </a>
                             </div>
                         </div>
 
                         <div class="row" id="existingMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <select data-placeholder="<?php echo $tpl->__("input.placeholders.filter_by_milestone") ?>"
+                                <select data-placeholder="<?php echo $tpl->__('input.placeholders.filter_by_milestone') ?>"
                                         name="existingMilestone" class="user-select">
-                                    <option value=""><?php echo $tpl->__("text.all_milestones")?></option>
+                                    <option value=""><?php echo $tpl->__('text.all_milestones')?></option>
                                     <?php foreach ($tpl->get('milestones') as $milestoneRow) {
-                                        echo "<option value='" . $milestoneRow->id . "'";
+                                        echo "<option value='".$milestoneRow->id."'";
 
                                         if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
                                             echo " selected='selected' ";
                                         }
 
-                                        echo ">" . $tpl->escape($milestoneRow->headline) . "</option>";
+                                        echo '>'.$tpl->escape($milestoneRow->headline).'</option>';
                                     } ?>
                                 </select>
                                 <input type="hidden" name="type" value="milestone"/>
                                 <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> "/>
-                                <input type="button" value="<?php echo $tpl->__("buttons.save")?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
+                                <input type="button" value="<?php echo $tpl->__('buttons.save')?>" onclick="jQuery('#primaryCanvasSubmitButton').click()"
                                        class="btn btn-primary"/>
                                 <a href="javascript:void(0);"
                                    onclick="leantime.ideasController.toggleMilestoneSelectors('hide');">
-                                    <i class="fas fa-times"></i> <?php echo $tpl->__("links.cancel")?>
+                                    <i class="fas fa-times"></i> <?php echo $tpl->__('links.cancel')?>
                                 </a>
                             </div>
                         </div>
@@ -136,12 +136,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                         <div hx-trigger="load"
                              hx-indicator=".htmx-indicator"
-                             hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$canvasItem['milestoneId'] ?>">
+                             hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $canvasItem['milestoneId'] ?>">
                             <div class="htmx-indicator">
-                                <?=$tpl->__("label.loading_milestone") ?>
+                                <?= $tpl->__('label.loading_milestone') ?>
                             </div>
                         </div>
-                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="ideaCanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                        <a href="<?= CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId']; ?>" class="ideaCanvasModal delete formModal"><i class="fa fa-close"></i> <?= $tpl->__('links.remove') ?></a>
 
                     </li>
                 <?php } ?>
@@ -171,8 +171,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <?php if ($id != '') { ?>
-            <a href="<?=BASE_URL ?>/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
-                        class="fa fa-trash"></i> <?php echo $tpl->__("links.delete") ?></a>
+            <a href="<?= BASE_URL ?>/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
+                        class="fa fa-trash"></i> <?php echo $tpl->__('links.delete') ?></a>
         <?php } ?>
 
 
@@ -189,7 +189,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         leantime.editorController.initComplexEditor();
         leantime.ticketsController.initTagsInput();
 
-        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
+        <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");
 
 

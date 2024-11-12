@@ -9,7 +9,6 @@ namespace Leantime\Domain\Plugins\Contracts;
  */
 interface PluginInterface
 {
-
     /**
      * Installs the plugin.
      *
@@ -44,6 +43,4 @@ interface PluginInterface
      * @return bool True if the functionality is successfully disabled, false otherwise.
      */
     public function disable(): bool;
-
-
 }

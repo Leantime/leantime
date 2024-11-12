@@ -12,20 +12,18 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Services\Users;
     use Ramsey\Uuid\Uuid;
 
-    /**
-     *
-     */
     class EditUser extends Controller
     {
         private ProjectRepository $projectsRepo;
+
         private UserRepository $userRepo;
+
         private ClientRepository $clientsRepo;
+
         private Users $userService;
 
         /**
          * init - initialize private variables
-         *
-         * @access public
          */
         public function init(
             ProjectRepository $projectsRepo,
@@ -41,8 +39,6 @@ namespace Leantime\Domain\Users\Controllers {
 
         /**
          * run - display template and edit data
-         *
-         * @access public
          */
         public function run()
         {
@@ -52,13 +48,13 @@ namespace Leantime\Domain\Users\Controllers {
             //Only admins
 
             if (isset($_GET['id']) === true) {
-                $id = (int)($_GET['id']);
+                $id = (int) ($_GET['id']);
                 $row = $this->userRepo->getUser($id);
                 $edit = false;
                 $infoKey = '';
 
                 //Build values array
-                $values = array(
+                $values = [
                     'id' => $row['id'],
                     'firstname' => $row['firstname'],
                     'lastname' => $row['lastname'],
@@ -69,59 +65,58 @@ namespace Leantime\Domain\Users\Controllers {
                     'hours' => $row['hours'],
                     'wage' => $row['wage'],
                     'clientId' => $row['clientId'],
-                    'source' =>  $row['source'],
+                    'source' => $row['source'],
                     'pwReset' => $row['pwReset'],
                     'jobTitle' => $row['jobTitle'],
                     'jobLevel' => $row['jobLevel'],
                     'department' => $row['department'],
 
-                );
+                ];
 
                 if (isset($_GET['resendInvite']) && $row !== false) {
-                    if (!session()->exists("lastInvite." . $values['id']) ||
-                        session("lastInvite." . $values['id']) < time() - 240) {
-                        session(["lastInvite." . $values['id'] => time()]);
+                    if (! session()->exists('lastInvite.'.$values['id']) ||
+                        session('lastInvite.'.$values['id']) < time() - 240) {
+                        session(['lastInvite.'.$values['id'] => time()]);
 
                         //If pw reset is empty for whatever reason, create new invite code
-                        if(empty($values['pwReset'])){
+                        if (empty($values['pwReset'])) {
                             $inviteCode = Uuid::uuid4()->toString();
-                            $this->userRepo->patchUser($values['id'], array("pwReset" => $inviteCode));
+                            $this->userRepo->patchUser($values['id'], ['pwReset' => $inviteCode]);
                             $values['pwReset'] = $inviteCode;
                         }
-
 
                         $this->userService->sendUserInvite(
                             inviteCode: $values['pwReset'],
                             user: $values['user']
                         );
 
-                        $this->tpl->setNotification($this->language->__("notification.invitation_sent"), 'success', "userinvitation_sent");
+                        $this->tpl->setNotification($this->language->__('notification.invitation_sent'), 'success', 'userinvitation_sent');
                     } else {
-                        $this->tpl->setNotification($this->language->__("notification.invite_too_soon"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.invite_too_soon'), 'error');
                     }
 
-                    Frontcontroller::redirect(BASE_URL . '/users/editUser/' . $values['id']);
+                    Frontcontroller::redirect(BASE_URL.'/users/editUser/'.$values['id']);
                 }
 
                 if (isset($_POST['save'])) {
-                    if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
-                        $values = array(
-                            'id' =>  $row['id'],
+                    if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+                        $values = [
+                            'id' => $row['id'],
                             'firstname' => ($_POST['firstname'] ?? $row['firstname']),
-                            'lastname' => ($_POST['lastname'] ??  $row['lastname']),
+                            'lastname' => ($_POST['lastname'] ?? $row['lastname']),
                             'user' => ($_POST['user'] ?? $row['username']),
-                            'phone' => ($_POST['phone'] ??  $row['phone']),
+                            'phone' => ($_POST['phone'] ?? $row['phone']),
                             'status' => ($_POST['status'] ?? $row['status']),
                             'role' => ($_POST['role'] ?? $row['role']),
                             'hours' => ($_POST['hours'] ?? $row['hours']),
                             'wage' => ($_POST['wage'] ?? $row['wage']),
                             'clientId' => ($_POST['client'] ?? $row['clientId']),
-                            'source' =>  $row['source'],
+                            'source' => $row['source'],
                             'pwReset' => $row['pwReset'],
                             'jobTitle' => ($_POST['jobTitle'] ?? $row['jobTitle']),
                             'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
                             'department' => ($_POST['department'] ?? $row['department']),
-                        );
+                        ];
 
                         $changedEmail = 0;
 
@@ -130,28 +125,28 @@ namespace Leantime\Domain\Users\Controllers {
                         }
 
                         if ($values['user'] !== '') {
-                            if (!isset($_POST['password']) || ($_POST['password'] == $_POST['password2'])) {
+                            if (! isset($_POST['password']) || ($_POST['password'] == $_POST['password2'])) {
                                 if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                                     if ($changedEmail == 1) {
                                         if ($this->userRepo->usernameExist($row['username'], $id) === false) {
                                             $edit = true;
                                         } else {
-                                            $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
+                                            $this->tpl->setNotification($this->language->__('notification.user_exists'), 'error');
                                         }
                                     } else {
                                         $edit = true;
                                     }
                                 } else {
-                                    $this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
+                                    $this->tpl->setNotification($this->language->__('notification.no_valid_email'), 'error');
                                 }
                             } else {
-                                $this->tpl->setNotification($this->language->__("notification.enter_email"), 'error');
+                                $this->tpl->setNotification($this->language->__('notification.enter_email'), 'error');
                             }
                         } else {
-                            $this->tpl->setNotification($this->language->__("notification.passwords_dont_match"), 'error');
+                            $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), 'error');
                         }
                     } else {
-                        $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
+                        $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
                     }
                 }
 
@@ -169,13 +164,13 @@ namespace Leantime\Domain\Users\Controllers {
                         //If projects is not set, all project assignments have been removed.
                         $this->projectsRepo->deleteAllProjectRelations($id);
                     }
-                    $this->tpl->setNotification($this->language->__("notifications.user_edited"), 'success');
+                    $this->tpl->setNotification($this->language->__('notifications.user_edited'), 'success');
                 }
 
                 // Get relations to projects
                 $projects = $this->projectsRepo->getUserProjectRelation($id);
 
-                $projectrelation = array();
+                $projectrelation = [];
 
                 foreach ($projects as $projectId) {
                     $projectrelation[] = $projectId['projectId'];
@@ -188,15 +183,14 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-                session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
-                session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
+                session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
+                session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
 
                 $this->tpl->assign('values', $values);
                 $this->tpl->assign('relations', $projectrelation);
 
                 $this->tpl->assign('status', $this->userRepo->status);
                 $this->tpl->assign('id', $id);
-
 
                 return $this->tpl->display('users.editUser');
             } else {

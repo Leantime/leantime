@@ -84,7 +84,7 @@ class StartSession
         // Maximum time to wait for acquiring the lock if already held
         $maxWaitForLock = 10; // Wait for up to y seconds to acquire the lock
 
-        $lock = $this->cache("sessions")
+        $lock = $this->cache('sessions')
             ->lock('session_lock_'.$session->getId(), $holdLockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
@@ -94,7 +94,7 @@ class StartSession
 
             return $this->handleStatefulRequest($request, $session, $next);
 
-        } catch(LockTimeoutException $e) {
+        } catch (LockTimeoutException $e) {
 
             Log::error($e);
 
@@ -162,7 +162,7 @@ class StartSession
     {
         //Non logged in cookies will be reduced to 60min.
         //Extend Session Lifetime
-        if(! $request->cookies->has("esl")) {
+        if (! $request->cookies->has('esl')) {
             app('config')->set('session.lifetime', 60);
         }
 
@@ -245,18 +245,19 @@ class StartSession
      */
     protected function saveSession(IncomingRequest $request)
     {
-        if($this->shouldLockSession($request)) {
+        if ($this->shouldLockSession($request)) {
 
             $this->manager->driver()->save();
         }
     }
 
-    protected function shouldLockSession(IncomingRequest $request) {
+    protected function shouldLockSession(IncomingRequest $request)
+    {
 
         if (
             $request->isApiOrCronRequest() === false
         ) {
-             return true;
+            return true;
         }
 
         return false;

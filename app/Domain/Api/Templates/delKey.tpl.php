@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -19,13 +19,13 @@ $user = $tpl->get('user');
 
         <?php echo $tpl->displayNotification() ?>
 
-        <h5 class="subtitle"><?php echo $tpl->__("subtitles.delete_key"); ?></h5>
+        <h5 class="subtitle"><?php echo $tpl->__('subtitles.delete_key'); ?></h5>
 
             <form method="post">
-                <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                 <p><?php echo $tpl->__('text.confirm_key_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-primary" href="<?=BASE_URL ?>/setting/editCompanySettings/#apiKeys"><?php echo $tpl->__('buttons.back'); ?></a>
+                <a class="btn btn-primary" href="<?= BASE_URL ?>/setting/editCompanySettings/#apiKeys"><?php echo $tpl->__('buttons.back'); ?></a>
             </form>
 
     </div>

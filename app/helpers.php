@@ -3,21 +3,12 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Leantime\Core\Application;
-use Leantime\Core\Bootloader;
-use Leantime\Core\Configuration\AppSettings;
-use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Core\Support\Mix;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 if (! function_exists('__')) {
@@ -32,15 +23,11 @@ if (! function_exists('__')) {
     }
 }
 
-
 if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array  $array
-     * @param string $sortyBy
-     *
-     * @return array
+     * @param  string  $sortyBy
      */
     function array_sort(array $array, mixed $sortyBy): array
     {
@@ -60,27 +47,21 @@ if (! function_exists('array_sort')) {
 if (! function_exists('do_once')) {
     /**
      * Execute a callback only once.
-     *
-     * @param Closure $callback
-     * @param bool    $across_requests
-     * @param string  $key
-     *
-     * @return void
      */
     function do_once(string $key, Closure $callback, bool $across_requests = false): void
     {
         $key = "do_once_{$key}";
 
         if ($across_requests) {
-            if (session()->exists("do_once") === false) {
-                session(["do_once" => []]);
+            if (session()->exists('do_once') === false) {
+                session(['do_once' => []]);
             }
 
-            if (session("do_once." . $key) ?? false) {
+            if (session('do_once.'.$key) ?? false) {
                 return;
             }
 
-            session(["do_once." . $key => true]);
+            session(['do_once.'.$key => true]);
         } else {
             static $do_once;
             $do_once ??= [];
@@ -96,13 +77,10 @@ if (! function_exists('do_once')) {
     }
 }
 
-
 if (! function_exists('build')) {
     /**
      * Turns any object into a builder object
-     * @param object $object
      *
-     * @return Build
      **/
     function build(object $object): Build
     {
@@ -114,13 +92,10 @@ if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
      *
-     * @param string|int|float|DateTime|Carbon|null $value
-     * @param string|int|float|DateTime|null        $value2
-     * @param FromFormat|null                       $fromFormat
-     *
-     * @return Format|string
+     * @param  string|int|float|DateTime|Carbon|null  $value
+     * @param  string|int|float|DateTime|null  $value2
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, ?FromFormat $fromFormat = FromFormat::DbDate): Format|string
     {
         return new Format($value, $value2, $fromFormat);
     }
@@ -130,11 +105,10 @@ if (! function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
-     * @param mixed  $obj              The object to be cast.
-     * @param string $to_class         The class to which the object should be cast.
-     * @param array  $construct_params Optional parameters to pass to the constructor.
-     * @param array  $mappings         Make sure certain sub properties are casted to specific types.
-     *
+     * @param  mixed  $obj  The object to be cast.
+     * @param  string  $to_class  The class to which the object should be cast.
+     * @param  array  $construct_params  Optional parameters to pass to the constructor.
+     * @param  array  $mappings  Make sure certain sub properties are casted to specific types.
      * @return mixed The casted object, or throws an exception on failure.
      *
      * @throws \InvalidArgumentException If the class does not exist.
@@ -163,13 +137,12 @@ if (! function_exists('dtHelper')) {
     /**
      * Get a singleton instance of the DateTimeHelper class.
      *
-     * @return DateTimeHelper|null
      *
      * @throws BindingResolutionException
      */
     function dtHelper(): ?DateTimeHelper
     {
-        if (!app()->bound(DateTimeHelper::class)) {
+        if (! app()->bound(DateTimeHelper::class)) {
             app()->singleton(DateTimeHelper::class);
         }
 
@@ -205,7 +178,6 @@ if (! function_exists('currentRoute')) {
      * @param  array  $headers
      * @param  bool|null  $secure
      */
-
     function currentRoute()
     {
 
@@ -218,7 +190,6 @@ if (! function_exists('get_domain_key')) {
 
     /**
      * Gets a unique instance key determined by domain
-     *
      */
     function get_domain_key()
     {
@@ -235,4 +206,3 @@ if (! function_exists('get_domain_key')) {
     }
 
 }
-

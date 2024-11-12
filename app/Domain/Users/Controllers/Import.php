@@ -13,31 +13,23 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Import extends Controller
     {
         private UserRepository $userRepo;
+
         private LdapService $ldapService;
 
-        /**
-         * @param UserRepository $userRepo
-         * @param LdapService    $ldapService
-         * @return void
-         */
         public function init(UserRepository $userRepo, LdapService $ldapService): void
         {
             $this->userRepo = $userRepo;
             $this->ldapService = $ldapService;
 
-            if (!session()->exists("tmp")) {
-                session(["tmp" => []]);
+            if (! session()->exists('tmp')) {
+                session(['tmp' => []]);
             }
         }
 
         /**
-         * @return Response
          * @throws \Exception
          */
         public function get(): Response
@@ -51,8 +43,8 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('admin', true);
             $this->tpl->assign('roles', Roles::getRoles());
 
-            if (session()->exist("tmp.ldapUsers") && count(session("tmp.ldapUsers")) > 0) {
-                $this->tpl->assign('allLdapUsers', session("tmp.ldapUsers"));
+            if (session()->exist('tmp.ldapUsers') && count(session('tmp.ldapUsers')) > 0) {
+                $this->tpl->assign('allLdapUsers', session('tmp.ldapUsers'));
                 $this->tpl->assign('confirmUsers', true);
             }
 
@@ -60,8 +52,6 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -71,25 +61,25 @@ namespace Leantime\Domain\Users\Controllers {
 
             //Password Submit to connect to ldap and retrieve users. Sets tmp session var
             if (isset($params['pwSubmit'])) {
-                $username = $this->ldapService->extractLdapFromUsername(session("userdata.mail"));
+                $username = $this->ldapService->extractLdapFromUsername(session('userdata.mail'));
 
                 $this->ldapService->connect();
 
                 if ($this->ldapService->bind($username, $params['password'])) {
-                    session(["tmp.ldapUsers" => $this->ldapService->getAllMembers()]);
-                    $this->tpl->assign('allLdapUsers', session("tmp.ldapUsers"));
+                    session(['tmp.ldapUsers' => $this->ldapService->getAllMembers()]);
+                    $this->tpl->assign('allLdapUsers', session('tmp.ldapUsers'));
                     $this->tpl->assign('confirmUsers', true);
                 } else {
-                    $this->tpl->setNotification($this->language->__("notifications.username_or_password_incorrect"), "error");
+                    $this->tpl->setNotification($this->language->__('notifications.username_or_password_incorrect'), 'error');
                 }
             }
 
             //Import/Update User Post
             if (isset($params['importSubmit'])) {
-                if (is_array($params["users"])) {
-                    $users = array();
-                    foreach (session("tmp.ldapUsers") as $user) {
-                        if (array_search($user['username'], $params["users"])) {
+                if (is_array($params['users'])) {
+                    $users = [];
+                    foreach (session('tmp.ldapUsers') as $user) {
+                        if (array_search($user['username'], $params['users'])) {
                             $users[] = $user;
                         }
                     }

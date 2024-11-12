@@ -2,11 +2,11 @@
 
 use Leantime\Core\Controller\Frontcontroller;
 
-$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+$currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());
 
 $clients = $tpl->get('clients');
-$currentClient = $tpl->get("currentClient");
-$currentClientName = $tpl->get("currentClientName");
+$currentClient = $tpl->get('currentClient');
+$currentClientName = $tpl->get('currentClientName');
 
 ?>
 
@@ -18,7 +18,7 @@ $currentClientName = $tpl->get("currentClientName");
     </div>
     <div class="pagetitle">
 
-        <h1><?php echo $tpl->__("headlines.my_projects"); ?>
+        <h1><?php echo $tpl->__('headlines.my_projects'); ?>
 
 
 

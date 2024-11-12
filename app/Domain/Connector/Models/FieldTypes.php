@@ -2,25 +2,21 @@
 
 namespace Leantime\Domain\Connector\Models {
 
-    /**
-     *
-     */
     final class FieldTypes
     {
-        public static string $int = "int";
-        public static string $shortString = "varchar(255)";
+        public static string $int = 'int';
 
-        public static string $array = "array";
+        public static string $shortString = 'varchar(255)';
 
-        public static string $text = "text";
+        public static string $array = 'array';
 
-        public static string $email = "email";
+        public static string $text = 'text';
 
-        public static string $dateTime = "dateTime";
+        public static string $email = 'email';
 
-        public function __construct()
-        {
-        }
+        public static string $dateTime = 'dateTime';
+
+        public function __construct() {}
     }
 
 }

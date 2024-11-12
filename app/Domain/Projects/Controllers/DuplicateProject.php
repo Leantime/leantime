@@ -13,21 +13,14 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class DuplicateProject extends Controller
     {
         private ProjectService $projectService;
+
         private ClientRepository $clientRepo;
+
         private ProjectRepository $projectRepo;
 
-        /**
-         * @param ProjectRepository $projectRepo
-         * @param ClientRepository  $clientRepo
-         * @param ProjectService    $projectService
-         * @return void
-         */
         public function init(
             ProjectRepository $projectRepo,
             ClientRepository $clientRepo,
@@ -41,7 +34,6 @@ namespace Leantime\Domain\Projects\Controllers {
         }
 
         /**
-         * @return Response
          * @throws \Exception
          */
         public function get(): Response
@@ -53,18 +45,16 @@ namespace Leantime\Domain\Projects\Controllers {
                 return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }
 
-            $id = (int)($_GET['id']);
+            $id = (int) ($_GET['id']);
             $project = $this->projectService->getProject($id);
 
             $this->tpl->assign('allClients', $this->clientRepo->getAll());
-            $this->tpl->assign("project", $project);
+            $this->tpl->assign('project', $project);
 
             return $this->tpl->displayPartial('projects.duplicateProject');
         }
 
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -72,7 +62,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
-                $id = (int)($_GET['id']);
+                $id = (int) ($_GET['id']);
                 $projectName = $params['projectName'];
                 $startDate = format(value: $_POST['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
                 $clientId = (int) $params['clientId'];
@@ -84,9 +74,9 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $result = $this->projectService->duplicateProject($id, $clientId, $projectName, $startDate, $assignSameUsers);
 
-                $this->tpl->setNotification(sprintf($this->language->__("notifications.project_copied_successfully"), BASE_URL . "/projects/changeCurrentProject/" . $result), 'success');
+                $this->tpl->setNotification(sprintf($this->language->__('notifications.project_copied_successfully'), BASE_URL.'/projects/changeCurrentProject/'.$result), 'success');
 
-                return Frontcontroller::redirect(BASE_URL . "/projects/duplicateProject/" . $id);
+                return Frontcontroller::redirect(BASE_URL.'/projects/duplicateProject/'.$id);
             } else {
                 return $this->tpl->displayPartial('errors.error403');
             }

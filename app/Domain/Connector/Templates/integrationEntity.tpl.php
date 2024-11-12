@@ -2,14 +2,14 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$providerEntities = $tpl->get("providerEntities");
-$provider = $tpl->get("provider");
-$leantimeEntities = $tpl->get("leantimeEntities");
-$integrationId = $tpl->get("integrationId");
+$providerEntities = $tpl->get('providerEntities');
+$provider = $tpl->get('provider');
+$leantimeEntities = $tpl->get('leantimeEntities');
+$integrationId = $tpl->get('integrationId');
 
 $urlAppend = '';
 if (isset($integrationId) && is_numeric($integrationId)) {
-    $urlAppend = "&integrationId=" . $integrationId;
+    $urlAppend = '&integrationId='.$integrationId;
 }
 ?>
 
@@ -18,7 +18,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.connector"); ?> // <?=$provider->name ?></h1>
+                <h1><?php echo $tpl->__('headlines.connector'); ?> // <?= $provider->name ?></h1>
             </div>
         </div>
     </div>

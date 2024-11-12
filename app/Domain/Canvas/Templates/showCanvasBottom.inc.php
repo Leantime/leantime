@@ -6,7 +6,6 @@
  * Required variables:
  * - $canvasName       Name of current canvas
  */
-
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -17,26 +16,26 @@ foreach ($__data as $var => $val) {
         echo "<br /><br /><div class='center'>";
 
         echo "<div class='svgContainer'>";
-        echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
-        echo "</div>";
+        echo file_get_contents(ROOT.'/dist/images/svg/undraw_design_data_khdb.svg');
+        echo '</div>';
 
-        echo"<h3>" . $tpl->__("headlines.$canvasName.analysis") . "</h3>";
-        echo "<br />" . $tpl->__("text.$canvasName.helper_content");
+        echo '<h3>'.$tpl->__("headlines.$canvasName.analysis").'</h3>';
+        echo '<br />'.$tpl->__("text.$canvasName.helper_content");
 
         if ($login::userIsAtLeast($roles::$editor)) {
             echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                 " . $tpl->__("links.icon.create_new_board") . "</a>.";
+                 ".$tpl->__('links.icon.create_new_board').'</a>.';
         }
-        echo"</div>";
+        echo '</div>';
     }
-    if (!empty($disclaimer) && count($tpl->get('allCanvas')) > 0) { ?>
-        <small class="align-center"><?=$disclaimer ?></small>
+if (! empty($disclaimer) && count($tpl->get('allCanvas')) > 0) { ?>
+        <small class="align-center"><?= $disclaimer ?></small>
         <?php
-    }
+}
 
-    echo $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render();
+echo $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render();
 
-    ?>
+?>
     </div>
 </div>
 
@@ -52,8 +51,8 @@ foreach ($__data as $var => $val) {
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.<?=$canvasName ?>CanvasController.setRowHeights();
-        leantime.canvasController.setCanvasName('<?=$canvasName ?>');
+        leantime.<?= $canvasName ?>CanvasController.setRowHeights();
+        leantime.canvasController.setCanvasName('<?= $canvasName ?>');
         leantime.canvasController.initFilterBar();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
@@ -68,14 +67,14 @@ foreach ($__data as $var => $val) {
 
 
         <?php if (isset($_GET['showModal'])) {
-            if ($_GET['showModal'] == "") {
-                $modalUrl = "&type=" . array_key_first($canvasTypes);
+            if ($_GET['showModal'] == '') {
+                $modalUrl = '&type='.array_key_first($canvasTypes);
             } else {
-                $modalUrl = "/" . (int)$_GET['showModal'];
+                $modalUrl = '/'.(int) $_GET['showModal'];
             }
             ?>
-        leantime.canvasController.openModalManually("<?=BASE_URL?>/<?=$canvasName ?>canvas/editCanvasItem<?=$modalUrl ?>");
-        window.history.pushState({},document.title, '<?=BASE_URL?>/<?=$canvasName ?>canvas/showCanvas/');
+        leantime.canvasController.openModalManually("<?= BASE_URL?>/<?= $canvasName ?>canvas/editCanvasItem<?= $modalUrl ?>");
+        window.history.pushState({},document.title, '<?= BASE_URL?>/<?= $canvasName ?>canvas/showCanvas/');
 
         <?php } ?>
 

@@ -5,7 +5,6 @@ namespace Leantime\Core\Providers;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Cache\RateLimiter;
-use Illuminate\Support\Str;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
 class Cache extends CacheServiceProvider

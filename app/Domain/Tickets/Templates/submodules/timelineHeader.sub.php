@@ -3,26 +3,26 @@
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Sprints\Models\Sprints;
 
-$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
+$currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());
 
-$currentSprintId = $tpl->get("currentSprint");
-$searchCriteria = $tpl->get("searchCriteria");
+$currentSprintId = $tpl->get('currentSprint');
+$searchCriteria = $tpl->get('searchCriteria');
 $searchSprint = $searchCriteria['sprint'] ?? '';
-$sprints        = $tpl->get("sprints");
+$sprints = $tpl->get('sprints');
 
 $sprint = false;
 
-$currentSprintId = $currentSprintId == '' ? "all" : $currentSprintId;
+$currentSprintId = $currentSprintId == '' ? 'all' : $currentSprintId;
 if ($currentSprintId == 'all') {
-    $sprint = new Sprints();
+    $sprint = new Sprints;
     $sprint->id = 'all';
-    $sprint->name = $tpl->__("links.all_todos");
+    $sprint->name = $tpl->__('links.all_todos');
 }
 
 if ($currentSprintId == 'backlog') {
-    $sprint = new Sprints();
+    $sprint = new Sprints;
     $sprint->id = 'backlog';
-    $sprint->name = $tpl->__("links.backlog");
+    $sprint->name = $tpl->__('links.backlog');
 }
 
 if (is_array($tpl->get('sprints'))) {
@@ -43,60 +43,60 @@ if (is_array($tpl->get('sprints'))) {
         <span class="fa fa-fw fa-chart-gantt"></span>
     </div>
     <div class="pagetitle">
-        <h5><?php $tpl->e(session("currentProjectClient") ?? '' . " // " . session("currentProjectName") ?? ''); ?></h5>
+        <h5><?php $tpl->e(session('currentProjectClient') ?? ''.' // '.session('currentProjectName') ?? ''); ?></h5>
 
-        <?php  if (
+        <?php if (
             ($tpl->get('currentSprint') !== false)
                 && ($tpl->get('currentSprint') !== null)
-                && count($tpl->get('sprints'))  > 0
+                && count($tpl->get('sprints')) > 0
                 && $sprint->id != 'all'
                 && $sprint->id != 'backlog'
-) {?>
+        ) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a href="#/sprints/editSprint/<?=$tpl->get("currentSprint")?>"><?=$tpl->__("link.edit_sprint") ?></a></li>
-                        <li><a href="#/sprints/delSprint/<?=$tpl->get("currentSprint")?>" class="delete"><?=$tpl->__("links.delete_sprint") ?></a></li>
+                        <li><a href="#/sprints/editSprint/<?= $tpl->get('currentSprint')?>"><?= $tpl->__('link.edit_sprint') ?></a></li>
+                        <li><a href="#/sprints/delSprint/<?= $tpl->get('currentSprint')?>" class="delete"><?= $tpl->__('links.delete_sprint') ?></a></li>
                     <?php } ?>
                 </ul>
             </span>
         <?php } ?>
 
         <h1>
-            <?=$tpl->__("headline.milestones"); ?>
-            <?php  if (($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints'))  > 0) {?>
+            <?= $tpl->__('headline.milestones'); ?>
+            <?php if (($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints')) > 0) {?>
             //
             <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                     <?php
-                    if ($sprint !== false) {
-                        $tpl->e($sprint->name);
-                    } else {
-                        $tpl->__('label.select_board');
-                    } ?>
+                            if ($sprint !== false) {
+                                $tpl->e($sprint->name);
+                            } else {
+                                $tpl->__('label.select_board');
+                            } ?>
                     <i class="fa fa-caret-down"></i>
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$tpl->__("links.create_sprint_no_icon") ?></a></li>
+                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?= $tpl->__('links.create_sprint_no_icon') ?></a></li>
                     <li class='nav-header border'></li>
                     <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("links.all_todos") ?></a>
+                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('<?= $currentUrlPath; ?>')"><?= $tpl->__('links.all_todos') ?></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("label.backlog") ?></a>
+                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?= $currentUrlPath; ?>')"><?= $tpl->__('label.backlog') ?></a>
                     </li>
                     <?php foreach ($tpl->get('sprints') as $sprintRow) {   ?>
                         <li>
-                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val(<?=$sprintRow->id?>); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->escape($sprintRow->name)?><br /><small><?=sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date());?></small></a>
+                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val(<?= $sprintRow->id?>); leantime.ticketsController.initTicketSearchUrlBuilder('<?= $currentUrlPath; ?>')"><?= $tpl->escape($sprintRow->name)?><br /><small><?= sprintf($tpl->__('label.date_from_date_to'), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date()); ?></small></a>
                         </li>
                     <?php } ?>
                 </ul>
             </span>
             <?php } ?>
         </h1>
-        <input type="hidden" name="sprintSelect" id="sprintSelect" value="<?=$currentSprintId?>" />
+        <input type="hidden" name="sprintSelect" id="sprintSelect" value="<?= $currentSprintId?>" />
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->

@@ -17,54 +17,27 @@ namespace Leantime\Domain\Projects\Repositories {
     use PDO;
     use SVG\SVG;
 
-    /**
-     *
-     */
     class Projects
     {
         use EventhelperCore;
 
-        /**
-         * @access public
-         * @var    string
-         */
         public string $name = '';
 
-        /**
-         * @access public
-         * @var    int
-         */
         public int $id = 0; // WAS: '';
 
-        /**
-         * @access public
-         * @var    int
-         */
         public int $clientId = 0;
 
-        /**
-         * @access private
-         * @var    DbCore|null
-         */
         private ?DbCore $db;
 
-        /**
-         * @access public
-         * @var    object
-         */
         public object $result; // WAS: = '';
 
         /**
-         * @access public
-         * @var    array state for projects
+         * @var array state for projects
          */
-        public array $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
+        public array $state = [0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN'];
+
         private Environment $config;
 
-        /**
-         * @param Environment $config
-         * @param DbCore      $db
-         */
         public function __construct(
             Environment $config,
             DbCore $db
@@ -73,17 +46,11 @@ namespace Leantime\Domain\Projects\Repositories {
             $this->db = $db;
         }
 
-
         /**
          * getAll - get all projects open and closed
-         *
-         * @access public
-         * @param bool $showClosedProjects
-         * @return array
          */
         public function getAll(bool $showClosedProjects = false): array
         {
-
 
             $query = "SELECT
 					project.id,
@@ -112,15 +79,15 @@ namespace Leantime\Domain\Projects\Repositories {
 				";
 
             if ($showClosedProjects === false) {
-                $query .= " WHERE project.state IS NULL OR project.state <> -1 ";
+                $query .= ' WHERE project.state IS NULL OR project.state <> -1 ';
             }
 
-            $query .= "
+            $query .= '
 				GROUP BY
 					project.id,
 					project.name,
 					project.clientId
-				ORDER BY clientName, project.name";
+				ORDER BY clientName, project.name';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -134,16 +101,11 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * Gets all users that have access to a project.
          * For direct access only set the teamOnly flag to true
-         *
-         * @access public
-         * @param  $id
-         * @return array|bool
-         *
          */
         public function getUsersAssignedToProject($id, $includeApiUsers = false): array|bool
         {
 
-            $query = "SELECT
+            $query = 'SELECT
 					DISTINCT zp_user.id,
 					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
 					zp_user.lastname,
@@ -161,15 +123,15 @@ namespace Leantime\Domain\Projects\Repositories {
 				LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
                 WHERE
                         zp_relationuserproject.projectId = :projectId
-                        AND zp_user.id IS NOT NULL ";
+                        AND zp_user.id IS NOT NULL ';
 
-                if($includeApiUsers === false) {
-				    $query .= " AND !(zp_user.source <=> 'api') ";
-                }
+            if ($includeApiUsers === false) {
+                $query .= " AND !(zp_user.source <=> 'api') ";
+            }
 
-                $query .= "
+            $query .= '
 				    GROUP BY zp_user.id
-                    ORDER BY zp_user.lastname";
+                    ORDER BY zp_user.lastname';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
@@ -181,14 +143,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * @param int      $userId
-         * @param string   $projectStatus
-         * @param int|null $clientId
-         * @param string   $accessStatus
-         * @return array|false
-         */
-        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, string $accessStatus = "assigned", string $projectTypes = "all"): false|array
+        public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
         {
 
             $query = "SELECT
@@ -223,7 +178,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				WHERE (project.active > '-1' OR project.active IS NULL)";
 
             //All Projects this user has access to
-            if ($accessStatus == "all") {
+            if ($accessStatus == 'all') {
                 $query .= " AND
 				(
 				    relation.userId = :id
@@ -234,7 +189,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				)";
 
                 //All projects the user is assigned to OR the users client is assigned to
-            } elseif ($accessStatus == "clients") {
+            } elseif ($accessStatus == 'clients') {
                 $query .= " AND
 				(
 				    relation.userId = :id
@@ -243,55 +198,54 @@ namespace Leantime\Domain\Projects\Repositories {
 
                 //Only assigned
             } else {
-                $query .= " AND
-				(relation.userId = :id)";
+                $query .= ' AND
+				(relation.userId = :id)';
             }
 
-            if ($projectStatus == "open") {
+            if ($projectStatus == 'open') {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
-            } elseif ($projectStatus == "closed") {
-                $query .= " AND (project.state = -1)";
+            } elseif ($projectStatus == 'closed') {
+                $query .= ' AND (project.state = -1)';
             }
 
-            if ($clientId != "" && $clientId != null && $clientId > 0) {
-                $query .= " AND project.clientId = :clientId";
+            if ($clientId != '' && $clientId != null && $clientId > 0) {
+                $query .= ' AND project.clientId = :clientId';
             }
 
-            if ($projectTypes  != "all" && $projectTypes  != "project") {
-                $projectTypeIn = DbCore::arrayToPdoBindingString("projectType", count(explode(",", $projectTypes)));
-                $query .= " AND project.type IN(" . $projectTypeIn . ")";
+            if ($projectTypes != 'all' && $projectTypes != 'project') {
+                $projectTypeIn = DbCore::arrayToPdoBindingString('projectType', count(explode(',', $projectTypes)));
+                $query .= ' AND project.type IN('.$projectTypeIn.')';
             }
 
-            if ($projectTypes  == "project") {
+            if ($projectTypes == 'project') {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
-            $query .= " GROUP BY
+            $query .= ' GROUP BY
 					project.id
-				    ORDER BY clientName, project.name";
+				    ORDER BY clientName, project.name';
 
             $stmn = $this->db->database->prepare($query);
 
             if ($userId == '') {
-                $stmn->bindValue(':id', session("userdata.id"), PDO::PARAM_STR);
+                $stmn->bindValue(':id', session('userdata.id'), PDO::PARAM_STR);
             } else {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
-            if ($clientId != "" && $clientId != null && $clientId > 0) {
+            if ($clientId != '' && $clientId != null && $clientId > 0) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
-            if ($projectTypes  != "all" && $projectTypes  != "project") {
-                foreach (explode(",", $projectTypes) as $key => $type) {
-                    $stmn->bindValue(":projectType" . $key, $type, PDO::PARAM_STR);
+            if ($projectTypes != 'all' && $projectTypes != 'project') {
+                foreach (explode(',', $projectTypes) as $key => $type) {
+                    $stmn->bindValue(':projectType'.$key, $type, PDO::PARAM_STR);
                 }
             }
 
-            if ($projectTypes  == "project") {
+            if ($projectTypes == 'project') {
                 $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
-
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_ASSOC);
@@ -302,13 +256,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
         // Deprecated
 
-        /**
-         * @param $userId
-         * @param string $status
-         * @param string $clientId
-         * @return array|false
-         */
-        public function getProjectsUserHasAccessTo($userId, string $status = "all", string $clientId = ""): false|array
+        public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
         {
 
             $query = "SELECT
@@ -335,15 +283,15 @@ namespace Leantime\Domain\Projects\Repositories {
 				    )
 				  AND (project.active > '-1' OR project.active IS NULL)";
 
-            if ($status == "open") {
+            if ($status == 'open') {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
-            } elseif ($status == "closed") {
-                $query .= " AND (project.state = -1)";
+            } elseif ($status == 'closed') {
+                $query .= ' AND (project.state = -1)';
             }
 
-            $query .= " GROUP BY
+            $query .= ' GROUP BY
 					project.id
-				ORDER BY clientName, project.name";
+				ORDER BY clientName, project.name';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
@@ -356,28 +304,23 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-
         /**
-         * @param $clientId
-         * @param $type
          * @return int|mixed
          */
         /**
-         * @param $clientId
-         * @param $type
          * @return int|mixed
          */
         public function getNumberOfProjects($clientId = null, $type = null): mixed
         {
 
-            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
+            $sql = 'SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0';
 
             if ($clientId != null && is_numeric($clientId)) {
-                $sql .= " AND clientId = :clientId";
+                $sql .= ' AND clientId = :clientId';
             }
 
             if ($type != null) {
-                $sql .= " AND type = :type";
+                $sql .= ' AND type = :type';
             }
 
             $stmn = $this->db->database->prepare($sql);
@@ -403,15 +346,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         // Get all open user projects /param: open, closed, all
 
-
-        /**
-         * @param $clientId
-         * @return array|false
-         */
-        /**
-         * @param $clientId
-         * @return array|false
-         */
         public function getClientProjects($clientId): false|array
         {
 
@@ -447,18 +381,10 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getProjectTickets($projectId): false|array
         {
 
-            $sql = "SELECT zp_tickets.id,
+            $sql = 'SELECT zp_tickets.id,
 		zp_tickets.headline,
 		zp_tickets.editFrom,
 		zp_tickets.editTo,
@@ -466,7 +392,7 @@ namespace Leantime\Domain\Projects\Repositories {
 		zp_user.lastname
 		 FROM zp_tickets
 		LEFT JOIN zp_user ON zp_tickets.editorId = zp_user.id
-		WHERE projectId=:projectId ORDER BY zp_tickets.editFrom";
+		WHERE projectId=:projectId ORDER BY zp_tickets.editFrom';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
@@ -480,10 +406,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * getProject - get one project
-         *
-         * @access public
-         * @param  $id
-         * @return array|bool
          */
         public function getProject($id): array|bool
         {
@@ -524,7 +446,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
-            $stmn->bindValue(':id', session("userdata.id"), PDO::PARAM_STR);
+            $stmn->bindValue(':id', session('userdata.id'), PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -533,22 +455,13 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-
-        /**
-         * @param $id
-         * @return array|bool
-         */
-        /**
-         * @param $id
-         * @return array|bool
-         */
         public function getProjectBookedHours($id): array|bool
         {
 
-            $query = "SELECT zp_tickets.projectId, SUM(zp_timesheets.hours) AS totalHours
+            $query = 'SELECT zp_tickets.projectId, SUM(zp_timesheets.hours) AS totalHours
 				FROM zp_tickets
 				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				WHERE projectId = :id";
+				WHERE projectId = :id';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -560,16 +473,6 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * @param $needle
-         * @param $haystack
-         * @return false|int|string
-         */
-        /**
-         * @param $needle
-         * @param $haystack
-         * @return false|int|string
-         */
         public function recursive_array_search($needle, $haystack): false|int|string
         {
             foreach ($haystack as $key => $value) {
@@ -578,17 +481,10 @@ namespace Leantime\Domain\Projects\Repositories {
                     return $current_key;
                 }
             }
+
             return false;
         }
 
-        /**
-         * @param $id
-         * @return array|bool
-         */
-        /**
-         * @param $id
-         * @return array|bool
-         */
         public function getProjectBookedHoursArray($id): array|bool
         {
 
@@ -608,13 +504,13 @@ namespace Leantime\Domain\Projects\Repositories {
             $results = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            $chartArr = array();
+            $chartArr = [];
 
             if (count($results) > 0) {
-                $begin = date_create($results[0]["workDate"]);
+                $begin = date_create($results[0]['workDate']);
                 $begin->sub(new DateInterval('P1D'));
 
-                $end = date_create($results[(count($results) - 1)]["workDate"]);
+                $end = date_create($results[(count($results) - 1)]['workDate']);
                 $end->add(new DateInterval('P1D'));
 
                 $i = new DateInterval('P1D');
@@ -640,25 +536,16 @@ namespace Leantime\Domain\Projects\Repositories {
                 }
             }
 
-
             return $chartArr;
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         */
-        /**
-         * @param $id
-         * @return mixed
-         */
         public function getProjectBookedDollars($id): mixed
         {
 
-            $query = "SELECT zp_tickets.projectId, SUM(zp_timesheets.hours*zp_timesheets.rate) AS totalDollars
+            $query = 'SELECT zp_tickets.projectId, SUM(zp_timesheets.hours*zp_timesheets.rate) AS totalDollars
 				FROM zp_tickets
 				INNER JOIN zp_timesheets ON zp_timesheets.ticketId = zp_tickets.id
-				WHERE projectId = :id";
+				WHERE projectId = :id';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -670,18 +557,15 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-
         /**
          * addProject - add a project to a client
          *
-         * @access public
-         * @param bool|array $values
          * @return int|bool returns new project id on success, false on failure.
          */
         public function addProject(bool|array $values): int|bool
         {
 
-            $query = "INSERT INTO `zp_projects` (
+            $query = 'INSERT INTO `zp_projects` (
 				            `name`,
                            `details`,
                            `clientId`,
@@ -710,7 +594,7 @@ namespace Leantime\Domain\Projects\Repositories {
                             :end,
                             :created,
                             :modified
-                        )";
+                        )';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -723,15 +607,14 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('menuType', $values['menuType'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
-            $stmn->bindValue('created', date("Y-m-d H:i:s"), PDO::PARAM_STR);
-            $stmn->bindValue('modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue('created', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmn->bindValue('modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
             $startDate = null;
             if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
                 $startDate = $values['start'];
             }
             $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
-
 
             $endDate = null;
             if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
@@ -745,15 +628,15 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            if (session()->exists("userdata.id")) {
-                $this->addProjectRelation(session("userdata.id"), $projectId, "");
+            if (session()->exists('userdata.id')) {
+                $this->addProjectRelation(session('userdata.id'), $projectId, '');
             }
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
                 foreach ($values['assignedUsers'] as $user) {
-                    if (is_array($user) && isset($user["id"]) && isset($user["projectRole"])) {
-                        $this->addProjectRelation($user["id"], $projectId, $user["projectRole"]);
+                    if (is_array($user) && isset($user['id']) && isset($user['projectRole'])) {
+                        $this->addProjectRelation($user['id'], $projectId, $user['projectRole']);
                     }
                 }
             }
@@ -763,17 +646,13 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * editProject - edit a project
-         *
-         * @access public
-         * @param array $values
-         * @param  $id
          */
         public function editProject(array $values, $id): void
         {
 
             $oldProject = $this->getProject($id);
 
-            $query = "UPDATE zp_projects SET
+            $query = 'UPDATE zp_projects SET
 				name = :name,
 				details = :details,
 				clientId = :clientId,
@@ -789,7 +668,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				modified = :modified
 				WHERE id = :id
 
-				LIMIT 1";
+				LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
 
@@ -804,14 +683,13 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
-            $stmn->bindValue('modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue('modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
             $startDate = null;
             if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
                 $startDate = $values['start'];
             }
             $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
-
 
             $endDate = null;
             if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
@@ -823,15 +701,11 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("editProject", array("values" => $values, "oldProject" => $oldProject));
+            static::dispatch_event('editProject', ['values' => $values, 'oldProject' => $oldProject]);
         }
 
         /**
          * editProject - edit a project
-         *
-         * @access public
-         * @param array     $values
-         * @param $projectId
          */
         public function editProjectRelations(array $values, $projectId): void
         {
@@ -842,8 +716,8 @@ namespace Leantime\Domain\Projects\Repositories {
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
                 foreach ($values['assignedUsers'] as $userId) {
                     $projectRole = null;
-                    if (isset($values['projectRoles']['userProjectRole-' . $userId]) && $values['projectRoles']['userProjectRole-' . $userId] != "40" && $values['projectRoles']['userProjectRole-' . $userId] != "50") {
-                        $projectRole = (int) $values['projectRoles']['userProjectRole-' . $userId];
+                    if (isset($values['projectRoles']['userProjectRole-'.$userId]) && $values['projectRoles']['userProjectRole-'.$userId] != '40' && $values['projectRoles']['userProjectRole-'.$userId] != '50') {
+                        $projectRole = (int) $values['projectRoles']['userProjectRole-'.$userId];
                     }
 
                     $this->addProjectRelation($userId, $projectId, $projectRole);
@@ -853,14 +727,11 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * deleteProject - delete a project
-         *
-         * @access public
-         * @param  $id
          */
         public function deleteProject($id): void
         {
 
-            $query = "DELETE FROM zp_projects WHERE id = :id LIMIT 1";
+            $query = 'DELETE FROM zp_projects WHERE id = :id LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -868,8 +739,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->execute();
             $stmn->closeCursor();
 
-
-            $query = "DELETE FROM zp_tickets WHERE projectId = :id";
+            $query = 'DELETE FROM zp_tickets WHERE projectId = :id';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -880,10 +750,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * hasTickets - check if there are Tickets related to a project
-         *
-         * @access public
-         * @param  $id
-         * @return bool
          */
         public function hasTickets($id): bool
         {
@@ -909,25 +775,22 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * getUserProjectRelation - get all projects related to a user
          *
-         * @access public
-         * @param  $id
-         * @param null $projectId
-         * @return array
+         * @param  null  $projectId
          */
         public function getUserProjectRelation($id, $projectId = null): array
         {
 
-            $query = "SELECT
+            $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name,
 				zp_relationuserproject.projectRole
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :id";
+			WHERE userId = :id';
 
             if ($projectId != null) {
-                $query .= " AND  zp_projects.id = :projectId";
+                $query .= ' AND  zp_projects.id = :projectId';
             }
 
             $stmn = $this->db->database->prepare($query);
@@ -945,15 +808,9 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
         /**
-         * @param $userId
-         * @param $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         /**
-         * @param $userId
-         * @param $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserAssignedToProject($userId, $projectId): bool
@@ -967,7 +824,7 @@ namespace Leantime\Domain\Projects\Repositories {
             }
 
             //admins owners and managers can access everything
-            if (in_array(Roles::getRoleString($user['role']), array(Roles::$admin, Roles::$owner, Roles::$manager))) {
+            if (in_array(Roles::getRoleString($user['role']), [Roles::$admin, Roles::$owner, Roles::$manager])) {
                 return true;
             }
 
@@ -990,13 +847,13 @@ namespace Leantime\Domain\Projects\Repositories {
             }
 
             //Select users are allowed to see project
-            $query = "SELECT
+            $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
+			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -1014,15 +871,9 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
         /**
-         * @param $userId
-         * @param $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         /**
-         * @param $userId
-         * @param $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserMemberOfProject($userId, $projectId): bool
@@ -1037,23 +888,21 @@ namespace Leantime\Domain\Projects\Repositories {
 
             //admins owners and managers can access everything
 
-
             $project = $this->getProject($projectId);
 
             if ($project === false) {
                 return false;
             }
 
-
             //Select users are allowed to see project
-            $query = "SELECT
+            $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name,
                 zp_projects.modified
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
-			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
+			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -1072,16 +921,11 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * getUserProjectRelation - get all projects related to a user
-         *
-         * @access public
-         * @param  $id
-         * @param $projects
-         * @return bool
          */
         public function editUserProjectRelations($id, $projects): bool
         {
 
-            $sql = "SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id";
+            $sql = 'SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -1101,7 +945,7 @@ namespace Leantime\Domain\Projects\Repositories {
                         }
                     }
                 }
-                if (!$exists) {
+                if (! $exists) {
                     $this->addProjectRelation($id, $project, '');
                 }
             }
@@ -1118,15 +962,10 @@ namespace Leantime\Domain\Projects\Repositories {
             return true;
         }
 
-        /**
-         * @param $userId
-         * @param $projectId
-         * @return void
-         */
         public function deleteProjectRelation($userId, $projectId): void
         {
 
-            $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId";
+            $sql = 'DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -1138,18 +977,10 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $userId
-         * @return void
-         */
-        /**
-         * @param $userId
-         * @return void
-         */
         public function deleteAllProjectRelations($userId): void
         {
 
-            $sql = "DELETE FROM zp_relationuserproject WHERE userId=:userId";
+            $sql = 'DELETE FROM zp_relationuserproject WHERE userId=:userId';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -1160,18 +991,10 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $projectId
-         * @return void
-         */
-        /**
-         * @param $projectId
-         * @return void
-         */
         public function deleteAllUserRelations($projectId): void
         {
 
-            $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId";
+            $sql = 'DELETE FROM zp_relationuserproject WHERE projectId=:projectId';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -1182,23 +1005,11 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $userId
-         * @param $projectId
-         * @param $projectRole
-         * @return void
-         */
-        /**
-         * @param $userId
-         * @param $projectId
-         * @param $projectRole
-         * @return void
-         */
         public function addProjectRelation($userId, $projectId, $projectRole): void
         {
             $oldProject = $this->getProject($projectId);
 
-            $sql = "INSERT INTO zp_relationuserproject (
+            $sql = 'INSERT INTO zp_relationuserproject (
 					userId,
 					projectId,
                     projectRole
@@ -1206,7 +1017,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					:userId,
 					:projectId,
 					:projectRole
-				)";
+				)';
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -1218,40 +1029,30 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("userAddedToProject", array("userId" => $userId, "projectId" => $projectId, "projectRole" => $projectRole, "oldProject" => $oldProject));
+            static::dispatch_event('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
         }
 
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patch($id, $params): bool
         {
 
-            unset($params["act"]);
+            unset($params['act']);
 
-            $sql = "UPDATE zp_projects SET ";
+            $sql = 'UPDATE zp_projects SET ';
 
             foreach ($params as $key => $value) {
-                $sql .= "" . DbCore::sanitizeToColumnString($key) . "=:" . DbCore::sanitizeToColumnString($key) . ", ";
+                $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
             }
 
-            $sql .= "modified=:modified ";
+            $sql .= 'modified=:modified ';
 
-            $sql .= " WHERE id=:id LIMIT 1";
+            $sql .= ' WHERE id=:id LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
             foreach ($params as $key => $value) {
-                $stmn->bindValue(':' . DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+                $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
@@ -1263,10 +1064,6 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * setPicture - set the profile picture for an individual
          *
-         * @access public
-         * @param array $_FILE
-         * @param $id
-         * @return bool
          * @throws BindingResolutionException
          */
         public function setPicture(array $_FILE, $id): bool
@@ -1289,7 +1086,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
                 $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-                $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+                $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
                 $result = $stmn->execute();
                 $stmn->closeCursor();
@@ -1301,13 +1098,13 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
         /**
-         * @param $id
          * @return string[]|SVG
+         *
          * @throws BindingResolutionException
          */
         /**
-         * @param $id
          * @return string[]|SVG
+         *
          * @throws BindingResolutionException
          */
         public function getProjectAvatar($id): array|SVG
@@ -1316,7 +1113,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $value = false;
 
             if ($id !== false) {
-                $sql = "SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1";
+                $sql = 'SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1';
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':id', $id, PDO::PARAM_INT);
@@ -1326,18 +1123,19 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->closeCursor();
             }
             try {
-                $avatar = (new InitialAvatar())
-                        ->fontName("Verdana")
-                        ->background('#555555')
-                        ->color("#fff");
+                $avatar = (new InitialAvatar)
+                    ->fontName('Verdana')
+                    ->background('#555555')
+                    ->color('#fff');
 
                 if (empty($value)) {
-                    return $avatar->name("🦄")->generateSvg();
+                    return $avatar->name('🦄')->generateSvg();
                 }
             } catch (\Exception $e) {
-                Log::error("Could not generate project avatar.");
+                Log::error('Could not generate project avatar.');
                 Log::error($e);
-                return array("filename" => "not_found", "type" => "uploaded");
+
+                return ['filename' => 'not_found', 'type' => 'uploaded'];
             }
             if (empty($value['avatar'])) {
 
@@ -1346,30 +1144,30 @@ namespace Leantime\Domain\Projects\Repositories {
                 $initialsClass->name($value['name']);
                 $imagename = $initialsClass->getInitials();
 
-                if (!file_exists($filename = APP_ROOT . "/cache/avatars/" . $imagename . ".svg")) {
+                if (! file_exists($filename = APP_ROOT.'/cache/avatars/'.$imagename.'.svg')) {
                     $image = $avatar->name($value['name'])->generateSvg();
 
-                    if (!is_writable(APP_ROOT . "/cache/avatars/")) {
+                    if (! is_writable(APP_ROOT.'/cache/avatars/')) {
                         return $image;
                     }
 
                     file_put_contents($filename, $image);
                 }
 
-                return array("filename" => $filename, "type" => "generated");
+                return ['filename' => $filename, 'type' => 'generated'];
             }
 
             $files = app()->make(Files::class);
             $file = $files->getFile($value['avatar']);
 
             if ($file) {
-                $filePath = $file['encName'] . "." . $file['extension'];
+                $filePath = $file['encName'].'.'.$file['extension'];
                 $type = $file['extension'];
 
-                return array("filename" => $filePath, "type" => "uploaded");
+                return ['filename' => $filePath, 'type' => 'uploaded'];
             }
 
-            return $avatar->name("🦄")->generateSvg();
+            return $avatar->name('🦄')->generateSvg();
         }
     }
 

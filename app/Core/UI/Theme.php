@@ -7,9 +7,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\EventDispatcher as EventDispatcher;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Events\EventDispatcher as EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -102,9 +101,6 @@ class Theme
 
     private Environment $config;
 
-    /**
-     * @var Setting
-     */
     private Setting $settingsRepo;
 
     private Language $language;
@@ -114,9 +110,6 @@ class Theme
      */
     private AppSettings $appSettings;
 
-    /**
-     * @var array|false
-     */
     private array|false $iniData;
 
     /**
@@ -179,19 +172,19 @@ class Theme
             'secondaryColor' => $this->iniData['general']['secondaryColor'] ?? $this->colorSchemes['themeDefault']['secondaryColor'],
         ];
 
-        $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor") ?  $this->settingsRepo->getSetting("companysettings.primarycolor") : null;
-        $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor") ?  $this->settingsRepo->getSetting("companysettings.secondarycolor") : null;
+        $primaryColor = $this->settingsRepo->getSetting('companysettings.primarycolor') ? $this->settingsRepo->getSetting('companysettings.primarycolor') : null;
+        $secondaryColor = $this->settingsRepo->getSetting('companysettings.secondarycolor') ? $this->settingsRepo->getSetting('companysettings.secondarycolor') : null;
 
-        $parsedColorSchemes["companyColors"] = array(
-            "name" => "label.companyColors",
-            "primaryColor" => $primaryColor ?? $this->config->primarycolor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
-            "secondaryColor" => $secondaryColor ?? $this->config->secondarycolor ?? $parsedColorSchemes["themeDefault"]["secondaryColor"],
-        );
+        $parsedColorSchemes['companyColors'] = [
+            'name' => 'label.companyColors',
+            'primaryColor' => $primaryColor ?? $this->config->primarycolor ?? $parsedColorSchemes['themeDefault']['primaryColor'],
+            'secondaryColor' => $secondaryColor ?? $this->config->secondarycolor ?? $parsedColorSchemes['themeDefault']['secondaryColor'],
+        ];
 
-        if(
-            $parsedColorSchemes["companyColors"]["primaryColor"] ==  $parsedColorSchemes['themeDefault']["primaryColor"] &&
-            $parsedColorSchemes["companyColors"]["secondaryColor"] ==  $parsedColorSchemes['themeDefault']["secondaryColor"]) {
-            unset($parsedColorSchemes["companyColors"]);
+        if (
+            $parsedColorSchemes['companyColors']['primaryColor'] == $parsedColorSchemes['themeDefault']['primaryColor'] &&
+            $parsedColorSchemes['companyColors']['secondaryColor'] == $parsedColorSchemes['themeDefault']['secondaryColor']) {
+            unset($parsedColorSchemes['companyColors']);
         }
 
         $colorschemes = self::dispatchFilter('colorschemes', $parsedColorSchemes);
@@ -223,7 +216,7 @@ class Theme
         //This is an active logged in session.
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
-            $theme = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".theme");
+            $theme = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.theme');
             if ($theme !== false) {
                 $this->setActive($theme);
 
@@ -265,7 +258,7 @@ class Theme
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
-            $colorMode = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorMode");
+            $colorMode = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.colorMode');
             if ($colorMode !== false) {
                 $this->setColorMode($colorMode);
 
@@ -306,7 +299,7 @@ class Theme
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
 
-            $colorScheme = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorScheme");
+            $colorScheme = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.colorScheme');
             if ($colorScheme !== false) {
                 $this->setColorScheme($colorScheme);
 
@@ -320,13 +313,15 @@ class Theme
             return $_COOKIE['colorScheme'];
         }
 
-        if(!empty($this->config->primarycolor) && !empty($this->config->secondarycolor)) {
+        if (! empty($this->config->primarycolor) && ! empty($this->config->secondarycolor)) {
             //Return default
             $this->setColorScheme('companyColors');
+
             return 'companyColors';
-        }else{
+        } else {
             //Return default
             $this->setColorScheme('themeDefault');
+
             return 'themeDefault';
         }
 
@@ -350,7 +345,7 @@ class Theme
         if (Auth::isLoggedIn()) {
 
             //User is logged in, we don't have a theme yet, check settings
-            $themeFont = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".themeFont");
+            $themeFont = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.themeFont');
             if ($themeFont !== false) {
                 $this->setFont($themeFont);
 
@@ -638,12 +633,12 @@ class Theme
             return false;
         }
 
-        if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType)) {
-            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.min.' . $assetType . '?v=' . $this->appSettings->appVersion;
+        if (file_exists($this->getDir().'/'.$assetType.'/'.$fileName.'.min.'.$assetType)) {
+            return $this->getUrl().'/'.$assetType.'/'.$fileName.'.min.'.$assetType.'?v='.$this->appSettings->appVersion;
         }
 
-        if (file_exists($this->getDir() . '/' . $assetType . '/' . $fileName . '.' . $assetType)) {
-            return $this->getUrl() . '/' . $assetType . '/' . $fileName . '.' . $assetType . '?v=' . $this->appSettings->appVersion;
+        if (file_exists($this->getDir().'/'.$assetType.'/'.$fileName.'.'.$assetType)) {
+            return $this->getUrl().'/'.$assetType.'/'.$fileName.'.'.$assetType.'?v='.$this->appSettings->appVersion;
         }
 
         return false;
@@ -720,9 +715,9 @@ class Theme
         //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
         $logoPath = false;
-        if (session()->exists("companysettings.logoPath") === false || session("companysettings.logoPath") == '') {
+        if (session()->exists('companysettings.logoPath') === false || session('companysettings.logoPath') == '') {
 
-            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
+            $logoPath = $this->settingsRepo->getSetting('companysettings.logoPath');
 
             if (
                 $logoPath !== false &&
@@ -791,9 +786,9 @@ class Theme
     public function setCompanyColors()
     {
 
-        if (! session()->exists("usersettings.colors.primaryColor")) {
+        if (! session()->exists('usersettings.colors.primaryColor')) {
 
-            $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
+            $primaryColor = $this->settingsRepo->getSetting('companysettings.primarycolor');
 
             if ($primaryColor !== false) {
                 session(['usersettings.colors.primaryColor' => $primaryColor]);
@@ -803,7 +798,7 @@ class Theme
                 session(['usersettings.colors.secondaryColor' => $this->config->secondaryColor]);
             }
 
-            $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondaryColor");
+            $secondaryColor = $this->settingsRepo->getSetting('companysettings.secondaryColor');
             if ($secondaryColor !== false) {
                 session(['usersettings.colors.secondaryColor' => $secondaryColor]);
             }

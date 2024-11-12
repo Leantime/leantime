@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$user = $tpl->get("user");
+$user = $tpl->get('user');
 ?>
 <div class="projectSteps">
     <div class="progressWrapper">
@@ -64,7 +64,7 @@ $user = $tpl->get("user");
 <br /><br /><br />
 
 
-<h2><?php echo $tpl->language->__("headlines.set_up_your_account"); ?></h2>
+<h2><?php echo $tpl->language->__('headlines.set_up_your_account'); ?></h2>
 
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 <div class="regcontent">
@@ -78,27 +78,27 @@ $user = $tpl->get("user");
         <input type="hidden" name="step" value="1"/>
 
         <div class="">
-            <input type="text" name="firstname" style="margin-bottom:15px" id="firstname" placeholder="<?php echo $tpl->language->__("input.placeholders.firstname"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
+            <input type="text" name="firstname" style="margin-bottom:15px" id="firstname" placeholder="<?php echo $tpl->language->__('input.placeholders.firstname'); ?>" value="<?= $tpl->escape($user['firstname']); ?>" />
 
         </div>
         <div class="">
-            <input type="text" name="lastname" id="lastname" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.lastname"); ?>" value="<?=$tpl->escape($user['lastname']); ?>" />
+            <input type="text" name="lastname" id="lastname" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__('input.placeholders.lastname'); ?>" value="<?= $tpl->escape($user['lastname']); ?>" />
         </div>
         <div class="">
-            <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
+            <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__('input.placeholders.jobtitle'); ?>" value="<?= $tpl->escape($user['jobTitle']); ?>" />
         </div>
         <div class="">
-            <input type="password" name="password" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
+            <input type="password" name="password" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_new_password'); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <div class=" ">
-            <input type="password" name="password2" id="password2" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.confirm_password"); ?>" />
+            <input type="password" name="password2" id="password2" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__('input.placeholders.confirm_password'); ?>" />
         </div>
-        <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
+        <small><?= $tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            <input type="submit" name="createAccount" value="<?php echo $tpl->language->__('buttons.next'); ?>" />
 
         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>

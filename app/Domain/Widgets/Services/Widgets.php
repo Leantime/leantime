@@ -6,134 +6,123 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Widgets\Models\Widget;
 use Leantime\Domain\Users\Services\Users;
+use Leantime\Domain\Widgets\Models\Widget;
 
-/**
- *
- */
 class Widgets
 {
     use DispatchesEvents;
 
     /**
-     * @var array
-     *
      * @api
      */
     public array $availableWidgets = [];
 
     /**
-     * @var array
-     *
      * @api
      */
     public array $defaultWidgets = [];
 
     /**
-     * @var Setting
-     *
      * @api
      */
     public Setting $settingRepo;
 
-    private const WIDGET_HISTORY_KEY = "usersettings.%d.widgetHistory";
-    private const ACTIVE_WIDGETS_KEY = "usersettings.%d.dashboardGrid";
+    private const WIDGET_HISTORY_KEY = 'usersettings.%d.widgetHistory';
+
+    private const ACTIVE_WIDGETS_KEY = 'usersettings.%d.dashboardGrid';
 
     /**
      * __construct method.
      *
      * Initializes the object and sets the available widgets and default widgets.
      *
-     * @param Setting $settingRepo The Setting repository object
-     *
+     * @param  Setting  $settingRepo  The Setting repository object
      * @return void
-     *
      */
     public function __construct(Setting $settingRepo)
     {
 
         $this->settingRepo = $settingRepo;
 
-        $this->availableWidgets["welcome"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            "id" => "welcome",
-            "name" => "widgets.title.welcome",
-            "description" => "widgets.descriptions.welcome",
-            "widgetUrl" => BASE_URL . "/widgets/welcome/get",
-            "gridHeight" => 11,
-            "gridWidth" => 12,
-            "gridMinHeight" => 8,
-            "gridMinWidth" => 6,
-            "gridX" => 0,
-            "gridY" => 0,
-            "widgetBackground" => "",
-            "widgetTrigger" => "load, every 5m",
-            "alwaysVisible" => true,
-            "noTitle" => true,
+        $this->availableWidgets['welcome'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'welcome',
+            'name' => 'widgets.title.welcome',
+            'description' => 'widgets.descriptions.welcome',
+            'widgetUrl' => BASE_URL.'/widgets/welcome/get',
+            'gridHeight' => 11,
+            'gridWidth' => 12,
+            'gridMinHeight' => 8,
+            'gridMinWidth' => 6,
+            'gridX' => 0,
+            'gridY' => 0,
+            'widgetBackground' => '',
+            'widgetTrigger' => 'load, every 5m',
+            'alwaysVisible' => true,
+            'noTitle' => true,
 
         ]);
 
-        $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            "id" => "todos",
-            "name" => "widgets.title.my_todos",
-            "description" => "widgets.descriptions.my_todos",
-            "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
-            "gridHeight" => 30,
-            "gridWidth" => 8,
-            "gridMinHeight" => 16,
-            "gridMinWidth" => 3,
-            "gridX" => 0,
-            "gridY" => 12,
-            "alwaysVisible" => false,
-            "noTitle" => false,
+        $this->availableWidgets['todos'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'todos',
+            'name' => 'widgets.title.my_todos',
+            'description' => 'widgets.descriptions.my_todos',
+            'widgetUrl' => BASE_URL.'/widgets/myToDos/get',
+            'gridHeight' => 30,
+            'gridWidth' => 8,
+            'gridMinHeight' => 16,
+            'gridMinWidth' => 3,
+            'gridX' => 0,
+            'gridY' => 12,
+            'alwaysVisible' => false,
+            'noTitle' => false,
 
         ]);
 
-        $this->availableWidgets["calendar"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            "id" => "calendar",
-            "name" => "widgets.title.calendar",
-            "description" => "widgets.descriptions.calendar",
-            "gridHeight" => 30,
-            "gridWidth" => 4,
-            "gridMinHeight" => 12,
-            "gridMinWidth" => 3,
-            "gridX" => 8,
-            "gridY" => 12,
-            "alwaysVisible" => false,
-            "noTitle" => false,
-            "widgetUrl" => BASE_URL . "/widgets/calendar/get",
+        $this->availableWidgets['calendar'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'calendar',
+            'name' => 'widgets.title.calendar',
+            'description' => 'widgets.descriptions.calendar',
+            'gridHeight' => 30,
+            'gridWidth' => 4,
+            'gridMinHeight' => 12,
+            'gridMinWidth' => 3,
+            'gridX' => 8,
+            'gridY' => 12,
+            'alwaysVisible' => false,
+            'noTitle' => false,
+            'widgetUrl' => BASE_URL.'/widgets/calendar/get',
         ]);
 
-        $this->availableWidgets["myprojects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            "id" => "myprojects",
-            "name" => "widgets.title.my_projects",
-            "description" => "widgets.descriptions.my_projects",
-            "gridHeight" => 22,
-            "gridWidth" => 8,
-            "gridMinHeight" => 10,
-            "gridMinWidth" => 2,
-            "gridX" => 0,
-            "gridY" => 43,
-            "alwaysVisible" => false,
-            "noTitle" => false,
-            "widgetUrl" => BASE_URL . "/widgets/myProjects/get",
+        $this->availableWidgets['myprojects'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            'id' => 'myprojects',
+            'name' => 'widgets.title.my_projects',
+            'description' => 'widgets.descriptions.my_projects',
+            'gridHeight' => 22,
+            'gridWidth' => 8,
+            'gridMinHeight' => 10,
+            'gridMinWidth' => 2,
+            'gridX' => 0,
+            'gridY' => 43,
+            'alwaysVisible' => false,
+            'noTitle' => false,
+            'widgetUrl' => BASE_URL.'/widgets/myProjects/get',
         ]);
 
         $this->defaultWidgets = [
-            "welcome"     => $this->availableWidgets["welcome"],
-            "calendar"    => $this->availableWidgets["calendar"],
-            "todos"       => $this->availableWidgets["todos"]
+            'welcome' => $this->availableWidgets['welcome'],
+            'calendar' => $this->availableWidgets['calendar'],
+            'todos' => $this->availableWidgets['todos'],
         ];
 
-        $this->availableWidgets = self::dispatch_filter("availableWidgets", $this->availableWidgets);
-        $this->defaultWidgets = self::dispatch_filter("defaultWidgets", $this->defaultWidgets, array("availableWidgets"=> $this->availableWidgets));
+        $this->availableWidgets = self::dispatch_filter('availableWidgets', $this->availableWidgets);
+        $this->defaultWidgets = self::dispatch_filter('defaultWidgets', $this->defaultWidgets, ['availableWidgets' => $this->availableWidgets]);
     }
 
     /**
      * Register a new widget.
      *
-     * @param Widget $widget The widget to register.
-     * @return void
+     * @param  Widget  $widget  The widget to register.
      *
      * @api
      */
@@ -143,11 +132,12 @@ class Widgets
 
         // Update widget history for all users
         $users = app()->make(Users::class)->getAll(true);
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $widgetHistory = $this->getWidgetHistory($user['id']);
             // Don't add to history during registration - let users discover it
-            if(!isset($widgetHistory[$widget->id])) {
+            if (! isset($widgetHistory[$widget->id])) {
                 $widget->isNew = true;
+
                 continue;
             }
         }
@@ -162,13 +152,13 @@ class Widgets
      */
     public function getAll(): array
     {
-        return DispatchesEvents::dispatch_filter("availableWidgets", $this->availableWidgets);
+        return DispatchesEvents::dispatch_filter('availableWidgets', $this->availableWidgets);
     }
 
     /**
      * Retrieves the active widgets for a specific user.
      *
-     * @param int $userId The ID of the user.
+     * @param  int  $userId  The ID of the user.
      * @return array The array of active widgets.
      *
      * @api
@@ -178,7 +168,7 @@ class Widgets
 
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
-        if(Cache::has($activeWidgetKey)) {
+        if (Cache::has($activeWidgetKey)) {
             return Cache::get($activeWidgetKey);
         }
 
@@ -187,31 +177,31 @@ class Widgets
         $widgets = $this->defaultWidgets;
 
         if ($activeWidgets && $activeWidgets != '') {
-            $unserializedData =  unserialize($activeWidgets);
+            $unserializedData = unserialize($activeWidgets);
 
-            $widgets = array();
+            $widgets = [];
             foreach ($unserializedData as $key => $widget) {
                 // Check if this widget exists in available widgets but not in user's stored widgets
-                if (isset($this->availableWidgets[$widget["id"]]) && !isset($widgetHistory[$widget["id"]])) {
-                    $widget["isNew"] = true;
+                if (isset($this->availableWidgets[$widget['id']]) && ! isset($widgetHistory[$widget['id']])) {
+                    $widget['isNew'] = true;
                 }
 
-                if (isset($this->availableWidgets[$widget["id"]])) {
-                    $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
-                    $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
-                    $widget["description"] = $this->availableWidgets[$widget["id"]]->description;
-                    $widget["widgetTrigger"] = $this->availableWidgets[$widget["id"]]->widgetTrigger;
-                    $widget["alwaysVisible"] = $this->availableWidgets[$widget["id"]]->alwaysVisible;
-                    $widget["gridMinWidth"] = $this->availableWidgets[$widget["id"]]->gridMinWidth;
-                    $widget["gridMinHeight"] = $this->availableWidgets[$widget["id"]]->gridMinHeight;
-                    $widget["noTitle"] = $this->availableWidgets[$widget["id"]]->noTitle;
-                    $widgets[$widget["id"]] = app()->make(Widget::class, $widget);
+                if (isset($this->availableWidgets[$widget['id']])) {
+                    $widget['name'] = $this->availableWidgets[$widget['id']]->name;
+                    $widget['widgetBackground'] = $this->availableWidgets[$widget['id']]->widgetBackground;
+                    $widget['description'] = $this->availableWidgets[$widget['id']]->description;
+                    $widget['widgetTrigger'] = $this->availableWidgets[$widget['id']]->widgetTrigger;
+                    $widget['alwaysVisible'] = $this->availableWidgets[$widget['id']]->alwaysVisible;
+                    $widget['gridMinWidth'] = $this->availableWidgets[$widget['id']]->gridMinWidth;
+                    $widget['gridMinHeight'] = $this->availableWidgets[$widget['id']]->gridMinHeight;
+                    $widget['noTitle'] = $this->availableWidgets[$widget['id']]->noTitle;
+                    $widgets[$widget['id']] = app()->make(Widget::class, $widget);
                 }
             }
         }
 
         //Sort Widgets
-        $widgets = array_sort($widgets, [['gridY', 'asc'],['gridX', 'asc']]);
+        $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
 
         Cache::set($activeWidgetKey, $widgets, CarbonImmutable::now()->addDays(30));
 
@@ -221,8 +211,7 @@ class Widgets
     /**
      * Resets the dashboard grid for a specific user.
      *
-     * @param int $userId The ID of the user for whom the dashboard grid needs to be reset.
-     * @return void
+     * @param  int  $userId  The ID of the user for whom the dashboard grid needs to be reset.
      *
      * @api
      */
@@ -238,7 +227,7 @@ class Widgets
     /**
      * Get new widgets for the user.
      *
-     * @param int $userId The ID of the user.
+     * @param  int  $userId  The ID of the user.
      * @return array An array of new widgets.
      *
      * @api
@@ -252,32 +241,28 @@ class Widgets
         $newWidgets = [];
 
         foreach ($availableWidgets as $widgetId => $widget) {
-            if (!isset($widgetHistory[$widgetId]) && !isset($activeWidgets[$widgetId])) {
+            if (! isset($widgetHistory[$widgetId]) && ! isset($activeWidgets[$widgetId])) {
                 $widget->isNew = true;
                 $newWidgets[$widgetId] = $widget;
             }
         }
+
         return $newWidgets;
     }
 
     /**
      * Get widget history for a user
-     *
-     * @param int $userId
-     * @return array
      */
     private function getWidgetHistory(int $userId): array
     {
         $historyKey = sprintf(self::WIDGET_HISTORY_KEY, $userId);
         $history = $this->settingRepo->getSetting($historyKey);
+
         return $history ? unserialize($history) : [];
     }
 
     /**
      * Mark a widget as seen by a user
-     *
-     * @param int $userId
-     * @param string $widgetId
      */
     public function markWidgetAsSeen(int $userId, string $widgetId): void
     {
@@ -287,7 +272,8 @@ class Widgets
         $this->settingRepo->saveSetting($historyKey, serialize($history));
     }
 
-    public function saveGrid($data, $userId) {
+    public function saveGrid($data, $userId)
+    {
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
         Cache::forget($activeWidgetKey);
         $this->settingRepo->saveSetting($activeWidgetKey,

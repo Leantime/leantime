@@ -5,16 +5,16 @@ foreach ($__data as $var => $val) {
 ?>
 
 <?php
-$providerFields = $tpl->get("providerFields");
-$provider = $tpl->get("provider");
-$leantimeFields = $tpl->get("leantimeFields");
-$numberOfFields = $tpl->get("maxFields");
-$values = $tpl->get("values");
-$flags = $tpl->get("flags");
-$fields = $tpl->get("fields");
+$providerFields = $tpl->get('providerFields');
+$provider = $tpl->get('provider');
+$leantimeFields = $tpl->get('leantimeFields');
+$numberOfFields = $tpl->get('maxFields');
+$values = $tpl->get('values');
+$flags = $tpl->get('flags');
+$fields = $tpl->get('fields');
 $urlAppend = '';
 if (isset($integrationId) && is_numeric($integrationId)) {
-    $urlAppend = "&integrationId=" . $integrationId;
+    $urlAppend = '&integrationId='.$integrationId;
 }
 ?>
 
@@ -24,7 +24,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.integrations"); ?> // <?=$provider->name ?> </h1>
+                <h1><?php echo $tpl->__('headlines.integrations'); ?> // <?= $provider->name ?> </h1>
             </div>
         </div>
     </div>
@@ -39,20 +39,20 @@ if (isset($integrationId) && is_numeric($integrationId)) {
 
         <h5 class="subtitle">Review</h5>
 
-        <?php if (!empty($flags)) { ?>
+        <?php if (! empty($flags)) { ?>
             <p style="font-style: oblique">Please resolve the following errors and reconnect your integration:</p>
             <ul style="padding-left: 20px; margin-bottom: 20px;">
                 <?php
                 $messages = [];
-                foreach ($flags as $flag) { ?>
-                    <?php if(in_array($flag, $messages) === false){ ?>
+            foreach ($flags as $flag) { ?>
+                    <?php if (in_array($flag, $messages) === false) { ?>
                         <li style="margin-right: 10px; color: red; font-style: oblique;"><?= $flag ?></li>
                     <?php
-                        $messages[] = $flag;
+                    $messages[] = $flag;
                     } ?>
                 <?php } ?>
             </ul>
-            <a class="btn btn-primary pull-left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=fields<?=$urlAppend?>">Go Back</a>
+            <a class="btn btn-primary pull-left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=fields<?= $urlAppend?>">Go Back</a>
         <?php } else { ?>
             <a class="btn btn-primary right" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=import">Confirm</a>
         <?php } ?>
@@ -64,19 +64,19 @@ if (isset($integrationId) && is_numeric($integrationId)) {
         <table width="100%">
             <thead>
             <tr>
-                <?php foreach ($fields as $sourceField => $leantimeField) : ?>
+                <?php foreach ($fields as $sourceField => $leantimeField) { ?>
                     <th><?= $leantimeField['leantimeField'] ?></th>
-                <?php endforeach; ?>
+                <?php } ?>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($values as $record) : ?>
+            <?php foreach ($values as $record) { ?>
                 <tr>
-                    <?php foreach ($record as $value) : ?>
+                    <?php foreach ($record as $value) { ?>
                         <td><?= $value ?></td>
-                    <?php endforeach; ?>
+                    <?php } ?>
                 </tr>
-            <?php endforeach; ?>
+            <?php } ?>
             </tbody>
         </table>
         <br />

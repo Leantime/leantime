@@ -11,8 +11,8 @@ foreach ($__data as $var => $val) {
         <div class="col-md-12">
             <h1 style="font-size:var(--font-size-xxxl)">Stay on top of your project</h1><br />
             <div style='width:50%' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_joyride_re_968t.svg");
-                echo"</div>";?>
+                <?php echo file_get_contents(ROOT.'/dist/images/svg/undraw_joyride_re_968t.svg');
+echo '</div>'; ?>
 
             </div>
         </div>

@@ -5,34 +5,26 @@ namespace Leantime\Domain\Goalcanvas\Services {
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 
     /**
-     *
-     *
      * @api
      */
     class Goalcanvas
     {
         private GoalcanvaRepository $goalRepository;
+
         public array $reportingSettings = [
-            "linkonly",
-            "linkAndReport",
-            "nolink",
+            'linkonly',
+            'linkAndReport',
+            'nolink',
         ];
 
-        /**
-         * @param GoalcanvaRepository $goalRepository
-         *
-     */
         public function __construct(GoalcanvaRepository $goalRepository)
         {
             $this->goalRepository = $goalRepository;
         }
 
         /**
-         * @param int $id
-         * @return array
-         *
-     * @api
-     */
+         * @api
+         */
         public function getCanvasItemsById(int $id): array
         {
 
@@ -48,7 +40,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                         continue;
                     }
 
-                    if ($goal['setting'] == "linkAndReport") {
+                    if ($goal['setting'] == 'linkAndReport') {
                         //GetAll Child elements
                         $currentValueSum = $this->getChildGoalsForReporting($goal['id']);
 
@@ -66,17 +58,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param $parentId
          * @return int|mixed
          *
-     * @api
-     */
+         * @api
+         */
         /**
-         * @param $parentId
          * @return int|mixed
          *
-     * @api
-     */
+         * @api
+         */
         public function getChildGoalsForReporting($parentId): mixed
         {
 
@@ -88,10 +78,10 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $goals = $this->goalRepository->getCanvasItemsByKPI($parentId);
             $currentValueSum = 0;
             foreach ($goals as $child) {
-                if ($child['setting'] == "linkAndReport") {
+                if ($child['setting'] == 'linkAndReport') {
                     $currentValueSum = $currentValueSum + $child['childCurrentValue'];
                 } else {
-                    $currentValueSum = $currentValueSum + $child["currentValue"];
+                    $currentValueSum = $currentValueSum + $child['currentValue'];
                 }
             }
 
@@ -99,15 +89,12 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param $parentId
-         * @return array
-         *
-     * @api
-     */
+         * @api
+         */
         public function getChildrenbyKPI($parentId): array
         {
 
-            $goals = array();
+            $goals = [];
             //Goals come back as rows for levl1 and lvl2 being columns, so
             //goal A | goalChildA
             //goal A | goalChildB
@@ -117,33 +104,33 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             foreach ($children as $child) {
                 //Added Child already? Look for child of child
-                if (!isset($goals[$child['id']])) {
-                    $goals[$child['id']] = array(
-                        "id" => $child['id'],
-                        "title" => $child['title'],
-                        "startValue" => $child['startValue'],
-                        "endValue" => $child['endValue'],
-                        "currentValue" => $child['currentValue'],
-                        "metricType" => $child['metricType'],
-                        "boardTitle" => $child['boardTitle'],
-                        "canvasId" => $child['canvasId'],
-                        "projectName" => $child['projectName'],
-                    );
+                if (! isset($goals[$child['id']])) {
+                    $goals[$child['id']] = [
+                        'id' => $child['id'],
+                        'title' => $child['title'],
+                        'startValue' => $child['startValue'],
+                        'endValue' => $child['endValue'],
+                        'currentValue' => $child['currentValue'],
+                        'metricType' => $child['metricType'],
+                        'boardTitle' => $child['boardTitle'],
+                        'canvasId' => $child['canvasId'],
+                        'projectName' => $child['projectName'],
+                    ];
                 }
 
                 if ($child['childId'] != '') {
                     if (isset($goals[$child['childId']]) === false) {
-                        $goals[$child['childId']] = array(
-                            "id" => $child['childId'],
-                            "title" => $child['childTitle'],
-                            "startValue" => $child['childStartValue'],
-                            "endValue" => $child['childEndValue'],
-                            "currentValue" => $child['childCurrentValue'],
-                            "metricType" => $child['childMetricType'],
-                            "boardTitle" => $child['childBoardTitle'],
-                            "canvasId" => $child['childCanvasId'],
-                            "projectName" => $child['childProjectName'],
-                        );
+                        $goals[$child['childId']] = [
+                            'id' => $child['childId'],
+                            'title' => $child['childTitle'],
+                            'startValue' => $child['childStartValue'],
+                            'endValue' => $child['childEndValue'],
+                            'currentValue' => $child['childCurrentValue'],
+                            'metricType' => $child['childMetricType'],
+                            'boardTitle' => $child['childBoardTitle'],
+                            'canvasId' => $child['childCanvasId'],
+                            'projectName' => $child['childProjectName'],
+                        ];
                     }
                 }
             }
@@ -152,26 +139,23 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param $projectId
-         * @return array
-         *
-     * @api
-     */
+         * @api
+         */
         public function getParentKPIs($projectId): array
         {
 
             $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);
 
-            $goals = array();
+            $goals = [];
 
             //Checks if first level is also link+report or just link
             foreach ($kpis as $kpi) {
-                $goals[$kpi['id']] = array(
-                    "id" => $kpi['id'],
-                    "description" => $kpi['description'],
-                    "project" => $kpi['projectName'],
-                    "board" => $kpi['boardTitle'],
-                );
+                $goals[$kpi['id']] = [
+                    'id' => $kpi['id'],
+                    'description' => $kpi['description'],
+                    'project' => $kpi['projectName'],
+                    'board' => $kpi['boardTitle'],
+                ];
             }
 
             return $goals;
@@ -201,7 +185,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param array $values
+         * @param  array  $values
          * @return int
          *
          * @api
@@ -212,8 +196,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param ?int $projectId
-         * @param ?int $board
          * @return array
          *
          * @api
@@ -230,8 +212,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param ?int $projectId
-         * @param ?int $board
          * @return array
          *
          * @api
@@ -243,35 +223,36 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             foreach ($goals as $key => $goal) {
                 $goals[$key] = $this->prepareDatesForApiResponse($goal);
-                $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
+                $goals[$key]['id'] = $goal['id'].'-'.$goal['modified'];
             }
 
             return $goals;
         }
 
-        private function prepareDatesForApiResponse($goal) {
+        private function prepareDatesForApiResponse($goal)
+        {
 
-            if(dtHelper()->isValidDateString($goal['created'])) {
+            if (dtHelper()->isValidDateString($goal['created'])) {
                 $goal['created'] = dtHelper()->parseDbDateTime($goal['created'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $goal['created'] = null;
             }
 
-            if(dtHelper()->isValidDateString($goal['modified'])) {
+            if (dtHelper()->isValidDateString($goal['modified'])) {
                 $goal['modified'] = dtHelper()->parseDbDateTime($goal['modified'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $goal['modified'] = null;
             }
 
-            if(dtHelper()->isValidDateString($goal['startDate'])) {
+            if (dtHelper()->isValidDateString($goal['startDate'])) {
                 $goal['startDate'] = dtHelper()->parseDbDateTime($goal['startDate'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $goal['startDate'] = null;
             }
 
-            if(dtHelper()->isValidDateString($goal['endDate'])) {
+            if (dtHelper()->isValidDateString($goal['endDate'])) {
                 $goal['endDate'] = dtHelper()->parseDbDateTime($goal['endDate'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $goal['endDate'] = null;
             }
 

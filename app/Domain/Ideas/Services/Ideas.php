@@ -14,10 +14,6 @@ namespace Leantime\Domain\Ideas\Services {
         }
 
         /**
-         * @param ?int $projectId
-         * @param ?int $board
-         * @return array
-         *
          * @api
          */
         public function pollForNewIdeas(?int $projectId = null, ?int $board = null): array
@@ -32,10 +28,6 @@ namespace Leantime\Domain\Ideas\Services {
         }
 
         /**
-         * @param ?int $projectId
-         * @param ?int $board
-         * @return array
-         *
          * @api
          */
         public function pollForUpdatedIdeas(?int $projectId = null, ?int $board = null): array
@@ -44,23 +36,24 @@ namespace Leantime\Domain\Ideas\Services {
 
             foreach ($ideas as $key => $idea) {
                 $ideas[$key] = $this->prepareDatesForApiResponse($idea);
-                $ideas[$key]['id'] = $idea['id'] . '-' . $idea['modified'];
+                $ideas[$key]['id'] = $idea['id'].'-'.$idea['modified'];
             }
 
             return $ideas;
         }
 
-        private function prepareDatesForApiResponse($idea) {
+        private function prepareDatesForApiResponse($idea)
+        {
 
-            if(dtHelper()->isValidDateString($idea['created'])) {
+            if (dtHelper()->isValidDateString($idea['created'])) {
                 $idea['created'] = dtHelper()->parseDbDateTime($idea['created'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $idea['created'] = null;
             }
 
-            if(dtHelper()->isValidDateString($idea['modified'])) {
+            if (dtHelper()->isValidDateString($idea['modified'])) {
                 $idea['modified'] = dtHelper()->parseDbDateTime($idea['modified'])->toIso8601ZuluString();
-            }else{
+            } else {
                 $idea['modified'] = null;
             }
 

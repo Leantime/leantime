@@ -14,7 +14,6 @@ use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\ViewServiceProvider;
 use Leantime\Core\Support\PathManifestRepository;
-use Leantime\Core\UI\Composer;
 
 class Views extends ViewServiceProvider
 {
@@ -61,14 +60,12 @@ class Views extends ViewServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-
             //Backwards compatible view engine resolver
             array_map(fn ($ext) => $factory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
 
             // reprioritize blade
             //Use blade engine for all things blade
             $factory->addExtension('blade.php', 'blade');
-
 
             // We will also set the container instance on this view environment since the
             // view composers may be classes registered in the container, which allows

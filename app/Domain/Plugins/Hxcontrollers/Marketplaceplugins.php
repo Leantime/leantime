@@ -7,24 +7,12 @@ use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 
-/**
- *
- */
 class Marketplaceplugins extends HtmxController
 {
-    /**
-     * @var string
-     */
     protected static string $view = 'plugins::partials.pluginlist';
 
-    /**
-     * @var PluginService
-     */
     private PluginService $pluginService;
 
-    /**
-     * @return void
-     */
     public function init(
         PluginService $pluginService,
     ): void {
@@ -32,7 +20,6 @@ class Marketplaceplugins extends HtmxController
     }
 
     /**
-     * @return void
      * @throws BindingResolutionException
      */
     public function getlist(): void
@@ -46,10 +33,5 @@ class Marketplaceplugins extends HtmxController
         $this->tpl->assign('plugins', $plugins);
     }
 
-    /**
-     * @return void
-     */
-    public function search(): void
-    {
-    }
+    public function search(): void {}
 }

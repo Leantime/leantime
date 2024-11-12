@@ -13,8 +13,8 @@ $projects = $tpl->get('relations');
 
 <?php echo $tpl->displayNotification() ?>
 
-<form action="<?=BASE_URL?>/api/apiKey/<?=(int)$_GET['id'] ?>" method="post" class="stdform formModal" >
-        <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+<form action="<?= BASE_URL?>/api/apiKey/<?= (int) $_GET['id'] ?>" method="post" class="stdform formModal" >
+        <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
         <input type="hidden" name="save" value="1" />
 
         <div class="row" >
@@ -35,11 +35,11 @@ $projects = $tpl->get('relations');
                 <select name="role" id="role">
 
                     <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                        <option value="<?php  echo $key; ?>"
+                        <option value="<?php echo $key; ?>"
                             <?php if ($key == $values['role']) {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?=$tpl->__("label.roles." . $role) ?>
+                            <?= $tpl->__('label.roles.'.$role) ?>
                         </option>
                     <?php } ?>
 
@@ -48,17 +48,17 @@ $projects = $tpl->get('relations');
                 <label for="status"><?php echo $tpl->__('label.status'); ?></label><div class="clearfix"></div>
                 <select name="status" id="status">
                     <option value="a"
-                        <?php if (strtolower($values['status']) == "a") {
+                        <?php if (strtolower($values['status']) == 'a') {
                             ?> selected="selected" <?php
                         } ?>>
-                        <?=$tpl->__("label.active") ?>
+                        <?= $tpl->__('label.active') ?>
                     </option>
 
                     <option value=""
-                        <?php if (strtolower($values['status']) == "") {
+                        <?php if (strtolower($values['status']) == '') {
                             ?> selected="selected" <?php
                         } ?>>
-                        <?=$tpl->__("label.deactivated") ?>
+                        <?= $tpl->__('label.deactivated') ?>
                     </option>
 
                 </select>
@@ -77,23 +77,23 @@ $projects = $tpl->get('relations');
                 <div class="scrollableItemList">
                     <?php
                     $currentClient = '';
-                    $i = 0;
-                    $containerOpen = false;
-                    foreach ($tpl->get('allProjects') as $row) {
+$i = 0;
+$containerOpen = false;
+foreach ($tpl->get('allProjects') as $row) {
 
-                        if ($currentClient != $row['clientName']) {
-                            if ($i > 0 && $containerOpen) {
-                                echo"</div>";
-                                $containerOpen = false;
-                            }
+    if ($currentClient != $row['clientName']) {
+        if ($i > 0 && $containerOpen) {
+            echo '</div>';
+            $containerOpen = false;
+        }
 
-                            echo "<h3 id='accordion_link_" . $i . "'>
-                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
+        echo "<h3 id='accordion_link_".$i."'>
+                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$tpl->escape($row['clientName'])."</a>
                             </h3>
-                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
-                                $currentClient = $row['clientName'];
-                                $containerOpen = true;
-                        } ?>
+                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
+        $currentClient = $row['clientName'];
+        $containerOpen = true;
+    } ?>
 
                         <div class="item">
                             <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"

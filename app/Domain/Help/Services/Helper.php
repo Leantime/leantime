@@ -3,32 +3,27 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
-use ProjectIntroStep;
-use InviteTeamStep;
 
-/**
- *
- */
 class Helper
 {
     use DispatchesEvents;
 
     private $availableModals = [
-        "dashboard.show" => "dashboard",
-        "leancanvas.showCanvas" => "fullLeanCanvas",
-        "leancanvas.simpleCanvas" => "simpleLeanCanvas",
-        "ideas.showBoards" => "ideaBoard",
-        "ideas.advancedBoards" => "advancedBoards",
-        "tickets.roadmap" => "roadmap",
-        "retroscanvas.showBoards" => "retroscanvas",
-        "tickets.showKanban" => "kanban",
-        "timesheets.showMy" => "mytimesheets",
-        "projects.newProject" => "newProject",
-        "projects.showAll" => "showProjects",
-        "clients.showAll" => "showClients",
-        "goalcanvas.dashboard" => "goalCanvas",
-        "strategy.showBoards" => "blueprints",
-        "wiki.show" => "wiki",
+        'dashboard.show' => 'dashboard',
+        'leancanvas.showCanvas' => 'fullLeanCanvas',
+        'leancanvas.simpleCanvas' => 'simpleLeanCanvas',
+        'ideas.showBoards' => 'ideaBoard',
+        'ideas.advancedBoards' => 'advancedBoards',
+        'tickets.roadmap' => 'roadmap',
+        'retroscanvas.showBoards' => 'retroscanvas',
+        'tickets.showKanban' => 'kanban',
+        'timesheets.showMy' => 'mytimesheets',
+        'projects.newProject' => 'newProject',
+        'projects.showAll' => 'showProjects',
+        'clients.showAll' => 'showClients',
+        'goalcanvas.dashboard' => 'goalCanvas',
+        'strategy.showBoards' => 'blueprints',
+        'wiki.show' => 'wiki',
     ];
 
     /**
@@ -40,7 +35,7 @@ class Helper
     public function __construct()
     {
 
-        $this->availableModals = self::dispatch_filter("addHelperModal", $this->availableModals);
+        $this->availableModals = self::dispatch_filter('addHelperModal', $this->availableModals);
     }
 
     /**
@@ -56,7 +51,7 @@ class Helper
     /**
      * Retrieves the corresponding helper modal for a given route.
      *
-     * @param string $route The route for which to retrieve the helper modal.
+     * @param  string  $route  The route for which to retrieve the helper modal.
      * @return string The helper modal associated with the given route. If not found, 'notfound' is returned.
      */
     public function getHelperModalByRoute(string $route): string
@@ -64,6 +59,7 @@ class Helper
         //Turning off helper modals for now.
         //Todo do something.
         $this->availableModals = [];
+
         return $this->availableModals[$route] ?? 'notfound';
     }
 
@@ -79,17 +75,15 @@ class Helper
     public function getFirstLoginSteps(): array
     {
 
-        $steps = array(
-            0 => array("class" => "Leantime\Domain\Help\Services\ProjectIntroStep", "next" => 20),
+        $steps = [
+            0 => ['class' => "Leantime\Domain\Help\Services\ProjectIntroStep", 'next' => 20],
             //10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
-            20 => array("class" => "Leantime\Domain\Help\Services\InviteTeamStep", "next" => "end"),
-        );
+            20 => ['class' => "Leantime\Domain\Help\Services\InviteTeamStep", 'next' => 'end'],
+        ];
 
         //make array of onboarding steps.
-        $steps = self::dispatch_filter("filterSteps", $steps);
+        $steps = self::dispatch_filter('filterSteps', $steps);
 
         return $steps;
     }
-
-
 }

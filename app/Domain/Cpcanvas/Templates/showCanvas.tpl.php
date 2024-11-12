@@ -3,8 +3,7 @@
 /**
  * Template
  */
-
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -26,7 +25,7 @@ $canvasName = 'cp';
                         </div>
                         <div class="column" style="width: 84%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="fa fa-user-doctor"></i> <?=$tpl->__('box.header.cp.cj') ?></large>
+                                <large><i class="fa fa-user-doctor"></i> <?= $tpl->__('box.header.cp.cj') ?></large>
                             </h4>
                         </div>
                     </div>
@@ -35,7 +34,7 @@ $canvasName = 'cp';
                         <div class="column" style="width: 16%">
                             <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
                             <div class="contentInner even status_<?php echo $canvasName; ?> canvas-element-center-middle">
-                                <strong><?=$tpl->__('box.label.cp.need') ?></strong></div>
+                                <strong><?= $tpl->__('box.label.cp.need') ?></strong></div>
                         </div>
                         <div class="column" style="width: 28%">
                             <?php echo $tpl->viewFactory->make(
@@ -69,7 +68,7 @@ $canvasName = 'cp';
                         </div>
                         <div class="column" style="width: 84%">
                             <h4 class="widgettitle title-primary center canvas-title-only">
-                                <large><i class="fa fa-barcode"></i> <?=$tpl->__('box.header.cp.ovp') ?></large>
+                                <large><i class="fa fa-barcode"></i> <?= $tpl->__('box.header.cp.ovp') ?></large>
                             </h4>
                         </div>
                     </div>
@@ -78,7 +77,7 @@ $canvasName = 'cp';
                         <div class="column" style="width: 16%">
                             <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
                             <div class="contentInner even status_<?php echo $canvasName; ?> canvas-element-center-middle">
-                                <strong><?=$tpl->__('box.label.cp.unique') ?></strong></div>
+                                <strong><?= $tpl->__('box.label.cp.unique') ?></strong></div>
                         </div>
                         <div class="column" style="width: 28%">
                             <?php echo $tpl->viewFactory->make(
@@ -103,7 +102,7 @@ $canvasName = 'cp';
                         <div class="column" style="width: 16%">
                             <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
                             <div class="contentInner even status_<?php echo $canvasName; ?> canvas-element-center-middle">
-                                <strong><?=$tpl->__('box.label.cp.superior') ?></strong></div>
+                                <strong><?= $tpl->__('box.label.cp.superior') ?></strong></div>
                         </div>
                         <div class="column" style="width: 28%">
                             <?php echo $tpl->viewFactory->make(
@@ -128,7 +127,7 @@ $canvasName = 'cp';
                         <div class="column" style="width: 16%">
                             <h4 class="widgettitle title-primary center canvas-element-title-empty">&nbsp;</h4>
                             <div class="contentInner even status_<?php echo $canvasName; ?> canvas-element-center-middle">
-                              <strong><?=$tpl->__('box.label.cp.indifferent') ?></strong></div>
+                              <strong><?= $tpl->__('box.label.cp.indifferent') ?></strong></div>
                         </div>
                         <div class="column" style="width: 28%">
                             <?php echo $tpl->viewFactory->make(

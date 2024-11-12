@@ -4,7 +4,7 @@ foreach ($__data as $var => $val) {
 }
 $ticket = $tpl->get('ticket');
 $remainingHours = $tpl->get('remainingHours');
-$statusLabels  = $tpl->get('statusLabels');
+$statusLabels = $tpl->get('statusLabels');
 $ticketTypes = $tpl->get('ticketTypes');
 
 ?>
@@ -16,7 +16,7 @@ $ticketTypes = $tpl->get('ticketTypes');
             <div class="col-md-12">
 
                 <div class="form-group">
-                        <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%;" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_todo')?>"/>
+                        <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%;" placeholder="<?= $tpl->__('input.placeholders.enter_title_of_todo')?>"/>
                 </div>
                 <div class="form-group">
                     <input type="text" value="<?php $tpl->e($ticket->tags); ?>" name="tags" id="tags" />
@@ -24,7 +24,7 @@ $ticketTypes = $tpl->get('ticketTypes');
 
                 <div class="viewDescription mce-content-body">
                     <div class="tw-pl-[9px]">
-                        <p><?=$tpl->__("label.description") ?></p>
+                        <p><?= $tpl->__('label.description') ?></p>
                         <br /><br />
                         <?php echo $tpl->escapeMinimal($ticket->description); ?>
                     </div>
@@ -51,12 +51,12 @@ $ticketTypes = $tpl->get('ticketTypes');
         <?php if ($ticket->id) {?>
             <br />
             <hr />
-            <?php $tpl->dispatchTplEvent("beforeSubtasks", ["ticketId" => $ticket->id]); ?>
+            <?php $tpl->dispatchTplEvent('beforeSubtasks', ['ticketId' => $ticket->id]); ?>
             <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> <?php echo $tpl->__('subtitles.subtasks'); ?></h4>
 
             <div
                 id="ticketSubtasks"
-                hx-get="<?=BASE_URL ?>/tickets/subtasks/get?ticketId=<?=$ticket->id ?>"
+                hx-get="<?= BASE_URL ?>/tickets/subtasks/get?ticketId=<?= $ticket->id ?>"
                 hx-trigger="load"
                 hx-indicator=".subtaskIndicator"
             ></div>
@@ -68,12 +68,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
+        <form method="post" action="<?= BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $tpl->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
+            $tpl->assign('formUrl', ''.BASE_URL.'/tickets/showTicket/'.$ticket->id.'');
 
-            $tpl->displaySubmodule('comments-generalComment') ;
+            $tpl->displaySubmodule('comments-generalComment');
             ?>
         </form>
         </div>
@@ -85,18 +85,18 @@ $ticketTypes = $tpl->get('ticketTypes');
             <div class="col-md-12">
 
                 <div class="form-group">
-                    <label class="control-label"><?=$tpl->__('label.project') ?></label>
+                    <label class="control-label"><?= $tpl->__('label.project') ?></label>
                     <select name="projectId" class="tw-w-full">
-                        <?php foreach($allAssignedprojects as $project) { ?>
-                            <option value="<?=$project['id'] ?>"
+                        <?php foreach ($allAssignedprojects as $project) { ?>
+                            <option value="<?= $project['id'] ?>"
                                 <?php
-                                if($ticket->projectId == $project['id']) {
-                                    echo "selected";
-                                }else if( session("currentProject") == $project['id']){
-                                    echo "selected";
+                                if ($ticket->projectId == $project['id']) {
+                                    echo 'selected';
+                                } elseif (session('currentProject') == $project['id']) {
+                                    echo 'selected';
                                 }
-                                ?>
-                            ><?=$tpl->escape($project["name"]); ?></option>
+                            ?>
+                            ><?= $tpl->escape($project['name']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -108,20 +108,20 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
                                 <?php
-                                if (is_array($tpl->get('ticketParents'))) {
-                                    foreach ($tpl->get('ticketParents') as $ticketRow) {
-                                        ?>
-                                        <?php echo"<option value='" . $ticketRow->id . "'";
+                            if (is_array($tpl->get('ticketParents'))) {
+                                foreach ($tpl->get('ticketParents') as $ticketRow) {
+                                    ?>
+                                        <?php echo "<option value='".$ticketRow->id."'";
 
-                                        if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                            echo" selected='selected' ";
-                                        }
+                                    if (($ticket->dependingTicketId == $ticketRow->id)) {
+                                        echo " selected='selected' ";
+                                    }
 
-                                        echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
+                                    echo '>'.$tpl->escape($ticketRow->headline).'</option>'; ?>
 
                                         <?php
-                                    }
-                                }?>
+                                }
+                            }?>
                             </select>
                         </div>
                     </div>
@@ -134,14 +134,14 @@ $ticketTypes = $tpl->get('ticketTypes');
                             id="status-select"
                             class="span11"
                             name="status"
-                            data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]["name"] ?? '' : ''; ?>"
+                            data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : ''; ?>"
                         >
                             <?php foreach ($statusLabels as $key => $label) {?>
                                 <option value="<?php echo $key; ?>"
                                     <?php if ($ticket->status == $key) {
                                         echo "selected='selected'";
                                     } ?>
-                                ><?php echo $tpl->escape($label["name"]); ?></option>
+                                ><?php echo $tpl->escape($label['name']); ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -152,12 +152,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="">
                         <select id='type' name='type' class="span11">
                             <?php foreach ($ticketTypes as $types) {
-                                echo "<option value='" . strtolower($types) . "' ";
+                                echo "<option value='".strtolower($types)."' ";
                                 if (strtolower($types) == strtolower($ticket->type ?? '')) {
                                     echo "selected='selected'";
                                 }
 
-                                echo ">" . $tpl->__("label." . strtolower($types)) . "</option>";
+                                echo '>'.$tpl->__('label.'.strtolower($types)).'</option>';
                             } ?>
                         </select><br/>
                     </div>
@@ -168,11 +168,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <select id='priority' name='priority' class="span11">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
-                                echo "<option value='" . $priorityKey . "' ";
+                                echo "<option value='".$priorityKey."' ";
                                 if ($priorityKey == $ticket->priority) {
                                     echo "selected='selected'";
                                 }
-                                echo ">" . $priorityValue . "</option>";
+                                echo '>'.$priorityValue.'</option>';
                             } ?>
                         </select>
                     </div>
@@ -183,11 +183,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <select id='storypoints' name='storypoints' class="span11">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
-                                echo "<option value='" . $effortKey . "' ";
+                                echo "<option value='".$effortKey."' ";
                                 if ($effortKey == $ticket->storypoints) {
                                     echo "selected='selected'";
                                 }
-                                echo ">" . $effortValue . "</option>";
+                                echo '>'.$effortValue.'</option>';
                             } ?>
                         </select>
                     </div>
@@ -215,13 +215,13 @@ $ticketTypes = $tpl->get('ticketTypes');
                                 <select  name="milestoneid"  class="span11" >
                                     <option value=""><?php echo $tpl->__('label.not_assigned_to_milestone'); ?></option>
                                     <?php foreach ($tpl->get('milestones') as $milestoneRow) {     ?>
-                                        <?php echo"<option value='" . $milestoneRow->id . "'";
+                                        <?php echo "<option value='".$milestoneRow->id."'";
 
                                         if (($ticket->milestoneid == $milestoneRow->id)) {
-                                            echo" selected='selected' ";
+                                            echo " selected='selected' ";
                                         }
 
-                                        echo">" . $tpl->escape($milestoneRow->headline) . "</option>"; ?>
+                                        echo '>'.$tpl->escape($milestoneRow->headline).'</option>'; ?>
 
                                     <?php } ?>
                                 </select>
@@ -245,7 +245,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                             } ?>
                                         ><?php $tpl->e($sprintRow->name); ?></option>
                                     <?php }
-                                } ?>
+                                    } ?>
                             </select>
                         </div>
                     </div>
@@ -283,18 +283,18 @@ $ticketTypes = $tpl->get('ticketTypes');
                                     name="editorId" id="editorId" class="user-select span11">
                                 <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                                 <?php foreach ($tpl->get('users') as $userRow) { ?>
-                                    <?php echo "<option value='" . $userRow["id"] . "'";
+                                    <?php echo "<option value='".$userRow['id']."'";
 
-                                    if ($ticket->editorId == $userRow["id"]) {
+                                    if ($ticket->editorId == $userRow['id']) {
                                         echo " selected='selected' ";
                                     }
 
-                                    echo ">" . $tpl->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
+                                    echo '>'.$tpl->escape($userRow['firstname'].' '.$userRow['lastname']).'</option>'; ?>
 
                                 <?php } ?>
                             </select><br />
                             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session("userdata.id"); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a></small>
+                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session('userdata.id'); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a></small>
                             <?php } ?>
                         </div>
                     </div>
@@ -323,7 +323,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <div class="">
 
                             <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
-                                   value="<?=format($ticket->date)->date(); ?>" name="date"/>
+                                   value="<?= format($ticket->date)->date(); ?>" name="date"/>
                         </div>
                     </div>
 
@@ -331,11 +331,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.due_date'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" id="deadline" autocomplete="off"
-                                   value="<?=format($ticket->dateToFinish)->date(); ?>"
-                                   name="dateToFinish" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?= format($ticket->dateToFinish)->date(); ?>"
+                                   name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                             <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
-                                   value="<?=format($ticket->dateToFinish)->time24(); ?>"
+                                   value="<?= format($ticket->dateToFinish)->time24(); ?>"
                                    name="timeToFinish"/>
                         </div>
                     </div>
@@ -344,9 +344,9 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
                         <div class="">
                             <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
-                                   value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?= format($ticket->editFrom)->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
-                                   value="<?=format($ticket->editFrom)->time24(); ?>"
+                                   value="<?= format($ticket->editFrom)->time24(); ?>"
                                    name="timeFrom"/>
                         </div>
                     </div>
@@ -355,9 +355,9 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
                         <div class="">
                             <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
-                                   value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?= format($ticket->editTo)->date() ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
-                                   value="<?=format($ticket->editTo)->time24() ?>"
+                                   value="<?= format($ticket->editTo)->time24() ?>"
                                    name="timeTo"/>
                         </div>
                     </div>

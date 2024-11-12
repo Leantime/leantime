@@ -9,50 +9,50 @@ $formHash = md5($formUrl);
 //Controller may not redirect. Make sure delComment is only added once
 if (str_contains($formUrl, '?delComment=')) {
     $urlParts = explode('?delComment=', $formUrl);
-    $deleteUrlBase = $urlParts[0] . "?delComment=";
+    $deleteUrlBase = $urlParts[0].'?delComment=';
 } else {
-    $deleteUrlBase = $formUrl . "?delComment=";
+    $deleteUrlBase = $formUrl.'?delComment=';
 }
 ?>
 
-<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm-<?=$formHash ?>" class="formModal">
+<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm-<?= $formHash ?>" class="formModal">
 
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
-        <div class="mainToggler-<?=$formHash ?>" id="">
+        <div class="mainToggler-<?= $formHash ?>" id="">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=session("userdata.id") ?>&v=<?=format(session("userdata.modified"))->timestamp() ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id') ?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
             </div>
             <div class="commentReply inactive">
-                <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, null, '<?=$formHash?>')">
+                <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, null, '<?= $formHash?>')">
                     <?php echo $tpl->__('links.add_new_comment') ?>
                 </a>
             </div>
         </div>
 
-        <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?> commenterFields" style="display:none;">
+        <div id="comment-<?= $formHash ?>-0" class="commentBox-<?= $formHash ?> commenterFields" style="display:none;">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=session("userdata.id")?>&v=<?=format(session("userdata.modified"))->timestamp() ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id')?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
                 <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" class="commenterField" value="1"/>
-            <input type="hidden" name="father" class="commenterField" id="father-<?=$formHash ?>" value="0"/>
-            <input type="hidden" name="edit-comment-helper" class="commenterField" id="edit-comment-helper-<?=$formHash ?>" />
+            <input type="hidden" name="father" class="commenterField" id="father-<?= $formHash ?>" value="0"/>
+            <input type="hidden" name="edit-comment-helper" class="commenterField" id="edit-comment-helper-<?= $formHash ?>" />
             <br/>
         </div>
     <?php } ?>
 
-    <div id="comments-<?=$formHash ?>">
+    <div id="comments-<?= $formHash ?>">
         <div>
-            <?php foreach ($tpl->get('comments') as $row) : ?>
+            <?php foreach ($tpl->get('comments') as $row) { ?>
                 <div class="clearall">
-                    <div class="commentImage"  id="comment-image-to-hide-on-edit-<?=$formHash ?>-<?=$row['id']?>">
+                    <div class="commentImage"  id="comment-image-to-hide-on-edit-<?= $formHash ?>-<?= $row['id']?>">
                         <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?= format($row['userModified'])->timestamp() ?>"/>
                     </div>
                     <div class="commentMain">
-                        <div class="commentContent" id="comment-to-hide-on-edit-<?=$formHash ?>-<?=$row['id']?>">
+                        <div class="commentContent" id="comment-to-hide-on-edit-<?= $formHash ?>-<?= $row['id']?>">
                             <div class="right commentDate">
                                 <?php printf(
                                     $tpl->__('text.written_on'),
@@ -66,46 +66,46 @@ if (str_contains($formUrl, '?delComment=')) {
                                             </a>
 
                                             <ul class="dropdown-menu">
-                                                <?php if (($row['userId'] == session("userdata.id")) || $login::userIsAtLeast($roles::$manager)) { ?>
-                                                    <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment formModal">
+                                                <?php if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager)) { ?>
+                                                    <li><a href="<?php echo $deleteUrlBase.$row['id'] ?>" class="deleteComment formModal">
                                                         <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                     </a></li>
                                                 <?php } ?>
                                                 <?php if (($row['userId'] == session('userdata.id')) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li>
-                                                        <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash?>', true)">
+                                                        <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?= $formHash?>', true)">
                                                             <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
                                                         </a>
                                                     </li>
                                                 <?php } ?>
                                                 <?php
                                                 if (isset($tpl->get('ticket')->id)) {?>
-                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$tpl->get('ticket')->id ?>);"><?=$tpl->__("links.add_to_timesheets"); ?></a></li>
+                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?= $row['id'] ?>, <?= $tpl->get('ticket')->id ?>);"><?= $tpl->__('links.add_to_timesheets'); ?></a></li>
                                                 <?php } ?>
                                             </ul>
                                         </div>
                                     <?php } ?>
                             </div>
                             <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></span>
-                            <div class="text mce-content-body" id="commentText-<?=$formHash ?>-<?=$row['id']?>">
-                                <div id="comment-text-to-hide-<?=$formHash ?>-<?=$row['id']?>"><?php echo $tpl->escapeMinimal($row['text']); ?></div>
+                            <div class="text mce-content-body" id="commentText-<?= $formHash ?>-<?= $row['id']?>">
+                                <div id="comment-text-to-hide-<?= $formHash ?>-<?= $row['id']?>"><?php echo $tpl->escapeMinimal($row['text']); ?></div>
                             </div>
                         </div>
-                        <div class="commentLinks" id="comment-link-to-hide-on-edit-<?=$formHash ?>-<?=$row['id']?>">
+                        <div class="commentLinks" id="comment-link-to-hide-on-edit-<?= $formHash ?>-<?= $row['id']?>">
                             <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                 <a href="javascript:void(0);"
-                                   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash ?>')">
+                                   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?= $formHash ?>')">
                                     <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                 </a>
                             <?php } ?>
                         </div>
 
                         <div class="replies">
-                            <?php if ($comments->getReplies($row['id'])) : ?>
-                                <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
+                            <?php if ($comments->getReplies($row['id'])) { ?>
+                                <?php foreach ($comments->getReplies($row['id']) as $comment) { ?>
                                     <div>
                                         <div class="commentImage">
-                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?=format($comment['userModified'])->timestamp() ?>"/>
+                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?= format($comment['userModified'])->timestamp() ?>"/>
                                         </div>
                                         <div class="commentMain">
                                             <div class="commentContent">
@@ -117,21 +117,21 @@ if (str_contains($formUrl, '?delComment=')) {
                                                     ); ?>
                                                 </div>
                                                 <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>
-                                                <div class="text mce-content-body" id="comment-text-to-hide-reply-<?=$formHash ?>-<?=$comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
+                                                <div class="text mce-content-body" id="comment-text-to-hide-reply-<?= $formHash ?>-<?= $comment['id']?>"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
                                             </div>
 
                                             <div class="commentLinks">
                                                 <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                     <a href="javascript:void(0);"
-                                                       onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?=$formHash ?>')">
+                                                       onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, null, '<?= $formHash ?>')">
                                                         <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                     </a>
-                                                    <?php if ($comment['userId'] == session("userdata.id")) { ?>
-                                                        <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
+                                                    <?php if ($comment['userId'] == session('userdata.id')) { ?>
+                                                        <a href="<?php echo $deleteUrlBase.$comment['id'] ?>"
                                                            class="deleteComment formModal">
                                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                         </a>
-                                                        <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, <?=$comment['id']?>, '<?=$formHash?>', true, true)">
+                                                        <a href="javascript:void(0);" onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, <?= $comment['id']?>, '<?= $formHash?>', true, true)">
                                                             <span class="fa fa-edit"></span> <?php echo $tpl->__('label.edit') ?>
                                                         </a>
                                                     <?php } ?>
@@ -140,22 +140,22 @@ if (str_contains($formUrl, '?delComment=')) {
                                         </div>
                                         <div class="clearall"></div>
                                     </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                            <div style="display:none;" id="comment-<?=$formHash?>-<?php echo $row['id']; ?>" class="commentBox">
+                                <?php } ?>
+                            <?php } ?>
+                            <div style="display:none;" id="comment-<?= $formHash?>-<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session("userdata.id") ?>&v=<?= format(session("userdata.modified"))->timestamp() ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id') ?>&v=<?= format(session('userdata.modified'))->timestamp() ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" id="submit-reply-button" class="btn btn-primary"/>
-                                    <input type="button" onclick="cancel(<?php echo $row['id']; ?>, '<?=$formHash?>')" value="<?php echo $tpl->__('links.cancel') ?>" class="btn btn-primary"/>
+                                    <input type="button" onclick="cancel(<?php echo $row['id']; ?>, '<?= $formHash?>')" value="<?php echo $tpl->__('links.cancel') ?>" class="btn btn-primary"/>
                                 </div>
                                 <div class="clearall"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            <?php } ?>
         </div>
     </div>
 

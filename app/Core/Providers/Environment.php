@@ -3,9 +3,7 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Bootstrap\HandleExceptions;
 use Leantime\Core\Events\DispatchesEvents;
-use Symfony\Component\ErrorHandler\Debug;
 
 class Environment extends ServiceProvider
 {

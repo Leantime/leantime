@@ -14,9 +14,9 @@ foreach ($__data as $var => $val) {
             <div class='mediamgr_left'>
                 <div class="mediamgr_category">
 
-                    <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
-                        echo"?modalPopUp=true";
-                                  }?>' method='post' enctype="multipart/form-data" class="fileModal" >
+                    <form action='<?= BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
+                        echo '?modalPopUp=true';
+                    }?>' method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
                             <div class='fileupload fileupload-new' data-provides='fileupload'>
@@ -45,7 +45,7 @@ foreach ($__data as $var => $val) {
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                        <?php foreach ($tpl->get('files') as $file) : ?>
+                        <?php foreach ($tpl->get('files') as $file) { ?>
                             <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -53,27 +53,27 @@ foreach ($__data as $var => $val) {
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                        <li><a target="_blank" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                        <li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>
+                                        <li><a target="_blank" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
 
                                         <?php
 
-                                        if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                            <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
-                                        <?php  } ?>
+                          if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                            <li><a href="<?= BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
+                                        <?php } ?>
 
                                     </ul>
                                 </div>
-                                <a class="imageLink" href="<?=BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                                    <?php else : ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
-                                    <?php endif; ?>
-                                    <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
+                                <a class="imageLink" href="<?= BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
+                                        <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                    <?php } else { ?>
+                                        <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                    <?php } ?>
+                                    <span class="filename"><?php echo substr($file['realName'], 0, 10).'(...).'.$file['extension'] ?></span>
                                 </a>
                             </li>
-                        <?php endforeach; ?>
+                        <?php } ?>
                         <br class="clearall" />
                     </ul>
                     <br class="clearall" />

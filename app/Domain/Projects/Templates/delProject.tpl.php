@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -21,13 +21,13 @@ $project = $tpl->get('project');
 
         <?php echo $tpl->displayNotification() ?>
 
-        <h4 class="widget widgettitle"><?php echo $tpl->__("subtitles.delete") ?></h4>
+        <h4 class="widget widgettitle"><?php echo $tpl->__('subtitles.delete') ?></h4>
         <div class="widgetcontent">
 
             <form method="post">
                 <p><?php echo $tpl->__('text.confirm_project_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-primary" href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id'] ?>"><?php echo $tpl->__('buttons.back'); ?></a>
+                <a class="btn btn-primary" href="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id'] ?>"><?php echo $tpl->__('buttons.back'); ?></a>
             </form>
 
         </div>

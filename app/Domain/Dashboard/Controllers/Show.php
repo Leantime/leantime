@@ -20,27 +20,23 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Symfony\Component\HttpFoundation\RedirectResponse;
     use Symfony\Component\HttpFoundation\Response;
 
-    /**
-     *
-     */
     class Show extends Controller
     {
         private ProjectService $projectService;
+
         private TicketService $ticketService;
+
         private UserService $userService;
+
         private TimesheetService $timesheetService;
+
         private CommentService $commentService;
+
         private ReactionService $reactionsService;
+
         private Setting $settingsSvc;
 
         /**
-         * @param ProjectService   $projectService
-         * @param TicketService    $ticketService
-         * @param UserService      $userService
-         * @param TimesheetService $timesheetService
-         * @param CommentService   $commentService
-         * @param ReactionService  $reactionsService
-         * @return void
          * @throws BindingResolutionException
          * @throws BindingResolutionException
          */
@@ -61,42 +57,41 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reactionsService = $reactionsService;
             $this->settingsSvc = $settingsSvc;
 
-            session(["lastPage" => BASE_URL . "/dashboard/show"]);
+            session(['lastPage' => BASE_URL.'/dashboard/show']);
         }
 
         /**
-         * @return Response
          * @throws BindingResolutionException
          */
         public function get(): Response
         {
             $currentProjectId = $this->projectService->getCurrentProjectId();
-            if (0 === $currentProjectId) {
-                return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+            if ($currentProjectId === 0) {
+                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
             }
 
             $project = $this->projectService->getProject($currentProjectId);
             if (isset($project['id']) === false) {
-                return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
             }
 
-            $projectRedirectFilter = self::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
-            if ($projectRedirectFilter != "/dashboard/show") {
-                return FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
+            $projectRedirectFilter = self::dispatch_filter('dashboardRedirect', '/dashboard/show', ['type' => $project['type']]);
+            if ($projectRedirectFilter != '/dashboard/show') {
+                return FrontcontrollerCore::redirect(BASE_URL.$projectRedirectFilter);
             }
 
             [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($currentProjectId);
-            $this->tpl->assign("progressSteps", $progressSteps);
-            $this->tpl->assign("percentDone", $percentDone);
+            $this->tpl->assign('progressSteps', $progressSteps);
+            $this->tpl->assign('percentDone', $percentDone);
 
             $project['assignedUsers'] = $this->projectService->getUsersAssignedToProject($currentProjectId);
             $this->tpl->assign('project', $project);
 
-            $userReaction = $this->reactionsService->getUserReactions(session("userdata.id"), 'project', $currentProjectId, Reactions::$favorite);
+            $userReaction = $this->reactionsService->getUserReactions(session('userdata.id'), 'project', $currentProjectId, Reactions::$favorite);
             if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
-                $this->tpl->assign("isFavorite", true);
+                $this->tpl->assign('isFavorite', true);
             } else {
-                $this->tpl->assign("isFavorite", false);
+                $this->tpl->assign('isFavorite', false);
             }
 
             $this->tpl->assign('allUsers', $this->userService->getAll());
@@ -104,59 +99,56 @@ namespace Leantime\Domain\Dashboard\Controllers {
             //Project Progress
             $progress = $this->projectService->getProjectProgress($currentProjectId);
             $this->tpl->assign('projectProgress', $progress);
-            $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($currentProjectId));
+            $this->tpl->assign('currentProjectName', $this->projectService->getProjectName($currentProjectId));
 
             //Milestones
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(CommentRepository::class);
 
             //Delete comment
             if (isset($_GET['delComment']) === true) {
-                $commentId = (int)($_GET['delComment']);
+                $commentId = (int) ($_GET['delComment']);
 
                 $comments->deleteComment($commentId);
 
-                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success", "projectcomment_deleted");
+                $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'projectcomment_deleted');
             }
 
             // add replies to comments
             $comment = array_map(function ($comment) use ($comments) {
                 $comment['replies'] = $comments->getReplies($comment['id']);
+
                 return $comment;
             }, $comments->getComments('project', $currentProjectId, 0));
 
-
             $url = parse_url(CURRENT_URL);
-            $this->tpl->assign('delUrlBase', $url['scheme'] . '://' . $url['host'] . $url['path'] . '?delComment='); // for delete comment
+            $this->tpl->assign('delUrlBase', $url['scheme'].'://'.$url['host'].$url['path'].'?delComment='); // for delete comment
 
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $currentProjectId));
 
             $completedOnboarding = $this->settingsSvc->onboardingHandler();
-            if($completedOnboarding instanceof RedirectResponse) {
+            if ($completedOnboarding instanceof RedirectResponse) {
                 return $completedOnboarding;
             }
 
-            $this->tpl->assign("completedOnboarding", $completedOnboarding);
+            $this->tpl->assign('completedOnboarding', $completedOnboarding);
 
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($currentProjectId));
-            $this->tpl->assign("onTheClock", $this->timesheetService->isClocked(session("userdata.id")));
+            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign("types", $this->ticketService->getTicketTypes());
-            $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
+            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
+            $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
 
             return $this->tpl->display('dashboard.show');
         }
 
-
         /**
-         * @param $params
-         * @return Response
          * @throws BindingResolutionException
          */
         public function post($params): Response
@@ -166,13 +158,13 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 if (isset($params['quickadd'])) {
                     $result = $this->ticketService->quickAddTicket($params);
 
-                    if (isset($result["status"])) {
-                        $this->tpl->setNotification($result["message"], $result["status"]);
+                    if (isset($result['status'])) {
+                        $this->tpl->setNotification($result['message'], $result['status']);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
+                        $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success', 'quickticket_created');
                     }
 
-                    return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
+                    return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
                 }
             }
 
@@ -182,14 +174,14 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 $currentProjectId = $this->projectService->getCurrentProjectId();
                 $project = $this->projectService->getProject($currentProjectId);
 
-                if ($project && $this->commentService->addComment($_POST, "project", $currentProjectId, $project)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success", "dashboardcomment_created");
+                if ($project && $this->commentService->addComment($_POST, 'project', $currentProjectId, $project)) {
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success', 'dashboardcomment_created');
                 } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
                 }
             }
 
-            return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
+            return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
         }
     }
 }

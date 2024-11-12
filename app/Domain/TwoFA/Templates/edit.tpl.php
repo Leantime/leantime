@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -24,10 +24,10 @@ foreach ($__data as $var => $val) {
                 <br />
                         <div class="center">
 
-                        <?php if (!$tpl->get('twoFAEnabled')) { ?>
+                        <?php if (! $tpl->get('twoFAEnabled')) { ?>
                             <h5>1. <?php echo $tpl->__('text.twoFA_qr'); ?></h5>
-                            <img src="<?php echo $tpl->get("qrData"); ?>"/><br />
-                            Secret: <p><?php echo $tpl->get("secret"); ?></p>
+                            <img src="<?php echo $tpl->get('qrData'); ?>"/><br />
+                            Secret: <p><?php echo $tpl->get('secret'); ?></p>
                             <form action="" method="post" class='stdform'>
                                 <h5>2. <?php echo $tpl->__('text.twoFA_verify_code'); ?></h5>
                                 <p>
@@ -35,7 +35,7 @@ foreach ($__data as $var => $val) {
                                     <input type="text" class="input" name="twoFACode" id="twoFACode"/><br/>
                                 </p>
 
-                                <input type="hidden" name="secret" value="<?php echo $tpl->get("secret"); ?>" />
+                                <input type="hidden" name="secret" value="<?php echo $tpl->get('secret'); ?>" />
                                 <br/>
                                 <p class='stdformbutton'>
                                     <input type="submit" name="save" id="save"
@@ -45,11 +45,11 @@ foreach ($__data as $var => $val) {
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
                                 <h5><?php echo $tpl->__('text.twoFA_already_enabled'); ?></h5>
-                                <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
+                                <input type="hidden" name="<?= session('formTokenName')?>" value="<?= session('formTokenValue')?>" />
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="<?php echo $tpl->__('buttons.remove'); ?>" class="button"/>
-                                    <a href="<?=BASE_URL?>/users/editOwn" class="btn"><?php echo $tpl->__('buttons.back'); ?></a>
+                                    <a href="<?= BASE_URL?>/users/editOwn" class="btn"><?php echo $tpl->__('buttons.back'); ?></a>
                                 </p>
                             </form>
                         <?php } ?>

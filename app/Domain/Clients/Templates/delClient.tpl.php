@@ -1,5 +1,5 @@
 <?php
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -23,7 +23,7 @@ $client = $tpl->get('client');
 
         <?php echo $tpl->displayNotification() ?>
 
-        <h4 class="widget widgettitle"><?php echo $tpl->__("subtitles.delete") ?></h4>
+        <h4 class="widget widgettitle"><?php echo $tpl->__('subtitles.delete') ?></h4>
         <div class="widgetcontent">
 
             <form method="post">

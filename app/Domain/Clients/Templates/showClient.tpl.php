@@ -1,6 +1,6 @@
 <?php
 
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -125,7 +125,7 @@ $users = $tpl->get('users');
 
                         <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> <?php echo $tpl->__('subtitles.users_assigned_to_this_client') ?></h4>
-                            <a href="#/users/newUser?preSelectedClient=<?=$values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
+                            <a href="#/users/newUser?preSelectedClient=<?= $values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?= $tpl->__('buttons.add_user') ?> </a>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -140,7 +140,7 @@ $users = $tpl->get('users');
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php foreach ($tpl->get('userClients') as $user) : ?>
+                                <?php foreach ($tpl->get('userClients') as $user) { ?>
                                     <tr>
                                         <td>
                                         <?php printf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])); ?>
@@ -148,10 +148,10 @@ $users = $tpl->get('users');
                                         <td><a href='mailto:<?php $tpl->e($user['username']); ?>'><?php $tpl->e($user['username']); ?></a></td>
                                         <td><?php $tpl->e($user['phone']); ?></td>
                                     </tr>
-                                <?php endforeach; ?>
+                                <?php } ?>
 
                                 <?php if (count($tpl->get('userClients')) == 0) {
-                                    echo "<tr><td colspan='3'>" . $tpl->__('text.no_users_assigned_to_this_client') . "</td></tr>";
+                                    echo "<tr><td colspan='3'>".$tpl->__('text.no_users_assigned_to_this_client').'</td></tr>';
                                 }?>
                                 </tbody>
                             </table>
@@ -166,7 +166,7 @@ $users = $tpl->get('users');
                                    value="<?php echo $tpl->__('buttons.save') ?>" class="btn btn-primary" />
                         </div>
                         <div class="col-md-6 align-right">
-                            <a href="<?=BASE_URL ?>/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete') ?></a>
+                            <a href="<?= BASE_URL ?>/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete') ?></a>
                         </div>
                     </div>
 
@@ -175,11 +175,11 @@ $users = $tpl->get('users');
 
             <div id='comment'>
 
-                <form method="post" action="<?=BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
+                <form method="post" action="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $tpl->assign('formUrl', BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id']) . "");
-                    $tpl->displaySubmodule('comments-generalComment') ?>
+                    $tpl->assign('formUrl', BASE_URL.'/clients/showClient/'.$tpl->escape($_GET['id']).'');
+$tpl->displaySubmodule('comments-generalComment') ?>
                 </form>
 
 
@@ -199,16 +199,16 @@ $users = $tpl->get('users');
                                         <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                     </div>
                                     <span class="btn btn-file">
-                                                         <span class="fileupload-new"><?=$tpl->__('label.select_file'); ?></span>
-                                                <span class='fileupload-exists'><?=$tpl->__('label.change'); ?></span>
+                                                         <span class="fileupload-new"><?= $tpl->__('label.select_file'); ?></span>
+                                                <span class='fileupload-exists'><?= $tpl->__('label.change'); ?></span>
                                                         <input type='file' name='file' />
                                                     </span>
-                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?=$tpl->__('buttons.remove'); ?></a>
+                                    <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?= $tpl->__('buttons.remove'); ?></a>
                                 </div>
                             </div>
                         </div>
 
-                        <input type="submit" name="upload" class="button" value="<?=$tpl->__('buttons.upload'); ?>" />
+                        <input type="submit" name="upload" class="button" value="<?= $tpl->__('buttons.upload'); ?>" />
 
                     </form>
                 </div>
@@ -216,7 +216,7 @@ $users = $tpl->get('users');
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                                    <?php foreach ($tpl->get('files') as $file) : ?>
+                                    <?php foreach ($tpl->get('files') as $file) { ?>
                                         <li class="<?php echo $file['moduleId'] ?>">
                                             <div class="inlineDropDownContainer" style="float:right;">
 
@@ -224,26 +224,26 @@ $users = $tpl->get('users');
                                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu">
-                                                    <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                                    <li><a href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                                    <li class="nav-header"><?php echo $tpl->__('subtitles.file'); ?></li>
+                                                    <li><a href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__('links.download'); ?></a></li>
 
                                                     <?php
-                                                    if ($login::userIsAtLeast($roles::$admin)) { ?>
-                                                        <li><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
-                                                    <?php  } ?>
+                                if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                                        <li><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
+                                                    <?php } ?>
 
                                                 </ul>
                                             </div>
-                                              <a class="cboxElement" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
-                                                  <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                                      <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
-                                                  <?php else : ?>
-                                                      <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
-                                                  <?php endif; ?>
+                                              <a class="cboxElement" href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
+                                                  <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) {  ?>
+                                                      <img style='max-height: 50px; max-width: 70px;' src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>" alt="" />
+                                                  <?php } else { ?>
+                                                      <img style='max-height: 50px; max-width: 70px;' src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
+                                                  <?php } ?>
                                                 <span class="filename"><?php $tpl->e($file['realName']); ?></span>
                                               </a>
                                            </li>
-                                    <?php endforeach; ?>
+                                    <?php } ?>
                                     <br class="clearall" />
                                     </ul>
 
