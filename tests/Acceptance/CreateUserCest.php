@@ -20,7 +20,7 @@ class CreateUserCest
     {
         $I->wantTo('Create a user');
         $I->amOnPage('/users/showAll');
-        $I->click('Add User');
+        $I->clickWithRetry('.userEditModal');
         $I->waitForElement('#firstname', 120);
         $I->fillField('#firstname', 'John');
         $I->fillField('#lastname', 'Doe');
@@ -31,11 +31,11 @@ class CreateUserCest
         $I->fillField('#jobTitle', 'Testing');
         $I->fillField('#jobLevel', 'Testing');
         $I->fillField('#department', 'Testing');
-        $I->click('Invite User');
+        $I->clickWithRetry('#save');
         $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_user', [
-            'username' => 'john@doe.com'
+            'username' => 'john@doe.com',
         ]);
     }
 
@@ -44,11 +44,14 @@ class CreateUserCest
     public function editAUser(AcceptanceTester $I): void
     {
         $I->wantTo('Edit a user');
+
+        // Set CSRF token before making the request
+        $I->setCSRFToken();
         $I->amOnPage('/users/editUser/1/');
         $I->see('Edit User');
         $I->fillField(['name' => 'jobTitle'], 'Testing');
-        $I->click('Save');
+        $I->clickWithRetry('#save');
         $I->waitForElement('.growl', 120);
-        $I->see('User edited successfully');
+        $I->seeInSource('User edited successfully');
     }
 }

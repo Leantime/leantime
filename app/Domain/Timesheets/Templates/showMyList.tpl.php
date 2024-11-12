@@ -128,7 +128,7 @@ foreach ($__data as $var => $val) {
                     $sum = $sum + $row['hours'];?>
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
-                            <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
+                            <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
                         <td data-order="<?php echo format($row['workDate'])->date(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
