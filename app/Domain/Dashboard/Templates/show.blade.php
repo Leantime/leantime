@@ -1,3 +1,7 @@
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
+@endphp
+
 @extends($layout)
 
 @section('content')
@@ -179,7 +183,12 @@
 
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple w-full" name="text"></textarea>
+                                    <x-global::forms.text-editor
+                                        name="text"
+                                        :type="EditorTypeEnum::Simple->value"
+                                        diameter="w-full"
+                                    />
+                                    
                                     <x-global::forms.button type="submit" name="comment" class="btn-success ml-0">
                                         {{ __('buttons.save') }}
                                     </x-global::forms.button>
@@ -332,7 +341,6 @@
     <script>
         @dispatchEvent('scripts.afterOpen')
 
-        leantime.editorController.initSimpleEditor();
 
         jQuery(document).ready(function() {
 
