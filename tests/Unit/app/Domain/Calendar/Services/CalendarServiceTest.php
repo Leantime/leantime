@@ -36,6 +36,10 @@ class CalendarServiceTest extends TestCase
 
         parent::setUp();
 
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost');
+        }
+
         $this->calendarRepository = $this->make(CalendarRepository::class);
         $this->language = $this->make(Language::class);
         $this->settingsRepository =  $this->make(Setting::class, [

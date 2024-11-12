@@ -29,6 +29,10 @@ class MenuRepositoryTest extends TestCase
 
         parent::setUp();
 
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost');
+        }
+
         //Mock classes
         $settingsRepo =  $this->make(Setting::class);
         $language = $this->make(Language::class);
