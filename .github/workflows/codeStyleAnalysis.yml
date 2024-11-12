@@ -1,4 +1,4 @@
-name: Makefile CI
+name: Static Analysis
 
 on:
   workflow_dispatch:
@@ -8,15 +8,15 @@ on:
     branches: [ "master", "*.*-dev" ]
 
 jobs:
-  build:
+  phpstan:
 
     runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: make build
+    - name: Install Dependencies
+      run: make build-dev
 
-    - name: Run distcheck
-      run: make clean
+    - name: Run Pint Analysis
+      run: make phpstan

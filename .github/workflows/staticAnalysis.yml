@@ -1,8 +1,11 @@
 name: Static Analysis
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [ "master", "*.*-dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "*.*-dev" ]
 
 jobs:
   phpstan:
@@ -16,4 +19,4 @@ jobs:
       run: make build-dev
 
     - name: Run Tests
-      run: make phpstan
+      run: make test-code-style
