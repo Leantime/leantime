@@ -18,5 +18,5 @@ jobs:
     - name: Install Dependencies
       run: make build-dev
 
-    - name: Run Tests
-      run: make test-code-style
+    - name: Run PHPStan Analysis
+    - run: make phpstan

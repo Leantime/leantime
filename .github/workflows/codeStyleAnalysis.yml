@@ -8,7 +8,7 @@ on:
     branches: [ "master", "*.*-dev" ]
 
 jobs:
-  phpstan:
+  pint:
 
     runs-on: ubuntu-24.04
 
@@ -18,5 +18,5 @@ jobs:
     - name: Install Dependencies
       run: make build-dev
 
-    - name: Run Pint Analysis
-      run: make phpstan
+    - name: Run Laravel Pint Analysis
+      run: make test-code-style
