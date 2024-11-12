@@ -223,7 +223,7 @@ $state = $tpl->get('state');
                     <div class="col-md-4">
                         <strong><?= $tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->get('mattermostWebhookURL'); ?>"/>
+                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->escape($tpl->get('mattermostWebhookURL')); ?>"/>
                             <br />
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="mattermostSave" />
                         </form>
@@ -242,7 +242,7 @@ $state = $tpl->get('state');
                     <div class="col-md-4">
                         <strong><?= $tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->get('slackWebhookURL'); ?>"/>
+                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->escape($tpl->get('slackWebhookURL')); ?>"/>
                             <br />
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="slackSave" />
                         </form>
@@ -265,16 +265,16 @@ $state = $tpl->get('state');
                             <input type="text" name="zulipURL" id="zulipURL" placeholder="<?= $tpl->__('input.placeholders.zulip_url'); ?>" value="<?php echo $tpl->get('zulipHook')['zulipURL']; ?>"/>
                             <br />
                             <strong><?= $tpl->__('label.bot_email'); ?></strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $tpl->get('zulipHook')['zulipEmail']; ?>"/>
+                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $tpl->escape($tpl->get('zulipHook')['zulipEmail']); ?>"/>
                             <br />
                             <strong><?= $tpl->__('label.botkey'); ?></strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $tpl->get('zulipHook')['zulipBotKey']; ?>"/>
+                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $tpl->escape($tpl->get('zulipHook')['zulipBotKey']); ?>"/>
                             <br />
                             <strong><?= $tpl->__('label.stream'); ?></strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $tpl->get('zulipHook')['zulipStream']; ?>"/>
+                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $tpl->escape($tpl->get('zulipHook')['zulipStream']); ?>"/>
                             <br />
                             <strong><?= $tpl->__('label.topic'); ?></strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $tpl->get('zulipHook')['zulipTopic']; ?>"/>
+                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $tpl->escape($tpl->get('zulipHook')['zulipTopic']); ?>"/>
                             <br />
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="zulipSave" />
                         </form>
@@ -295,7 +295,7 @@ $state = $tpl->get('state');
                         <strong><?= $tpl->__('label.webhook_url'); ?></strong><br/>
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <?php for ($i = 1; $i <= 3; $i++) { ?>
-                            <input type="text" name="discordWebhookURL<?= $i; ?>" id="discordWebhookURL<?= $i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->get('discordWebhookURL'.$i); ?>"/><br/>
+                            <input type="text" name="discordWebhookURL<?= $i; ?>" id="discordWebhookURL<?= $i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->escape($tpl->get('discordWebhookURL'.$i)); ?>"/><br/>
                             <?php } ?>
                             <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="discordSave"/>
                         </form>
