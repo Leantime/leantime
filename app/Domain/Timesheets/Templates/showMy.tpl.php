@@ -273,13 +273,13 @@ foreach ($days as $day) { ?>
                 <tbody>
                     <?php
                         $colSum = [
-    'day1' => 0,
-    'day2' => 0,
-    'day3' => 0,
-    'day4' => 0,
-    'day5' => 0,
-    'day6' => 0,
-    'day7' => 0,
+                            'day1' => 0,
+                            'day2' => 0,
+                            'day3' => 0,
+                            'day4' => 0,
+                            'day5' => 0,
+                            'day6' => 0,
+                            'day7' => 0,
                         ];
 // @todo: move all this calculations into the service the timesheets class.
 foreach ($tpl->get('allTimesheets') as $timeRow) {

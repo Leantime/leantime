@@ -6,7 +6,7 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $maxSize = Fileupload::getMaximumFileUploadSize();
-$moduleId = (int)$_GET['id'] ?? '';
+$moduleId = (int) $_GET['id'] ?? '';
 ?>
 
 <div id="fileManager">
