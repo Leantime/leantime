@@ -9,9 +9,7 @@ on:
 
 jobs:
   phpstan:
-
     runs-on: ubuntu-24.04
-
     steps:
     - uses: actions/checkout@v3
 
@@ -19,4 +17,4 @@ jobs:
       run: make build-dev
 
     - name: Run PHPStan Analysis
-    - run: make phpstan
+      run: make phpstan
