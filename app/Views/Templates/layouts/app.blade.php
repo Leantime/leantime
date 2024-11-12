@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+
 <head>
     @include('global::sections.header')
     @stack('styles')
@@ -9,7 +10,7 @@
 
     @include('global::sections.appAnnouncement')
 
-    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
+    <div class="mainwrapper menu{{ session('menuState') ?? 'closed' }}">
 
         <div class="header">
 
@@ -21,10 +22,8 @@
                 </a>
 
                 <div class="logo">
-                    <a
-                        href="{{ BASE_URL }}"
-                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')"
-                    >&nbsp;</a>
+                    <a href="{{ BASE_URL }}"
+                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')">&nbsp;</a>
                 </div>
 
                 @include('menu::headMenu')
@@ -43,11 +42,7 @@
             </div>
             <div class="rightpanel {{ $section }}">
                 <div class="primaryContent">
-                    @isset($action, $module)
-                        @include("$module::$action")
-                    @else
-                        @yield('content')
-                    @endisset
+                    @yield('content')
                     <div class="clearfix"></div>
                     @include('global::sections.footer')
                 </div>
@@ -56,7 +51,7 @@
 
     </div><!-- mainwrapper -->
     <div id="modal-wrapper" hx-indicator="#global-loader">
-        <x-global::content.modal.modal-buttons/>
+        <x-global::content.modal.modal-buttons />
 
         <x-global::content.modal id="main-page-modal" />
     </div>
