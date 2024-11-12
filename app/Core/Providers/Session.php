@@ -41,19 +41,15 @@ class Session extends ServiceProvider
                 $app['config']->set('session.files', $sessionDir);
             }
 
-            //Now that we know where the instance is bing called from
-            //Let's add a domain level cache.
-            $domain = 'localhost';
-            if (! $app->runningInConsole()) {
-                $domain = $app['request']->getFullUrl();
-            }
-
             //Most of this is set in the config but some things aren't clear until we get here.
+            $app['config']->set('domain', is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null);
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);
 
             return $sessionManager;
         });
+
+
 
         $this->app->singleton('session.store', function ($app) {
             // First, we will create the session manager which is responsible for the
@@ -70,6 +66,5 @@ class Session extends ServiceProvider
         });
 
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
-
     }
 }
