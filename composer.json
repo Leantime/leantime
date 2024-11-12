@@ -68,12 +68,11 @@
         "spatie/icalendar-generator": "^2.6",
         "predis/predis": "^2.2",
         "sentry/sentry-laravel": "^4.8",
-        "stripe/stripe-php": "v7.128.0",
         "symfony/http-client": "^6.2.4",
         "symfony/psr-http-message-bridge": "^2.0",
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
-        "ext-fileinfo": "*",
+
         "phpseclib/phpseclib": "~3.0"
     },
     "require-dev": {
@@ -91,7 +90,6 @@
         "leantime/leantime-documentor": "dev-main",
         "codeception/module-laravel": "^3.1",
         "codeception/module-rest": "^3.4"
-
     },
     "provide": {
         "psr/container-implementation": "1.1|2.0",
