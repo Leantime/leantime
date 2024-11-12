@@ -42,7 +42,7 @@ class Session extends ServiceProvider
             }
 
             //Most of this is set in the config but some things aren't clear until we get here.
-            $app['config']->set('domain', is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null);
+            $app['config']->set('domain', is_array(parse_url(BASE_URL)) ? (parse_url(BASE_URL)['host'] ?? null) : null);
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);
 
