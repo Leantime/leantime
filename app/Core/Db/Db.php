@@ -5,6 +5,7 @@ namespace Leantime\Core\Db;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\DB as dbFacade;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 
@@ -67,8 +68,9 @@ class Db extends DatabaseManager
             $this->database = $this->connection->getPdo();
 
         } catch (\PDOException $e) {
-            \Log::error("Can't connect to database");
-            \Log::error($e);
+
+            Log::error("Can't connect to database");
+            Log::error($e);
 
             exit('Cannot connect to database');
         }
