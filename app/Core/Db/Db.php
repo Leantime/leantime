@@ -51,16 +51,12 @@ class Db
     {
 
         $config = app('config');
-        // $this->user = $config->dbUser;
-        // $this->password = $config->dbPassword;
-        // $this->databaseName = $config->dbDatabase;
-        // $this->host = $config->dbHost ?? 'localhost';
-        // $this->port = $config->dbPort ?? '3306';
-        $this->user = 'root';
-        $this->password = '';
-        $this->databaseName = 'leantime';
-        $this->host = 'localhost';
-        $this->port = '3306';
+        $this->user = $config->dbUser;
+        $this->password = $config->dbPassword;
+        $this->databaseName = $config->dbDatabase;
+        $this->host = $config->dbHost ?? 'localhost';
+        $this->port = $config->dbPort ?? '3306';
+
 
         $this->database = new PDO(
             dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
