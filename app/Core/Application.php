@@ -61,6 +61,7 @@ class Application extends \Illuminate\Foundation\Application
         $this->usePublicPath($this->basePath.'/public');
         $this->useStoragePath($this->basePath.'/storage');
         $this->useLangPath($this->basePath.'/app/Language');
+        $this->useDatabasePath($this->basePath.'/database');
 
         $this->registerBaseBindings();
 

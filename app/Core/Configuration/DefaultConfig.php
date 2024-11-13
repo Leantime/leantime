@@ -95,7 +95,7 @@ class DefaultConfig
     /**
      * @var string Log Path
      */
-    public string $logPath = APP_ROOT.'/logs/error.log';
+    public string $logPath = APP_ROOT.'/storage/logs/error.log';
 
     /**
      * @var bool Whether or not to enable the Poor Man's Cron fallback

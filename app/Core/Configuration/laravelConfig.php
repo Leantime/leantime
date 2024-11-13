@@ -50,6 +50,14 @@ return [
             \Leantime\Core\Providers\TemplateServiceProvider::class,
 
         ],
+        'name' => env('LEAN_SITENAME', 'Leantime'),
+        'locale' => env('LEAN_LANGUAGE', 'en-US'),
+        'url' => env('LEAN_APP_URL', ''),
+        'timezone' => env('LEAN_DEFAULT_TIMEZONE', 'America/Los_Angeles'),
+        'env' => env('LEAN_ENV', ''),
+        'debug' => env('LEAN_DEBUG', 0),
+        'key' => env('LEAN_SESSION_PASSWORD', '123'),
+
     ],
     'debug_blacklist' => [
         '_ENV' => [
@@ -325,7 +333,7 @@ return [
         |
         */
 
-        'secure' => false,
+        'secure' => env('LEAN_SESSION_SECURE', false),
 
         /*
         |--------------------------------------------------------------------------
@@ -396,17 +404,17 @@ return [
             'compression' => 3, // Redis::COMPRESSION_LZ4
         ],
         'default' => [
-            'url' => '',
-            'scheme' => 'tls',
-            'host' => '',
-            'password' => null,
-            'port' => '6379',
+            'url' => env('LEAN_REDIS_URL', ''),
+            'scheme' => env('LEAN_REDIS_SCHEME', 'tls'),
+            'host' => env('LEAN_REDIS_HOST', '127.0.0.1'),
+            'password' => env('LEAN_REDIS_PASSWORD', null),
+            'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
             'database' => '0',
             'prefix' => 'leantime_cache',
         ],
     ],
     'database' => [
-        'default' => env('DB_CONNECTION', 'mysql'),
+        'default' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
         /*
         |--------------------------------------------------------------------------
         | Database Connections
@@ -421,9 +429,9 @@ return [
             'sqlite' => [
                 'driver' => 'sqlite',
                 'url' => env('LEAN_DB_URL'),
-                'database' => env('LEAN_DB_DATABASE', database_path('database.sqlite')),
+                'database' => database_path('database.sqlite'),
                 'prefix' => '',
-                'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+                'foreign_key_constraints' => env('LEAN_DB_FOREIGN_KEYS', true),
                 'busy_timeout' => null,
                 'journal_mode' => null,
                 'synchronous' => null,
@@ -437,17 +445,20 @@ return [
                 'username' => env('LEAN_DB_USER', 'root'),
                 'password' => env('LEAN_DB_PASSWORD', ''),
                 'unix_socket' => env('LEAN_DB_SOCKET', ''),
-                'charset' => env('DB_CHARSET', 'utf8mb4'),
-                'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+                'charset' => env('LEAN_DB_CHARSET', 'utf8mb4'),
+                'collation' => env('LEAN_DB_COLLATION', 'utf8mb4_unicode_ci'),
                 'prefix' => '',
                 'prefix_indexes' => true,
                 'strict' => false,
                 'engine' => 'InnoDB',
+                'sslmode' => env('LEAN_DB_SSLMODE', ''),
                 'options' => extension_loaded('pdo_mysql') ? array_filter([
-                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_VERIFY_SERVER', false),
+                    PDO::MYSQL_ATTR_SSL_KEY => env('LEAN_DB_MYSQL_ATTR_SSL_KEY'),
+                    PDO::MYSQL_ATTR_SSL_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_CERT'),
+                    PDO::MYSQL_ATTR_SSL_CA => env('LEAN_DB_MYSQL_ATTR_SSL_CA'),
                     PDO::ATTR_EMULATE_PREPARES => true,
                 ]) : [],
-
             ],
         ],
     ],
