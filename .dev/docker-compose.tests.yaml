@@ -2,9 +2,6 @@
 # This docker compose file is used to build the environment for our testing framework in codeception
 # It is not to be used for development
 #
-
-version: "3.9"
-
 services:
   leantime-dev:
     volumes:
@@ -21,7 +18,9 @@ services:
       LEAN_DB_PASSWORD: 'leantime'
       LEAN_DB_DATABASE: 'leantime_test'
       LEAN_DB_PORT: '3306'
-
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     environment:
       MYSQL_DATABASE: leantime_test

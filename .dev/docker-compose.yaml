@@ -1,14 +1,10 @@
-version: "3.9"
-
 networks:
   leantime:
       external: false
       driver: bridge
-
 volumes:
   mysql:
   s3ninja-data:
-
 services:
   leantime-dev:
     build: .
@@ -38,7 +34,6 @@ services:
       - "6379"
     networks:
       - leantime
-
   db:
     image: mysql:8.0
     ports:
@@ -69,7 +64,6 @@ services:
       - "7900"
     networks:
       - leantime
-
   maildev:
     image: maildev/maildev
     environment:
@@ -79,7 +73,6 @@ services:
       - "8081"
     networks:
       - leantime
-
   phpmyadmin:
     image: phpmyadmin
     ports:
@@ -89,7 +82,6 @@ services:
       - PMA_PORT=3306
     networks:
       - leantime
-
   s3ninja:
     image: scireum/s3-ninja
     ports:

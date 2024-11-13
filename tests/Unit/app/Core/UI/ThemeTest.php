@@ -32,6 +32,10 @@ class ThemeTest extends \Unit\TestCase
 
         parent::setUp();
 
+        if (! defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost');
+        }
+
         $this->settingsRepoMock = $this->make(Setting::class, [
 
         ]);
