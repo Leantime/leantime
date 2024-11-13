@@ -26,7 +26,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         <x-slot:cardContent>
             <!-- Filter Bar Content -->
             {{-- @dispatchTplEvent('filters.beforeFirstBarField') --}}
-    
+
             <div>
                 <x-global::forms.select name="users" id="userSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
@@ -41,7 +41,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="milestone" id="milestoneSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
@@ -56,7 +56,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="type" id="typeSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_type') }}"
@@ -71,7 +71,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="priority" id="prioritySelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_priority') }}"
@@ -86,7 +86,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="searchStatus" id="statusSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_status') }}">
@@ -103,13 +103,13 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.text-input name="termInput" id="termInput" :value="$searchCriteria['term']"
                     caption="{{ __('label.search_term') }}" placeholder="{{ __('label.search_term') }}"
                     style="width: 230px" />
             </div>
-    
+
             <div style="margin-top: 15px;">
                 <x-global::forms.button type="submit" name="search" class="btn btn-primary">
                     {{ __('buttons.search') }}
@@ -118,32 +118,34 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         </x-slot:cardContent>
     </x-global::actions.dropdown>
 
+    @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
+        <x-global::actions.dropdown contentRole="ghost">
+            <x-slot:labelText>
+                {{ __('popover.group_by') }}
+                <span class="fa-solid fa-diagram-project"></span>
+                @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
+                    <span class="badge badge-primary">1</span>
+                @endif
+                </button>
+            </x-slot:labelText>
 
-    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
-    <x-global::actions.dropdown contentRole="ghost">
-        <x-slot:labelText>
-            {{ __('popover.group_by') }}
-            <span class="fa-solid fa-diagram-project"></span>
-            @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
-                <span class="badge badge-primary">1</span>
-            @endif
-            </button>
-        </x-slot:labelText>
+            <x-slot:menu>
+                @foreach ($groupBy as $input)
+                    <x-global::actions.dropdown.item>
+                        <span>
+                            <input type="radio" name="groupBy"
+                                @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
+                                value="{{ $input['field'] }}" id="{{ $input['id'] }}"
+                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
+                            />
+                            <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
+                        </span>
+                    </x-global::actions.dropdown.item>
+                @endforeach
+            </x-slot:menu>
+        </x-global::actions.dropdown>
+    @endif
 
-        <x-slot:menu>
-            @foreach ($groupBy as $input)
-                <x-global::actions.dropdown.item>
-                    <span>
-                        <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
-                            value="{{ $input['field'] }}" id="{{ $input['id'] }}"
-                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
-                        <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
-                    </span>
-                </x-global::actions.dropdown.item>
-            @endforeach
-        </x-slot:menu>
-    </x-global::actions.dropdown>
-    
     @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
         <x-global::actions.dropdown contentRole="ghost">
             <x-slot:labelText>
@@ -153,7 +155,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     <span class="badge badge-primary">1</span>
                 @endif
             </x-slot:labelText>
-    
+
             <x-slot:menu>
                 @foreach ($groupBy as $input)
                     <x-global::actions.dropdown.item>
@@ -161,7 +163,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                             <input type="radio" name="groupBy"
                                 @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                                 value="{{ $input['field'] }}" id="{{ $input['id'] }}"
-                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
+                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')"
+                            />
                             <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
                         </span>
                     </x-global::actions.dropdown.item>
@@ -169,58 +172,63 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </x-slot:menu>
         </x-global::actions.dropdown>
     @endif
-    
+
     @if(isset($taskToggle) && $taskToggle === true)
         <div class="" style="float:right; margin-left:5px;">
             <x-global::forms.checkbox labelText="Show Tasks" labelPosition="right" name="showTasks" value="true"
                 :checked="($tpl->get('showTasks') === 'true')" id="taskTypeToggle" class="toggle" onchange="jQuery('#ticketSearch').submit();" />
         </div>
     @endif
-    
+
     <div class="clearall"></div>
-    
+
     @php
         $tpl->dispatchTplEvent('filters.beforeBar');
         $tpl->dispatchTplEvent('filters.beforeFormClose');
     @endphp
-    
+
 </form>
 
 <script>
     jQuery(document).ready(function() {
+        const selectElements = [
+            {
+                element: '#userSelect',
+                placeholder: 'All Users',
+            },
+            {
+                element: '#milestoneSelect',
+                placeholder: 'All Milestones',
+            },
+            {
+                element: '#prioritySelect',
+                placeholder: 'All Priorities',
+            },
+            {
+                element: '#typeSelect',
+                placeholder: 'All Types',
+            },
+            {
+                element: '#statusSelect',
+                placeholder: 'All Statuses',
+            },
+        ];
 
-        new SlimSelect({
-            select: '#userSelect',
-            settings: {
-                placeholderText: 'All Users',
-            },
-        });
-        new SlimSelect({
-            select: '#milestoneSelect',
-            settings: {
-                placeholderText: 'All Milestones',
-            },
-        });
-        new SlimSelect({
-            select: '#prioritySelect',
-            settings: {
-                placeholderText: 'All Priorities',
-            },
-        });
-        new SlimSelect({
-            select: '#typeSelect',
-            settings: {
-                placeholderText: 'All Types',
-            },
-        });
-        new SlimSelect({
-            select: '#statusSelect',
-            settings: {
-                placeholderText: 'All Statuses',
-            },
+        selectElements.forEach((select) => {
+            const element = document.querySelector(select.element);
+
+            if (! element || element.nodeName !== 'SELECT') {
+                return;
+            }
+
+            new SlimSelect({
+                select: select.element,
+                settings: {
+                    placeholderText: select.placeholder,
+                },
+            });
         });
 
-        leantime.ticketsController.initTicketSearchSubmit('<?= $currentUrlPath ?>');
-
+        leantime.ticketsController.initTicketSearchSubmit('{!! $currentUrlPath !!}');
     })
 </script>

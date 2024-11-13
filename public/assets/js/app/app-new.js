@@ -85,18 +85,20 @@ import onDocumentReady from './core/on-document-ready.module';
 import replaceSVGColors from './core/replaceSVGColors.module';
 import snippets from './core/snippets.module';
 import selects from './core/selects.module.mjs';
+import tableModule from './core/table.module';
 
 addToGlobalScope({
-    dateHelper: dateHelper,
-    editorController: editorController,
-    getLatestGrowl: getLatestGrowl,
-    handleAsyncResponse: handleAsyncResponse,
-    instanceInfo: instanceInfo,
-    modals: modals,
-    replaceSVGColors: replaceSVGColors,
-    snippets: snippets,
-    selects: selects,
-    datePickers: datePickers
+  dateHelper: dateHelper,
+  editorController: editorController,
+  getLatestGrowl: getLatestGrowl,
+  handleAsyncResponse: handleAsyncResponse,
+  instanceInfo: instanceInfo,
+  modals: modals,
+  replaceSVGColors: replaceSVGColors,
+  snippets: snippets,
+  selects: selects,
+  datePickers: datePickers,
+  tableModule: tableModule,
 });
 
 jQuery(document).ready(onDocumentReady);
