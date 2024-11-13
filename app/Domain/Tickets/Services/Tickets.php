@@ -553,12 +553,23 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket['milestoneid']);
                                     $color = $milestone->tags;
                                     $class = '" style="color:'.$color.'"';
-                                    $startDate = strtok($milestone->editFrom, ' ');
-                                    $endDate = strtok($milestone->editTo, ' ');
+
+                                    try {
+                                        $startDate = dtHelper()->parseDbDateTime($milestone->editFrom)->formatDateForUser();
+                                    } catch (\Exception $e) {
+                                        $startDate = $this->language->__('text.no_date_defined');
+                                    }
+
+                                    try {
+                                        $endDate = dtHelper()->parseDbDateTime($milestone->editTo)->formatDateForUser();
+                                    } catch (\Exception $e) {
+                                        $startDate = $this->language->__('text.no_date_defined');
+                                    }
+
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
                                     $class = '" style="color:'.$color.'"';
-                                    $moreInfo = $this->language->__('label.start').': '.$startDate.', '.$this->language->__('label.end').': '.$endDate.', '.$this->language->__('label.status_lowercase').': '.$status;
+                                    $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
                                     $label = $ticket['milestoneHeadline']." <a href='#/tickets/editMilestone/".$ticket['milestoneid']."' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 

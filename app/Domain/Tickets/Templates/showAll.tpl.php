@@ -80,9 +80,10 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 <h5 class="accordionTitle <?= $group['class']?>" id="accordion_link_<?= $group['id'] ?>">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
                         <i class="fa fa-angle-down"></i><?= $group['label'] ?>(<?= count($group['items']) ?>)
-                    </a>
+                    </a><br />
+                    <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);"><?= $group['more-info'] ?></small>
                 </h5>
-                <span><?= $group['more-info'] ?></span>
+
                 <div class="simpleAccordionContainer" id="accordion_content-<?= $group['id'] ?>">
             <?php } ?>
 

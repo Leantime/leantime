@@ -123,6 +123,8 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?= $group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?= $group['id'] ?>');">
                         <i class="fa fa-angle-down"></i><?= $group['label'] ?> (<?= count($group['items']) ?>)
                     </a>
+                    <br />
+                    <small style="padding-left:20px; color:var(--primary-font-color); font-size:var(--font-size-s);"><?= $group['more-info'] ?></small>
                 </h5>
                 <div class="simpleAccordionContainer kanban" id="accordion_content-<?= $group['id'] ?>">
             <?php } ?>
