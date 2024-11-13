@@ -3,7 +3,6 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Database\DatabaseServiceProvider;
-use Illuminate\Support\ServiceProvider;
 
 class Db extends DatabaseServiceProvider
 {

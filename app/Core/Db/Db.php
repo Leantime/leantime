@@ -64,7 +64,7 @@ class Db extends DatabaseManager
         // Get the PDO connection from Laravel's connection
         try {
 
-            $this->database =  $this->connection->getPdo();
+            $this->database = $this->connection->getPdo();
 
         } catch (\PDOException $e) {
             \Log::error("Can't connect to database");
