@@ -15,11 +15,11 @@ install-deps:
 	npm install
 	composer install --no-dev --optimize-autoloader
 
-build: install-deps
+build: install-deps clear-cache
 	npx mix --production
 	node generateBlocklist.mjs
 
-build-dev: install-deps-dev
+build-dev: install-deps-dev clear-cache
 	npx mix
 	node generateBlocklist.mjs
 
@@ -50,6 +50,9 @@ package: clean build
 
 
 	rm -rf $(TARGET_DIR)/public/theme/*/css/custom.css
+
+	# Remove user files
+	rm -rf $(TARGET_DIR)/app/Plugins/*
 
 	# Remove user files
 	rm -rf $(TARGET_DIR)/userfiles/*

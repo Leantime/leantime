@@ -5,12 +5,15 @@ namespace Leantime\Domain\Plugins\Services {
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Http\Client\RequestException;
+    use Illuminate\Support\Facades\Artisan;
     use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
+    use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\UI\Template;
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
@@ -24,9 +27,6 @@ namespace Leantime\Domain\Plugins\Services {
     {
         use DispatchesEvents;
 
-        /**
-         * @api
-         */
         private string $pluginDirectory = ROOT.'/../app/Plugins/';
 
         /**
@@ -35,8 +35,6 @@ namespace Leantime\Domain\Plugins\Services {
          * system: Plugin is defined in config and loaded on start. Cannot delete, or disable plugin
          * marketplace: Plugin comes from maarketplace.
          *
-         *
-         * @api
          */
         private array $pluginTypes = [
             'custom' => 'custom',
@@ -49,21 +47,15 @@ namespace Leantime\Domain\Plugins\Services {
          * phar: Phar plugins (only from marketplace)
          * folder: Folder plugins
          *
-         *
-         * @api
          */
         private array $pluginFormat = [
             'phar' => 'phar',
             'folder' => 'phar',
         ];
 
-        /**
-         * Marketplace URL
-         *
-         *
-         * @api
-         */
+
         public string $marketplaceUrl;
+
 
         /**
          * @return void
@@ -75,6 +67,8 @@ namespace Leantime\Domain\Plugins\Services {
             private EnvironmentCore $config,
             private SettingsService $settingsService,
             private UsersService $usersService,
+            private ConsoleKernel $leantimeCli,
+            private Template $template,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }
@@ -309,6 +303,8 @@ namespace Leantime\Domain\Plugins\Services {
                     return false;
                 }
             }
+
+           $this->template->clearViewPathCache();
 
             return $this->pluginRepository->enablePlugin($id);
         }

@@ -4,6 +4,7 @@ namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\Compiler;
@@ -90,6 +91,8 @@ class Template
 
         /** @var Roles */
         private Roles $roles,
+
+        private Filesystem $files,
 
     ) {
 
@@ -932,6 +935,13 @@ class Template
         } else {
             $this->hookContext = 'leantime.domain.'.$templateParts['module'].'.templates.'.$templateParts['path'];
         }
+
+    }
+
+    public function clearViewPathCache() {
+
+        $viewPathCachePath = storage_path('framework/viewPaths.php');
+        $this->files->delete($viewPathCachePath);
 
     }
 }

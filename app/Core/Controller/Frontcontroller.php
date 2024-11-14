@@ -297,7 +297,7 @@ class Frontcontroller
      */
     public function getValidControllerMethod(string $controllerClass, string $method): string
     {
-        $method = Str::camel($method);
+        $methodFormatted = Str::camel($method);
         $httpMethod = Str::lower($this->incomingRequest->getMethod());
 
         if (Str::lower($method) == 'head') {
@@ -305,10 +305,12 @@ class Frontcontroller
         }
 
         //First check if the given method exists.
-        if (method_exists($controllerClass, $method)) {
-            return $method;
+        if (method_exists($controllerClass, $methodFormatted)) {
+
+            return $methodFormatted;
             //Then check if the http method exists as verb
         } elseif (method_exists($controllerClass, $httpMethod)) {
+
             //If this was the case our first assumption around $method was wrong and $method is actually a
             //id/slug. Let's set id to that slug.
             $this->incomingRequest->query->set('id', $method);
