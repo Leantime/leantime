@@ -45,12 +45,12 @@
 
             <?php foreach ($tpl->get('allClients') as $row) { ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
+                    <td>{{ $row->id }}</td>
                     <td>
-                        <a class="" href="{{ BASE_URL }}/clients/showClient/<?=$row['id'] ?>"><i class='fa fa-plus'></i> <?=$tpl->escape($row['name'])?></a>
+                        <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row->id }}"><i class='fa fa-plus'></i> {{ $row->name }}</a>
                     </td>
-                    <td><a href="<?php $tpl->e($row['internet']); ?>" target="_blank"><?php $tpl->e($row['internet']); ?></a></td>
-                    <td><?php echo $row['numberOfProjects']; ?></td>
+                    <td><a href="{{ $row->internet }}" target="_blank">{{ $row->internet }}</a></td>
+                    <td>{{ $row->numberOfProjects }}</td>
                 </tr>
             <?php } ?>
 

@@ -146,6 +146,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         </x-slot:menu>
     </x-global::actions.dropdown>
     
+    <?php }?>
+
     @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
         <x-global::actions.dropdown contentRole="ghost">
             <x-slot:labelText>

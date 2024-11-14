@@ -8,6 +8,7 @@ namespace Leantime\Domain\Clients\Repositories {
 
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Db\Repository;
+    use Leantime\Domain\Clients\Models\Clients as ClientsModel;
     use PDO;
 
     class Clients extends Repository
@@ -35,7 +36,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * getClient - get one client from db
          */
-        public function getClient($id): array|false
+        public function getClient($id): ClientsModel|false
         {
 
             $query = 'SELECT
@@ -65,13 +66,17 @@ namespace Leantime\Domain\Clients\Repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             $stmn->execute();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, ClientsModel::class);
             $row = $stmn->fetch();
+            
             $stmn->closeCursor();
 
             if ($row !== false && count($row) > 0) {
-                $this->name = $row['name'];
+                // $this->name = $row['name'];
+                $this->name = $row->name;
 
-                $this->id = $row['id'];
+                // $this->id = $row['id'];
+                $this->id = $row->id;
 
                 return $row;
             } else {
@@ -82,7 +87,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * getAll - get all clients
          */
-        public function getAll(): array
+        public function getAll()
         {
 
             $query = 'SELECT
@@ -101,9 +106,12 @@ namespace Leantime\Domain\Clients\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
+            // $values = $stmn->fetchAll();
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, ClientsModel::class);
+            
             $stmn->closeCursor();
+            // print_r($values);
 
             return $values;
         }
@@ -170,7 +178,8 @@ namespace Leantime\Domain\Clients\Repositories {
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
 
             $stmn->execute();
-            $values = $stmn->fetchAll();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, ClientsModel::class);
+            // $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
             return $values;
