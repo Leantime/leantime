@@ -1,0 +1,53 @@
+{% import "include/macros.twig" as macros %}
+{% block content %}
+---
+title: {{ node.FullyQualifiedStructuralElementName }}
+{% include 'config/frontmatter.twig' %}
+---
+
+# {{ node.name }}
+
+{{ node.summary|raw }}
+
+{{ node.description|raw }}
+
+* Full name: `{{ node.FullyQualifiedStructuralElementName }}`
+{% if node.parent %}* Parent trait: {{ macros.mdClassLink(node.parent, macros.mdClassPath(node), node.parent.FullyQualifiedStructuralElementName) }}
+{% endif %}
+{% if node.final %}* This trait is marked as **final** and can't be subclassed
+{% endif %}
+{% if node.deprecated %}* **Warning:** this trait is **deprecated**. This means that this class will likely be removed in a future version.
+{% endif %}
+{% if node.interfaces is not empty %}* This trait implements: {{ node.interfaces|join(', ')|raw }}
+{% endif %}
+
+{% if node.tags.see is not empty or node.tags.link is not empty %}
+**See Also:**
+
+{% for see in node.tags.see %}
+* {{ see.reference }} {% if see.description %}- {{ see.description|raw }}{% endif %}
+
+{% endfor %}
+{% for link in node.tags.link %}
+* {{ link.link }} {% if link.description and link.description != link.link %}- {{ link.description|raw }}{% endif %}
+
+{% endfor %}
+
+{% endif %}{# node.tags.see || node.tags.link #}
+
+{# Gitlab supports automatic table of contents generation #}
+{% if md_flavour == 'gitlab' %}
+## Table of contents
+[[_TOC_]]
+{% endif %}
+
+
+## Methods
+
+{% for method in node.methods %}
+{% include 'method.md.twig' %}
+{% endfor %}
+
+{% include 'config/footer.md.twig' %}
+
+{% endblock %}

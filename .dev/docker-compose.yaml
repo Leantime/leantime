@@ -1,49 +1,82 @@
-version: "3.9"
 networks:
   leantime:
-    external: false
+      external: false
+      driver: bridge
 volumes:
   mysql:
   s3ninja-data:
-
 services:
   leantime-dev:
     build: .
     ports:
-      - "8080:8080"
+      - "8001:8080" #Using ports that are hopefully available. format is: 80XX
+      - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     volumes:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
-     - ".env:/var/www/html/config/.env"
+    environment:
+      LEAN_DB_HOST: 'db'
+      LEAN_DB_USER: 'leantime'
+      LEAN_DB_PASSWORD: 'leantime'
+      LEAN_DB_DATABASE: 'leantime'
+      LEAN_DB_PORT: '3306'
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - leantime
+  redis:
+    image: redis:4.0
+    ports:
+      - "6379"
     networks:
       - leantime
   db:
     image: mysql:8.0
+    ports:
+      - "3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=leantime
-      - MYSQL_USER=leantime
-      - MYSQL_PASSWORD=leantime
-      - MYSQL_DATABASE=leantime
+      MYSQL_ROOT_PASSWORD: 'leantime'
+      MYSQL_USER: 'leantime'
+      MYSQL_PASSWORD: 'leantime'
+      MYSQL_DATABASE: 'leantime'
     networks:
       - leantime
     volumes:
       - mysql:/var/lib/mysql:rw
+    healthcheck:
+      test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  selenium:
+    image: selenium/standalone-chromium
+    shm_size: 2gb
+    environment:
+      - SCREEN_WIDTH=2560
+      - SCREEN_HEIGHT=1440
+    ports:
+      - "4444"
+      - "7900"
+    networks:
+      - leantime
   maildev:
     image: maildev/maildev
     environment:
       - MAILDEV_SMTP_PORT=465
       - MAILDEV_WEB_PORT=8081
     ports:
-      - 8081:8081
-    networks: 
-      - leantime  
+      - "8081"
+    networks:
+      - leantime
   phpmyadmin:
     image: phpmyadmin
     ports:
-      - 8082:80
+      - "8082"
     environment:
       - PMA_HOST=db
       - PMA_PORT=3306
@@ -52,10 +85,8 @@ services:
   s3ninja:
     image: scireum/s3-ninja
     ports:
-      - 8083:9000 
+      - "8083"
     networks:
       - leantime
     volumes:
       - s3ninja-data:/home/sirius/data
-
-

@@ -1,5 +1,0 @@
-# Ignore everything in this directory
-*
-# Except the following
-!.gitignore
-!debughooks

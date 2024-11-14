@@ -13,17 +13,10 @@ vendor/*
 release/*
 logs/*
 target/*
-public/js/compiled-app.min.js
-public/js/compiled-base-libs.min.js
-public/js/compiled-footer.min.js
-public/js/compiled-extended-libs.min.js
-public/js/jsSourceMapAPP.map
-public/js/jsSourceMapAppSrc.map
-public/js/jsSourceMapBaseLib.map
-public/js/jsSourceMapFooterSrc.map
-public/js/jsSourceMapExtendedSrc.map
-public/css/main.css
-public/css/main.css.map
+backupdb/*
+public/js/*.min.js
+public/js/*.map
+public/css/*.css
 
 # PHPStorm specific git ignore to be able to share inspection configs and run tools
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -119,3 +112,16 @@ public/theme/dts/
 nbproject
 config/config.yaml
 config/.env
+
+# Documentor
+.phpdoc/cache
+
+# Local Dev Files
+.dev/docker-compose.local.yaml
+
+#codebuddy files
+.codebuddy
+
+#vscode
+.vscode
+.idea/codebuddy.xml

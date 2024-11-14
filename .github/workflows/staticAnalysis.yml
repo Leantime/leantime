@@ -1,0 +1,20 @@
+name: Static Analysis
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master", "*.*-dev" ]
+  pull_request:
+    branches: [ "master", "*.*-dev" ]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: make build-dev
+
+    - name: Run PHPStan Analysis
+      run: make phpstan

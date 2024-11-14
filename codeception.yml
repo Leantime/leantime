@@ -1,12 +1,25 @@
 namespace: Tests
 support_namespace: Support
 paths:
-    tests: tests
-    output: tests/_output
-    data: tests/Support/Data
-    support: tests/Support
-    envs: tests/_envs
+  tests: tests
+  output: tests/_output
+  data: tests/Support/Data
+  support: tests/Support
+  envs: tests/_envs
+  log: tests/_log
 actor_suffix: Tester
 extensions:
-    enabled:
-        - Codeception\Extension\RunFailed
+  enabled:
+    - Codeception\Extension\RunFailed
+settings:
+  memory_limit: 1024M
+  colors: true
+  error_level: E_ALL & ~E_DEPRECATED
+
+coverage:
+  enabled: true
+  include:
+    - app/*
+
+params:
+  - tests/_envs/.env.test

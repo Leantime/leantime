@@ -1,9 +1,6 @@
+Options +FollowSymLinks
 RewriteEngine On
 
-#Uncomment and update if Leantime runs in a subfolder
-#RewriteBase /leantime/
-
-RewriteRule ^/?$ index.php?act=dashboard.show
-RewriteRule ^([^/\.]+)/?$ index.php?act=$1 [QSA]
-RewriteRule ^([^/\.]+)/([^/\.]+)/?$ index.php?act=$1.$2 [QSA]
-RewriteRule ^([^/\.]+)/([^/\.]+)/([^/\.]+)/?$ index.php?act=$1.$2&id=$3 [QSA]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L,QSA]

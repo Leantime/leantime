@@ -1,9 +1,13 @@
 # Codeception Test Suite Configuration
-#
-# Suite for unit or integration tests.
 
+# The actor attribute identifies the testing scenario. In this case, it's a `UnitTester`
 actor: UnitTester
+
+error_level: E_ALL & ~E_STRICT & ~E_DEPRECATED
+
 modules:
-    enabled:
-        - Asserts
-step_decorators: ~
+  enabled:
+    - Asserts
+
+coverage:
+  enabled: true

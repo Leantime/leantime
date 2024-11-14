@@ -1,0 +1,114 @@
+body .gantt-container {
+    font-size: var(--base-font-size);
+    overflow-x:visible;
+    height:calc(100vh - 375px);
+}
+
+.gantt-wrapper {
+    margin-top:10px;
+    border-radius: var(--box-radius);
+    overflow: auto;
+}
+
+
+.gantt .bar-label {
+    text-anchor: start;
+}
+
+body .gantt .bar-label,
+body .gantt .lower-text,
+body .gantt .upper-text {
+    font-size: var(--base-font-size);
+}
+
+body .gantt .upper-text {
+    fill:var(--kanban-col-title-color);
+    opacity:0.7;
+}
+
+body .gantt .lower-text,
+body .gantt .upper-text {
+    font-weight:bold;
+}
+
+body .gantt #details .details-container p {
+    font-size: var(--base-font-size);
+}
+
+
+body .gantt #details .details-container {
+    border-radius:var(--box-radius);
+}
+
+.gantt-container .popup-wrapper {
+    background-color:var(--secondary-background);
+    padding:10px;
+    box-shadow:var(--regular-shadow);
+    margin-left: -10px;
+    opacity:0;
+    min-width:100px;
+    max-width:300px;
+}
+
+.gantt-container .bar-wrapper {
+    outline:none;
+}
+
+.gantt .bar-wrapper.active .bar {
+    fill:var(--main-action-hover-bg);
+}
+
+.gantt .bar-wrapper.active .bar-label {
+    fill:var(--main-action-hover-color);
+}
+
+.gantt-container .popup-wrapper .pointer {
+    margin:10px 0 0 -12px;
+    height:10px;
+    border: 10px solid transparent;
+    border-top-color:var(--secondary-background);
+}
+
+.gantt .grid-header {
+    fill:var(--col-title-bg) !important;
+    stroke:none;
+    filter: drop-shadow(var(--regular-shadow));
+}
+
+.gantt .grid-header-line {
+    fill:var(--neutral) !important;
+    filter: drop-shadow(var(--regular-shadow));
+}
+
+.gantt .grid-row:nth-child(even) {
+    fill:var(--col-row-striped);
+}
+
+.gantt .handle {
+    fill:var(--col-title-bg);
+    width:10px;
+}
+
+.gantt .handle.progress {
+    display:none;
+}
+
+
+.gantt .today-highlight {
+    fill:var(--accent1);
+}
+
+.today-highlight-label-bg {
+    fill:var(--main-action-bg);
+    opacity: 1;
+}
+
+.today-highlight-label {
+    fill:var(--main-action-color);
+    font-size:var(--font-size-s);
+    text-anchor: middle;
+}
+
+.gantt .grid-row {
+    fill: transparent;
+}

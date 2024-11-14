@@ -1,0 +1,41 @@
+parameters:
+    bootstrapFiles:
+        - public/index.php
+    level: 0
+    paths:
+        - public/
+        - app/Command
+        - app/Core
+        - app/Domain
+        - app/Plugins
+        - app/Views
+        - bin/
+    excludePaths:
+        - app/Plugins/*/vendor/*
+    scanDirectories:
+        - vendor
+        - config
+    #ignoreErrors:
+            # Rules for level 1. Templates use variables through include which are not detected by phpstan
+            #-
+            #    messages:
+            #        - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
+            #        - '#Variable \$__data might not be defined\.#'
+            #        - '#Variable \$tpl might not be defined\.#'
+            #        - '#Constant BASE_URL not found\.#'
+            #        - '#Constant CURRENT_URL not found\.#'
+            #        - '#Variable \$login might not be defined\.#'
+            #        - '#Variable \$roles might not be defined\.#'
+            #    paths:
+            #        - app/Domain/*/Templates/*.tpl.php
+            #        - app/Domain/*/Templates/*.inc.php
+            #        - app/Domain/*/Templates/submodules/*.sub.php
+    universalObjectCratesClasses:
+        - Leantime\Core\Environment
+    earlyTerminatingMethodCalls:
+        Leantime\Core\Templates:
+            - redirect
+            - display
+            - displayPartial
+
+

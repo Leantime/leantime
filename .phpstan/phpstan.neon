@@ -1,0 +1,37 @@
+parameters:
+    bootstrapFiles:
+        - bootstrap.php
+    level: 0
+    inferPrivatePropertyTypeFromConstructor: true
+    paths:
+        - ../public
+        - ../app
+    excludePaths:
+        - ../app/Plugins/*/vendor/*
+    scanDirectories:
+        - ../vendor
+        - ../config
+    ignoreErrors:
+            #- '#Call to an undefined static method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            #- '#Access to undefined constant Illuminate\\Http\\Request::[a-zA-Z0-9\\_]()#'
+            #- '#Call to an undefined static method Carbon\\CarbonImmutable::[a-zA-Z0-9\\_]()#'
+            # Rules for level 1. Templates use variables through include which are not detected by phpstan
+            #-
+            #    messages:
+            #        - '#Attribute class Leantime\\Domain\\Connector\\Models\\DbColumn does not exist\.#'
+            #        - '#Variable \$__data might not be defined\.#'
+            #        - '#Constant BASE_URL not found\.#'
+            #        - '#Constant CURRENT_URL not found\.#'
+            #        - '#Variable \$login might not be defined\.#'
+            #        - '#Variable \$roles might not be defined\.#'
+            #    paths:
+            #        - app/Domain/*/Templates/*.tpl.php
+            #        - app/Domain/*/Templates/*.inc.php
+            #        - app/Domain/*/Templates/submodules/*.sub.php
+    universalObjectCratesClasses:
+        - Leantime\Core\Configuration\Environment
+    earlyTerminatingMethodCalls:
+        Leantime\Core\UI\Templates:
+            - redirect
+            - display
+            - displayPartial

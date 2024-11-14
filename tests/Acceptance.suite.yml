@@ -3,14 +3,31 @@
 # Suite for acceptance tests.
 # Perform tests in browser using the WebDriver or PhpBrowser.
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
-
 actor: AcceptanceTester
+bootstrap: bootstrap.php
 modules:
-    enabled:
-        - PhpBrowser:
-            url: http://leantime.localhost
-# add Codeception\Step\Retry trait to AcceptanceTester to enable retries
+  enabled:
+    - \Tests\Support\Helper\Acceptance
+    - WebDriver:
+        url: 'https://leantime-dev'
+        host: selenium
+        browser: chrome
+        wait: 20
+        log_js_errors: true
+        window_size: "2560x1440"
+        capabilities:
+          acceptInsecureCerts: true
+          goog:chromeOptions:
+            args: [ "--headless" ]
+
+    - Db:
+        dsn: "mysql:host=db;port=3306;dbname=leantime_test"
+        user: leantime
+        password: leantime
+        populate: true
+        cleanup: true
+
 step_decorators:
-    - Codeception\Step\ConditionalAssertion
-    - Codeception\Step\TryTo
-    - Codeception\Step\Retry
+  - Codeception\Step\ConditionalAssertion
+  - Codeception\Step\TryTo
+  - Codeception\Step\Retry

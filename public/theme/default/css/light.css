@@ -1,0 +1,192 @@
+:root {
+
+    --accent1: hsla(199, 100%, 31%, 1);
+    --accent1-hover: #555;
+    --accent1-color:#fff;
+
+    --accent2: hsla(168, 100%, 33%, 1);
+    --accent2-hover: #555;
+    --accent2-color:#fff;
+
+    --nav-link-color: #fff;
+    --header-nav-link-color: #fff;
+
+    --tab-background: transparent;
+    --tab-color: var(--accent1);
+    --tab-active-background: rgba(245, 245, 245, 1);
+    --tab-active-color: #333;
+
+    --primary-content-bg-opacity: 0.15;
+    --main-titles-color: #fff;
+
+    --primary-background: rgba(255, 255, 255, 0.8);
+    --secondary-background: rgba(255, 255, 255, 1);
+    --layered-background: rgba(255, 255, 255, 0.9);
+    --light-layered-background: rgba(255, 255, 255, 0.4);
+
+    --primary-font-color: #333333;
+    --secondary-font-color: #000;
+
+    --neutral: rgba(230, 230, 230, 0.8);
+    --solid-neutral: rgba(220, 220, 220, 1);
+    --neutral-background: rgba(240, 240, 240, 0.7);
+
+    --col-title-bg: rgb(255, 255, 255, 1);
+    --col-content-bg:  rgba(255,255,255, 0.8);
+    --col-hover-bg: rgba(245, 245, 245, 0.7);
+    --col-row-striped: rgba(250, 250, 250, 0.5);
+
+    --primary-color: var(--accent1);
+    --secondary-color: var(--accent2);
+
+    --main-bg: var(--primary-background);
+    --left-panel-bg: transparent;
+    --content-bg: var(--secondary-background);
+
+    --glass-blur: blur( 8px );
+    --glass-background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.70) 50%, rgba(255,255,255,0.50) 100%);
+    --glass-border: 1px solid rgba(255,255,255,0.9);
+
+    --main-action-bg: var(--accent1);
+    --main-action-color: var(--accent1-color);
+    --main-action-hover-bg: var(--accent1-hover);
+    --main-action-hover-color: var(--accent1-color);
+
+    --secondary-action-bg: var(--primary-background);
+    --secondary-action-color: var(--primary-font-color);
+    --secondary-action-hover-bg: var(--accent2-hover);
+    --secondary-action-hover-color: var(--accent2-color);
+
+    --main-menu-link-bg: var(--secondary-background);
+    --main-menu-link-color: var(--primary-font-color);
+
+    --main-menu-link-hover-bg: rgba(255, 255, 255, 0.2);
+    --main-menu-link-hover-color: var(--accent1);
+
+    --main-menu-overlayed-link-hover-bg: rgba(255, 255, 255, 0.4);
+
+    --main-menu-link-active-bg: var(--primary-background);
+    --main-menu-link-active-color: var(--accent1);
+
+    --main-menu-border-color:var(--neutral);
+
+    --project-selector-bg: var(--secondary-background);
+    --project-selector-color: var(--primary-font-color);
+    --project-selector-hover-bg: var(--primary-background);
+    --project-selector-hover-color: var(--primary-font-color);
+
+    --dropdown-link-bg:var(--secondary-background);
+    --dropdown-link-color: var(--primary-font-color);
+    --dropdown-link-hover-bg: var(--tab-active-background);
+    --dropdown-link-hover-color: var(--primary-font-color);
+
+    --input-background: #fff;
+
+    --header-action-hover-color:var(--neutral);
+    --header-bg-color:var(--accent1);
+    --header-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 90%);
+    --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
+
+    --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
+
+    --font-size-xs: 10px;
+    --font-size-s: 12px;
+    --base-font-size: 14px;
+    --font-size-m: var(--base-font-size);
+    --font-size-l: 16px;
+    --font-size-xl: 18px;
+    --font-size-xxl: 20px;
+    --font-size-xxxl: 24px;
+
+    --main-border-color:rgba(220,220,220, 1);
+    --main-border-color-hover:rgba(200,200,200, 0.9);
+
+    /* Softer shadows */
+    --min-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+    --regular-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+    --large-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+
+    --box-radius-large: 24px;
+    --box-radius: 16px;
+    --box-radius-small: 8px;
+    --element-radius: 16px;
+    --input-radius: 12px;
+
+    --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
+    --input-padding: 4px 14px;
+
+    --kanban-col-bg: transparent;
+    --kanban-col-title-bg: var(--col-title-bg);
+    --kanban-col-title-color:var(--primary-font-color);
+    --kanban-card-bg: var(--layered-background);
+    --kanban-card-hover: rgba(240, 240, 240, 0.8);
+
+
+    --accordion-header-bg: var(--secondary-action-bg);
+    --accordion-header-radius: 10px;
+
+    --interactive-icon-color: #777;
+
+    --dark-red: #c41e3a;
+    --dark-red-text-color: #fff;
+
+    --red: #d64045;
+    --red-text-color: #fff;
+
+    --green: #2e7d32;
+    --green-text-color: #fff;
+
+    --dark-green: #1b5e20;
+    --dark-green-text-color: #fff;
+
+    --yellow: #f9a825;
+    --yellow-text-color: #000;
+
+    --blue: #1976d2;
+    --blue-text-color: #fff;
+
+    --dark-blue: #0d47a1;
+    --dark-blue-text-color: #fff;
+
+    --darker-blue: #002171;
+    --darker-blue-text-color: #fff;
+
+    --purple:#5F0F40;
+    --purple-text-color:#fff;
+
+    --magenta:#bb1b75;
+    --purple-text-color:#fff;
+
+    --pink: #F26CA7;
+    --pink-text-color:#fff;
+
+    --brown: #BB611B;
+    --brown-text-color: #fff;
+
+    --grey: #aaaaaa;
+    --grey-text-color:#fff;
+
+    --dark-grey: #4c4c4c;
+    --dark-grey-text-color: #fff;
+
+    --teal: #1bbbb1;
+    --teal-text-color: #fff;
+
+    --zlayer-1: 1; /*Background*/
+    --zlayer-2: 5; /* Maincontentinnnter */
+    --zlayer-3: 10; /* Element contentinner */
+    --zlayer-4: 15; /* over element contentinnter (headlines, status) */
+    --zlayer-5: 20; /* Highest layer on content inner (Filters) */
+    --zlayer-6: 25; /* modal */
+    --zlayer-7: 30; /* modal dropdowns*/
+    --zlayer-8: 35; /* modal dialogs */
+    --zlayer-9: 40; /* modal modals*/
+
+    --transparencyLayer: transparent;
+
+}
+
+.ss-option:hover {
+    color: white;
+    background-color: var(--accent1) !important;
+}

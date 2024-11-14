@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title id="tab_title">Pomodoro</title>
+  <link id="dynamic-favicon" rel="icon" type="image/ico" 
+        href="images/red_tomato.ico">
+        <!-- Original favicon courtesy of http://icons8.com -->
+  <link rel="stylesheet" 
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel='stylesheet' type='text/css' 
+        href='http://fonts.googleapis.com/css?family=Indie+Flower'>
+  <link rel="stylesheet" href="pomodoro.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div id="titlebox">
+  	  <div id="title">Pomodoro</div>
+  	  <div id="subtitle">A simple workflow tool</div>
+  	</div>
+  </header>
+  <div class="content">
+    <p>
+        <div><span id="timer"></span></div>
+        <button id="btn_start" class="btn_default">start</button>
+        <button id="btn_pause" class="btn_default">pause</button>
+        <button id="btn_reset" class="btn_default">reset</button>
+    </p>
+    <p>
+        <button id="btn_pomodoro" class="btn_default">pomodoro (25m)</button>
+        <button id="btn_shortbreak" class="btn_default">short break (5m)</button>
+        <button id="btn_longbreak" class="btn_default">long break (15m)</button>
+    </p>
+    <p>
+        <button id="btn_custom" class="btn_default">
+          <label for="ipt_custom">custom:</label>
+        </button>
+        <input type="number" id="ipt_custom" value="45" min="0" max="100000000">
+        <select id="custom_units">
+          <option value="seconds">seconds</option>
+          <option value="minutes" selected>minutes</option>
+          <option value="hours">hours</option>
+        </select>
+    </p>
+  </div>
+  <footer>
+    <div class="footerbox">
+      <h1>How it works:</h1>
+      <ol>
+        <li>Choose a task to focus on</li>
+        <li>Work for 25 uninterrupted minutes</li>
+        <li>Break for 5 minutes</li>
+        <li>Every four cycles, take a 15-30 minute<br>
+            break instead, preferably outside</li>
+      </ol>
+      <br>
+      <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique" target="_blank">
+        Read more at Wikipedia
+      </a>
+    </div>
+    <div class="footerbox">
+      <h1>Options:</h1>
+      <div id="options">
+        <label for="alarm_select" id="lbl_alarm">Alarm:</label><br>
+        <select id="alarm_select">
+          <option value="none">None</option>
+          <option value="alarm_chime">Chime</option>
+          <option value="alarm_bell" selected>Bell</option>
+          <option value="alarm_beeps">Beeps</option>
+          <option value="alarm_boops">Boops</option>
+        </select>
+        <br><br>
+        <label for="alarm_volume" id="lbl_volume">Volume:</label><br>
+        <input type="range" id="alarm_volume" min=0 max=100 value=50>
+        </div>
+        <br>
+    </div>
+    <div class="credits">
+      Created by 
+      <a href="../index.html">Andy Roche</a> - 
+      <a href="https://github.com/rocheio/rocheio.github.io/tree/master/pomodoro">Github</a>
+    </div>
+  </footer>
+</div>
+<audio id="alarm_chime">
+  <source src="audio/one_chime.mp3" type="audio/mpeg"></audio>
+<audio id="alarm_bell">
+  <source src="audio/one_bell.mp3" type="audio/mpeg"></audio>
+<audio id="alarm_beeps">
+  <source src="audio/three_beeps.mp3" type="audio/mpeg"></audio>
+<audio id="alarm_boops">
+  <source src="audio/three_boops.mp3" type="audio/mpeg"></audio>
+<!-- Audio courtesy of https://soundcloud.com/andyouarewho -->
+<script type="text/javascript" src="../resources/mousetrap.js"></script>
+<script type="text/javascript" src="pomodoro.js"></script>
+</body>
+</html>

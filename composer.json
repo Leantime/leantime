@@ -1,47 +1,154 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
+    "version": "3.3",
     "type": "project",
+    "license": "AGPL-3.0",
     "config": {
         "platform-check": false,
         "platform": {
-            "php": "8.0"
+            "php": "8.2.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "metasyntactical/composer-plugin-license-check": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "wikimedia/composer-merge-plugin": true
         }
     },
     "authors": [
         {
-            "name": "Marcel",
+            "name": "Marcel Folaron",
             "email": "marcel@leantime.io"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/leantime/leantime-documentor.git"
+        }
+    ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "ext-ldap": "*",
+        "ext-mysqli": "*",
         "ext-pdo": "*",
-        "guzzlehttp/guzzle": "7.4.5",
-        "aws/aws-sdk-php": "3.219.0",
-        "phpmailer/phpmailer": "6.6.0",
-        "robthree/twofactorauth": "1.8.2",
-        "endroid/qr-code": "3.9.7",
-        "league/html-to-markdown": "5.1",
-        "symfony/console": "^5.4",
+        "ext-pdo_mysql": "*",
+        "ext-zip": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
+        "ext-bcmath": "*",
+        "ext-simplexml": "*",
+        "ext-phar": "*",
+        "ext-openssl": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "laravel/framework": "^10.48",
+        "filp/whoops": "^2.14",
+        "guzzlehttp/guzzle": "^7.9",
+        "aws/aws-sdk-php": "^3.314",
+        "phpmailer/phpmailer": "^6.6",
+        "robthree/twofactorauth": "^1.8",
+        "endroid/qr-code": "^3.9",
+        "league/html-to-markdown": "^5.1",
         "ramsey/uuid": "^4.3",
-        "htmlawed/htmlawed": "1.2.6",
-        "mpdf/mpdf": "^8.1.3",
-        "vlucas/phpdotenv": "^5.5",
-        "symfony/yaml": "^5.4",
-        "lasserafn/php-initial-avatar-generator": "^4.2"
+        "htmlawed/htmlawed": "^1.2",
+        "symfony/dotenv": "^7.1.6",
+        "lasserafn/php-initial-avatar-generator": "^4.2",
+        "guzzlehttp/oauth-subscriber": "^0.6.0",
+        "kamermans/guzzle-oauth2-subscriber": "^1.0",
+        "league/csv": "^9.8",
+        "dragonmantank/cron-expression": "^3.3",
+        "vedmant/laravel-feed-reader": "^1.6",
+        "psr/container": "^1.1.1|^2.0.1",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/simple-cache": "^1.0|^2.0|^3.0",
+        "symfony/cache": "^6.2",
+        "symfony/console": "^6.2",
+        "symfony/error-handler": "^6.2",
+        "symfony/finder": "^6.2",
+        "symfony/http-foundation": "^6.4",
+        "symfony/http-kernel": "^6.2",
+        "symfony/mailer": "^6.2",
+        "symfony/mime": "^6.2",
+        "symfony/process": "^6.2",
+        "symfony/routing": "^6.2",
+        "symfony/uid": "^6.2",
+        "symfony/var-dumper": "^6.2",
+        "nikic/php-parser": "^4.17",
+        "nesbot/carbon": "^2.72",
+        "predis/predis": "^2.2",
+        "sentry/sentry-laravel": "^4.8",
+        "symfony/http-client": "^6.2.4",
+        "symfony/psr-http-message-bridge": "^2.0",
+        "carbon-cli/carbon-cli": "^1.2",
+        "metasyntactical/composer-plugin-license-check": "^2.1",
+        "phpseclib/phpseclib": "~3.0",
+        "spatie/icalendar-generator": "^2.6"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.7",
-        "codeception/codeception": "^5.0",
+        "squizlabs/php_codesniffer": "^3.8",
+        "codeception/codeception": "^5.1",
         "codeception/module-phpbrowser": "*",
-        "codeception/module-asserts": "*"
+        "codeception/module-asserts": "^3.0",
+        "codeception/module-db": "^3.1",
+        "codeception/module-webdriver": "^3.2",
+        "codeception/stub": "^4.1",
+        "codeception/module-laravel": "^3.1",
+        "codeception/module-rest": "^3.4",
+        "phpcsstandards/phpcsextra": "^1.2.1",
+        "zebra-north/phpcs-short-types": "^1.0",
+        "laravel/pint": "^1.17",
+        "phpstan/phpstan": "^1.10",
+        "leantime/leantime-documentor": "dev-main"
+
+    },
+    "provide": {
+        "psr/container-implementation": "1.1|2.0",
+        "psr/simple-cache-implementation": "1.0|2.0|3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Leantime\\": [
+                "app/"
+            ],
+            "": "app/"
+        },
+        "files": [
+            "app/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Leantime\\": [
+                "app/"
+            ],
+            "Unit\\": [
+                "tests/Unit/"
+            ],
+            "": "app/"
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "extra": {
         "installer-paths": {
-            "app/plugins/{$name}/": [
+            "app/Plugins/{$name}/": [
                 "type:leantime-plugin"
+            ]
+        },
+        "carbon": {
+            "macros": [
+                "Leantime\\Core\\Support\\CarbonMacros"
+            ]
+        },
+        "merge-plugin": {
+            "include": [
+                "app/Plugins/*/composer.json"
             ]
         }
     }

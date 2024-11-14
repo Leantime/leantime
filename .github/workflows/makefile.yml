@@ -1,24 +1,22 @@
 name: Makefile CI
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "*.*-dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "*.*-dev" ]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: make build
-
-    - name: Run packaging
-      run: make package
 
     - name: Run distcheck
       run: make clean

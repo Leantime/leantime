@@ -1,19 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-define('ROOT', dirname(__FILE__));
+use Leantime\Core\Console\ConsoleKernel;
+define('LEAN_CLI', true);
 
-require __DIR__ . '/../app/core/class.autoload.php';
-require_once __DIR__ . '/../config/configuration.php';
-require_once __DIR__ . '/../config/appSettings.php';
+require __DIR__.'/../vendor/autoload.php';
 
-use leantime\command\migrateCommand;
-use leantime\command\addUserCommand;
-use leantime\command\saveSettingCommand;
-use Symfony\Component\Console\Application;
+//Get the application once.
+//Loads everything up once and then let's the bootloader manage it
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
-$application = new Application();
-$application->add(new addUserCommand());
-$application->add(new migrateCommand());
-$application->add(new saveSettingCommand());
-$application->run();
+$kernel = $app->make(ConsoleKernel::class);
+
+$status = $kernel->handle(
+        $input = new \Symfony\Component\Console\Input\ArgvInput,
+        new \Symfony\Component\Console\Output\ConsoleOutput
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);
