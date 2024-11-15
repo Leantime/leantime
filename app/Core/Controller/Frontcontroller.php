@@ -143,10 +143,18 @@ class Frontcontroller
             $method = $segments[2];
         }
 
+        //If a third segment is set it is the id
+        if(isset($segments[3])) {
+            $id = $segments[3];
+            $method = $segments[2];
+            $request_parts = join('.', array_slice($segments, 3));
+            $this->incomingRequest->query->set('request_parts', $request_parts);
+        }
+
         $this->incomingRequest->query->set('act', $moduleName.'.'.$controllerName.'.'.$method);
         $this->incomingRequest->setCurrentRoute($moduleName.'.'.$controllerName);
 
-        if (! empty($id)) {
+        if ($id === "0" || !empty($id)) {
             $this->incomingRequest->query->set('id', $id);
         }
 
@@ -213,20 +221,20 @@ class Frontcontroller
 
         $moduleName = Str::studly($moduleName);
         $actionName = Str::studly($actionName);
-        $methodName = Str::lower($methodName);
+        $methodNameLower = Str::lower($methodName);
         $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
         $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
 
         if ($this->config->debug == false) {
-            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodName)) {
-                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodName);
+            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodNameLower)) {
+                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodNameLower);
             }
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
-        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodName : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
+        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
 
         return ['class' => $classPath, 'method' => $classMethod];
     }

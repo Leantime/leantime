@@ -40,7 +40,6 @@ class Auth
 
     public function __construct(
         private AuthService $authService,
-        private ProjectsService $projectsService,
     ) {
         $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
     }

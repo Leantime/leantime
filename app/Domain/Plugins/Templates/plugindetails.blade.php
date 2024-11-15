@@ -105,6 +105,8 @@
                         <div class="tw-text-green-500">{!! $formNotification !!}</div>
                     @else
                         <div id="installForm{{ $plugin->marketplaceId }}">
+
+
                             @if (! empty($formError))
                                 <div class="tw-text-red-500">{!! $formError !!}</div>
                             @endif
@@ -112,7 +114,7 @@
                                 class="tw-flex tw-gap-2 tw-items-center"
                                 hx-post="{{ BASE_URL }}/hx/plugins/details/install"
                                 hx-swap="outerHTML"
-                                hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                                hx-indicator=".htmx-indicator-small, .htmx-loaded-content"
                                 hx-target="#installForm{{ $plugin->marketplaceId }}"
                             >
                                 @php
@@ -133,8 +135,8 @@
                                     :tag="'button'"
                                     :type="'secondary'"
                                 >Install</x-global::button>
-                                <div class="htmx-indicator">
-                                    <x-global::loadingText type="text" :count="5" />
+                                <div class="htmx-indicator-small">
+                                    <x-global::loader id="loadingthis" size="25px" />
                                 </div>
                             </form>
                         </div>

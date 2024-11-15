@@ -373,7 +373,6 @@ namespace Leantime\Domain\Plugins\Services {
 
             return $this->pluginRepository->removePlugin($id);
 
-            //TODO remove files savely
         }
 
         /**
@@ -579,6 +578,10 @@ namespace Leantime\Domain\Plugins\Services {
             $files = app()->make(\Illuminate\Filesystem\Filesystem::class);
             $viewPathCachePath = storage_path('framework/viewPaths.php');
             $files->delete($viewPathCachePath);
+
+            $composerPathCachePath = storage_path('framework/composerPaths.php');
+            $files->delete($composerPathCachePath);
+
         }
     }
 }

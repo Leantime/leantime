@@ -105,12 +105,25 @@ class HttpKernel extends Kernel
 
         //This filter only works for system plugins
         //Regular plugins are not available until after install verification
-        $this->middleware = self::dispatch_filter('plugins_middleware', $this->middleware, ['request' => $request]);
+        $this->middleware = self::dispatch_filter('middleware', $this->middleware, ['request' => $request]);
 
-        return (new \Illuminate\Routing\Pipeline($this->app))
+        //Main Pipeline
+        $response = (new \Illuminate\Routing\Pipeline($this->app))
             ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then(fn () => Frontcontroller::dispatch_request($request));
+            ->through($this->middleware)
+            ->then(fn ($request) =>
+                //Then run through plugin pipeline
+            (new \Illuminate\Routing\Pipeline($this->app))
+                ->send($request)
+                ->through(self::dispatch_filter(
+                    hook: 'plugins_middleware',
+                    payload: [],
+                    function: 'handle',
+                ))
+                ->then(fn () => Frontcontroller::dispatch_request($request))
+            );
+
+        return $response;
     }
 
     public function handle($request)

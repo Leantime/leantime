@@ -79,7 +79,7 @@ class Views extends ViewServiceProvider
             foreach ($composers as $key => $composerClass) {
                 if (
                     (is_subclass_of($composerClass, \Leantime\Core\UI\Composer::class)
-                    || is_subclass_of($composerClass, \Leantime\Core\Controller\Composer::class))
+                        || is_subclass_of($composerClass, \Leantime\Core\Controller\Composer::class))
                     &&
 
                     ! (new \ReflectionClass($composerClass))->isAbstract()
@@ -254,7 +254,35 @@ class Views extends ViewServiceProvider
 
         $enabledPlugins = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
         $pluginComposerClasses = collect($enabledPlugins)
-            ->map(fn ($plugin) => glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php'))
+            ->map(function ($plugin) {
+                if ($plugin->format === 'phar') {
+                    $pharPath = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar';
+
+                    if (!file_exists($pharPath)) {
+                        return [];
+                    }
+
+                    try {
+
+                        $composers = [];
+                        $composerPath = 'phar://'.$pharPath.'/Composers';
+                        $p = new \Phar($composerPath, 0);
+                        $paths = collect(new \RecursiveIteratorIterator($p));
+
+                        foreach($paths as $path) {
+                            $something = $path;
+                            $composers[] = 'Plugins/'.$plugin->foldername.'/Composers/'.$path->getFileName();
+                        }
+
+                        return $composers;
+
+                    } catch (\Exception $e) {
+                        return [];
+                    }
+                }
+
+                return glob($basePath.'/Composers/*.php') ?: [];
+            })
             ->flatten();
 
         $composerList = $appComposerClasses
