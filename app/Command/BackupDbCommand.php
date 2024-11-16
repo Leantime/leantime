@@ -75,6 +75,7 @@ class BackupDbCommand extends Command
             case 1:
                 $io->error('There was an issue backing up the database');
                 $io->listing($output);
+
                 return Command::FAILURE;
         }
 

@@ -12,7 +12,6 @@ return [
              */
             \Leantime\Core\Providers\AppServiceProvider::class,
 
-
             \Leantime\Core\Providers\Cache::class, //\Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Core\Providers\Redis::class,
 

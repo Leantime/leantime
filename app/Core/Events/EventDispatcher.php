@@ -293,16 +293,16 @@ class EventDispatcher implements Dispatcher
     ): void {
 
         //Some backwards compatibility rules
-        if(str_starts_with($eventName, "leantime.core.template.tpl")) {
-            $eventParts = explode(".", $eventName);
+        if (str_starts_with($eventName, 'leantime.core.template.tpl')) {
+            $eventParts = explode('.', $eventName);
 
             $count = count($eventParts);
 
-            $eventName = "leantime.*.".($eventParts[$count-2] ?? '').".".($eventParts[$count-1] ?? '');
+            $eventName = 'leantime.*.'.($eventParts[$count - 2] ?? '').'.'.($eventParts[$count - 1] ?? '');
         }
 
-        if($eventName == "leantime.core.*.afterFooterOpen") {
-            $eventName = "leantime.*.afterFooterOpen";
+        if ($eventName == 'leantime.core.*.afterFooterOpen') {
+            $eventName = 'leantime.*.afterFooterOpen';
         }
 
         if (! array_key_exists($eventName, self::$eventRegistry)) {
