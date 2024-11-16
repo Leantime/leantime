@@ -293,7 +293,13 @@ class EventDispatcher implements Dispatcher
     ): void {
 
         //Some backwards compatibility rules
-        $eventName = str_replace('leantime.core.template.tpl', 'leantime.*', $eventName);
+        if(str_starts_with($eventName, "leantime.core.template.tpl")) {
+            $eventParts = explode(".", $eventName);
+
+            $count = count($eventParts);
+
+            $eventName = "leantime.*.".($eventParts[$count-2] ?? '').".".($eventParts[$count-1] ?? '');
+        }
 
         if (! array_key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];

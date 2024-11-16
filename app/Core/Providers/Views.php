@@ -255,6 +255,7 @@ class Views extends ViewServiceProvider
         $enabledPlugins = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
         $pluginComposerClasses = collect($enabledPlugins)
             ->map(function ($plugin) {
+
                 if ($plugin->format === 'phar') {
                     $pharPath = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar';
 
@@ -281,7 +282,8 @@ class Views extends ViewServiceProvider
                     }
                 }
 
-                return glob(APP_ROOT.'app/Views/Composers/*.php') ?: [];
+                //If not a phar, we can just use glob
+                return glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php') ?: [];
             })
             ->flatten();
 
