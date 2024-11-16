@@ -9,7 +9,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;

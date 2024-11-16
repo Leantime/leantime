@@ -938,7 +938,8 @@ class Template
 
     }
 
-    public function clearViewPathCache() {
+    public function clearViewPathCache()
+    {
 
         $viewPathCachePath = storage_path('framework/viewPaths.php');
         $this->files->delete($viewPathCachePath);

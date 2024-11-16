@@ -9,7 +9,6 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
-    use League\Flysystem\Filesystem;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
@@ -297,7 +296,6 @@ namespace Leantime\Domain\Plugins\Services {
                     return false;
                 }
             }
-
 
             return $this->pluginRepository->enablePlugin($id);
         }

@@ -11,7 +11,6 @@ use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-
 if (! function_exists('__')) {
     /**
      * Translate a string.
@@ -212,8 +211,6 @@ if (! function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
-     * @param string $path
-     * @param string $manifestDirectory
      * @return Mix|string
      *
      * @throws BindingResolutionException
@@ -221,7 +218,7 @@ if (! function_exists('mix')) {
     function mix(string $path = '', string $manifestDirectory = ''): \Leantime\Core\Support\Mix|string
     {
         if (! ($app = app())->bound(\Leantime\Core\Support\Mix::class)) {
-            $app->instance(\Leantime\Core\Support\Mix::class, new \Leantime\Core\Support\Mix());
+            $app->instance(\Leantime\Core\Support\Mix::class, new \Leantime\Core\Support\Mix);
         }
 
         $mix = $app->make(\Leantime\Core\Support\Mix::class);

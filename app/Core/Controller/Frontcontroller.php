@@ -144,17 +144,17 @@ class Frontcontroller
         }
 
         //If a third segment is set it is the id
-        if(isset($segments[3])) {
+        if (isset($segments[3])) {
             $id = $segments[3];
             $method = $segments[2];
-            $request_parts = join('.', array_slice($segments, 3));
+            $request_parts = implode('.', array_slice($segments, 3));
             $this->incomingRequest->query->set('request_parts', $request_parts);
         }
 
         $this->incomingRequest->query->set('act', $moduleName.'.'.$controllerName.'.'.$method);
         $this->incomingRequest->setCurrentRoute($moduleName.'.'.$controllerName);
 
-        if ($id === "0" || !empty($id)) {
+        if ($id === '0' || ! empty($id)) {
             $this->incomingRequest->query->set('id', $id);
         }
 

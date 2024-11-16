@@ -28,7 +28,7 @@ class SetRequestForConsole
             ], $server);
         }
 
-        if(! defined('BASE_URL')) {
+        if (! defined('BASE_URL')) {
             define('BASE_URL', $uri);
         }
 
