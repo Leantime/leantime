@@ -1,4 +1,4 @@
-VERSION := $(shell grep "appVersion" ./app/Core/Configuration/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')-$(shell git rev-parse --short HEAD)
+VERSION := $(shell grep "appVersion" ./app/Core/Configuration/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
 TARGET_DIR:= ./target/leantime
 DESC:=$(shell git log -1 --pretty=%B)
 
@@ -49,6 +49,7 @@ package: clean build
 	touch   $(TARGET_DIR)/userfiles/.gitkeep
 
 
+	rm -rf $(TARGET_DIR)/config/.env
 	rm -rf $(TARGET_DIR)/public/theme/*/css/custom.css
 
 	# Remove user files

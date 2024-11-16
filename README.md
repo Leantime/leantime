@@ -47,7 +47,7 @@ Leantime is an open source project management system for non-project manager.<br
 * MySQL 8.0+
 * Apache or Nginx (IIS works with some modifications)
 * PHP Extensions: 
-* * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
+* * mysql, pdo_mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap, zip, openssl, phar
 <br /><br />
 ### ️⚡️ Installation (Production) ###
 
@@ -212,7 +212,7 @@ We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/proje
 ## ⚖️ LICENSE Exceptions ##
 
 Leantime is licensed under AGPLv3.
-This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
+This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/Plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=856e290f-a6e9-4fbd-9b95-a835e39a0492" />
 
