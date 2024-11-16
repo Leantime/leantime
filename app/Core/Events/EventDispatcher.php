@@ -301,6 +301,10 @@ class EventDispatcher implements Dispatcher
             $eventName = "leantime.*.".($eventParts[$count-2] ?? '').".".($eventParts[$count-1] ?? '');
         }
 
+        if($eventName == "leantime.core.*.afterFooterOpen") {
+            $eventName = "leantime.*.afterFooterOpen";
+        }
+
         if (! array_key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];
         }
