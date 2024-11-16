@@ -67,6 +67,11 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
+         * Retrieves all plugins, optionally filtering only the enabled ones.
+         *
+         * @param bool $enabledOnly If set to true, only enabled plugins will be returned.
+         * @return false|array<InstalledPlugin> Returns an array of all plugins or false if an error occurs.
+         *
          * @api
          */
         public function getAllPlugins(bool $enabledOnly = false): false|array

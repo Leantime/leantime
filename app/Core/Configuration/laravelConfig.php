@@ -12,6 +12,7 @@ return [
              */
             \Leantime\Core\Providers\AppServiceProvider::class,
 
+
             \Leantime\Core\Providers\Cache::class, //\Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Core\Providers\Redis::class,
 
@@ -48,7 +49,6 @@ return [
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
-
         ],
         'name' => env('LEAN_SITENAME', 'Leantime'),
         'locale' => env('LEAN_LANGUAGE', 'en-US'),

@@ -4,7 +4,7 @@
 
 @include("auth::partials.onboardingProgress", ['percentComplete' => 12, 'current' => 'account', 'completed' => []])
 
-<h2>😀 Setting Account Details</h2>
+<h2>{{ __('titles.account_details') }}</h2>
 
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 <div class="regcontent">

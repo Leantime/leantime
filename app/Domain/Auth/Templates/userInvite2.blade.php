@@ -4,8 +4,8 @@
 
     @include("auth::partials.onboardingProgress", ['percentComplete' => 37, 'current' => 'theme', 'completed' => ['account']])
 
-<h2>👀 Determining A Visual Experience</h2>
-<p>You can choose a theme and font that is easy on your brain.</p>
+<h2>{{ __('titles.determine_visual_experience') }}</h2>
+<p>{{ __('text.choose_a_theme_and_font_easy_to_read ') }}</p>
 
 <div class="regcontent">
 
