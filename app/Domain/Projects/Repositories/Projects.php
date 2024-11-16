@@ -143,6 +143,20 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
+        /**
+         * Retrieves the relationship of users assigned to a specific project.
+         *
+         * @param int $id The ID of the project.
+         * @param bool $includeApiUsers Flag to determine whether to include API users. Default is false.
+         * @return array|bool Returns an array of users assigned to the project or false on failure.
+         *
+         * @Deprecated
+         *
+         */
+        public function getProjectUserRelation($id, $includeApiUsers = false): array|bool {
+            return $this->getUsersAssignedToProject($id, $includeApiUsers);
+        }
+
         public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
         {
 
@@ -304,9 +318,9 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * @return int|mixed
-         */
+
+
+
         /**
          * @return int|mixed
          */
