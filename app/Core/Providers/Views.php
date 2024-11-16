@@ -258,7 +258,7 @@ class Views extends ViewServiceProvider
                 if ($plugin->format === 'phar') {
                     $pharPath = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar';
 
-                    if (!file_exists($pharPath)) {
+                    if (! file_exists($pharPath)) {
                         return [];
                     }
 
@@ -269,7 +269,7 @@ class Views extends ViewServiceProvider
                         $p = new \Phar($composerPath, 0);
                         $paths = collect(new \RecursiveIteratorIterator($p));
 
-                        foreach($paths as $path) {
+                        foreach ($paths as $path) {
                             $something = $path;
                             $composers[] = 'Plugins/'.$plugin->foldername.'/Composers/'.$path->getFileName();
                         }
@@ -281,7 +281,7 @@ class Views extends ViewServiceProvider
                     }
                 }
 
-                return glob($basePath.'/Composers/*.php') ?: [];
+                return glob(APP_ROOT.'app/Views/Composers/*.php') ?: [];
             })
             ->flatten();
 

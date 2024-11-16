@@ -7,6 +7,6 @@ define('APP_ROOT', realpath(__DIR__.'/..'));
 define('BASE_URL', 'http://localhost');
 
 $app = require __DIR__.'/../bootstrap/app.php';
-$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$app->make(\Leantime\Core\Console\ConsoleKernel::class)->bootstrap();
 
 return $app;

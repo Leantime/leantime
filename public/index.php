@@ -2,6 +2,9 @@
 
 define('RESTRICTED', true);
 
+/* Load Leantime helper functions before laravel */
+require __DIR__.'/../app/helpers.php';
+
 require __DIR__.'/../vendor/autoload.php';
 
 //Get the application once.

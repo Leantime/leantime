@@ -291,6 +291,10 @@ class EventDispatcher implements Dispatcher
         string|callable|object $handler,
         int $priority = 10
     ): void {
+
+        //Some backwards compatibility rules
+        $eventName = str_replace("leantime.core.template.tpl", "leantime.*", $eventName);
+
         if (! array_key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];
         }
