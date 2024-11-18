@@ -20,19 +20,19 @@ if (isset($currentSprint->id)) {
     <label><?= $tpl->__('label.sprint_name') ?></label>
     <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="<?= $tpl->__('label.sprint_name') ?>"/><br />
 
+    <?php
+
+    function isSelected($projectId, $currentSprint, $currentProject) {
+        return (isset($currentSprint) && ($currentSprint->projectId == $projectId || $currentProject == $projectId)) ||
+            (!isset($currentSprint) && $currentProject == $projectId);
+    }
+
+    $currentProject = session('currentProject');
+    ?>
     <label><?= $tpl->__('label.project') ?></label>
     <select name="projectId">
         <?php foreach ($allAssignedprojects as $project) { ?>
-            <option value="<?= $project['id'] ?>"
-                    <?php
-                    if (isset($currentSprint)) {
-                        if ($currentSprint->projectId == $project['id']) {
-                            echo 'selected';
-                        }
-                    } elseif (session('currentProject') == $project['id']) {
-                        echo 'selected';
-                    }
-            ?>
+            <option value="<?= $project['id'] ?>" <?= isSelected($project['id'], $currentSprint ?? null, $currentProject) ? 'selected' : '' ?>
         ><?= $tpl->escape($project['name']); ?></option>
         <?php } ?>
     </select><br />
