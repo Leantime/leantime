@@ -3,7 +3,6 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Illuminate\Pipeline\Pipeline;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;

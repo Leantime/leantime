@@ -73,7 +73,6 @@ class Db extends DatabaseManager
             Log::error($e);
 
             throw new \Exception($e);
-
         }
     }
 
