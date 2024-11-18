@@ -83,6 +83,13 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
             }
 
             $this->phpConfig = new Config;
+
+            $configVars = get_class_vars(Config::class);
+            foreach (array_keys($configVars) as $propertyName) {
+                $envVarName = self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_'.Str::of($propertyName)->snake()->upper()->toString();
+                putenv($envVarName.'='.$configVars[$propertyName]);
+            }
+
         }
 
         /* YAML */

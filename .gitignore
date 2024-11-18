@@ -6,6 +6,7 @@
 .vscode
 *.swp
 
+config/_configuration.php
 config/configuration.php
 resources/logs/*
 node_modules/*
