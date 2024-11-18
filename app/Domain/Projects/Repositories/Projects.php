@@ -6,6 +6,7 @@ namespace Leantime\Domain\Projects\Repositories {
     use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Facades\Log;
+    use Illuminate\Support\Str;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
@@ -1134,8 +1135,8 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->closeCursor();
             }
             try {
-                $avatar = (new InitialAvatar)
-                    ->fontName('Verdana')
+                $avatar = app()->make(InitialAvatar::class)
+                    ->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf')
                     ->background('#555555')
                     ->color('#fff');
 
@@ -1152,13 +1153,21 @@ namespace Leantime\Domain\Projects\Repositories {
 
                 /** @var Initials $initialsClass */
                 $initialsClass = app()->make(Initials::class);
+                $initialsClass->allowSpecialCharacters(false);
                 $initialsClass->name($value['name']);
                 $imagename = $initialsClass->getInitials();
+                $imagename = Str::of($imagename)->alphaNumeric(true);
 
-                if (! file_exists($filename = APP_ROOT.'/cache/avatars/'.$imagename.'.svg')) {
+                if (is_dir(storage_path('framework/cache/avatars')) === false) {
+                    mkdir(storage_path('framework/cache/avatars'));
+                }
+
+                if (! file_exists($filename = storage_path('framework/cache/avatars/user-'.$imagename.'.svg'))) {
                     $image = $avatar->name($value['name'])->generateSvg();
 
-                    if (! is_writable(APP_ROOT.'/cache/avatars/')) {
+                    if (! is_writable(storage_path('framework/cache/avatars/'))) {
+                        Log::warning("Can't write to avatars folders");
+
                         return $image;
                     }
 
