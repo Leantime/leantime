@@ -22,13 +22,14 @@ if (isset($currentSprint->id)) {
 
     <?php
 
-    function isSelected($projectId, $currentSprint, $currentProject) {
+    function isSelected($projectId, $currentSprint, $currentProject)
+    {
         return (isset($currentSprint) && ($currentSprint->projectId == $projectId || $currentProject == $projectId)) ||
-            (!isset($currentSprint) && $currentProject == $projectId);
+            (! isset($currentSprint) && $currentProject == $projectId);
     }
 
-    $currentProject = session('currentProject');
-    ?>
+$currentProject = session('currentProject');
+?>
     <label><?= $tpl->__('label.project') ?></label>
     <select name="projectId">
         <?php foreach ($allAssignedprojects as $project) { ?>
