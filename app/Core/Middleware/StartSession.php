@@ -120,6 +120,8 @@ class StartSession
             $this->startSession($request, $session)
         );
 
+        self::dispatchEvent('session_started');
+
         $this->collectGarbage($session);
 
         //Going deeper down the rabbit hole and executing the rest of the middleware and stack.

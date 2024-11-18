@@ -58,12 +58,12 @@ class Registration
                 $languageArray += parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini', true);
             }
 
-            if ((($language = session('usersettings.language') ?? $config->language) !== 'en-US') && in_array($language, $languages)) {
+            if ((($userLanguage = session('usersettings.language') ?? $config->language) !== 'en-US') && in_array($userLanguage, $languages)) {
 
-                if (! Cache::store('installation')->has($pluginId.'.language.'.$language)) {
+                if (! Cache::store('installation')->has($pluginId.'.language.'.$userLanguage)) {
                     Cache::store('installation')->put(
-                        $pluginId.'.language.'.$language,
-                        parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/'.$language.'.ini', true),
+                        $pluginId.'.language.'.$userLanguage,
+                        parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini', true),
                         Carbon::now()->addDays(30)
                     );
                 }

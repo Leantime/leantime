@@ -38,6 +38,7 @@ class Helpermodal extends Composer
 
         $currentModal = $this->helperService->getHelperModalByRoute($action);
 
+
         if (
             $completedOnboarding == '1'
             && $currentModal !== 'notfound'

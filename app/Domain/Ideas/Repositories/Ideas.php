@@ -239,6 +239,10 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function patchCanvasItem($id, $params): bool
         {
 
+            if (isset($params['act'])) {
+                unset($params['act']);
+            }
+
             $sql = 'UPDATE zp_canvas_items SET ';
 
             foreach ($params as $key => $value) {
