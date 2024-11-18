@@ -115,7 +115,8 @@ class LoadConfig extends LoadConfiguration
      * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
      * @return void
      */
-    public function setBaseConstants($appUrl, $app) {
+    public function setBaseConstants($appUrl, $app)
+    {
 
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {

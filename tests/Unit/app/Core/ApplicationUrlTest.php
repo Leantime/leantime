@@ -6,7 +6,6 @@ use Leantime\Core\Application;
 use Leantime\Core\Bootstrap\LoadConfig;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Configuration\Environment;
-use Tests\Unit\TestCase;
 
 class ApplicationUrlTest extends \Unit\TestCase
 {
@@ -23,7 +22,8 @@ class ApplicationUrlTest extends \Unit\TestCase
 
     }
 
-    protected function bootstrapApplication() {
+    protected function bootstrapApplication()
+    {
 
         $this->app = new Application(APP_ROOT);
         $this->app->boot();
@@ -79,7 +79,6 @@ class ApplicationUrlTest extends \Unit\TestCase
 
         $_ENV['LEAN_APP_URL'] = 'https://example.com:8443';
 
-
         $this->bootstrapApplication();
 
         $this->assertEquals('https://example.com:8443', $this->config->get('app.url'));
@@ -93,7 +92,6 @@ class ApplicationUrlTest extends \Unit\TestCase
         $_SERVER['HTTP_X_FORWARDED_HOST'] = 'example.com';
 
         $_ENV['LEAN_APP_URL'] = 'https://example.com';
-
 
         $this->bootstrapApplication();
 

@@ -3,7 +3,6 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\Request;
 
