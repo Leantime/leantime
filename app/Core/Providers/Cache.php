@@ -31,23 +31,22 @@ class Cache extends CacheServiceProvider
             //If redis is set up let's use redis as cache
             if ($app['config']['useRedis']) {
 
+                $app['config']->set('cache.prefix', '');
+
                 //Default driver just in case it is being asked for
                 $app['config']->set('cache.stores.redis.driver', 'redis');
                 $app['config']->set('cache.stores.redis.connection', 'cache');
-                $app['config']->set('cache.stores.redis.prefix', 'leantime_cache');
 
                 //Only needed when using sessions with redis
                 $app['config']->set('cache.stores.sessions.driver', 'redis');
                 $app['config']->set('cache.stores.sessions.connection', 'sessions');
-                $app['config']->set('cache.stores.sessions.prefix', 'leantime_sessions');
 
                 $app['config']->set('cache.stores.installation.driver', 'redis');
                 $app['config']->set('cache.stores.installation.connection', 'installation');
-                $app['config']->set('cache.stores.installation.prefix', 'leantime_cache:installation');
 
                 $app['config']->set('cache.stores.'.$domainCacheName.'.driver', 'redis');
                 $app['config']->set('cache.stores.'.$domainCacheName.'.connection', 'cache');
-                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', 'leantime_cache:'.$domainCacheName.'');
+                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', ''.$domainCacheName.'');
 
             }
 

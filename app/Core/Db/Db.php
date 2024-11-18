@@ -72,7 +72,7 @@ class Db extends DatabaseManager
             Log::error("Can't connect to database");
             Log::error($e);
 
-            exit('Cannot connect to database');
+            throw new \Exception($e);
         }
     }
 

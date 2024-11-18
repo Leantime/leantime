@@ -32,7 +32,6 @@ class HttpKernel extends Kernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \Leantime\Core\Middleware\TrustProxies::class,
-        \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\InitialHeaders::class,
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
@@ -44,6 +43,7 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \Leantime\Core\Middleware\Auth::class,
         \Leantime\Core\Middleware\ApiAuth::class,
+        \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\Localization::class,
         \Leantime\Core\Middleware\CurrentProject::class,
         \Leantime\Core\Middleware\LoadPlugins::class,

@@ -134,7 +134,6 @@ return [
         | specified when running a cache operation inside the application.
         |
         */
-
         'default' => 'installation',
 
         /*
@@ -179,7 +178,7 @@ return [
         | that reason, you may prefix every cache key to avoid collisions.
         |
         */
-        'prefix' => 'leantime_cache_',
+        'prefix' => '',
 
     ],
     'session' => [
@@ -395,23 +394,6 @@ return [
         'compiled' => realpath(storage_path('framework/views')),
 
     ],
-    'redis' => [
-        'client' => 'phpredis',
-        'options' => [
-            'cluster' => 'redis',
-            'context' => [],
-            'compression' => 3, // Redis::COMPRESSION_LZ4
-        ],
-        'default' => [
-            'url' => env('LEAN_REDIS_URL', ''),
-            'scheme' => env('LEAN_REDIS_SCHEME', 'tls'),
-            'host' => env('LEAN_REDIS_HOST', '127.0.0.1'),
-            'password' => env('LEAN_REDIS_PASSWORD', null),
-            'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
-            'database' => '0',
-            'prefix' => 'leantime_cache',
-        ],
-    ],
     'database' => [
         'default' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
         /*
@@ -460,5 +442,34 @@ return [
                 ]) : [],
             ],
         ],
+
     ],
+
+    /*
+       |--------------------------------------------------------------------------
+       | Redis Databases
+       |--------------------------------------------------------------------------
+       |
+       | Redis is an open source, fast, and advanced key-value store that also
+       | provides a richer body of commands than a typical key-value system
+       | such as Memcached. You may define your connection settings here.
+       |
+    */
+    'redis' => [
+        'client' => 'phpredis',
+        'options' => [
+            'cluster' => 'redis',
+            'context' => [],
+            'compression' => 3, // Redis::COMPRESSION_LZ4
+        ],
+        'default' => [
+            'url' => env('LEAN_REDIS_URL', ''),
+            'scheme' => env('LEAN_REDIS_SCHEME', 'tls'),
+            'host' => env('LEAN_REDIS_HOST', '127.0.0.1'),
+            'password' => env('LEAN_REDIS_PASSWORD', null),
+            'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
+            'database' => '0',
+        ],
+    ],
+
 ];
