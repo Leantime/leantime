@@ -330,7 +330,7 @@ class Fileupload
     /**
      * displayImageFile - display image file
      */
-    public function displayImageFile(string $imageName, string $fullPath = ''): Response
+    public function displayImageFile(string $imageName, string $fullPath = '', $allowSvg = false): Response
     {
         $mimes = [
             'jpg' => 'image/jpg',
@@ -338,6 +338,10 @@ class Fileupload
             'gif' => 'image/gif',
             'png' => 'image/png',
         ];
+
+        if ($allowSvg) {
+            $mimes['svg'] = 'image/svg+xml';
+        }
 
         $responseFailure = new Response(file_get_contents(ROOT.'/dist/images/doc.png'));
         $sLastModified = filemtime(ROOT.'/dist/images/doc.png');
@@ -387,7 +391,12 @@ class Fileupload
         $path_parts = pathinfo($fullPath);
         $ext = $path_parts['extension'];
 
-        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png'])) {
+        $fileExtensions = ['jpg', 'jpeg', 'gif', 'png'];
+        if ($allowSvg) {
+            $fileExtensions[] = 'svg';
+        }
+
+        if (! in_array($ext, $fileExtensions)) {
             throw new HttpResponseException($responseFailure);
         }
 
