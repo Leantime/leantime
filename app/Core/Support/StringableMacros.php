@@ -2,27 +2,23 @@
 
 namespace Leantime\Core\Support;
 
-use Illuminate\Support\Stringable;
-
-/** @mixin \Illuminate\Support\Stringable
- *
- * @method static Stringable this()
- * */
+use Illuminate\Support\Str;
+/**
+ * @mixin \Illuminate\Support\Stringable
+ */
 class StringableMacros
 {
     /**
-     * Returns an alphanumeric string with all special characters stripped
+     * Cleans a string by removing special characters and optionally spaces.
      *
-     * @return \Closure
+     * @param bool $removeSpaces Whether to remove spaces from the string.
+     * @return callable A function that cleans a string based on the given parameter.
      */
     public function alphaNumeric($removeSpaces = false)
     {
-
         return function () use ($removeSpaces) {
-
-            // Step 1: Remove all special characters except letters and digits
-            /** @var Stringable $this */
-            $cleaned = preg_replace('/[^A-Za-z0-9 ]/', '', $this->value);
+            /** @var \Illuminate\Support\Stringable $this */
+            $cleaned = preg_replace('/[^A-Za-z0-9 ]/', '', (string) $this);
 
             if ($removeSpaces) {
                 $cleaned = str_replace(' ', '', $cleaned);
@@ -34,7 +30,7 @@ class StringableMacros
             // Step 3: Trim leading and trailing spaces
             $cleaned = trim($cleaned);
 
-            return new self($cleaned);
+            return $cleaned;
         };
 
     }
