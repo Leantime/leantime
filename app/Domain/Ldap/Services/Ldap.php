@@ -263,15 +263,15 @@ class Ldap
             Log::debug("LEANTIME: Testing the logging\n");
 
             Log::debug("LEANTIME: >>>Attributes Begin>>>>>>\n");
-            Log::debug("LEANTIME: fn $firstname", 0);
-            Log::debug("LEANTIME: sn $lastname", 0);
-            Log::debug("LEANTIME: phone $phone", 0);
-            Log::debug("LEANTIME: role $role", 0);
-            Log::debug("LEANTIME: username $uname ", 0);
-            Log::debug("LEANTIME: jobTitle $jobTitle ", 0);
-            Log::debug("LEANTIME: jobLevel $jobLevel ", 0);
-            Log::debug("LEANTIME: department $department ", 0);
-            Log::debug("LEANTIME: >>>Attributes End>>>>>>\n", 0);
+            Log::debug("LEANTIME: fn $firstname");
+            Log::debug("LEANTIME: sn $lastname");
+            Log::debug("LEANTIME: phone $phone");
+            Log::debug("LEANTIME: role $role");
+            Log::debug("LEANTIME: username $uname ");
+            Log::debug("LEANTIME: jobTitle $jobTitle ");
+            Log::debug("LEANTIME: jobLevel $jobLevel ");
+            Log::debug("LEANTIME: department $department ");
+            Log::debug("LEANTIME: >>>Attributes End>>>>>>\n");
         }
 
         return [
