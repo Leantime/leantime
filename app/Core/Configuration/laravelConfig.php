@@ -93,8 +93,7 @@ return [
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                // Add the Sentry log channel to the stack
-                'channels' => ['single', 'sentry'],
+                'channels' => ['single'],
             ],
             'single' => [
                 'driver' => 'daily',
@@ -113,11 +112,6 @@ return [
                 'emoji' => ':boom:',
                 'level' => 'critical',
                 'replace_placeholders' => true,
-            ],
-            'sentry' => [
-                'driver' => 'sentry',
-                'level' => 'error',
-                'bubble' => true,
             ],
         ],
         'default' => 'stack',

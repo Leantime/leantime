@@ -69,6 +69,12 @@ class LoadConfig extends LoadConfiguration
                 //Additional adjustments
                 $finalConfig->set('APP_DEBUG', $finalConfig->get('debug') ? true : false);
 
+                if (preg_match('/.+\/$/', $finalConfig->get('appUrl'))) {
+                    $url = rtrim($finalConfig->get('appUrl'), '/');
+                    $finalConfig->set('appUrl', $url);
+                    $finalConfig->set('app.url', $url);
+                }
+
                 $this->setBaseConstants($finalConfig->get('appUrl'), $app);
 
                 if ($finalConfig->get('app.url') == '') {
@@ -76,6 +82,7 @@ class LoadConfig extends LoadConfiguration
                     $finalConfig->set('app.url', $url);
                 }
 
+                //Handle trailing slashes
                 return $finalConfig;
             });
         }
@@ -115,14 +122,14 @@ class LoadConfig extends LoadConfiguration
                 define('BASE_URL', $appUrl);
 
             } else {
-                define('BASE_URL', request()->getSchemeAndHttpHost());
+                define('BASE_URL', ! empty($app['request']) ? $app['request']->getSchemeAndHttpHost() : 'http://localhost');
             }
         }
 
         putenv('APP_URL='.$appUrl);
 
         if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', BASE_URL.request()->getRequestUri());
+            define('CURRENT_URL', ! empty($app['request']) ? BASE_URL.$app['request']->getRequestUri() : 'http://localhost');
         }
 
     }
