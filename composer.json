@@ -103,7 +103,8 @@
         "zebra-north/phpcs-short-types": "^1.0",
         "laravel/pint": "^1.17",
         "phpstan/phpstan": "^1.10",
-        "leantime/leantime-documentor": "dev-main"
+        "leantime/leantime-documentor": "dev-main",
+        "larastan/larastan": "^2.9"
 
     },
     "provide": {

@@ -2,7 +2,12 @@
 
 namespace Leantime\Core\Support;
 
-/** @mixin \Illuminate\Support\Stringable */
+use Illuminate\Support\Stringable;
+
+/** @mixin \Illuminate\Support\Stringable
+ *
+ * @method static Stringable this()
+ * */
 class StringableMacros
 {
     /**
@@ -16,6 +21,7 @@ class StringableMacros
         return function () use ($removeSpaces) {
 
             // Step 1: Remove all special characters except letters and digits
+            /** @var Stringable $this */
             $cleaned = preg_replace('/[^A-Za-z0-9 ]/', '', $this->value);
 
             if ($removeSpaces) {
