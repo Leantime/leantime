@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Support;
 
-use Illuminate\Support\Str;
 /**
  * @mixin \Illuminate\Support\Stringable
  */
@@ -11,7 +10,7 @@ class StringableMacros
     /**
      * Cleans a string by removing special characters and optionally spaces.
      *
-     * @param bool $removeSpaces Whether to remove spaces from the string.
+     * @param  bool  $removeSpaces  Whether to remove spaces from the string.
      * @return callable A function that cleans a string based on the given parameter.
      */
     public function alphaNumeric($removeSpaces = false)
