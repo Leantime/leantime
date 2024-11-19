@@ -1,3 +1,23 @@
+# Version: 3.3.1
+
+* [9285883](https://github.com/Leantime/leantime/commit/9285883d0c950d25add07dd6a5aa7d0bed421ee2): Update StringableMacros.php
+* [138de0e](https://github.com/Leantime/leantime/commit/138de0e8190f9835cb4941495ff34776097af32d): update comments for phpstan
+* [671794b](https://github.com/Leantime/leantime/commit/671794ba695331b245a40460f5ad0e1ca6029790): mixin updates
+* [ab23d11](https://github.com/Leantime/leantime/commit/ab23d119581765559d6fd909b7fd652deb02212d): Adding comments for phpstan
+* [4eabdb1](https://github.com/Leantime/leantime/commit/4eabdb19e840ebc49a27be99b2734525fdda149c): Resolving open basedir restrictions with font files in avatar generation scripts
+* [c4032e0](https://github.com/Leantime/leantime/commit/c4032e009751aba406e331ce18234a33cc212d9a): Version bump
+* [1875f07](https://github.com/Leantime/leantime/commit/1875f07c912e4e1d5f36499ad709c6b8beebb756): code style fixes
+* [8ad64a6](https://github.com/Leantime/leantime/commit/8ad64a64c0b65b12d41c1091ff420ec4a284a717): Update .gitignore
+* [99357d0](https://github.com/Leantime/leantime/commit/99357d001372721773a3614d3a122c2ce9717299): Deprecate configuration.php file and create backward support
+* [cbc8aff](https://github.com/Leantime/leantime/commit/cbc8affd3ff4a03efb03c3554be3fd2bb6a45b0d): Ensure current project is selected for new sprints
+* [6da255a](https://github.com/Leantime/leantime/commit/6da255a3824a40aaf564424d2b50a262f5d65915): Fix debug calls in ldap service
+* [e1f8943](https://github.com/Leantime/leantime/commit/e1f8943b75beeb38f6c0aad335ca7060f7b05bc8): code style fixes
+* [9aa3ffb](https://github.com/Leantime/leantime/commit/9aa3ffb1d389af0508c7956d9f8df099cb936447): code style fixes
+* [ded3cac](https://github.com/Leantime/leantime/commit/ded3cac475d630c0f7f8f26eb509c1e9e394ff58): Fix constant url handling
+* [60ed1c1](https://github.com/Leantime/leantime/commit/60ed1c16a2954e3185d60d5ecc2ca1d528f8453c): Move BASE_URL set to config bootstrap to fix mixed url issue #2787
+* [beccd6c](https://github.com/Leantime/leantime/commit/beccd6c1ec6f17f0bb1767329c7971774ab54019): Fixing cache pre-fix issues when using redis cluster
+
+
 # Version: 3.3.0
 
 * [7b11f85](https://github.com/Leantime/leantime/commit/7b11f8537a7df673b0a7ec778a57cc41ad20733a): Delete changelog.yml
