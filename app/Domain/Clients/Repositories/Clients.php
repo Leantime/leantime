@@ -71,11 +71,9 @@ namespace Leantime\Domain\Clients\Repositories {
             
             $stmn->closeCursor();
 
-            if ($row !== false && count($row) > 0) {
-                // $this->name = $row['name'];
+            if ($row !== false) {
                 $this->name = $row->name;
 
-                // $this->id = $row['id'];
                 $this->id = $row->id;
 
                 return $row;
@@ -106,12 +104,10 @@ namespace Leantime\Domain\Clients\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            // $values = $stmn->fetchAll();
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, ClientsModel::class);
             
             $stmn->closeCursor();
-            // print_r($values);
 
             return $values;
         }
@@ -144,8 +140,9 @@ namespace Leantime\Domain\Clients\Repositories {
 			name = :name AND street = :street LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-            $stmn->bindValue(':street', $values['street'], PDO::PARAM_STR);
+
+            $stmn->bindValue(':name', $values->name, PDO::PARAM_STR);
+            $stmn->bindValue(':street', $values->street, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -178,8 +175,8 @@ namespace Leantime\Domain\Clients\Repositories {
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
 
             $stmn->execute();
-            $values = $stmn->fetchAll(PDO::FETCH_CLASS, ClientsModel::class);
-            // $values = $stmn->fetchAll();
+            // might need to replace with UserModel Class
+            $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
             return $values;
@@ -188,7 +185,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * addClient - add a client and postback test
          */
-        public function addClient(array $values): false|string
+        public function addClient(object $values): false|string
         {
 
             $sql = 'INSERT INTO zp_clients (
@@ -198,15 +195,16 @@ namespace Leantime\Domain\Clients\Repositories {
 				)';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-            $stmn->bindValue(':street', $values['street'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':zip', $values['zip'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':city', $values['city'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':state', $values['state'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':country', $values['country'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':internet', $values['internet'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':email', $values['email'] ?? '', PDO::PARAM_STR);
+
+            $stmn->bindValue(':name', $values->name, PDO::PARAM_STR);
+            $stmn->bindValue(':street', $values->street ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':zip', $values->zip ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':city', $values->city ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':state', $values->state ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':country', $values->country ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':phone', $values->phone ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':internet', $values->internet ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':email', $values->email ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
 
@@ -219,7 +217,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * editClient - edit a client
          */
-        public function editClient(array $values, $id): bool
+        public function editClient(object $values, $id): bool
         {
 
             $query = 'UPDATE zp_clients SET
@@ -235,15 +233,15 @@ namespace Leantime\Domain\Clients\Repositories {
 			 WHERE id = :id LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':name', $values['name'], PDO::PARAM_STR);
-            $stmn->bindValue(':street', $values['street'], PDO::PARAM_STR);
-            $stmn->bindValue(':zip', $values['zip'], PDO::PARAM_STR);
-            $stmn->bindValue(':city', $values['city'], PDO::PARAM_STR);
-            $stmn->bindValue(':state', $values['state'], PDO::PARAM_STR);
-            $stmn->bindValue(':country', $values['country'], PDO::PARAM_STR);
-            $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
-            $stmn->bindValue(':internet', $values['internet'], PDO::PARAM_STR);
-            $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
+            $stmn->bindValue(':name', $values->name, PDO::PARAM_STR);
+            $stmn->bindValue(':street', $values->street, PDO::PARAM_STR);
+            $stmn->bindValue(':zip', $values->zip, PDO::PARAM_STR);
+            $stmn->bindValue(':city', $values->city, PDO::PARAM_STR);
+            $stmn->bindValue(':state', $values->state, PDO::PARAM_STR);
+            $stmn->bindValue(':country', $values->country, PDO::PARAM_STR);
+            $stmn->bindValue(':phone', $values->phone, PDO::PARAM_STR);
+            $stmn->bindValue(':internet', $values->internet, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $values->email, PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $result = $stmn->execute();
