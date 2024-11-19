@@ -34,7 +34,7 @@ class Details extends Controller
         );
 
         if (! $plugin) {
-            return $this->tpl->display('error.error404', 'blank');
+            return $this->tpl->display('errors.error404', 'blank');
         }
 
         $this->tpl->assign('plugin', $plugin);

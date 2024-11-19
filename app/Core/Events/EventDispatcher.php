@@ -10,15 +10,18 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Leantime\Core\Controller\Frontcontroller;
 
 /**
  * EventDispatcher class - Handles all events and filters
  */
 class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatcher
 {
+    use Macroable;
     use ReflectsClosures;
 
     /**
@@ -267,6 +270,8 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
                 'current_route' => currentRoute(),
             ];
         }
+
+        $default_params['currentEvent'] = $eventName;
 
         $finalParams = [];
 
@@ -627,6 +632,19 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
         return $halt ? null : $responses;
         */
+    }
+    /**
+     * Get all of the listeners for a given event name.
+     *
+     * @param  string  $eventName
+     * @return array
+     */
+    public function getListeners($eventName)
+    {
+        $listeners = $this->findEventListeners($eventName, $this->getEventRegistry());
+        $list = array_map(fn ($item) => $item['handler'], $listeners);
+
+        return $list;
     }
 
     /**

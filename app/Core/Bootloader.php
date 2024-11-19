@@ -64,7 +64,6 @@ class Bootloader
         //Capture the request and instantiate the correct type
         $request = IncomingRequest::capture();
 
-
         //Use the right kernel for the job and handle the request.
         $this->handleRequest($request);
 

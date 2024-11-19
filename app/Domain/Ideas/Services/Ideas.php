@@ -57,6 +57,7 @@ namespace Leantime\Domain\Ideas\Services {
             $ideas = $this->ideasRepository->getAllIdeas();
 
             foreach ($ideas as $key => $idea) {
+                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
                 $ideas[$key]['id'] = $idea['id'].'-'.$idea['modified'];
             }
 

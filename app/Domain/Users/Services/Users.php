@@ -22,6 +22,16 @@ namespace Leantime\Domain\Users\Services {
     {
         use DispatchesEvents;
 
+        private UserRepository $userRepo;
+
+        private LanguageCore $language;
+
+        private ProjectRepository $projectRepository;
+
+        private ClientRepository $clientRepo;
+
+        private AuthService $authService;
+
         public function __construct(
             protected UserRepository $userRepo,
             protected LanguageCore $language,

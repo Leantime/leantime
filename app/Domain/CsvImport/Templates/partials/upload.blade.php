@@ -21,7 +21,7 @@ use Leantime\Core\Fileupload;
 
         <div class="extra" style="margin-top:5px;"></div>
         <div class="fileUploadDrop">
-            <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
+            <p><i><?= $tpl->__('text.drop_files'); ?></i></p>
             <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
         </div>
 
@@ -47,7 +47,7 @@ use Leantime\Core\Fileupload;
             debug: false,
             autoProceed: true,
             restrictions: {
-                maxFileSize: <?=$maxSize?>
+                maxFileSize: <?= $maxSize?>
             }
         });
 

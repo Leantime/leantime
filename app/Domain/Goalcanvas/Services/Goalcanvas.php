@@ -300,11 +300,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $goals = $this->goalRepository->getAllAccountGoals();
 
             foreach ($goals as $key => $goal) {
+                $goals[$key] = $this->prepareDatesForApiResponse($goal);
                 $goals[$key]['id'] = $goal['id'].'-'.$goal['modified'];
             }
 
             return $goals;
         }
+
 
         /**
          * Retrieves the related labels for the goal canvas.

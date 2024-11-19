@@ -199,6 +199,7 @@ leantime.editorController = (function () {
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
+                browser_spellcheck: true,
                 toolbar_location: 'bottom',
                 branding: false,
                 statusbar: false,
@@ -248,6 +249,8 @@ leantime.editorController = (function () {
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
                 autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
                 autosave_restore_when_empty: true,
+                browser_spellcheck: true,
+                contextmenu: false,
                 autosave_retention: '120m',
                 autosave_interval: '10s',
                 autosave_ask_before_unload: false,
@@ -322,6 +325,8 @@ leantime.editorController = (function () {
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
                 toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
                 toolbar_location: 'bottom',
+                browser_spellcheck: true,
+                contextmenu: false,
                 autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
                 autosave_restore_when_empty: true,
                 autosave_retention: '120m',
@@ -378,11 +383,43 @@ leantime.editorController = (function () {
         );
     };
 
+    var initContentEditable = function (id) {
+
+        jQuery(id).tinymce(
+            {
+                // General options
+                width: "100%",
+                skin_url: skin_url,
+                inline: true,
+                plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
+                toolbar : "",
+                toolbar_location: 'bottom',
+                browser_spellcheck: true,
+                contextmenu: false,
+                branding: false,
+                statusbar: false,
+                convert_urls: true,
+                paste_data_images: true,
+                menubar:false,
+                relative_urls : true,
+                document_base_url : leantime.appUrl + "/",
+                default_link_target: '_blank',
+                table_appearance_options: false,
+                mentions: mentionsConfig,
+                textpattern_patterns: markDownTextPatterns,
+                images_upload_handler: imageUploadHandler,
+                file_picker_callback: filePickerCallback,
+                setup: editorSetup
+            }
+        );
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initSimpleEditor:initSimpleEditor,
         initComplexEditor:initComplexEditor,
-        initNotesEditor:initNotesEditor
+        initNotesEditor:initNotesEditor,
+        initContentEditable:initContentEditable
     };
 
 })();

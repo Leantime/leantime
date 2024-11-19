@@ -28,7 +28,7 @@
 
         </a>
 
-        <div class='dropdown-menu p-m' id='newsDropdown'>
+        <div class='dropdown-menu p-m h-screen overflow-y-auto' id='newsDropdown'>
             <div class="htmx-indicator">
                 <x-global::elements.loadingText type="text" count="3" includeHeadline="true" />
             </div>
@@ -93,7 +93,7 @@
                                     {{ format($notif['datetime'])->date() }}
                                     {{ format($notif['datetime'])->time() }}
                                 </span>
-                                <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
+                                <span class="notificationTitle">{!! strip_tags($tpl->convertRelativePaths($notif['message'])) !!}</span>
                             </a>
                         </li>
                     @endforeach
@@ -124,7 +124,7 @@
                                     {{ format($notif['datetime'])->date() }}
                                     {{ format($notif['datetime'])->time() }}
                                 </span>
-                                <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
+                                <span class="notificationTitle">{!! strip_tags($tpl->convertRelativePaths($notif['message'])) !!}</span>
                             </a>
                         </li>
                     @endforeach

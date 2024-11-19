@@ -2,10 +2,17 @@
 
 namespace Leantime\Core\Http;
 
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Facade;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
 
 class HttpKernel extends Kernel
 {
+    use DispatchesEvents;
+
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
         \Leantime\Core\Bootstrap\LoadConfig::class,
@@ -25,7 +32,6 @@ class HttpKernel extends Kernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \Leantime\Core\Middleware\TrustProxies::class,
-        \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\InitialHeaders::class,
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
@@ -35,6 +41,7 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Leantime\Core\Middleware\LoadPlugins::class,
     ];
 
     /**
@@ -47,12 +54,17 @@ class HttpKernel extends Kernel
             \Leantime\Core\Middleware\Auth::class,
             \Leantime\Core\Middleware\Localization::class,
             \Leantime\Core\Middleware\CurrentProject::class,
+            \Leantime\Core\Middleware\SetCacheHeaders::class,
+
         ],
         'api' => [
             \Leantime\Core\Middleware\ApiAuth::class,
+            \Leantime\Core\Middleware\SetCacheHeaders::class,
+
         ],
         'hx' => [
             \Leantime\Core\Middleware\Auth::class,
+            \Leantime\Core\Middleware\SetCacheHeaders::class,
             \Leantime\Core\Middleware\Localization::class,
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
@@ -78,4 +90,13 @@ class HttpKernel extends Kernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    public function terminate($request, $response)
+    {
+
+        self::dispatchEvent('request_terminated', [$request, $response]);
+
+        parent::terminate($request, $response);
+
+    }
 }

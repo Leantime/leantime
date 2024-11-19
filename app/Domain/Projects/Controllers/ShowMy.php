@@ -11,15 +11,16 @@ namespace Leantime\Domain\Projects\Controllers {
     {
         private ProjectService $projectService;
 
+        private TicketService $ticketService;
+
+        private ReportService $reportService;
+
+        private CommentService $commentService;
+
         private ClientRepository $clientRepo;
 
         private Menu $menuService;
 
-        /**
-         * @param  TicketService  $ticketService
-         * @param  ReportService  $reportService
-         * @param  CommentService  $commentService
-         */
         public function init(
             ProjectService $projectService,
             ClientRepository $clientRepo,

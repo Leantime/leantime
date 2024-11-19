@@ -6,6 +6,7 @@ use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\UI\Template;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,9 @@ abstract class HtmxController
 
         /** @var Template $tpl */
         public Template $tpl,
+
+        /** @var Template $tpl */
+        public Language $language,
 
     ) {
         self::dispatchEvent('begin');
