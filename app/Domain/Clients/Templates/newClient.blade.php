@@ -38,7 +38,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="name"
                                     id="name"
-                                    value="{{ $tpl->escape($values['name']) }}"
+                                    value="{{ $tpl->escape($values->name) }}"
                                     labelText="{{ __('label.name') }}"
                                     class="form-control"
                                 />
@@ -49,7 +49,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="email"
                                     id="email"
-                                    value="{{ $tpl->escape($values['email']) }}"
+                                    value="{{ $tpl->escape($values->email) }}"
                                     labelText="{{ __('label.email') }}"
                                     class="form-control"
                                 />
@@ -60,7 +60,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="internet"
                                     id="internet"
-                                    value="{{ $tpl->escape($values['internet']) }}"
+                                    value="{{ $tpl->escape($values->internet) }}"
                                     labelText="{{ __('label.url') }}"
                                     class="form-control"
                                 />
@@ -71,7 +71,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="street"
                                     id="street"
-                                    value="{{ $tpl->escape($values['street']) }}"
+                                    value="{{ $tpl->escape($values->street) }}"
                                     labelText="{{ __('label.street') }}"
                                     class="form-control"
                                 />
@@ -82,7 +82,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="zip"
                                     id="zip"
-                                    value="{{ $tpl->escape($values['zip']) }}"
+                                    value="{{ $tpl->escape($values->zip) }}"
                                     labelText="{{ __('label.zip') }}"
                                     class="form-control"
                                 />
@@ -93,7 +93,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="city"
                                     id="city"
-                                    value="{{ $tpl->escape($values['city']) }}"
+                                    value="{{ $tpl->escape($values->city) }}"
                                     labelText="{{ __('label.city') }}"
                                     class="form-control"
                                 />
@@ -104,7 +104,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="state"
                                     id="state"
-                                    value="{{ $tpl->escape($values['state']) }}"
+                                    value="{{ $tpl->escape($values->state) }}"
                                     labelText="{{ __('label.state') }}"
                                     class="form-control"
                                 />
@@ -115,7 +115,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="country"
                                     id="country"
-                                    value="{{ $tpl->escape($values['country']) }}"
+                                    value="{{ $tpl->escape($values->country) }}"
                                     labelText="{{ __('label.country') }}"
                                     class="form-control"
                                 />
@@ -126,7 +126,7 @@ $values = $tpl->get('values');
                                     inputType="text"
                                     name="phone"
                                     id="phone"
-                                    value="{{ $tpl->escape($values['phone']) }}"
+                                    value="{{ $tpl->escape($values->phone) }}"
                                     labelText="{{ __('label.phone') }}"
                                     class="form-control"
                                 />
@@ -135,7 +135,7 @@ $values = $tpl->get('values');
                             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
                             <div class="form-group">
-                                <div class="span4 control-label">
+                                <div class="mt-4 span4 control-label">
                                     <x-global::forms.button
                                         type="submit"
                                         name="save"
@@ -143,6 +143,14 @@ $values = $tpl->get('values');
                                         class="btn btn-primary"
                                     >
                                         {{ __('buttons.save') }}
+                                    </x-global::forms.button>
+
+                                    <x-global::forms.button 
+                                        tag="a" 
+                                        href="/clients/showAll" 
+                                        class="btn btn-secondary"
+                                    >
+                                        {{ __('buttons.cancel') }}
                                     </x-global::forms.button>
                                 </div>
                                 <div class="span6">
@@ -159,3 +167,5 @@ $values = $tpl->get('values');
         </div>
     </div>
 </div>
+
+@endsection

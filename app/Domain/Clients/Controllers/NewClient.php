@@ -12,6 +12,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Symfony\Component\HttpFoundation\Response;
 
     class NewClient extends Controller
     {
@@ -22,23 +23,24 @@ namespace Leantime\Domain\Clients\Controllers {
         /**
          * init - initialize private variables
          */
-        public function init(ClientRepository $clientRepo, UserRepository $user)
-        {
-
+        public function init(
+            ClientRepository $clientRepo, 
+            UserRepository $user
+        ){
             $this->clientRepo = $clientRepo;
             $this->user = $user;
         }
 
         /**
-         * run - display template and edit data
+         * get - display template and provide empty values object
          */
-        public function run()
+        public function get(): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
-                $values = [
+                $values = (object) [
                     'name' => '',
                     'street' => '',
                     'zip' => '',
@@ -50,20 +52,49 @@ namespace Leantime\Domain\Clients\Controllers {
                     'email' => '',
                 ];
 
+                $this->tpl->assign('values', $values);
+
+                return $this->tpl->display('clients.newClient');
+            } else {
+                return $this->tpl->display('errors.error403', responseCode: 403);
+            }
+        }
+
+        /**
+         * post - display template and save data
+         */
+        public function post($params): Response
+        {
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
+            //Only admins
+            if (Auth::userIsAtLeast(Roles::$admin)) {
+                $values = (object) [
+                    'name' => '',
+                    'street' => '',
+                    'zip' => '',
+                    'city' => '',
+                    'state' => '',
+                    'country' => '',
+                    'phone' => '',
+                    'internet' => '',
+                    'email' => '',
+                ];
+                
                 if (isset($_POST['save']) === true) {
-                    $values = [
-                        'name' => ($_POST['name']),
-                        'street' => ($_POST['street']),
-                        'zip' => ($_POST['zip']),
-                        'city' => ($_POST['city']),
-                        'state' => ($_POST['state']),
-                        'country' => ($_POST['country']),
-                        'phone' => ($_POST['phone']),
-                        'internet' => ($_POST['internet']),
-                        'email' => ($_POST['email']),
+                    $values = (object) [
+                        'name' => ($params['name']),
+                        'street' => ($params['street']),
+                        'zip' => ($params['zip']),
+                        'city' => ($params['city']),
+                        'state' => ($params['state']),
+                        'country' => ($params['country']),
+                        'phone' => ($params['phone']),
+                        'internet' => ($params['internet']),
+                        'email' => ($params['email']),
                     ];
 
-                    if ($values['name'] !== '') {
+                    if ($values->name !== '') {
                         if ($this->clientRepo->isClient($values) !== true) {
                             $id = $this->clientRepo->addClient($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');

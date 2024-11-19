@@ -74,3 +74,5 @@
     <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>
+
+@endsection

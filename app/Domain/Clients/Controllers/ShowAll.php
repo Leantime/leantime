@@ -10,6 +10,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Symfony\Component\HttpFoundation\Response;
 
     class ShowAll extends Controller
     {
@@ -25,9 +26,9 @@ namespace Leantime\Domain\Clients\Controllers {
         }
 
         /**
-         * run - display template and edit data
+         * get - display template and edit data
          */
-        public function run()
+        public function get():Response
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
