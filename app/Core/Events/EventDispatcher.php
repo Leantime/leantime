@@ -75,6 +75,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             'isWild' => $isWild];
     }
 
+
     //Support laravel event listeners
     public function listen($events, $listener = null)
     {
