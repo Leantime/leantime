@@ -18,6 +18,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Symfony\Component\HttpFoundation\Response;
 
     class ShowClient extends Controller
     {
@@ -52,17 +53,15 @@ namespace Leantime\Domain\Clients\Controllers {
             }
         }
 
-        /**
-         * run - display template and edit data
-         */
-        public function run()
+
+        public function get($params): Response
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $id = '';
 
-            if (isset($_GET['id']) === true) {
-                $id = (int) ($_GET['id']);
+            if (isset($params['id']) === true) {
+                $id = (int) ($params['id']);
             }
 
             $row = $this->clientRepo->getClient($id);
@@ -70,20 +69,79 @@ namespace Leantime\Domain\Clients\Controllers {
             if ($row === false) {
                 $this->tpl->display('errors.error404');
 
-                return;
+                return $this->tpl->display('errors.error403');
             }
 
-            $clientValues = [
-                'id' => $row['id'],
-                'name' => $row['name'],
-                'street' => $row['street'],
-                'zip' => $row['zip'],
-                'city' => $row['city'],
-                'state' => $row['state'],
-                'country' => $row['country'],
-                'phone' => $row['phone'],
-                'internet' => $row['internet'],
-                'email' => $row['email'],
+            $clientValues = (object) [
+                'id' => $row->id,
+                'name' => $row->name,
+                'street' => $row->street,
+                'zip' => $row->zip,
+                'city' => $row->city,
+                'state' => $row->state,
+                'country' => $row->country,
+                'phone' => $row->phone,
+                'internet' => $row->internet,
+                'email' => $row->email,
+            ];
+
+
+            if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
+                $file = app()->make(FileRepository::class);
+                $project = app()->make(ProjectRepository::class);
+
+                if (session('userdata.role') == 'admin') {
+                    $this->tpl->assign('admin', true);
+                }
+
+                $this->tpl->assign('userClients', $this->clientRepo->getClientsUsers($id));
+                $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
+                $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
+                $this->tpl->assign('client', $clientValues);
+                $this->tpl->assign('users', app()->make(UserRepository::class));
+                $this->tpl->assign('clientProjects', $project->getClientProjects($id));
+                $this->tpl->assign('files', $file->getFilesByModule('client', $id));
+
+                return $this->tpl->display('clients.showClient');
+            } else {
+                return $this->tpl->display('errors.error403');
+            }
+        }
+
+
+        /**
+         * post - display template and edit data
+         */
+        public function post($params)
+        {
+
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
+
+            $id = '';
+
+            if (isset($params['id']) === true) {
+                $id = (int) ($params['id']);
+            }
+
+            $row = $this->clientRepo->getClient($id);
+
+            if ($row === false) {
+                $this->tpl->display('errors.error404');
+
+                return $this->tpl->display('errors.error404');
+            }
+
+            $clientValues = (object) [
+                'id' => $row->id,
+                'name' => $row->name,
+                'street' => $row->street,
+                'zip' => $row->zip,
+                'city' => $row->city,
+                'state' => $row->state,
+                'country' => $row->country,
+                'phone' => $row->phone,
+                'internet' => $row->internet,
+                'email' => $row->email,
             ];
 
             if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
@@ -118,7 +176,7 @@ namespace Leantime\Domain\Clients\Controllers {
 
                 //Add comment
                 if (isset($_POST['comment']) === true) {
-                    if ($this->commentService->addComment($_POST, 'client', $id, $row)) {
+                    if ($this->commentService->addComment($_POST, 'client', $id)) {
                         $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
                     } else {
                         $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
@@ -126,20 +184,20 @@ namespace Leantime\Domain\Clients\Controllers {
                 }
 
                 if (isset($_POST['save']) === true) {
-                    $clientValues = [
-                        'id' => $row['id'],
-                        'name' => $_POST['name'],
-                        'street' => $_POST['street'],
-                        'zip' => $_POST['zip'],
-                        'city' => $_POST['city'],
-                        'state' => $_POST['state'],
-                        'country' => $_POST['country'],
-                        'phone' => $_POST['phone'],
-                        'internet' => $_POST['internet'],
-                        'email' => $_POST['email'],
+                    $clientValues = (object) [
+                        'id' => $row->id,
+                        'name' => $params['name'],
+                        'street' => $params['street'],
+                        'zip' => $params['zip'],
+                        'city' => $params['city'],
+                        'state' => $params['state'],
+                        'country' => $params['country'],
+                        'phone' => $params['phone'],
+                        'internet' => $params['internet'],
+                        'email' => $params['email'],
                     ];
 
-                    if ($clientValues['name'] !== '') {
+                    if ($clientValues->name !== '') {
                         $this->clientRepo->editClient($clientValues, $id);
 
                         $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
