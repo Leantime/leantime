@@ -1,16 +1,20 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
-    "version": "3.2.1",
+    "version": "4.0.0",
     "type": "project",
+    "license": "AGPL-3.0",
     "config": {
         "platform-check": false,
-        "platform": {},
+        "platform": {
+            "php": "8.2.0"
+        },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "metasyntactical/composer-plugin-license-check": true,
             "php-http/discovery": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "wikimedia/composer-merge-plugin": true
         }
     },
     "authors": [
@@ -27,8 +31,19 @@
     ],
     "require": {
         "ext-ldap": "*",
+        "ext-mysqli": "*",
         "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "ext-zip": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
+        "ext-bcmath": "*",
+        "ext-simplexml": "*",
+        "ext-phar": "*",
+        "ext-openssl": "*",
+        "ext-gd": "*",
         "ext-fileinfo": "*",
         "guzzlehttp/guzzle": "^7.9.2",
         "aws/aws-sdk-php": "^3.314",
@@ -64,7 +79,10 @@
         "symfony/var-dumper": "^6.2",
         "nikic/php-parser": "^4.17",
         "nesbot/carbon": "^2.72",
-        "spatie/icalendar-generator": "^2.6",
+        "predis/predis": "^2.2",
+        "sentry/sentry-laravel": "^4.8",
+        "symfony/http-client": "^6.2.4",
+        "symfony/psr-http-message-bridge": "^2.0",
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "predis/predis": "^2.2",
@@ -72,19 +90,24 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
-        "codeception/codeception": "^5.0",
+        "codeception/codeception": "^5.1",
         "codeception/module-phpbrowser": "*",
-        "codeception/module-asserts": "*",
+        "codeception/module-asserts": "^3.0",
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
+        "codeception/stub": "^4.1",
+        "codeception/module-laravel": "^3.1",
+        "codeception/module-rest": "^3.4",
         "phpcsstandards/phpcsextra": "^1.2.1",
         "zebra-north/phpcs-short-types": "^1.0",
+        "laravel/pint": "^1.17",
         "phpstan/phpstan": "^1.10",
         "phpstan/extension-installer": "^1.4",
         "codeception/stub": "^4.1",
         "laravel/pint": "^1.17",
         "symfony/http-client": "^6.2.4",
-        "symfony/psr-http-message-bridge": "^2.0"
+        "symfony/psr-http-message-bridge": "^2.0",
+        "leantime/leantime-documentor": "dev-main"
     },
     "provide": {
         "psr/container-implementation": "1.1|2.0",
@@ -142,6 +165,9 @@
         "psr-4": {
             "Leantime\\": [
                 "app/"
+            ],
+            "Unit\\": [
+                "tests/Unit/"
             ],
             "": "app/"
         },

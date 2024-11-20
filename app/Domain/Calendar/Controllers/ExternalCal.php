@@ -34,10 +34,10 @@ class ExternalCal extends Controller
      *
      * @throws BindingResolutionException
      */
-    public function run(): void
+    public function run($params): void
     {
 
-        $calId = $_GET['id'];
+        $calId = $params['id'];
 
         if (! session()->exists('calendarCache')) {
             session(['calendarCache' => []]);
@@ -49,14 +49,14 @@ class ExternalCal extends Controller
         } else {
             $cal = $this->calendarRepo->getExternalCalendar($calId, session('userdata.id'));
 
-            if (isset($cal["url"])) {
+            if (isset($cal['url'])) {
 
                 try {
-                    $content = $this->loadIcalUrl($cal["url"]);
-                    session(["calendarCache." . $calId . ".lastUpdate" => time()]);
-                    session(["calendarCache." . $calId . "content" => $content]);
-                }catch(\Exception $e) {
-                    $content = "";
+                    $content = $this->loadIcalUrl($cal['url']);
+                    session(['calendarCache.'.$calId.'.lastUpdate' => time()]);
+                    session(['calendarCache.'.$calId.'content' => $content]);
+                } catch (\Exception $e) {
+                    $content = '';
                 }
             }
         }

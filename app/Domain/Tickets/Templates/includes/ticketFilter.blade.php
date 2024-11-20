@@ -26,7 +26,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         <x-slot:cardContent>
             <!-- Filter Bar Content -->
             {{-- @dispatchTplEvent('filters.beforeFirstBarField') --}}
-    
+
             <div>
                 <x-global::forms.select name="users" id="userSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_user') }}"
@@ -41,7 +41,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="milestone" id="milestoneSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
@@ -56,7 +56,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="type" id="typeSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_type') }}"
@@ -71,7 +71,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="priority" id="prioritySelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_priority') }}"
@@ -86,7 +86,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.select name="searchStatus" id="statusSelect" variant='multiple'
                     data-placeholder="{{ __('input.placeholders.filter_by_status') }}">
@@ -103,13 +103,13 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     @endforeach
                 </x-global::forms.select>
             </div>
-    
+
             <div>
                 <x-global::forms.text-input name="termInput" id="termInput" :value="$searchCriteria['term']"
                     caption="{{ __('label.search_term') }}" placeholder="{{ __('label.search_term') }}"
                     style="width: 230px" />
             </div>
-    
+
             <div style="margin-top: 15px;">
                 <x-global::forms.button type="submit" name="search" class="btn btn-primary">
                     {{ __('buttons.search') }}
@@ -119,32 +119,9 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
     </x-global::actions.dropdown>
 
 
-    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
-    <x-global::actions.dropdown contentRole="ghost">
-        <x-slot:labelText>
-            {{ __('popover.group_by') }}
-            <span class="fa-solid fa-diagram-project"></span>
-            @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
-                <span class="badge badge-primary">1</span>
-            @endif
-            </button>
-        </x-slot:labelText>
 
-        <x-slot:menu>
-            @foreach ($groupBy as $input)
-                <x-global::actions.dropdown.item>
-                    <span>
-                        <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
-                            value="{{ $input['field'] }}" id="{{ $input['id'] }}"
-                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
-                        <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
-                    </span>
-                </x-global::actions.dropdown.item>
-            @endforeach
-        </x-slot:menu>
-    </x-global::actions.dropdown>
-    
-    @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
+
+    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
         <x-global::actions.dropdown contentRole="ghost">
             <x-slot:labelText>
                 {{ __('popover.group_by') }}
@@ -152,14 +129,14 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
                     <span class="badge badge-primary">1</span>
                 @endif
+                </button>
             </x-slot:labelText>
     
             <x-slot:menu>
                 @foreach ($groupBy as $input)
                     <x-global::actions.dropdown.item>
-                        <span class="radio">
-                            <input type="radio" name="groupBy"
-                                @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
+                        <span>
+                            <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                                 value="{{ $input['field'] }}" id="{{ $input['id'] }}"
                                 onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
                             <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
@@ -168,7 +145,39 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 @endforeach
             </x-slot:menu>
         </x-global::actions.dropdown>
-    @endif
+    <?php } ?>
+    
+    {{-- @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
+
+
+
+
+
+        <x-global::actions.dropdown contentRole="ghost">
+            <x-slot:labelText>
+                {{ __('popover.group_by') }}
+                <span class="fa-solid fa-diagram-project"></span>
+                @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
+                    <span class="badge badge-primary">1</span>
+                @endif
+                </button>
+            </x-slot:labelText>
+
+            <x-slot:menu>
+                @foreach ($groupBy as $input)
+                    <x-global::actions.dropdown.item>
+                        <span>
+                            <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
+                                value="{{ $input['field'] }}" id="{{ $input['id'] }}"
+                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
+                            <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
+                        </span>
+                    </x-global::actions.dropdown.item>
+                @endforeach
+            </x-slot:menu>
+        </x-global::actions.dropdown>
+
+    @endif --}}
     
     @if(isset($taskToggle) && $taskToggle === true)
         <div class="" style="float:right; margin-left:5px;">
@@ -177,13 +186,14 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         </div>
     @endif
     
+
     <div class="clearall"></div>
-    
+
     @php
         $tpl->dispatchTplEvent('filters.beforeBar');
         $tpl->dispatchTplEvent('filters.beforeFormClose');
     @endphp
-    
+
 </form>
 
 <script>

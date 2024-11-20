@@ -85,6 +85,8 @@ class ApiRequest extends IncomingRequest
      */
     public function isApiRequest(): bool
     {
-        return str_starts_with($_SERVER['REQUEST_URI'], '/api/jsonrpc');
+        $requestUri = $this->getRequestUri();
+
+        return str_starts_with($requestUri, '/api/jsonrpc');
     }
 }

@@ -32,7 +32,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            $id = (int) ($_GET['id'])  ?? '';
+            $id = (int) ($_GET['id']) ?? '';
             $this->goalService->deleteGoalCanvasItem($id);
 
             $this->tpl->setNotification(

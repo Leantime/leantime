@@ -6,10 +6,8 @@ parameters:
     paths:
         - ../public
         - ../app
-        - ../bin
     excludePaths:
         - ../app/Plugins/*/vendor/*
-        - ../app/Plugins/*
     scanDirectories:
         - ../vendor
         - ../config

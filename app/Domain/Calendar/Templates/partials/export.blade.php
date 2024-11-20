@@ -4,7 +4,7 @@
 $url = $tpl->get('url');
 ?>
 
-<h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> <?=$tpl->__('label.ical_export'); ?></h4>
+<h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> <?= $tpl->__('label.ical_export'); ?></h4>
 
 @displayNotification()
 
@@ -14,17 +14,17 @@ $url = $tpl->get('url');
 
     <?php
     echo $tpl->__('text.ical_export_description');
-    echo "<br />";
-    ?>
+echo '<br />';
+?>
 
     <?php
-    if ($url) {
-        echo $tpl->__('text.you_ical_url');
-        echo "<br /><input type='text' value='" . $url . "' style='width:100%;'/>";
-    } else {
-        echo $tpl->__('text.no_url');
-    }
-    ?>
+if ($url) {
+    echo $tpl->__('text.you_ical_url');
+    echo "<br /><input type='text' value='".$url."' style='width:100%;'/>";
+} else {
+    echo $tpl->__('text.no_url');
+}
+?>
     <div class="row">
         <div class="col-md-6">
             <input type="hidden" value="1" name="generateUrl" />

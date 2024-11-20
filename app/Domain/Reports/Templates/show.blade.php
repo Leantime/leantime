@@ -73,25 +73,25 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                 <br />
                                 <span class="pull-left">
                                 <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
-                                    <x-global::forms.select 
-                                    data-placeholder="{!! __('input.placeholders.filter_by_list') !!}" 
-                                    title="{!! __('input.placeholders.filter_by_list') !!}" 
-                                    name="sprint" 
-                                    class="mainSprintSelector" 
-                                    onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()" 
+                                    <x-global::forms.select
+                                    data-placeholder="{!! __('input.placeholders.filter_by_list') !!}"
+                                    title="{!! __('input.placeholders.filter_by_list') !!}"
+                                    name="sprint"
+                                    class="mainSprintSelector"
+                                    onchange="location.href='{{ BASE_URL }}/reports/show?sprint='+jQuery(this).val()"
                                     id="sprintSelect"
                                 >
                                     <x-global::forms.select.select-option value="">
                                         {!! __('input.placeholders.filter_by_list') !!}
                                     </x-global::forms.select.select-option>
-                                
+
                                     @php $dates = ""; @endphp
-                                
+
                                     @foreach ($tpl->get('allSprints') as $sprintRow)
                                         <x-global::forms.select.select-option :value="$sprintRow->id" :selected="$tpl->get('currentSprint') !== false && $sprintRow->id == $tpl->get('currentSprint')">
                                             {!! $tpl->escape($sprintRow->name) !!}
                                         </x-global::forms.select.select-option>
-                                
+
                                         @if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint"))
                                             @php
                                                 $dates = sprintf(
@@ -103,7 +103,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                         @endif
                                     @endforeach
                                 </x-global::forms.select>
-                                
+
                                 <?php } ?>
                             </span>
 
@@ -164,7 +164,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle"><?=$tpl->__("headline.milestones") ?></h5>
-                        
+
                         @if (count($milestones) == 0)
                             <div class="center">
                                 <br />
@@ -179,7 +179,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                             @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
                                 @break
                             @endif
-                            <x-tickets::milestone-card 
+                            <x-tickets::milestone-card
                                 :milestone="$row"
                             />
                         @endforeach
