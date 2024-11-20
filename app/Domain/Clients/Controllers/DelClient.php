@@ -10,19 +10,21 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Symfony\Component\HttpFoundation\Response;
 
     class DelClient extends Controller
     {
-        private ClientRepository $clientRepo;
+        private ClientService $clientService;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(
+            ClientService $clientService
+        )
         {
-            $this->clientRepo = app()->make(ClientRepository::class);
+            $this->clientService = $clientService;
         }
 
 
@@ -39,7 +41,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 if (isset($params['id']) === true) {
                     $id = (int) ($params['id']);
 
-                    $this->tpl->assign('client', $this->clientRepo->getClient($id));
+                    $this->tpl->assign('client', $this->clientService->get($id));
 
                     return $this->tpl->display('clients.delClient');
                 } else {
@@ -63,11 +65,11 @@ namespace Leantime\Domain\Clients\Controllers {
                 if (isset($params['id']) === true) {
                     $id = (int) ($params['id']);
 
-                    if ($this->clientRepo->hasTickets($id) === true) {
+                    if ($this->clientService->hasTickets($id) === true) {
                         $this->tpl->setNotification($this->language->__('notification.client_has_todos'), 'error');
                     } else {
                         if (isset($_POST['del']) === true) {
-                            $this->clientRepo->deleteClient($id);
+                            $this->clientService->delete($id);
 
                             $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
 

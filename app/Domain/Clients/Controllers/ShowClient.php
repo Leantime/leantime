@@ -10,7 +10,8 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    // use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Files\Services\Files as FileService;
@@ -22,7 +23,7 @@ namespace Leantime\Domain\Clients\Controllers {
 
     class ShowClient extends Controller
     {
-        private ClientRepository $clientRepo;
+        private ClientService $clientService;
 
         private SettingRepository $settingsRepo;
 
@@ -36,13 +37,13 @@ namespace Leantime\Domain\Clients\Controllers {
          * init - initialize private variables
          */
         public function init(
-            ClientRepository $clientRepo,
+            ClientService $clientService,
             SettingRepository $settingsRepo,
             ProjectService $projectService,
             CommentService $commentService,
             FileService $fileService
         ) {
-            $this->clientRepo = $clientRepo;
+            $this->clientService = $clientService;
             $this->settingsRepo = $settingsRepo;
             $this->projectService = $projectService;
             $this->commentService = $commentService;
@@ -64,7 +65,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 $id = (int) ($params['id']);
             }
 
-            $row = $this->clientRepo->getClient($id);
+            $row = $this->clientService->get($id);
 
             if ($row === false) {
                 $this->tpl->display('errors.error404');
@@ -94,7 +95,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     $this->tpl->assign('admin', true);
                 }
 
-                $this->tpl->assign('userClients', $this->clientRepo->getClientsUsers($id));
+                $this->tpl->assign('userClients', $this->clientService->getUserClients($id));
                 $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
                 $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
                 $this->tpl->assign('client', $clientValues);
@@ -123,7 +124,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 $id = (int) ($params['id']);
             }
 
-            $row = $this->clientRepo->getClient($id);
+            $row = $this->clientService->get($id);
 
             if ($row === false) {
                 $this->tpl->display('errors.error404');
@@ -183,7 +184,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     }
                 }
 
-                if (isset($_POST['save']) === true) {
+                if (isset($params['save']) === true) {
                     $clientValues = (object) [
                         'id' => $row->id,
                         'name' => $params['name'],
@@ -198,7 +199,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     ];
 
                     if ($clientValues->name !== '') {
-                        $this->clientRepo->editClient($clientValues, $id);
+                        $this->clientService->editClient($clientValues);
 
                         $this->tpl->setNotification($this->language->__('notification.client_saved_successfully'), 'success');
                     } else {
@@ -206,7 +207,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     }
                 }
 
-                $this->tpl->assign('userClients', $this->clientRepo->getClientsUsers($id));
+                $this->tpl->assign('userClients', $this->clientService->getUserClients($id));
                 $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
                 $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
                 $this->tpl->assign('client', $clientValues);

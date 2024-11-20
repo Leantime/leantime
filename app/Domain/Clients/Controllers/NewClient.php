@@ -10,25 +10,20 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Symfony\Component\HttpFoundation\Response;
 
     class NewClient extends Controller
     {
-        private ClientRepository $clientRepo;
-
-        private UserRepository $user;
+        private ClientService $clientService;
 
         /**
          * init - initialize private variables
          */
         public function init(
-            ClientRepository $clientRepo, 
-            UserRepository $user
+            ClientService $clientService 
         ){
-            $this->clientRepo = $clientRepo;
-            $this->user = $user;
+            $this->clientService = $clientService;
         }
 
         /**
@@ -81,7 +76,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     'email' => '',
                 ];
                 
-                if (isset($_POST['save']) === true) {
+                if (isset($params['save']) === true) {
                     $values = (object) [
                         'name' => ($params['name']),
                         'street' => ($params['street']),
@@ -95,8 +90,8 @@ namespace Leantime\Domain\Clients\Controllers {
                     ];
 
                     if ($values->name !== '') {
-                        if ($this->clientRepo->isClient($values) !== true) {
-                            $id = $this->clientRepo->addClient($values);
+                        if ($this->clientService->isClient($values) !== true) {
+                            $id = $this->clientService->create($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
 
                             return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
