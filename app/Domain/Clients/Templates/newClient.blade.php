@@ -139,6 +139,7 @@ $values = $tpl->get('values');
                                     <x-global::forms.button
                                         type="submit"
                                         name="save"
+                                        value="true"
                                         id="save"
                                         class="btn btn-primary"
                                     >

@@ -180,7 +180,7 @@
 
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <x-global::forms.button type="submit" name="save" id="save">
+                            <x-global::forms.button type="submit" name="save" value="true" id="save">
                                 {{ __('buttons.save') }}
                             </x-global::forms.button>
                             
@@ -202,7 +202,7 @@
 
                 <div id='comment'>
 
-                <form method="post" action="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($values->id); ?>#comment">
+                <form method="post" value="true" action="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($values->id); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <x-comments::list :module="'client'" :statusUpdates="'true'" moduleId="{{ $tpl->escape($values->id) }}" />
                 </form>
