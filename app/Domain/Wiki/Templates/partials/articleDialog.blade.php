@@ -174,8 +174,7 @@ if (isset($currentArticle->id)) {
                 value="{!! $tpl->escape($currentArticle->tags) !!}"
             />
 
-            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
-
+            <x-global::forms.text-editor name="description" :type="EditorTypeEnum::Complex->value" :value="$currentArticle->description" />
 
                 <div class="row">
                     <div class="col-md-10 padding-top-sm">

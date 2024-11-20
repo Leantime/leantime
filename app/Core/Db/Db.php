@@ -59,6 +59,7 @@ class Db extends DatabaseManager
     public function __construct($connection = 'mysql')
     {
 
+
         // Get Laravel's database connection
         $this->connection = dbFacade::connection($connection);
 
