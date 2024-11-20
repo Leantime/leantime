@@ -290,6 +290,11 @@
       <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
       <path value="$PROJECT_DIR$/vendor/leantime/leantime-documentor" />
       <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/vendor/justinrainbow/json-schema" />
+      <path value="$PROJECT_DIR$/vendor/codeception/module-laravel" />
+      <path value="$PROJECT_DIR$/vendor/codeception/module-rest" />
+      <path value="$PROJECT_DIR$/vendor/codeception/lib-xml" />
+      <path value="$PROJECT_DIR$/vendor/softcreatr/jsonpath" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
