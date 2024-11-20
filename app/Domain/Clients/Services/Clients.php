@@ -147,4 +147,14 @@ class Clients
     {
         return $this->clientRepository->getClient($id);
     }
+
+        /**
+     * Gets number of clients
+     *
+     * @api
+     */
+    public function getNumberOfClients(): mixed
+    {
+        return $this->clientRepository->getNumberOfClients();
+    }
 }
