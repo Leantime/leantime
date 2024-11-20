@@ -217,7 +217,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * editClient - edit a client
          */
-        public function editClient(object $values, $id): bool
+        public function editClient(object|array $values, $id): bool
         {
 
             $query = 'UPDATE zp_clients SET
