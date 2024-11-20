@@ -3,11 +3,13 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Projects\Services\Projects as ProjectsService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,6 +25,7 @@ class Auth
         'auth.resetPw',
         'auth.userInvite',
         'install',
+        'install.index',
         'install.update',
         'errors.error404',
         'errors.error500',
@@ -36,7 +39,6 @@ class Auth
 
     public function __construct(
         private AuthService $authService,
-        private ProjectsService $projectsService,
     ) {
         $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
     }
@@ -53,7 +55,7 @@ class Auth
 
         $uri = ltrim(str_replace('.', '/', $route), '/');
         $destination = BASE_URL.'/'.$uri;
-        $originClean = Str::replaceStart("/", "", $origin);
+        $originClean = Str::replaceStart('/', '', $origin);
         $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $originClean]) : '';
 
         if ($request->getCurrentRoute() == $route) {
@@ -69,12 +71,14 @@ class Auth
     public function handle(IncomingRequest $request, Closure $next): Response
     {
 
-        if (in_array($request->getCurrentRoute(), $this->publicActions)) {
+        if ($this->isPublicController($request->getCurrentRoute())) {
             return $next($request);
         }
 
         if (! $this->authService->loggedIn()) {
-            return $this->redirectWithOrigin('auth.login', $request->getRequestUri(), $request) ?: $next($request);
+            $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
+
+            return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
         }
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
@@ -84,6 +88,56 @@ class Auth
 
         self::dispatchEvent('logged_in', ['application' => $this]);
 
-        return $next($request);
+        $response = $next($request);
+
+        if ($this->authService->loggedIn()) {
+
+            //Set cookie to increase session timeout
+            $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
+                'esl', //Extend Session Lifetime
+                'true',
+                Date::instance(
+                    Carbon::now()->addRealMinutes(app('config')['session']['lifetime'])
+                ),
+                app('config')['session']['path'],
+                app('config')['session']['domain'],
+                false,
+                app('config')['session']['http_only'] ?? true,
+                false,
+                app('config')['session']['same_site'] ?? null,
+                app('config')['session']['partitioned'] ?? false
+            ));
+        }
+
+        return $response;
+    }
+
+    public function isPublicController($currentPath)
+    {
+
+        //path comes in with dots as separator.
+        //We only need to compare the first 2 segments
+        $currentPath = explode('.', $currentPath);
+
+        //Todo: We may want to take out hx if we have public htmx paths
+        if (! is_array($currentPath)) {
+            return false;
+        }
+
+        if (count($currentPath) == 1) {
+            if (in_array($currentPath[0], $this->publicActions)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        $controllerPath = $currentPath[0].'.'.$currentPath[1];
+        if (in_array($controllerPath, $this->publicActions)) {
+            return true;
+        }
+
+        return false;
+
     }
 }

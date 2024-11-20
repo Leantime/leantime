@@ -26,9 +26,11 @@ export const toggleCommentBoxes = function (id) {
     }
     jQuery('.commentBox textarea').remove();
 
-    jQuery('.commentBox').hide('fast', function () {});
+    jQuery('.commentBox').hide('fast', function () { });
 
     jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+    jQuery('#comment'+id).removeClass('hidden');
+
     initSimpleEditor();
 
     jQuery('#comment' + id + '').show('fast');

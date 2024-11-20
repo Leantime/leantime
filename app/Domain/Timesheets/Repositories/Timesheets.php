@@ -492,7 +492,8 @@ class Timesheets extends Repository
         return $returnValues;
     }
 
-    public function getTimesheetsByTicket($id) {
+    public function getTimesheetsByTicket($id)
+    {
 
         $query = "SELECT
                 YEAR(zp_timesheets.workDate) AS year,

@@ -1,5 +1,7 @@
 <x-global::content.modal.modal-buttons />
 @php
+    use Leantime\Core\Support\EditorTypeEnum;
+
     if (isset($canvasItem->id) && $canvasItem->id != '') {
         $id = $canvasItem->id;
     }
@@ -60,7 +62,7 @@
                 </x-global::forms.select>
 
 
-                <textarea rows="3" cols="10" name="data" class="complexEditor" placeholder="">{!! htmlentities($canvasItem->data) !!}</textarea><br />
+                <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
 
                 <x-global::forms.button
                     type="submit"
@@ -197,7 +199,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
-        leantime.editorController.initComplexEditor();
+        // leantime.editorController.initComplexEditor();
 
         @if (!$login::userIsAtLeast($roles::$editor))
             leantime.authController.makeInputReadonly(".nyroModalCont");

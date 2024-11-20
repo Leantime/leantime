@@ -93,7 +93,7 @@ namespace Leantime\Domain\Notifications\Services {
             $links = $dom->getElementsByTagName('a');
 
             $author = $this->userRepository->getUser($authorId);
-            $authorName = $author['firstname'] ?? $this->language->__('label.team_mate');
+            $authorName = htmlentities($author['firstname']) ?? $this->language->__('label.team_mate');
 
             for ($i = 0; $i < $links->count(); $i++) {
                 $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');

@@ -3,8 +3,7 @@
 /**
  * Template
  */
-
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -23,7 +22,7 @@ $canvasName = 'em';
                 <div class="row canvas-row">
                     <div class="column" style="width:100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-bullseye"></i> <?=$tpl->__('box.em.header.goal') ?>
+                            <i class="fas fa-bullseye"></i> <?= $tpl->__('box.em.header.goal') ?>
                         </h4>
                     </div>
                 </div>
@@ -46,7 +45,7 @@ $canvasName = 'em';
                 <div class="row canvas-row">
                     <div class="column" style="width: 100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-heart"></i> <?=$tpl->__('box.em.header.empathy') ?>
+                            <i class="fas fa-heart"></i> <?= $tpl->__('box.em.header.empathy') ?>
                         </h4>
                     </div>
                 </div>
@@ -81,7 +80,7 @@ $canvasName = 'em';
                 <div class="row canvas-row">
                     <div class="column" style="width: 100%">
                         <h4 class="widgettitle title-primary center canvas-title-only">
-                            <i class="fas fa-7"></i> <?=$tpl->__('box.em.header.think_feel') ?>
+                            <i class="fas fa-7"></i> <?= $tpl->__('box.em.header.think_feel') ?>
                         </h4>
                     </div>
                 </div>

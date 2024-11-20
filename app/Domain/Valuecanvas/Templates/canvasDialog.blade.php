@@ -1,4 +1,5 @@
 <?php
+use Leantime\Core\Support\EditorTypeEnum;
 
 /**
  * Dialog
@@ -107,12 +108,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                     <br />
         
                 @else
-                    <textarea 
-                        name="{!! $dataLabels[$index]['field'] !!}" 
-                        rows="3" 
-                        cols="10" 
-                        class="modalTextArea tinymceSimple w-full"
-                    >{!! $canvasItem[$dataLabels[$index]['field']] !!}</textarea>
+                    <x-global::forms.text-editor
+                        name="{!! $dataLabels[$index]['field'] !!}"
+                        :type="EditorTypeEnum::Simple->value"
+                        value="{!! $canvasItem[$dataLabels[$index]['field']] !!}"
+                        class="w-full"
+                    />
                     <br />
                 @endif
             @else
@@ -278,8 +279,6 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 ]
             });
         <?php } ?>
-
-        leantime.editorController.initSimpleEditor();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");

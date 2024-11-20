@@ -44,6 +44,12 @@ class DefaultConfig
     public string $appDir = '';
 
     /**
+     * @var string Send anonymous data <a href='https://docs.leantime.io/#/using-leantime/company-settings?id=telemetry' target='_blank'>More Info</a>.
+     *             No personal identifieble data will be sent and it will be impossible for us to track individual users.
+     */
+    public bool $allowTelemetry = true;
+
+    /**
      * @var string Default theme
      */
     public string $defaultTheme = 'default';
@@ -51,12 +57,12 @@ class DefaultConfig
     /**
      * @var string Primary Theme color
      */
-    public string $primarycolor = '#1b75bb';
+    public string $primarycolor;
 
     /**
      * @var string Secondary Theme Color
      */
-    public string $secondarycolor = '#81B1A8';
+    public string $secondarycolor;
 
     /**
      * @var string Default timezone
@@ -89,7 +95,7 @@ class DefaultConfig
     /**
      * @var string Log Path
      */
-    public string $logPath = APP_ROOT.'/logs/error.log';
+    public string $logPath = APP_ROOT.'/storage/logs/error.log';
 
     /**
      * @var bool Whether or not to enable the Poor Man's Cron fallback
@@ -189,9 +195,15 @@ class DefaultConfig
     public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
-     * @var int How many seconds after inactivity should we logout?  28800seconds = 8hours
+     * @var int How many minutes after inactivity should we logout?  480min = 8hours
      */
-    public int $sessionExpiration = 28800;
+    public int $sessionExpiration = 480;
+
+    /**
+     * @var bool. Sets whether the cookie should only be served via https
+     */
+    #[LaravelConfig('session.secure')]
+    public bool $sessionSecure = true;
 
     // Email =======================================================================================
     /**
@@ -384,6 +396,11 @@ class DefaultConfig
     public string $oidcClientSecret = '';
 
     /**
+     * @var string Custom Auto discover URL
+     */
+    public string $oidcAutoDiscoverUrl = '';
+
+    /**
      * @var string OIDC Auth URL
      */
     public string $oidcAuthUrl = '';
@@ -474,34 +491,39 @@ class DefaultConfig
     public bool $useRedis = false;
 
     /**
+     * @var bool Set to true if you want to use a redis cluster
+     */
+    public bool $useCluster = false;
+
+    /**
      * @var string Redis URL
      */
+    #[LaravelConfig('redis.default.url')]
     public string $redisUrl = '';
 
     /**
      * @var string Redis Host
      */
+    #[LaravelConfig('redis.default.host')]
     public string $redisHost = '127.0.0.1';
 
     /**
      * @var string Redis Port
      */
+    #[LaravelConfig('redis.default.port')]
     public string $redisPort = '6379';
 
     /**
      * @var string Redis Password
      */
+    #[LaravelConfig('redis.default.password')]
     public string $redisPassword = '';
 
     /**
-     * @var string Redis Cluster
+     * @var string Redis Password
      */
-    public string $redisCluster = '';
-
-    /**
-     * @var string Redis Prefix
-     */
-    public string $redisPrefix = 'ltRedis';
+    #[LaravelConfig('redis.default.tls')]
+    public string $redisScheme = 'tls';
 
     // Security/Rate Limiting Settings ===============================================================================
     /**

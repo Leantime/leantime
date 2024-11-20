@@ -1,3 +1,7 @@
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
+@endphp
+
 @extends($layout)
 
 @section('content')
@@ -60,7 +64,6 @@
                                 </x-slot:menu>
 
                             </x-global::actions.dropdown>
-
                         @endif
 
                     </x-slot:card-context-buttons>
@@ -97,9 +100,7 @@
                     @endif
 
                     @foreach ($tickets as $row)
-                        <x-tickets::ticket-card
-                            :id="$row['id']"
-                        />
+                        <x-tickets::ticket-card :id="$row['id']" />
                     @endforeach
 
                 </x-global::content.card>
@@ -146,8 +147,10 @@
             </div>
 
             <div class="col-md-4">
+                <x-dashboard::project-updates :id="$project['id']" />
 
                 <x-global::content.card variation="content">
+
                     <x-slot:card-context-buttons>
                         @if ($login::userIsAtLeast($roles::$editor))
                             <x-global::forms.button content-role="ghost"
@@ -179,7 +182,12 @@
 
 
                                 <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple w-full" name="text"></textarea>
+                                    <x-global::forms.text-editor
+                                        name="text"
+                                        :type="EditorTypeEnum::Simple->value"
+                                        diameter="w-full"
+                                    />
+                                    
                                     <x-global::forms.button type="submit" name="comment" class="btn-success ml-0">
                                         {{ __('buttons.save') }}
                                     </x-global::forms.button>
@@ -297,6 +305,7 @@
             </div>
 
 
+
                     <div class="row" id="milestoneProgressContainer">
                         <div class="col-md-12">
                             <h5 class="subtitle">{{ __('headline.milestones') }}</h5>
@@ -313,26 +322,46 @@
 
                             @foreach ($milestones as $row)
                                 @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
-                                    @break
-                                @endif
-                                <x-tickets::milestone-card 
-                                    :milestone="$row"
-                                />
-                            @endforeach
+                                @break
+                            @endif
+                            <x-tickets::milestone-card :milestone="$row" />
+                        @endforeach
 
-                        </div>
                     </div>
-                </x-global::content.card>
+            </x-global::content.card>
+        </div>
 
     </div>
-    </div>
-    </div>
+</div>
+</div>
+
+@once @push('scripts')
+<script>
+    @dispatchEvent('scripts.afterOpen')
+
+    leantime.editorController.initSimpleEditor();
+
+    jQuery(document).ready(function() {
+
+        jQuery('#descriptionReadMoreToggle').click(function() {
+
+            if (jQuery("#projectDescription").hasClass("closed")) {
+                jQuery("#projectDescription").css("max-height", "100%");
+                jQuery("#projectDescription").removeClass("closed");
+                jQuery("#projectDescription").removeClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
+            } else {
+                jQuery("#projectDescription").css("max-height", "200px");
+                jQuery("#projectDescription").addClass("closed");
+                jQuery("#projectDescription").addClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
+            }
+        });
 
     @once @push('scripts')
     <script>
         @dispatchEvent('scripts.afterOpen')
 
-        leantime.editorController.initSimpleEditor();
 
         jQuery(document).ready(function() {
 
@@ -405,9 +434,55 @@
             @endif
 
             @php(session(['usersettings.modals.projectDashboardTour' => 1]));
+
         });
 
-        @dispatchEvent('scripts.beforeClose')
-    </script>
-    @endpush @endonce
+        @if ($login::userIsAtLeast($roles::$editor))
+            leantime.dashboardController.prepareHiddenDueDate();
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initMilestoneDropdown();
+            leantime.ticketsController.initStatusDropdown();
+        @else
+            leantime.authController.makeInputReadonly(".maincontentinner");
+        @endif
+
+        jQuery("#favoriteProject").click(function() {
+            if (jQuery("#favoriteProject").hasClass("isFavorite")) {
+                leantime.reactionsController.removeReaction(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass(
+                            "fa-regular");
+                        jQuery("#favoriteProject").removeClass("isFavorite");
+                    }
+                );
+            } else {
+                leantime.reactionsController.addReactions(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass(
+                            "fa-solid");
+                        jQuery("#favoriteProject").addClass("isFavorite");
+                    }
+                );
+            }
+        });
+
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.ticketsController.initDueDateTimePickers();
+
+        @if ($completedOnboarding === false)
+            leantime.helperController.firstLoginModal();
+        @endif
+
+        @php(session(['usersettings.modals.projectDashboardTour' => 1]));
+    });
+
+    @dispatchEvent('scripts.beforeClose')
+</script>
+@endpush @endonce
 @endsection

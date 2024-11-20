@@ -1,28 +1,23 @@
 <?php
 
-namespace Unit\app\Domain\Menu\Repositories;
+namespace Unit\app\Domain\Calendar\Services;
 
-use Codeception\Test\Unit;
-use Leantime\Config\Config;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepo;
-use Leantime\Domain\Calendar\Services\Calendar;
+use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Tickets\Services\Tickets;
+use Unit\TestCase;
 
-class CalendarServiceTest extends Unit
+class CalendarServiceTest extends TestCase
 {
-
     use \Codeception\Test\Feature\Stub;
 
-    protected $calendarRepo;
+    protected $calendarRepository;
 
     protected $language;
 
-    protected $settingsRepo;
+    protected $settingsRepository;
 
     protected $config;
 
@@ -35,23 +30,29 @@ class CalendarServiceTest extends Unit
      */
     protected $menu;
 
-    protected function _before()
+    protected function setUp(): void
     {
 
-        $this->calendarRepo = $this->make(CalendarRepo::class);
+        parent::setUp();
+
+        if (! defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost');
+        }
+
+        $this->calendarRepository = $this->make(CalendarRepository::class);
         $this->language = $this->make(Language::class);
-        $this->settingsRepo =  $this->make(Setting::class, [
-            "getSetting" => "secret"
+        $this->settingsRepository = $this->make(Setting::class, [
+            'getSetting' => 'secret',
         ]);
         $this->config = $this->make(Environment::class, [
-            "sessionPassword" => "123abc"
+            'sessionPassword' => '123abc',
         ]);
 
         //Load class to be tested
         $this->calendar = new \Leantime\Domain\Calendar\Services\Calendar(
-            calendarRepo: $this->calendarRepo,
+            calendarRepo: $this->calendarRepository,
             language: $this->language,
-            settingsRepo: $this->settingsRepo,
+            settingsRepo: $this->settingsRepository,
             config: $this->config
 
         );
@@ -68,17 +69,14 @@ class CalendarServiceTest extends Unit
     /**
      * Test GetMenuTypes method
      */
-    public function testGetICalUrl() {
-
-
+    public function testGetICalUrl()
+    {
 
         //Sha is generated from id -1 and sessionpassword 123abc
-        $sha = "ba62fbd0d08f6607d6b3213dcccc1b50f4d82f19";
+        $sha = 'ba62fbd0d08f6607d6b3213dcccc1b50f4d82f19';
         $url = $this->calendar->getICalUrl(1);
 
-        $this->assertEquals(BASE_URL . "/calendar/ical/secret_" . $sha, $url, 'hash is not correct');
+        $this->assertEquals(BASE_URL.'/calendar/ical/secret_'.$sha, $url, 'hash is not correct');
 
     }
-
-
 }

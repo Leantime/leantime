@@ -195,7 +195,8 @@
     opacity:0.1;
 }
 
-.primaryContent {
+.primaryContent,
+.row .regLeft:before {
     background: rgba(0,0,0, 0.7);
 }
 
@@ -462,4 +463,8 @@ body .ticketDropdown ul::after {
 
 .articleBody table td {
     border:1px solid var(--neutral);
+}
+
+.row .regLeft {
+    background:var(--accent1);
 }

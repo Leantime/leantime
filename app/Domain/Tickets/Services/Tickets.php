@@ -142,6 +142,8 @@ namespace Leantime\Domain\Tickets\Services {
 
                 session()->forget('projectsettings.ticketlabels');
 
+                self::dispatchEvent('statusLabels_updated');
+
                 return $this->settingsRepo->saveSetting('projectsettings.'.session('currentProject').'.ticketlabels', serialize($statusArray));
             } else {
                 return false;
@@ -207,7 +209,6 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function getPriorityLabels(): array
         {
-
             return $this->ticketRepository->priority;
         }
 
@@ -429,14 +430,18 @@ namespace Leantime\Domain\Tickets\Services {
             if (is_array($tickets)) {
                 $ticketCounter = 0;
                 $projectStatusLabels = [];
-                foreach ($tickets as $ticket) {
-                    if (! isset($projectStatusLabels[$ticket['projectId']])) {
-                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
-                    }
 
-                    if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
-                        $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
-                        $ticketArray[] = $ticket;
+                foreach ($tickets as $ticket) {
+
+                    if ($ticket['type'] !== 'milestone') {
+                        if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                            $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                        }
+
+                        if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                            $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                            $ticketArray[] = $ticket;
+                        }
                     }
                 }
             }
@@ -544,12 +549,23 @@ namespace Leantime\Domain\Tickets\Services {
                                     $milestone = $this->getTicket($ticket['milestoneid']);
                                     $color = $milestone->tags;
                                     $class = '" style="color:'.$color.'"';
-                                    $startDate = strtok($milestone->editFrom, ' ');
-                                    $endDate = strtok($milestone->editTo, ' ');
+
+                                    try {
+                                        $startDate = dtHelper()->parseDbDateTime($milestone->editFrom)->formatDateForUser();
+                                    } catch (\Exception $e) {
+                                        $startDate = $this->language->__('text.no_date_defined');
+                                    }
+
+                                    try {
+                                        $endDate = dtHelper()->parseDbDateTime($milestone->editTo)->formatDateForUser();
+                                    } catch (\Exception $e) {
+                                        $startDate = $this->language->__('text.no_date_defined');
+                                    }
+
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
                                     $class = '" style="color:'.$color.'"';
-                                    $moreInfo = $this->language->__('label.start').': '.$startDate.', '.$this->language->__('label.end').': '.$endDate.', '.$this->language->__('label.status_lowercase').': '.$status;
+                                    $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
                                     $label = $ticket['milestoneHeadline']." <a href='#/tickets/editMilestone/".$ticket['milestoneid']."' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
@@ -790,7 +806,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getOpenUserTicketsByPriority($userId, $projectId): array
         {
 
-            $searchCriteria = $this->prepareTicketSearchArray(['users' => $userId, 'status' => '', 'sprint' => '']);
+            $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'priority',
@@ -807,7 +823,14 @@ namespace Leantime\Domain\Tickets\Services {
                     isset($statusLabels[$row['projectId']][$row['status']]) &&
                     $statusLabels[$row['projectId']][$row['status']]['statusType'] != 'DONE'
                 ) {
-                    $label = $this->ticketRepository->priority[$row['priority']];
+
+                    if (empty($row['priority'])) {
+                        $row['priority'] = 999;
+                        $label = 'Unset';
+                    } else {
+                        $label = $this->ticketRepository->priority[$row['priority']];
+                    }
+
                     if (isset($tickets[$row['priority']])) {
                         $tickets[$row['priority']]['tickets'][] = $row;
                     } else {
@@ -818,7 +841,7 @@ namespace Leantime\Domain\Tickets\Services {
                         $tickets[$row['priority']] = [
                             'labelName' => $label,
                             'tickets' => [$row],
-                            'groupValue' => $row['time'],
+                            'groupValue' => $row['priority'],
                         ];
                     }
                 }
@@ -1093,8 +1116,8 @@ namespace Leantime\Domain\Tickets\Services {
                 if ($task['milestoneid'] !== '' && $task['milestoneid'] > 0) {
                     $goals = $this->goalcanvasService->getGoalsByMilestone($task['milestoneid']);
                     foreach ($goals as $goal) {
-                        if (! isset($contributedToGoal[$goal->id])) {
-                            $contributedToGoal[$goal->id] = $goal;
+                        if (! isset($contributedToGoal[$goal['id']])) {
+                            $contributedToGoal[$goal['id']] = $goal;
                         }
                     }
                 }
@@ -1116,8 +1139,6 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
-         * @param $params
-         * @return array|bool
          * @api
          */
         public function quickAddTicket($params): array|bool
@@ -1155,6 +1176,8 @@ namespace Leantime\Domain\Tickets\Services {
             $values = $this->prepareTicketDates($values);
 
             $result = $this->ticketRepository->addTicket($values);
+
+            self::dispatchEvent('ticket_created');
 
             if ($result > 0) {
                 $values['id'] = $result;
@@ -1219,6 +1242,8 @@ namespace Leantime\Domain\Tickets\Services {
                 return $error;
             }
 
+            self::dispatchEvent('milestone_created');
+
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->addTicket($values);
         }
@@ -1226,34 +1251,34 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Adds a ticket to the system.
          *
-         * @param array $values An array of ticket data.
-         *     - id (optional): The ID of the ticket.
-         *     - headline (optional): The headline of the ticket.
-         *     - type (optional): The type of the ticket. Default is "task".
-         *     - description (optional): The description of the ticket.
-         *     - projectId (optional): The ID of the project the ticket belongs to. Default is the current project.
-         *     - editorId (optional): The ID of the editor of the ticket.
-         *     - userId: The ID of the user creating the ticket.
-         *     - date: The date when the ticket is created.
-         *     - dateToFinish (optional): The date to finish the ticket.
-         *     - timeToFinish (optional): The time to finish the ticket.
-         *     - status (optional): The status of the ticket. Default is 3.
-         *     - planHours (optional): The planned hours for the ticket.
-         *     - tags (optional): The tags associated with the ticket.
-         *     - sprint (optional): The sprint the ticket belongs to.
-         *     - storypoints (optional): The story points assigned to the ticket.
-         *     - hourRemaining (optional): The remaining hours for the ticket.
-         *     - priority (optional): The priority of the ticket.
-         *     - acceptanceCriteria (optional): The acceptance criteria of the ticket.
-         *     - editFrom (optional): The edit from date of the ticket.
-         *     - timeFrom (optional): The edit from time of the ticket.
-         *     - editTo (optional): The edit to date of the ticket.
-         *     - timeTo (optional): The edit to time of the ticket.
-         *     - dependingTicketId (optional): The ID of the depending ticket.
-         *     - milestoneid (optional): The ID of the milestone the ticket belongs to.
+         * @param  array  $values  An array of ticket data.
+         *                         - id (optional): The ID of the ticket.
+         *                         - headline (optional): The headline of the ticket.
+         *                         - type (optional): The type of the ticket. Default is "task".
+         *                         - description (optional): The description of the ticket.
+         *                         - projectId (optional): The ID of the project the ticket belongs to. Default is the current project.
+         *                         - editorId (optional): The ID of the editor of the ticket.
+         *                         - userId: The ID of the user creating the ticket.
+         *                         - date: The date when the ticket is created.
+         *                         - dateToFinish (optional): The date to finish the ticket.
+         *                         - timeToFinish (optional): The time to finish the ticket.
+         *                         - status (optional): The status of the ticket. Default is 3.
+         *                         - planHours (optional): The planned hours for the ticket.
+         *                         - tags (optional): The tags associated with the ticket.
+         *                         - sprint (optional): The sprint the ticket belongs to.
+         *                         - storypoints (optional): The story points assigned to the ticket.
+         *                         - hourRemaining (optional): The remaining hours for the ticket.
+         *                         - priority (optional): The priority of the ticket.
+         *                         - acceptanceCriteria (optional): The acceptance criteria of the ticket.
+         *                         - editFrom (optional): The edit from date of the ticket.
+         *                         - timeFrom (optional): The edit from time of the ticket.
+         *                         - editTo (optional): The edit to date of the ticket.
+         *                         - timeTo (optional): The edit to time of the ticket.
+         *                         - dependingTicketId (optional): The ID of the depending ticket.
+         *                         - milestoneid (optional): The ID of the milestone the ticket belongs to.
          * @return array|int|bool If the ticket is successfully added, returns the ID of the ticket.
-         *     If the user does not have access to the project, returns an error message and type array.
-         *     If the headline is missing, returns an error message and type array.
+         *                        If the user does not have access to the project, returns an error message and type array.
+         *                        If the headline is missing, returns an error message and type array.
          *
          * @api
          */
@@ -1297,6 +1322,9 @@ namespace Leantime\Domain\Tickets\Services {
 
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
+
+                self::dispatchEvent('ticket_created');
+
                 if ($addTicketResponse !== false) {
                     $values['id'] = $addTicketResponse;
                     $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, $values['headline']);
@@ -1349,8 +1377,7 @@ namespace Leantime\Domain\Tickets\Services {
          *                         - 'priority' => The ticket priority. (optional)
          *                         - 'acceptanceCriteria' => The ticket acceptance criteria. (optional)
          *                         - 'editFrom' => The ticket edit 'from' date-time. (optional)
-         *
-         *                      - 'time*
+         *                         - 'time*
          *
          * @api
          */
@@ -1418,6 +1445,8 @@ namespace Leantime\Domain\Tickets\Services {
 
                 $this->projectService->notifyProjectUsers($notification);
 
+                self::dispatchEvent('ticket_updated');
+
                 return true;
             }
 
@@ -1432,10 +1461,13 @@ namespace Leantime\Domain\Tickets\Services {
 
             //$params is an array of field names. Exclude id
             unset($params['id']);
+            unset($params['act']);
 
             $params = $this->prepareTicketDates($params);
 
             $return = $this->ticketRepository->patchTicket($id, $params);
+
+            self::dispatchEvent('ticket_updated');
 
             //Todo: create events and move notification logic to notification module
             if (isset($params['status']) && $return) {
@@ -1484,6 +1516,8 @@ namespace Leantime\Domain\Tickets\Services {
                     }
                 }
 
+                self::dispatchEvent('ticket_updated');
+
                 //Update ticket
                 return $this->patch($ticket->id, ['projectId' => $projectId, 'sprint' => '', 'dependingTicketId' => '', 'milestoneid' => '']);
             }
@@ -1530,6 +1564,8 @@ namespace Leantime\Domain\Tickets\Services {
 
             $values = $this->prepareTicketDates($values);
 
+            self::dispatchEvent('milestone_updated');
+
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->updateTicket($values, $params['id']);
         }
@@ -1572,12 +1608,17 @@ namespace Leantime\Domain\Tickets\Services {
                 if (! $this->ticketRepository->addTicket($values)) {
                     return false;
                 }
+
+                self::dispatchEvent('ticket_created');
+
             } else {
                 //Update Ticket
 
                 if (! $this->ticketRepository->updateTicket($values, $subtaskId)) {
                     return false;
                 }
+
+                self::dispatchEvent('ticket_updated');
             }
 
             return true;
@@ -1597,6 +1638,8 @@ namespace Leantime\Domain\Tickets\Services {
                     return false;
                 }
             }
+
+            self::dispatchEvent('ticket_updated');
 
             return true;
         }
@@ -1656,6 +1699,8 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
+            self::dispatchEvent('ticket_updated');
+
             return true;
         }
 
@@ -1677,24 +1722,28 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if ($this->ticketRepository->delticket($id)) {
+
+                self::dispatchEvent('ticket_deleted');
+
                 return true;
             }
 
             return false;
         }
 
-        public function canDelete($id) {
+        public function canDelete($id)
+        {
 
             $ticket = $this->getTicket($id);
 
-            if(empty($ticket)) {
-                throw new \Exception ("Task does not exist");
+            if (empty($ticket)) {
+                throw new \Exception('Task does not exist');
             }
 
             $hasLoggedHours = $this->timesheetsRepo->getTimesheetsByTicket($id);
 
-            if($hasLoggedHours) {
-                throw new \Exception ("Task has timesheets attached, delete all timesheets first or consider archiving the task");
+            if ($hasLoggedHours) {
+                throw new \Exception('Task has timesheets attached, delete all timesheets first or consider archiving the task');
             }
 
             return true;
@@ -1718,6 +1767,8 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if ($this->ticketRepository->delMilestone($id)) {
+                self::dispatchEvent('milestone_deleted');
+
                 return true;
             }
 
@@ -1836,7 +1887,7 @@ namespace Leantime\Domain\Tickets\Services {
                     'id' => 'sprint',
                     'field' => 'sprint',
                     'class' => '',
-                    'label' => 'list',
+                    'label' => 'sprint',
                 ],
 
                 /*
@@ -1940,8 +1991,6 @@ namespace Leantime\Domain\Tickets\Services {
 
         /**
          * @throws BindingResolutionException
-         *
-         * @api
          */
         public function getTicketTemplateAssignments($params): array
         {
@@ -2012,10 +2061,9 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Retrieves the assignments for the ToDoWidget.
          *
-         * @param array $params The parameters for filtering the assignments.
-         *                      - projectFilter (optional): The project filter for the assignments.
-         *                      - groupBy (optional): The grouping for the assignments (time, project, priority, or sprint).
-         *
+         * @param  array  $params  The parameters for filtering the assignments.
+         *                         - projectFilter (optional): The project filter for the assignments.
+         *                         - groupBy (optional): The grouping for the assignments (time, project, priority, or sprint).
          * @return array An array containing the assignments for the ToDoWidget.
          *               - tickets: The open user tickets based on the groupBy parameter.
          *               - onTheClock: Indicates whether the user is currently clocked in.
@@ -2027,7 +2075,6 @@ namespace Leantime\Domain\Tickets\Services {
          *               - allAssignedprojects: The projects assigned to the user.
          *               - projectFilter: The current project filter.
          *               - groupBy: The current grouping for the assignments.
-         *
          */
         public function getToDoWidgetAssignments($params)
         {
@@ -2085,7 +2132,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
 
-            $tickets = self::dispatchFilter('myTodoWidgetTasks', $tickets);
+            $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
             return [
                 'tickets' => $tickets,
@@ -2104,8 +2151,7 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Prepare ticket dates for database.
          *
-         * @param array $values The values of the ticket fields.
-         *
+         * @param  array  $values  The values of the ticket fields.
          * @return array The values of the ticket fields after preparing the dates.
          *
          * @api
@@ -2146,9 +2192,10 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Find milestones that contain a specific term in their headline.
          *
-         * @param string $term The term to search for in the headline.
-         * @param int $projectId The ID of the project to search milestones in.
+         * @param  string  $term  The term to search for in the headline.
+         * @param  int  $projectId  The ID of the project to search milestones in.
          * @return array The array of milestones that match the search term.
+         *
          * @api
          */
         public function findMilestone(string $term, int $projectId)
@@ -2170,10 +2217,11 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Finds tickets based on search term, project ID, and optional user ID.
          *
-         * @param string $term The search term to match against ticket headlines.
-         * @param int $projectId The ID of the project to search within.
-         * @param int|null $userId (Optional) The ID of the user to limit the search to.
+         * @param  string  $term  The search term to match against ticket headlines.
+         * @param  int  $projectId  The ID of the project to search within.
+         * @param  int|null  $userId  (Optional) The ID of the user to limit the search to.
          * @return array An array of tickets matching the search criteria.
+         *
          * @api
          */
         public function findTicket(string $term, int $projectId, ?int $userId)
@@ -2195,9 +2243,10 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Retrieve milestones for a specific project and user.
          *
-         * @param int|null $projectId The ID of the project (optional)
-         * @param int|null $userId The ID of the user (optional)
+         * @param  int|null  $projectId  The ID of the project (optional)
+         * @param  int|null  $userId  The ID of the user (optional)
          * @return array|false An array of milestones or false if an error occurred
+         *
          * @api
          */
         public function pollForNewAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
@@ -2223,9 +2272,10 @@ namespace Leantime\Domain\Tickets\Services {
          *
          * Retrieves all milestones based on the provided search criteria and prepares the dates for API response.
          *
-         * @param int|null $projectId (optional) The ID of the project to filter milestones by.
-         * @param int|null $userId (optional) The ID of the user to filter milestones by.
+         * @param  int|null  $projectId  (optional) The ID of the project to filter milestones by.
+         * @param  int|null  $userId  (optional) The ID of the user to filter milestones by.
          * @return array|false An array of milestones with prepared dates for API response, or false if an error occurs.
+         *
          * @api
          */
         public function pollForUpdatedAccountMilestones(?int $projectId = null, ?int $userId = null): array|false
@@ -2254,10 +2304,11 @@ namespace Leantime\Domain\Tickets\Services {
          * it will return all todos. Optionally, a project ID and a user ID can be specified to filter the todos.
          * It excludes todos of type "milestone".
          *
-         * @param int|null $projectId The ID of the project to filter the todos (optional).
-         * @param int|null $userId The ID of the user to filter the todos (optional).
+         * @param  int|null  $projectId  The ID of the project to filter the todos (optional).
+         * @param  int|null  $userId  The ID of the user to filter the todos (optional).
          * @return array|false The retrieved todos as an array of associative arrays.
-         *                    Returns false if an error occurs during retrieval.
+         *                     Returns false if an error occurs during retrieval.
+         *
          * @api
          */
         public function pollForNewAccountTodos(?int $projectId = null, ?int $userId = null): array|false
@@ -2281,9 +2332,10 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * Polls for updated account todos.
          *
-         * @param int|null $projectId The ID of the project (optional)
-         * @param int|null $userId The ID of the user (optional)
+         * @param  int|null  $projectId  The ID of the project (optional)
+         * @param  int|null  $userId  The ID of the user (optional)
          * @return array|false An array of updated account todos or false if there was an error
+         *
          * @api
          */
         public function pollForUpdatedAccountTodos(?int $projectId = null, ?int $userId = null): array|false

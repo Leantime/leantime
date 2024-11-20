@@ -13,13 +13,14 @@ namespace Leantime\Domain\Projects\Controllers {
         
         private ClientService $clientService;
 
+        private TicketService $ticketService;
+
+        private ReportService $reportService;
+
+        private CommentService $commentService;
+
         private Menu $menuService;
 
-        /**
-         * @param  TicketService  $ticketService
-         * @param  ReportService  $reportService
-         * @param  CommentService  $commentService
-         */
         public function init(
             ProjectService $projectService,
             ClientService $clientService,

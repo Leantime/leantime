@@ -31,10 +31,7 @@ class EditCanvasItem extends Controller
 
     private CommentRepository $commentsRepo;
 
-    /**
-     * @var object
-     */
-    private CanvasRepository $canvasRepo;
+    private object $canvasRepo;
 
     /**
      * __construct - constructor
