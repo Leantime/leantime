@@ -24,6 +24,7 @@
                 class="fa fa-plus-square"></span> {{ __('links.add_new_comment') }}
         </a>
 
+
         <div id="comment0" class="commentBox">
             <x-global::forms.text-editor name="text" :type="EditorTypeEnum::Simple->value" value="" />
 
@@ -39,6 +40,7 @@
         </div>
         <hr />
 
+
         <div id="comments">
             <div>
                 <?php foreach ($tpl->get('comments') as $row) : ?>
@@ -49,6 +51,7 @@
                     <strong>
                         <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br />
+
                     <div style="margin-left:60px;"><?php echo $row['text']; ?></div>
                     <div class="clear"></div>
                     <div style="padding-left:60px">
@@ -61,6 +64,7 @@
                         <a href="<?php echo $deleteUrlBase . $row['id']; ?>" class="deleteComment">
                             <span class="fa fa-trash"></span> {{ __('links.delete') }}
                         </a>
+
                         <?php } ?>
                         <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
                             <br /><input type="submit" value="{{ __('links.reply') }}" name="comment"
@@ -69,6 +73,7 @@
                     </div>
                     <div class="clear"></div>
                 </div>
+
 
                 <?php if ($comments->getReplies($row['id'])) : ?>
                 <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
@@ -99,11 +104,14 @@
                 <?php endforeach; ?>
             </div>
 
+
             <?php if (count($tpl->get('comments')) == 0) { ?>
             <div class="text-center">
                 <div style='width:33%' class='svgContainer'>
+
                     <?php echo file_get_contents(ROOT . '/dist/images/svg/undraw_real_time_collaboration_c62i.svg'); ?>
                     <?php $tpl->e($language->__('text.no_comments')); ?>
+
                 </div>
             </div>
             <?php } ?>

@@ -175,7 +175,7 @@ namespace Leantime\Domain\Reports\Services {
             //Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
-            self::dispatchEvent('beforeTelemetrySend', ['companyId' => $companyId]);
+            self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
 
             $companyLang = $this->settings->getSetting('companysettings.language');
             if ($companyLang != '' && $companyLang !== false) {
@@ -281,7 +281,8 @@ namespace Leantime\Domain\Reports\Services {
         {
 
             //Only send once a day
-            $allowTelemetry = (bool) $this->settings->getSetting('companysettings.telemetry.active');
+
+            $allowTelemetry = app('config')->allowTelemetry ?? true;
 
             if ($allowTelemetry === true) {
                 $date_utc = new DateTime('now', new DateTimeZone('UTC'));
@@ -296,6 +297,7 @@ namespace Leantime\Domain\Reports\Services {
                     $httpClient = new Client;
 
                     try {
+
                         $data_string = json_encode($telemetry);
 
                         $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
@@ -308,6 +310,7 @@ namespace Leantime\Domain\Reports\Services {
                         });
 
                         return $promise;
+
                     } catch (\Exception $e) {
                         report($e);
 

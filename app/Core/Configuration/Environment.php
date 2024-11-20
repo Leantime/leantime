@@ -47,6 +47,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
         'ldapDomain' => 'LEAN_LDAP_LDAP_DOMAIN',
         'oidcClientId' => 'LEAN_OIDC_CLIENT_ID',
         'oidcClientSecret' => 'LEAN_OIDC_CLIENT_SECRET',
+        'oidcAutoDiscoverUrl' => 'LEAN_OIDC_AUTO_DISCOVER',
         'oidcAuthUrl' => 'LEAN_OIDC_AUTH_URL_OVERRIDE',
         'oidcTokenUrl' => 'LEAN_OIDC_TOKEN_URL_OVERRIDE',
         'oidcJwksUrl' => 'LEAN_OIDC_JWKS_URL_OVERRIDE',
@@ -82,6 +83,13 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
             }
 
             $this->phpConfig = new Config;
+
+            $configVars = get_class_vars(Config::class);
+            foreach (array_keys($configVars) as $propertyName) {
+                $envVarName = self::LEGACY_MAPPINGS[$propertyName] ?? 'LEAN_'.Str::of($propertyName)->snake()->upper()->toString();
+                putenv($envVarName.'='.$configVars[$propertyName]);
+            }
+
         }
 
         /* YAML */

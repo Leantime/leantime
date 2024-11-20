@@ -92,18 +92,18 @@ $projects = $tpl->get('relations');
                             @endforeach
                         </x-global::forms.select>
                         <br />
-                        
+
                         <x-global::forms.select name="client" id="client" :labelText={!!__('label.client')!!}>
                             @if ($login::userIsAtLeast('admin'))
                                 <x-global::forms.select.select-option value="0" selected="selected">
                                     {{ __('label.no_clients') }}
                                 </x-global::forms.select.select-option>
                             @endif
-                        
+
                             @foreach ($tpl->get('clients') as $client)
                                 @if (!($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client['id'] !== session('userdata.clientId')))
-                                    <x-global::forms.select.select-option 
-                                        :value="$client['id']" 
+                                    <x-global::forms.select.select-option
+                                        :value="$client['id']"
                                         :selected="$client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']">
                                         {!! $tpl->escape($client['name']) !!}
                                     </x-global::forms.select.select-option>
@@ -111,7 +111,7 @@ $projects = $tpl->get('relations');
                             @endforeach
                         </x-global::forms.select>
                         <br/>
-                        
+
             <br/>
 
 
@@ -178,7 +178,7 @@ $projects = $tpl->get('relations');
                                     :value="$row['id']"
                                     :checked="is_array($projects) && in_array($row['id'], $projects)"
                                 />
-                                
+
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
                                     <img src='{{ BASE_URL }}/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
                                 </span>

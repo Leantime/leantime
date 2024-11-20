@@ -7,11 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -84,28 +81,20 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         //$customCommands = $customPluginCommands = null;
 
-        //$ltCommands = collect(glob(APP_ROOT.'/app/Command/*.php') ?? []);
-
+        $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
+        $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
         /*$commands = collect(Arr::flatten($ltCommands))
             ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
         */
 
         $this->load(APP_ROOT.'/app/Command/');
+        $this->load(APP_ROOT.'/app/Domain/**/Command/');
+
+        foreach ($ltPluginCommands as $pluginPath) {
+            $this->load($pluginPath);
+        }
 
         $commandsLoaded = true;
-    }
-
-    /**
-     * Queue an Artisan console command by name.
-     *
-     * @param  string  $command
-     *
-     * @todo Implement
-     */
-    public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
-    {
-        /** @phpstan-ignore-next-line */
-        return \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
     public function bootstrap()
@@ -157,6 +146,10 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
     protected function schedule(Schedule $schedule)
     {
-        //
+        // Set default timezone
+        config(['app.timezone' => config('defaultTimezone')]);
+
+        self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
+
     }
 }

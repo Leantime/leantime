@@ -6,18 +6,6 @@
     @stack('styles')
     <style>
         .leantimeLogo { position: fixed; bottom: 10px; right: 10px; }
-        .row .regLeft:after {
-
-            content: "";
-            height: 326px;
-            right: 0px;
-            opacity: .2;
-            position: absolute;
-            bottom: -50px;
-            width: 250px;
-            left: auto;
-            top: auto;
-        }
 
         .regcontent {
             width: auto;
@@ -53,7 +41,7 @@
                         @endisset
                     </div>
                 </div>
-                <div class="col-md-5 regLeft" style="background:var(--element-gradient); padding:20px; height:auto;">
+                <div class="col-md-5 regLeft" style="position:relative; background:var(--element-gradient); padding:20px; height:auto;">
 
                     <h1 style="position: relative; z-index: 5; width:100%; font-size:16px;">
                         <span style="font-size:26px">Sign Up</span><br /><br />

@@ -71,8 +71,8 @@ class ShowMy extends Controller
             $this->saveTimeSheet($_POST);
         }
 
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session("userdata.id"));
-        $existingTicketIds = array_map(fn($item) => $item['ticketId'], $myTimesheets);
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session('userdata.id'));
+        $existingTicketIds = array_map(fn ($item) => $item['ticketId'], $myTimesheets);
 
         $this->tpl->assign('existingTicketIds', $existingTicketIds);
         $this->tpl->assign('dateFrom', $fromDate);
@@ -109,12 +109,13 @@ class ShowMy extends Controller
                 $hours = $dateEntry;
 
                 // if ticket ID is set to new, pull id and hour type from form field
-                if ($ticketId === "new" || $ticketId === 0) {
-                    $ticketId = (int)$postData["ticketId"];
-                    $kind = $postData["kindId"];
+                if ($ticketId === 'new' || $ticketId === 0) {
+                    $ticketId = (int) $postData['ticketId'];
+                    $kind = $postData['kindId'];
 
-                    if($ticketId == 0 && $hours > 0){
-                        $this->tpl->setNotification("Task ID is required for new entries", "error", "save_timesheet");
+                    if ($ticketId == 0 && $hours > 0) {
+                        $this->tpl->setNotification('Task ID is required for new entries', 'error', 'save_timesheet');
+
                         return;
                     }
                 }

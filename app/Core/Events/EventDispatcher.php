@@ -10,6 +10,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
  */
 class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatcher
 {
+    use Macroable;
     use ReflectsClosures;
 
     /**
@@ -46,15 +48,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         'events' => [],
     ];
 
-    /**
-     * Create a new event dispatcher instance.
-     *
-     * @return void
-     */
-    public function __construct(?\Illuminate\Contracts\Container\Container $container = null)
-    {
-        $this->container = $container ?: new Container;
-    }
 
     /**
      * Adds an event listener to be registered
@@ -258,7 +251,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
      *
      * @throws BindingResolutionException
      */
-    private function defineParams(mixed $paramAttr): array|object
+    private function defineParams(mixed $paramAttr, string $eventName): array|object
     {
 
         if (! isset($default_params)) {
@@ -266,6 +259,8 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
                 'current_route' => currentRoute(),
             ];
         }
+
+        $default_params['currentEvent'] = $eventName;
 
         $finalParams = [];
 
@@ -312,7 +307,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             $additionalParams,
         ];
 
-        if(!is_array($payload)) {
+        if (! is_array($payload)) {
             $payload = [
                 $payload,
                 $hookName,
@@ -330,24 +325,23 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             if ($isEvent) {
 
                 //Some odd events
-//                if(is_array($eventPayload[0])){
-//
-//                    if( collect($eventPayload[0])->first() instanceof MessageLogged) {
-//                        $eventPayload[0] = $eventPayload[0][0];
-//                    }
-//
-//                    if( collect($eventPayload[0])->first() instanceof CacheEvent) {
-//                        $eventPayload[0] = $eventPayload[0][0];
-//                    }
-//
-//                    if( collect($eventPayload[0])->first() instanceof ViewEvent) {
-//                        $eventPayload[0] = $eventPayload[0][0];
-//                    }
-//
-//                }
+                //                if(is_array($eventPayload[0])){
+                //
+                //                    if( collect($eventPayload[0])->first() instanceof MessageLogged) {
+                //                        $eventPayload[0] = $eventPayload[0][0];
+                //                    }
+                //
+                //                    if( collect($eventPayload[0])->first() instanceof CacheEvent) {
+                //                        $eventPayload[0] = $eventPayload[0][0];
+                //                    }
+                //
+                //                    if( collect($eventPayload[0])->first() instanceof ViewEvent) {
+                //                        $eventPayload[0] = $eventPayload[0][0];
+                //                    }
+                //
+                //                }
 
                 $handler(event: $hookName, payload: $eventPayload[0]);
-
 
                 continue;
             }
@@ -629,6 +623,20 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
     }
 
     /**
+     * Get all of the listeners for a given event name.
+     *
+     * @param  string  $eventName
+     * @return array
+     */
+    public function getListeners($eventName)
+    {
+        $listeners = $this->findEventListeners($eventName, $this->getEventRegistry());
+        $list = array_map(fn ($item) => $item['handler'], $listeners);
+
+        return $list;
+    }
+
+    /**
      * Dispatches an event to be executed somewhere
      *
      *
@@ -661,6 +669,14 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         //        self::executeHandlers($matchedEvents, 'events', $eventName, $payload);
     }
 
+    public function dispatch_event(
+        string $eventName,
+        mixed $payload = [],
+        string $context = ''
+    ): void {
+        $this->dispatchEvent($eventName, $payload, $context);
+    }
+
     /**
      * Dispatches a filter to manipulate a variable somewhere
      *
@@ -683,9 +699,16 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             return $payload;
         }
 
-        $available_params = $this->defineParams($available_params);
+        $available_params = $this->defineParams($available_params, $filtername);
 
         return $this->executeHandlers($matchedEvents, 'filters', $filtername, $payload, $available_params);
+    }
+
+    public function dispatch_filter( string $filtername,
+        mixed $payload = '',
+        mixed $available_params = [],
+        mixed $context = '') {
+        return $this->dispatchFilter($filtername, $payload, $available_params, $context);
     }
 
     /**
@@ -733,20 +756,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
     }
 
     /**
-     * Get all of the listeners for a given event name.
-     *
-     * @param  string  $eventName
-     * @return array
-     */
-    public function getListeners($eventName)
-    {
-        $listeners = $this->findEventListeners($eventName, $this->getEventRegistry());
-        $list = array_map(fn ($item) => $item['handler'], $listeners);
-
-        return $list;
-    }
-
-    /**
      * Finds event listeners by event names,
      * Allows listeners with wildcards
      */
@@ -774,8 +783,8 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
             if (preg_match("/^$pattern$/", $eventName)) {
 
-                foreach($value as &$listener) {
-                    $listener['handler'] =  $this->makeListener($listener['handler'], $listener['isWild'] ?? false);
+                foreach ($value as &$listener) {
+                    $listener['handler'] = $this->makeListener($listener['handler'], $listener['isWild'] ?? false);
                 }
                 //$value['handler'] = $this->makeListener($value['handler'], $value['isWild']);
 

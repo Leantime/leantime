@@ -70,7 +70,7 @@
                                     </span>&nbsp;<i class='fa fa-caret-down' aria-hidden='true'></i>"
                         contentRole="link" position="bottom" align="start"
                         class="dropdown ticketDropdown milestoneDropdown colorized show"
-                        style="background-color:{{ __($ticket['milestoneColor']) }}"
+                        style="background-color:{{ __( ($ticket['milestoneColor'] ?? '#ccc')) }}"
                         id="milestoneDropdownMenuLink{{ $ticket['id'] }}">
 
                         <x-slot:menu>

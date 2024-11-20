@@ -2,26 +2,14 @@
 
 namespace Leantime\Core;
 
-use Illuminate\Container\Container;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Http\Kernel;
-use Illuminate\Foundation\Mix;
-use Illuminate\Foundation\PackageManifest;
-use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RoutingServiceProvider;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
-use Leantime\Core\Http\HttpKernel;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Providers\Events;
-use Leantime\Core\Providers\Logging;
-
 
 /**
  * Class Application
@@ -31,6 +19,11 @@ use Leantime\Core\Providers\Logging;
 class Application extends \Illuminate\Foundation\Application
 {
     use DispatchesEvents;
+
+    /**
+     * Application bootstrap status
+     */
+    private static bool $bootstrapped = false;
 
     /**
      * Constructor for the class.
@@ -48,7 +41,7 @@ class Application extends \Illuminate\Foundation\Application
             $this->setBasePath($basePath);
         }
 
-        $this->appPath = $basePath."/app/Core";
+        $this->appPath = $basePath.'/app/Core';
 
         //Larevel stores cache in bootstrap folder
         //Cache files are in root in Leantime not in bootstrap
@@ -68,6 +61,7 @@ class Application extends \Illuminate\Foundation\Application
         $this->usePublicPath($this->basePath.'/public');
         $this->useStoragePath($this->basePath.'/storage');
         $this->useLangPath($this->basePath.'/app/Language');
+        $this->useDatabasePath($this->basePath.'/database');
 
         $this->registerBaseBindings();
 
@@ -134,7 +128,6 @@ class Application extends \Illuminate\Foundation\Application
 
     //Boot with Leantime event dispatcher
 
-
     /**
      * Boot the application.
      *
@@ -154,5 +147,15 @@ class Application extends \Illuminate\Foundation\Application
 
         self::dispatchEvent('afterBootingServiceProviders');
 
+    }
+
+    /**
+     * Set the application as having been bootstrapped
+     */
+    public static function setHasBeenBootstrapped(): self
+    {
+        self::$bootstrapped = true;
+
+        return self::getInstance();
     }
 }

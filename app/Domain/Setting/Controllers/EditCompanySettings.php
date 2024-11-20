@@ -94,11 +94,6 @@ namespace Leantime\Domain\Setting\Controllers {
                 $companySettings['language'] = $language;
             }
 
-            $telemetryActive = $this->settingsRepo->getSetting('companysettings.telemetry.active');
-            if ($telemetryActive !== false) {
-                $companySettings['telemetryActive'] = $telemetryActive;
-            }
-
             $messageFrequency = $this->settingsRepo->getSetting('companysettings.messageFrequency');
             if ($messageFrequency !== false) {
                 $companySettings['messageFrequency'] = $messageFrequency;

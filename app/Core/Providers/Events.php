@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core;
 
@@ -17,7 +16,7 @@ class Events extends ServiceProvider
     {
 
         $this->app->singleton('events', function ($app) {
-            return new Core\Events\EventDispatcher($app);
+            return new Core\Events\EventDispatcher;
         });
 
         $this->booting(function () {

@@ -100,11 +100,13 @@ class FileSystemServiceProvider extends ServiceProvider
 
         $this->app->singleton('filesystem.disk', function () {
             $app = Container::getInstance();
+
             return $app['filesystem']->disk($this->getDefaultDriver());
         });
 
         $this->app->singleton('filesystem.cloud', function () {
             $app = Container::getInstance();
+
             return $app['filesystem']->disk($this->getCloudDriver());
         });
     }
@@ -118,6 +120,7 @@ class FileSystemServiceProvider extends ServiceProvider
     {
         $this->app->singleton('filesystem', function () {
             $app = Container::getInstance();
+
             return new FilesystemManager($app);
         });
     }

@@ -26,7 +26,7 @@ class Tags extends Controller
      */
     public function get(array $params): Response
     {
-        $tags = $this->tagService->getTags(session('currentProject'), $params['term'] ?? '');
+        $tags = $this->tagService->getTags(session('currentProject'), $params['term']);
 
         return $this->tpl->displayJson($tags);
     }

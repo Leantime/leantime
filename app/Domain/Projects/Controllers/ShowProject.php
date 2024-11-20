@@ -100,7 +100,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 $project = $this->projectRepo->getProject($id);
 
                 if (isset($project['id']) === false) {
-                    return FrontcontrollerCore::redirect(BASE_URL.'/error/error404');
+                    return FrontcontrollerCore::redirect(BASE_URL.'/errors/error404');
                 }
 
                 if (session('currentProject') != $project['id']) {
@@ -184,7 +184,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 session(['lastPage' => BASE_URL.'/projects/showProject/'.$id]);
 
-                $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
+                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
 
                 if (isset($_POST['submitSettings'])) {
                     if (isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0) {
@@ -212,7 +212,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->projectRepo->editProjectRelations($values, $id);
 
-                    $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
+                    $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
 
                     $this->tpl->setNotification($this->language->__('notifications.user_was_added_to_project'), 'success');
                 }
@@ -241,7 +241,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         } else {
                             $this->projectRepo->editProject($values, $id);
 
-                            $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
+                            $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
 
                             $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
 
@@ -298,7 +298,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 return $this->tpl->display('projects.showProject');
             } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
+                return $this->tpl->display('errors.error404', responseCode: 404);
             }
         }
     }
