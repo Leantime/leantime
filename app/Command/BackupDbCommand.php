@@ -57,7 +57,7 @@ class BackupDbCommand extends Command
             'mysqldump --column-statistics=0 --user=%s --password=%s --host=%s %s --port=%s --result-file=%s 2>&1',
             $config->dbUser,
             $config->dbPassword,
-            $config->dbHost,
+            $config->dbHost == 'localhost' ? '127.0.0.1' : $config->dbHost,
             $config->dbDatabase,
             $config->dbPort,
             $backupPath
@@ -74,6 +74,7 @@ class BackupDbCommand extends Command
             case 2:
             case 1:
                 $io->error('There was an issue backing up the database');
+                $io->listing($output);
 
                 return Command::FAILURE;
         }

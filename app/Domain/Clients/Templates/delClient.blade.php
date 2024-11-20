@@ -34,12 +34,12 @@ $client = $tpl->get('client');
                 <x-global::forms.button type="submit" name="del" class="button">
                     {{ __('buttons.yes_delete') }}
                 </x-global::forms.button>
-                
+
                 <x-global::forms.button tag="a" href="/clients/showClient/{{ $client['id'] }}" class="btn btn-primary">
                     {{ __('buttons.back') }}
                 </x-global::forms.button>
-                
-                
+
+
                 <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
             </form>

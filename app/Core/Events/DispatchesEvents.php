@@ -16,9 +16,16 @@ namespace Leantime\Core\Events {
          *
          * @throws BindingResolutionException
          */
+        public static function dispatch_event(string $hook, mixed $available_params = [], string|int|null $function = null): void
+        {
+            EventDispatcher::dispatch_event($hook, $available_params, static::getEventContext($function));
+        }
+
+        // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
+        //Temporary for backwards compatibility
         public static function dispatchEvent(string $hook, mixed $available_params = [], string|int|null $function = null): void
         {
-            EventDispatcher::dispatchEvent($hook, $available_params, static::getEventContext($function));
+            EventDispatcher::dispatch_event($hook, $available_params, static::getEventContext($function));
         }
 
         public static function dispatch(mixed $event, mixed $available_params = [], string|int|null $function = null): void
@@ -33,9 +40,16 @@ namespace Leantime\Core\Events {
          *
          * @throws BindingResolutionException
          */
+        public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
+        {
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::getEventContext($function));
+        }
+
+        // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
+        //Temporary for backwards compatibility
         public static function dispatchFilter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
         {
-            return EventDispatcher::dispatchFilter($hook, $payload, $available_params, static::getEventContext($function));
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::getEventContext($function));
         }
 
         /**
@@ -47,11 +61,22 @@ namespace Leantime\Core\Events {
                 self::$event_context = static::setClassContext();
             }
 
-            $function = ! empty($function) && is_string($function) && ! is_numeric($function)
-                ? $function
-                : static::getFunctionContext(is_numeric($function) ? (int) $function : null);
+            $eventContext = self::$event_context.'.';
 
-            return self::$event_context.'.'.$function;
+            if (! empty($function) && is_string($function) && ! is_numeric($function)) {
+
+                $function = $function;
+
+                //If context starts with leantime, the full context was provided by caller
+                if (str_starts_with($function, 'leantime.')) {
+                    $eventContext = '';
+                }
+
+            } else {
+                $function = static::getFunctionContext(is_numeric($function) ? (int) $function : null);
+            }
+
+            return $eventContext.$function;
         }
 
         /**

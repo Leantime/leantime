@@ -4,3 +4,4 @@
     @yield('content')
 @endisset
 
+@dispatchEvent('beforeBodyClose')

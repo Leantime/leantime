@@ -2,16 +2,11 @@
 
 namespace Leantime\Domain\Menu\Services;
 
-use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\UI\Template as TemplateCore;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users;
@@ -31,13 +26,8 @@ class Menu
     private Setting $settingSvc;
 
     /**
-     * @param TimesheetRepository $timesheetsRepo
-     * @param SettingRepository   $settingsRepo
-     * @param ProjectService      $projectService
-     * @param TimesheetService    $timesheetService
-     * @param SprintService       $sprintService
-     * @param Users               $userService
-     * @param Setting             $settingSvc
+     * @param  TimesheetRepository  $timesheetsRepo
+     * @param  SettingRepository  $settingsRepo
      */
     public function __construct(
         ProjectService $projectService,

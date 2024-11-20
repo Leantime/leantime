@@ -300,6 +300,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $goals = $this->goalRepository->getAllAccountGoals();
 
             foreach ($goals as $key => $goal) {
+                $goals[$key] = $this->prepareDatesForApiResponse($goal);
                 $goals[$key]['id'] = $goal['id'].'-'.$goal['modified'];
             }
 
@@ -358,7 +359,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
             ];
         }
 
-
         public function getGoalStatusLabels()
         {
             return $this->goalRepository->getStatusLabels();
@@ -373,6 +373,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         {
             return $this->goalRepository->getRelatesLabels();
         }
+
         /**
          * Creates a default canvas when no canvas exists.
          *

@@ -89,6 +89,9 @@ class Login extends Controller
 
             //If login successful redirect to the correct url to avoid post on reload
             if ($this->authService->login($username, $password) === true) {
+
+                self::dispatch_event('successfulLogin', ['post' => $_POST]);
+
                 if ($this->authService->use2FA()) {
                     return FrontcontrollerCore::redirect(BASE_URL.'/auth/twoFA');
                 }

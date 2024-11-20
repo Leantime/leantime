@@ -1,0 +1,52 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["Bug"]
+assignees: 
+  - marcelfolaron
+body:
+  - type: markdown
+    attributes:
+      value: "Thank you for taking the time to submit a bug report. If you have problems with the installation or other questions please use the [discussion forum](https://github.com/Leantime/leantime/discussions) or our [discord server](https://discord.gg/4zMzJtAq9z)"
+  - type: dropdown
+    attributes:
+      label: What is your set up? 
+      options:
+        - Cloud Hosted
+        - Self Hosted Server
+        - Self Hosted Docker
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Which Leantime version are you using (see footer bottom right)"
+      placeholder: "3.x.x"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the issue
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: "How do you trigger this bug? Please walk us through it step by step."
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Notes
+      description: "Please add any additional context you can share"
+    validations:
+      required: false

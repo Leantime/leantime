@@ -5,11 +5,19 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SetCacheHeaders
 {
+    private AuthService $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     /**
      * Specify the options for the middleware.
      *
@@ -39,7 +47,6 @@ class SetCacheHeaders
      * Add cache related HTTP headers.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string|array  $options
      * @return \Symfony\Component\HttpFoundation\Response
      *
@@ -48,6 +55,15 @@ class SetCacheHeaders
     public function handle($request, Closure $next, $options = [])
     {
         $response = $next($request);
+
+        // For authenticated routes, set strict no-cache headers
+        if ($this->authService->loggedIn()) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+
+            return $response;
+        }
 
         if (! $request->isMethodCacheable() || (! $response->getContent() && ! $response instanceof BinaryFileResponse && ! $response instanceof StreamedResponse)) {
             return $response;
