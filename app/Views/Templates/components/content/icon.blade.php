@@ -18,4 +18,4 @@
 
 @endphp
 
-<span {{ $attributes->merge([ 'class' => 'material-symbols-rounded' ]) }}>{{ $iconMapped }}</span>
+<span {{ $attributes->merge([ 'class' => 'material-symbols-rounded' ]) }}>{!! $iconMapped !!}</span>
