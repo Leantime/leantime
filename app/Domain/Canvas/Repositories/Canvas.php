@@ -245,9 +245,6 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @return array|false
-         */
         public function getSingleCanvas($canvasId): false|array
         {
             $sql = "SELECT

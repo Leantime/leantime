@@ -39,6 +39,7 @@
     "jquery-is-in-viewport": "^1.0.5",
     "jquery-ui-dist": "1.13.2",
     "jquery-ui-touch-punch": "^0.2.3",
+      "jquery-bridget": "^3.0.1",
     "jstree": "^3.3.16",
     "leader-line": "^1.0.7",
     "luxon": "^3.4.4",

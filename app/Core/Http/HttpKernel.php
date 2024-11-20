@@ -41,6 +41,11 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Leantime\Core\Middleware\Auth::class,
+        \Leantime\Core\Middleware\ApiAuth::class,
+        \Leantime\Core\Middleware\SetCacheHeaders::class,
+        \Leantime\Core\Middleware\Localization::class,
+        \Leantime\Core\Middleware\CurrentProject::class,
         \Leantime\Core\Middleware\LoadPlugins::class,
     ];
 
@@ -90,6 +95,63 @@ class HttpKernel extends Kernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        //Events are discovered and available as part of bootstrapping the providers.
+        //Can savely assume events are available here.
+        self::dispatch_event('request_started', ['request' => $request]);
+
+        //This filter only works for system plugins
+        //Regular plugins are not available until after install verification
+        $this->middleware = self::dispatch_filter('middleware', $this->middleware, ['request' => $request]);
+
+        //Main Pipeline
+        $response = (new \Illuminate\Routing\Pipeline($this->app))
+            ->send($request)
+            ->through($this->middleware)
+            ->then(fn ($request) =>
+                //Then run through plugin pipeline
+            (new \Illuminate\Routing\Pipeline($this->app))
+                ->send($request)
+                ->through(self::dispatch_filter(
+                    hook: 'plugins_middleware',
+                    payload: [],
+                    function: 'handle',
+                ))
+                ->then(fn () => Frontcontroller::dispatch_request($request))
+            );
+
+        return $response;
+    }
+
+    public function handle($request)
+    {
+        $this->requestStartedAt = Carbon::now();
+
+        try {
+            $request->enableHttpMethodParameterOverride();
+
+            $response = $this->sendRequestThroughRouter($request);
+        } catch (\Throwable $e) {
+            $this->reportException($e);
+
+            $response = $this->renderException($request, $e);
+        }
+
+        $this->app['events']->dispatch(new RequestHandled($request, $response));
+
+        $response = self::dispatch_filter('beforeSendResponse', $response);
+
+        return $response;
+    }
+
 
     public function terminate($request, $response)
     {

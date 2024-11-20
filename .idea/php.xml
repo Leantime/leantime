@@ -285,11 +285,7 @@
   </component>
   <component name="PhpProjectServersManager">
     <servers>
-      <server host="leantime.localhost" id="822abf0f-3bb4-4146-b5e4-26439962d6a2" name="Mamp Localhost" port="443">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$" remote-root="/var/www/html" />
-        </path_mappings>
-      </server>
+      <server host="leantime.localhost" id="822abf0f-3bb4-4146-b5e4-26439962d6a2" name="Mamp Localhost" port="443" />
     </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

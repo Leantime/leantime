@@ -307,7 +307,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
-
         /**
          * Retrieves the related labels for the goal canvas.
          *
@@ -360,7 +359,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
             ];
         }
 
-
         public function getGoalStatusLabels()
         {
             return $this->goalRepository->getStatusLabels();
@@ -375,6 +373,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         {
             return $this->goalRepository->getRelatesLabels();
         }
+
         /**
          * Creates a default canvas when no canvas exists.
          *

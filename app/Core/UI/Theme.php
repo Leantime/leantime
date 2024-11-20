@@ -8,12 +8,12 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Events\EventDispatcher as EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Event as EventDispatcher;
 
 /**
  * theme - Engine for handling themes

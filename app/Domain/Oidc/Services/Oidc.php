@@ -165,7 +165,7 @@ class Oidc
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         }
 
-        if ((!isset($tokens['access_token'])) && (!isset($tokens['access_token']))) {
+        if ((! isset($tokens['access_token'])) && (! isset($tokens['access_token']))) {
             $this->displayError('oidc.error.unsupportedToken');
         }
 

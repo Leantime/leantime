@@ -284,7 +284,6 @@ if (! function_exists('get_domain_key')) {
 
     /**
      * Gets a unique instance key determined by domain
-     *
      */
     function get_domain_key()
     {

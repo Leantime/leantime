@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Container\Container;
 use Illuminate\Log;
 use Illuminate\Support\ServiceProvider;
 

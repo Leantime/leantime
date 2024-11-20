@@ -42,14 +42,14 @@ namespace Leantime\Core\Events {
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
         {
-            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::getEventContext($function));
         }
 
         // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
         //Temporary for backwards compatibility
         public static function dispatchFilter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
         {
-            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
+            return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::getEventContext($function));
         }
 
         /**

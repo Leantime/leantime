@@ -150,7 +150,7 @@
 
 </ul>
 
-<ul class="headmenu" hx-boost="true" hx-indicator="#global-loader">
+<ul class="headmenu" hx-indicator="#global-loader">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>

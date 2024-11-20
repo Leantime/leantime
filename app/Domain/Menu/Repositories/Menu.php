@@ -129,7 +129,6 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
         ];
 
-
         public function __construct(
             /** @var SettingRepository */
             private SettingRepository $settingsRepo,
@@ -252,10 +251,10 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $this->menuStructures =
                 self::dispatchFilter(
-                'menuStructures',
+                    'menuStructures',
                     $this->menuStructures,
                     ['menuType' => $menuType]
-            );
+                );
 
             //If menu structure cannot be found, don't return anything
             if (! isset($this->menuStructures[$menuType])) {
@@ -266,10 +265,10 @@ namespace Leantime\Domain\Menu\Repositories {
             $filter = "menuStructures.$menuType";
 
             $this->menuStructures[$menuType] = self::dispatchFilter(
-                        $filter,
-                        $this->menuStructures[$menuType],
-                        ['menuType' => $menuType]
-                    );
+                $filter,
+                $this->menuStructures[$menuType],
+                ['menuType' => $menuType]
+            );
 
             $menuStructure = $this->menuStructures[$menuType];
 

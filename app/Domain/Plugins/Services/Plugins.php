@@ -120,7 +120,7 @@ namespace Leantime\Domain\Plugins\Services {
              *
              * @var array $allPlugins
              */
-            $allPlugins = self::dispatchFilter("beforeReturnAllPlugins", $installedPluginsById, array("enabledOnly" => $enabledOnly));
+            $allPlugins = self::dispatchFilter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
 
             return $allPlugins;
         }

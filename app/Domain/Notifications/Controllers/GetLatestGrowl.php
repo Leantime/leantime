@@ -4,44 +4,36 @@
  * Controller / Delete Canvas
  */
 
-namespace Leantime\Domain\Notifications\Controllers {
+namespace Leantime\Domain\Notifications\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Symfony\Component\HttpFoundation\JsonResponse;
+use Leantime\Core\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-    class GetLatestGrowl extends Controller
+class GetLatestGrowl extends Controller
+{
+    public function init(
+
+    ): void {}
+
+    public function get()
     {
-        public function init(
 
-        ): void {}
+        $jsonEncoded = false;
+        if (session('notification') != '') {
+            $notificationArray = [
+                'notification' => session('notification') ?? '',
+                'type' => session('notificationType') ?? '',
+                'eventId' => session('eventId') ?? '',
+            ];
 
-        public function get()
-        {
+            session(['notification' => '']);
+            session(['notificationType' => '']);
+            session(['eventId' => '']);
 
-            $jsonEncoded = false;
-            if (session('notification') != '') {
-                $notificationArray = [
-                    'notification' => session('notification') ?? '',
-                    'type' => session('notificationType') ?? '',
-                    'eventId' => session('eventId') ?? '',
-                ];
-
-            if (session('notification') != '') {
-                $notificationArray = [
-                    'notification' => session('notification') ?? '',
-                    'type' => session('notificationType') ?? '',
-                    'eventId' => session('eventId') ?? '',
-                ];
-
-                session(['notification' => '']);
-                session(['notificationType' => '']);
-                session(['eventId' => '']);
-
-                $jsonEncoded = json_encode($notificationArray);
-            }
-
-            return new JsonResponse($jsonEncoded);
-
+            $jsonEncoded = json_encode($notificationArray);
         }
+
+        return new JsonResponse($jsonEncoded);
+
     }
 }

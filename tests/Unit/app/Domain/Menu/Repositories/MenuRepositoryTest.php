@@ -108,7 +108,7 @@ class MenuRepositoryTest extends TestCase
     public function testGetFilteredMenuStructure()
     {
 
-        \Leantime\Core\Events\EventDispatcher::addFilterListener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company", function($menu){
+        \Leantime\Core\Events\EventDispatcher::addFilterListener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company', function ($menu) {
 
             if (isset($menu[15]) && isset($menu[15]['submenu'])) {
                 unset($menu[15]['submenu'][20]);
@@ -128,7 +128,7 @@ class MenuRepositoryTest extends TestCase
     public function testInjectNewProjectMenuType()
     {
 
-        \Leantime\Core\Events\EventDispatcher::addFilterListener("leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures", function($menuStructure){
+        \Leantime\Core\Events\EventDispatcher::addFilterListener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', function ($menuStructure) {
 
             $testStructure = [
                 10 => ['item' => 'myNewMenu', 'type' => 'item'],

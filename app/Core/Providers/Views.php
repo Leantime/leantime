@@ -14,7 +14,6 @@ use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\ViewServiceProvider;
 use Leantime\Core\Support\PathManifestRepository;
-use Leantime\Core\UI\Composer;
 
 class Views extends ViewServiceProvider
 {

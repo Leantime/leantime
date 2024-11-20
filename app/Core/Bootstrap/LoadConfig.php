@@ -89,7 +89,8 @@ class LoadConfig extends LoadConfiguration
 
         $config = $app['config'];
 
-        self::dispatchEvent('config_initialized');
+        //self::dispatchEvent('config_initialized');
+        $app['events']->dispatch('config_initialized');
 
         // Finally, we will set the application's environment based on the configuration
         // values that were loaded. We will pass a callback which will be used to get

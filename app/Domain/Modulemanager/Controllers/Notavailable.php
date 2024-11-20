@@ -10,7 +10,6 @@ namespace Leantime\Domain\ModuleManager\Controllers {
 
     class Notavailable
     {
-
         use DispatchesEvents;
 
         public function run($params)

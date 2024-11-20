@@ -337,8 +337,10 @@ namespace Leantime\Domain\Ideas\Repositories {
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
 
             $stmn->closeCursor();
+
             return $values;
         }
+
         public function getCanvasItemsIdById($id): false|array
         {
 
@@ -399,14 +401,14 @@ namespace Leantime\Domain\Ideas\Repositories {
                     LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
                     WHERE zp_canvas_items.id = :id';
 
-            if (!empty($key)) {
+            if (! empty($key)) {
                 $sql .= ' AND zp_canvas_items.box = :key';
             }
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            if (!empty($key)) {
+            if (! empty($key)) {
                 $stmn->bindValue(':key', $key, PDO::PARAM_STR);
             }
 
@@ -417,7 +419,6 @@ namespace Leantime\Domain\Ideas\Repositories {
 
             return $value;
         }
-
 
         public function addCanvasItem($values): false|string
         {

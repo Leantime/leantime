@@ -201,7 +201,7 @@ class Projects
     public function getAllUserInfoToNotify($projectId): array
     {
 
-      $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+        $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
         $to = [];
 
@@ -265,31 +265,31 @@ class Projects
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
             $entityId = $notification->entity['id'];
 
-        if (isset($mentionFields[$notification->module])) {
-            $fields = $mentionFields[$notification->module];
+            if (isset($mentionFields[$notification->module])) {
+                $fields = $mentionFields[$notification->module];
 
-            foreach ($fields as $field) {
-                if (isset($notification->entity[$field])) {
-                    $contentToCheck .= $notification->entity[$field];
+                foreach ($fields as $field) {
+                    if (isset($notification->entity[$field])) {
+                        $contentToCheck .= $notification->entity[$field];
+                    }
                 }
             }
-        }
-    } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-        $entityId = $notification->entity->id;
+        } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+            $entityId = $notification->entity->id;
 
-        if (isset($mentionFields[$notification->module])) {
-            $fields = $mentionFields[$notification->module];
+            if (isset($mentionFields[$notification->module])) {
+                $fields = $mentionFields[$notification->module];
 
-            foreach ($fields as $field) {
-                if (isset($notification->entity->$field)) {
-                    $contentToCheck .= $notification->entity->$field;
+                foreach ($fields as $field) {
+                    if (isset($notification->entity->$field)) {
+                        $contentToCheck .= $notification->entity->$field;
+                    }
                 }
             }
+        } else {
+            //Entity id not set use project id
+            $entityId = $notification->projectId;
         }
-    } else {
-        //Entity id not set use project id
-        $entityId = $notification->projectId;
-    }
 
         if ($contentToCheck != '') {
             $this->notificationService->processMentions(
@@ -517,8 +517,8 @@ class Projects
             'allAvailableProjects' => $projects,
             'allAvailableProjectsHierarchy' => $projectHierarchy,
             'clients' => $clients,
-            ];
-        }
+        ];
+    }
 
     /**
      * Gets all the clients available to a user.
@@ -829,12 +829,12 @@ class Projects
 
         foreach ($users as $key => $user) {
 
-                if (dtHelper()->isValidDateString($user['modified'])) {
-                    $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
-                } else {
-                    $users[$key]['modified'] = null;
-                }
+            if (dtHelper()->isValidDateString($user['modified'])) {
+                $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+            } else {
+                $users[$key]['modified'] = null;
             }
+        }
 
         if ($users) {
             return $users;
@@ -872,27 +872,27 @@ class Projects
         return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
     }
 
-        /**
-         * Adds a new project .
-         *
-         * @param  array  $values  The project data.
-         *                         - name: string (required)The name of the project.
-         *                         - details: string (optional) Additional details about the project.
-         *                         - clientId: int (required)The ID of the client associated with the project.
-         *                         - hourBudget: int (optional) The hour budget for the project (defaults to 0).
-         *                         - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
-         *                         - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
-         *                         - psettings: string (optional) The project settings (defaults to 'restricted').
-         *                         - type: string (fixed value 'project') The type of the project.
-         *                         - start: string|null The start date of the project in user format or null.
-         *                         - end: string|null The end date of the project in user format or null.
-         * @return int|false The ID of the added project, or false if the project could not be added.
-         *
-         * @api
-         */
-        public function addProject(array $values): int|false
-        {
-            $values = [
+    /**
+     * Adds a new project .
+     *
+     * @param  array  $values  The project data.
+     *                         - name: string (required)The name of the project.
+     *                         - details: string (optional) Additional details about the project.
+     *                         - clientId: int (required)The ID of the client associated with the project.
+     *                         - hourBudget: int (optional) The hour budget for the project (defaults to 0).
+     *                         - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
+     *                         - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
+     *                         - psettings: string (optional) The project settings (defaults to 'restricted').
+     *                         - type: string (fixed value 'project') The type of the project.
+     *                         - start: string|null The start date of the project in user format or null.
+     *                         - end: string|null The end date of the project in user format or null.
+     * @return int|false The ID of the added project, or false if the project could not be added.
+     *
+     * @api
+     */
+    public function addProject(array $values): int|false
+    {
+        $values = [
             'name' => $values['name'],
             'details' => $values['details'] ?? '',
             'clientId' => $values['clientId'],
@@ -909,7 +909,7 @@ class Projects
         }
         if ($values['end'] != null) {
             $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
-            }
+        }
 
         return $this->projectRepository->addProject($values);
     }
@@ -992,8 +992,8 @@ class Projects
             }
         }
 
-            $projectStart = new DateTime($startDate);
-            $interval = $oldestTicket->diff($projectStart);
+        $projectStart = new DateTime($startDate);
+        $interval = $oldestTicket->diff($projectStart);
 
         //oldId = > newId
         $ticketIdList = [];
@@ -1257,7 +1257,8 @@ class Projects
     public function getProjectAvatar($id): mixed
     {
         $avatar = $this->projectRepository->getProjectAvatar($id);
-        $avatar = self::dispatchFilter("afterGettingAvatar", $avatar, array("projectId" => $id));
+        $avatar = self::dispatchFilter('afterGettingAvatar', $avatar, ['projectId' => $id]);
+
         return $avatar;
     }
 
@@ -1293,57 +1294,57 @@ class Projects
      * @param  int  $projectId  The ID of the project.
      * @return array The setup checklist for the project
      */
-        public function getProjectSetupChecklist($projectId): array
-        {
-            $progressSteps = [
-                'define' => [
-                    'title' => 'label.define',
-                    'description' => 'checklist.define.description',
-                    'tasks' => [
-                        'description' => [
-                            'title' => 'label.projectDescription',
-                            'status' => '',
-                            'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'',
-                            'description' => 'checklist.define.tasks.description',
-                        ],
-                        'defineTeam' => [
-                            'title' => 'label.defineTeam',
-                            'status' => '',
-                            'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'#team',
-                            'description' => 'checklist.define.tasks.defineTeam',
-                        ],
-                        'createBlueprint' => [
-                            'title' => 'label.createBlueprint',
-                            'status' => '',
-                            'link' => BASE_URL.'/strategy/showBoards/',
-                            'description' => 'checklist.define.tasks.createBlueprint',
-                        ],
+    public function getProjectSetupChecklist($projectId): array
+    {
+        $progressSteps = [
+            'define' => [
+                'title' => 'label.define',
+                'description' => 'checklist.define.description',
+                'tasks' => [
+                    'description' => [
+                        'title' => 'label.projectDescription',
+                        'status' => '',
+                        'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'',
+                        'description' => 'checklist.define.tasks.description',
                     ],
-                    'status' => '',
-                ],
-                'goals' => [
-                    'title' => 'label.setGoals',
-                    'description' => 'checklist.goals.description',
-                    'tasks' => [
-                        'setGoals' => [
-                            'title' => 'label.setGoals',
-                            'status' => '',
-                            'link' => BASE_URL.'/goalcanvas/dashboard',
-                            'description' => 'checklist.goals.tasks.setGoals',
-                        ],
+                    'defineTeam' => [
+                        'title' => 'label.defineTeam',
+                        'status' => '',
+                        'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'#team',
+                        'description' => 'checklist.define.tasks.defineTeam',
                     ],
-                    'status' => '',
+                    'createBlueprint' => [
+                        'title' => 'label.createBlueprint',
+                        'status' => '',
+                        'link' => BASE_URL.'/strategy/showBoards/',
+                        'description' => 'checklist.define.tasks.createBlueprint',
+                    ],
                 ],
-                'timeline' => [
-                    'title' => 'label.setTimeline',
-                    'description' => 'checklist.timeline.description',
-                    'tasks' => [
-                        'createMilestones' => [
-                            'title' => 'label.createMilestones',
-                            'status' => '',
-                            'link' => BASE_URL.'/tickets/roadmap',
-                            'description' => 'checklist.timeline.tasks.createMilestones',
-                        ],
+                'status' => '',
+            ],
+            'goals' => [
+                'title' => 'label.setGoals',
+                'description' => 'checklist.goals.description',
+                'tasks' => [
+                    'setGoals' => [
+                        'title' => 'label.setGoals',
+                        'status' => '',
+                        'link' => BASE_URL.'/goalcanvas/dashboard',
+                        'description' => 'checklist.goals.tasks.setGoals',
+                    ],
+                ],
+                'status' => '',
+            ],
+            'timeline' => [
+                'title' => 'label.setTimeline',
+                'description' => 'checklist.timeline.description',
+                'tasks' => [
+                    'createMilestones' => [
+                        'title' => 'label.createMilestones',
+                        'status' => '',
+                        'link' => BASE_URL.'/tickets/roadmap',
+                        'description' => 'checklist.timeline.tasks.createMilestones',
+                    ],
 
                 ],
                 'status' => '',
@@ -1449,11 +1450,11 @@ class Projects
                     $progressSteps[$name]['stepType'] = '';
                 }
 
-                    $progressSteps[$name]['status'] = '';
-                    $previousValue = $progressSteps[$name];
+                $progressSteps[$name]['status'] = '';
+                $previousValue = $progressSteps[$name];
 
-                    continue;
-                }
+                continue;
+            }
 
             // otherwise, set the step as completed
             $progressSteps[$name]['status'] = 'done';
@@ -1692,7 +1693,7 @@ class Projects
      * @api
      */
     public function pollForNewProjects()
-        {
+    {
 
         $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: 'all');
 
@@ -1736,8 +1737,9 @@ class Projects
      * @return array The modified project array with formatted date values.
      *
      * @internal
-     */    private function prepareDatesForApiResponse($project)
-        {
+     */
+    private function prepareDatesForApiResponse($project)
+    {
 
         if (dtHelper()->isValidDateString($project['modified'])) {
             $project['modified'] = dtHelper()->parseDbDateTime($project['modified'])->toIso8601ZuluString();

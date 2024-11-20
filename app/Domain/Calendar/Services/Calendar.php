@@ -254,7 +254,7 @@ class Calendar
         //Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
             try {
-                $description = str_replace("\r\n", "\\n", strip_tags($event['description']));
+                $description = str_replace("\r\n", '\\n', strip_tags($event['description']));
 
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
