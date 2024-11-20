@@ -2,6 +2,8 @@
 
 <?php
 
+defined('RESTRICTED') or die('Restricted access');
+
 use Leantime\Core\Support\FromFormat;
 
 $values = $tpl->get('values');
@@ -155,11 +157,11 @@ $values = $tpl->get('values');
      <x-global::forms.button tag="a" href="{{ BASE_URL }}/timesheets/delTime/{{ $_GET['id'] }}" class="delete editTimeModal pull-right">
         {!! $tpl->__('links.delete') !!}
     </x-global::forms.button>
-    
+
     <x-global::forms.button type="submit" name="save" class="button">
         {{ __('buttons.save') }}
     </x-global::forms.button>
-    
+
     </p>
 </x-global::content.modal.form>
 

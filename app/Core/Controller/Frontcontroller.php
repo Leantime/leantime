@@ -5,12 +5,13 @@ namespace Leantime\Core\Controller;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HtmxRequest;
 use Leantime\Core\Http\IncomingRequest;
-use PHPUnit\Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
@@ -39,14 +40,18 @@ class Frontcontroller
 
     protected $defaultRoute = 'dashboard.home';
 
+    protected Environment $config;
+
     /**
      * __construct - Set the rootpath of the server
      *
      * @param  IncomingRequest  $incomingRequest
      * @return void
      */
-    public function __construct(IncomingRequest $request) {
+    public function __construct(IncomingRequest $request)
+    {
         $this->incomingRequest = $request;
+        $this->config = config();
     }
 
     /**
@@ -61,30 +66,29 @@ class Frontcontroller
     {
         $this->incomingRequest = $request;
 
-        try {
+        [$moduleName, $controllerType, $controllerName, $method] = $this->parseRequestParts($request);
 
-            [$moduleName, $controllerType, $controllerName, $method] = $this->parseRequestParts($request);
+        $this->dispatchEvent('execute_action_start', ['action' => $controllerName, 'module' => $moduleName]);
 
-            $this->dispatchEvent('execute_action_start', ['action' => $actionName, 'module' => $moduleName]);
+        $routeParts = $this->getValidControllerCall($moduleName, $controllerName, $method, $controllerType);
 
-            $routeParts = $this->getValidControllerCall($moduleName, $controllerName, $methodName, $controllerType);
+        //Setting default response code to 200, can be changed in controller
+        $this->setResponseCode(200);
 
-            //Setting default response code to 200, can be changed in controller
-            $this->setResponseCode(200);
+        $this->lastAction = $moduleName.'.'.$controllerName.'.'.$method;
 
-            $this->lastAction = $completeName;
+        $this->dispatchEvent('execute_action_end', ['action' => $controllerName, 'module' => $moduleName]);
 
-            $this->dispatchEvent('execute_action_end', ['action' => $actionName, 'module' => $moduleName]);
+        //execute action
+        return $this->executeAction($routeParts['class'], $routeParts['method']);
 
+    }
 
-            //execute action
-            return $this->executeAction($moduleName.'.'.$controllerName.'.'.$method, $controllerType);
+    public static function dispatch_request(IncomingRequest $request): Response
+    {
+        $frontcontroller = new self($request);
 
-        } catch (Exception $e) {
-
-            return self::redirect(BASE_URL.'/error/error404');
-
-        }
+        return $frontcontroller->dispatch($request);
     }
 
     /**
@@ -125,21 +129,41 @@ class Frontcontroller
 
         //third is either id or method
         //we can say that a numeric value always represents an id
-        if (isset($segments[2]) && is_numeric($segments[2])) {
+        if (isset($segments[2]) &&
+            (is_numeric($segments[2]) || Str::isUuid($segments[2]))
+        ) {
             $id = $segments[2];
         }
 
         //If not numeric, it's quite likely this is a method name
         //But it needs to be double checked.
-        if (isset($segments[2]) && ! is_numeric($segments[2])) {
+        if (isset($segments[2]) &&
+            ! (is_numeric($segments[2]) || Str::isUuid($segments[2]))
+        ) {
             $method = $segments[2];
+        }
+
+        //If a third segment is set it is the id
+        if (isset($segments[3])) {
+            $id = $segments[3];
+            $method = $segments[2];
+            $request_parts = implode('.', array_slice($segments, 3));
+            $this->incomingRequest->query->set('request_parts', $request_parts);
         }
 
         $this->incomingRequest->query->set('act', $moduleName.'.'.$controllerName.'.'.$method);
         $this->incomingRequest->setCurrentRoute($moduleName.'.'.$controllerName);
-        $this->incomingRequest->query->set('id', $id);
+
+        if ($id === '0' || ! empty($id)) {
+            $this->incomingRequest->query->set('id', $id);
+        }
+
+        //need to update all controllers to stop using global get and post methods.
+        //In the meantime we are setting it again.
+        $this->incomingRequest->overrideGlobals();
 
         return [$moduleName, $controllerType, $controllerName, $method];
+
     }
 
     /**
@@ -155,13 +179,13 @@ class Frontcontroller
 
         $parameters = $this->incomingRequest->getRequestParams();
 
-        $controller = app()->make($controller);
-        $response = $controller->callAction($method, $parameters);
+        $controllerClass = app()->make($controller);
+
+        $response = $controllerClass->callAction($method, $parameters);
 
         //Expecting a response object but can accept a string to a fragment.
-        return $response instanceof Response ? $response : $controller->getResponse($response);
+        return $response instanceof Response ? $response : $controllerClass->getResponse($response);
     }
-
 
     /**
      * Retrieves the type of controller based on the incoming request.
@@ -197,18 +221,20 @@ class Frontcontroller
 
         $moduleName = Str::studly($moduleName);
         $actionName = Str::studly($actionName);
-        $methodName = Str::lower($methodName);
+        $methodNameLower = Str::lower($methodName);
         $routepath = $moduleName.'.'.$controllerType.'.'.$actionName;
         $actionPath = $moduleName.'\\'.$controllerType.'\\'.$actionName;
 
-        if(Cache::store("installation")->has("routes.".$routepath.".".$methodName)){
-            return Cache::store("installation")->get("routes.".$routepath.".".$methodName);
+        if ($this->config->debug == false) {
+            if (Cache::store('installation')->has('routes.'.$routepath.'.'.$methodNameLower)) {
+                return Cache::store('installation')->get('routes.'.$routepath.'.'.$methodNameLower);
+            }
         }
 
         $classPath = $this->getClassPath($controllerType, $moduleName, $actionName);
         $classMethod = $this->getValidControllerMethod($classPath, $methodName);
 
-        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodName : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
+        Cache::store('installation')->set('routes.'.$routepath.'.'.($classMethod == 'run' ? $methodNameLower : $classMethod), ['class' => $classPath, 'method' => $classMethod]);
 
         return ['class' => $classPath, 'method' => $classMethod];
     }
@@ -228,6 +254,13 @@ class Frontcontroller
             return $classname;
         }
 
+        //Check if hxcontroller exists
+        $classname = 'Leantime\\Domain\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+
+        if (class_exists($classname)) {
+            return $classname;
+        }
+
         $classname = 'Leantime\\Plugins\\'.$moduleName.'\\'.$controllerType.'\\'.$actionName;
 
         $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
@@ -241,11 +274,20 @@ class Frontcontroller
             break;
         }
 
-        if (! $pluginEnabled || ! class_exists($classname)) {
-            return self::redirect(BASE_URL."/errors/error404");
+        if (! $pluginEnabled) {
+            return false;
         }
 
-        return $classname;
+        if (class_exists($classname)) {
+            return $classname;
+        }
+
+        $classname = 'Leantime\\Plugins\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
+        if (class_exists($classname)) {
+            return $classname;
+        }
+
+        return false;
     }
 
     /**
@@ -263,7 +305,7 @@ class Frontcontroller
      */
     public function getValidControllerMethod(string $controllerClass, string $method): string
     {
-
+        $methodFormatted = Str::camel($method);
         $httpMethod = Str::lower($this->incomingRequest->getMethod());
 
         if (Str::lower($method) == 'head') {
@@ -271,10 +313,12 @@ class Frontcontroller
         }
 
         //First check if the given method exists.
-        if (method_exists($controllerClass, $method)) {
-            return $method;
+        if (method_exists($controllerClass, $methodFormatted)) {
+
+            return $methodFormatted;
             //Then check if the http method exists as verb
         } elseif (method_exists($controllerClass, $httpMethod)) {
+
             //If this was the case our first assumption around $method was wrong and $method is actually a
             //id/slug. Let's set id to that slug.
             $this->incomingRequest->query->set('id', $method);
@@ -285,7 +329,7 @@ class Frontcontroller
             return 'run';
         }
 
-        return self::redirect(BASE_URL."/errors/error404");
+        throw new NotFoundHttpException("Can't find valid method for".strip_tags($method).' in '.strip_tags($controllerClass));
     }
 
     /**

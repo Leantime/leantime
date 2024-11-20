@@ -1,8 +1,5 @@
 <?php
 
-use Leantime\Core\Console\ConsoleKernel;
-use Leantime\Core\Http\HttpKernel;
-
 ! defined('ROOT') ? define('ROOT', __DIR__.'/../public') : '';
 ! defined('APP_ROOT') ? define('APP_ROOT', dirname(__DIR__, 1)) : '';
 
@@ -48,7 +45,6 @@ $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     Leantime\Core\Http\HttpKernel::class
 );
-
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,

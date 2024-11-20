@@ -5,6 +5,7 @@ import { theme } from 'js/app/core/instance-info.module';
 import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
 import { updateDueDates } from 'domain/Tickets/Js/ticketsRepository';
 import moment from 'moment';
+import commentsController from '../../Comments/Js/commentsController';
 
 export const chartColors = {
     red: 'rgb(201,48,44)',
@@ -281,6 +282,10 @@ export const initBacklogChartButtonClick = function (id, actualData, label, char
     );
 };
 
+export const printCharts = function () {
+    console.log('printCharts');
+}
+
 export const initDueDateTimePickers = function () {
     jQuery(document).ready(function () {
         jQuery(".duedates").datepicker(
@@ -328,5 +333,8 @@ export default {
     initBacklogChartButtonClick:initBacklogChartButtonClick,
     initProgressChart:initProgressChart,
     prepareHiddenDueDate:prepareHiddenDueDate,
-    initDueDateTimePickers:initDueDateTimePickers
+    initDueDateTimePickers:initDueDateTimePickers,
+    commentsController: commentsController,
+    printCharts: printCharts
+
 };

@@ -5,7 +5,6 @@ namespace Leantime\Domain\Timesheets\Services;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Users\Repositories\Users;
@@ -44,11 +43,14 @@ class Timesheets
     }
 
     /**
+     * @param  int  $ticketId
+     *
      * @api
      */
     public function punchIn(int|string $ticketId): mixed
     {
-        $ticketId = (int)$ticketId;
+        $ticketId = (int) $ticketId;
+
         return $this->timesheetsRepo->punchIn($ticketId);
     }
 
@@ -57,7 +59,8 @@ class Timesheets
      */
     public function punchOut(int|string $ticketId): float|false|int
     {
-        $ticketId = (int)$ticketId;
+        $ticketId = (int) $ticketId;
+
         return $this->timesheetsRepo->punchOut($ticketId);
     }
 
@@ -106,9 +109,9 @@ class Timesheets
         }
 
         if (empty($params['time'])) {
-            $values['date'] = format($params['date'], 'start', FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
         } else {
-            $values['date'] = format($params['date'], $params['time'], FromFormat::UserDateTime)->isoDateTimeUTC();
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], $params['time'])->formatDateTimeForDb();
         }
 
         $values['hours'] = $params['hours'];
@@ -172,7 +175,7 @@ class Timesheets
         }
 
         if (empty($params['timestamp'])) {
-            $values['date'] = format($params['date'], 'start', FromFormat::UserDateStartOfDay)->isoDateTimeUTC();
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
         } else {
             $values['date'] = dtHelper()->timestamp($params['timestamp'])->formatDateTimeForDb();
         }

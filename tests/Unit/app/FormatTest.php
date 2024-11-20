@@ -8,8 +8,9 @@ use Leantime\Core\Support\Format;
 use Tests\DateTimeHelper;
 use Tests\Language;
 use Tests\MockObject;
+use Unit\TestCase;
 
-class FormatTest extends \Codeception\Test\Unit
+class FormatTest extends TestCase
 {
     /**
      * @var DateTimeHelper|MockObject
@@ -23,6 +24,8 @@ class FormatTest extends \Codeception\Test\Unit
 
     protected function setUp(): void
     {
+
+        parent::setUp();
 
         $this->languageMock = $this->createMock(\Leantime\Core\Language::class);
         app()->instance(\Leantime\Core\Support\CarbonMacros::class, $this->carbonMacrosMock);

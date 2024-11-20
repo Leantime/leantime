@@ -4,7 +4,7 @@
 
 ### Leantime&reg; ###
 
-Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use. Building with ADHD, dyslexia and Autistism in mind. <br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature-rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use. Building with ADHD, dyslexia and autism in mind. <br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature-rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 <a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -47,7 +47,7 @@ Leantime is an open source project management system for non-project manager.<br
 * MySQL 8.0+
 * Apache or Nginx (IIS works with some modifications)
 * PHP Extensions: 
-* * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
+* * mysql, pdo_mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap, zip, openssl, phar
 <br /><br />
 ### ️⚡️ Installation (Production) ###
 
@@ -179,6 +179,11 @@ Head to [leantime.io](https://leantime.io/) for more information.
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
 
+Please note: We currently only support the official Leantime docker compose and standard installations. 
+We only offer support for the most recent version. 
+
+We do not offer support for Cloudron, Elestio, Turnkey, or other external distribution platforms sharing unofficial versions of Leantime. 
+
 ## Contributing
 
 We're excited you are interested in contributing to Leantime. We want to make sure you have a great experience contributing to Leantime and that the new features you build will make it into core. 
@@ -207,7 +212,7 @@ We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/proje
 ## ⚖️ LICENSE Exceptions ##
 
 Leantime is licensed under AGPLv3.
-This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
+This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/Plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=856e290f-a6e9-4fbd-9b95-a835e39a0492" />
 

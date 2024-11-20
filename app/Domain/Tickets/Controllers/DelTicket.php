@@ -28,23 +28,23 @@ namespace Leantime\Domain\Tickets\Controllers {
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
 
-
-
                 if (isset($_GET['id'])) {
-                    $id = (int)($_GET['id']);
+                    $id = (int) ($_GET['id']);
 
-                    try{
+                    try {
 
                         $this->ticketService->canDelete($id);
 
-                    }catch(\Exception $e) {
+                    } catch (\Exception $e) {
 
-                        $this->tpl->assign("error", $e->getMessage());
+                        $this->tpl->assign('error', $e->getMessage());
+
                         return $this->tpl->displayPartial('tickets.delTicket');
                     }
 
-                    $this->tpl->assign("error", "");
+                    $this->tpl->assign('error', '');
                     $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
                     return $this->tpl->displayPartial('tickets.delTicket');
                 } else {
                     return $this->tpl->display('errors.error404', responseCode: 404);
@@ -70,17 +70,15 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__('notification.todo_deleted'), 'success');
-
                         $this->tpl->closeModal();
                         $this->tpl->htmxRefresh();
 
                         return $this->tpl->emptyResponse();
-
                     } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), 'error');
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
 
-                        return $this->tpl->displayPartial('tickets::partials.delTicket');
+                        return $this->tpl->displayPartial('tickets.delTicket');
                     }
                 } else {
                     return $this->tpl->display('errors.error403', responseCode: 403);

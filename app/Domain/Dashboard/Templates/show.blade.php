@@ -60,7 +60,6 @@
                                 </x-slot:menu>
 
                             </x-global::actions.dropdown>
-
                         @endif
 
                     </x-slot:card-context-buttons>
@@ -97,9 +96,7 @@
                     @endif
 
                     @foreach ($tickets as $row)
-                        <x-tickets::ticket-card
-                            :id="$row['id']"
-                        />
+                        <x-tickets::ticket-card :id="$row['id']" />
                     @endforeach
 
                 </x-global::content.card>
@@ -146,155 +143,19 @@
             </div>
 
             <div class="col-md-4">
+                <x-dashboard::project-updates :id="$project['id']" />
 
                 <x-global::content.card variation="content">
-                    <x-slot:card-context-buttons>
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <x-global::forms.button content-role="ghost"
-                                data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                                onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();">
-                                <i class="fa fa-plus"></i> {{ __('links.add_new_report') }}
-                            </x-global::forms.button>
-                        @endif
-                    </x-slot:card-context-buttons>
+                    <x-slot:card-title>
+                        {{ __('subtitles.project_progress') }}
+                    </x-slot:card-title>
 
-                    <x-slot:card-title>{{ __('subtitles.project_updates') }}</x-slot:card-title>
-
-                    <form method="post" action="{{ BASE_URL }}/dashboard/show">
-                        <input type="hidden" name="comment" value="1" />
-                        @if ($login::userIsAtLeast($roles::$editor))
-                            <div id="comment0" class="commentBox hidden">
-                                <x-global::forms.select name="status" id="projectStatus" class="ml-0 mb-[10px]"
-                                    :labelText="__('label.project_status_is')">
-                                    <x-global::forms.select.select-option value="green">
-                                        {{ __('label.project_status_green') }}
-                                    </x-global::forms.select.select-option>
-                                    <x-global::forms.select.select-option value="yellow">
-                                        {{ __('label.project_status_yellow') }}
-                                    </x-global::forms.select.select-option>
-                                    <x-global::forms.select.select-option value="red">
-                                        {{ __('label.project_status_red') }}
-                                    </x-global::forms.select.select-option>
-                                </x-global::forms.select>
-
-
-                                <div class="commentReply">
-                                    <textarea rows="5" cols="50" class="tinymceSimple w-full" name="text"></textarea>
-                                    <x-global::forms.button type="submit" name="comment" class="btn-success ml-0">
-                                        {{ __('buttons.save') }}
-                                    </x-global::forms.button>
-
-                                    <x-global::forms.button tag="a" href="javascript:void(0);" onclick="leantime.commentsController.toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();" content-role="secondary" class="leading-[50px]">
-                                        {{ __('links.cancel') }}
-                                    </x-global::forms.button>
-
-                                    <input type="hidden" name="comment" value="1" />
-                                    <input type="hidden" name="father" id="father" value="0" />
-                                </div>
-                            </div>
-                        @endif
-
-                        <div id="comments">
-                            @foreach ($comments as $row)
-                                @if ($loop->iteration == 3)
-                                    <a href="javascript:void(0);" onclick="jQuery('.readMore').toggle('fast')">
-                                        {{ __('links.read_more') }}
-                                    </a>
-                                    <div class="readMore hidden mt-[20px]">
-                                @endif
-                                <div class="clearall">
-                                    <div>
-                                        <div class="commentContent statusUpdate commentStatus-{{ $row['status'] }}">
-                                            <strong class="fancyLink">
-                                                {{ sprintf(__('text.report_written_on'), format($row['date'])->date(), format($row['date'])->time()) }}
-                                            </strong>
-                                            @if ($login::userIsAtLeast($roles::$editor))
-                                                <div class="inlineDropDownContainer float-right ml-[10px]">
-                                                    <a href="javascript:void(0)" class="dropdown-toggle"
-                                                        data-toggle="dropdown">
-                                                        <i class="fa fa-ellipsis-v"></i>
-                                                    </a>
-
-                                                    <ul class="dropdown-menu">
-                                                        @if ($row['userId'] == session('userdata.id'));
-                                                            <li>
-                                                                <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
-                                                                    <span class="fa fa-trash"></span>
-                                                                    {{ __('links.delete') }}
-                                                                </a>
-                                                            </li>
-                                                        @endif
-
-                                                        @isset($ticket->id)
-                                                            <li>
-                                                                <a href="javascript:void(0);"
-                                                                    onclick="leantime.ticketsController.addCommentTimesheetContent({!! $row['id'] !!}, {!! $ticket->id !!})">{{ __('links.add_to_timesheets') }}</a>
-                                                            </li>
-                                                @endif
-                                                </ul>
-                                            </div>
-                                @endif
-
-
-                                <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
-                            </div>
-
-                            <div class="commentLinks">
-                                <small class="right">
-                                    {!! sprintf(
-                                        __('text.written_on_by'),
-                                        format($row['date'])->date(),
-                                        format($row['date'])->time(),
-                                        $tpl->escape($row['firstname']),
-                                        $tpl->escape($row['lastname']),
-                                    ) !!}
-                                </small>
-
-                                @if ($login::userIsAtLeast($roles::$commenter))
-                                    <a href="javascript:void(0);"
-                                        onclick="leantime.commentsController.toggleCommentBoxes({!! $row['id'] !!});"><span
-                                            class="fa fa-reply"></span> {{ __('links.reply') }}
-                                    </a>
-                                @endif
-                            </div>
-
-                            <div class="replies">
-                                @if ($row['replies'])
-                                    @foreach ($row['replies'] as $comment)
-                                        <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
-                                    @endforeach
-                                @endif
-                            </div>
-                </div>
-            </div>
-            @endforeach
-
-            @if (count($comments) >= 3)
-        </div>
-        @endif
-        </div>
-
-        @if (count($comments) == 0)
-            <div style="padding-left:0px; clear:both;" class="noCommentsMessage">
-                {{ __('text.no_updates') }}
-            </div>
-        @endif
-        <div class="clearall"></div>
-        </form>
-
-        </x-global::content.card>
-
-        <x-global::content.card variation="content">
-            <x-slot:card-title>
-                {{ __('subtitles.project_progress') }}
-            </x-slot:card-title>
-
-            <div class="flex flex-row justify-center items-center">
-                <div class="radial-progress before:drop-shadow-[0_0px_15px_rgba(0,0,0,0.5)] text-primary bg-base-100/50 border-base-300 border-4 align-center shadow-md"
-                    style="--value:70;  --size:10rem; --thickness: 1rem;" role="progressbar">
-                    {{ round($projectProgress['percent']) }}%
-                </div>
-            </div>
+                    <div class="flex flex-row justify-center items-center">
+                        <div class="radial-progress before:drop-shadow-[0_0px_15px_rgba(0,0,0,0.5)] text-primary bg-base-100/50 border-base-300 border-4 align-center shadow-md"
+                            style="--value:70;  --size:10rem; --thickness: 1rem;" role="progressbar">
+                            {{ round($projectProgress['percent']) }}%
+                        </div>
+                    </div>
 
 
                     <div class="row" id="milestoneProgressContainer">
@@ -313,101 +174,99 @@
 
                             @foreach ($milestones as $row)
                                 @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
-                                    @break
-                                @endif
-                                <x-tickets::milestone-card 
-                                    :milestone="$row"
-                                />
-                            @endforeach
+                                @break
+                            @endif
+                            <x-tickets::milestone-card :milestone="$row" />
+                        @endforeach
 
-                        </div>
                     </div>
-                </x-global::content.card>
+            </x-global::content.card>
+        </div>
 
     </div>
-    </div>
-    </div>
+</div>
+</div>
 
-    @once @push('scripts')
-    <script>
-        @dispatchEvent('scripts.afterOpen')
+@once @push('scripts')
+<script>
+    @dispatchEvent('scripts.afterOpen')
 
-        leantime.editorController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
-        jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 
-            jQuery('#descriptionReadMoreToggle').click(function() {
+        jQuery('#descriptionReadMoreToggle').click(function() {
 
-                if (jQuery("#projectDescription").hasClass("closed")) {
-                    jQuery("#projectDescription").css("max-height", "100%");
-                    jQuery("#projectDescription").removeClass("closed");
-                    jQuery("#projectDescription").removeClass("kanbanContent");
-                    jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
-                } else {
-                    jQuery("#projectDescription").css("max-height", "200px");
-                    jQuery("#projectDescription").addClass("closed");
-                    jQuery("#projectDescription").addClass("kanbanContent");
-                    jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
-                }
-            });
-
-            jQuery(".readMoreBox").each(function() {
-                if (jQuery(this).find(".readMoreContent").height() >= 169) {
-
-                    jQuery(this).find(".readMoreToggle").show();
-                }
-            });
-
-            jQuery(document).on('click', '.progressWrapper .dropdown-menu', function(e) {
-                e.stopPropagation();
-            });
-
-            @if ($login::userIsAtLeast($roles::$editor))
-                leantime.dashboardController.prepareHiddenDueDate();
-                leantime.ticketsController.initEffortDropdown();
-                leantime.ticketsController.initMilestoneDropdown();
-                leantime.ticketsController.initStatusDropdown();
-            @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
-            @endif
-
-            jQuery("#favoriteProject").click(function() {
-                if (jQuery("#favoriteProject").hasClass("isFavorite")) {
-                    leantime.reactionsController.removeReaction(
-                        'project',
-                        {!! $project['id'] !!},
-                        'favorite',
-                        function() {
-                            jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass(
-                                "fa-regular");
-                            jQuery("#favoriteProject").removeClass("isFavorite");
-                        }
-                    );
-                } else {
-                    leantime.reactionsController.addReactions(
-                        'project',
-                        {!! $project['id'] !!},
-                        'favorite',
-                        function() {
-                            jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass(
-                                "fa-solid");
-                            jQuery("#favoriteProject").addClass("isFavorite");
-                        }
-                    );
-                }
-            });
-
-            leantime.ticketsController.initDueDateTimePickers();
-            leantime.ticketsController.initDueDateTimePickers();
-
-            @if ($completedOnboarding === false)
-                leantime.helperController.firstLoginModal();
-            @endif
-
-            @php(session(['usersettings.modals.projectDashboardTour' => 1]));
+            if (jQuery("#projectDescription").hasClass("closed")) {
+                jQuery("#projectDescription").css("max-height", "100%");
+                jQuery("#projectDescription").removeClass("closed");
+                jQuery("#projectDescription").removeClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
+            } else {
+                jQuery("#projectDescription").css("max-height", "200px");
+                jQuery("#projectDescription").addClass("closed");
+                jQuery("#projectDescription").addClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
+            }
         });
 
-        @dispatchEvent('scripts.beforeClose')
-    </script>
-    @endpush @endonce
+        jQuery(".readMoreBox").each(function() {
+            if (jQuery(this).find(".readMoreContent").height() >= 169) {
+
+                jQuery(this).find(".readMoreToggle").show();
+            }
+        });
+
+        jQuery(document).on('click', '.progressWrapper .dropdown-menu', function(e) {
+            e.stopPropagation();
+        });
+
+        @if ($login::userIsAtLeast($roles::$editor))
+            leantime.dashboardController.prepareHiddenDueDate();
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initMilestoneDropdown();
+            leantime.ticketsController.initStatusDropdown();
+        @else
+            leantime.authController.makeInputReadonly(".maincontentinner");
+        @endif
+
+        jQuery("#favoriteProject").click(function() {
+            if (jQuery("#favoriteProject").hasClass("isFavorite")) {
+                leantime.reactionsController.removeReaction(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass(
+                            "fa-regular");
+                        jQuery("#favoriteProject").removeClass("isFavorite");
+                    }
+                );
+            } else {
+                leantime.reactionsController.addReactions(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass(
+                            "fa-solid");
+                        jQuery("#favoriteProject").addClass("isFavorite");
+                    }
+                );
+            }
+        });
+
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.ticketsController.initDueDateTimePickers();
+
+        @if ($completedOnboarding === false)
+            leantime.helperController.firstLoginModal();
+        @endif
+
+        @php(session(['usersettings.modals.projectDashboardTour' => 1]));
+    });
+
+    @dispatchEvent('scripts.beforeClose')
+</script>
+@endpush @endonce
 @endsection

@@ -2,62 +2,9 @@
 
 @section('content')
 
-    <div class="projectSteps">
-        <div class="progressWrapper">
-            <div class="progress">
-                <div
-                    id="progressChecklistBar"
-                    class="progress-bar progress-bar-success tx-transition"
-                    role="progressbar"
-                    aria-valuenow="0"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    style="width: 100%"
-                ><span class="sr-only">88%</span></div>
-            </div>
+    @include("auth::partials.onboardingProgress", ['percentComplete' => 100, 'current' => '', 'completed' => ['account', 'theme', 'personalization', 'time']])
 
-
-            <div class="step complete" style="left: 12%;">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                    <span class="innerCircle"></span>
-                    <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 1
-                </span>
-                </a>
-            </div>
-
-            <div class="step complete" style="left: 37%;">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                    <span class="innerCircle"></span>
-                    <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 2
-                </span>
-                </a>
-            </div>
-
-            <div class="step complete" style="left: 62%;">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                    <span class="innerCircle"></span>
-                    <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 3
-                </span>
-                </a>
-            </div>
-
-            <div class="step complete" style="left: 88%;">
-                <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                    <span class="innerCircle"></span>
-                    <span class="title">
-                    <i class="fa-regular fa-circle-check"></i> Step 4
-                </span>
-                </a>
-            </div>
-
-        </div>
-    </div>
-    <br /><br /><br />
-
-
+<h2>🎉 Your Leantime journey is about to begin</h2>
 
 <div class="regcontent">
 
@@ -68,14 +15,23 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <x-global::elements.undrawSvg image="undraw_adventure_map_hnin.svg" headline="You are now one step closer to getting things done!" maxWidth="60%" maxHeight="300px"></x-global::elements.undrawSvg>
-        <br /><br />
-        <p>As you get ready to go into the system, start thinking about what you want to accomplish.<br />
-            <br />
-            Studies found that people who put down their goals were <strong>42% more likely to achieve those goals</strong> and,
-            in the work place, they had higher productivity, improved focus, and were better motivated.<br />
-            <br />
-            We’re excited to be your partners in doing more than just “work” but in making meaningful impact. <br /><br /></p>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ticketBox tw-p-[20px]">
+                    <span class="fancyLink">Did you know?</span><br />
+                    <span style="font-size:16px;">Setting Intentions has been shown to <strong>more than double the success rate</strong> of completing a task.</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <x-global::undrawSvg image="undraw_adventure_map_hnin.svg" maxWidth="60%" maxHeight="300px"></x-global::undrawSvg>
+            </div>
+        </div>
+
+        <p><br />From here, we'll help you turn your task list into a project and goals.
+            Then we'll work<br /> together to identify your most important tasks so you can create some
+            intentions<br />to get the work done.</p> <br />
 
         <br />
         <input type="submit" name="createAccount" value="Complete Sign up" />

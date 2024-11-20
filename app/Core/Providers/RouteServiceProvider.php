@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Api\Controllers\Jsonrpc;
-use Symfony\Component\HttpFoundation\Response;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -40,63 +39,66 @@ class RouteServiceProvider extends ServiceProvider
                 ->any('api/jsonrpc', function (IncomingRequest $request) use ($frontController) {
 
                     $httpMethod = Str::lower($request->getMethod());
+
                     return $frontController->executeAction(Jsonrpc::class, $httpMethod);
                 });
 
-
             Route::middleware(['hx'])
                 ->prefix('hx')
-                ->group(function() use ($frontController) {
+                ->group(function () use ($frontController) {
 
                     Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController) {
-                        $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, "Hxcontrollers");
+                        $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, 'Hxcontrollers');
+
                         return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                     });
 
                     Route::any('{moduleName}/{actionName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController) {
                         $httpMethod = Str::lower($request->getMethod());
-                        $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Hxcontrollers");
+                        $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, 'Hxcontrollers');
+
                         return $frontController->executeAction($controllerParts['class'], $httpMethod);
                     });
 
                 });
 
-
-            Route::middleware(['web'])->group(function() use ($frontController)  {
+            Route::middleware(['web'])->group(function () use ($frontController) {
 
                 Route::any('{moduleName}/{actionName}/{id}', function (IncomingRequest $request, $moduleName, $actionName, $id) use ($frontController) {
-                  
+
                     $httpMethod = Str::lower($request->getMethod());
-                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Controllers");
+                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, 'Controllers');
                     $request->query->set('id', $id);
+
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
-                Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController)  {
-                    
-                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, "Controllers");
+                Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController) {
+
+                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, 'Controllers');
+
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
-                Route::any('{moduleName}/{actionName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController)  {
-                    
-                    
+                Route::any('{moduleName}/{actionName}', function (IncomingRequest $request, $moduleName, $actionName) use ($frontController) {
+
                     $httpMethod = Str::lower($request->getMethod());
-                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, "Controllers");
+                    $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $httpMethod, 'Controllers');
+
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
-                Route::any('{moduleName}', function (IncomingRequest $request, $moduleName) use ($frontController)  {
+                Route::any('{moduleName}', function (IncomingRequest $request, $moduleName) use ($frontController) {
                     $httpMethod = Str::lower($request->getMethod());
-                    $controllerParts = $frontController->getValidControllerCall($moduleName, "index", $httpMethod, "Controllers");
+                    $controllerParts = $frontController->getValidControllerCall($moduleName, 'index', $httpMethod, 'Controllers');
+
                     return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
                 });
 
             });
 
             Route::any('', function (IncomingRequest $request) use ($frontController) {
-                
-               
+
                 return $frontController->redirect(self::HOME);
             });
         });

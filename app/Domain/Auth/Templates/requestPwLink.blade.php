@@ -7,7 +7,7 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
 ?>
 <div class="pageheader">
     <div class="pagetitle">
-        <h1><?php echo $tpl->language->__("headlines.reset_password"); ?></h1>
+        <h1><?php echo $tpl->language->__('headlines.reset_password'); ?></h1>
     </div>
 </div>
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
@@ -16,13 +16,13 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
     <form id="resetPassword" action="" method="post">
         <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
         <?php echo $tpl->displayInlineNotification(); ?>
-        <p><?php echo $tpl->language->__("text.enter_email_address_to_reset"); ?><br /><br /></p>
+        <p><?php echo $tpl->language->__('text.enter_email_address_to_reset'); ?><br /><br /></p>
         <div class="">
-            <x-global::forms.text-input 
-                type="text" 
-                name="username" 
-                id="username" 
-                placeholder="{{ $tpl->language->__('input.placeholders.enter_email') }}" 
+            <x-global::forms.text-input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="{{ $tpl->language->__('input.placeholders.enter_email') }}"
                 variant="fullWidth"
             />
         </div>
