@@ -129,8 +129,6 @@
       <path value="$PROJECT_DIR$/vendor/nunomaduro/termwind" />
       <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
       <path value="$PROJECT_DIR$/app/Plugins/CustomFields/vendor/composer" />
-      <path value="$PROJECT_DIR$/vendor/spatie/icalendar-generator" />
-      <path value="$PROJECT_DIR$/vendor/spatie/enum" />
       <path value="$PROJECT_DIR$/vendor/carbon-cli/carbon-cli" />
       <path value="$PROJECT_DIR$/vendor/simple-cli/simple-cli" />
       <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />

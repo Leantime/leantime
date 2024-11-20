@@ -87,8 +87,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/http-kernel" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php83" />
       <excludeFolder url="file://$MODULE_DIR$/cache" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/enum" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/spatie/icalendar-generator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/carbon-cli/carbon-cli" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/simple-cli/simple-cli" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/prompts" />

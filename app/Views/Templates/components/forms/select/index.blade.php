@@ -102,9 +102,15 @@
 </x-global::forms.field-row>
 
 <script>
-    @if ($variant === 'tags')
+    jQuery(document).ready(initSelect);
+
+    htmx.onLoad(initSelect)
+
+    function initSelect() {
+        @if ($variant === 'tags')
         leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}', {{ $maxItemCount }});
-    @else
+        @else
         leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
-    @endif
+        @endif
+    }
 </script>
