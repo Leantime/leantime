@@ -177,6 +177,8 @@ class Frontcontroller
     public function executeAction(string $controller, string $method): Response
     {
 
+        $this->incomingRequest->overrideGlobals();
+
         $parameters = $this->incomingRequest->getRequestParams();
 
         $controllerClass = app()->make($controller);
