@@ -3,21 +3,19 @@
     use Leantime\Core\Fileupload;
 @endphp
 
-@props(['type'])
+@props(['module', 'moduleId', 'fetch' => false])
 
 
 
-@if (!empty($type))
-    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?type={{ $type }}" hx-trigger="load delay:500ms"
+@if (!empty($fetch))
+    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}" hx-trigger="load delay:500ms"
         hx-swap="innerHTML">
         loading...
     </div>
 @else
     @php
-        $module = 'project';
         $action = Frontcontroller::getActionName('');
         $maxSize = Fileupload::getMaximumFileUploadSize();
-        $moduleId = session('currentProject');
     @endphp
     <div class="pageheader">
 
@@ -220,7 +218,7 @@
                 }
             });
             uppy.use(Uppy.XHRUpload, {
-                endpoint: '{{ BASE_URL }}/api/files?module=project&moduleId=<?= $moduleId ?>',
+                endpoint: '{{ BASE_URL }}/api/files?module={{$module}}&moduleId={{$moduleId}}',
                 formData: true,
                 fieldName: 'file',
             });

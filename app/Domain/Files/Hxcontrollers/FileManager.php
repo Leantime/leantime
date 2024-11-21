@@ -1,6 +1,7 @@
 <?php
 
 namespace Leantime\Domain\Files\Hxcontrollers;
+
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 
@@ -10,17 +11,18 @@ use Leantime\Core\Controller\HtmxController;
 
 class FileManager extends HtmxController
 {
-  
+
   protected static string $view = 'files::components.file-manager';
 
-  
+
   private FileRepository $filesRepo;
   private FileService $filesService;
   /**
    * Controller constructor
    *
    */
-  public function init(FileRepository $filesRepo, FileService $filesService): void {
+  public function init(FileRepository $filesRepo, FileService $filesService): void
+  {
     $this->filesRepo = $filesRepo;
     $this->filesService = $filesService;
   }
@@ -29,13 +31,18 @@ class FileManager extends HtmxController
 
   public function get($params): void
   {
-    // dd($params);
-    $type = $params['type'] ?? '';
+    $module = $params['module'];
+    $moduleId = $params['moduleId'];
     $currentModule = session('currentProject');
+
+    
+    if ($module === 'project') {
+      $moduleId = session('currentProject');
+    }
 
     if (isset($_POST['upload']) || isset($_FILES['file'])) {
       if (isset($_FILES['file'])) {
-        $this->filesRepo->upload($_FILES, 'project', session('currentProject'));
+        $this->filesRepo->upload($_FILES, $module, session('currentProject'));
         // $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_created');
       } else {
         // $this->tpl->setNotification('notifications.file_upload_error', 'error');
@@ -54,10 +61,12 @@ class FileManager extends HtmxController
       }
     }
 
-    
+
     $this->tpl->assign('currentModule', $currentModule);
+    $this->tpl->assign('moduleId', $moduleId);
+    $this->tpl->assign('module', $module);
     $this->tpl->assign('modules', $this->filesRepo->getModules(session('userdata.id')));
     $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webpe']);
-    $this->tpl->assign('files', $this->filesRepo->getFilesByModule('project', session('currentProject')));
+    $this->tpl->assign('files', $this->filesRepo->getFilesByModule($module, $moduleId));
   }
 }

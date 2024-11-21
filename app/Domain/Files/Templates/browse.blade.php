@@ -8,7 +8,7 @@
     // $module = 'project';
     // $action = Frontcontroller::getActionName('');
     // $maxSize = Fileupload::getMaximumFileUploadSize();
-    // $moduleId = session('currentProject');
+    $moduleId = session('currentProject');
     ?>
 
     {{-- <div class="pageheader">
@@ -19,5 +19,5 @@
         </div>
     </div> --}}
 
-    <x-files::file-manager :type="'project'" />
+    <x-files::file-manager :module="'project'" :moduleId="$moduleId" :fetch="true" />
 @endsection
