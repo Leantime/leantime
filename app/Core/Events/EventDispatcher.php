@@ -2,18 +2,15 @@
 
 namespace Leantime\Core\Events;
 
-use Illuminate\Cache\Events\CacheEvent;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Events\QueuedClosure;
-use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
-use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 /**
  * EventDispatcher class - Handles all events and filters
@@ -47,7 +44,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         'filters' => [],
         'events' => [],
     ];
-
 
     /**
      * Adds an event listener to be registered
@@ -180,7 +176,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         $discovered = true;
     }
 
-    public function getDomainPaths()
+    protected function getDomainPaths()
     {
 
         $domainModules = collect(glob(APP_ROOT.'/app/Domain'.'/*', GLOB_ONLYDIR));
@@ -323,24 +319,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
             //Regular event
             if ($isEvent) {
-
-                //Some odd events
-                //                if(is_array($eventPayload[0])){
-                //
-                //                    if( collect($eventPayload[0])->first() instanceof MessageLogged) {
-                //                        $eventPayload[0] = $eventPayload[0][0];
-                //                    }
-                //
-                //                    if( collect($eventPayload[0])->first() instanceof CacheEvent) {
-                //                        $eventPayload[0] = $eventPayload[0][0];
-                //                    }
-                //
-                //                    if( collect($eventPayload[0])->first() instanceof ViewEvent) {
-                //                        $eventPayload[0] = $eventPayload[0][0];
-                //                    }
-                //
-                //                }
-
                 $handler(event: $hookName, payload: $eventPayload[0]);
 
                 continue;
@@ -359,105 +337,7 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
         return null;
 
-        // class with handle function
-        // An actual object was passed into the listener
-        //            if (is_object($handler) && method_exists($handler, 'handle')) {
-        //
-        //                //Regular event
-        //                if ($isEvent) {
-        //                    $handler->handle($eventPayload);
-        //                    continue;
-        //                }
-        //
-        //                //Filter event
-        //                $eventPayload["payload"] =  $handler->handle($eventPayload);
-        //                continue;
-        //            }
-        //
-        //            // anonymous functions was passed into listener
-        //            if (is_callable($handler)) {
-        //
-        //                $filteredPayload = $this->handleAnonListeners($isEvent, $handler, $eventName, $filteredPayload, $additionalParameters);
-        //
-        //                continue;
-        //            }
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //            if (
-        //                in_array(true, [
-        //                    // function name as string
-        //                    is_string($handler) && function_exists($handler),
-        //                    // class instance with method name
-        //                    is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
-        //                    // class name with method name
-        //                    is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
-        //                ])
-        //            ) {
-        //                if ($isEvent) {
-        //                    call_user_func_array($handler, [$payload]);
-        //
-        //                    continue;
-        //                }
-        //
-        //                $filteredPayload = handleAnonListeners(
-        //                    $handler,
-        //                    [
-        //                        $index == 0 ? $payload : $filteredPayload,
-        //                        $available_params,
-        //                    ]
-        //                );
-        //
-        //                continue;
-        //            }
-        //        }
-
     }
-
-    //    protected function handleClassListeners($isEvent, $handler, $eventName, $payload, $additionalParameters)
-    //    {
-    //
-    //        $eventPayload = [
-    //            'eventName' => $eventName,
-    //            'payload' => $payload,
-    //            'availableParams' => $additionalParameters,
-    //        ];
-    //
-    //        //Is a regular event:
-    //        if ($isEvent) {
-    //            return $handler->handle($eventPayload);
-    //        }
-    //
-    //        //Is a filter event:
-    //        return $handler->handle($eventPayload);
-    //    }
-
-    //    protected function handleAnonListeners($isEvent, $handler, $eventName, $payload, $additionalParameters)
-    //    {
-    //
-    //        $eventPayload = [
-    //            'eventName' => $eventName,
-    //            'payload' => $payload,
-    //            'availableParams' => $additionalParameters,
-    //        ];
-    //
-    //        //Is a regular event:
-    //        if ($isEvent) {
-    //            return $handler(event: $eventName, payload: $eventPayload);
-    //
-    //        }
-    //
-    //        return $handler(event: $eventName, payload: $eventPayload
-    //        );
-    //    }
-
-    //    protected function handleStringListeners($isEvent, $handler, $eventName, $payload, $additionalParameters) {}
 
     public function getEventRegistry(): array
     {
@@ -596,30 +476,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
         return $this->executeHandlers($matchedEvents, 'events', $event, $payload, [], $halt);
 
-        /*
-
-        foreach ($this->getListeners($event) as $listener) {
-            $response = $listener($event, $payload);
-
-            // If a response is returned from the listener and event halting is enabled
-            // we will just return this response, and not call the rest of the event
-            // listeners. Otherwise we will add the response on the response list.
-            if ($halt && ! is_null($response)) {
-                return $response;
-            }
-
-            // If a boolean false is returned from a listener, we will stop propagating
-            // the event to any further listeners down in the chain, else we keep on
-            // looping through the listeners and firing every one in our sequence.
-            if ($response === false) {
-                break;
-            }
-
-            $responses[] = $response;
-        }
-
-        return $halt ? null : $responses;
-        */
     }
 
     /**
@@ -655,18 +511,6 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
 
         $this->dispatch($eventName, [$payload]);
 
-        //        if (! in_array($eventName, self::$available_hooks['events'])) {
-        //            self::$available_hooks['events'][] = $eventName;
-        //        }
-        //
-        //        $matchedEvents = self::findEventListeners($eventName, self::$eventRegistry);
-        //        if (count($matchedEvents) == 0) {
-        //            return;
-        //        }
-        //
-        //        $payload = self::defineParams($payload);
-        //
-        //        self::executeHandlers($matchedEvents, 'events', $eventName, $payload);
     }
 
     public function dispatch_event(
@@ -704,10 +548,11 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
         return $this->executeHandlers($matchedEvents, 'filters', $filtername, $payload, $available_params);
     }
 
-    public function dispatch_filter( string $filtername,
+    public function dispatch_filter(string $filtername,
         mixed $payload = '',
         mixed $available_params = [],
-        mixed $context = '') {
+        mixed $context = '')
+    {
         return $this->dispatchFilter($filtername, $payload, $available_params, $context);
     }
 
