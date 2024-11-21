@@ -1,22 +1,21 @@
-<div class="dropdown dropdown-bottom dropdown-start">
-    <div tabindex="0" role="button" class="btn btn-ghost bigProjectSelector dropdown-toggle" >
-        @if ($menuType == 'project' || $menuType == 'default')
-            <div class="w-8 h-8 rounded bg-gradient-to-r from-primary to-primary-focus flex items-center justify-center">
-                @if (isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != 'avatar')
-                    <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
-                @else
-                    <img class="w-full h-full rounded object-cover"
-                        src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ format($currentProject['modified'] ?? '')->timestamp() }}" 
-                        alt="Project Avatar" />
-                @endif
-            </div>
-            <span>{{ $currentProject['name'] ?? '' }}</span>
-        @else
-            <span class="text-gray-600">{!! __('menu.projects') !!}</span>
-        @endif
+<a
+   class="dropdown-toggle bigProjectSelector {{ $menuType == "project" ? "active" : "" }}"
+   data-toggle="dropdown">
 
-        <i class="fa fa-caret-down"></i>
-    </div>
+    @if ($menuType == 'project' || $menuType == 'default')
+        <span class="projectAvatar {{ $currentProjectType }}">
+        @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
+                <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
+            @else
+                <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ format($currentProject['modified'] ?? '')->timestamp() }}"/>
+            @endif
+        </span>
+        {{ $currentProject['name'] ?? "" }}&nbsp;
 
-    @include('menu::includes.projectSelectorDropdown', [])
-</div>
+    @else
+        {!! __('menu.projects') !!}
+    @endif
+
+   <i class="fa fa-caret-down" aria-hidden="true"></i>
+</a>
+@include('menu::includes.projectSelectorDropdown', [])
