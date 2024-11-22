@@ -41,11 +41,8 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \Leantime\Core\Middleware\Auth::class,
-        \Leantime\Core\Middleware\ApiAuth::class,
         \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\Localization::class,
-        \Leantime\Core\Middleware\CurrentProject::class,
         \Leantime\Core\Middleware\LoadPlugins::class,
     ];
 
@@ -57,7 +54,6 @@ class HttpKernel extends Kernel
     protected $middlewareGroups = [
         'web' => [
             \Leantime\Core\Middleware\Auth::class,
-            \Leantime\Core\Middleware\Localization::class,
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
         'api' => [
@@ -65,7 +61,6 @@ class HttpKernel extends Kernel
         ],
         'hx' => [
             \Leantime\Core\Middleware\Auth::class,
-            \Leantime\Core\Middleware\Localization::class,
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
     ];
@@ -102,6 +97,14 @@ class HttpKernel extends Kernel
         //Events are discovered and available as part of bootstrapping the providers.
         //Can savely assume events are available here.
         self::dispatch_event('request_started', ['request' => $request]);
+
+        if ($request instanceof ApiRequest) {
+
+            array_splice($this->middleware, 5, 0, $this->middlewareGroups['api']);
+
+        } else {
+            array_splice($this->middleware, 5, 0, $this->middlewareGroups['web']);
+        }
 
         //This filter only works for system plugins
         //Regular plugins are not available until after install verification

@@ -5,8 +5,6 @@ paths:
   output: tests/_output
   data: tests/Support/Data
   support: tests/Support
-  envs: tests/_envs
-  log: tests/_log
 actor_suffix: Tester
 extensions:
   enabled:
@@ -21,5 +19,3 @@ coverage:
   include:
     - app/*
 
-params:
-  - tests/_envs/.env.test

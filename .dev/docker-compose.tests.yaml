@@ -14,7 +14,7 @@ services:
         - "44302:443" #Using different ports for testing, so we don't have to worry about collision (available range is 44300–44399)
     environment:
       LEAN_DB_HOST: 'db'
-      LEAN_DB_USER: 'leantime'
+      LEAN_DB_USER: 'root'
       LEAN_DB_PASSWORD: 'leantime'
       LEAN_DB_DATABASE: 'leantime_test'
       LEAN_DB_PORT: '3306'

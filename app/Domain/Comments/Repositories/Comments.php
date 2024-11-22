@@ -204,16 +204,19 @@ namespace Leantime\Domain\Comments\Repositories {
                 comment.moduleId,
                 comment.userId,
                 comment.commentParent,
-                comment.status
+                comment.status,
+                zp_projects.id AS projectId
             FROM zp_comment as comment
                 LEFT JOIN zp_tickets ON comment.moduleId = zp_tickets.id
                 LEFT JOIN zp_canvas_items ON comment.moduleId = zp_tickets.id
                 LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
                 LEFT JOIN zp_projects ON zp_canvas.projectId = zp_projects.id OR zp_tickets.projectId = zp_projects.id
-            WHERE zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+            WHERE
+
+                (zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
                     OR zp_projects.psettings = 'all'
                     OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
-                    OR (:requesterRole = 'admin' OR :requesterRole = 'manager') ";
+                    OR (:requesterRole = 'admin' OR :requesterRole = 'manager')) ";
 
             if (isset($projectId) && $projectId > 0) {
                 $sql .= ' AND (zp_projects.id = :projectId)';

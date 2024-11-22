@@ -155,6 +155,21 @@ The dev environment provides a MySQL server, mail server, s3 server, and should 
 Additionally, Xdebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connections
 <br /><br />
+
+### Run Tests
+
+Static Analysis `make phpstan`<br />
+Code Style `make test-code-style` (to fix code style automatically use `make fix-code-style`)<br />
+Unit Tests `make unit-test`<br />
+Acceptance Tests `make acceptance-test`<br /> (requires docker)
+
+You can test individual acceptance test groups directly using:<br />
+For api: <br />
+`docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run -g api --steps`<br />
+For timesheets: <br />
+`docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run -g timesheet --steps`<br />
+
+
 ###  🏗 Update ###
 
 #### Manual
