@@ -95,11 +95,10 @@ class ApiCest
             'error' => [
                 'code' => 'integer',
                 'message' => 'string',
-                'data' => 'string'
+                'data' => 'string',
             ],
             'id' => 'integer',
         ]);
-
 
     }
 
