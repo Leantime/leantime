@@ -563,7 +563,7 @@ namespace Leantime\Domain\Tickets\Services {
                                     try {
                                         $endDate = dtHelper()->parseDbDateTime($milestone->editTo)->formatDateForUser();
                                     } catch (\Exception $e) {
-                                        $startDate = $this->language->__('text.no_date_defined');
+                                        $endDate = $this->language->__('text.no_date_defined');
                                     }
 
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
