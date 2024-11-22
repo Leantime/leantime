@@ -30,7 +30,11 @@ class ApiAuth
         self::dispatchEvent('before_api_request', ['application' => app()]);
 
         $apiKey = $request->getAPIKey();
-        $apiUser = app()->make(ApiService::class)->getAPIKeyUser($apiKey);
+        $apiUser = false;
+
+        if ($apiKey !== null) {
+            $apiUser = app()->make(ApiService::class)->getAPIKeyUser($apiKey);
+        }
 
         if (! $apiUser) {
             return new Response(json_encode(['error' => 'Invalid API Key']), 401);

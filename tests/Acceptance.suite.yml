@@ -24,7 +24,7 @@ modules:
             args: [ "--headless" ]
     - Db:
         dsn: "mysql:host=db;port=3306;dbname=leantime_test"
-        user: leantime
+        user: root
         password: leantime
         populate: true
         cleanup: true

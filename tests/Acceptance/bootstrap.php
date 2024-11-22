@@ -11,7 +11,6 @@ if (! isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
 }
 
 if (! file_exists($composer = __DIR__.'/../../vendor/autoload.php')) {
-    dd($composer);
     throw new RuntimeException('Please run "make build-dev" to run tests.');
 }
 

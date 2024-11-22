@@ -56,6 +56,8 @@ class IncomingRequest extends \Illuminate\Http\Request
         //static::$httpMethodParameterOverride = false;
         //parent::enableHttpMethodParameterOverride();
 
+        //static::enableHttpMethodParameterOverride();
+
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
                 strtolower($key) => match (true) {
@@ -66,9 +68,11 @@ class IncomingRequest extends \Illuminate\Http\Request
             ])
             ->all();
 
+        $requestUriTest = strtolower($_SERVER['REQUEST_URI'] ?? '');
+
         $request = match (true) {
             isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
-            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+            (isset($headers['x-api-key']) || str_starts_with($requestUriTest, '/api/jsonrpc')) => ApiRequest::createFromGlobals(),
             defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
             default => parent::createFromGlobals(),
         };

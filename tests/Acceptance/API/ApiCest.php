@@ -2,6 +2,7 @@
 
 namespace Acceptance\API;
 
+use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Install;
@@ -31,6 +32,7 @@ class ApiCest
     }
 
     #[Group('api')]
+    #[Depends('Acceptance\LoginCest:loginSuccessfully')]
     public function createAPIKey(AcceptanceTester $I)
     {
 
@@ -49,10 +51,12 @@ class ApiCest
 
         $this->apiKey = $I->grabValueFrom('#apiKey');
 
-        codecept_debug($this->apiKey);
+        $I->resetCookie("leantime_session", []);
+        $I->deleteSessionSnapshot("leantime_session");
     }
 
     #[Group('api')]
+    #[Depends('createAPIKey')]
     public function testJsonRpcEndpoint(AcceptanceTester $I)
     {
 
@@ -76,6 +80,7 @@ class ApiCest
     }
 
     #[Group('api')]
+    #[Depends('createAPIKey')]
     public function testInvalidJsonRpcRequest(AcceptanceTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
@@ -103,6 +108,7 @@ class ApiCest
     }
 
     #[Group('api')]
+    #[Depends('createAPIKey')]
     public function testValidReturnId(AcceptanceTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
@@ -125,6 +131,8 @@ class ApiCest
 
     }
 
+    #[Group('api')]
+    #[Depends('createAPIKey')]
     public function testMissingApiKey(AcceptanceTester $I)
     {
         $I->haveHttpHeader('Content-Type', 'application/json');

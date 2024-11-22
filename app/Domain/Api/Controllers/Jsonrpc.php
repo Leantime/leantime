@@ -27,7 +27,8 @@ class Jsonrpc extends Controller
     public function init(): void
     {
         if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
-            $this->json_data = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
+            $bodyContent = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
+            $this->json_data = $bodyContent ?? '';
         }
     }
 
