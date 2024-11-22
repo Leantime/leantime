@@ -8,6 +8,9 @@ bootstrap: bootstrap.php
 modules:
   enabled:
     - \Tests\Support\Helper\Acceptance
+    - REST:
+        url: 'https://leantime-dev'
+        depends: PhpBrowser
     - WebDriver:
         url: 'https://leantime-dev'
         host: selenium
@@ -19,7 +22,6 @@ modules:
           acceptInsecureCerts: true
           goog:chromeOptions:
             args: [ "--headless" ]
-
     - Db:
         dsn: "mysql:host=db;port=3306;dbname=leantime_test"
         user: leantime
