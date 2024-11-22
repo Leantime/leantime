@@ -1,6 +1,6 @@
 <?php
 
-namespace Acceptance;
+namespace Acceptance\API;
 
 use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
