@@ -159,7 +159,6 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
-
                 height:heightWindow,
                 initialView: '<?= session('usersettings.submenuToggle.myProjectCalendarView') ?>',
                 events: events,
@@ -168,8 +167,23 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
                 eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
                 slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                views: {
+                    timeGridDay: {
 
-            nowIndicator: true,
+                    },
+                    timeGridWeek: {
+
+                    },
+                    dayGridMonth: {
+                        dayHeaderFormat: { weekday: 'short' },
+                    },
+                    multiMonthYear: {
+                        showNonCurrentDates: true,
+                        multiMonthTitleFormat: { month: 'long', year: 'numeric' },
+                        dayHeaderFormat: { weekday: 'short' },
+                    }
+                },
+                nowIndicator: true,
                 bootstrapFontAwesome: {
                     close: 'fa-times',
                     prev: 'fa-chevron-left',
