@@ -26,8 +26,8 @@ class Jsonrpc extends Controller
      */
     public function init(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST)) {
-            $this->json_data = json_decode(file_get_contents('php://input'), JSON_OBJECT_AS_ARRAY);
+        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
+            $this->json_data = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
         }
     }
 
@@ -129,8 +129,11 @@ class Jsonrpc extends Controller
          * @see https://jsonrpc.org/specification#batch
          */
         if (array_keys($params) == range(0, count($params) - 1)) {
+
             return $this->tpl->displayJson(array_map(
-                fn ($requestParams) => json_decode($this->executeApiRequest($requestParams)->getContent()),
+                function ($requestParams) {
+                    return json_decode($this->executeApiRequest($requestParams)->getContent());
+                },
                 $params
             ));
         }
