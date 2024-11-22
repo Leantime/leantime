@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <span class='field'>
-                                        <x-global::forms.select name="messageFrequency" class="input" id="messageFrequency" :labelText="__('label.choose_option')">
+                                        <x-global::forms.select name="messageFrequency" id="messageFrequency" :labelText="__('label.choose_option')">
                                             <x-global::forms.select.select-option value="">
                                                 --{!! __('label.choose_option') !!}--
                                             </x-global::forms.select.select-option>
@@ -204,11 +204,9 @@
                                                         <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?=$tpl->__("buttons.remove")?></a>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                                        <span id="save-logo" class="btn btn-primary fileupload-exists ld-ext-right">
-                                                            <span onclick="leantime.settingController.saveCroppie()">{{ __("buttons.save") }}</span>
-                                                            <span class="ld ld-ring ld-spin"> </span>
-                                                        </span>
-
+                                                        <x-global::forms.button tag="button" id="saveBtn" onclick="leantime.settingController.saveCroppie()">
+                                                            {{ __('buttons.save') }}
+                                                        </x-global::forms.button>
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
                                                     </p>
                                                 </div>
@@ -218,7 +216,10 @@
                                 </form>
                                 <hr />
                                 <?=$tpl->__("text.logo_reset")?><br /><br />
-                                <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
+                                {{-- <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a> --}}
+                                <x-global::forms.button tag="a" contentRole="ghost" href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" scale="sm">
+                                    {{ __("buttons.reset_logo") }}
+                                </x-global::forms.button>
                             </div>
                         </div>
                 </div>
