@@ -51,8 +51,8 @@ class ApiCest
 
         $this->apiKey = $I->grabValueFrom('#apiKey');
 
-        $I->resetCookie("leantime_session", []);
-        $I->deleteSessionSnapshot("leantime_session");
+        $I->resetCookie('leantime_session', []);
+        $I->deleteSessionSnapshot('leantime_session');
     }
 
     #[Group('api')]
