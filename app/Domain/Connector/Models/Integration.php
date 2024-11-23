@@ -2,9 +2,8 @@
 
 namespace Leantime\Domain\Connector\Models {
 
-    /**
-     *
-     */
+    use Leantime\Core\Db\DbColumn;
+
     class Integration
     {
         #[DbColumn('id')]
@@ -43,10 +42,7 @@ namespace Leantime\Domain\Connector\Models {
         #[DbColumn('lastSync')]
         public ?string $lastSync;
 
-
-        public function __construct()
-        {
-        }
+        public function __construct() {}
     }
 
 }
