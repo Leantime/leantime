@@ -1,3 +1,66 @@
+# Version: 3.3.2
+
+* [4a952c8](https://github.com/Leantime/leantime/commit/4a952c8b521fa9db7b7b04d968102521310b0440): Update README.md
+* [d5d1c8f](https://github.com/Leantime/leantime/commit/d5d1c8f90f66fbff397727757ac1b377a6a49140): Version bump
+* [034a158](https://github.com/Leantime/leantime/commit/034a1581bb04babc54595cfb46d8ef56146ec599): attribute class
+* [7e2ea50](https://github.com/Leantime/leantime/commit/7e2ea500500f047460d70747a569b1cd0b756fcd): fix csv importer
+* [112d550](https://github.com/Leantime/leantime/commit/112d550a803b890ba15fc544e774b669cefc7cce): New translations en-us.ini (German (Informal))
+* [f944a62](https://github.com/Leantime/leantime/commit/f944a62be856105c51cf466bceb232047a45230f): New translations en-us.ini (Karakalpak)
+* [8549a4c](https://github.com/Leantime/leantime/commit/8549a4c47fbd19cbece7becba4db83d29eeae2eb): New translations en-us.ini (Spanish, Latin America)
+* [ff06e4f](https://github.com/Leantime/leantime/commit/ff06e4ffa78641650e5a0e3cb5a2060bdd519e44): New translations en-us.ini (English (upside down))
+* [6b62a82](https://github.com/Leantime/leantime/commit/6b62a82b64ea6c1968829835d28fda3fc96a1376): New translations en-us.ini (Kashmiri)
+* [06bc0f1](https://github.com/Leantime/leantime/commit/06bc0f1cfdd636f1a87301a3f2d614a6b5d7d0d9): New translations en-us.ini (Pirate English)
+* [03cf307](https://github.com/Leantime/leantime/commit/03cf307d279e469d78bcfba91e14d4726f2d22ee): New translations en-us.ini (English, United Kingdom)
+* [46e84c3](https://github.com/Leantime/leantime/commit/46e84c3867d14b77c641d3e1417ca11c61158398): New translations en-us.ini (Latvian)
+* [698dda3](https://github.com/Leantime/leantime/commit/698dda3abb97d5741c586f81fd78fdcf86ea8ef7): New translations en-us.ini (Estonian)
+* [a5e2ce0](https://github.com/Leantime/leantime/commit/a5e2ce01f5d49bea3223f508dd9c45323af87ad3): New translations en-us.ini (Croatian)
+* [a19b3e0](https://github.com/Leantime/leantime/commit/a19b3e09246ca04da3ec23ae5d8f0ef438ed327b): New translations en-us.ini (Spanish, Mexico)
+* [89c85f0](https://github.com/Leantime/leantime/commit/89c85f0a86884f8895c0c35e1e9704b7807c0896): New translations en-us.ini (Khmer)
+* [594c8c9](https://github.com/Leantime/leantime/commit/594c8c9ccabeaefb9961c9782c69b180c56c6cae): New translations en-us.ini (Persian)
+* [2e59069](https://github.com/Leantime/leantime/commit/2e59069a5416be0e7462457021285bc1d7451adc): New translations en-us.ini (Portuguese, Brazilian)
+* [2781e73](https://github.com/Leantime/leantime/commit/2781e73d7a18524d404af2f7aaad1996e3d191a2): New translations en-us.ini (Icelandic)
+* [eb5eb6c](https://github.com/Leantime/leantime/commit/eb5eb6c86e41744805d4682b1ceff4787e9e6162): New translations en-us.ini (Vietnamese)
+* [fed047b](https://github.com/Leantime/leantime/commit/fed047be658feb53669f22cad308a875ff7e07bc): New translations en-us.ini (Chinese Traditional)
+* [b81bbae](https://github.com/Leantime/leantime/commit/b81bbae55d5f6d012e05bf88cef9f75e36b649f5): New translations en-us.ini (Chinese Simplified)
+* [b3c9851](https://github.com/Leantime/leantime/commit/b3c9851ed90f745568b45e386e0b4c2aa934bc2e): New translations en-us.ini (Turkish)
+* [6218e74](https://github.com/Leantime/leantime/commit/6218e74d3735e942c5e391278357c84db429a097): New translations en-us.ini (Swedish)
+* [13dc4cd](https://github.com/Leantime/leantime/commit/13dc4cd1aaf58e363506287529560787c899af06): New translations en-us.ini (Serbian (Cyrillic))
+* [20b909a](https://github.com/Leantime/leantime/commit/20b909a667db60ed1b06d2e8bccac4054d998229): New translations en-us.ini (Slovenian)
+* [adb090c](https://github.com/Leantime/leantime/commit/adb090c63c6fdaab48704ecfc71a3a127a824429): New translations en-us.ini (Slovak)
+* [e56aff4](https://github.com/Leantime/leantime/commit/e56aff497bc7ec715a1b6d689302f36064a2c843): New translations en-us.ini (Russian)
+* [7bc3dfd](https://github.com/Leantime/leantime/commit/7bc3dfd22be6898c05dae621cb7bc884e609d553): New translations en-us.ini (Portuguese)
+* [8225b72](https://github.com/Leantime/leantime/commit/8225b72b3e3323c877996cbf2fbbef7151530a2f): New translations en-us.ini (Polish)
+* [214635a](https://github.com/Leantime/leantime/commit/214635aa7bcb34fa3b8b7c2e84833a4eb373101f): New translations en-us.ini (Norwegian)
+* [c045d94](https://github.com/Leantime/leantime/commit/c045d94819ce91ae919dc45a1ffae7624e33e842): New translations en-us.ini (Dutch)
+* [9ecb23b](https://github.com/Leantime/leantime/commit/9ecb23b84116592844672cd1ea9a933fbf0bd34e): New translations en-us.ini (Korean)
+* [c098909](https://github.com/Leantime/leantime/commit/c098909bfe324db2b475a30895f81086f6dc7c6a): New translations en-us.ini (Japanese)
+* [7ae0cac](https://github.com/Leantime/leantime/commit/7ae0caca2c5d7f831c3e3974184efff108dbb28d): New translations en-us.ini (Italian)
+* [85bd1a4](https://github.com/Leantime/leantime/commit/85bd1a4261abd0c1959252d708fc39536c3af83b): New translations en-us.ini (Hungarian)
+* [99e3e46](https://github.com/Leantime/leantime/commit/99e3e46098041cf734a9df139ac2343268a39169): New translations en-us.ini (Hebrew)
+* [38f9db3](https://github.com/Leantime/leantime/commit/38f9db3ff3336b15394b21ff31ba1297611a5fbd): New translations en-us.ini (Greek)
+* [473b217](https://github.com/Leantime/leantime/commit/473b217a8ac9e875e8d8197873197fe97c50d669): New translations en-us.ini (German)
+* [6b18346](https://github.com/Leantime/leantime/commit/6b1834604704a87d114dc4ec23bd195d0dd714bb): New translations en-us.ini (Danish)
+* [5ee5788](https://github.com/Leantime/leantime/commit/5ee5788f4d0da2f0e7a14377c796949a93561061): New translations en-us.ini (Czech)
+* [900209a](https://github.com/Leantime/leantime/commit/900209a70645dc9fa95a8fce1fd5c65b0a670a2d): New translations en-us.ini (Arabic)
+* [341f439](https://github.com/Leantime/leantime/commit/341f4392f48e53a70979bd9eb7b32e3abf278603): New translations en-us.ini (Spanish)
+* [45b55e6](https://github.com/Leantime/leantime/commit/45b55e6705ab0fcb4632b57869cd2b9c5248641a): New translations en-us.ini (French)
+* [4d06b41](https://github.com/Leantime/leantime/commit/4d06b41be002d7571ae02a33e5b0a3c9601e4954): New translations en-us.ini (Romanian)
+* [2b11141](https://github.com/Leantime/leantime/commit/2b1114191776313746f252a243b96f25177793f4): Update Projects.php
+* [7699c45](https://github.com/Leantime/leantime/commit/7699c4599198b3a705fdb70081e76d8c8b7f46f8): New translations en-us.ini (German)
+* [4f0998f](https://github.com/Leantime/leantime/commit/4f0998f651684417657e5bef6daefa2432078136): Update de-DE.ini
+* [31d54ce](https://github.com/Leantime/leantime/commit/31d54cebf18c9a3204cb612e7c30f14a6a73dd74): fix code styles
+* [8cb7914](https://github.com/Leantime/leantime/commit/8cb79140d77dcc6c2c13e8e928b4e1dfabea6168): Clean up tests
+* [39d18c1](https://github.com/Leantime/leantime/commit/39d18c1e9e61e3a57a71174c6d30071969243b9c): Update UnitTesterActions.php
+* [5f1b0d8](https://github.com/Leantime/leantime/commit/5f1b0d8a6fd0e3094d0c43737c0d8b02ff577192): Unit tests for jsonrpc controller
+* [fc40528](https://github.com/Leantime/leantime/commit/fc40528efcd64ffa387f5dc1dfea6e3ce554fdb3): Fix code style
+* [4b78fdd](https://github.com/Leantime/leantime/commit/4b78fdde3a6e9bfaeb17ba245df24e690f69906b): update readme and test location
+* [ec63cdc](https://github.com/Leantime/leantime/commit/ec63cdc2bf49b093c04855d49f05e86501ce65c6): Update en-US.ini
+* [a5c9ff8](https://github.com/Leantime/leantime/commit/a5c9ff8a3cda237ad9186c654d6b5219cb3dabf9): Fix API calls and write unit tests
+* [aebcf67](https://github.com/Leantime/leantime/commit/aebcf67ecc331adc29d3c0f19bae4ce3acba7f42): Fixes issue where milestones without end dates are causing 500 error
+* [cd3cf13](https://github.com/Leantime/leantime/commit/cd3cf13d4e78b0971ee47e71f2e949c92569bb43): delete Pirate.json
+* [6cffcf6](https://github.com/Leantime/leantime/commit/6cffcf6d67349e3632a00894a829fe724dd1c6db): Fixes wrong dates in milestone calendar header
+
+
 # Version: 3.3.1
 
 * [9285883](https://github.com/Leantime/leantime/commit/9285883d0c950d25add07dd6a5aa7d0bed421ee2): Update StringableMacros.php
