@@ -10,12 +10,11 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    // use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Models\Clients as ClientModel;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Files\Services\Files as FileService;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -27,9 +26,9 @@ namespace Leantime\Domain\Clients\Controllers {
 
         private SettingRepository $settingsRepo;
 
-        private ProjectService $projectService;
-
         private CommentService $commentService;
+        
+        private ProjectService $projectService;
 
         private FileService $fileService;
 
@@ -39,14 +38,14 @@ namespace Leantime\Domain\Clients\Controllers {
         public function init(
             ClientService $clientService,
             SettingRepository $settingsRepo,
-            ProjectService $projectService,
             CommentService $commentService,
+            ProjectService $projectService,
             FileService $fileService
         ) {
             $this->clientService = $clientService;
             $this->settingsRepo = $settingsRepo;
-            $this->projectService = $projectService;
             $this->commentService = $commentService;
+            $this->projectService = $projectService;
             $this->fileService = $fileService;
 
             if (! session()->exists('lastPage')) {
@@ -72,24 +71,12 @@ namespace Leantime\Domain\Clients\Controllers {
 
                 return $this->tpl->display('errors.error403');
             }
-
-            $clientValues = (object) [
-                'id' => $row->id,
-                'name' => $row->name,
-                'street' => $row->street,
-                'zip' => $row->zip,
-                'city' => $row->city,
-                'state' => $row->state,
-                'country' => $row->country,
-                'phone' => $row->phone,
-                'internet' => $row->internet,
-                'email' => $row->email,
-            ];
-
+            
+            $clientValues = app() -> make(ClientModel::class, [
+                'attributes' => $row
+            ]);
 
             if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
-                $file = app()->make(FileRepository::class);
-                $project = app()->make(ProjectRepository::class);
 
                 if (session('userdata.role') == 'admin') {
                     $this->tpl->assign('admin', true);
@@ -100,8 +87,8 @@ namespace Leantime\Domain\Clients\Controllers {
                 $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
                 $this->tpl->assign('client', $clientValues);
                 $this->tpl->assign('users', app()->make(UserRepository::class));
-                $this->tpl->assign('clientProjects', $project->getClientProjects($id));
-                $this->tpl->assign('files', $file->getFilesByModule('client', $id));
+                $this->tpl->assign('clientProjects', $this->projectService->getClientProjects($id));
+                $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
 
                 return $this->tpl->display('clients.showClient');
             } else {
@@ -132,22 +119,12 @@ namespace Leantime\Domain\Clients\Controllers {
                 return $this->tpl->display('errors.error404');
             }
 
-            $clientValues = (object) [
-                'id' => $row->id,
-                'name' => $row->name,
-                'street' => $row->street,
-                'zip' => $row->zip,
-                'city' => $row->city,
-                'state' => $row->state,
-                'country' => $row->country,
-                'phone' => $row->phone,
-                'internet' => $row->internet,
-                'email' => $row->email,
-            ];
+            $clientValues = app() -> make(ClientModel::class, [
+                'attributes' => $row
+            ]);
 
             if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
                 $file = app()->make(FileRepository::class);
-                $project = app()->make(ProjectRepository::class);
 
                 if (session('userdata.role') == 'admin') {
                     $this->tpl->assign('admin', true);
@@ -185,18 +162,9 @@ namespace Leantime\Domain\Clients\Controllers {
                 }
 
                 if (isset($params['save']) === true) {
-                    $clientValues = (object) [
-                        'id' => $row->id,
-                        'name' => $params['name'],
-                        'street' => $params['street'],
-                        'zip' => $params['zip'],
-                        'city' => $params['city'],
-                        'state' => $params['state'],
-                        'country' => $params['country'],
-                        'phone' => $params['phone'],
-                        'internet' => $params['internet'],
-                        'email' => $params['email'],
-                    ];
+                    $clientValues = app() -> make(ClientModel::class, [
+                        'attributes' => $params
+                    ]);
 
                     if ($clientValues->name !== '') {
                         $this->clientService->editClient($clientValues);
@@ -212,8 +180,8 @@ namespace Leantime\Domain\Clients\Controllers {
                 $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
                 $this->tpl->assign('client', $clientValues);
                 $this->tpl->assign('users', app()->make(UserRepository::class));
-                $this->tpl->assign('clientProjects', $project->getClientProjects($id));
-                $this->tpl->assign('files', $file->getFilesByModule('client', $id));
+                $this->tpl->assign('clientProjects', $this->projectService->getClientProjects($id));
+                $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
 
                 return $this->tpl->display('clients.showClient');
             } else {

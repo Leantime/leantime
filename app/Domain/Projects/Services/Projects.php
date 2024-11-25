@@ -1283,6 +1283,18 @@ class Projects
      *
      * @api
      */
+    public function getClientProjects($id)
+    {
+        return $this->projectRepository->getClientProjects($id);
+    }
+
+
+        /**
+     * Retrieves all projects.
+     *
+     * @return array The projects.
+     * @api
+     */
     public function getAllProjects()
     {
         return $this->projectRepository->getAll();

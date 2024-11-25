@@ -10,6 +10,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Clients\Models\Clients as ClientModel;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Symfony\Component\HttpFoundation\Response;
 
@@ -35,18 +36,9 @@ namespace Leantime\Domain\Clients\Controllers {
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
-                $values = (object) [
-                    'name' => '',
-                    'street' => '',
-                    'zip' => '',
-                    'city' => '',
-                    'state' => '',
-                    'country' => '',
-                    'phone' => '',
-                    'internet' => '',
-                    'email' => '',
-                ];
 
+                $values = app() -> make(ClientModel::class);
+            
                 $this->tpl->assign('values', $values);
 
                 return $this->tpl->display('clients.newClient');
@@ -64,31 +56,13 @@ namespace Leantime\Domain\Clients\Controllers {
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
-                $values = (object) [
-                    'name' => '',
-                    'street' => '',
-                    'zip' => '',
-                    'city' => '',
-                    'state' => '',
-                    'country' => '',
-                    'phone' => '',
-                    'internet' => '',
-                    'email' => '',
-                ];
                 
-                if (isset($params['save']) === true) {
-                    $values = (object) [
-                        'name' => ($params['name']),
-                        'street' => ($params['street']),
-                        'zip' => ($params['zip']),
-                        'city' => ($params['city']),
-                        'state' => ($params['state']),
-                        'country' => ($params['country']),
-                        'phone' => ($params['phone']),
-                        'internet' => ($params['internet']),
-                        'email' => ($params['email']),
-                    ];
+                $values = null;
 
+                if (isset($params['save']) === true) {
+
+                    $values = app() -> make(ClientModel::class, ['attributes' => $params]);
+                    // dd("values are: ", $values);
                     if ($values->name !== '') {
                         if ($this->clientService->isClient($values) !== true) {
                             $id = $this->clientService->create($values);
