@@ -2,15 +2,17 @@
 
 namespace Leantime\Domain\Auth\Guards;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
 class LeantimeGuard implements Guard
 {
     protected $provider;
+
     protected $user;
+
     protected AuthService $authService;
 
     public function __construct(UserProvider $provider, AuthService $authService)
@@ -26,7 +28,7 @@ class LeantimeGuard implements Guard
 
     public function guest()
     {
-        return !$this->check();
+        return ! $this->check();
     }
 
     public function user()
@@ -42,7 +44,8 @@ class LeantimeGuard implements Guard
         return $this->user;
     }
 
-    public function hasUser() {
+    public function hasUser()
+    {
         return $this->user ? true : false;
     }
 
@@ -64,7 +67,7 @@ class LeantimeGuard implements Guard
     public function setUser(Authenticatable $user)
     {
         $this->user = $user;
+
         return $this;
     }
-
 }

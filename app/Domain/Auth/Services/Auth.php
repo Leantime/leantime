@@ -583,7 +583,8 @@ class Auth implements Authenticatable
         return 'remember_token';
     }
 
-    public function getUserById($id) {
+    public function getUserById($id)
+    {
         return (object) $this->userRepo->getUser($id);
     }
 }

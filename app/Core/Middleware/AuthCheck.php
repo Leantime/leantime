@@ -80,7 +80,7 @@ class AuthCheck
 
         $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
 
-        if ( $request instanceof ApiRequest) {
+        if ($request instanceof ApiRequest) {
             self::dispatchEvent('before_api_request', ['application' => app()], 'leantime.core.middleware.apiAuth.handle');
         }
         $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect, $next);

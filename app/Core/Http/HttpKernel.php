@@ -75,7 +75,7 @@ class HttpKernel extends Kernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'auth' =>  \Leantime\Core\Middleware\AuthCheck::class,
+        'auth' => \Leantime\Core\Middleware\AuthCheck::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

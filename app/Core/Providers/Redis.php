@@ -57,7 +57,7 @@ class Redis extends ServiceProvider
                 // Set cluster specific options
                 $app['config']->set('redis.options', [
                     'cluster' => 'redis',
-                    'parameters' => ['timeout' => 1.0]
+                    'parameters' => ['timeout' => 1.0],
                 ]);
             } else {
                 $app['config']->set('redis.cache', $cacheConfig);

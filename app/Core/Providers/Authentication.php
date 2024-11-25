@@ -2,19 +2,15 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Support\ServiceProvider;
-use Leantime\Domain\Api\Services\Api;
 use Leantime\Domain\Auth\Guards\ApiGuard;
 use Leantime\Domain\Auth\Guards\LeantimeGuard;
 use Leantime\Domain\Auth\Providers\LeantimeUserProvider;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
-use Illuminate\Support\Facades\Auth;
 
 class Authentication extends ServiceProvider
 {
-
     /**
      * Register any application services.
      *
@@ -47,9 +43,9 @@ class Authentication extends ServiceProvider
 
         $this->app['auth']->extend('jsonRpc', function ($app, $name, array $config) {
             return new ApiGuard(
-                        $app['auth']->createUserProvider($config['provider']),
-                        $app->make(\Leantime\Domain\Api\Services\Api::class),
-                        $app['request']
+                $app['auth']->createUserProvider($config['provider']),
+                $app->make(\Leantime\Domain\Api\Services\Api::class),
+                $app['request']
             );
         });
     }

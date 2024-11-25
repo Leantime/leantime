@@ -4,8 +4,8 @@ namespace Leantime\Command;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Finder\Finder;
 
 #[AsCommand(
     name: 'translations:check-unused',
@@ -21,6 +21,7 @@ class CheckTranslations extends Command
     protected $description = 'Scan codebase for unused translation strings';
 
     protected $translations = [];
+
     protected $usedTranslations = [];
 
     public function handle()
@@ -42,8 +43,9 @@ class CheckTranslations extends Command
     private function parseLanguageFile(): void
     {
         $langFile = app_path('Language/en-US.ini');
-        if (!file_exists($langFile)) {
-            $this->error('Language file not found: ' . $langFile);
+        if (! file_exists($langFile)) {
+            $this->error('Language file not found: '.$langFile);
+
             return;
         }
 
@@ -60,10 +62,10 @@ class CheckTranslations extends Command
         $excludeDirs = explode(',', $this->option('exclude'));
 
         if ($this->option('debug')) {
-            $this->info('Excluding directories: ' . implode(', ', $excludeDirs));
+            $this->info('Excluding directories: '.implode(', ', $excludeDirs));
         }
 
-        $finder = new Finder();
+        $finder = new Finder;
         $finder->files()
             ->in(app_path())
             ->name('*.php')
@@ -97,10 +99,10 @@ class CheckTranslations extends Command
                 preg_quote($key, '/'),                    // Direct key usage
                 preg_quote("'$key'", '/'),                // Single quoted
                 preg_quote("\"$key\"", '/'),              // Double quoted
-                preg_quote('__("' . $key . '")', '/'),    // PHP translation function
+                preg_quote('__("'.$key.'")', '/'),    // PHP translation function
                 preg_quote("__('$key')", '/'),            // PHP translation function
-                preg_quote('$tpl->__("' . $key . '")', '/'), // Template translation
-                preg_quote('$tpl->__(\'' . $key . '\')', '/'), // Template translation
+                preg_quote('$tpl->__("'.$key.'")', '/'), // Template translation
+                preg_quote('$tpl->__(\''.$key.'\')', '/'), // Template translation
             ];
 
             if ($this->option('debug')) {
@@ -108,7 +110,7 @@ class CheckTranslations extends Command
             }
 
             foreach ($patterns as $pattern) {
-                if (preg_match('/' . $pattern . '/', $content)) {
+                if (preg_match('/'.$pattern.'/', $content)) {
                     if ($this->option('debug')) {
                         $this->line(" - Found usage of key: {$key}");
                     }
@@ -125,6 +127,7 @@ class CheckTranslations extends Command
 
         if (empty($unusedTranslations)) {
             $this->info('No unused translations found.');
+
             return;
         }
 
