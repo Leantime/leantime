@@ -62,7 +62,6 @@ namespace Leantime\Domain\Clients\Controllers {
                 if (isset($params['save']) === true) {
 
                     $values = app() -> make(ClientModel::class, ['attributes' => $params]);
-                    // dd("values are: ", $values);
                     if ($values->name !== '') {
                         if ($this->clientService->isClient($values) !== true) {
                             $id = $this->clientService->create($values);
