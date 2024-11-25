@@ -26,15 +26,15 @@ class TimesheetCest
         $I->amOnPage('/timesheets/showMy');
         // Select project.
         $I->waitForElementNotVisible('.project-select', 120);
-        $I->click('#projectSelect .chosen-single');
+        $I->clickWithRetry('#projectSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#projectSelect .chosen-results .active-result');
+        $I->clickWithRetry('#projectSelect .chosen-results .active-result');
 
         // Select ticket.
         $I->waitForElementNotVisible('.ticket-select', 120);
-        $I->click('#ticketSelect .chosen-single');
+        $I->clickWithRetry('#ticketSelect .chosen-single');
         $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#ticketSelect .chosen-results .active-result');
+        $I->clickWithRetry('#ticketSelect .chosen-results .active-result');
 
         // Select type.
         $I->waitForElementVisible('.kind-select', 120);
@@ -43,12 +43,15 @@ class TimesheetCest
         // Set hours in active
         $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->clickWithRetry('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+
+        $I->wait(3);
+
+        $I->seeInSource('<td id="finalSum">3</td>');
         $I->seeInDatabase('zp_timesheets', [
             'id' => 1,
             'hours' => 1,
@@ -88,7 +91,7 @@ class TimesheetCest
         // Set hours.
         $I->fillField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->clickWithRetry('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
         $I->wait(10);
@@ -98,7 +101,8 @@ class TimesheetCest
         $I->seeInField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', '2');
 
-        $I->see('6', '#finalSum');
+        $I->seeInSource('<td id="finalSum">6</td>');
+
     }
 
     #[Group('timesheet')]
@@ -112,10 +116,10 @@ class TimesheetCest
         // Set hours in active
         $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
         $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->clickWithRetry('.saveTimesheetBtn');
         $I->waitForElement('.growl', 60);
 
-        $I->see('6', '#finalSum');
+        $I->seeInSource('<td id="finalSum">6</td>');
     }
 
     /**
@@ -130,9 +134,9 @@ class TimesheetCest
         $I->wantTo('Save the timesheet once more to ensure number do not change');
 
         $I->amOnPage('/timesheets/showMy');
-        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->clickWithRetry('.saveTimesheetBtn');
         $I->waitForElement('.growl', 120);
-        $I->see('Timesheet saved successfully');
+        $I->seeInSource('Timesheet saved successfully');
 
         // An page reload will trigger an "resend submission popup".
         $I->amOnPage('/timesheets/showMy');
@@ -140,7 +144,8 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('6', '#finalSum');
+
+        $I->seeInSource('<td id="finalSum">6</td>');
     }
 
     #[Group('timesheet')]
@@ -157,7 +162,8 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('6', '#finalSum');
+
+        $I->seeInSource('<td id="finalSum">6</td>');
 
         // Switch back.
         $this->changeUsersTimeZone($I);
@@ -173,10 +179,10 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->see('#1 - Edit');
 
-        $I->click('#1 - Edit');
+        $I->clickWithRetry('#editTimesheet-1');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 2);
-        $I->click('.stdformbutton .button');
+        $I->clickWithRetry('.stdformbutton .button');
         $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_timesheets', [
@@ -186,7 +192,7 @@ class TimesheetCest
 
         // Close modal.
         $I->waitForElementVisible('.nyroModalClose');
-        $I->click('.nyroModalClose');
+        $I->clickWithRetry('.nyroModalClose');
 
         // Check that data have been updated.
         $I->wait(5);
@@ -203,17 +209,17 @@ class TimesheetCest
 
         $I->amOnPage('/#/tickets/showTicket/10');
         $I->waitForElementVisible('#ui-id-8');
-        $I->click('#ui-id-8');
+        $I->clickWithRetry('#ui-id-8');
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 4);
 
-        $I->click('.formModal .button');
+        $I->clickWithRetry('.formModal .button');
         $I->wait(1);
 
         // Go and see if the total is correct.
         $I->amOnPage('/timesheets/showMy');
         $I->waitForElementVisible('#finalSum');
-        $I->see('11', '#finalSum');
+        $I->seeInSource('<td id="finalSum">11</td>');
     }
 
     #[Group('timesheet')]
@@ -238,19 +244,19 @@ class TimesheetCest
 
         // Maker paid
         $I->checkOption('//*//input[@id="checkAllPaid"]');
-        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->cantSeeElement('//*//input[@class="paid"]');
 
         // Make Invoiced
         $I->checkOption('//*/input[@id="checkAllEmpl"]');
-        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->cantSeeElement('//*//input[@class="invoicedEmpl"]');
 
         // Make MGR Approval
         $I->checkOption('//*//input[@id="checkAllComp"]');
-        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
         $I->cantSeeElement('//*//input[@class="invoicedComp"]');
     }
@@ -265,14 +271,14 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->see('#1 - Edit');
 
-        $I->click('#1 - Edit');
+        $I->clickWithRetry('#editTimesheet-1');
         $I->waitForElementVisible('.delete');
-        $I->click('.stdformbutton .delete');
+        $I->clickWithRetry('.stdformbutton .delete');
 
         $I->wait(1);
         $I->see('Should the timesheet really be deleted?');
 
-        $I->click('.nyroModalLink .button');
+        $I->clickWithRetry('.nyroModalLink .button');
 
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->cantSee('#1 - Edit');
@@ -289,7 +295,8 @@ class TimesheetCest
         $I->amOnPage('/users/editOwn#settings');
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
-        $I->click('#saveSettings');
+        $I->waitForElementClickable('#saveSettings');
+        $I->clickWithRetry('#saveSettings');
 
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',

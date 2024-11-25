@@ -13,24 +13,14 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     class ShowKanban extends Controller
     {
-        private ProjectService $projectService;
 
         private TicketService $ticketService;
 
-        private SprintService $sprintService;
-
-        private TimesheetService $timesheetService;
 
         public function init(
-            ProjectService $projectService,
             TicketService $ticketService,
-            SprintService $sprintService,
-            TimesheetService $timesheetService
         ): void {
-            $this->projectService = $projectService;
             $this->ticketService = $ticketService;
-            $this->sprintService = $sprintService;
-            $this->timesheetService = $timesheetService;
 
             session(['lastPage' => CURRENT_URL]);
             session(['lastTicketView' => 'kanban']);

@@ -4,6 +4,6 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $canvasName = 'sm';
-require file_exists($customFile = APP_ROOT . '/custom/Domain/Canvas/Templates/helper.inc.php')
+require file_exists($customFile = APP_ROOT.'/custom/Domain/Canvas/Templates/helper.inc.php')
     ? $customFile
-    : str_replace(APP_ROOT . '/custom/', APP_ROOT . '/app/', $customFile);
+    : str_replace(APP_ROOT.'/custom/', APP_ROOT.'/app/', $customFile);

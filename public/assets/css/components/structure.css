@@ -319,20 +319,23 @@
     background-size: contain;
     background-position: bottom;
     min-height: 100vh;
+
 }
 
 .rightpanel:before {
-    content: " ";
+
+    position: absolute;
     height: 100%;
-    left: 0;
-    opacity: .2;
-    position: fixed;
-    background-size: cover;
-    top: 0px;
     width: 100%;
-
-
-
+    left: 0;
+    top: 0px;
+    content: " ";
+    opacity: .2;
+    background-size:cover;
+    background-image:url(/dist/images/backgrounds/bg5.png);
+    background-repeat:no-repeat;
+    background-position:center;
+    background-attachment: fixed;
 }
 
 .rightpanel.personal:before {
@@ -349,28 +352,11 @@
 
 
 .primaryContent {
-
     min-height:100vh;
-
-    padding-left:225px;
     padding-top:10px;
     padding-bottom:10px;
-
-}
-
-.primaryContent:before{
-
-    content: "";
-    height: 100%;
-    left: 0;
-    opacity: var(--primary-content-bg-opacity);
-    position: fixed;
-    top: 0px;
-    width: 100%;
-    background-size:cover;
-    background-image:url(/dist/images/backgrounds/bg5.png);
-    background-repeat:no-repeat;
-    background-position:center;
+    position: relative;
+    overflow-x: hidden;
 }
 
 
@@ -420,8 +406,6 @@
     padding-bottom:150px;
     height:60px;
     line-height:60px;
-    /*border-bottom: 1px solid #ddd;
-     */
     position: relative;
 }
 
@@ -448,7 +432,6 @@
 }
 
 .footer {
-
     border-radius:var(--box-radius);
     background: var(--glass-background);
     backdrop-filter: var(--glass-blur);
@@ -459,7 +442,6 @@
     box-shadow: var(--large-shadow);
 
     border: var(--glass-border);
-
 
     font-size: var(--font-size-s);
 

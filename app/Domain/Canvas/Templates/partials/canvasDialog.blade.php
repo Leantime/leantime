@@ -1,3 +1,7 @@
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
+@endphp
+
 @extends($layout)
 
 @section('content')
@@ -89,12 +93,10 @@
                             value="{{ $canvasItem[$dataLabels[$index]['field']] }}"
                             labelText="{{ $tpl->__($dataLabels[$index]['title']) }}" class="w-full" />
                     @else
-                        <label
-                            for="{{ $dataLabels[$index]['field'] }}">{{ $tpl->__($dataLabels[$index]['title']) }}</label>
-                        <textarea name="{{ $dataLabels[$index]['field'] }}" rows="3" cols="10"
-                            class="modalTextArea tinymceSimple w-full">
-                    {{ $canvasItem[$dataLabels[$index]['field']] }}
-                </textarea>
+                        <label for="{{ $dataLabels[$index]['field'] }}">{{ $tpl->__($dataLabels[$index]['title']) }}</label>
+
+                        <x-global::forms.text-editor :name="$dataLabels[$index]['field']" :type="EditorTypeEnum::Simple->value" :value="$canvasItem[$dataLabels[$index]['field']]" diameter="w-full" modal="true" />
+
                         <br />
                     @endif
                 @else

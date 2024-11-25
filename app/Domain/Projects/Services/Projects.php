@@ -4,7 +4,6 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
@@ -25,73 +24,42 @@ use Leantime\Domain\Wiki\Repositories\Wiki;
 
 /**
  * The Projects class is responsible for managing projects and project-related operations.
- *
- * @package Domain\Projects
- *
  */
 class Projects
 {
     use DispatchesEvents;
 
-    private TemplateCore $tpl;
-    private ProjectRepository $projectRepository;
-    private TicketRepository $ticketRepository;
-    private SettingRepository $settingsRepo;
-    private LanguageCore $language;
-    private Messengers $messengerService;
-    private NotificationService $notificationService;
-    private FileRepository $filesRepository;
-
-    /**
-     * @param ProjectRepository   $projectRepository
-     * @param TicketRepository    $ticketRepository
-     * @param SettingRepository   $settingsRepo
-     * @param FileRepository      $filesRepository
-     * @param LanguageCore        $language
-     * @param Messengers          $messengerService
-     * @param NotificationService $notificationService
-     *
-    */
     public function __construct(
-        ProjectRepository $projectRepository,
-        TicketRepository $ticketRepository,
-        SettingRepository $settingsRepo,
-        FileRepository $filesRepository,
-        LanguageCore $language,
-        Messengers $messengerService,
-        NotificationService $notificationService
-    ) {
-        $this->projectRepository = $projectRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->settingsRepo = $settingsRepo;
-        $this->filesRepository = $filesRepository;
-        $this->language = $language;
-        $this->messengerService = $messengerService;
-        $this->notificationService = $notificationService;
-    }
+        private ProjectRepository $projectRepository,
+        private TicketRepository $ticketRepository,
+        private SettingRepository $settingsRepo,
+        private FileRepository $filesRepository,
+        private LanguageCore $language,
+        private Messengers $messengerService,
+        private NotificationService $notificationService
+    ) {}
 
     /**
      * Gets the project types.
      *
-     * @return mixed
      *
      * @api
      */
     public function getProjectTypes(): mixed
     {
 
-            $types = ['project' => 'label.project'];
+        $types = ['project' => 'label.project'];
 
-            $filtered = static::dispatchFilter('filterProjectType', $types);
+        $filtered = static::dispatch_filter('filterProjectType', $types);
 
-            //Strategy & Program are protected types
-            if (isset($filtered['strategy'])) {
-                unset($filtered['strategy']);
-            }
+        //Strategy & Program are protected types
+        if (isset($filtered['strategy'])) {
+            unset($filtered['strategy']);
+        }
 
-            if (isset($filtered['program'])) {
-                unset($filtered['program']);
-            }
+        if (isset($filtered['program'])) {
+            unset($filtered['program']);
+        }
 
         return $filtered;
     }
@@ -99,7 +67,7 @@ class Projects
     /**
      * Gets the project with the given ID.
      *
-     * @param int $id The ID of the project to retrieve.
+     * @param  int  $id  The ID of the project to retrieve.
      * @return bool|array Returns the project data as an associative array if the project exists, otherwise returns false.
      *
      * @api
@@ -111,14 +79,19 @@ class Projects
 
     //Gets project progress
 
-        /**
-         * @throws \Exception
-         *
-         * @api
-         */
-        public function getProjectProgress($projectId): array
-        {
-            $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
+    /**
+     * Gets the progress of a project.
+     * Calculates the completion percentage, estimated completion date,
+     * and planned completion date of the project.
+     *
+     * @param  int  $projectId  The ID of the project.
+     * @return array The progress of the project.
+     *
+     * @api
+     */
+    public function getProjectProgress($projectId): array
+    {
+        $returnValue = ['percent' => 0, 'estimatedCompletionDate' => 'We need more data to determine that.', 'plannedCompletionDate' => ''];
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
@@ -129,9 +102,9 @@ class Projects
             return $returnValue;
         }
 
-            $dateOfFirstTicket = new DateTime($firstTicket->date);
-            $today = new DateTime;
-            $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
+        $dateOfFirstTicket = new DateTime($firstTicket->date);
+        $today = new DateTime;
+        $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
 
         //Calculate percent
 
@@ -170,72 +143,84 @@ class Projects
             $estDaysLeftInProject = ceil($percentLeft / $dailyPercent);
         }
 
-            $today->add(new DateInterval('P'.$estDaysLeftInProject.'D'));
+        $today->add(new DateInterval('P'.$estDaysLeftInProject.'D'));
 
-            //Fix this
-            $currentDate = new DateTime;
-            $inFiveYears = intval($currentDate->format('Y')) + 5;
+        //Fix this
+        $currentDate = new DateTime;
+        $inFiveYears = intval($currentDate->format('Y')) + 5;
 
-            if (intval($today->format('Y')) >= $inFiveYears) {
-                $completionDate = 'Past '.$inFiveYears;
-            } else {
-                $completionDate = $today->format($this->language->__('language.dateformat'));
-            }
-
-            $returnValue = ['percent' => $finalPercent, 'estimatedCompletionDate' => $completionDate, 'plannedCompletionDate' => ''];
-            if ($numberOfClosedTickets < 10) {
-                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
-            } elseif ($finalPercent == 100) {
-                $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
-            }
-
-            return $returnValue;
+        if (intval($today->format('Y')) >= $inFiveYears) {
+            $completionDate = 'Past '.$inFiveYears;
+        } else {
+            $completionDate = $today->format($this->language->__('language.dateformat'));
         }
 
-        /**
-         * @api
-         */
-        public function getUsersToNotify($projectId): array
-        {
+        $returnValue = ['percent' => $finalPercent, 'estimatedCompletionDate' => $completionDate, 'plannedCompletionDate' => ''];
+        if ($numberOfClosedTickets < 10) {
+            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/tickets/showAll' class='btn btn-primary'><span class=\"fa fa-thumb-tack\"></span> Complete more To-Dos to see that!</a>";
+        } elseif ($finalPercent == 100) {
+            $returnValue['estimatedCompletionDate'] = "<a href='".BASE_URL."/projects/showAll' class='btn btn-primary'><span class=\"fa fa-suitcase\"></span> This project is complete, onto the next!</a>";
+        }
+
+        return $returnValue;
+    }
+
+    /**
+     * Gets an array of user IDs to notify for a given project.
+     *
+     * @param  int  $projectId  The ID of the project to get users to notify for.
+     * @return array An array of user IDs.
+     *
+     * @api
+     */
+    public function getUsersToNotify($projectId): array
+    {
 
         $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-            $to = [];
+        $to = [];
 
-            //Only users that actually want to be notified and are active
-            foreach ($users as $user) {
-                if ($user['notifications'] != 0 && strtolower($user['status']) == 'a') {
-                    $to[] = $user['id'];
-                }
+        //Only users that actually want to be notified and are active
+        foreach ($users as $user) {
+            if ($user['notifications'] != 0 && strtolower($user['status']) == 'a') {
+                $to[] = $user['id'];
             }
+        }
 
         return $to;
     }
 
     /**
+     * Gets all the users who need to be notified for a given project.
+     *
+     * @param  int  $projectId  The ID of the project.
+     * @return array An array of users to notify.
+     *
      * @api
      */
     public function getAllUserInfoToNotify($projectId): array
     {
 
-      $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+        $users = $this->projectRepository->getUsersAssignedToProject($projectId);
 
-      $to = [];
+        $to = [];
 
-      //Only users that actually want to be notified
-      foreach ($users as $user) {
-          if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
-              $to[] = $user;
-          }
-      }
+        //Only users that actually want to be notified
+        foreach ($users as $user) {
+            if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
+                $to[] = $user;
+            }
+        }
 
-      return $to;
+        return $to;
     }
 
     //TODO Split and move to notifications
 
     /**
-     * @throws BindingResolutionException
+     * Notifies the users associated with a project about a notification.
+     *
+     * @param  Notification  $notification  The notification object to send.
      *
      * @api
      */
@@ -280,31 +265,31 @@ class Projects
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
             $entityId = $notification->entity['id'];
 
-        if (isset($mentionFields[$notification->module])) {
-            $fields = $mentionFields[$notification->module];
+            if (isset($mentionFields[$notification->module])) {
+                $fields = $mentionFields[$notification->module];
 
-            foreach ($fields as $field) {
-                if (isset($notification->entity[$field])) {
-                    $contentToCheck .= $notification->entity[$field];
+                foreach ($fields as $field) {
+                    if (isset($notification->entity[$field])) {
+                        $contentToCheck .= $notification->entity[$field];
+                    }
                 }
             }
-        }
-    } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
-        $entityId = $notification->entity->id;
+        } elseif (isset($notification->entity) && is_object($notification->entity) && isset($notification->entity->id)) {
+            $entityId = $notification->entity->id;
 
-        if (isset($mentionFields[$notification->module])) {
-            $fields = $mentionFields[$notification->module];
+            if (isset($mentionFields[$notification->module])) {
+                $fields = $mentionFields[$notification->module];
 
-            foreach ($fields as $field) {
-                if (isset($notification->entity->$field)) {
-                    $contentToCheck .= $notification->entity->$field;
+                foreach ($fields as $field) {
+                    if (isset($notification->entity->$field)) {
+                        $contentToCheck .= $notification->entity->$field;
+                    }
                 }
             }
+        } else {
+            //Entity id not set use project id
+            $entityId = $notification->projectId;
         }
-    } else {
-        //Entity id not set use project id
-        $entityId = $notification->projectId;
-    }
 
         if ($contentToCheck != '') {
             $this->notificationService->processMentions(
@@ -316,12 +301,32 @@ class Projects
             );
         }
 
+        /**
+         * This event is fired to notify project users of important updates.
+         * An event "notifyProjectUsers" is dispatched with an array of variables required for the notification.
+         * These variables include the type of update, module affected, entity ID, message and subject of notification,
+         * users to be notified, and url if present. This event belongs to the "domain.services.projects" context.
+         *
+         * @event notifyProjectUsers
+         *
+         * @param  string  $type  The type of update. E.g., "projectUpdate"
+         * @param  string  $module  The name of the module affected by the update.
+         * @param  int  $moduleId  The ID of the entity affected by the update.
+         * @param  string  $message  The content of the notification message.
+         * @param  string  $subject  The subject of the notification message.
+         * @param  array  $users  The users to be notified about this update. Retrieved by the 'getAllUserInfoToNotify' method.
+         * @param  string|null  $url  The url leading to the update if any.
+         *
+         * @context domain.services.projects
+         */
         self::dispatchEvent('notifyProjectUsers', ['type' => 'projectUpdate', 'module' => $notification->module, 'moduleId' => $entityId, 'message' => $notification->message, 'subject' => $notification->subject, 'users' => $this->getAllUserInfoToNotify($notification->projectId), 'url' => $notification->url['url']], 'domain.services.projects');
     }
 
     /**
-     * @param $projectId
-     * @return mixed|void
+     * Retrieves the name of a project based on its ID.
+     *
+     * @param  int  $projectId  The ID of the project.
+     * @return string|null The name of the project, or null if the project does not exist.
      *
      * @api
      */
@@ -337,7 +342,7 @@ class Projects
     /**
      * Gets the project IDs assigned to a specified user.
      *
-     * @param int $userId The ID of the user.
+     * @param  int  $userId  The ID of the user.
      * @return false|array The project IDs assigned to the user, or false if no projects are found.
      *
      * @api
@@ -357,16 +362,16 @@ class Projects
     /**
      * Gets projects assigned to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The status of the projects. Defaults to "open".
-     * @param int|null $clientId The ID of the client. Defaults to null.
+     * @param  int  $userId  The ID of the user.
+     * @param  string  $projectStatus  The status of the projects. Defaults to "open".
+     * @param  int|null  $clientId  The ID of the client. Defaults to null.
      * @return array The projects assigned to the user.
      *
      * @api
      */
-    public function getProjectsAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectsAssignedToUser($userId, string $projectStatus = 'open', $clientId = null, string $projectTypes = 'all'): array
     {
-        $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, projectStatus: $projectStatus, clientId: $clientId, projectTypes: $projectTypes);
 
         if ($projects) {
             return $projects;
@@ -375,12 +380,11 @@ class Projects
         }
     }
 
-
     /**
      * Finds all children projects for a given parent project.
      *
-     * @param mixed $currentParentId The ID of the current parent project.
-     * @param array $projects An array of projects to search for children.
+     * @param  mixed  $currentParentId  The ID of the current parent project.
+     * @param  array  $projects  An array of projects to search for children.
      * @return array An array of children projects found.
      *
      * @api
@@ -390,25 +394,25 @@ class Projects
 
         $branch = [];
 
-            foreach ($projects as $project) {
-                if ($project['parent'] == $currentParentId) {
-                    $children = $this->findMyChildren($project['id'], $projects);
-                    if ($children) {
-                        $project['children'] = $children;
-                    }
-                    $branch[] = $project;
+        foreach ($projects as $project) {
+            if ($project['parent'] == $currentParentId) {
+                $children = $this->findMyChildren($project['id'], $projects);
+                if ($children) {
+                    $project['children'] = $children;
                 }
+                $branch[] = $project;
             }
-
-            return $branch;
         }
+
+        return $branch;
+    }
 
     /**
      * Cleans the parent relationship in the given array of projects.
      * Removes projects that have a parent project that does not exist in the array.
      * Assigns a parent id of 0 to projects that have no parent.
      *
-     * @param array $projects An array of projects
+     * @param  array  $projects  An array of projects
      * @return array The cleaned array of projects
      *
      * @api
@@ -437,15 +441,14 @@ class Projects
     /**
      * Gets the hierarchy of projects assigned to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The project status. Default is "open".
-     * @param int|null $clientId The ID of the client. Default is null.
-     *
+     * @param  int  $userId  The ID of the user.
+     * @param  string  $projectStatus  The project status. Default is "open".
+     * @param  int|null  $clientId  The ID of the client. Default is null.
      * @return array An array containing the assigned projects, the project hierarchy, and the favorite projects.
      *
      * @api
      */
-    public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
 
         //Load all projects user is assigned to
@@ -481,9 +484,9 @@ class Projects
     /**
      * Gets the project hierarchy available to a user.
      *
-     * @param int $userId The ID of the user.
-     * @param string $projectStatus The status of the projects to retrieve. Defaults to "open".
-     * @param int|null $clientId The ID of the client. Defaults to null.
+     * @param  int  $userId  The ID of the user.
+     * @param  string  $projectStatus  The status of the projects to retrieve. Defaults to "open".
+     * @param  int|null  $clientId  The ID of the client. Defaults to null.
      * @return array Returns an array containing the following keys:
      *               - "allAvailableProjects": An array of all projects available to the user.
      *               - "allAvailableProjectsHierarchy": An array representing the project hierarchy available to the user.
@@ -491,7 +494,7 @@ class Projects
      *
      * @api
      */
-    public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = "open", $clientId = null): array
+    public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
 
         //Load all projects user is assigned to
@@ -514,19 +517,19 @@ class Projects
             'allAvailableProjects' => $projects,
             'allAvailableProjectsHierarchy' => $projectHierarchy,
             'clients' => $clients,
-            ];
-        }
+        ];
+    }
 
     /**
      * Gets all the clients available to a user.
      *
-         * @param  int  $userId  The ID of the user.
-         * @param  string  $projectStatus  The status of the projects to be considered. Defaults to "open".
+     * @param  int  $userId  The ID of the user.
+     * @param  string  $projectStatus  The status of the projects to be considered. Defaults to "open".
      * @return array An array of clients available to the user.
-         *
-         * @api
-         */
-        public function getAllClientsAvailableToUser($userId, string $projectStatus = 'open'): array
+     *
+     * @api
+     */
+    public function getAllClientsAvailableToUser($userId, string $projectStatus = 'open'): array
     {
 
         //Load all projects user is assigned to
@@ -543,15 +546,12 @@ class Projects
         return $clients;
     }
 
-    /**
-     *
-     */
     public function getClientsFromProjectList(array $projects): array
     {
 
-            $clients = [];
-            foreach ($projects as $project) {
-                if (! array_key_exists($project['clientId'], $clients)) {
+        $clients = [];
+        foreach ($projects as $project) {
+            if (! array_key_exists($project['clientId'], $clients)) {
                 $clients[$project['clientId']] = [
                     'name' => $project['clientName'],
                     'id' => $project['clientId'],
@@ -565,8 +565,8 @@ class Projects
     /**
      * Gets the role of a user in a specific project.
      *
-     * @param mixed $userId The user ID.
-     * @param mixed $projectId The project ID.
+     * @param  mixed  $userId  The user ID.
+     * @param  mixed  $projectId  The project ID.
      * @return mixed The role of the user in the project (string) or an empty string if the user is not assigned to the project or if the project role is not defined.
      *
      * @api
@@ -590,14 +590,14 @@ class Projects
     /**
      * Gets the projects that a user has access to.
      *
-     * @param int $userId The ID of the user.
+     * @param  int  $userId  The ID of the user.
      * @return array|false The array of projects if the user has access, false otherwise.
      *
      * @api
      */
     public function getProjectsUserHasAccessTo($userId): false|array
     {
-        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: "all");
+        $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: 'all');
 
         if ($projects) {
             return $projects;
@@ -615,7 +615,6 @@ class Projects
      * If lastProject setting is not set, it sets the currentProject to the first project assigned to the user.
      * If no projects are assigned to the user, it throws an Exception.
      *
-     * @return void
      *
      * @throws \Exception
      */
@@ -666,26 +665,24 @@ class Projects
      * Otherwise, it returns 0.
      *
      * @return int The current project ID.
-     *
      */
     public function getCurrentProjectId(): int
     {
         // Make sure that we never return a value less than 0.
-        return max(0, (int) (session("currentProject") ?? 0));
+        return max(0, (int) (session('currentProject') ?? 0));
     }
 
     /**
      * Change the current session project to the specified projectId.
      *
-     * @param mixed $projectId The ID of the project to set as current.
-     *
+     * @param  mixed  $projectId  The ID of the project to set as current.
      * @return bool Returns true if the current project is successfully changed, false otherwise.
      *
      * @api
      */
     public function changeCurrentSessionProject($projectId): bool
     {
-        if (!is_numeric($projectId)) {
+        if (! is_numeric($projectId)) {
             return false;
         }
 
@@ -754,7 +751,7 @@ class Projects
                 session(['currentRETROSCanvas' => '']);
                 $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.lastProject', session('currentProject'));
 
-                    $recentProjects = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.recentProjects');
+                $recentProjects = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.recentProjects');
                 $recent = unserialize($recentProjects);
 
                 if (is_array($recent) === false) {
@@ -785,9 +782,6 @@ class Projects
 
     /**
      * Resets the current project by clearing all session data related to the project.
-     *
-     * @return void
-     *
      */
     public function resetCurrentProject(): void
     {
@@ -820,27 +814,27 @@ class Projects
         $this->setCurrentProject();
     }
 
-
     /**
-     * Gets all the users assigned to a specific project.
+     * Gets all users that have access to a project.
+     * For direct access only set the teamOnly flag to true
      *
-     * @param int $projectId The ID of the project.
+     * @param  int  $projectId  The ID of the project.
      * @return array An array of users assigned to the project.
      *
      * @api
      */
-    public function getUsersAssignedToProject($projectId): array
+    public function getUsersAssignedToProject($projectId, $teamOnly = false): array
     {
-        $users = $this->projectRepository->getUsersAssignedToProject($projectId);
+        $users = $this->projectRepository->getUsersAssignedToProject($projectId, $teamOnly);
 
         foreach ($users as $key => $user) {
 
-                if (dtHelper()->isValidDateString($user['modified'])) {
-                    $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
-                } else {
-                    $users[$key]['modified'] = null;
-                }
+            if (dtHelper()->isValidDateString($user['modified'])) {
+                $users[$key]['modified'] = dtHelper()->parseDbDateTime($user['modified'])->toIso8601ZuluString();
+            } else {
+                $users[$key]['modified'] = null;
             }
+        }
 
         if ($users) {
             return $users;
@@ -852,8 +846,8 @@ class Projects
     /**
      * Checks if a user is assigned to a particular project.
      *
-     * @param int $userId The ID of the user being checked.
-     * @param int $projectId The ID of the project being checked.
+     * @param  int  $userId  The ID of the user being checked.
+     * @param  int  $projectId  The ID of the project being checked.
      * @return bool Returns true if the user is assigned to the project, false otherwise.
      *
      * @api
@@ -867,8 +861,8 @@ class Projects
     /**
      * Checks if a user is a member of a specific project.
      *
-     * @param int $userId - The ID of the user.
-     * @param int $projectId - The ID of the project.
+     * @param  int  $userId  - The ID of the user.
+     * @param  int  $projectId  - The ID of the project.
      * @return bool - Returns true if the user is a member of the project, otherwise false.
      *
      * @api
@@ -878,27 +872,27 @@ class Projects
         return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
     }
 
-        /**
-         * Adds a new project .
-         *
-         * @param  array  $values  The project data.
-         *                         - name: string (required)The name of the project.
-         *                         - details: string (optional) Additional details about the project.
-         *                         - clientId: int (required)The ID of the client associated with the project.
-         *                         - hourBudget: int (optional) The hour budget for the project (defaults to 0).
-         *                         - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
-         *                         - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
-         *                         - psettings: string (optional) The project settings (defaults to 'restricted').
-         *                         - type: string (fixed value 'project') The type of the project.
-         *                         - start: string|null The start date of the project in user format or null.
-         *                         - end: string|null The end date of the project in user format or null.
+    /**
+     * Adds a new project .
+     *
+     * @param  array  $values  The project data.
+     *                         - name: string (required)The name of the project.
+     *                         - details: string (optional) Additional details about the project.
+     *                         - clientId: int (required)The ID of the client associated with the project.
+     *                         - hourBudget: int (optional) The hour budget for the project (defaults to 0).
+     *                         - assignedUsers: string (optional) The list of assigned users (defaults to an empty string).
+     *                         - dollarBudget: int (optional) The dollar budget for the project (defaults to 0).
+     *                         - psettings: string (optional) The project settings (defaults to 'restricted').
+     *                         - type: string (fixed value 'project') The type of the project.
+     *                         - start: string|null The start date of the project in user format or null.
+     *                         - end: string|null The end date of the project in user format or null.
      * @return int|false The ID of the added project, or false if the project could not be added.
-         *
-         * @api
-         */
-        public function addProject(array $values): int|false
-        {
-            $values = [
+     *
+     * @api
+     */
+    public function addProject(array $values): int|false
+    {
+        $values = [
             'name' => $values['name'],
             'details' => $values['details'] ?? '',
             'clientId' => $values['clientId'],
@@ -915,7 +909,7 @@ class Projects
         }
         if ($values['end'] != null) {
             $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTimeUTC();
-            }
+        }
 
         return $this->projectRepository->addProject($values);
     }
@@ -923,11 +917,11 @@ class Projects
     /**
      * Duplicates a project with the specified details.
      *
-     * @param int $projectId The ID of the project to duplicate.
-     * @param int $clientId The ID of the client for the duplicate project.
-     * @param string $projectName The name of the duplicate project.
-     * @param string $userStartDate The start date of the duplicate project in the format specified by the language setting.
-     * @param bool $assignSameUsers Whether to assign the same users as the original project.
+     * @param  int  $projectId  The ID of the project to duplicate.
+     * @param  int  $clientId  The ID of the client for the duplicate project.
+     * @param  string  $projectName  The name of the duplicate project.
+     * @param  string  $userStartDate  The start date of the duplicate project in the format specified by the language setting.
+     * @param  bool  $assignSameUsers  Whether to assign the same users as the original project.
      * @return bool|int Returns true if the project was successfully duplicated, or the ID of the new project if successful.
      *
      * @api
@@ -998,8 +992,8 @@ class Projects
             }
         }
 
-            $projectStart = new DateTime($startDate);
-            $interval = $oldestTicket->diff($projectStart);
+        $projectStart = new DateTime($startDate);
+        $interval = $oldestTicket->diff($projectStart);
 
         //oldId = > newId
         $ticketIdList = [];
@@ -1141,10 +1135,10 @@ class Projects
     /**
      * Duplicate a canvas from one project to another.
      *
-     * @param string $repository The repository class to use for CRUD operations
-     * @param int $originalProjectId The ID of the original project
-     * @param int $newProjectId The ID of the new project
-     * @param string $canvasTypeName The canvas type name (optional)
+     * @param  string  $repository  The repository class to use for CRUD operations
+     * @param  int  $originalProjectId  The ID of the original project
+     * @param  int  $newProjectId  The ID of the new project
+     * @param  string  $canvasTypeName  The canvas type name (optional)
      * @return bool True if the canvas is duplicated successfully, false otherwise
      *
      * @api
@@ -1239,23 +1233,10 @@ class Projects
     }
 
     /**
-     * Retrieves the relation between a project and its users.
-     *
-     * @param int $id The ID of the project.
-     * @return array The relation between the project and its users.
-     *
-     * @api
-     */
-    public function getProjectUserRelation($id): array
-    {
-        return $this->projectRepository->getProjectUserRelation($id);
-    }
-
-    /**
      * Updates a project with the given parameters.
      *
-     * @param int $id The ID of the project.
-     * @param array $params The parameters to update the project.
+     * @param  int  $id  The ID of the project.
+     * @param  array  $params  The parameters to update the project.
      * @return bool Returns true if the project was successfully updated, false otherwise.
      *
      * @api
@@ -1268,7 +1249,7 @@ class Projects
     /**
      * Retrieves the avatar for a project.
      *
-     * @param mixed $id The ID of the project.
+     * @param  mixed  $id  The ID of the project.
      * @return mixed The avatar for the project.
      *
      * @api
@@ -1276,15 +1257,16 @@ class Projects
     public function getProjectAvatar($id): mixed
     {
         $avatar = $this->projectRepository->getProjectAvatar($id);
-        $avatar = self::dispatchFilter("afterGettingAvatar", $avatar, array("projectId" => $id));
+        $avatar = self::dispatchFilter('afterGettingAvatar', $avatar, ['projectId' => $id]);
+
         return $avatar;
     }
 
     /**
      * Sets the avatar for a project.
      *
-     * @param mixed $file The file containing the avatar.
-     * @param mixed $project The project object.
+     * @param  mixed  $file  The file containing the avatar.
+     * @param  mixed  $project  The project object.
      * @return bool Indicates whether the avatar was successfully set.
      *
      * @api
@@ -1298,6 +1280,19 @@ class Projects
      * Retrieves all projects.
      *
      * @return array The projects.
+     *
+     * @api
+     */
+    public function getClientProjects($id)
+    {
+        return $this->projectRepository->getClientProjects($id);
+    }
+
+
+        /**
+     * Retrieves all projects.
+     *
+     * @return array The projects.
      * @api
      */
     public function getAllProjects()
@@ -1308,61 +1303,60 @@ class Projects
     /**
      * Retrieves the setup checklist for a project.
      *
-     * @param int $projectId The ID of the project.
+     * @param  int  $projectId  The ID of the project.
      * @return array The setup checklist for the project
-     *
      */
-        public function getProjectSetupChecklist($projectId): array
-        {
-            $progressSteps = [
-                'define' => [
-                    'title' => 'label.define',
-                    'description' => 'checklist.define.description',
-                    'tasks' => [
-                        'description' => [
-                            'title' => 'label.projectDescription',
-                            'status' => '',
-                            'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'',
-                            'description' => 'checklist.define.tasks.description',
-                        ],
-                        'defineTeam' => [
-                            'title' => 'label.defineTeam',
-                            'status' => '',
-                            'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'#team',
-                            'description' => 'checklist.define.tasks.defineTeam',
-                        ],
-                        'createBlueprint' => [
-                            'title' => 'label.createBlueprint',
-                            'status' => '',
-                            'link' => BASE_URL.'/strategy/showBoards/',
-                            'description' => 'checklist.define.tasks.createBlueprint',
-                        ],
+    public function getProjectSetupChecklist($projectId): array
+    {
+        $progressSteps = [
+            'define' => [
+                'title' => 'label.define',
+                'description' => 'checklist.define.description',
+                'tasks' => [
+                    'description' => [
+                        'title' => 'label.projectDescription',
+                        'status' => '',
+                        'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'',
+                        'description' => 'checklist.define.tasks.description',
                     ],
-                    'status' => '',
-                ],
-                'goals' => [
-                    'title' => 'label.setGoals',
-                    'description' => 'checklist.goals.description',
-                    'tasks' => [
-                        'setGoals' => [
-                            'title' => 'label.setGoals',
-                            'status' => '',
-                            'link' => BASE_URL.'/goalcanvas/dashboard',
-                            'description' => 'checklist.goals.tasks.setGoals',
-                        ],
+                    'defineTeam' => [
+                        'title' => 'label.defineTeam',
+                        'status' => '',
+                        'link' => BASE_URL.'/projects/showProject/'.session('currentProject').'#team',
+                        'description' => 'checklist.define.tasks.defineTeam',
                     ],
-                    'status' => '',
+                    'createBlueprint' => [
+                        'title' => 'label.createBlueprint',
+                        'status' => '',
+                        'link' => BASE_URL.'/strategy/showBoards/',
+                        'description' => 'checklist.define.tasks.createBlueprint',
+                    ],
                 ],
-                'timeline' => [
-                    'title' => 'label.setTimeline',
-                    'description' => 'checklist.timeline.description',
-                    'tasks' => [
-                        'createMilestones' => [
-                            'title' => 'label.createMilestones',
-                            'status' => '',
-                            'link' => BASE_URL.'/tickets/roadmap',
-                            'description' => 'checklist.timeline.tasks.createMilestones',
-                        ],
+                'status' => '',
+            ],
+            'goals' => [
+                'title' => 'label.setGoals',
+                'description' => 'checklist.goals.description',
+                'tasks' => [
+                    'setGoals' => [
+                        'title' => 'label.setGoals',
+                        'status' => '',
+                        'link' => BASE_URL.'/goalcanvas/dashboard',
+                        'description' => 'checklist.goals.tasks.setGoals',
+                    ],
+                ],
+                'status' => '',
+            ],
+            'timeline' => [
+                'title' => 'label.setTimeline',
+                'description' => 'checklist.timeline.description',
+                'tasks' => [
+                    'createMilestones' => [
+                        'title' => 'label.createMilestones',
+                        'status' => '',
+                        'link' => BASE_URL.'/tickets/roadmap',
+                        'description' => 'checklist.timeline.tasks.createMilestones',
+                    ],
 
                 ],
                 'status' => '',
@@ -1444,18 +1438,18 @@ class Projects
             // set the "left" css position for the step on the progress bar
             $progressSteps[$name]['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
 
-                // set the status based on the stepsCompleted setting
-                data_set(
-                    $progressSteps,
-                    "$name.tasks",
-                    collect(data_get($progressSteps, "$name.tasks"))
-                        ->map(function ($task, $key) use ($stepsCompleted) {
-                            $task['status'] = $stepsCompleted[$key] ?? '';
+            // set the status based on the stepsCompleted setting
+            data_set(
+                $progressSteps,
+                "$name.tasks",
+                collect(data_get($progressSteps, "$name.tasks"))
+                    ->map(function ($task, $key) use ($stepsCompleted) {
+                        $task['status'] = $stepsCompleted[$key] ?? '';
 
-                            return $task;
-                        })
-                        ->toArray()
-                );
+                        return $task;
+                    })
+                    ->toArray()
+            );
 
             // check for any open tasks
             if (in_array('', data_get($progressSteps, "$name.tasks.*.status"))) {
@@ -1468,11 +1462,11 @@ class Projects
                     $progressSteps[$name]['stepType'] = '';
                 }
 
-                    $progressSteps[$name]['status'] = '';
-                    $previousValue = $progressSteps[$name];
+                $progressSteps[$name]['status'] = '';
+                $previousValue = $progressSteps[$name];
 
-                    continue;
-                }
+                continue;
+            }
 
             // otherwise, set the step as completed
             $progressSteps[$name]['status'] = 'done';
@@ -1498,13 +1492,11 @@ class Projects
         ];
     }
 
-
     /**
      * Updates the progress of a project.
      *
-     * @param string|array $stepsComplete The steps completed for the project.
-     * @param int $projectId The ID of the project.
-     * @return void
+     * @param  string|array  $stepsComplete  The steps completed for the project.
+     * @param  int  $projectId  The ID of the project.
      */
     public function updateProjectProgress($stepsComplete, $projectId): void
     {
@@ -1533,7 +1525,6 @@ class Projects
      * @return bool True if the project relations were successfully edited, false otherwise.
      *
      * @api
-     *
      */
     public function editUserProjectRelations($id, $projects): bool
     {
@@ -1549,28 +1540,32 @@ class Projects
      *
      *  @api
      */
-    public function getProjectIdbyName($allProjects, $projectName)
+    public function getProjectIdbyName(?array $allProjects, string $projectName)
     {
+        if ($allProjects == null) {
+            $allProjects = $this->getAll();
+        }
+
         foreach ($allProjects as $project) {
             if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
                 return $project['id'];
             }
         }
+
         return false;
     }
 
     /**
      * Updates the sorting of multiple projects.
      *
-     * @param array $params The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
+     * @param  array  $params  The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
      * @return bool Returns true if the sorting update was successful, false otherwise.
-     *
      */
     public function updateProjectSorting($params): bool
     {
         //ticketId: sortIndex
         foreach ($params as $id => $sortKey) {
-            if ($this->projectRepository->patch($id, ["sortIndex" => $sortKey * 100]) === false) {
+            if ($this->projectRepository->patch($id, ['sortIndex' => $sortKey * 100]) === false) {
                 return false;
             }
         }
@@ -1581,8 +1576,8 @@ class Projects
     /**
      * Edits a project.
      *
-     * @param mixed $values The values to be updated in the project.
-     * @param int $id The ID of the project to be edited.
+     * @param  mixed  $values  The values to be updated in the project.
+     * @param  int  $id  The ID of the project to be edited.
      * @return void
      *
      *  @api
@@ -1595,11 +1590,10 @@ class Projects
     /**
      * Updates the status and sorting of projects.
      *
-     * @param array $params An associative array representing the project status and sorting.
-     *                      The key is the status and the value is the serialized project list.
-     * @param null $handler Optional parameter for handling the project update process.
+     * @param  array  $params  An associative array representing the project status and sorting.
+     *                         The key is the status and the value is the serialized project list.
+     * @param  null  $handler  Optional parameter for handling the project update process.
      * @return bool Returns true if the update process is successful, false otherwise.
-     *
      */
     public function updateProjectStatusAndSorting($params, $handler = null): bool
     {
@@ -1628,8 +1622,8 @@ class Projects
     /**
      * Retrieves the projects for a client manager.
      *
-     * @param int $userId The ID of the user.
-     * @param int $clientId The ID of the client.
+     * @param  int  $userId  The ID of the user.
+     * @param  int  $clientId  The ID of the client.
      * @return array The projects for the client manager.
      *
      *  @api
@@ -1661,32 +1655,32 @@ class Projects
      * Gets all the projects for the current user.
      * By default, closed projects are not included.
      *
-     * @param bool $showClosedProjects (optional) Set to true to include closed projects.
+     * @param  bool  $showClosedProjects  (optional) Set to true to include closed projects.
      * @return array Returns an array of projects.
      *
      * @api
      */
     public function getAll(bool $showClosedProjects = false): array
     {
-        return $this->projectRepository->getUserProjects( userId: session('userdata.id'),
-            accessStatus: "all",
-            projectTypes: "project");
+        return $this->projectRepository->getUserProjects(userId: session('userdata.id'),
+            accessStatus: 'all',
+            projectTypes: 'project');
     }
 
     /**
      * Finds projects based on a search term.
      *
-     * @param string $term The search term (optional)
+     * @param  string  $term  The search term (optional)
      * @return array The filtered projects that match the search term
      *
      * @api
      */
-    public function findProject(string $term = "")
+    public function findProject(string $term = '')
     {
         $projects = $this->projectRepository->getUserProjects(
             userId: session('userdata.id'),
-            accessStatus: "all",
-            projectTypes: "project");
+            accessStatus: 'all',
+            projectTypes: 'project');
 
         $filteredProjects = [];
         foreach ($projects as $key => $project) {
@@ -1711,7 +1705,7 @@ class Projects
      * @api
      */
     public function pollForNewProjects()
-        {
+    {
 
         $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: 'all');
 
@@ -1723,19 +1717,17 @@ class Projects
 
     }
 
-
     /**
      * Polls for updated projects.
      * Retrieves all the projects the current user has access to and prepares them for API response.
      * Adds the modified timestamp to the project ID for tracking updates.
      *
-     * @return array
      *
      * @api
      */
     public function pollForUpdatedProjects(): array
     {
-        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: "all");
+        $projects = $this->projectRepository->getUserProjects(userId: session('userdata.id'), accessStatus: 'all');
 
         foreach ($projects as $key => $project) {
             $projects[$key] = $this->prepareDatesForApiResponse($project);
@@ -1753,12 +1745,13 @@ class Projects
      * and 'end' date values into ISO 8601 Zulu string format. If a date value
      * is not a valid string, it sets it to null.
      *
-     * @param array $project The project array to be modified.
+     * @param  array  $project  The project array to be modified.
      * @return array The modified project array with formatted date values.
      *
      * @internal
-     */    private function prepareDatesForApiResponse($project)
-        {
+     */
+    private function prepareDatesForApiResponse($project)
+    {
 
         if (dtHelper()->isValidDateString($project['modified'])) {
             $project['modified'] = dtHelper()->parseDbDateTime($project['modified'])->toIso8601ZuluString();
@@ -1782,4 +1775,3 @@ class Projects
 
     }
 }
-

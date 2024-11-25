@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Ldap\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use LDAP\Connection;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -79,13 +80,13 @@ class Ldap
             $this->ldapUri = $this->config->ldapUri;
 
             if (! is_object($this->ldapLtGroupAssignments)) {
-                report('LDAP: Group Assignment array failed to parse. Please check for valid json');
+                Log::error('LDAP: Group Assignment array failed to parse. Please check for valid json');
 
                 return false;
             }
 
             if (! is_object($this->ldapKeys)) {
-                report('LDAP: Ldap Keys failed to parse. Please check for valid json');
+                Log::error('LDAP: Ldap Keys failed to parse. Please check for valid json');
 
                 return false;
             }
@@ -120,7 +121,7 @@ class Ldap
 
             return true;
         } else {
-            report('ldap extension not installed', 0);
+            Log::error('ldap extension not installed');
 
             return false;
         }
@@ -156,10 +157,10 @@ class Ldap
             }
 
             if ($this->config->debug == 1) {
-                report(ldap_error($this->ldapConnection));
+                Log::error(ldap_error($this->ldapConnection));
                 ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
                 if ($err) {
-                    report($err);
+                    Log::error($err);
                 }
             }
         }
@@ -173,7 +174,7 @@ class Ldap
     public function getEmail($username)
     {
         if (! $this->ldapConnection) {
-            report('No connection, last error: '.ldap_error($this->ldapConnection));
+            Log::error('No connection, last error: '.ldap_error($this->ldapConnection));
         }
         $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
 
@@ -183,9 +184,13 @@ class Ldap
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
         if ($entries === false) {
-            report(ldap_error($this->ldapConnection));
-            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            report($err);
+            if ($this->config->debug == 1) {
+                Log::error(ldap_error($this->ldapConnection));
+                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                if ($err) {
+                    Log::error($err);
+                }
+            }
         }
         $mail = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
@@ -210,9 +215,13 @@ class Ldap
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
         if ($entries === false || ! isset($entries[0])) {
-            report(ldap_error($this->ldapConnection));
-            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-            report($err);
+            if ($this->config->debug == 1) {
+                Log::error(ldap_error($this->ldapConnection));
+                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                if ($err) {
+                    Log::error($err);
+                }
+            }
 
             return false;
         }
@@ -251,18 +260,18 @@ class Ldap
         $department = isset($entries[0][strtolower($this->ldapKeys->department)]) ? $entries[0][strtolower($this->ldapKeys->department)][0] : '';
 
         if ($this->config->debug) {
-            report("LEANTIME: Testing the logging\n");
+            Log::debug("LEANTIME: Testing the logging\n");
 
-            report("LEANTIME: >>>Attributes Begin>>>>>>\n");
-            report("LEANTIME: fn $firstname", 0);
-            report("LEANTIME: sn $lastname", 0);
-            report("LEANTIME: phone $phone", 0);
-            report("LEANTIME: role $role", 0);
-            report("LEANTIME: username $uname ", 0);
-            report("LEANTIME: jobTitle $jobTitle ", 0);
-            report("LEANTIME: jobLevel $jobLevel ", 0);
-            report("LEANTIME: department $department ", 0);
-            report("LEANTIME: >>>Attributes End>>>>>>\n", 0);
+            Log::debug("LEANTIME: >>>Attributes Begin>>>>>>\n");
+            Log::debug("LEANTIME: fn $firstname");
+            Log::debug("LEANTIME: sn $lastname");
+            Log::debug("LEANTIME: phone $phone");
+            Log::debug("LEANTIME: role $role");
+            Log::debug("LEANTIME: username $uname ");
+            Log::debug("LEANTIME: jobTitle $jobTitle ");
+            Log::debug("LEANTIME: jobLevel $jobLevel ");
+            Log::debug("LEANTIME: department $department ");
+            Log::debug("LEANTIME: >>>Attributes End>>>>>>\n");
         }
 
         return [

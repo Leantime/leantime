@@ -19,8 +19,6 @@ class MyToDos extends HtmxController
 
     private TicketService $ticketsService;
 
-    private Language $language;
-
     /**
      * Controller constructor
      *

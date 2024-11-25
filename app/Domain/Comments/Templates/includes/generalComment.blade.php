@@ -1,4 +1,5 @@
 <?php
+use Leantime\Core\Support\EditorTypeEnum;
 $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 $formHash = md5($formUrl);
@@ -33,7 +34,7 @@ if (str_contains($formUrl, '?delComment=')) {
                     src="<?= BASE_URL ?>/api/users?profileImage=<?= session('userdata.id') ?>&v=<?= format(session('userdata.modified'))->timestamp() ?>" />
             </div>
             <div class="commentReply">
-                <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
+                <x-global::forms.text-editor name="text" :type="EditorTypeEnum::Simple->value" value="" />
                 <x-global::forms.button type="submit" name="comment" class="btn btn-success" style="margin-left: 0px;">
                     {{ __('buttons.save') }}
                 </x-global::forms.button>
@@ -176,7 +177,6 @@ if (str_contains($formUrl, '?delComment=')) {
     </form>
 
     <script type='text/javascript'>
-        leantime.editorController.initSimpleEditor();
 
         function toggleCommentBoxes(id, commentId, formHash, editComment = false, isReply = false) {
             <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>

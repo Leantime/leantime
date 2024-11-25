@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Queue\Workers;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
@@ -32,10 +33,12 @@ class DefaultWorker
                     $this->queue->deleteMessageInQueue($message['msghash']);
 
                     return true;
+                } else {
+                    Log::error('Worker was not successful');
                 }
 
-            } catch (\Exception $e) {
-                error_log($e);
+            } catch (Exception $e) {
+                Log::error($e);
             }
 
             return false;

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Users\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Facades\Log;
+    use Illuminate\Support\Str;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
     use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
@@ -612,8 +613,8 @@ namespace Leantime\Domain\Users\Repositories {
 
             try {
 
-                $avatar = (new InitialAvatar)
-                    ->fontName('Verdana')
+                $avatar = app()->make(InitialAvatar::class)
+                    ->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf')
                     ->background('#00a887')
                     ->color('#fff');
 
@@ -634,17 +635,22 @@ namespace Leantime\Domain\Users\Repositories {
 
                 /** @var Initials $initialsClass */
                 $initialsClass = app()->make(Initials::class);
+                $initialsClass->allowSpecialCharacters(false);
                 $initialsClass->name($name);
-                $imagename = $initialsClass->getInitials();
 
-                if (! file_exists($filename = APP_ROOT.'/userfiles/avatars/user-'.$imagename.'.svg')) {
+                $imagename = $initialsClass->getInitials();
+                $imagename = Str::of($imagename)->alphaNumeric(true);
+
+                if (is_dir(storage_path('framework/cache/avatars')) === false) {
+                    mkdir(storage_path('framework/cache/avatars'));
+                }
+
+                if (! file_exists($filename = storage_path('framework/cache/avatars/user-'.$imagename.'.svg'))) {
                     $image = $avatar->name($name)->generateSvg();
 
-                    if(!is_dir(APP_ROOT.'/userfiles/avatars')) {
-                        mkdir(APP_ROOT.'/userfiles/avatars');
-                    }
+                    if (! is_writable(storage_path('framework/cache/avatars/'))) {
+                        Log::warning("Can't write to avatars folders");
 
-                    if (! is_writable(APP_ROOT.'/userfiles/avatars/')) {
                         return $image;
                     }
 

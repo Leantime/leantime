@@ -37,8 +37,8 @@ class Ical extends Controller
     public function run(): RedirectResponse|Response
     {
 
-        $calId = $_GET['id'] ?? "";
-        $idParts = explode("_", $calId);
+        $calId = $_GET['id'] ?? '';
+        $idParts = explode('_', $calId);
 
         if (count($idParts) != 2) {
             return Frontcontroller::redirect(BASE_URL.'/errors/404');
@@ -53,10 +53,9 @@ class Ical extends Controller
                 'Content-Disposition' => 'attachment; filename="leantime-calendar.ics"',
             ]);
 
-        }catch(\Exception $e) {
-            return Frontcontroller::redirect(BASE_URL . "/errors/404");
+        } catch (\Exception $e) {
+            return Frontcontroller::redirect(BASE_URL.'/errors/404');
         }
-
 
     }
 }
