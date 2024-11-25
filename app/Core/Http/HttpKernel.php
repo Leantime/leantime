@@ -125,7 +125,7 @@ class HttpKernel extends Kernel
                     payload: [],
                     function: 'handle',
                 ))
-                ->then(fn () => Frontcontroller::dispatch_request($request))
+                ->then($this->dispatchToRouter())
             );
 
         return $response;
