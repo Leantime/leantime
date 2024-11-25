@@ -40,7 +40,7 @@ return [
             \Illuminate\Validation\ValidationServiceProvider::class,
             //\Illuminate\View\ViewServiceProvider::class,
 
-            \Leantime\Core\Providers\Auth::class,
+            \Leantime\Core\Providers\Authentication::class,
             \Leantime\Core\Providers\RateLimiter::class,
             \Leantime\Core\Providers\Db::class,
             \Leantime\Core\Providers\Language::class,
@@ -94,7 +94,8 @@ return [
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                'channels' => ['single'],
+                // Add the Sentry log channel to the stack
+                'channels' => ['single', 'sentry'],
             ],
             'single' => [
                 'driver' => 'daily',
@@ -114,6 +115,11 @@ return [
                 'level' => 'critical',
                 'replace_placeholders' => true,
             ],
+            'sentry' => [
+                'driver' => 'sentry',
+                'level' => 'error',
+                'bubble' => true,
+            ],
         ],
         'default' => 'stack',
     ],
@@ -129,6 +135,7 @@ return [
         | specified when running a cache operation inside the application.
         |
         */
+
         'default' => 'installation',
 
         /*
@@ -205,7 +212,7 @@ return [
         |
         */
 
-        'lifetime' => 480, //8 hours
+        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), //8 hours
 
         'expire_on_close' => false,
 
@@ -389,6 +396,7 @@ return [
         'compiled' => realpath(storage_path('framework/views')),
 
     ],
+
     'database' => [
         'default' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
         /*
@@ -438,8 +446,8 @@ return [
             ],
         ],
 
-    ],
 
+    ],
     /*
        |--------------------------------------------------------------------------
        | Redis Databases
@@ -453,9 +461,11 @@ return [
     'redis' => [
         'client' => 'phpredis',
         'options' => [
+            'parameters' => ['timeout' => 1.0],
             'cluster' => 'redis',
             'context' => [],
             'compression' => 3, // Redis::COMPRESSION_LZ4
+            'password' => '',
         ],
         'default' => [
             'url' => env('LEAN_REDIS_URL', ''),
@@ -464,7 +474,31 @@ return [
             'password' => env('LEAN_REDIS_PASSWORD', null),
             'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
             'database' => '0',
+            'read_timeout' => 1.0,
+            'prefix' => 'leantime_cache',
         ],
     ],
 
+    // Driver options: eloquent, database (using db query builder),
+    'auth' => [
+        'defaults' => [
+            'guard' => 'leantime',
+            'passwords' => 'users',
+        ],
+        'guards' => [
+            'leantime' => [
+                'driver' => 'leantime',
+                'provider' => 'leantimeUsers',
+            ],
+            'jsonRpc' => [
+                'driver' => 'jsonRpc',
+                'provider' => 'leantimeUsers',
+            ],
+        ],
+        'providers' => [
+            'leantimeUsers' => [
+                'driver' => 'leantimeUsers',
+            ],
+        ],
+    ],
 ];

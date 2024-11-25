@@ -80,14 +80,13 @@
         "symfony/var-dumper": "^6.2",
         "nikic/php-parser": "^4.17",
         "nesbot/carbon": "^2.72",
-        "predis/predis": "^2.2",
-        "sentry/sentry-laravel": "^4.8",
         "symfony/http-client": "^6.2.4",
         "symfony/psr-http-message-bridge": "^2.0",
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "phpseclib/phpseclib": "~3.0",
-        "spatie/icalendar-generator": "^2.6"
+        "spatie/icalendar-generator": "^2.6",
+        "sentry/sentry-laravel": "4.10.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",

@@ -4,16 +4,18 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class Auth
+class AuthCheck
 {
     use DispatchesEvents;
 
@@ -38,13 +40,14 @@ class Auth
     ];
 
     public function __construct(
-        private AuthService $authService,
+        protected Environment $config
     ) {
         $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
     }
 
     /**
      * Redirect with origin
+     * Returns false if the current route is already the redirection route.
      *
      * @return Response|RedirectResponse
      *
@@ -75,10 +78,15 @@ class Auth
             return $next($request);
         }
 
-        if (! $this->authService->loggedIn()) {
-            $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
+        $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
 
-            return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
+        if ( $request instanceof ApiRequest) {
+            self::dispatchEvent('before_api_request', ['application' => app()], 'leantime.core.middleware.apiAuth.handle');
+        }
+        $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect);
+
+        if ($authCheckResponse !== true) {
+            return $authCheckResponse;
         }
 
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
@@ -90,7 +98,7 @@ class Auth
 
         $response = $next($request);
 
-        if ($this->authService->loggedIn()) {
+        if ($authCheckResponse === true) {
 
             //Set cookie to increase session timeout
             $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
@@ -110,6 +118,28 @@ class Auth
         }
 
         return $response;
+    }
+
+    protected function authenticate($request, array $guards, $loginRedirect, $next)
+    {
+        if (empty($guards)) {
+            $guards = [null];
+        }
+
+        foreach ($guards as $guard) {
+            if (Auth::guard($guard)->check()) {
+                Auth::shouldUse($guard);
+
+                return true;
+            }
+        }
+
+        if ($request instanceof APIRequest) {
+            return new Response(json_encode(['error' => 'Invalid API Key']), 401);
+        }
+
+        return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
+
     }
 
     public function isPublicController($currentPath)
