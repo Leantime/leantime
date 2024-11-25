@@ -83,7 +83,7 @@ class AuthCheck
         if ( $request instanceof ApiRequest) {
             self::dispatchEvent('before_api_request', ['application' => app()], 'leantime.core.middleware.apiAuth.handle');
         }
-        $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect);
+        $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect, $next);
 
         if ($authCheckResponse !== true) {
             return $authCheckResponse;
