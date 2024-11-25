@@ -78,11 +78,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <br />
         @endif
     
-        <?php } else { ?>
+        {{-- TODO: need to figure out what this was used for --}}
+        <?php /* } else { ?>
             <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                 $hiddenRelatesLabels
             ) ?>" />
-        <?php } ?>
+        <?php } */ ?>
 
         @foreach ([1, 2, 3] as $index)
             @if ($dataLabels[$index]['active'])
