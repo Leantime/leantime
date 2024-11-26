@@ -13,14 +13,16 @@ class Avatarcreator
 {
     protected $filePrefix = 'user';
 
+    protected const MAX_FILENAME_LENGTH = 255;
+
     public function __construct(
         protected InitialAvatar $avatarGenerator,
         protected Initials $initials,
         protected Theme $theme
     ) {
+        $this->initials->allowSpecialCharacters(true);
 
-        $this->initials->allowSpecialCharacters(false);
-
+        $colorschemes = $theme->getAvailableColorSchemes();
         $bgColor = '#00a887';
         if (isset($colorschemes['companyColors']) && isset($colorschemes['companyColors']['secondaryColor'])) {
             $bgColor = $colorschemes['companyColors']['secondaryColor'];
@@ -43,9 +45,13 @@ class Avatarcreator
         $this->filePrefix = Str::sanitizeFilename($prefix);
     }
 
+    public function getFilePrefix(): string
+    {
+        return $this->filePrefix;
+    }
+
     public function setInitials($name)
     {
-
         $cleanString = Str::sanitizeFilename($name);
 
         if (empty($cleanString)) {
@@ -66,7 +72,7 @@ class Avatarcreator
     public function getAvatar($name): string|SVG
     {
         $this->setInitials($name);
-        $filename = storage_path('framework/cache/avatars/'.$this->filePrefix.'-'.$this->getInitials().'.svg');
+        $filename = $this->getSafeFilename();
 
         if (file_exists($filename)) {
             return $filename;
@@ -80,10 +86,14 @@ class Avatarcreator
     {
         if (is_dir(storage_path('framework/cache/avatars')) === false) {
             mkdir(storage_path('framework/cache/avatars'));
+
+            // Set proper permissions for security
+            chmod(storage_path('framework/cache/avatars'), 0755);
         }
 
-        if (! file_exists($filename = storage_path('framework/cache/avatars/'.$this->filePrefix.'-'.$this->getInitials().'.svg'))) {
+        $filename = $this->getSafeFilename();
 
+        if (! file_exists($filename)) {
             $image = $this->generateAvatar();
 
             if (! is_writable(storage_path('framework/cache/avatars/'))) {
@@ -99,6 +109,19 @@ class Avatarcreator
 
         return $filename;
 
+    }
+
+    protected function getSafeFilename(): string
+    {
+        $baseFilename = $this->filePrefix.'-'.$this->getInitials();
+
+        // Ensure filename doesn't exceed maximum length
+        if (strlen($baseFilename) > self::MAX_FILENAME_LENGTH - 4) { // -4 for .svg
+            $baseFilename = substr($baseFilename, 0, self::MAX_FILENAME_LENGTH - 4);
+        }
+
+        return storage_path('framework/cache/avatars/'.
+            Str::sanitizeFilename($baseFilename).'.svg');
     }
 
     protected function generateAvatar(): SVG

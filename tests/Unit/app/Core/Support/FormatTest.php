@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\app;
+namespace Unit\app\Core\Support;
 
 use Carbon\CarbonImmutable;
 use Leantime\Core\Support\CarbonMacros;
