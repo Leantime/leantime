@@ -166,6 +166,15 @@
     </li>
     @if ($login::userIsAtLeast("manager", true))
         <li>
+            @if($login::userHasRole("manager"))
+                <a
+                    href="{{ BASE_URL }}/projects/showAll/"
+                    @if ($menuType == 'company')
+                        class="active"
+                    @endif
+                    data-tippy-content="{{ __('popover.company') }}"
+                >{!! __('menu.company') !!}</a>
+            @else
             <a
                 href="{{ BASE_URL }}/setting/editCompanySettings/"
                 @if ($menuType == 'company')
@@ -173,6 +182,7 @@
                 @endif
                 data-tippy-content="{{ __('popover.company') }}"
             >{!! __('menu.company') !!}</a>
+            @endif
         </li>
     @endif
 
