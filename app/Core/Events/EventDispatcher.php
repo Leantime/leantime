@@ -24,6 +24,11 @@ class EventDispatcher implements Dispatcher
     use ReflectsClosures;
 
     /**
+     * Cache for pattern matching results
+     */
+    private static array $patternMatchCache = [];
+
+    /**
      * Registry of all events added to a hook
      */
     private static array $eventRegistry = [];
@@ -115,32 +120,53 @@ class EventDispatcher implements Dispatcher
      */
     public static function findEventListeners(string $eventName, array $registry): array
     {
+        // Check cache first
+        $cacheKey = $eventName . '_' . md5(serialize(array_keys($registry)));
+        if (isset(self::$patternMatchCache[$cacheKey])) {
+            return self::$patternMatchCache[$cacheKey];
+        }
+
         $matches = [];
+        $patterns = [];
 
         foreach ($registry as $key => $value) {
-            preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
-
-            $key = strtr($key, [
-                ...collect($regexMatches[0] ?? [])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
-                '*' => 'RANDOM_STRING',
-                '?' => 'RANDOM_CHARACTER',
-            ]);
-
-            // escape the non regex characters
-            $pattern = preg_quote($key, '/');
-
-            $pattern = strtr($pattern, [
-                'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
-                'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
-                ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
-            ]);
+            // Skip if we've already compiled this pattern
+            if (!isset($patterns[$key])) {
+                preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
+                $pattern = self::compilePattern($key, $regexMatches);
+                $patterns[$key] = $pattern;
+            } else {
+                $pattern = $patterns[$key];
+            }
 
             if (preg_match("/^$pattern$/", $eventName)) {
                 $matches = array_merge($matches, $value);
             }
         }
 
+        // Cache the result
+        self::$patternMatchCache[$cacheKey] = $matches;
         return $matches;
+    }
+
+    /**
+     * Compiles a pattern for matching
+     */
+    private static function compilePattern(string $key, array $regexMatches): string
+    {
+        $key = strtr($key, [
+            ...collect($regexMatches[0] ?? [])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
+            '*' => 'RANDOM_STRING',
+            '?' => 'RANDOM_CHARACTER',
+        ]);
+
+        $pattern = preg_quote($key, '/');
+
+        return strtr($pattern, [
+            'RANDOM_STRING' => '.*?',
+            'RANDOM_CHARACTER' => '.',
+            ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
+        ]);
     }
 
     /**
