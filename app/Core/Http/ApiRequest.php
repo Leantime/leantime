@@ -77,5 +77,4 @@ class ApiRequest extends IncomingRequest
 
         return null;
     }
-
 }

@@ -285,5 +285,4 @@ class IncomingRequest extends \Illuminate\Http\Request
 
         return str_starts_with($requestUri, '/api/jsonrpc');
     }
-
 }
