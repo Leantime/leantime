@@ -8,7 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
@@ -39,7 +39,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
         private UserRepository $userRepo;
 
-        private ClientRepository $clientsRepo;
+        private ClientService $clientService;
 
         private FileRepository $fileRepo;
 
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Projects\Controllers {
             SettingRepository $settingsRepo,
             ProjectRepository $projectRepo,
             UserRepository $userRepo,
-            ClientRepository $clientsRepo,
+            ClientService $clientService,
             FileRepository $fileRepo,
             CommentRepository $commentsRepo,
             MenuRepository $menuRepo
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->settingsRepo = $settingsRepo;
             $this->projectRepo = $projectRepo;
             $this->userRepo = $userRepo;
-            $this->clientsRepo = $clientsRepo;
+            $this->clientService = $clientService;
             $this->fileRepo = $fileRepo;
             $this->commentsRepo = $commentsRepo;
             $this->menuRepo = $menuRepo;
@@ -282,7 +282,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 //Assign vars
                 $this->tpl->assign('availableUsers', $this->userRepo->getAll());
-                $this->tpl->assign('clients', $this->clientsRepo->getAll());
+                $this->tpl->assign('clients', $this->clientService->getAll());
 
                 $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());
 

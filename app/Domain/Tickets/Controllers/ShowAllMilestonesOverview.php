@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Domain\Clients\Repositories\Clients;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -26,7 +25,6 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         private ClientService $clientService;
 
-        private Clients $clientRepo;
 
         public function init(
             ProjectService $projectService,
@@ -35,7 +33,6 @@ namespace Leantime\Domain\Tickets\Controllers {
             TimesheetService $timesheetService,
             UserService $userService,
             ClientService $clientService,
-            Clients $clientRepo
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -43,7 +40,6 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->timesheetService = $timesheetService;
             $this->userService = $userService;
             $this->clientService = $clientService;
-            $this->clientRepo = $clientRepo;
 
             session(['lastPage' => CURRENT_URL]);
         }
@@ -57,7 +53,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $currentClientName = '';
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int) $_GET['client'];
-                $currentClient = $this->clientRepo->getClient($clientId);
+                $currentClient = $this->clientService->get($clientId);
                 if (is_array($currentClient) && count($currentClient) > 0) {
                     $currentClientName = $currentClient['name'];
                 }
