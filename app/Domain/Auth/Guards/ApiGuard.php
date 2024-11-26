@@ -19,11 +19,18 @@ class ApiGuard implements Guard
         protected Api $apiService,
         protected IncomingRequest $request)
     {
-        $this->apiKey = $this->request->getAPIKey();
+        if ($this->request->isApiRequest()) {
+            $this->apiKey = $this->request->getAPIKey();
+        }
     }
 
     public function check()
     {
+
+        if (empty($this->apiKey)) {
+            return false;
+        }
+
         $apiUser = $this->apiService->getAPIKeyUser($this->apiKey);
 
         if (! $apiUser) {
@@ -41,6 +48,10 @@ class ApiGuard implements Guard
     public function user()
     {
         if ($this->user !== null) {
+            return $this->user;
+        }
+
+        if (empty($this->apiKey)) {
             return $this->user;
         }
 
@@ -66,6 +77,10 @@ class ApiGuard implements Guard
 
     public function validate(array $credentials = [])
     {
+
+        if (empty($this->apiKey)) {
+            return false;
+        }
 
         $apiUser = $this->apiService->getAPIKeyUser($this->apiKey);
 
