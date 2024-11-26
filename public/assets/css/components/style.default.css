@@ -1606,7 +1606,8 @@ div.color-picker ul li:hover {
     margin: 0;
     opacity: 0;
     filter: alpha(opacity=0);
-    transform: translate(-300px, 0) scale(4);
+    /* This was causing the tabs to not work in the edit own page*/
+    /* transform: translate(-300px, 0) scale(4); */
     font-size: 24px;
     direction: ltr;
     cursor: pointer;
