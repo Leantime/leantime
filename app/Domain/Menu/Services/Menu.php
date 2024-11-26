@@ -60,7 +60,7 @@ class Menu
         $favoriteProjects = $projects['favoriteProjects'];
 
         //Filtered
-        $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open', empty($client) ? session("userdata.clientId") : $client);
+        $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open', empty($client) ? session('userdata.clientId') : $client);
         $allAvailableProjects = $projects['allAvailableProjects'];
         $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
 

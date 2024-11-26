@@ -346,6 +346,7 @@ namespace Leantime\Domain\Menu\Repositories {
             //ModuleManager Check
             if (false) {
                 $structure['type'] = 'disabled';
+
                 return;
             }
 
