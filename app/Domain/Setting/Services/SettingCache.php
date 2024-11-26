@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class SettingCache
 {
     private const CACHE_KEY_PREFIX = 'setting:';
+
     private const CACHE_TTL = 3600; // 1 hour
 
     /**
@@ -14,7 +15,7 @@ class SettingCache
      */
     public function get(string $key): mixed
     {
-        return Cache::get(self::CACHE_KEY_PREFIX . $key);
+        return Cache::get(self::CACHE_KEY_PREFIX.$key);
     }
 
     /**
@@ -22,7 +23,7 @@ class SettingCache
      */
     public function set(string $key, mixed $value): void
     {
-        Cache::put(self::CACHE_KEY_PREFIX . $key, $value, self::CACHE_TTL);
+        Cache::put(self::CACHE_KEY_PREFIX.$key, $value, self::CACHE_TTL);
     }
 
     /**
@@ -30,7 +31,7 @@ class SettingCache
      */
     public function forget(string $key): void
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . $key);
+        Cache::forget(self::CACHE_KEY_PREFIX.$key);
     }
 
     /**

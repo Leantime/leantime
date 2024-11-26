@@ -121,7 +121,7 @@ class EventDispatcher implements Dispatcher
     public static function findEventListeners(string $eventName, array $registry): array
     {
         // Check cache first
-        $cacheKey = $eventName . '_' . md5(serialize(array_keys($registry)));
+        $cacheKey = $eventName.'_'.md5(serialize(array_keys($registry)));
         if (isset(self::$patternMatchCache[$cacheKey])) {
             return self::$patternMatchCache[$cacheKey];
         }
@@ -131,7 +131,7 @@ class EventDispatcher implements Dispatcher
 
         foreach ($registry as $key => $value) {
             // Skip if we've already compiled this pattern
-            if (!isset($patterns[$key])) {
+            if (! isset($patterns[$key])) {
                 preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
                 $pattern = self::compilePattern($key, $regexMatches);
                 $patterns[$key] = $pattern;
@@ -146,6 +146,7 @@ class EventDispatcher implements Dispatcher
 
         // Cache the result
         self::$patternMatchCache[$cacheKey] = $matches;
+
         return $matches;
     }
 

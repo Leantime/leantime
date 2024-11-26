@@ -10,6 +10,7 @@ namespace Leantime\Domain\Setting\Repositories {
     class Setting
     {
         private DbCore $db;
+
         private SettingCache $cache;
 
         public array $applications = [
