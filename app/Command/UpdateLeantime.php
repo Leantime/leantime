@@ -103,7 +103,7 @@ class UpdateLeantime extends Command
 
         $zip = new \ZipArchive;
         $zip->open($zipFile);
-        $zip->extractTo(storage_path('/framework/cache'));
+        $zip->extractTo(storage_path('/framework/cache/leantime'));
         $zip->close();
 
         //Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
