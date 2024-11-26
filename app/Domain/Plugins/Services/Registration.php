@@ -56,9 +56,9 @@ class Registration
             //Always load en-Us as this is the default fallback language
             if (! Cache::store('installation')->has($pluginId.'.language.en-US')) {
 
-                if(file_exists(app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini')) {
+                if (file_exists(app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini')) {
                     $languageArray += parse_ini_file(
-                        app_path() . '/Plugins/' . $pluginId . '/Language/en-US.ini',
+                        app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini',
                         true
                     );
                 }
@@ -68,7 +68,7 @@ class Registration
 
                 if (! Cache::store('installation')->has($pluginId.'.language.'.$userLanguage)) {
 
-                    if(file_exists(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini')) {
+                    if (file_exists(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini')) {
                         Cache::store('installation')->put(
                             $pluginId.'.language.'.$userLanguage,
                             parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini', true),
