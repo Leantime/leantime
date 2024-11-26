@@ -41,7 +41,7 @@ class FormatTest extends TestCase
 
     }
 
-    public function testDate(): void
+    public function test_date(): void
     {
         $formattedDateString = '12/31/2021';
         $dbDate = '2022-01-01 00:00:00';
@@ -50,7 +50,7 @@ class FormatTest extends TestCase
         $this->assertSame($formattedDateString, $format->date());
     }
 
-    public function testTime(): void
+    public function test_time(): void
     {
         $formattedTimeString = '04:00 PM';
         $dbDate = '2022-01-01 00:00:00';
@@ -59,7 +59,7 @@ class FormatTest extends TestCase
         $this->assertSame($formattedTimeString, $format->time());
     }
 
-    public function testTime24(): void
+    public function test_time24(): void
     {
         $formattedTimeString = '16:00';
         $dbDate = '2022-01-01 00:00:00';

@@ -36,6 +36,8 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
         \Leantime\Core\Middleware\Updated::class,
+        \Leantime\Core\Middleware\AuthCheck::class,
+
         \Leantime\Core\Middleware\RequestRateLimiter::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
@@ -53,14 +55,14 @@ class HttpKernel extends Kernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \Leantime\Core\Middleware\Auth::class,
+
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
         'api' => [
-            \Leantime\Core\Middleware\ApiAuth::class,
+            \Leantime\Core\Middleware\AuthCheck::class,
         ],
         'hx' => [
-            \Leantime\Core\Middleware\Auth::class,
+            \Leantime\Core\Middleware\AuthCheck::class,
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
     ];
@@ -73,7 +75,7 @@ class HttpKernel extends Kernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        //'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth' => \Leantime\Core\Middleware\AuthCheck::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -100,10 +102,10 @@ class HttpKernel extends Kernel
 
         if ($request instanceof ApiRequest) {
 
-            array_splice($this->middleware, 5, 0, $this->middlewareGroups['api']);
+            array_splice($this->middleware, 6, 0, $this->middlewareGroups['api']);
 
         } else {
-            array_splice($this->middleware, 5, 0, $this->middlewareGroups['web']);
+            array_splice($this->middleware, 6, 0, $this->middlewareGroups['web']);
         }
 
         //This filter only works for system plugins

@@ -32,7 +32,7 @@ class JsonrpcTest extends \Unit\TestCase
         $_SERVER['REQUEST_METHOD'] = 'post';
     }
 
-    public function testMethodStringParsing()
+    public function test_method_string_parsing()
     {
         $params = [
             'method' => 'leantime.rpc.Comments.pollComments',
@@ -53,7 +53,7 @@ class JsonrpcTest extends \Unit\TestCase
         $this->controller->post($params);
     }
 
-    public function testInvalidMethodString()
+    public function test_invalid_method_string()
     {
         $params = [
             'method' => 'invalid.method.string',
@@ -74,7 +74,7 @@ class JsonrpcTest extends \Unit\TestCase
         $this->controller->post($params);
     }
 
-    public function testMissingJsonRpcVersion()
+    public function test_missing_json_rpc_version()
     {
         $params = [
             'method' => 'leantime.rpc.Comments.pollComments',
@@ -94,7 +94,7 @@ class JsonrpcTest extends \Unit\TestCase
         $this->controller->post($params);
     }
 
-    public function testBatchRequest()
+    public function test_batch_request()
     {
         $params = [
             [
