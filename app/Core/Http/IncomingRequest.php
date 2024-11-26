@@ -273,4 +273,17 @@ class IncomingRequest extends \Illuminate\Http\Request
 
         return '';
     }
+
+    /**
+     * Checks if the current request is an API request.
+     *
+     * @return bool Returns true if the current request is an API request, false otherwise.
+     */
+    public function isApiRequest(): bool
+    {
+        $requestUri = $this->getRequestUri();
+
+        return str_starts_with($requestUri, '/api/jsonrpc');
+    }
+
 }
