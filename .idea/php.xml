@@ -8,6 +8,9 @@
       <LaravelPintConfiguration tool_path="$PROJECT_DIR$/vendor/bin/pint" />
     </laravel_pint_settings>
   </component>
+  <component name="LaravelPintOptionsConfiguration">
+    <option name="pintJsonPath" value="$PROJECT_DIR$/.pint/pint.json" />
+  </component>
   <component name="MessDetectorOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
@@ -296,6 +299,7 @@
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="autoload" value="$PROJECT_DIR$/vendor/autoload.php" />
+    <option name="config" value="$PROJECT_DIR$/.phpstan/phpstan.neon" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
   </component>
