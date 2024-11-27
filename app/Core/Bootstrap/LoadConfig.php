@@ -87,6 +87,9 @@ class LoadConfig extends LoadConfiguration
             });
         }
 
+        //Need to run this in case config is coming from cache
+        $this->setBaseConstants($app['config']->get('appUrl'), $app);
+
         $config = $app['config'];
 
         self::dispatchEvent('config_initialized');
@@ -121,9 +124,9 @@ class LoadConfig extends LoadConfiguration
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {
                 define('BASE_URL', $appUrl);
-
             } else {
-                define('BASE_URL', ! empty($app['request']) ? $app['request']->getSchemeAndHttpHost() : 'http://localhost');
+                $appUrl = ! empty($app['request']) ? $app['request']->getSchemeAndHttpHost() : 'http://localhost';
+                define('BASE_URL', $appUrl);
             }
         }
 
