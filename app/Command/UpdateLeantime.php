@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'system:update',
-    description: 'Updates the system',
+    description: 'Updates Leantime to the latest version from Github',
 )]
 class UpdateLeantime extends Command
 {
