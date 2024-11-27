@@ -157,8 +157,8 @@ namespace Leantime\Domain\Connector\Controllers {
                     //confirm and store in DB
                     $result = $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
 
-                    if($result !== true) {
-                        $this->tpl->setNotification("There was a problem with the import ".$result, 'error');
+                    if ($result !== true) {
+                        $this->tpl->setNotification('There was a problem with the import '.$result, 'error');
                     }
 
                     //display stored successfully message
