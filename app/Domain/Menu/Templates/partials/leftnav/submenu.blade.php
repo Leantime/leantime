@@ -6,7 +6,7 @@
             id="submenu-icon-{{ $menuItem['id'] }}"></i>
     </a>
 
-    <ul id="submenu-{{ $menuItem['id'] }}" class="ml-4 submenu {{ $menuItem['visual'] == 'closed' ? 'closed' : 'open' }}">
+    <ul id="submenu-{{ $menuItem['id'] }}" class="submenu {{ $menuItem['visual'] == 'closed' ? 'closed' : 'open' }}">
         @foreach ($menuItem['submenu'] as $subkey => $submenuItem)
             @switch ($submenuItem['type'])
                 @case('header')
