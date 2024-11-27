@@ -46,7 +46,7 @@ body:
   - type: textarea
     id: context
     attributes:
-      label: Additional Notes
-      description: "Please add any additional context you can share"
+      label: Error Logs (LEANTIMEFOLDER/storage/logs)
+      description: "Please past the contents of your error logs and any other logs you may have."
     validations:
       required: false
