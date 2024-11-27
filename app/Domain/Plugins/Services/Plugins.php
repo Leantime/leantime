@@ -314,6 +314,8 @@ namespace Leantime\Domain\Plugins\Services {
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
+            $result = $this->pluginRepository->disablePlugin($id);
+
             if ($pluginModel->format == 'phar') {
                 $phar = new \Phar(
                     Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
@@ -337,7 +339,7 @@ namespace Leantime\Domain\Plugins\Services {
                 }
             }
 
-            return $this->pluginRepository->disablePlugin($id);
+            return $result;
         }
 
         /**
