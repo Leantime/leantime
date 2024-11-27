@@ -1,3 +1,32 @@
+# Version: 3.3.3
+
+* [752bfec](https://github.com/Leantime/leantime/commit/752bfec2650b4da9cd5c2310b8ae4ea3901a27b8): Version Bump
+* [f5717e6](https://github.com/Leantime/leantime/commit/f5717e6c9c1d5ce815251f9e1f3676876e040b68): Merge remote-tracking branch 'origin/master'
+* [f44dbb8](https://github.com/Leantime/leantime/commit/f44dbb8fc73f56fa6082089a21d92da26c46cead): style fixes
+* [6828e9c](https://github.com/Leantime/leantime/commit/6828e9c042ee038bc7101574c88b869746a63c31): Check for datetime parsing and sprint verification
+* [22d28a5](https://github.com/Leantime/leantime/commit/22d28a514adff2b7390742c731f6cd6ee9cbc47f): Fixes updater and backup creator
+* [87e3774](https://github.com/Leantime/leantime/commit/87e377482efb885c2e47007c387c1df6fe61ae8f): Updating how we load language files from plugins and caching them
+* [838c836](https://github.com/Leantime/leantime/commit/838c8367933be9cbaa19dfe5c48859f7b09f9a57): Update bug_report.yml
+* [8b804d4](https://github.com/Leantime/leantime/commit/8b804d4ab26965743a1dcf21dffec133887d0bd9): Update UpdateLeantime.php
+* [fd34096](https://github.com/Leantime/leantime/commit/fd340969d606e793f990921a3669fa8291e47a35): Update Registration.php
+* [7069916](https://github.com/Leantime/leantime/commit/706991635364ac895c3b230a943030678deb21b9): LanguageFile Registration improvements
+* [3a0aa4a](https://github.com/Leantime/leantime/commit/3a0aa4a4a29278524175a4e64139a82aa6dc10f4): fix code styles
+* [ee79913](https://github.com/Leantime/leantime/commit/ee799139412baacba0d0952b839e6560f9df7de5): Improving eventDispatcher findListener call and settings repo
+* [177d514](https://github.com/Leantime/leantime/commit/177d5143f54cd996a854307c3efd5295cbad18fe): Fix styles and ignore generated files in pint
+* [743beee](https://github.com/Leantime/leantime/commit/743beee87b9603f8460ebd9b94269e6035d33fa5): Code style fixes
+* [ad64371](https://github.com/Leantime/leantime/commit/ad64371e719d3a9443d583d0457678305fc5ccc9): Fix access issues regarding manager role #2820
+* [3619037](https://github.com/Leantime/leantime/commit/3619037a7cb4fe71893da1936d1578d7e49332c3): code style fix
+* [28343d3](https://github.com/Leantime/leantime/commit/28343d36dfe02e93a0c9951e79d4e9ec7cb6e9db): Fix issue with api guard not having access to apikey
+* [120f578](https://github.com/Leantime/leantime/commit/120f578698e28e921d029a6b8749eab44b4c8d8a): Fix missing value submission for notifications checkbox #2818
+* [29ad2e6](https://github.com/Leantime/leantime/commit/29ad2e6bf9f73881309e9d75e2c2e0047abb99ae): Fixing code style
+* [ee6285b](https://github.com/Leantime/leantime/commit/ee6285bd7e735f23a977cd1162bb5609936332a2): Add unit tests
+* [73af0b6](https://github.com/Leantime/leantime/commit/73af0b65610d13c1538dd3932a4a204d3879b674): Create new avatar creator support class and ensure avatars can be generated in various languages and encodings
+* [936dcbf](https://github.com/Leantime/leantime/commit/936dcbf68a0639c969792b9d011a0c5ec373c2d6): fix code styles
+* [4e2c859](https://github.com/Leantime/leantime/commit/4e2c859a8d4b1fcf08963dfa10b5e499cd04351d): Fix authcheck missing parameter
+* [5d18d8c](https://github.com/Leantime/leantime/commit/5d18d8cc1fccb24dabe290b54fa6fe04d23346f2): Using laravel auth and adding leantime as auth provider.
+* [fabd409](https://github.com/Leantime/leantime/commit/fabd4091d09f9e571afcfc9cf28b978ff6711e3c): Check translations strings
+
+
 # Version: 3.3.2
 
 * [4a952c8](https://github.com/Leantime/leantime/commit/4a952c8b521fa9db7b7b04d968102521310b0440): Update README.md
