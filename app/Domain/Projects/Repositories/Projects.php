@@ -263,8 +263,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        // Deprecated
-
+        //This populates the projects show all tab and shows users all the projects that they could access
         public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
         {
 
@@ -277,6 +276,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
+				    project.parent,
 				    project.modified,
 					client.name AS clientName,
 					client.id AS clientId,
@@ -364,6 +364,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.state,
 				    project.menuType,
 				    project.modified,
+				    project.type,
 					client.name AS clientName,
 					client.id AS clientId
 				FROM zp_projects as project

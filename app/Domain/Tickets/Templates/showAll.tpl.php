@@ -237,7 +237,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                             <td  data-order="<?php
                             if ($row['priority'] != '' && $row['priority'] > 0) {
-                                echo $priorities[$row['priority']];
+                                echo $priorities[$row['priority']] ?? $tpl->__('label.priority_unkown');
                             } else {
                                 echo $tpl->__('label.priority_unkown');
                             }?>">
@@ -245,7 +245,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                     <a class="dropdown-toggle label-default priority priority-bg-<?= $row['priority']?>  f-left" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['priority'] != '' && $row['priority'] > 0) {
-                                                                    echo $priorities[$row['priority']];
+                                                                    echo $priorities[$row['priority']] ?? $tpl->__('label.priority_unkown');
                                                                 } else {
                                                                     echo $tpl->__('label.priority_unkown');
                                                                 }?>

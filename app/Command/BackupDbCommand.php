@@ -54,7 +54,7 @@ class BackupDbCommand extends Command
 
         $output = [];
         $cmd = sprintf(
-            'mysqldump --column-statistics=0 --user=%s --password=%s --host=%s %s --port=%s --result-file=%s 2>&1',
+            'mysqldump --column-statistics=0 --user=\'%s\' --password=\'%s\' --host=%s %s --port=%s --result-file=%s 2>&1',
             $config->dbUser,
             $config->dbPassword,
             $config->dbHost == 'localhost' ? '127.0.0.1' : $config->dbHost,
