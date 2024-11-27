@@ -4,7 +4,6 @@ namespace Leantime\Domain\Plugins\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
@@ -35,66 +34,63 @@ class Registration
 
         $pluginId = $this->pluginId;
 
-        EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () use ($pluginId, $languages) {
+        EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () use ($languages) {
 
             $language = app()->make(Language::class);
             $config = app()->make(Environment::class);
+            $currentUserLanguage = session('usersettings.language');
 
-            try {
-                $languageArray = Cache::store('installation')->get($pluginId.'.languageArray', []);
-            } catch (\Exception $e) {
-                Log::error($e);
-                $languageArray = [];
+            //At this point in the stack localization has already determined user language and set up the core language
+            //array in the language of the users choice. First we register english if it is in the array and then we
+            //override with the user language
+            if (in_array('en-US', $languages)) {
+                $pluginLangArray = $this->loadPluginLanguage('en-US');
+                $language->mergeLanguageArray($pluginLangArray);
             }
 
-            if (is_array($languageArray) && count($languageArray) > 0) {
-                $language->ini_array = array_merge($language->ini_array, $languageArray);
-
-                return;
+            //Now check the user language and override if needed
+            if (in_array($currentUserLanguage, $languages)) {
+                $pluginLangArray = $this->loadPluginLanguage($currentUserLanguage);
+                $language->mergeLanguageArray($pluginLangArray);
             }
-
-            //Always load en-Us as this is the default fallback language
-            if (! Cache::store('installation')->has($pluginId.'.language.en-US')) {
-
-                if (file_exists(app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini')) {
-                    $languageArray += parse_ini_file(
-                        app_path().'/Plugins/'.$pluginId.'/Language/en-US.ini',
-                        true
-                    );
-                }
-            }
-
-            if ((($userLanguage = session('usersettings.language') ?? $config->language) !== 'en-US') && in_array($userLanguage, $languages)) {
-
-                if (! Cache::store('installation')->has($pluginId.'.language.'.$userLanguage)) {
-
-                    if (file_exists(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini')) {
-                        Cache::store('installation')->put(
-                            $pluginId.'.language.'.$userLanguage,
-                            parse_ini_file(app_path().'/Plugins/'.$pluginId.'/Language/'.$userLanguage.'.ini', true),
-                            Carbon::now()->addDays(30)
-                        );
-                    }
-                }
-
-                $languageArray = array_merge($languageArray, Cache::store('installation')->get($pluginId.'.language.'.$language));
-
-                $cachedLangArr = Cache::store('installation')->get($pluginId.'.language.'.$language, []);
-                $languageArray = array_merge(
-                    is_array($languageArray) ? $languageArray : [],
-                    is_array($cachedLangArr) ? $cachedLangArr : []
-                );
-            }
-
-            try {
-                Cache::store('installation')->put($pluginId.'.languageArray', $languageArray);
-            } catch (\Exception $e) {
-                Log::error($e);
-            }
-
-            $language->ini_array = array_merge($language->ini_array, $languageArray);
 
         }, 5);
+
+    }
+
+    private function loadPluginLanguage($language): array|false
+    {
+
+        if (Cache::store('installation')->has($this->pluginId.'.language.'.$language)) {
+            return Cache::store('installation')->get($this->pluginId.'.language.'.$language);
+        }
+
+        $pluginPath = APP_ROOT.'/app/Plugins/';
+
+        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $regularPath = "{$pluginPath}{$this->pluginId}";
+
+        $languagePath = "/Language/{$language}.ini";
+
+        //Check phar first
+        if (file_exists($pharPath.$languagePath)) {
+            $completeLanguagePath = $pharPath.$languagePath;
+        } elseif (file_exists($regularPath.$languagePath)) {
+            $completeLanguagePath = $regularPath.$languagePath;
+        } else {
+            //Language file doesn't exist
+            Cache::store('installation')->set($this->pluginId.'.language.'.$language, false, Carbon::now()->addDays(7));
+
+            return false;
+        }
+
+        $languageArray = parse_ini_file($completeLanguagePath, true);
+
+        //We're caching the results no matter what, language file is not going to magically appear.
+        //So even a false is valid as parse_ini_is too expensive to run every time
+        Cache::store('installation')->set($this->pluginId.'.language.'.$language, $languageArray, Carbon::now()->addDays(7));
+
+        return $languageArray;
 
     }
 
@@ -154,4 +150,6 @@ class Registration
     public function addFooterJs(array $middleware) {}
 
     public function addCss(array $middleware) {}
+
+    protected function getPluginPath() {}
 }

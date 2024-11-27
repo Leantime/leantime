@@ -349,6 +349,15 @@ class Language
         return (string) $returnValue;
     }
 
+    public function mergeLanguageArray($newLanguageArray)
+    {
+
+        if (is_array($newLanguageArray)) {
+            $this->ini_array = array_merge($this->ini_array, $newLanguageArray);
+        }
+
+    }
+
     public function get(string $index, $default = '', $locale = '')
     {
         $contentReplacement = '';
