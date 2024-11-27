@@ -1,7 +1,7 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
-    "version": "3.3.2",
+    "version": "3.3.3",
     "type": "project",
     "license": "AGPL-3.0",
     "config": {
