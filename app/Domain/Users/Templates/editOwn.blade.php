@@ -288,7 +288,7 @@
                                 <div class="form-group">
                                     <label for="notifications" >{{ __('label.receive_notifications') }}</label>
                                     <span>
-                                        <input type="checkbox" value="" name="notifications" class="input"
+                                        <input type="checkbox" value="on" name="notifications" class="input"
                                                id="notifications"
                                                @if ($values['notifications'] == "1" )
                                                    checked='checked'
