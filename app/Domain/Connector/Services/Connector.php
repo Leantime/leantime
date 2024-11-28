@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Connector\Services {
 
+    use Illuminate\Support\Facades\Log;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
@@ -199,6 +200,28 @@ namespace Leantime\Domain\Connector\Services {
                     } else {
                         $row['status'] = 3;
                     }
+                }
+            }
+
+            //Status Field Mapping
+            $matchingDateField = '';
+            $dateArray = ['date', 'dateToFinish', 'editFrom', 'editTo'];
+            foreach ($fields as $item) {
+                if (in_array($item['leantimeField'], $dateArray)) {
+                    $matchingDateField = $item['sourceField'];
+                    break;
+                }
+            }
+
+            if ($matchingDateField) {
+                foreach ($values as &$row) {
+
+                    try {
+                        dtHelper()->parseUserDateTime($row[$matchingDateField])->formatDateTimeForDb();
+                    } catch (\Exception $e) {
+                        $flags[] = $row[$matchingDateField].' '.'is not a valid date. Please use the date format defined in your profile or iso8601';
+                    }
+
                 }
             }
 
@@ -597,10 +620,41 @@ namespace Leantime\Domain\Connector\Services {
                 $ticket['status'] = $row['status'] ?? 3;
                 $ticket['type'] = $row['type'] ?? 'task';
 
-                if (isset($ticket['id']) && is_numeric($ticket['id'])) {
-                    $this->ticketService->updateTicket($ticket);
-                } else {
-                    $this->ticketService->addTicket($ticket);
+                try {
+                    $ticket['date'] = dtHelper()->parseUserDateTime($row['date']);
+                } catch (\Exception $e) {
+                    $ticket['date'] = '';
+                }
+
+                try {
+                    $ticket['dateToFinish'] = dtHelper()->parseUserDateTime($row['dateToFinish']);
+                } catch (\Exception $e) {
+                    $ticket['dateToFinish'] = '';
+                }
+
+                try {
+                    $ticket['editFrom'] = dtHelper()->parseUserDateTime($row['editFrom']);
+                } catch (\Exception $e) {
+                    $ticket['editFrom'] = '';
+                }
+
+                try {
+                    $ticket['editTo'] = dtHelper()->parseUserDateTime($row['editTo']);
+                } catch (\Exception $e) {
+                    $ticket['editTo'] = '';
+                }
+
+                try {
+                    if (isset($ticket['id']) && is_numeric($ticket['id'])) {
+                        $this->ticketService->updateTicket($ticket);
+                    } else {
+                        $this->ticketService->addTicket($ticket);
+                    }
+                } catch (\Exception $e) {
+                    Log::error($e);
+
+                    return $e->getMessage();
+
                 }
             }
 

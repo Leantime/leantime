@@ -3,8 +3,8 @@
 namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Stringable;
-use Leantime\Core\Support\StringableMacros;
+use Illuminate\Support\Str;
+use Leantime\Core\Support\StrMacros;
 
 class LoadMacros extends ServiceProvider
 {
@@ -21,6 +21,6 @@ class LoadMacros extends ServiceProvider
      */
     public function boot(): void
     {
-        Stringable::mixin(new StringableMacros);
+        Str::mixin(new StrMacros);
     }
 }

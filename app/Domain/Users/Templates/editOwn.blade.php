@@ -28,7 +28,7 @@
                         <x-global::content.tabs.content name="myProfile">
                             <form action="" method="post">
                                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
-                            
+
                                 <div class="row-fluid">
                                     <div class="form-group">
                                         <x-global::forms.text-input
@@ -40,7 +40,7 @@
                                             :disabled="session('userdata.isLdap')"
                                         />
                                     </div>
-                                
+
                                     <div class="form-group">
                                         <x-global::forms.text-input
                                             name="lastname"
@@ -51,7 +51,7 @@
                                             :disabled="session('userdata.isLdap')"
                                         />
                                     </div>
-                                
+
                                     <div class="form-group">
                                         <x-global::forms.text-input
                                             name="user"
@@ -62,7 +62,7 @@
                                             :disabled="session('userdata.isLdap')"
                                         />
                                     </div>
-                                
+
                                     <div class="form-group">
                                         <x-global::forms.text-input
                                             name="phone"
@@ -74,16 +74,16 @@
                                         />
                                     </div>
                                 </div>
-                                
-                                
-                                
-                            
+
+
+
+
                                 <p class="stdformbutton">
                                     <input type="hidden" name="profileInfo" value="1" />
-                                    
-                                    <x-global::forms.button 
-                                        type="submit" 
-                                        name="save" 
+
+                                    <x-global::forms.button
+                                        type="submit"
+                                        name="save"
                                         id="save"
                                         class="button"
                                     >
@@ -91,7 +91,7 @@
                                     </x-global::forms.button>
                                 </p>
                             </form>
-                            
+
                         </x-global::content.tabs.content>
 
                         <x-global::content.tabs.content name="security">
@@ -155,15 +155,15 @@
                                 @if (!session("userdata.isLdap") )
                                     <input type="hidden" name="savepw" value="1" />
                                     {{-- <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button"/> --}}
-                                    <x-global::forms.button 
-                                    type="submit" 
-                                    name="save" 
+                                    <x-global::forms.button
+                                    type="submit"
+                                    name="save"
                                     id="save"
                                     class="button"
                                 >
                                     {{ __('buttons.save') }}
                                 </x-global::forms.button>
-                                    
+
                                 @endif
                             </form>
                             <br /><br />
@@ -191,14 +191,14 @@
                                             @endforeach
                                         </x-global::forms.select>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <x-global::forms.select name="date_format" id="date_format" :labelText="__('label.date_format')">
                                             @php
                                                 $dateFormats = $dateTimeValues['dates'];
                                                 $dateTimeNow = date_create();
                                             @endphp
-                                    
+
                                             @foreach ($dateFormats as $format)
                                                 <x-global::forms.select.select-option :value="$format" :selected="$dateFormat == $format">
                                                     {{ date_format($dateTimeNow, $format) }}
@@ -206,14 +206,14 @@
                                             @endforeach
                                         </x-global::forms.select>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <x-global::forms.select name="time_format" id="time_format" :labelText="__('label.time_format')">
                                             @php
                                                 $timeFormats = $dateTimeValues['times'];
                                                 $dateTimeNow = date_create();
                                             @endphp
-                                    
+
                                             @foreach ($timeFormats as $format)
                                                 <x-global::forms.select.select-option :value="$format" :selected="$timeFormat == $format">
                                                     {{ date_format($dateTimeNow, $format) }}
@@ -221,7 +221,7 @@
                                             @endforeach
                                         </x-global::forms.select>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <x-global::forms.select name="timezone" id="timezone" :labelText="__('label.timezone')">
                                             @foreach ($timezoneOptions as $tz)
@@ -231,17 +231,17 @@
                                             @endforeach
                                         </x-global::forms.select>
                                     </div>
-                                    
+
                                 </div>
                                 <input type="hidden" name="saveSettings" value="1" />
-                                <x-global::forms.button 
-                                    type="submit" 
-                                    name="save" 
+                                <x-global::forms.button
+                                    type="submit"
+                                    name="save"
                                     id="save"
                                     class="button"
                                 >
                                     {{ __('buttons.save') }}
-                                </x-global::forms.button>                       
+                                </x-global::forms.button>
                              </form>
                         </x-global::content.tabs.content>
 
@@ -258,7 +258,7 @@
                                             @endforeach
                                         </x-global::forms.select>
                                     </div>
-                                    
+
                                     <div class="row">
                                         <div class="col-md-12">
 
@@ -312,9 +312,9 @@
                                 </div>
                                 <br /><br />
                                 <input type="hidden" name="saveTheme" value="1" />
-                                <x-global::forms.button 
-                                    type="submit" 
-                                    name="save" 
+                                <x-global::forms.button
+                                    type="submit"
+                                    name="save"
                                     id="save"
                                     class="button"
                                 >
@@ -331,11 +331,12 @@
                                         <x-global::forms.checkbox
                                             name="notifications"
                                             id="notifications"
+                                            value="on"
                                             :checked="$values['notifications'] == '1'"
                                             {{-- class="input" --}}
                                             labelText="{{ __('label.receive_notifications') }}"
                                             labelPosition="left"
-                                        />    
+                                        />
                                         <br/>
                                     </div>
                                     <div class="form-group">
@@ -344,64 +345,64 @@
                                                 <x-global::forms.select.select-option value="">
                                                     --{{ __('label.choose_option') }}--
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="60" :selected="$values['messagesfrequency'] == '60'">
                                                     {{ __('label.1min') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="300" :selected="$values['messagesfrequency'] == '300'">
                                                     {{ __('label.5min') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="900" :selected="$values['messagesfrequency'] == '900'">
                                                     {{ __('label.15min') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="1800" :selected="$values['messagesfrequency'] == '1800'">
                                                     {{ __('label.30min') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="3600" :selected="$values['messagesfrequency'] == '3600'">
                                                     {{ __('label.1h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="10800" :selected="$values['messagesfrequency'] == '10800'">
                                                     {{ __('label.3h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="36000" :selected="$values['messagesfrequency'] == '36000'">
                                                     {{ __('label.6h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="43200" :selected="$values['messagesfrequency'] == '43200'">
                                                     {{ __('label.12h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="86400" :selected="$values['messagesfrequency'] == '86400'">
                                                     {{ __('label.24h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="172800" :selected="$values['messagesfrequency'] == '172800'">
                                                     {{ __('label.48h') }}
                                                 </x-global::forms.select.select-option>
-                                            
+
                                                 <x-global::forms.select.select-option value="604800" :selected="$values['messagesfrequency'] == '604800'">
                                                     {{ __('label.1w') }}
                                                 </x-global::forms.select.select-option>
                                             </x-global::forms.select>
                                             <br/>
-                                            
+
                                     </div>
                                 </div>
                                 <input type="hidden" name="savenotifications" value="1" />
-                                <x-global::forms.button 
-                                    type="submit" 
-                                    name="save" 
+                                <x-global::forms.button
+                                    type="submit"
+                                    name="save"
                                     id="save"
                                     class="button"
                                 >
                                     {{ __('buttons.save') }}
-                                </x-global::forms.button>                       
+                                </x-global::forms.button>
                              </form>
                         </x-global::content.tabs.content>
                     </x-slot:contents>

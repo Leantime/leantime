@@ -11,7 +11,7 @@ class EventsTest extends Unit
      * This test will check the dispatchEvent method of the EventDispatcher class.
      * It will dispatch an event and assert if it is added to the available_hooks array.
      */
-    public function testDispatchEvent()
+    public function test_dispatch_event()
     {
         $eventName = 'test.event.name';
         $payload = ['testKey' => 'testValue'];
@@ -30,7 +30,7 @@ class EventsTest extends Unit
     /**
      * This test will check the findEventListeners method of the EventDispatcher class.
      */
-    public function testFindEventListeners()
+    public function test_find_event_listeners()
     {
         $eventName = 'test.event.name';
         $listenerName = 'test.listener';
@@ -48,7 +48,7 @@ class EventsTest extends Unit
      * It will add new event listener and a new filter listener and check both listeners
      * are in the registry arrays.
      */
-    public function testGetRegistries()
+    public function test_get_registries()
     {
         $eventName = 'event.test.name';
         $filterName = 'filter.test.name';

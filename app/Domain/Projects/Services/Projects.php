@@ -498,11 +498,10 @@ class Projects
     {
 
         //Load all projects user is assigned to
-        $projects = $this->projectRepository->getUserProjects(
+        $projects = $this->projectRepository->getProjectsUserHasAccessTo(
             userId: $userId,
-            projectStatus: $projectStatus,
+            status: $projectStatus,
             clientId: (int) $clientId,
-            accessStatus: 'all'
         );
         $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
@@ -1648,7 +1647,7 @@ class Projects
             }
         }
 
-        return $userProjects;
+        return $allProjects;
     }
 
     /**

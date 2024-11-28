@@ -55,6 +55,8 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         parent::enableHttpMethodParameterOverride();
 
+        //static::enableHttpMethodParameterOverride();
+
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
                 strtolower($key) => match (true) {
@@ -65,9 +67,11 @@ class IncomingRequest extends \Illuminate\Http\Request
             ])
             ->all();
 
+        $requestUriTest = strtolower($_SERVER['REQUEST_URI'] ?? '');
+
         $request = match (true) {
             isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
-            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+            (isset($headers['x-api-key']) || str_starts_with($requestUriTest, '/api/jsonrpc')) => ApiRequest::createFromGlobals(),
             defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
             default => parent::createFromGlobals(),
         };
@@ -267,5 +271,17 @@ class IncomingRequest extends \Illuminate\Http\Request
         }
 
         return '';
+    }
+
+    /**
+     * Checks if the current request is an API request.
+     *
+     * @return bool Returns true if the current request is an API request, false otherwise.
+     */
+    public function isApiRequest(): bool
+    {
+        $requestUri = $this->getRequestUri();
+
+        return str_starts_with($requestUri, '/api/jsonrpc');
     }
 }
