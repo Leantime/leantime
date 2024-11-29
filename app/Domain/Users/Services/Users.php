@@ -9,7 +9,7 @@ namespace Leantime\Domain\Users\Services {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Ramsey\Uuid\Uuid;
@@ -26,7 +26,7 @@ namespace Leantime\Domain\Users\Services {
             protected UserRepository $userRepo,
             protected LanguageCore $language,
             protected ProjectRepository $projectRepository,
-            protected ClientRepository $clientRepo,
+            protected ClientService $clientService,
             protected AuthService $authService
         ) {}
 
@@ -303,7 +303,7 @@ namespace Leantime\Domain\Users\Services {
                 }
 
                 if ($project['psettings'] == 'clients') {
-                    $clientUsers = $this->clientRepo->getClientsUsers($project['clientId']);
+                    $clientUsers = $this->clientService->getUserClients($project['clientId']);
                     $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
                     $users = $clientUsers;
 

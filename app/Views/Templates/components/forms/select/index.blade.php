@@ -106,15 +106,33 @@
 </x-global::forms.field-row>
 
 <script>
-    jQuery(document).ready(initSelect);
+    jQuery(function () {
 
-    htmx.onLoad(initSelect)
+        // Initialize select elements when the page is ready
+        initSelect();
 
-    function initSelect() {
-        @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}', {{ $maxItemCount }});
-        @else
-        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
-        @endif
-    }
+        // Re-initialize select elements when HTMX loads new content
+        htmx.onLoad(function () {
+            initSelect();
+        });
+
+        function initSelect() {
+            @if ($variant === 'tags')
+                leantime.selects.initTags(
+                    '.select-{{ $formHash }}',
+                    {{ $search }},
+                    {{ (!$autocompleteTags) ? 'false' : 'true' }},
+                    '{{ $selectClassBuilder }}',
+                    {{ $maxItemCount }}
+                );
+            @else
+                leantime.selects.initSelect(
+                    '.select-{{ $formHash }}',
+                    {{ $search }},
+                    '{{ $selectClassBuilder }}'
+                );
+            @endif
+        }
+    });
 </script>
+

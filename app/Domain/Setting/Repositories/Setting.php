@@ -4,11 +4,14 @@ namespace Leantime\Domain\Setting\Repositories {
 
     use Exception;
     use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Domain\Setting\Services\SettingCache;
     use PDO;
 
     class Setting
     {
         private DbCore $db;
+
+        private SettingCache $cache;
 
         public array $applications = [
             'general' => 'General',
@@ -17,9 +20,10 @@ namespace Leantime\Domain\Setting\Repositories {
         /**
          * __construct - neu db connection
          */
-        public function __construct(DbCore $db)
+        public function __construct(DbCore $db, SettingCache $cache)
         {
             $this->db = $db;
+            $this->cache = $cache;
         }
 
         /**
@@ -31,10 +35,16 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
             }
 
+            // Check cache first
+            $cachedValue = $this->cache->get($type);
+            if ($cachedValue !== null) {
+                return $cachedValue;
+            }
+
             $sql = 'SELECT
-						value
-				FROM zp_settings WHERE `key` = :key
-				LIMIT 1';
+                        value
+                FROM zp_settings WHERE `key` = :key
+                LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
@@ -50,8 +60,14 @@ namespace Leantime\Domain\Setting\Repositories {
             }
 
             if ($values !== false && isset($values['value'])) {
+                // Store in cache for future requests
+                $this->cache->set($type, $values['value']);
+
                 return $values['value'];
             }
+
+            //value is not in the db, which is fine. Let's cache that too
+            $this->cache->set($type, false);
 
             //TODO: This needs to return null or throw an exception if the setting doesn't exist.
             return false;
@@ -65,8 +81,8 @@ namespace Leantime\Domain\Setting\Repositories {
             }
 
             $sql = 'INSERT INTO zp_settings (`key`, `value`)
-				VALUES (:key, :value) ON DUPLICATE KEY UPDATE
-				  `value` = :valueUpdate';
+                VALUES (:key, :value) ON DUPLICATE KEY UPDATE
+                  `value` = :valueUpdate';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
@@ -75,6 +91,9 @@ namespace Leantime\Domain\Setting\Repositories {
 
             $return = $stmn->execute();
             $stmn->closeCursor();
+
+            // Update cache
+            $this->cache->set($type, $value);
 
             return $return;
         }
@@ -89,6 +108,9 @@ namespace Leantime\Domain\Setting\Repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
+
+            // Remove from cache
+            $this->cache->forget($type);
         }
 
         /**

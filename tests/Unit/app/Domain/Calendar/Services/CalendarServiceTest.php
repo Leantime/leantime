@@ -69,7 +69,7 @@ class CalendarServiceTest extends TestCase
     /**
      * Test GetMenuTypes method
      */
-    public function testGetICalUrl()
+    public function test_get_i_cal_url()
     {
 
         //Sha is generated from id -1 and sessionpassword 123abc

@@ -65,7 +65,7 @@ class ThemeTest extends \Unit\TestCase
     /**
      * Test GetMenuTypes method
      */
-    public function testGetDefaultColorSchemeWithColorEnvSet()
+    public function test_get_default_color_scheme_with_color_env_set()
     {
 
         //Load class to be tested
@@ -84,7 +84,7 @@ class ThemeTest extends \Unit\TestCase
     /**
      * Test GetMenuTypes method
      */
-    public function testGetDefaultColorSchemeWithoutEnv()
+    public function test_get_default_color_scheme_without_env()
     {
 
         $configMock = $this->make(Environment::class, []);

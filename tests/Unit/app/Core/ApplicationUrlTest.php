@@ -33,7 +33,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->config = $this->app['config'];
     }
 
-    public function testBaseUrlIsSetCorrectlyFromConfig(): void
+    public function test_base_url_is_set_correctly_from_config(): void
     {
         // Test default behavior (no LEAN_APP_URL set)
         $this->assertEquals('http://localhost', BASE_URL);
@@ -52,7 +52,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->assertEquals('https://example.com', $this->config->get('appUrl'));
     }
 
-    public function testBaseUrlHandlesTrailingSlash(): void
+    public function test_base_url_handles_trailing_slash(): void
     {
 
         $_ENV['LEAN_APP_URL'] = 'https://example.com/';
@@ -63,7 +63,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->assertEquals('https://example.com', $this->config->get('appUrl'));
     }
 
-    public function testBaseUrlHandlesSubdirectory(): void
+    public function test_base_url_handles_subdirectory(): void
     {
 
         $_ENV['LEAN_APP_URL'] = 'https://example.com/leantime';
@@ -74,7 +74,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->assertEquals('https://example.com/leantime', $this->config->get('appUrl'));
     }
 
-    public function testBaseUrlHandlesPort(): void
+    public function test_base_url_handles_port(): void
     {
 
         $_ENV['LEAN_APP_URL'] = 'https://example.com:8443';
@@ -85,7 +85,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->assertEquals('https://example.com:8443', $this->config->get('appUrl'));
     }
 
-    public function testBaseUrlHandlesReverseProxy(): void
+    public function test_base_url_handles_reverse_proxy(): void
     {
         // Simulate reverse proxy headers
         $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
