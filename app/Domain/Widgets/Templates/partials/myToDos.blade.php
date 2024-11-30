@@ -132,16 +132,16 @@
                 >
                     <input type="hidden" name="quickadd" value="1"/>
                     <div class="flex" style="display:flex; column-gap: 10px;">
-                        <x-global::forms.text-input 
-                            type="text" 
-                            name="headline" 
-                            placeholder="Enter To-Do Title" 
-                            title="{!! $tpl->__('label.headline') !!}" 
-                            variant="title" 
-                            class="w-full" 
+                        <x-global::forms.text-input
+                            type="text"
+                            name="headline"
+                            placeholder="Enter To-Do Title"
+                            title="{!! $tpl->__('label.headline') !!}"
+                            variant="title"
+                            class="w-full"
                         />
                         <br />
-                    
+
                         <x-global::forms.select name="projectId" :labelText="'Project'">
                             @foreach($allAssignedprojects as $project)
                                 <x-global::forms.select.select-option :value="$project['id']"
@@ -151,7 +151,7 @@
                                 </x-global::forms.select.select-option>
                             @endforeach
                         </x-global::forms.select>
-                        
+
                     </div>
                     <input type="submit" value="Save" name="quickadd" />
                     <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
@@ -372,7 +372,7 @@
 
     @dispatchEvent('scripts.afterOpen');
 
-    jQuery('.todaysDate').text(moment().format('LLLL'));
+    jQuery('.todaysDate').text(DateTime.now().toFormat('LLLL'));
 
     jQuery(document).ready(function(){
         tippy('[data-tippy-content]');

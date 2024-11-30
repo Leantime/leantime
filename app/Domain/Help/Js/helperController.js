@@ -1,7 +1,7 @@
 import jQuery from 'jquery';
 import i18n from 'i18n';
 import { appUrl } from 'js/app/core/instance-info.module';
-import replaceSVGColors from 'js/app/core/replaceSVGColors.module';
+import replaceSVGColors from 'js/app/support/replaceSVGColors.module';
 import { updateUserModalSettings, stopTour } from './helperRepository';
 import Shepherd from 'shepherd.js';
 

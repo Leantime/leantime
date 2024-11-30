@@ -1,7 +1,3 @@
-import jQuery from 'jquery';
-import tippy from 'tippy.js';
-import confetti from 'canvas-confetti';
-
 export default function () {
     window.leantime.replaceSVGColors();
 

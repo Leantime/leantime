@@ -1,67 +1,144 @@
-const pjson = require('./package.json');
-const glob = require('glob');
-const path = require('path');
-const version = pjson.version;
+const packageJson = require('./package.json');
 const webpack = require('webpack');
+const path = require('path');
+const { glb } = require('laravel-mix-glob');
+const mix = require('laravel-mix');
+const fs = require('fs');
 
-const fs = require("fs");
-
-// Helper to get all files of a given extension in a given directory and its subfolders.
-function getFilesRecursive(dir, type) {
-    // The list of files that we will return.
-    let files = []
-    // Loop everything in given location.
-    fs.readdirSync(dir).forEach(file => {
-        let fileName = `${dir}/${file}`
-        // Add if its a file and it is of the correct file type.
-        if(fs.statSync(fileName).isFile() && fileName.endsWith(type)) {
-            files.push(fileName)
-        }
-        // Process subfolder.
-        if(!fs.statSync(fileName).isFile()) {
-            // Recusively loop this function for the subfolder.
-            files = files.concat(getFilesRecursive(fileName, type))
-        }
-    })
-    return files
-}
-
-let mix = require('laravel-mix');
+// --- Plugin Loading ---
 require('laravel-mix-eslint');
 require('mix-tailwindcss');
-
 require('dotenv').config({ path: 'config/.env' });
 
-mix
-    .setPublicPath('public/dist')
-    .setResourceRoot(`../`);
-
-/*
-
-//Draft for file based js controller loading
-getFilesRecursive('app/Domain', '.js').forEach(file => {
-    subfolder = file.match(/(.*)[\/\\]/)[1]||''; // 'src/js/libraries'
-    subfolder = subfolder.replace('app/Domain', ''); // '/libraries'
-    mix.js(file, 'js' + subfolder);
-});
-*/
-
- // this is the URL to place assets referenced in the CSS/JS
-mix
-    // this is what to prefix the URL with
-    .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
-    .js('./public/assets/js/app/app-new.js', `public/dist/js/compiled-app.${version}.js`)
-    .extract([
+// --- Core Configuration ---
+const CONFIG = {
+    version: packageJson.version,
+    publicPath: 'public/dist',
+    resourceRoot: '../',
+    enableSourceMaps: false,
+    coreVendors: [
         'jquery',
-        'jquery-ui',
         'htmx.org',
         'tippy.js',
-        'moment',
-        'luxon',
-        'canvas-confetti'
-    ])
-    .minify(`./public/dist/js/compiled-app.${version}.js`)
-    .combine([
+        'canvas-confetti',
+    ],
+    chunkSize: 244000,
+    domainPaths: {
+        base: './app/Domain',
+        output: 'js/domain'
+    }
+};
+
+// --- Mix Initialization ---
+mix.setResourceRoot(CONFIG.resourceRoot)
+   .setPublicPath(CONFIG.publicPath)
+   .options({ runtimeChunkPath: 'js' })
+   .version();
+
+
+// Source Maps Configuration
+if (CONFIG.enableSourceMaps) {
+    mix.sourceMaps();
+}
+
+// --- JavaScript Processing ---
+
+// Core application JavaScript and extracting vendor
+mix.js('./public/assets/js/app/app.js', `${CONFIG.publicPath}/js/app.js`)
+    .extract(CONFIG.coreVendors, `${CONFIG.publicPath}/js/vendor.js`);
+
+// Build domain components
+mix.js(
+    glb.src('./app/Domain/**/Js/*.js'),
+    glb.out({
+        baseMap: './app',
+        outMap: './public/dist/js'
+        })
+    );
+
+// Process components and support modules
+mix.js('./public/assets/js/app/support/*.mjs', `${CONFIG.publicPath}/js/support`);
+mix.js('./public/assets/js/app/components/**/*.mjs', `${CONFIG.publicPath}/js/components`);
+
+// Dynamic imports configuration
+const webpackConfig = {
+    output: {
+        filename: '[name].js',
+        chunkFilename: 'js/chunks/[name].js',
+        publicPath: '/dist/',
+        clean: true,
+        libraryTarget: 'umd',
+        umdNamedDefine: false, // optional
+
+    },
+    optimization: {
+        usedExports: false,
+    },
+    // optimization: {
+    //     runtimeChunk: 'single',
+    //     splitChunks: {
+    //         chunks: 'async',
+    //         minSize: 20000,
+    //         maxSize: CONFIG.chunkSize,
+    //         cacheGroups: {
+    //             domain: {
+    //                 test: /[\\/]Domain[\\/].*[\\/]Js[\\/]/,
+    //                 priority: -10
+    //             }
+    //         }
+    //     }
+    // },
+    externals: {
+        i18n: 'window.leantime.i18n',
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            i18n: 'window.leantime.i18n',
+        }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        }),
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery',
+            $: 'jquery',
+            htmx: 'htmx.org'
+        }),
+    ],
+    resolve: {
+        alias: {
+            'images': path.resolve(__dirname, 'public/assets/images'),
+            'js': path.resolve(__dirname, 'public/assets/js'),
+            'javascript': path.resolve(__dirname, 'public/assets/js'),
+            'css': path.resolve(__dirname, 'public/assets/css'),
+            'fonts': path.resolve(__dirname, 'public/assets/fonts'),
+            'domain': path.resolve(__dirname, 'app/Domain'),
+            '@domain': path.resolve(__dirname, 'public/dist/js/Domain'),
+        },
+        extensions: [".*",".wasm",".mjs",".js",".jsx",".json",".*"],
+    },
+    stats: {
+        children: false
+    }
+};
+
+mix.webpackConfig(webpackConfig);
+
+// --- CSS Processing ---
+// Process and minify CSS files
+mix.postCss('./public/assets/less/editor.css', `${CONFIG.publicPath}/css/editor.${CONFIG.version}.min.css`)
+   .postCss('./public/assets/less/app.css', `${CONFIG.publicPath}/css/app.${CONFIG.version}.min.css`)
+   .postCss('./public/assets/less/main.css', `${CONFIG.publicPath}/css/main.${CONFIG.version}.min.css`)
+   .tailwind();
+
+// Asset Copying
+mix.copy('./public/assets/images', `${CONFIG.publicPath}/images`)
+   .copy('./public/assets/fonts', `${CONFIG.publicPath}/fonts`)
+   .copy('./public/assets/lottie', `${CONFIG.publicPath}/lottie`)
+   .copy('./public/assets/css/libs/tinymceSkin/oxide', `${CONFIG.publicPath}/css/libs/tinymceSkin/oxide`);
+
+// Footer and Editor Components
+mix.combine('./public/assets/js/libs/prism/prism.js', `${CONFIG.publicPath}/js/compiled-footer.js`)
+    .js([
         "./node_modules/tinymce/tinymce.js",
         "./node_modules/tinymce/icons/default/icons.js",
         "./node_modules/tinymce/jquery.tinymce.js",
@@ -97,133 +174,12 @@ mix
         "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
-    ], `public/dist/js/compiled-editor-component.${version}.min.js`)
-    .postCss('./public/assets/less/editor.css', `public/dist/css/editor.${version}.min.css`)
-    .postCss('./public/assets/less/app.css', `public/dist/css/app.${version}.min.css`)
-    .postCss('./public/assets/less/main.css', `public/dist/css/main.${version}.min.css`)
+    ], `${CONFIG.publicPath}/js/components/editor-component.js`);
 
-
-    .copy('./public/assets/images', 'public/dist/images')
-    .copy('./public/assets/fonts', 'public/dist/fonts')
-    .copy('./public/assets/lottie', 'public/dist/lottie')
-    .copy('./public/assets/css/libs/tinymceSkin/oxide', 'public/dist/css/libs/tinymceSkin/oxide')
-    .eslint({
-        fix: true,
-        extensions: ['js'],
-        exclude: [
-            'node_modules',
-            'public/assets/js/libs',
-        ],
-        overrideConfig: {
-            parser: '@babel/eslint-parser',
-        }
-    })
-    .tailwind()
-    .webpackConfig(() => {
-        return {
-            // entry: {
-            //     selects: './public/assets/js/app/core/selects.module.mjs',
-            //     datePickers: './public/assets/js/app/core/datePickers.module.mjs',
-            // },
-            // output: {
-            //     filename: '[name].js',
-            //     chunkFilename: '[name].chunk.js',
-            //     path: path.resolve('public/dist'),
-            //     clean: true,
-            // },
-            resolve: {
-                alias: {
-                    'images': path.resolve(__dirname, 'public/assets/images'),
-                    'js': path.resolve(__dirname, 'public/assets/js'),
-                    'css': path.resolve(__dirname, 'public/assets/css'),
-                    'fonts': path.resolve(__dirname, 'public/assets/fonts'),
-                    'domain': path.resolve(__dirname, 'app/Domain'),
-                },
-                extensions: [".*",".wasm",".mjs",".js",".jsx",".json",".*"]
-            },
-            externals: {
-                i18n: 'window.leantime.i18n',
-            },
-            plugins: [
-                new webpack.DefinePlugin({
-                    i18n: 'window.leantime.i18n',
-                }),
-                new webpack.ProvidePlugin({
-                    jQuery: 'jquery',
-                }),
-            ],
-            module: {
-                rules: [
-                    {
-                        test: path.resolve(__dirname, 'node_modules/leader-line/'),
-                        use: [{
-                            loader: 'skeleton-loader',
-                            options: { procedure: content => `${content}export default LeaderLine;` }
-                        }]
-                    },
-                    // {
-                    //     test: /\.mjs$/,
-                    //     exclude: /node_modules/,
-                    //     use: {
-                    //         loader: 'babel-loader',
-                    //         options: {
-                    //             presets: ['@babel/preset-env']
-                    //         }
-                    //     }
-                    // },
-                ],
-            },
-            optimization: {
-                //  runtimeChunk: 'single',
-                // splitChunks: {
-                //     cacheGroups: {
-                //         vendor: {
-                //             test: /[\\/]node_modules[\\/]/,
-                //             name: 'vendor',
-                //             chunks: 'all'
-                //         },
-                //     }
-                // },
-             }
-        //     entry: {
-        //         index: {
-        //             import: path.resolve('public/assets/js/app', 'app-new.js'),
-        //         },
-        //         selects: {
-        //             import: path.resolve('public/assets/js/app/core', 'selects.module.mjs'),
-        //             dependOn: 'index',
-        //         },
-        //         datePickers: {
-        //             import: path.resolve('public/assets/js/app/core', 'datePickers.module.mjs'),
-        //             dependOn: 'index',
-        //         },
-        //     },
-        //     output: {
-        //         filename: '[name].bundle.js',
-        //         chunkFilename: '[name].chunk.js',
-        //         path: path.resolve('public/dist/js'),
-        //         clean: true,
-        //     },
-        //     optimization: {
-        //         runtimeChunk: 'single',
-        //         splitChunks: {
-        //             chunks: 'all',
-        //         },
-        //         // splitChunks: {
-        //         //     cacheGroups: {
-        //         //         vendor: {
-        //         //             test: /[\\/]node_modules[\\/]/,
-        //         //             name: 'vendor',
-        //         //             chunks: 'all'
-        //         //         },
-        //         //     }
-        //         // },
-        //     },
-        //
-         }
-    })
-    .babelConfig({
-        sourceType: 'unambiguous',
-        presets: ['@babel/preset-env']
-    });
-
+// --- Webpack Configuration ---
+mix
+.babelConfig({
+    sourceType: 'unambiguous',
+    plugins: ['@babel/plugin-syntax-dynamic-import'],
+})
+.version();

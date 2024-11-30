@@ -57,7 +57,6 @@
         @push('scripts')
             <script>
                 jQuery(document).ready(function() {
-                    leantime.menuController.initProjectSelector();
                     leantime.menuController.initLeftMenuHamburgerButton();
                 });
             </script>

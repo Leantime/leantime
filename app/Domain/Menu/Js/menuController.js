@@ -35,8 +35,6 @@ export const toggleSubmenu = function (submenuName) {
 
 export const initProjectSelector = function () {
 
-    jQuery(".project-select").chosen();
-
     jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
         e.stopPropagation();
     });

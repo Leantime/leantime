@@ -1,11 +1,11 @@
+/** @format */
 import jQuery from 'jquery';
-import i18n from 'i18n';
+import { Calendar } from 'fullcalendar';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { DateTime } from 'luxon';
-import { Calendar, ThirdPartyDraggable } from 'fullcalendar';
 import iCalendarPlugin from '@fullcalendar/icalendar';
-import luxon3Plugin from '@fullcalendar/luxon3';
+import luxon3Plugin from '@fullcalendar/luxon3'
 
 export const initShowMyCalendar = function (
     element,
@@ -46,22 +46,22 @@ export const initShowMyCalendar = function (
             nextYear: 'fa-angle-double-right'
         },
         eventDrop: function (event) {
-            if(event.event.extendedProps.enitityType == "ticket") {
+            if(event.event.extendedProps.entityType == "ticket") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : leantime.appUrl + '/api/tickets',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         editFrom: event.event.startStr,
                         editTo: event.event.endStr
                     }
                 });
-            }else if(event.event.extendedProps.enitityType == "event") {
+            }else if(event.event.extendedProps.entityType == "event") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : leantime.appUrl + '/api/calendar',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         dateFrom: event.event.startStr,
                         dateTo: event.event.endStr
                     }
@@ -69,22 +69,22 @@ export const initShowMyCalendar = function (
             }
         },
         eventResize: function (event) {
-            if(event.event.extendedProps.enitityType == "ticket") {
+            if(event.event.extendedProps.entityType == "ticket") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : leantime.appUrl + '/api/tickets',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         editFrom: event.event.startStr,
                         editTo: event.event.endStr
                     }
                 })
-            }else if(event.event.extendedProps.enitityType == "event") {
+            }else if(event.event.extendedProps.entityType == "event") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : leantime.appUrl + '/api/calendar',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         dateFrom: event.event.startStr,
                         dateTo: event.event.endStr
                     }
@@ -93,7 +93,8 @@ export const initShowMyCalendar = function (
         },
         eventMouseEnter: function() {},
     });
-    calendar.setOption('locale', i18n.__("language.code"));
+
+    calendar.setOption('locale', leantime.i18n.__("language.code"));
     calendar.render();
     calendar.scrollToTime( Date.now() );
     jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
@@ -133,7 +134,7 @@ export const initTicketsCalendar = function (
     const heightWindow = jQuery("body").height() - 190;
     const calendar = new Calendar(element, {
         plugins: [luxon3Plugin],
-        timeZone: i18n.__("usersettings.timezone"),
+        timeZone: leantime.i18n.__("usersettings.timezone"),
         height: heightWindow,
         initialView: initialView,
         events: events,
@@ -155,7 +156,7 @@ export const initTicketsCalendar = function (
                 type : 'PATCH',
                 url  : appUrl + '/api/tickets',
                 data : {
-                    id: event.event.extendedProps.enitityId,
+                    id: event.event.extendedProps.entityId,
                     editFrom: event.event.startStr,
                     editTo: event.event.endStr
                 }
@@ -166,7 +167,7 @@ export const initTicketsCalendar = function (
                 type : 'PATCH',
                 url  : appUrl + '/api/tickets',
                 data : {
-                    id: event.event.extendedProps.enitityId,
+                    id: event.event.extendedProps.entityId,
                     editFrom: event.event.startStr,
                     editTo: event.event.endStr
                 }
@@ -174,7 +175,7 @@ export const initTicketsCalendar = function (
         },
         eventMouseEnter: function() {},
     });
-    calendar.setOption('locale', i18n.__("language.code"));
+    calendar.setOption('locale', leantime.i18n.__("language.code"));
     calendar.render();
     calendar.scrollToTime( 100 );
     jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
@@ -212,8 +213,8 @@ export const initEventDatepickers = function () {
             return this;
         };
         jQuery.datepicker.setDefaults(
-            { beforeShow: function (i) {
-                if (jQuery(i).attr('readonly')) {
+            { beforeShow: function (inputElement) {
+                if (jQuery(inputElement).attr('readonly')) {
                     return false; } } }
         );
 
@@ -224,18 +225,18 @@ export const initEventDatepickers = function () {
                 {
                     numberOfMonths: 1,
                     dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                    dayNames: i18n.__("language.dayNames").split(","),
-                    dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                    dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                    monthNames: i18n.__("language.monthNames").split(","),
-                    currentText: i18n.__("language.currentText"),
-                    closeText: i18n.__("language.closeText"),
-                    buttonText: i18n.__("language.buttonText"),
-                    isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                    nextText: i18n.__("language.nextText"),
-                    prevText: i18n.__("language.prevText"),
-                    weekHeader: i18n.__("language.weekHeader"),
-                    firstDay: i18n.__("language.firstDayOfWeek"),
+                    dayNames: leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: leantime.i18n.__("language.monthNames").split(","),
+                    currentText: leantime.i18n.__("language.currentText"),
+                    closeText: leantime.i18n.__("language.closeText"),
+                    buttonText: leantime.i18n.__("language.buttonText"),
+                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                    nextText: leantime.i18n.__("language.nextText"),
+                    prevText: leantime.i18n.__("language.prevText"),
+                    weekHeader: leantime.i18n.__("language.weekHeader"),
+                    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -253,18 +254,18 @@ export const initEventDatepickers = function () {
             {
                 numberOfMonths: 1,
                 dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                dayNames: i18n.__("language.dayNames").split(","),
-                dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                monthNames: i18n.__("language.monthNames").split(","),
-                currentText: i18n.__("language.currentText"),
-                closeText: i18n.__("language.closeText"),
-                buttonText: i18n.__("language.buttonText"),
-                isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: i18n.__("language.nextText"),
-                prevText: i18n.__("language.prevText"),
-                weekHeader: i18n.__("language.weekHeader"),
-                firstDay: i18n.__("language.firstDayOfWeek"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             }
         )
             .on(
@@ -292,13 +293,13 @@ export const initEventDatepickers = function () {
 
 
 var initWidgetCalendar = function (element, initialView, eventSources) {
-    let calendarEl = document.querySelector(element);
+    let calendarElement = document.querySelector(element);
     let userDateFormat = getFormatFromSettings("dateformat", "luxon");
     let userTimeFormat = getFormatFromSettings("timeformat", "luxon");
 
-    const calendar = new Calendar(calendarEl, {
+    const calendar = new Calendar(calendarElement, {
         plugins: [iCalendarPlugin, luxon3Plugin],
-        timeZone: i18n.__("usersettings.timezone"),
+        timeZone: leantime.i18n.__("usersettings.timezone"),
         height:'auto',
         initialView: initialView,
         dayHeaderFormat: userDateFormat,
@@ -330,24 +331,24 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
             nextYear: 'fa-angle-double-right'
         },
         eventDrop: function (event) {
-            if (event.event.extendedProps.enitityType == "ticket") {
+            if (event.event.extendedProps.entityType == "ticket") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : appUrl + '/api/tickets',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         editFrom: DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                         editTo: DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                     }
                 });
-            } else if (event.event.extendedProps.enitityType == "event") {
+            } else if (event.event.extendedProps.entityType == "event") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : appUrl + '/api/calendar',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         dateFrom: event.event.startStr,
                         dateTo: event.event.endStr
                     }
@@ -355,24 +356,24 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
             }
         },
         eventResize: function (event) {
-            if (event.event.extendedProps.enitityType == "ticket") {
+            if (event.event.extendedProps.entityType == "ticket") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : appUrl + '/api/tickets',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         editFrom: DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
                         editTo: DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
                         timeTo: DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                     }
                 })
-            } else if (event.event.extendedProps.enitityType == "event") {
+            } else if (event.event.extendedProps.entityType == "event") {
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : appUrl + '/api/calendar',
                     data : {
-                        id: event.event.extendedProps.enitityId,
+                        id: event.event.extendedProps.entityId,
                         dateFrom: event.event.startStr,
                         dateTo: event.event.endStr
                     }
@@ -430,7 +431,7 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
                 id: currentTicket.attr("data-val"),
                 title: currentTicket.find(".titleContainer strong").text(),
                 color: 'var(--accent2)',
-                enitityType: "ticket",
+                entityType: "ticket",
                 url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
             });
 
@@ -452,15 +453,15 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
                 new ThirdPartyDraggable(tickets, {
                     itemSelector: '.ticketBox',
                     eventDragMinDistance: 10,
-                    eventData: function (eventEl) {
+                    eventData: function (eventElement) {
                         return {
-                            id: jQuery(eventEl).attr("data-val"),
-                            title: jQuery(eventEl).find(".titleContainer strong").text(),
+                            id: jQuery(eventElement).attr("data-val"),
+                            title: jQuery(eventElement).find(".titleContainer strong").text(),
                             borderColor: 'var(--accent2)',
-                            enitityType: "ticket",
+                            entityType: "ticket",
                             dateContext: "edit",
                             duration: '01:00',
-                            url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
+                            url: '#/tickets/showTicket/' + jQuery(eventElement).attr("data-val"),
                         };
                     }
                 });
@@ -491,7 +492,7 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
                     id: currentTicket.attr("data-val"),
                     title: currentTicket.find(".titleContainer strong").text(),
                     borderColor: 'var(--accent2)',
-                    enitityType: "ticket",
+                    entityType: "ticket",
                     url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
                 });
 
@@ -510,14 +511,14 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
             new ThirdPartyDraggable(tickets, {
                 eventDragMinDistance: 10,
                 itemSelector: '.ticketBox',
-                eventData: function (eventEl) {
+                eventData: function (eventElement) {
                     return {
-                        id: jQuery(eventEl).attr("data-val"),
-                        title: jQuery(eventEl).find(".titleContainer strong").text(),
+                        id: jQuery(eventElement).attr("data-val"),
+                        title: jQuery(eventElement).find(".titleContainer strong").text(),
                         color: 'var(--accent2)',
-                        enitityType: "ticket",
+                        entityType: "ticket",
                         duration: '01:00',
-                        url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
+                        url: '#/tickets/showTicket/' + jQuery(eventElement).attr("data-val"),
                     };
                 }
             });
@@ -527,7 +528,7 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
 
     });
 
-    calendar.setOption('locale', i18n.__("language.code"));
+    calendar.setOption('locale', leantime.i18n.__("language.code"));
     calendar.render();
 
     jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
@@ -560,10 +561,10 @@ var initWidgetCalendar = function (element, initialView, eventSources) {
         });
     });
 
-    return calendarEl;
+    return calendarElement;
 }
 
-export default {
+export const calendarController = {
     initShowMyCalendar: initShowMyCalendar,
     initTicketsCalendar: initTicketsCalendar,
     initEventDatepickers: initEventDatepickers,

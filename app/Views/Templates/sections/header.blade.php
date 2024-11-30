@@ -22,15 +22,13 @@
 
 @dispatchEvent('afterLinkTags')
 
+<script>window.leantime = window.leantime || {};</script>
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
-<script src="{!! BASE_URL !!}/dist/js/manifest.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/vendor.js"></script>
-<script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
-
-<script src="{!! BASE_URL !!}/dist/js/compiled-editor-component.{!! $version !!}.min.js"></script>
-
-
+<!-- Core Dependencies -->
+<script src="@mix('js/manifest.js')"></script>
+<script src="@mix('js/vendor.js')"></script>
+<script src="@mix('js/app.js')"></script>
 
 @dispatchEvent('afterMainScriptTag')
 

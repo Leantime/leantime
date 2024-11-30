@@ -1,5 +1,5 @@
 import jQuery from 'jquery';
-import { initSimpleEditor } from 'js/app/core/editors.module';
+import { initSimpleEditor } from 'js/app/components/editors.module';
 
 export const enableCommenterForms = function () {
     jQuery(".commentBox").show();

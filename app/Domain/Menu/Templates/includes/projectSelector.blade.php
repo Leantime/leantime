@@ -18,4 +18,14 @@
 
    <i class="fa fa-caret-down" aria-hidden="true"></i>
 </a>
-@include('menu::includes.projectSelectorDropdown', [])
+<div class="dropdown-menu projectselector" id="mainProjectSelector">
+    @include('menu::includes.projectSelectorDropdown', [])
+</div>
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
+    });
+</script>

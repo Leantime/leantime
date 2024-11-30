@@ -2,10 +2,11 @@ import Chart from 'chart.js/auto';
 import jQuery from 'jquery';
 import i18n from 'i18n';
 import { theme } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { updateDueDates } from 'domain/Tickets/Js/ticketsRepository';
 import moment from 'moment';
 import commentsController from '../../Comments/Js/commentsController';
+import {DateTime} from "luxon";
 
 export const chartColors = {
     red: 'rgb(201,48,44)',
@@ -20,8 +21,8 @@ export const chartColors = {
 let _progressChart = '';
 
 export const prepareHiddenDueDate = function () {
-    var thisFriday = moment().startOf('week').add(5, 'days');
-    jQuery("#dateToFinish").val(thisFriday.format("YYYY-MM-DD"));
+    var thisFriday = DateTime.now().startOf('week').plus({days: 5});
+    jQuery("#dateToFinish").val(thisFriday.toFormat("YYYY-MM-DD"));
 };
 
 export const initProgressChart = function (chartId, complete, incomplete ) {
