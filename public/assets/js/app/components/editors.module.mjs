@@ -1,6 +1,54 @@
 import { appUrl, theme, colorScheme, version } from '../core/instance-info.module.mjs';
-import i18n from 'i18n';
 import jQuery from 'jquery';
+
+
+/* Import TinyMCE */
+import tinymce from 'tinymce';
+
+import 'tinymce/jquery.tinymce.js';
+
+/* Default icons are required for TinyMCE 5.3 or above */
+import 'tinymce/icons/default/index.js';
+
+/* A theme is also required */
+import 'tinymce/themes/silver/index.js';
+
+/* Import the skin */
+import 'tinymce/skins/ui/oxide/skin.css';
+
+/* Import plugins */
+import 'tinymce/plugins/autolink/index.js';
+import 'tinymce/plugins/link/index.js';
+import 'tinymce/plugins/textcolor/index.js';
+import 'tinymce/plugins/image/index.js';
+import 'tinymce/plugins/imagetools/index.js';
+import 'tinymce/plugins/lists/index.js';
+import 'tinymce/plugins/save/index.js';
+import 'tinymce/plugins/autosave/index.js';
+import 'tinymce/plugins/media/index.js';
+import 'tinymce/plugins/searchreplace/index.js';
+import 'tinymce/plugins/paste/index.js';
+import 'tinymce/plugins/directionality/index.js';
+import 'tinymce/plugins/fullscreen/index.js';
+import 'tinymce/plugins/noneditable/index.js';
+import 'tinymce/plugins/visualchars/index.js';
+import 'tinymce/plugins/emoticons/index.js';
+import 'tinymce/plugins/emoticons/js/emojis.js';
+import 'tinymce/plugins/advlist/index.js';
+import 'tinymce/plugins/autoresize/index.js';
+import 'tinymce/plugins/codesample/index.js';
+import 'tinymce/plugins/textpattern/index.js';
+
+import "js/libs/tinymce-plugins/checklist/index.js"
+import "js/libs/tinymce-plugins/shortlink/index.js"
+import "js/libs/tinymce-plugins/table/plugin.js"
+import "js/libs/tinymce-plugins/bettertable/index.js"
+import "js/libs/tinymce-plugins/collapsibleheaders/index.js"
+import "js/libs/tinymce-plugins/embed/index.js"
+import "js/libs/tinymce-plugins/slashcommands/slashcommands.js"
+import "js/libs/tinymce-plugins/mention/plugin.js"
+import "js/libs/tinymce-plugins/advancedTemplate/plugin.js"
+
 
 const markDownTextPatterns = [
     {start: '*', end: '*', format: 'italic'},
@@ -156,7 +204,7 @@ export const editorSetup = function(editor, callback) {
 
         //&& !editor.plugins.autosave.hasDraft()
         if (editor.getContent() === '' ) {
-            editor.setContent("<p class='tinyPlaceholder'>" + i18n.__('placeholder.type_slash') + "</p>");
+            editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
         }
     });
 
@@ -385,8 +433,10 @@ export const initNotesEditor = function (callback, specificId) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const editors = {
     initSimpleEditor: initSimpleEditor,
     initComplexEditor: initComplexEditor,
     initNotesEditor: initNotesEditor
 };
+
+export default editors;

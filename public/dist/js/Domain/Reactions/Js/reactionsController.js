@@ -20,7 +20,7 @@ return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push(
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   addReactions: () => (/* binding */ addReactions),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   reactionsController: () => (/* binding */ reactionsController),
 /* harmony export */   removeReaction: () => (/* binding */ removeReaction)
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
@@ -56,10 +56,10 @@ var removeReaction = function removeReaction(module, moduleId, reaction, clb) {
     clb();
   });
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+var reactionsController = {
   addReactions: addReactions,
   removeReaction: removeReaction
-});
+};
 
 /***/ }),
 

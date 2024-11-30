@@ -9,19 +9,19 @@
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(self, () => {
-return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push([["/js/Domain/Widgets/Js/Widgetcontroller"],{
+return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push([["/js/Domain/Widgets/Js/widgetController"],{
 
-/***/ "./app/Domain/Widgets/Js/Widgetcontroller.js":
+/***/ "./app/Domain/Widgets/Js/widgetController.js":
 /*!***************************************************!*\
-  !*** ./app/Domain/Widgets/Js/Widgetcontroller.js ***!
+  !*** ./app/Domain/Widgets/Js/widgetController.js ***!
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   initGrid: () => (/* binding */ initGrid),
-/* harmony export */   resizeWidget: () => (/* binding */ resizeWidget)
+/* harmony export */   resizeWidget: () => (/* binding */ resizeWidget),
+/* harmony export */   widgetController: () => (/* binding */ widgetController)
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
@@ -226,13 +226,13 @@ var buildWidget = function buildWidget(widget) {
 };
 
 // Make public what you want to have public, everything else is private
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+var widgetController = {
   resizeWidget: resizeWidget,
   removeWidget: removeWidget,
   saveGrid: saveGrid,
   initGrid: initGrid,
   toggleWidgetVisibility: toggleWidgetVisibility
-});
+};
 
 /***/ }),
 
@@ -6043,7 +6043,7 @@ var version = jquery__WEBPACK_IMPORTED_MODULE_0__('meta[name=leantime-version]')
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ __webpack_require__.O(0, ["js/vendor"], () => (__webpack_exec__("./app/Domain/Widgets/Js/Widgetcontroller.js")));
+/******/ __webpack_require__.O(0, ["js/vendor"], () => (__webpack_exec__("./app/Domain/Widgets/Js/widgetController.js")));
 /******/ var __webpack_exports__ = __webpack_require__.O();
 /******/ return __webpack_exports__;
 /******/ }

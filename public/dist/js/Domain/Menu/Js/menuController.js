@@ -19,9 +19,9 @@ return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push(
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   initLeftMenuHamburgerButton: () => (/* binding */ initLeftMenuHamburgerButton),
 /* harmony export */   initProjectSelector: () => (/* binding */ initProjectSelector),
+/* harmony export */   menuController: () => (/* binding */ menuController),
 /* harmony export */   toggleProjectDropDownList: () => (/* binding */ toggleProjectDropDownList),
 /* harmony export */   toggleSubmenu: () => (/* binding */ toggleSubmenu),
 /* harmony export */   updateGroupDropdownSetting: () => (/* binding */ updateGroupDropdownSetting)
@@ -158,13 +158,13 @@ var updateGroupDropdownSetting = function updateGroupDropdownSetting(ID, state, 
 };
 
 // Make public what you want to have public, everything else is private
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+var menuController = {
   toggleSubmenu: toggleSubmenu,
   initProjectSelector: initProjectSelector,
   initLeftMenuHamburgerButton: initLeftMenuHamburgerButton,
   updateGroupDropdownSetting: updateGroupDropdownSetting,
   toggleProjectDropDownList: toggleProjectDropDownList
-});
+};
 
 /***/ }),
 

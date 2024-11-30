@@ -1,12 +1,14 @@
-import { componentRegistry } from '../components/componentManager/ComponentRegistry.mjs';
+import { componentRegistry } from '../componentManager/ComponentRegistry.mjs';
 import {loadComponentsForPage} from "./componentLoader.mjs";
 import modals from "../components/modals.module.mjs";
+import onDocumentReady from "./on-document-ready.module.mjs";
 
 export function initializeCore() {
 
     try {
         // Set up global event listeners
         setupGlobalEventListeners();
+        onDocumentReady();
         loadComponentsForPage(document, 'default');
 
         console.log('Core initialization complete');

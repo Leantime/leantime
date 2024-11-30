@@ -23,7 +23,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   addCommentTimesheetContent: () => (/* binding */ addCommentTimesheetContent),
 /* harmony export */   colorTicketBoxes: () => (/* binding */ colorTicketBoxes),
 /* harmony export */   countTickets: () => (/* binding */ countTickets),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   initAsyncInputChange: () => (/* binding */ initAsyncInputChange),
 /* harmony export */   initDueDateTimePickers: () => (/* binding */ initDueDateTimePickers),
 /* harmony export */   initEffortDropdown: () => (/* binding */ initEffortDropdown),
@@ -48,6 +47,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initUserDropdown: () => (/* binding */ initUserDropdown),
 /* harmony export */   loadTicketToContainer: () => (/* binding */ loadTicketToContainer),
 /* harmony export */   setUpKanbanColumns: () => (/* binding */ setUpKanbanColumns),
+/* harmony export */   ticketsController: () => (/* binding */ ticketsController),
 /* harmony export */   toggleFilterBar: () => (/* binding */ toggleFilterBar),
 /* harmony export */   updatePlannedHours: () => (/* binding */ updatePlannedHours),
 /* harmony export */   updateRemainingHours: () => (/* binding */ updateRemainingHours)
@@ -1279,7 +1279,7 @@ var addCommentTimesheetContent = function addCommentTimesheetContent(commentId, 
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('li a[href*="timesheet"]').click();
   jquery__WEBPACK_IMPORTED_MODULE_0___default()("#timesheet #description").val(content);
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+var ticketsController = {
   toggleFilterBar: toggleFilterBar,
   initGanttChart: initGanttChart,
   updateRemainingHours: updateRemainingHours,
@@ -1309,7 +1309,7 @@ var addCommentTimesheetContent = function addCommentTimesheetContent(commentId, 
   initTicketSearchUrlBuilder: initTicketSearchUrlBuilder,
   initSprintDates: initSprintDates,
   initSimpleColorPicker: initSimpleColorPicker
-});
+};
 
 /***/ }),
 

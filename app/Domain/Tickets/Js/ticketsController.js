@@ -1616,7 +1616,7 @@ export const addCommentTimesheetContent = function (commentId, taskId) {
     jQuery("#timesheet #description").val(content);
 };
 
-export default {
+export const ticketsController = {
     toggleFilterBar: toggleFilterBar,
     initGanttChart: initGanttChart,
     updateRemainingHours: updateRemainingHours,

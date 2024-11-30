@@ -53,12 +53,14 @@
     @dispatchEvent('afterMenuClose')
 
 
-    @once
-        @push('scripts')
-            <script>
-                jQuery(document).ready(function() {
-                    leantime.menuController.initLeftMenuHamburgerButton();
-                });
-            </script>
-        @endpush
-    @endonce
+@once
+    @push('scripts')
+        <script type="module">
+            import "@mix('/js/Domain/Menu/Js/menuController.js')"
+
+            jQuery(document).ready(function() {
+                menuController.initLeftMenuHamburgerButton();
+            });
+        </script>
+    @endpush
+@endonce

@@ -1,8 +1,8 @@
-import { componentRegistry } from '../components/componentManager/ComponentRegistry.mjs';
-import { selectManager } from '../components/componentManager/SelectManager.mjs';
-import { editorManager } from '../components/componentManager/EditorManager.mjs';
-import { datepickerManager } from '../components/componentManager/DatepickerManager.mjs';
-import { modalManager } from '../components/componentManager/ModalManager.mjs';
+import { componentRegistry } from '../componentManager/ComponentRegistry.mjs';
+import { selectManager } from '../componentManager/SelectManager.mjs';
+import { editorManager } from '../componentManager/EditorManager.mjs';
+import { datepickerManager } from '../componentManager/DatepickerManager.mjs';
+import { modalManager } from '../componentManager/ModalManager.mjs';
 
 document.addEventListener('DOMContentLoaded', function() {
     componentRegistry.register('select', selectManager);

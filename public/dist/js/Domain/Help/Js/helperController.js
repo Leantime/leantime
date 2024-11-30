@@ -1,14 +1,14 @@
 "use strict";
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("window.leantime.i18n"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(["window.leantime.i18n"], factory);
+		define([], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("window.leantime.i18n")) : factory(root["window.leantime.i18n"]);
+		var a = factory();
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(self, (__WEBPACK_EXTERNAL_MODULE_i18n__) => {
+})(self, () => {
 return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push([["/js/Domain/Help/Js/helperController"],{
 
 /***/ "./app/Domain/Help/Js/helperController.js":
@@ -19,8 +19,8 @@ return (self["webpackChunkleantime"] = self["webpackChunkleantime"] || []).push(
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   firstLoginModal: () => (/* binding */ firstLoginModal),
+/* harmony export */   helperController: () => (/* binding */ helperController),
 /* harmony export */   hideAndKeepHidden: () => (/* binding */ hideAndKeepHidden),
 /* harmony export */   showHelperModal: () => (/* binding */ showHelperModal),
 /* harmony export */   startKanbanTour: () => (/* binding */ startKanbanTour),
@@ -28,13 +28,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! i18n */ "i18n");
-/* harmony import */ var i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! js/app/core/instance-info.module */ "./public/assets/js/app/core/instance-info.module.mjs");
-/* harmony import */ var js_app_support_replaceSVGColors_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! js/app/support/replaceSVGColors.module */ "./public/assets/js/app/support/replaceSVGColors.module.mjs");
-/* harmony import */ var _helperRepository__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./helperRepository */ "./app/Domain/Help/Js/helperRepository.js");
-/* harmony import */ var shepherd_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! shepherd.js */ "./node_modules/shepherd.js/dist/js/shepherd.esm.js");
-
+/* harmony import */ var js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! js/app/core/instance-info.module */ "./public/assets/js/app/core/instance-info.module.mjs");
+/* harmony import */ var js_app_support_replaceSVGColors_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! js/app/support/replaceSVGColors.module */ "./public/assets/js/app/support/replaceSVGColors.module.mjs");
+/* harmony import */ var _helperRepository__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helperRepository */ "./app/Domain/Help/Js/helperRepository.js");
+/* harmony import */ var shepherd_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! shepherd.js */ "./node_modules/shepherd.js/dist/js/shepherd.esm.js");
 
 
 
@@ -44,7 +41,7 @@ __webpack_require__.r(__webpack_exports__);
 //Functions
 var showHelperModal = function showHelperModal(module, minW, minH) {
   jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).ready(function () {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default().nmManual(js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + "/help/showOnboardingDialog?module=" + module, {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().nmManual(js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_1__.appUrl + "/help/showOnboardingDialog?module=" + module, {
       sizes: {
         minW: minW || 200,
         minH: minH || 500
@@ -53,7 +50,7 @@ var showHelperModal = function showHelperModal(module, minW, minH) {
       autoSizable: true,
       callbacks: {
         beforeShowCont: function beforeShowCont() {
-          (0,js_app_support_replaceSVGColors_module__WEBPACK_IMPORTED_MODULE_3__["default"])();
+          (0,js_app_support_replaceSVGColors_module__WEBPACK_IMPORTED_MODULE_2__["default"])();
         }
       }
     });
@@ -62,12 +59,12 @@ var showHelperModal = function showHelperModal(module, minW, minH) {
 
 //Functions
 var hideAndKeepHidden = function hideAndKeepHidden(module) {
-  (0,_helperRepository__WEBPACK_IMPORTED_MODULE_4__.updateUserModalSettings)(module);
+  (0,_helperRepository__WEBPACK_IMPORTED_MODULE_3__.updateUserModalSettings)(module);
   jquery__WEBPACK_IMPORTED_MODULE_0___default().nmTop().close();
 };
 var startProjectDashboardTour = function startProjectDashboardTour() {
-  (0,_helperRepository__WEBPACK_IMPORTED_MODULE_4__.updateUserModalSettings)("projectDashboard");
-  var tour = new shepherd_js__WEBPACK_IMPORTED_MODULE_5__["default"].Tour({
+  (0,_helperRepository__WEBPACK_IMPORTED_MODULE_3__.updateUserModalSettings)("projectDashboard");
+  var tour = new shepherd_js__WEBPACK_IMPORTED_MODULE_4__["default"].Tour({
     useModalOverlay: true,
     defaults: {
       classes: 'shepherd-theme-arrows',
@@ -87,11 +84,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.cancel"),
+      text: leantime.i18n.__("tour.cancel"),
       classes: 'shepherd-button-secondary',
       action: tour.cancel
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -107,11 +104,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -127,11 +124,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -147,11 +144,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -167,11 +164,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -187,11 +184,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     modalOverlayOpeningPadding: 10,
     scrollTo: true,
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -199,7 +196,7 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
     title: "🎉 Congratulations",
     text: "Follow the steps in the project checklist to fill in the rest of the project. If you want to go through this process again you can click on 'What's on this page' under your profile menu.",
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.close"),
+      text: leantime.i18n.__("tour.close"),
       action: tour.cancel
     }],
     scrollTo: true,
@@ -221,17 +218,17 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
   tour.addStep(
       'Your projects',
       {
-          title: i18n.__("tour.project_progress"),
+          title: leantime.i18n.__("tour.project_progress"),
           text: "These are the projects currently assigned to you. You can click on the headlines to get to those project quickly." ,
           attachTo: { element: '#projectProgressContainer', on: 'left' },
           buttons: [
               {
-                  text: i18n.__("tour.back"),
+                  text: leantime.i18n.__("tour.back"),
                   classes: 'shepherd-button-secondary',
                   action: tour.back
           },
               {
-                  text: i18n.__("tour.next"),
+                  text: leantime.i18n.__("tour.next"),
                   action: tour.next
           }
           ]
@@ -240,18 +237,18 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
    tour.addStep(
       'Your Todos',
       {
-          title: i18n.__("tour.your_todos"),
-          text: i18n.__("tour.your_todos_text"),
+          title: leantime.i18n.__("tour.your_todos"),
+          text: leantime.i18n.__("tour.your_todos_text"),
           attachTo: { element: '#yourToDoContainer', on: 'top' },
           advanceOn: '.headmenu click',
           buttons: [
               {
-                  text: i18n.__("tour.back"),
+                  text: leantime.i18n.__("tour.back"),
                   classes: 'shepherd-button-secondary',
                   action: tour.back
           },
               {
-                  text: i18n.__("tour.next"),
+                  text: leantime.i18n.__("tour.next"),
                   action: tour.next
           }
           ]
@@ -260,11 +257,11 @@ var startProjectDashboardTour = function startProjectDashboardTour() {
    tour.addStep(
       'Your Todos',
       {
-          title: i18n.__("tour.congratulations"),
-          text: i18n.__("tour.congratulations_dashboard_text"),
+          title: leantime.i18n.__("tour.congratulations"),
+          text: leantime.i18n.__("tour.congratulations_dashboard_text"),
           buttons:[
           {
-              text:i18n.__("tour.close"),
+              text:leantime.i18n.__("tour.close"),
               action:tour.cancel
           },
           {
@@ -286,7 +283,7 @@ var startKanbanTour = function startKanbanTour() {
   if (jquery__WEBPACK_IMPORTED_MODULE_0___default().nmTop()) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default().nmTop().close();
   }
-  var tour = new shepherd_js__WEBPACK_IMPORTED_MODULE_5__["default"].Tour({
+  var tour = new shepherd_js__WEBPACK_IMPORTED_MODULE_4__["default"].Tour({
     defaults: {
       classes: 'shepherd-theme-arrows',
       showCancelLink: true,
@@ -294,8 +291,8 @@ var startKanbanTour = function startKanbanTour() {
     }
   });
   tour.addStep('Left Nav', {
-    title: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.kanban"),
-    text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.kanban_text"),
+    title: leantime.i18n.__("tour.kanban"),
+    text: leantime.i18n.__("tour.kanban_text"),
     attachTo: '.column right',
     advanceOn: '.headmenu click',
     buttons: [{
@@ -308,24 +305,24 @@ var startKanbanTour = function startKanbanTour() {
     }]
   });
   tour.addStep('Drag & Drop', {
-    title: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.drag_drop"),
-    text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.drag_drop_text"),
+    title: leantime.i18n.__("tour.drag_drop"),
+    text: leantime.i18n.__("tour.drag_drop_text"),
     attachTo: {
       element: '.quickAddLink',
       on: 'right'
     },
     advanceOn: '.ticketBox click',
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
   tour.addStep('Change Views', {
-    title: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.change_views"),
+    title: leantime.i18n.__("tour.change_views"),
     text: "You can visualize your To-Dos in different ways. With these tabs you can switch between Kanban, Table, Timeline and Calendar views.",
     attachTo: {
       element: '.maincontentinner.tabs ul li',
@@ -333,11 +330,11 @@ var startKanbanTour = function startKanbanTour() {
     },
     advanceOn: '.ticketBox click',
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
@@ -347,25 +344,25 @@ var startKanbanTour = function startKanbanTour() {
     attachTo: '.filterWrapper bottom',
     advanceOn: '.ticketBox click',
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.back"),
+      text: leantime.i18n.__("tour.back"),
       classes: 'shepherd-button-secondary',
       action: tour.back
     }, {
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.next"),
+      text: leantime.i18n.__("tour.next"),
       action: tour.next
     }]
   });
   tour.addStep('Your Todos', {
-    title: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.congratulations"),
-    text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.congratulations_kanban_text"),
+    title: leantime.i18n.__("tour.congratulations"),
+    text: leantime.i18n.__("tour.congratulations_kanban_text"),
     buttons: [{
-      text: i18n__WEBPACK_IMPORTED_MODULE_1___default().__("tour.close"),
+      text: leantime.i18n.__("tour.close"),
       action: tour.complete
     }],
     advanceOn: '.headmenu click'
   });
   tour.on('complete', function () {
-    (0,_helperRepository__WEBPACK_IMPORTED_MODULE_4__.stopTour)();
+    (0,_helperRepository__WEBPACK_IMPORTED_MODULE_3__.stopTour)();
   });
   tour.start();
 };
@@ -392,13 +389,13 @@ var firstLoginModal = function firstLoginModal() {
 };
 
 // Make public what you want to have public, everything else is private
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+var helperController = {
   showHelperModal: showHelperModal,
   hideAndKeepHidden: hideAndKeepHidden,
   startProjectDashboardTour: startProjectDashboardTour,
   startKanbanTour: startKanbanTour,
   firstLoginModal: firstLoginModal
-});
+};
 
 /***/ }),
 
@@ -5068,16 +5065,6 @@ if (isServerSide) {
 
 //# sourceMappingURL=shepherd.esm.js.map
 
-
-/***/ }),
-
-/***/ "i18n":
-/*!***************************************!*\
-  !*** external "window.leantime.i18n" ***!
-  \***************************************/
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_i18n__;
 
 /***/ }),
 

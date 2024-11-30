@@ -1,6 +1,6 @@
 import { BaseComponentManager } from './BaseComponentManager.mjs';
 import tinymce from 'tinymce';
-import editors, {initSimpleEditor} from "../editors.module.mjs";
+import editors, {initSimpleEditor} from "../components/editors.module.mjs";
 
 class EditorManager extends BaseComponentManager {
     findElements(parentElement) {

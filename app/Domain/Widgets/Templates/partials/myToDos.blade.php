@@ -368,22 +368,26 @@
 
 
 
-<script type="text/javascript">
+<script type="module">
 
     @dispatchEvent('scripts.afterOpen');
+
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+    import "@mix('/js/Domain/Auth/Js/authController.js')"
+    import "@mix('/js/Domain/Dashboard/Js/dashboardController.js')"
 
     jQuery('.todaysDate').text(DateTime.now().toFormat('LLLL'));
 
     jQuery(document).ready(function(){
         tippy('[data-tippy-content]');
         @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
-            leantime.dashboardController.prepareHiddenDueDate();
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initStatusDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
+            dashboardController.prepareHiddenDueDate();
+            ticketsController.initEffortDropdown();
+            ticketsController.initMilestoneDropdown();
+            ticketsController.initStatusDropdown();
+            ticketsController.initDueDateTimePickers();
         @else
-            leantime.authController.makeInputReadonly(".maincontentinner");
+            authController.makeInputReadonly(".maincontentinner");
         @endif
 
     });

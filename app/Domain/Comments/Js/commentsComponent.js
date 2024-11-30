@@ -1,7 +1,7 @@
 import jQuery from 'jquery';
-import { initSimpleEditor } from 'js/app/components/editors.module';
+import * as editor from "@components/editors.module.mjs";
 
-export const enableCommenterForms = function () {
+const enableCommenterForms = function () {
     jQuery(".commentBox").show();
 
     //Hide reply comment boxes
@@ -18,7 +18,7 @@ export const enableCommenterForms = function () {
     jQuery(".commenterFields textarea").prop("disabled", false);
 };
 
-export const toggleCommentBoxes = function (parentId, formHash, commentId, editComment = false, isReply = false) {
+const toggleCommentBoxes = function (parentId, formHash, commentId, editComment = false, isReply = false) {
     console.log("commentsBoxes.js updated");
 
     resetForm(parentId, formHash);
@@ -57,7 +57,7 @@ export const toggleCommentBoxes = function (parentId, formHash, commentId, editC
 
     console.log(formHash, parentId, commentId, editComment, isReply);
     // Initialize the editor
-    initSimpleEditor();
+    editor.initSimpleEditor();
 
     // Show the comment box and remove the hidden class
     jQuery('#commentReplyBox-' + formHash + '-' + parentId).removeClass('hidden').show();
@@ -73,7 +73,7 @@ export const toggleCommentBoxes = function (parentId, formHash, commentId, editC
 };
 
 
-export const resetForm = function(id, formHash) {
+const resetForm = function(id, formHash) {
     jQuery('.mainToggler-'+formHash).show();
     jQuery('#comments-'+formHash+' .commentImage').show();
     jQuery('#comments-'+formHash+' .commentContent').show();
@@ -91,7 +91,7 @@ export const resetForm = function(id, formHash) {
 }
 
 // Make public what you want to have public, everything else is private
-export default {
+export const commentsComponent = {
     enableCommenterForms: enableCommenterForms,
     toggleCommentBoxes: toggleCommentBoxes,
     resetForm: resetForm,

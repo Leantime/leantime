@@ -155,7 +155,7 @@ export const updateGroupDropdownSetting = function (ID, state, prefix) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const menuController = {
     toggleSubmenu: toggleSubmenu,
     initProjectSelector: initProjectSelector,
     initLeftMenuHamburgerButton: initLeftMenuHamburgerButton,

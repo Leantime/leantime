@@ -1,4 +1,4 @@
-import { componentRegistry } from '../components/componentManager/ComponentRegistry.mjs';
+import { componentRegistry } from '../componentManager/ComponentRegistry.mjs';
 import { componentManifest, getPageComponents } from './componentConfig.mjs';
 import { handleLoadingError } from './errorHandler.mjs';
 

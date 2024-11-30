@@ -8,19 +8,8 @@ import { initializeCore } from './core/bootstrap';
 // Initialize core application
 document.addEventListener('DOMContentLoaded', async () => {
     await initializeCore();
-
-    // Load core components
-
 });
 
-// Handle dynamic module loading
-window.addEventListener('htmx:load', async (event) => {
-    const moduleRequests = event.detail.elt.querySelectorAll('[data-module]');
-    for (const element of moduleRequests) {
-        const [domain, module] = element.dataset.module.split('/');
-        await moduleLoader.load(`domain/${domain}/js/${module}`);
-    }
-});
 
 /*
 

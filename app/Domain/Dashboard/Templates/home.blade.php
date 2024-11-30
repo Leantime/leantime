@@ -36,16 +36,20 @@
     </div>
 </div>
 
-<script>
+<script type="module">
 
 @dispatchEvent('scripts.afterOpen')
 
+import "@mix('/js/Domain/Widgets/Js/widgetController.js')"
+import "@mix('/js/Domain/Help/Js/helperController.js')"
+
+
 jQuery(document).ready(function() {
 
-    leantime.widgetController.initGrid();
+    widgetController.initGrid();
 
     @if($completedOnboarding === false)
-        leantime.helperController.firstLoginModal();
+        helperController.firstLoginModal();
     @endif
 
     @php(session(["usersettings.modals.homeDashboardTour" => 1]));

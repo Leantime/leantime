@@ -26,14 +26,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var fullcalendar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fullcalendar */ "./node_modules/fullcalendar/index.js");
-/* harmony import */ var js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! js/app/core/instance-info.module */ "./public/assets/js/app/core/instance-info.module.mjs");
-/* harmony import */ var js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! js/app/components/dates/dateHelper.module */ "./public/assets/js/app/components/dates/dateHelper.module.mjs");
-/* harmony import */ var luxon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! luxon */ "./node_modules/luxon/src/luxon.js");
-/* harmony import */ var _fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fullcalendar/icalendar */ "./node_modules/@fullcalendar/icalendar/index.js");
-/* harmony import */ var _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fullcalendar/luxon3 */ "./node_modules/@fullcalendar/luxon3/index.js");
-/* provided dependency */ var htmx = __webpack_require__(/*! htmx.org */ "./node_modules/htmx.org/dist/htmx.esm.js");
+/* harmony import */ var htmx_org__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! htmx.org */ "./node_modules/htmx.org/dist/htmx.esm.js");
+/* harmony import */ var fullcalendar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! fullcalendar */ "./node_modules/fullcalendar/index.js");
+/* harmony import */ var js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! js/app/core/instance-info.module */ "./public/assets/js/app/core/instance-info.module.mjs");
+/* harmony import */ var js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! js/app/components/dates/dateHelper.module */ "./public/assets/js/app/components/dates/dateHelper.module.mjs");
+/* harmony import */ var luxon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! luxon */ "./node_modules/luxon/src/luxon.js");
+/* harmony import */ var _fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fullcalendar/icalendar */ "./node_modules/@fullcalendar/icalendar/index.js");
+/* harmony import */ var _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fullcalendar/luxon3 */ "./node_modules/@fullcalendar/luxon3/index.js");
 /** @format */
+
 
 
 
@@ -43,17 +44,17 @@ __webpack_require__.r(__webpack_exports__);
 
 var initShowMyCalendar = function initShowMyCalendar(element, eventSources, initialView) {
   var heightWindow = jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").height() - 210;
-  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_1__.Calendar(element, {
-    plugins: [_fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_5__["default"], _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_6__["default"]],
+  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_2__.Calendar(element, {
+    plugins: [_fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_6__["default"], _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_7__["default"]],
     timeZone: leantime.i18n.__("usersettings.timezone"),
     height: heightWindow,
     initialView: initialView,
     eventSources: eventSources,
     editable: true,
     headerToolbar: false,
-    dayHeaderFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "luxon"),
-    eventTimeFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("timeformat", "luxon"),
-    slotLabelFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("timeformat", "luxon"),
+    dayHeaderFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "luxon"),
+    eventTimeFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("timeformat", "luxon"),
+    slotLabelFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("timeformat", "luxon"),
     views: {
       timeGridDay: {},
       timeGridWeek: {},
@@ -150,7 +151,7 @@ var initShowMyCalendar = function initShowMyCalendar(element, eventSources, init
     calendar.changeView(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-select option:selected").val());
     jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
       type: 'PATCH',
-      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/submenu',
+      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/submenu',
       data: {
         submenu: "myCalendarView",
         state: jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-select option:selected").val()
@@ -160,17 +161,17 @@ var initShowMyCalendar = function initShowMyCalendar(element, eventSources, init
 };
 var initTicketsCalendar = function initTicketsCalendar(element, initialView, events) {
   var heightWindow = jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").height() - 190;
-  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_1__.Calendar(element, {
-    plugins: [_fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_6__["default"]],
+  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_2__.Calendar(element, {
+    plugins: [_fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_7__["default"]],
     timeZone: leantime.i18n.__("usersettings.timezone"),
     height: heightWindow,
     initialView: initialView,
     events: events,
     editable: true,
     headerToolbar: false,
-    dayHeaderFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "luxon"),
-    eventTimeFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("timeformat", "luxon"),
-    slotLabelFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("timeformat", "luxon"),
+    dayHeaderFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "luxon"),
+    eventTimeFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("timeformat", "luxon"),
+    slotLabelFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("timeformat", "luxon"),
     nowIndicator: true,
     bootstrapFontAwesome: {
       close: 'fa-times',
@@ -182,7 +183,7 @@ var initTicketsCalendar = function initTicketsCalendar(element, initialView, eve
     eventDrop: function eventDrop(event) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
         type: 'PATCH',
-        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/tickets',
+        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/tickets',
         data: {
           id: event.event.extendedProps.entityId,
           editFrom: event.event.startStr,
@@ -193,7 +194,7 @@ var initTicketsCalendar = function initTicketsCalendar(element, initialView, eve
     eventResize: function eventResize(event) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
         type: 'PATCH',
-        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/tickets',
+        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/tickets',
         data: {
           id: event.event.extendedProps.entityId,
           editFrom: event.event.startStr,
@@ -224,7 +225,7 @@ var initTicketsCalendar = function initTicketsCalendar(element, initialView, eve
     calendar.changeView(jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-select option:selected").val());
     jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
       type: 'PATCH',
-      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/submenu',
+      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/submenu',
       data: {
         submenu: "myProjectCalendarView",
         state: jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-select option:selected").val()
@@ -245,10 +246,10 @@ var initEventDatepickers = function initEventDatepickers() {
         }
       }
     });
-    var dateFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "jquery");
+    var dateFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "jquery");
     from = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#event_date_from").datepicker({
       numberOfMonths: 1,
-      dateFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "jquery"),
+      dateFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "jquery"),
       dayNames: leantime.i18n.__("language.dayNames").split(","),
       dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
       dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -268,7 +269,7 @@ var initEventDatepickers = function initEventDatepickers() {
       }
     }), to = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#event_date_to").datepicker({
       numberOfMonths: 1,
-      dateFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "jquery"),
+      dateFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "jquery"),
       dayNames: leantime.i18n.__("language.dayNames").split(","),
       dayNamesMin: leantime.i18n.__("language.dayNamesMin").split(","),
       dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -298,10 +299,10 @@ var initEventDatepickers = function initEventDatepickers() {
 };
 var initWidgetCalendar = function initWidgetCalendar(element, initialView, eventSources) {
   var calendarElement = document.querySelector(element);
-  var userDateFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "luxon");
-  var userTimeFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("timeformat", "luxon");
-  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_1__.Calendar(calendarElement, {
-    plugins: [_fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_5__["default"], _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_6__["default"]],
+  var userDateFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "luxon");
+  var userTimeFormat = (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("timeformat", "luxon");
+  var calendar = new fullcalendar__WEBPACK_IMPORTED_MODULE_2__.Calendar(calendarElement, {
+    plugins: [_fullcalendar_icalendar__WEBPACK_IMPORTED_MODULE_6__["default"], _fullcalendar_luxon3__WEBPACK_IMPORTED_MODULE_7__["default"]],
     timeZone: leantime.i18n.__("usersettings.timezone"),
     height: 'auto',
     initialView: initialView,
@@ -327,7 +328,7 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
         listDayFormat: {
           weekday: 'long'
         },
-        listDaySideFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_3__.getFormatFromSettings)("dateformat", "luxon")
+        listDaySideFormat: (0,js_app_components_dates_dateHelper_module__WEBPACK_IMPORTED_MODULE_4__.getFormatFromSettings)("dateformat", "luxon")
       }
     },
     droppable: true,
@@ -346,19 +347,19 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
       if (event.event.extendedProps.entityType == "ticket") {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
           type: 'PATCH',
-          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/tickets',
+          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/tickets',
           data: {
             id: event.event.extendedProps.entityId,
-            editFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-            timeFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-            editTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-            timeTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
+            editFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+            timeFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+            editTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+            timeTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
           }
         });
       } else if (event.event.extendedProps.entityType == "event") {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
           type: 'PATCH',
-          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/calendar',
+          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/calendar',
           data: {
             id: event.event.extendedProps.entityId,
             dateFrom: event.event.startStr,
@@ -371,19 +372,19 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
       if (event.event.extendedProps.entityType == "ticket") {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
           type: 'PATCH',
-          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/tickets',
+          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/tickets',
           data: {
             id: event.event.extendedProps.entityId,
-            editFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-            timeFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-            editTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-            timeTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
+            editFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+            timeFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+            editTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+            timeTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
           }
         });
       } else if (event.event.extendedProps.entityType == "event") {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
           type: 'PATCH',
-          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/calendar',
+          url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/calendar',
           data: {
             id: event.event.extendedProps.entityId,
             dateFrom: event.event.startStr,
@@ -399,13 +400,13 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
     eventReceive: function eventReceive(event) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
         type: 'PATCH',
-        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/tickets',
+        url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/tickets',
         data: {
           id: event.event.id,
-          editFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
-          timeFrom: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
-          editTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
-          timeTo: luxon__WEBPACK_IMPORTED_MODULE_4__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
+          editFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+          timeFrom: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+          editTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+          timeTo: luxon__WEBPACK_IMPORTED_MODULE_5__.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat)
         }
       });
     },
@@ -450,7 +451,7 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
     });
     var tickets = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#yourToDoContainer")[0];
     if (tickets) {
-      new ThirdPartyDraggable(tickets, {
+      new fullcalendar__WEBPACK_IMPORTED_MODULE_2__.ThirdPartyDraggable(tickets, {
         itemSelector: '.ticketBox',
         eventDragMinDistance: 10,
         eventData: function eventData(eventElement) {
@@ -468,9 +469,9 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
     }
     calendar.scrollToTime(Date.now());
   });
-  htmx.onLoad(function (content) {
+  htmx_org__WEBPACK_IMPORTED_MODULE_1__["default"].onLoad(function (content) {
     // look up all elements with the tomselect class on it within the element
-    var allSelects = htmx.findAll(content, "#yourToDoContainer");
+    var allSelects = htmx_org__WEBPACK_IMPORTED_MODULE_1__["default"].findAll(content, "#yourToDoContainer");
     var select;
     for (var i = 0; i < allSelects.length; i++) {
       var tickets = allSelects[i];
@@ -506,7 +507,7 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
           }
         });
       });
-      new ThirdPartyDraggable(tickets, {
+      new fullcalendar__WEBPACK_IMPORTED_MODULE_2__.ThirdPartyDraggable(tickets, {
         eventDragMinDistance: 10,
         itemSelector: '.ticketBox',
         eventData: function eventData(eventElement) {
@@ -544,7 +545,7 @@ var initWidgetCalendar = function initWidgetCalendar(element, initialView, event
     jquery__WEBPACK_IMPORTED_MODULE_0___default()(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
     jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
       type: 'PATCH',
-      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_2__.appUrl + '/api/submenu',
+      url: js_app_core_instance_info_module__WEBPACK_IMPORTED_MODULE_3__.appUrl + '/api/submenu',
       data: {
         submenu: "dashboardCalendarView",
         state: jquery__WEBPACK_IMPORTED_MODULE_0___default()(".minCalendar .calendarViewSelect option:selected").val()

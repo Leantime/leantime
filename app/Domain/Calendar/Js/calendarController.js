@@ -1,6 +1,7 @@
 /** @format */
 import jQuery from 'jquery';
-import { Calendar } from 'fullcalendar';
+import htmx from 'htmx.org';
+import {Calendar, ThirdPartyDraggable} from 'fullcalendar';
 import { appUrl } from 'js/app/core/instance-info.module';
 import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { DateTime } from 'luxon';

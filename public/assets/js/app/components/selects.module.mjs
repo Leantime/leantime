@@ -1,6 +1,6 @@
 import TomSelect from "tom-select/dist/esm/tom-select.complete.js";
 import { appUrl } from "../core/instance-info.module.mjs";
-import { selectManager } from "./componentManager/SelectManager.mjs";
+import { selectManager } from "../componentManager/SelectManager.mjs";
 
 function getOptions(selectElement) {
   const items = [];
@@ -108,7 +108,9 @@ export const initTags = function (
   );
 };
 
-export default {
+export const selects = {
   initSelect: initSelect,
   initTags: initTags,
 };
+
+export default selects;

@@ -1,5 +1,5 @@
-import { appUrl } from "../../core/instance-info.module.mjs";
-import {getFormatFromSettings} from "./dateHelper.module.mjs";
+import { appUrl } from "../core/instance-info.module.mjs";
+import {getFormatFromSettings} from "./dates/dateHelper.module.mjs";
 import jQuery from 'jquery';
 import { DateTime } from 'luxon';
 import flatpickr from 'flatpickr';
@@ -159,9 +159,11 @@ export const toggleTime = function (datePickerElement, toggleElement) {
 }
 
     // Make public what you want to have public, everything else is private
-export default {
+export const datePickers = {
     initDateRangePicker:initDateRangePicker,
     initDatePicker: initDatePicker,
     initDateTimePicker: initDateTimePicker,
     toggleTime: toggleTime
 };
+
+export default datePickers;

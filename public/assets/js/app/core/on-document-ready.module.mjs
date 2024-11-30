@@ -1,5 +1,8 @@
+import replaceSVGColors from "../support/replaceSVGColors.module.mjs";
+
 export default function () {
-    window.leantime.replaceSVGColors();
+
+    replaceSVGColors();
 
     jQuery(".confetti").click(confetti.start);
 
