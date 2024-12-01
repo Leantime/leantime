@@ -7,7 +7,9 @@ class ComponentRegistry {
 
     async register(componentType, manager) {
         if (this.managers.has(componentType)) {
-            console.warn(`Manager for ${componentType} already registered`);
+            //This is okay and expected. Each htmx response may try to register its
+            //component registry if a new one was added
+            console.info(`Manager for ${componentType} already registered`);
             return;
         }
 

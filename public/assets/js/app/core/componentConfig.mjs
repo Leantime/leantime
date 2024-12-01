@@ -8,10 +8,6 @@ export const componentManifest = {
         module: () => import('../componentManager/EditorManager.mjs'),
         dependencies: ['tinymce']
     },
-    'modal': {
-        module: () => import('../componentManager/ModalManager.mjs'),
-        dependencies: []
-    },
     'select': {
         module: () => import('../componentManager/SelectManager.mjs'),
         dependencies: ['select']
@@ -20,9 +16,9 @@ export const componentManifest = {
 
 // Page component configurations
 export const pageConfigs = {
-    'login': ['modal'],
+    'login': [],
     'dashboard': ['datepicker', 'editor', 'select'],
-    'default': ['modal', 'select']
+    'default': ['select']
 };
 
 export const getPageComponents = (pageName) => {

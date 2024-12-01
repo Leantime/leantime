@@ -149,14 +149,6 @@ a.barmenu:hover {
     flex-direction: column;
 }
 
-.headmenu .project-selector {
-    padding:0;
-    min-height:10px;
-    display: flex;
-    flex-direction: column;
-    height: 60px;
-}
-
 
 /*
 .bigProjectSelector {
@@ -184,7 +176,7 @@ a.barmenu:hover {
 .bigProjectSelector .projectAvatar span.fa {
     margin-right:0;
 }
-*/
+
 
 .bigProjectSelector:hover,
 .bigProjectSelector:active,
@@ -199,7 +191,7 @@ a.barmenu:hover {
     border-radius: var(--box-radius);
     min-width:415px;
 }
-
+*/
 .headmenu .projectselector  li.intro {
     color:var(--primary-font-color);
     padding:10px 15px 20px 15px;

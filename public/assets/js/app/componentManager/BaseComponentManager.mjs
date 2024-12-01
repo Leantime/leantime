@@ -1,20 +1,40 @@
 import htmx from "htmx.org";
 
 export class BaseComponentManager {
+
     constructor() {
         this.instances = new Map();
         this.setupHtmxListeners();
     }
 
+    isValidElement(element) {
+        // Check for null/undefined
+        if (!element) {
+            return false;
+        }
+        // Check for empty string or whitespace-only string
+        if (typeof element === 'string' && element.trim() === '') {
+            return false;
+        }
+        // Verify it's a DOM Element
+        return element instanceof Element;
+    }
+
     setupHtmxListeners() {
         htmx.on('htmx:beforeCleanupElement', (evt) => {
-            this.cleanupElements(evt.detail.element);
+            const element = evt.detail.elt;
+            if (!this.isValidElement(element)) {
+                console.debug(`${this.constructor.name}: Skipping cleanup for invalid element:`, element);
+                return;
+            }
+            this.cleanupElements(element);
         });
     }
 
     cleanupElements(parentElement) {
-        if (!parentElement) {
-            console.warn('Attempted to cleanup undefined parent element');
+        if (!this.isValidElement(parentElement)) {
+            console.warn(`${this.constructor.name}: Attempted to cleanup invalid parent element:`,
+                parentElement);
             return;
         }
 

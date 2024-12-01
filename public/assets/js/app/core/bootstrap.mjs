@@ -6,10 +6,14 @@ import onDocumentReady from "./on-document-ready.module.mjs";
 export function initializeCore() {
 
     try {
-        // Set up global event listeners
-        setupGlobalEventListeners();
+
         onDocumentReady();
+
+        //Pageload compent loader
         loadComponentsForPage(document, 'default');
+
+        // Set up global event listeners for component loader
+        setupGlobalEventListeners();
 
         console.log('Core initialization complete');
 
