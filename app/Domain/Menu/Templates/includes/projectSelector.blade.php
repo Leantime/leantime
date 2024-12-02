@@ -20,7 +20,7 @@
         <i class="fa fa-caret-down" aria-hidden="true"></i>
     </x-slot:labelText>
     <x-slot:card-content>
-        <div class="projectselector" id="mainProjectSelector">
+        <div class="projectselector w-96 h-fit" id="mainProjectSelector">
             @include('menu::includes.projectSelectorDropdown', [])
         </div>
     </x-slot:card-content>

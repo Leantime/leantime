@@ -18,7 +18,7 @@ export const componentManifest = {
 export const pageConfigs = {
     'login': [],
     'dashboard': ['datepicker', 'editor', 'select'],
-    'default': ['select']
+    'default': []
 };
 
 export const getPageComponents = (pageName) => {

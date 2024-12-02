@@ -130,48 +130,46 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 
 <script type="module">
 
-    import "@mix('js/Domain/Calendar/Js/calendarController.js')";
+    leantime.moduleLoader.load("@mix('js/Domain/Calendar/Js/calendarController')").then(function(module){
 
-    jQuery(document).ready(function() {
+            var eventSources = [];
 
-        var eventSources = [];
+            var events = {events: [
+                        <?php foreach ($tpl->get('calendar') as $calendar) : ?>
+                    {
+                        title: <?php echo json_encode($calendar['title']); ?>,
 
-        var events = {events: [
-                    <?php foreach ($tpl->get('calendar') as $calendar) : ?>
-                {
-                    title: <?php echo json_encode($calendar['title']); ?>,
+                        start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
+                            <?php if (isset($calendar['dateTo'])) : ?>
+                        end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
+                        <?php endif; ?>
+                            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
+                        allDay: true,
+                        <?php else : ?>
+                        allDay: false,
+                        <?php endif; ?>
+                        entityId: <?php echo $calendar['id'] ?>,
+                            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
+                        url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
+                        backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+                        borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+                        entityType: "event",
+                        <?php else : ?>
+                        url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
+                        backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+                        borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+                        entityType: "ticket",
+                        <?php endif; ?>
+                    },
+                    <?php endforeach; ?>
+                ]};
 
-                    start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
-                        <?php if (isset($calendar['dateTo'])) : ?>
-                    end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
-                    <?php endif; ?>
-                        <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
-                    allDay: true,
-                    <?php else : ?>
-                    allDay: false,
-                    <?php endif; ?>
-                    entityId: <?php echo $calendar['id'] ?>,
-                        <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-                    url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
-                    backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-                    borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
-                    entityType: "event",
-                    <?php else : ?>
-                    url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
-                    backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-                    borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
-                    entityType: "ticket",
-                    <?php endif; ?>
-                },
-                <?php endforeach; ?>
-            ]};
+            eventSources.push(events);
 
-        eventSources.push(events);
+            <?php
+            $externalCalendars = $tpl->get("externalCalendars");
 
-        <?php
-        $externalCalendars = $tpl->get("externalCalendars");
-
-        foreach ($externalCalendars as $externalCalendar) { ?>
+            foreach ($externalCalendars as $externalCalendar) { ?>
             eventSources.push(
                 {
                     url: '{{ BASE_URL }}/calendar/externalCal/<?=$externalCalendar['id'] ?>',
@@ -181,16 +179,14 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                 }
             );
 
-        <?php } ?>
-
+            <?php } ?>
 
             calendarController.initShowMyCalendar(
                 document.getElementById('calendar'),
                 eventSources,
                 '<?=session("usersettings.submenuToggle.myCalendarView") ?>'
             );
-        });
-
+    });
 
 </script>
 

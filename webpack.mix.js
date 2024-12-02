@@ -36,7 +36,6 @@ const CONFIG = {
 mix.setResourceRoot(CONFIG.resourceRoot)
    .setPublicPath(CONFIG.publicPath)
    .options({ runtimeChunkPath: 'js' })
-   .version();
 
 
 // Source Maps Configuration
@@ -52,7 +51,15 @@ mix.js('./public/assets/js/app/app.js', `${CONFIG.publicPath}/js/app.js`)
 
 // Build global components
 mix.js(
-    glb.src('./public/assets/js/app/components/*.mjs'),
+    glb.src('./public/assets/js/app/components/*'),
+    glb.out({
+        baseMap: './public/assets/js/app/components',
+        outMap: './public/dist/js/components'
+    })
+);
+
+mix.alias(
+    glb.src('./public/assets/js/app/components/*'),
     glb.out({
         baseMap: './public/assets/js/app/components',
         outMap: './public/dist/js/components'
@@ -61,7 +68,7 @@ mix.js(
 
 // Build domain components
 mix.js(
-    glb.src('./app/Domain/**/Js/*.js'),
+    glb.src('./app/Domain/**/Js/*'),
     glb.out({
         baseMap: './app',
         outMap: './public/dist/js'
@@ -75,10 +82,16 @@ const webpackConfig = {
         filename: '[name].js',
         chunkFilename: 'js/chunks/[name].js',
         publicPath: '/dist/',
+        //libraryTarget: 'umd',
+        //umdNamedDefine: true, // optional
         clean: true,
-        libraryTarget: 'umd',
-        umdNamedDefine: false, // optional
+        library: {
+            type: 'umd',
+        },
     },
+    // experiments: {
+    //     outputModule: true
+    // },
     module: {
         rules: [
             {
@@ -93,7 +106,7 @@ const webpackConfig = {
     },
     optimization: {
         usedExports: false,
-        runtimeChunk: 'single',
+        chunkIds: 'named',
         splitChunks: {
             chunks: 'async',
             cacheGroups: {
@@ -131,9 +144,6 @@ const webpackConfig = {
         new webpack.DefinePlugin({
             i18n: 'window.leantime.i18n',
         }),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-        }),
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
             $: 'jquery',
@@ -149,10 +159,11 @@ const webpackConfig = {
             'css': path.resolve(__dirname, 'public/assets/css'),
             'fonts': path.resolve(__dirname, 'public/assets/fonts'),
             'domain': path.resolve(__dirname, 'app/Domain'),
+            'dist': path.resolve(__dirname, 'public/dist/js'),
             '@domain': path.resolve(__dirname, 'public/dist/js/Domain'),
             '@components': path.resolve(__dirname, 'public/assets/js/app/components'),
         },
-        extensions: [".*",".mjs",".js",".json",".*"],
+        extensions: ['.mjs', '.js'],
     },
     stats: {
         children: false
@@ -180,6 +191,11 @@ mix.combine('./public/assets/js/libs/prism/prism.js', `${CONFIG.publicPath}/js/c
 mix
 .babelConfig({
     sourceType: 'unambiguous',
-    plugins: ['@babel/plugin-syntax-dynamic-import'],
+    presets: [
+        ['@babel/preset-modules']
+    ],
+    plugins: [
+        '@babel/plugin-proposal-unicode-property-regex'
+    ]
 })
 .version();

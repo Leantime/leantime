@@ -1,9 +1,9 @@
-import './core/globalLibraries';
+import './core/globalLibraries.js';
+import { addToGlobalScope } from './core/leantimeScope.mjs';
+import { moduleLoader } from './core/moduleLoader.mjs';
+import { initializeCore } from './core/bootstrap.mjs';
 
-import moduleLoader from './core/moduleLoader';
-window.moduleLoader = moduleLoader;
-
-import { initializeCore } from './core/bootstrap';
+addToGlobalScope({moduleLoader: moduleLoader});
 
 // Initialize core application
 document.addEventListener('DOMContentLoaded', async () => {

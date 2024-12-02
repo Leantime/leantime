@@ -38,23 +38,19 @@
 
 <script type="module">
 
-@dispatchEvent('scripts.afterOpen')
+    leantime.moduleLoader.load("@mix('/js/Domain/Widgets/Js/widgetController')").then(()=>
+        widgetController.initGrid()
+    );
 
-import "@mix('/js/Domain/Widgets/Js/widgetController.js')"
-import "@mix('/js/Domain/Help/Js/helperController.js')"
-
-
-jQuery(document).ready(function() {
-
-    widgetController.initGrid();
 
     @if($completedOnboarding === false)
-        helperController.firstLoginModal();
+        leantime.moduleLoader.load("@mix('/js/Domain/Help/Js/helperController')").then(()=>
+            helperController.firstLoginModal()
+        );
     @endif
 
     @php(session(["usersettings.modals.homeDashboardTour" => 1]));
 
-});
 </script>
 
 @endsection

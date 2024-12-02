@@ -13,7 +13,7 @@ export async function loadComponentsForPage(container = document, pageName = 'de
 
     // Add any additional components found in the DOM
     container.querySelectorAll('[data-component]').forEach(element => {
-        console.log(element.dataset.component);
+        console.debug(element.dataset.component);
         components.add(element.dataset.component);
     });
 

@@ -571,3 +571,5 @@ export const calendarController = {
     initEventDatepickers: initEventDatepickers,
     initWidgetCalendar: initWidgetCalendar
 };
+
+export default calendarController;

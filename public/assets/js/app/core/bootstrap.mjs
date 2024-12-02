@@ -15,7 +15,7 @@ export function initializeCore() {
         // Set up global event listeners for component loader
         setupGlobalEventListeners();
 
-        console.log('Core initialization complete');
+        console.debug('Core initialization complete');
 
     } catch (error) {
 

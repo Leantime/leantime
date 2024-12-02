@@ -13,8 +13,6 @@ import 'tinymce/icons/default/index.js';
 /* A theme is also required */
 import 'tinymce/themes/silver/index.js';
 
-/* Import the skin */
-import 'tinymce/skins/ui/oxide/skin.css';
 
 /* Import plugins */
 import 'tinymce/plugins/autolink/index.js';
