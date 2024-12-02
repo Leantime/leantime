@@ -1,9 +1,8 @@
-import jQuery from 'jquery';
-import tippy from 'tippy.js';
-import confetti from 'canvas-confetti';
+import replaceSVGColors from "../support/replaceSVGColors.module.mjs";
 
 export default function () {
-    window.leantime.replaceSVGColors();
+
+    replaceSVGColors();
 
     jQuery(".confetti").click(confetti.start);
 

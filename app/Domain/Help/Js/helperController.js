@@ -1,7 +1,6 @@
 import jQuery from 'jquery';
-import i18n from 'i18n';
 import { appUrl } from 'js/app/core/instance-info.module';
-import replaceSVGColors from 'js/app/core/replaceSVGColors.module';
+import replaceSVGColors from 'js/app/support/replaceSVGColors.module';
 import { updateUserModalSettings, stopTour } from './helperRepository';
 import Shepherd from 'shepherd.js';
 
@@ -59,12 +58,12 @@ export const startProjectDashboardTour = function () {
         scrollTo:true,
         buttons: [
             {
-                text: i18n.__("tour.cancel"),
+                text: leantime.i18n.__("tour.cancel"),
                 classes: 'shepherd-button-secondary',
                 action: tour.cancel
             },
             {
-                text: i18n.__("tour.next"),
+                text: leantime.i18n.__("tour.next"),
                 action: tour.next
             }
         ]
@@ -81,12 +80,12 @@ export const startProjectDashboardTour = function () {
             scrollTo:true,
             buttons: [
             {
-                text: i18n.__("tour.back"),
+                text: leantime.i18n.__("tour.back"),
                 classes: 'shepherd-button-secondary',
                 action: tour.back
             },
             {
-                text: i18n.__("tour.next"),
+                text: leantime.i18n.__("tour.next"),
                 action: tour.next
             }
             ]
@@ -105,12 +104,12 @@ export const startProjectDashboardTour = function () {
             scrollTo:true,
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -128,12 +127,12 @@ export const startProjectDashboardTour = function () {
             scrollTo:true,
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
                 },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
                 }
             ]
@@ -151,12 +150,12 @@ export const startProjectDashboardTour = function () {
             scrollTo:true,
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
                 },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
                 }
             ]
@@ -174,12 +173,12 @@ export const startProjectDashboardTour = function () {
             scrollTo:true,
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
                 },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
                 }
             ]
@@ -192,7 +191,7 @@ export const startProjectDashboardTour = function () {
             text: "Follow the steps in the project checklist to fill in the rest of the project. If you want to go through this process again you can click on 'What's on this page' under your profile menu.",
             buttons:[
                 {
-                    text:i18n.__("tour.close"),
+                    text:leantime.i18n.__("tour.close"),
                     action: tour.cancel
                 }
             ],
@@ -214,17 +213,17 @@ export const startProjectDashboardTour = function () {
     tour.addStep(
         'Your projects',
         {
-            title: i18n.__("tour.project_progress"),
+            title: leantime.i18n.__("tour.project_progress"),
             text: "These are the projects currently assigned to you. You can click on the headlines to get to those project quickly." ,
             attachTo: { element: '#projectProgressContainer', on: 'left' },
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -234,18 +233,18 @@ export const startProjectDashboardTour = function () {
     tour.addStep(
         'Your Todos',
         {
-            title: i18n.__("tour.your_todos"),
-            text: i18n.__("tour.your_todos_text"),
+            title: leantime.i18n.__("tour.your_todos"),
+            text: leantime.i18n.__("tour.your_todos_text"),
             attachTo: { element: '#yourToDoContainer', on: 'top' },
             advanceOn: '.headmenu click',
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -255,11 +254,11 @@ export const startProjectDashboardTour = function () {
     tour.addStep(
         'Your Todos',
         {
-            title: i18n.__("tour.congratulations"),
-            text: i18n.__("tour.congratulations_dashboard_text"),
+            title: leantime.i18n.__("tour.congratulations"),
+            text: leantime.i18n.__("tour.congratulations_dashboard_text"),
             buttons:[
             {
-                text:i18n.__("tour.close"),
+                text:leantime.i18n.__("tour.close"),
                 action:tour.cancel
             },
             {
@@ -298,8 +297,8 @@ export const startKanbanTour = function () {
     tour.addStep(
         'Left Nav',
         {
-            title: i18n.__("tour.kanban"),
-            text: i18n.__("tour.kanban_text"),
+            title: leantime.i18n.__("tour.kanban"),
+            text: leantime.i18n.__("tour.kanban_text"),
             attachTo: '.column right',
             advanceOn: '.headmenu click',
             buttons: [
@@ -318,18 +317,18 @@ export const startKanbanTour = function () {
     tour.addStep(
         'Drag & Drop',
         {
-            title: i18n.__("tour.drag_drop"),
-            text: i18n.__("tour.drag_drop_text"),
+            title: leantime.i18n.__("tour.drag_drop"),
+            text: leantime.i18n.__("tour.drag_drop_text"),
             attachTo: { element: '.quickAddLink', on: 'right' },
             advanceOn: '.ticketBox click',
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -339,18 +338,18 @@ export const startKanbanTour = function () {
     tour.addStep(
         'Change Views',
         {
-            title: i18n.__("tour.change_views"),
+            title: leantime.i18n.__("tour.change_views"),
             text: "You can visualize your To-Dos in different ways. With these tabs you can switch between Kanban, Table, Timeline and Calendar views.",
             attachTo: { element: '.maincontentinner.tabs ul li', on: 'bottom' },
             advanceOn: '.ticketBox click',
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -366,12 +365,12 @@ export const startKanbanTour = function () {
             advanceOn: '.ticketBox click',
             buttons: [
                 {
-                    text: i18n.__("tour.back"),
+                    text: leantime.i18n.__("tour.back"),
                     classes: 'shepherd-button-secondary',
                     action: tour.back
             },
                 {
-                    text: i18n.__("tour.next"),
+                    text: leantime.i18n.__("tour.next"),
                     action: tour.next
             }
             ]
@@ -381,11 +380,11 @@ export const startKanbanTour = function () {
     tour.addStep(
         'Your Todos',
         {
-            title: i18n.__("tour.congratulations"),
-            text: i18n.__("tour.congratulations_kanban_text"),
+            title: leantime.i18n.__("tour.congratulations"),
+            text: leantime.i18n.__("tour.congratulations_kanban_text"),
             buttons:[
             {
-                text:i18n.__("tour.close"),
+                text:leantime.i18n.__("tour.close"),
                 action:tour.complete
             }
             ],
@@ -432,7 +431,7 @@ export const firstLoginModal = function () {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const helperController = {
     showHelperModal: showHelperModal,
     hideAndKeepHidden: hideAndKeepHidden,
     startProjectDashboardTour: startProjectDashboardTour,

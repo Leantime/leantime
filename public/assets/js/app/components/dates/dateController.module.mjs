@@ -1,5 +1,4 @@
 import jQuery from 'jquery';
-import i18n from 'i18n';
 import { getFormatFromSettings } from './dateHelper.module.mjs';
 import { DateTime } from 'luxon';
 import flatpickr from 'flatpickr';
@@ -7,18 +6,18 @@ import flatpickr from 'flatpickr';
 export const getBaseDatePickerConfig = (callback) => ({
     numberOfMonths: 1,
     dateFormat: getFormatFromSettings("dateformat", "jquery"),
-    dayNames: i18n.__("language.dayNames").split(","),
-    dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-    dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-    monthNames: i18n.__("language.monthNames").split(","),
-    currentText: i18n.__("language.currentText"),
-    closeText: i18n.__("language.closeText"),
-    buttonText: i18n.__("language.buttonText"),
-    isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-    nextText: i18n.__("language.nextText"),
-    prevText: i18n.__("language.prevText"),
-    weekHeader: i18n.__("language.weekHeader"),
-    firstDay: i18n.__("language.firstDayOfWeek"),
+    dayNames: leantime.i18n.__("language.dayNames").split(","),
+    dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+    dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+    monthNames: leantime.i18n.__("language.monthNames").split(","),
+    currentText: leantime.i18n.__("language.currentText"),
+    closeText: leantime.i18n.__("language.closeText"),
+    buttonText: leantime.i18n.__("language.buttonText"),
+    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+    nextText: leantime.i18n.__("language.nextText"),
+    prevText: leantime.i18n.__("language.prevText"),
+    weekHeader: leantime.i18n.__("language.weekHeader"),
+    firstDay: leantime.i18n.__("language.firstDayOfWeek"),
     onSelect: callback
 });
 
@@ -94,19 +93,19 @@ let dateTimePickerConfig = {
     shorthandCurrentMonth: true,
     "locale": {
         weekdays: {
-            shorthand: i18n.__("language.dayNamesMin").split(","),
-            longhand: i18n.__("language.dayNames").split(","),
+            shorthand: leantime.i18n.__("language.dayNamesMin").split(","),
+            longhand: leantime.i18n.__("language.dayNames").split(","),
         },
         months: {
-            shorthand: i18n.__("language.monthNamesShort").split(","),
-            longhand: i18n.__("language.monthNames").split(","),
+            shorthand: leantime.i18n.__("language.monthNamesShort").split(","),
+            longhand: leantime.i18n.__("language.monthNames").split(","),
         },
-        firstDayOfWeek: i18n.__("language.firstDayOfWeek"),
-        weekAbbreviation: i18n.__("language.weekHeader"),
-        rangeSeparator: " " + i18n.__("language.until") + " ",
-        scrollTitle: i18n.__("language.scroll_to_change"),
-        toggleTitle: i18n.__("language.buttonText"),
-        time_24hr: !i18n.__("language.timeformat").includes("A"),
+        firstDayOfWeek: leantime.i18n.__("language.firstDayOfWeek"),
+        weekAbbreviation: leantime.i18n.__("language.weekHeader"),
+        rangeSeparator: " " + leantime.i18n.__("language.until") + " ",
+        scrollTitle: leantime.i18n.__("language.scroll_to_change"),
+        toggleTitle: leantime.i18n.__("language.buttonText"),
+        time_24hr: !leantime.i18n.__("language.timeformat").includes("A"),
     },
     onChange: function(selectedDates, dateStr, instance) {
         console.log(instance);
@@ -116,7 +115,7 @@ let dateTimePickerConfig = {
         let formattedDate = DateTime.fromJSDate(instance.latestSelectedDateObj).toFormat(userDateFormat);
 
         if(formattedDate == "Invalid DateTime")
-            formattedDate = i18n.__("language.anytime");
+            formattedDate = leantime.i18n.__("language.anytime");
 
         jQuery(instance.element).parents(".date-dropdown").find(".dateField").text(formattedDate);
 

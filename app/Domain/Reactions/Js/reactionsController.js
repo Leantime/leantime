@@ -32,7 +32,7 @@ export const removeReaction = function (module, moduleId, reaction, clb) {
     });
 };
 
-export default {
+export const reactionsController= {
     addReactions: addReactions,
     removeReaction: removeReaction
 };

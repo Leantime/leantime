@@ -30,7 +30,7 @@
                         @isset($ticket->id)
                             <li>
                                 <a href="javascript:void(0);"
-                                    onclick="leantime.ticketsController.addCommentTimesheetContent({{ $comment['id'] }}, {{ $ticket->id }})">
+                                    onclick="ticketsController.addCommentTimesheetContent({{ $comment['id'] }}, {{ $ticket->id }})">
                                     {{ __('links.add_to_timesheets') }}
                                 </a>
                             </li>
@@ -57,7 +57,7 @@
 
             @if ($login::userIsAtLeast($roles::$commenter))
                 <a href="javascript:void(0);"
-                    onclick="leantime.commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}')">
+                    onclick="commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}')">
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
                 </a>
             @endif

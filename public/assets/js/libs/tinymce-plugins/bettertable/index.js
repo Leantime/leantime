@@ -1,8 +1,7 @@
-(function() {
+tinymce.PluginManager.add('bettertable', function (editor) {
 
-    function register(editor) {
 
-        editor.on("BeforeExecCommand", (e) => {
+    editor.on("BeforeExecCommand", (e) => {
             // override select all: we want to only select the code inside the
             // code block.
 
@@ -14,57 +13,56 @@
             }
         });
 
-        let lastSelectedRow = null;
-        let lastSelectedCell = null;
-        editor.on("SelectionChange", (e) => {
-            // to highlight selected row & cell, we need to add data-mce-active
-            // attribute to both the row and the cell. CSS styling is done based
-            // on that.
+    let lastSelectedRow = null;
+    let lastSelectedCell = null;
+    editor.on("SelectionChange", (e) => {
+        // to highlight selected row & cell, we need to add data-mce-active
+        // attribute to both the row and the cell. CSS styling is done based
+        // on that.
 
-            if (lastSelectedRow) delete lastSelectedRow.dataset.mceActive;
-            if (lastSelectedCell) delete lastSelectedCell.dataset.mceActive;
+        if (lastSelectedRow) delete lastSelectedRow.dataset.mceActive;
+        if (lastSelectedCell) delete lastSelectedCell.dataset.mceActive;
 
+        const node = editor.selection.getNode();
+        const selectedRow = getTableRow(node);
+        if (selectedRow) {
+            selectedRow.dataset.mceActive = "1";
+
+            const selectedCell = getTableCell(node);
+            if (selectedCell) selectedCell.dataset.mceActive = "1";
+            lastSelectedCell = selectedCell;
+        }
+
+        lastSelectedRow = selectedRow;
+    });
+
+    editor.on("keyup", (e) => {
+        // if table is selected, pressing tab should move the focus to the
+        // first cell.
+
+        if (e.key === "Tab") {
             const node = editor.selection.getNode();
-            const selectedRow = getTableRow(node);
-            if (selectedRow) {
-                selectedRow.dataset.mceActive = "1";
+            if (
+                !node.classList.contains("table-container") &&
+                node.tagName !== "TABLE"
+            )
+                return;
 
-                const selectedCell = getTableCell(node);
-                if (selectedCell) selectedCell.dataset.mceActive = "1";
-                lastSelectedCell = selectedCell;
-            }
+            const cell = node.querySelector("th,td");
+            if (!cell) return;
+            e.preventDefault();
+            editor.selection.setCursorLocation(cell, 0);
+        }
+    });
 
-            lastSelectedRow = selectedRow;
-        });
-
-        editor.on("keyup", (e) => {
-            // if table is selected, pressing tab should move the focus to the
-            // first cell.
-
-            if (e.key === "Tab") {
-                const node = editor.selection.getNode();
-                if (
-                    !node.classList.contains("table-container") &&
-                    node.tagName !== "TABLE"
-                )
-                    return;
-
-                const cell = node.querySelector("th,td");
-                if (!cell) return;
-                e.preventDefault();
-                editor.selection.setCursorLocation(cell, 0);
-            }
-        });
-
-        editor.on('ExecCommand', function (e) {
-            //console.log(e.command);
-            if (e.command === 'mceInsertTable') {
-                const node = editor.selection.getNode();
-                const element = node.getElementsByTagName("table");
-                //element.DataTable();
-            }
-        });
-    }
+    editor.on('ExecCommand', function (e) {
+        //console.log(e.command);
+        if (e.command === 'mceInsertTable') {
+            const node = editor.selection.getNode();
+            const element = node.getElementsByTagName("table");
+            //element.DataTable();
+        }
+    });
 
     function getTableCell(node) {
         const cell = node.closest("td,th");
@@ -76,9 +74,6 @@
         return cell;
     }
 
-    (function init() {
-        addPluginToPluginManager("bettertable", register);
-    })();
 
-})();
+});
 

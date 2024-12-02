@@ -1,11 +1,12 @@
-(function() {
+tinymce.PluginManager.add('collapsibleheaders', function (editor) {
 
 
-const COLLAPSED_KEY = "c";
+
+    const COLLAPSED_KEY = "c";
 const HIDDEN_KEY = "h";
 const collapsibleTags = { H1: 1, HR: 2, H2: 3, H3: 4, H4: 5, H5: 6, H6: 7 };
 
-function register(editor) {
+
     let shouldCancelNextTouchEndEvent = false;
     editor.on(
         "mousedown touchstart",
@@ -38,7 +39,10 @@ function register(editor) {
                     target.classList.add(COLLAPSED_KEY);
                 }
                 collapseElement(target);
-                notifyEditorChange(editor, "headingCollapsed");
+
+                setTimeout(() => {
+                    editor.fire("input", { inputType: "headingCollapsed", data: "" });
+                }, 0);
             }
         },
         {
@@ -68,10 +72,13 @@ function register(editor) {
         if (target && target.classList.contains(COLLAPSED_KEY)) {
             target.classList.remove(COLLAPSED_KEY);
             collapseElement(target);
-            notifyEditorChange(editor, "headingCollapsed");
+
+            setTimeout(() => {
+                editor.fire("input", { inputType: "headingCollapsed", data: "" });
+            }, 0);
         }
     });
-}
+
 
 function toggleElementVisibility(element, toggleState) {
     if (!toggleState) element.classList.remove(HIDDEN_KEY);
@@ -105,8 +112,5 @@ function collapseElement(target) {
     }
 }
 
-(function init() {
-    addPluginToPluginManager("collapsibleheaders", register);
-})();
 
-})();
+});

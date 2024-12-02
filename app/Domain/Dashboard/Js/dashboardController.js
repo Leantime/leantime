@@ -2,10 +2,10 @@ import Chart from 'chart.js/auto';
 import jQuery from 'jquery';
 import i18n from 'i18n';
 import { theme } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { updateDueDates } from 'domain/Tickets/Js/ticketsRepository';
 import moment from 'moment';
-import commentsController from '../../Comments/Js/commentsController';
+import {DateTime} from "luxon";
 
 export const chartColors = {
     red: 'rgb(201,48,44)',
@@ -19,9 +19,9 @@ export const chartColors = {
 
 let _progressChart = '';
 
-export const prepareHiddenDueDate = function () {
-    var thisFriday = moment().startOf('week').add(5, 'days');
-    jQuery("#dateToFinish").val(thisFriday.format("YYYY-MM-DD"));
+const prepareHiddenDueDate = function () {
+    var thisFriday = DateTime.now().startOf('week').plus({days: 5});
+    jQuery("#dateToFinish").val(thisFriday.toFormat("YYYY-MM-DD"));
 };
 
 export const initProgressChart = function (chartId, complete, incomplete ) {
@@ -69,7 +69,7 @@ export const initProgressChart = function (chartId, complete, incomplete ) {
     _progressChart = new Chart(ctx, config);
 };
 
-export const initBurndown = function (labels, plannedData, actualData) {
+const initBurndown = function (labels, plannedData, actualData) {
 
     moment.locale(i18n.__("language.code"));
 
@@ -147,7 +147,7 @@ export const initBurndown = function (labels, plannedData, actualData) {
     };
 
     var ctx2 = document.getElementById('sprintBurndown').getContext('2d');
-    _burndownChart = new Chart(ctx2, config);
+    var _burndownChart = new Chart(ctx2, config);
 
     return _burndownChart;
 
@@ -169,7 +169,7 @@ export const initChartButtonClick = function (id, label, plannedData, actualData
 
 };
 
-export const initBacklogBurndown = function (labels, actualData) {
+const initBacklogBurndown = function (labels, actualData) {
     moment.locale(i18n.__("language.code"));
 
     var MONTHS = labels;
@@ -261,12 +261,12 @@ export const initBacklogBurndown = function (labels, actualData) {
     };
 
     var ctx2 = document.getElementById('backlogBurndown').getContext('2d');
-    _burndownChart = new Chart(ctx2, config);
+    var _burndownChart = new Chart(ctx2, config);
 
     return _burndownChart;
 };
 
-export const initBacklogChartButtonClick = function (id, actualData, label, chart) {
+const initBacklogChartButtonClick = function (id, actualData, label, chart) {
     jQuery("#" + id).click(
         function (event) {
             chart.data.datasets[0].data = actualData.done.data;
@@ -282,11 +282,11 @@ export const initBacklogChartButtonClick = function (id, actualData, label, char
     );
 };
 
-export const printCharts = function () {
+const printCharts = function () {
     console.log('printCharts');
 }
 
-export const initDueDateTimePickers = function () {
+const initDueDateTimePickers = function () {
     jQuery(document).ready(function () {
         jQuery(".duedates").datepicker(
             {
@@ -325,7 +325,7 @@ export const initDueDateTimePickers = function () {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const dashboardController = {
     chartColors: chartColors,
     initBurndown: initBurndown,
     initChartButtonClick: initChartButtonClick,
@@ -334,7 +334,5 @@ export default {
     initProgressChart:initProgressChart,
     prepareHiddenDueDate:prepareHiddenDueDate,
     initDueDateTimePickers:initDueDateTimePickers,
-    commentsController: commentsController,
     printCharts: printCharts
-
 };

@@ -64,6 +64,13 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             'isWild' => $isWild];
     }
 
+    public function add_event_listener(  $eventName,
+        string|callable|object $handler,
+        int $priority = 10
+    ): void {
+        $this->addEventListener($eventName, $handler, $priority);
+    }
+
     //Support laravel event listeners
     public function listen($events, $listener = null)
     {
@@ -197,6 +204,13 @@ class EventDispatcher extends \Illuminate\Events\Dispatcher implements Dispatche
             $this->filterRegistry[$filtername] = [];
         }
         $this->filterRegistry[$filtername][] = ['handler' => $handler, 'priority' => $priority];
+    }
+
+    public function add_filter_listener(  string $filtername,
+        string|callable|object $handler,
+        int $priority = 10
+    ): void {
+        $this->addFilterListener($filtername, $handler, $priority);
     }
 
     /**

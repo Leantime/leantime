@@ -73,51 +73,51 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                         <x-global::forms.button type="button" class="fc-next-button right" style="margin-right:5px;" content-role="secondary">
                             <span class="fc-icon fc-icon-chevron-right"></span>
                         </x-global::forms.button>
-                        
+
                         <x-global::forms.button type="button" class="fc-prev-button right" style="margin-right:5px;" content-role="secondary">
                             <span class="fc-icon fc-icon-chevron-left"></span>
                         </x-global::forms.button>
-                        
+
                         <x-global::forms.button type="button" class="fc-today-button right" style="margin-right:5px;" content-role="secondary">
                             today
                         </x-global::forms.button>
-                        
 
 
-                        <x-global::forms.select 
-                        id="my-select" 
-                        class="right" 
+
+                        <x-global::forms.select
+                        id="my-select"
+                        class="right"
                         style="margin-right:5px;"
                     >
-                        <x-global::forms.select.select-option 
-                            value="timeGridDay" 
+                        <x-global::forms.select.select-option
+                            value="timeGridDay"
                             :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay'"
                         >
                             Day
                         </x-global::forms.select.select-option>
-                    
-                        <x-global::forms.select.select-option 
-                            value="timeGridWeek" 
+
+                        <x-global::forms.select.select-option
+                            value="timeGridWeek"
                             :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek'"
                         >
                             Week
                         </x-global::forms.select.select-option>
-                    
-                        <x-global::forms.select.select-option 
-                            value="dayGridMonth" 
+
+                        <x-global::forms.select.select-option
+                            value="dayGridMonth"
                             :selected="session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth'"
                         >
                             Month
                         </x-global::forms.select.select-option>
-                    
-                        <x-global::forms.select.select-option 
-                            value="multiMonthYear" 
+
+                        <x-global::forms.select.select-option
+                            value="multiMonthYear"
                             :selected="session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear'"
                         >
                             Year
                         </x-global::forms.select.select-option>
                     </x-global::forms.select>
-                    
+
                     </div>
                 </div>
                 <div id="calendar"></div>
@@ -128,78 +128,92 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 
 </div>
 
+<script type="module">
 
-<script type='text/javascript'>
+    leantime.moduleLoader.load("@mix('js/Domain/Calendar/Js/calendarController')").then(function(module){
 
-    <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
+            var eventSources = [];
 
+            var events = {events: [
+                        <?php foreach ($tpl->get('calendar') as $calendar) : ?>
+                    {
+                        title: <?php echo json_encode($calendar['title']); ?>,
 
-    jQuery(document).ready(function() {
+                        start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
+                            <?php if (isset($calendar['dateTo'])) : ?>
+                        end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
+                        <?php endif; ?>
+                            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
+                        allDay: true,
+                        <?php else : ?>
+                        allDay: false,
+                        <?php endif; ?>
+                        entityId: <?php echo $calendar['id'] ?>,
+                            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
+                        url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
+                        backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+                        borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+                        entityType: "event",
+                        <?php else : ?>
+                        url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
+                        backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+                        borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
+                        entityType: "ticket",
+                        <?php endif; ?>
+                    },
+                    <?php endforeach; ?>
+                ]};
 
-        //leantime.calendarController.initCalendar(events);
-        leantime.calendarController.initExportModal();
+            eventSources.push(events);
 
+            <?php
+            $externalCalendars = $tpl->get("externalCalendars");
+
+            foreach ($externalCalendars as $externalCalendar) { ?>
+            eventSources.push(
+                {
+                    url: '{{ BASE_URL }}/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                    format: 'ics',
+                    color: '<?=$externalCalendar['colorClass'] ?>',
+                    editable: false,
+                }
+            );
+
+            <?php } ?>
+
+            calendarController.initShowMyCalendar(
+                document.getElementById('calendar'),
+                eventSources,
+                '<?=session("usersettings.submenuToggle.myCalendarView") ?>'
+            );
     });
-    var eventSources = [];
-
-    var events = {events: [
-        <?php foreach ($tpl->get('calendar') as $calendar) : ?>
-        {
-            title: <?php echo json_encode($calendar['title']); ?>,
-
-            start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
-            <?php if (isset($calendar['dateTo'])) : ?>
-            end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
-            <?php endif; ?>
-            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
-            allDay: true,
-            <?php else : ?>
-            allDay: false,
-            <?php endif; ?>
-            enitityId: <?php echo $calendar['id'] ?>,
-            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-            url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
-            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
-            enitityType: "event",
-            <?php else : ?>
-            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
-            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
-            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
-            enitityType: "ticket",
-            <?php endif; ?>
-        },
-        <?php endforeach; ?>
-    ]};
-
-    eventSources.push(events);
-
-    <?php
-    $externalCalendars = $tpl->get("externalCalendars");
-
-    foreach ($externalCalendars as $externalCalendar) { ?>
-        eventSources.push(
-            {
-                url: '{{ BASE_URL }}/calendar/externalCal/<?=$externalCalendar['id'] ?>',
-                format: 'ics',
-                color: '<?=$externalCalendar['colorClass'] ?>',
-                editable: false,
-            }
-        );
-
-    <?php } ?>
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        leantime.calendarController.initShowMyCalendar(
-            document.getElementById('calendar'),
-            eventSources,
-            '<?=session("usersettings.submenuToggle.myCalendarView") ?>',
-        );
-    });
-
-    <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>
+
+{{--<script type='text/javascript'>--}}
+
+{{--    <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>--}}
+
+
+{{--    jQuery(document).ready(function() {--}}
+
+{{--        //leantime.calendarController.initCalendar(events);--}}
+{{--        leantime.calendarController.initExportModal();--}}
+
+{{--    });--}}
+
+
+
+{{--    document.addEventListener('DOMContentLoaded', function() {--}}
+{{--        leantime.calendarController.initShowMyCalendar(--}}
+{{--            document.getElementById('calendar'),--}}
+{{--            eventSources,--}}
+{{--            '<?=session("usersettings.submenuToggle.myCalendarView") ?>',--}}
+{{--        );--}}
+{{--    });--}}
+
+{{--    <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>--}}
+
+{{--</script>--}}
 
 @endsection

@@ -58,8 +58,14 @@ class Mix
 
     public function __invoke(string $path, string $manifestDirectory = ''): string
     {
+
+        //Remove trailing slash
+
+
         $manifestDirectory = Str::start('/', $manifestDirectory ?: APP_ROOT.'/public/dist');
         $path = Str::start($path, '/');
+
+        $manifestDirectory = rtrim($manifestDirectory, '/');
 
         if (! isset($this->manifest[$manifestDirectory])) {
             throw new \Exception("Unable to locate Manifest in: {$manifestDirectory}.");
