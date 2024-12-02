@@ -122,3 +122,7 @@ config/.env
 /caddy
 frankenphp
 frankenphp-worker.php
+storage/event_cache.json
+config/_configuration.php
+.idea/codebuddy.xml
+.codebuddy/summary.md
