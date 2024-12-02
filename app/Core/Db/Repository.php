@@ -62,7 +62,7 @@ abstract class Repository
              */
             public function prepare(string $sql, array $args = []): void
             {
-                $sql = $this->caller_class::dispatchFilter(
+                $sql = $this->caller_class::dispatch_filter(
                     'sql',
                     $sql,
                     $this->getArgs(['prepareArgs' => $args]),
@@ -81,7 +81,7 @@ abstract class Repository
              */
             public function bindValue(string $needle, mixed $replace, int $type = PDO::PARAM_STR): void
             {
-                $replace = $this->caller_class::dispatchFilter(
+                $replace = $this->caller_class::dispatch_filter(
                     'binding.'.str_replace(':', '', $needle),
                     $replace,
                     $this->getArgs(),
@@ -166,6 +166,9 @@ abstract class Repository
      */
     public function patch(int $id, array $params): bool
     {
+
+        unset($params['act']);
+
         if ($this->entity == '') {
             report('Patch not implemented for this entity');
 

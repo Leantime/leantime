@@ -2,9 +2,11 @@
 
 namespace Leantime\Domain\Auth\Services;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
@@ -18,9 +20,9 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RobThree\Auth\TwoFactorAuth;
 
-class Auth
+class Auth implements Authenticatable
 {
-    use DispatchesEvents;
+    use DispatchesEvents, \Illuminate\Auth\Authenticatable;
 
     /**
      * @var int|null user id from DB
@@ -150,7 +152,8 @@ class Auth
 
         // Ensure the role is a valid role
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
-            report('Check for invalid role detected: '.$roleToCheck);
+
+            Log::info('Check for invalid role detected: '.$roleToCheck);
 
             return false;
         }
@@ -212,7 +215,8 @@ class Auth
                     if ($userId !== false) {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
-                        report('Ldap user creation failed.');
+
+                        Log::error('Ldap user creation failed.');
 
                         return false;
                     }
@@ -235,7 +239,8 @@ class Auth
 
                     return true;
                 } else {
-                    report('Could not retrieve user by email');
+
+                    Log::info('Could not retrieve user by email');
 
                     return false;
                 }
@@ -244,7 +249,7 @@ class Auth
             // Don't return false, to allow the standard login provider to check the db for contractors or clients not
             // in ldap
         } elseif ($this->config->useLdap === true && ! extension_loaded('ldap')) {
-            report("Can't use ldap. Extension not installed");
+            Log::error("Can't use ldap. Extension not installed");
         }
 
         // TODO: Single Sign On?
@@ -256,12 +261,12 @@ class Auth
         if ($user !== false && is_array($user)) {
             $this->setUserSession($user);
 
-            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return true;
         } else {
             $this->logFailedLogin($username);
-            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return false;
         }
@@ -272,7 +277,7 @@ class Auth
      *
      * @throws BindingResolutionException
      */
-    public function setUsersession(mixed $user, bool $isLdap = false)
+    public function setUserSession(mixed $user, bool $isLdap = false)
     {
         if (! $user || ! is_array($user)) {
             return false;
@@ -359,7 +364,7 @@ class Auth
             'projectsettings',
             'currentSubscriptions',
             'lastTicketView',
-            'lastFilterdTicketTableView',
+            'lastFilteredTicketTableView',
         ]);
 
         foreach ($sessionsToDestroy as $key) {
@@ -424,9 +429,8 @@ class Auth
                     return true;
                 }
             } elseif ($this->config->debug) {
-                report(
-                    'PW reset failed: maximum request count has been reached for user '.$userFromDB['id']
-                );
+
+                Log::warning('PW reset failed: maximum request count has been reached for user '.$userFromDB['id']);
             }
         }
 
@@ -454,7 +458,7 @@ class Auth
         $testKey = array_search($role, Roles::getRoles());
 
         if ($role == '' || $testKey === false) {
-            report('Check for invalid role detected: '.$role);
+            Log::warning('Check for invalid role detected: '.$role);
 
             return false;
         }
@@ -517,9 +521,9 @@ class Auth
 
     public function verify2FA(string $code): bool
     {
-        $tfa = new TwoFactorAuth('Leantime');
+        $twoFactorAuthentication = new TwoFactorAuth('Leantime');
 
-        return $tfa->verifyCode(session('userdata.twoFASecret'), $code);
+        return $twoFactorAuthentication->verifyCode(session('userdata.twoFASecret'), $code);
     }
 
     public function get2FAVerified(): mixed
@@ -541,6 +545,46 @@ class Auth
         $ip = $_SERVER['REMOTE_ADDR'];
         $msg = '['.$date.']['.$ip.'] Login failed for user: '.$user;
 
-        report($msg);
+        Log::info($msg);
+    }
+
+    public function getAuthIdentifierName()
+    {
+        return 'id';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->userId;
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+
+    public function getAuthPasswordName()
+    {
+        return 'password';
+    }
+
+    public function getRememberToken()
+    {
+        return null; // Not implemented yet
+    }
+
+    public function setRememberToken($value)
+    {
+        // Not implemented yet
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
+    }
+
+    public function getUserById($id)
+    {
+        return (object) $this->userRepo->getUser($id);
     }
 }

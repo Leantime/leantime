@@ -20,7 +20,8 @@
     'autocompleteTags' => false,
     'formHash' => md5(CURRENT_URL."selectChoices".mt_rand(0,100)),
     'value' => '',
-    'maxItemCount' => ''
+    'maxItemCount' => '',
+    'name' => '',
 ])
 
 @php
@@ -79,18 +80,21 @@
     @endif
 
     <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block w-full' : '')])}} >
-        @if($leadingVisual)
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                {{ $leadingVisual }}>
-            </span>
-        @endif
+        <div class="flex flex-row">
+            @if($leadingVisual)
+                <x-global::elements.leadingVisual>
+                    {{ $leadingVisual }}
+                </x-global::elements.leadingVisual>
+            @endif
 
-        <select
-            {{$attributes->merge(['class' => $selectClassBuilder ])}}
-            {{ $state === 'disabled' ? 'disabled' : '' }}
-            {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
-            {{ $slot }}
-        </select>
+            <select
+                {{$attributes->merge(['class' => $selectClassBuilder ])}}
+                name="{{ $name }}"
+                {{ $state === 'disabled' ? 'disabled' : '' }}
+                {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
+                {{ $slot }}
+            </select>
+        </div>
 
     </div>
 
@@ -102,9 +106,33 @@
 </x-global::forms.field-row>
 
 <script>
-    @if ($variant === 'tags')
-        leantime.selects.initTags('.select-{{ $formHash }}', {{ $search }}, {{ (!$autocompleteTags) ? 'false' : 'true' }}, '{{ $selectClassBuilder }}', {{ $maxItemCount }});
-    @else
-        leantime.selects.initSelect('.select-{{ $formHash }}', {{ $search }}, '{{ $selectClassBuilder }}');
-    @endif
+    jQuery(function () {
+
+        // Initialize select elements when the page is ready
+        initSelect();
+
+        // Re-initialize select elements when HTMX loads new content
+        htmx.onLoad(function () {
+            initSelect();
+        });
+
+        function initSelect() {
+            @if ($variant === 'tags')
+                leantime.selects.initTags(
+                    '.select-{{ $formHash }}',
+                    {{ $search }},
+                    {{ (!$autocompleteTags) ? 'false' : 'true' }},
+                    '{{ $selectClassBuilder }}',
+                    {{ $maxItemCount }}
+                );
+            @else
+                leantime.selects.initSelect(
+                    '.select-{{ $formHash }}',
+                    {{ $search }},
+                    '{{ $selectClassBuilder }}'
+                );
+            @endif
+        }
+    });
 </script>
+

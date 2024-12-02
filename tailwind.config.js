@@ -4,9 +4,10 @@ import defaultConfig from 'tailwindcss/defaultConfig'
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
-        './app/{Views,Domain}/**/*.{tpl,sub,inc,blade}.php',
-        './cache/Views/*.php',
-        './app/{Views,Domain}/**/{Composers,Controllers}/**/*.php',
+        './app/{Views,Domain,Plugins}/**/*.{tpl,sub,inc,blade}.php',
+        './app/Core/UI/Template.php',
+        './storage/framwork/views/*.php',
+        './app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php',
         './public/less/*'
     ],
     theme:  {

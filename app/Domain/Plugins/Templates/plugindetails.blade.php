@@ -116,7 +116,8 @@
                                 <div class="text-red-500">{!! $formError !!}</div>
                             @endif
                             <form class="flex gap-2 items-center" hx-post="{{ BASE_URL }}/hx/plugins/details/install"
-                                hx-swap="outerHTML" hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                                hx-swap="outerHTML"
+                                  hx-indicator=".htmx-indicator-small, .htmx-loaded-content"
                                 hx-target="#installForm{{ $plugin->marketplaceId }}">
                                 @php
                                     if (isset($plugin->version)) {
@@ -138,8 +139,8 @@
                                 <input class="!mb-none !p-[4px]" type="text" name="plugin[license]"
                                     placeholder="License Key" />
                                 <x-global::forms.button :tag="'button'" :type="'secondary'">Install</x-global::forms.button>
-                                <div class="htmx-indicator">
-                                    <x-global::elements.loadingText type="text" :count="5" />
+                                <div class="htmx-indicator-small">
+                                    <x-global::loader id="loadingthis" size="25px" />
                                 </div>
                             </form>
                         </div>

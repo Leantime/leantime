@@ -11,7 +11,7 @@ class InstallCest
 {
     public function _before(AcceptanceTester $I) {}
 
-    #[Group('install')]
+    #[Group('install, api')]
     public function installPageWorks(AcceptanceTester $I): void
     {
         $I->amOnPage('/install');
@@ -20,7 +20,7 @@ class InstallCest
         $I->see('Install');
     }
 
-    #[Group('install')]
+    #[Group('install, api')]
     #[Depends('installPageWorks')]
     public function createDBSuccessfully(AcceptanceTester $I, Install $installPage): void
     {

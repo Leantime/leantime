@@ -6,6 +6,7 @@
 .vscode
 *.swp
 
+config/_configuration.php
 config/configuration.php
 resources/logs/*
 node_modules/*
@@ -119,10 +120,19 @@ config/.env
 # Local Dev Files
 .dev/docker-compose.local.yaml
 
-/caddy
+#codebuddy files
+.codebuddy
+.idea/codebuddy.xml
+.codebuddy/summary.md
+
+caddy
 frankenphp
 frankenphp-worker.php
+<<<<<<< Updated upstream
 storage/event_cache.json
 config/_configuration.php
 .idea/codebuddy.xml
 .codebuddy/summary.md
+=======
+
+>>>>>>> Stashed changes

@@ -2,7 +2,6 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Leantime\Core;
 
@@ -17,9 +16,14 @@ class Events extends ServiceProvider
     {
 
         $this->app->singleton('events', function ($app) {
-            return new Core\Events\EventDispatcher($app);
+            return (new Core\Events\EventDispatcher($app))->setQueueResolver(function () use ($app) {
+                return $app->make(QueueFactoryContract::class);
+            })->setTransactionManagerResolver(function () use ($app) {
+                return $app->bound('db.transactions')
+                    ? $app->make('db.transactions')
+                    : null;
+            });
         });
-
         $this->booting(function () {
 
             //Core\Events\EventDispatcher::discover_listeners();

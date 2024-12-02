@@ -5,12 +5,10 @@ namespace Leantime\Domain\Projects\Repositories {
     use DateInterval;
     use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Log;
-    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
-    use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
+    use Leantime\Core\Support\Avatarcreator;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -27,8 +25,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         public int $clientId = 0;
 
-        private ?DbCore $db;
-
         public object $result; // WAS: = '';
 
         /**
@@ -36,11 +32,10 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         public array $state = [0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN'];
 
-        private Environment $config;
-
         public function __construct(
-            Environment $config,
-            DbCore $db
+            protected Environment $config,
+            protected DbCore $db,
+            protected Avatarcreator $avatarcreator
         ) {
             $this->config = $config;
             $this->db = $db;
@@ -101,28 +96,36 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * getUsersAssignedToProject - get one project
          */
-        public function getUsersAssignedToProject($id): array|bool
+        public function getUsersAssignedToProject($id, $includeApiUsers = false): array|bool
         {
 
-            $query = "SELECT
+            $query = 'SELECT
 					DISTINCT zp_user.id,
 					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
 					zp_user.lastname,
 					zp_user.username,
 					zp_user.notifications,
 					zp_user.profileId,
+					zp_user.jobTitle,
+					zp_user.source,
                     zp_user.status,
                     zp_user.modified,
+                    zp_user.role,
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
 				LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
                 WHERE
-				    zp_relationuserproject.projectId = :projectId
-				    AND !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
-                    AND zp_user.id IS NOT NULL
-				GROUP BY zp_user.id
-                ORDER BY zp_user.lastname";
+                        zp_relationuserproject.projectId = :projectId
+                        AND zp_user.id IS NOT NULL ';
+
+            if ($includeApiUsers === false) {
+                $query .= " AND !(zp_user.source <=> 'api') ";
+            }
+
+            $query .= '
+				    GROUP BY zp_user.id
+                    ORDER BY zp_user.lastname';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
@@ -132,6 +135,20 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             return $values;
+        }
+
+        /**
+         * Retrieves the relationship of users assigned to a specific project.
+         *
+         * @param  int  $id  The ID of the project.
+         * @param  bool  $includeApiUsers  Flag to determine whether to include API users. Default is false.
+         * @return array|bool Returns an array of users assigned to the project or false on failure.
+         *
+         * @Deprecated
+         */
+        public function getProjectUserRelation($id, $includeApiUsers = false): array|bool
+        {
+            return $this->getUsersAssignedToProject($id, $includeApiUsers);
         }
 
         public function getUserProjects(int $userId, string $projectStatus = 'all', ?int $clientId = null, string $accessStatus = 'assigned', string $projectTypes = 'all'): false|array
@@ -245,8 +262,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        // Deprecated
-
+        //This populates the projects show all tab and shows users all the projects that they could access
         public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
         {
 
@@ -259,6 +275,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
+				    project.parent,
 				    project.modified,
 					client.name AS clientName,
 					client.id AS clientId,
@@ -295,9 +312,6 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * @return int|mixed
-         */
         /**
          * @return int|mixed
          */
@@ -349,6 +363,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.state,
 				    project.menuType,
 				    project.modified,
+				    project.type,
 					client.name AS clientName,
 					client.id AS clientId
 				FROM zp_projects as project
@@ -595,7 +610,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
-            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
             $stmn->bindValue('created', date('Y-m-d H:i:s'), PDO::PARAM_STR);
@@ -910,46 +925,6 @@ namespace Leantime\Domain\Projects\Repositories {
             return false;
         }
 
-        public function getProjectUserRelation($id): array
-        {
-
-            $query = "SELECT
-				zp_relationuserproject.userId,
-				zp_relationuserproject.projectId,
-				zp_relationuserproject.projectRole,
-				zp_projects.name,
-				zp_projects.modified,
-				zp_user.username,
-				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
-				zp_user.lastname,
-				zp_user.id,
-				zp_user.jobTitle,
-				zp_user.jobLevel,
-				zp_user.department,
-				zp_user.profileId,
-				zp_user.role,
-				zp_user.status,
-                zp_user.modified
-			FROM zp_relationuserproject
-			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
-			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-			WHERE projectId = :id AND zp_user.id IS NOT NULL";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $results = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            $users = [];
-            foreach ($results as $row) {
-                $users[$row['userId']] = $row;
-            }
-
-            return $users;
-        }
-
         /**
          * getUserProjectRelation - get all projects related to a user
          */
@@ -1060,11 +1035,13 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatchEvent('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
+            static::dispatch_event('userAddedToProject', ['userId' => $userId, 'projectId' => $projectId, 'projectRole' => $projectRole, 'oldProject' => $oldProject]);
         }
 
         public function patch($id, $params): bool
         {
+
+            unset($params['act']);
 
             $sql = 'UPDATE zp_projects SET ';
 
@@ -1151,56 +1128,38 @@ namespace Leantime\Domain\Projects\Repositories {
                 $value = $stmn->fetch();
                 $stmn->closeCursor();
             }
-            try {
-                $avatar = (new InitialAvatar)
-                    ->fontName('Verdana')
-                    ->background('#555555')
-                    ->color('#fff');
 
-                if (empty($value)) {
-                    return $avatar->name('🦄')->generateSvg();
-                }
-            } catch (\Exception $e) {
-                Log::error('Could not generate project avatar.');
-                Log::error($e);
+            $this->avatarcreator->setFilePrefix('project');
+            $this->avatarcreator->setBackground('#555555');
 
-                return ['filename' => 'not_found', 'type' => 'uploaded'];
+            //If can't find user, return ghost
+            if (empty($value)) {
+                return $this->avatarcreator->getAvatar('🦄');
             }
-            if (empty($value['avatar'])) {
 
-                /** @var Initials $initialsClass */
-                $initialsClass = app()->make(Initials::class);
-                $initialsClass->name($value['name']);
-                $imagename = $initialsClass->getInitials();
+            //If user uploaded return uploaded file
+            if (! empty($value['avatar'])) {
 
-                if (! file_exists($filename = APP_ROOT.'/userfiles/avatars/'.$imagename.'.svg')) {
-                    $image = $avatar->name($value['name'])->generateSvg();
+                $files = app()->make(Files::class);
+                $file = $files->getFile($value['avatar']);
 
-                    if(!is_dir(APP_ROOT.'/userfiles/avatars')) {
-                        mkdir(APP_ROOT.'/userfiles/avatars');
-                    }
+                if ($file) {
+                    $filePath = $file['encName'].'.'.$file['extension'];
+                    $type = $file['extension'];
 
-                    if (! is_writable(APP_ROOT.'/userfiles/avatars/')) {
-                        return $image;
-                    }
-
-                    file_put_contents($filename, $image);
+                    return ['filename' => $filePath, 'type' => 'uploaded'];
                 }
 
-                return ['filename' => $filename, 'type' => 'generated'];
             }
 
-            $files = app()->make(Files::class);
-            $file = $files->getFile($value['avatar']);
+            $avatar = $this->avatarcreator->getAvatar($value['name']);
 
-            if ($file) {
-                $filePath = $file['encName'].'.'.$file['extension'];
-                $type = $file['extension'];
-
-                return ['filename' => $filePath, 'type' => 'uploaded'];
+            if (is_string($avatar)) {
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
-            return $avatar->name('🦄')->generateSvg();
+            return $avatar;
+
         }
     }
 

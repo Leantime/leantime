@@ -57,7 +57,7 @@ class ApiRequest extends IncomingRequest
      */
     public function getAPIKey(): string
     {
-        return $this->headers->get('x-api-key');
+        return $this->headers->get('x-api-key') ?? '';
     }
 
     /**
@@ -76,15 +76,5 @@ class ApiRequest extends IncomingRequest
         }
 
         return null;
-    }
-
-    /**
-     * Checks if the current request is an API request.
-     *
-     * @return bool Returns true if the current request is an API request, false otherwise.
-     */
-    public function isApiRequest(): bool
-    {
-        return str_starts_with($_SERVER['REQUEST_URI'], '/api/jsonrpc');
     }
 }

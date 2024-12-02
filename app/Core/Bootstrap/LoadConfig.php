@@ -8,11 +8,14 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Support\Attributes\LaravelConfig;
 
 class LoadConfig extends LoadConfiguration
 {
+    use DispatchesEvents;
+
     protected $ignoreFiles = [
         'configuration.sample.php',
         'configuration.php',
@@ -66,16 +69,31 @@ class LoadConfig extends LoadConfiguration
                 //Additional adjustments
                 $finalConfig->set('APP_DEBUG', $finalConfig->get('debug') ? true : false);
 
+                if (preg_match('/.+\/$/', $finalConfig->get('appUrl'))) {
+                    $url = rtrim($finalConfig->get('appUrl'), '/');
+                    $finalConfig->set('appUrl', $url);
+                    $finalConfig->set('app.url', $url);
+                }
+
+                $this->setBaseConstants($finalConfig->get('appUrl'), $app);
+
                 if ($finalConfig->get('app.url') == '') {
                     $url = defined('BASE_URL') ? BASE_URL : 'http://localhost';
                     $finalConfig->set('app.url', $url);
                 }
 
+                //Handle trailing slashes
                 return $finalConfig;
             });
         }
 
+        //Need to run this in case config is coming from cache
+        $this->setBaseConstants($app['config']->get('appUrl'), $app);
+
         $config = $app['config'];
+
+        //self::dispatchEvent('config_initialized');
+        $app['events']->dispatch('config_initialized');
 
         // Finally, we will set the application's environment based on the configuration
         // values that were loaded. We will pass a callback which will be used to get
@@ -85,6 +103,39 @@ class LoadConfig extends LoadConfiguration
         date_default_timezone_set($config->get('app.timezone', 'UTC'));
 
         mb_internal_encoding('UTF-8');
+
+    }
+
+    /**
+     * Sets the URL constants for the application.
+     *
+     * If the BASE_URL constant is not defined, it will be set based on the value of $appUrl parameter.
+     * If $appUrl is empty or not provided, it will be set using the getSchemeAndHttpHost method of the class.
+     *
+     * The APP_URL environment variable will be set to the value of $appUrl.
+     *
+     * If the CURRENT_URL constant is not defined, it will be set by appending the getRequestUri method result to the BASE_URL.
+     *
+     * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
+     * @return void
+     */
+    public function setBaseConstants($appUrl, $app)
+    {
+
+        if (! defined('BASE_URL')) {
+            if (isset($appUrl) && ! empty($appUrl)) {
+                define('BASE_URL', $appUrl);
+            } else {
+                $appUrl = ! empty($app['request']) ? $app['request']->getSchemeAndHttpHost() : 'http://localhost';
+                define('BASE_URL', $appUrl);
+            }
+        }
+
+        putenv('APP_URL='.$appUrl);
+
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', ! empty($app['request']) ? BASE_URL.$app['request']->getRequestUri() : 'http://localhost');
+        }
 
     }
 

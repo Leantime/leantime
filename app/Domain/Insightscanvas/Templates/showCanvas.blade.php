@@ -3,8 +3,7 @@
 /**
  * Template
  */
-
-defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }

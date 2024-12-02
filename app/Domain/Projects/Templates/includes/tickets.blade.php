@@ -6,31 +6,29 @@
 var ganttData = [
 
     <?php
-    $jsContent = array();
-    foreach ($tpl->get('projectTickets') as $ticket) {
-        if ($ticket["editFrom"] != "0000-00-00 00:00:00" && $ticket["editFrom"] != "1969-12-31 00:00:00") {
-            $plannedFromDate = new DateTime($ticket["editFrom"]);
-            $plannedToDate = new DateTime($ticket["editTo"]);
-        } else {
-            $plannedFromDate = new DateTime();
-            $plannedToDate = new DateTime();
-            $plannedToDate->add(new DateInterval("P1D"));
-        }
-
-
-        $author = str_replace("'", "", str_replace('"', "", json_encode($ticket["firstname"] . " " . $ticket["lastname"])));
-
-
-        $jsContent[] = "{
-				id: " . $ticket["id"] . ", name: '<a href=\"/tickets/showTicket/" . $ticket["id"] . "\">" . str_replace("'", "", str_replace('"', "", json_encode($ticket["headline"]))) . "</a>', series: [
-					{name: '" . $author . "', start: new Date(" . $plannedFromDate->format('Y') . ", " . ($plannedFromDate->format('m') - 1) . ", " . $plannedFromDate->format('d') . "), end: new Date(" . $plannedToDate->format('Y') . ", " . ($plannedToDate->format('m') - 1) . ", " . $plannedToDate->format('d') . ") }
-				]
-			}";
+    $jsContent = [];
+foreach ($tpl->get('projectTickets') as $ticket) {
+    if ($ticket['editFrom'] != '0000-00-00 00:00:00' && $ticket['editFrom'] != '1969-12-31 00:00:00') {
+        $plannedFromDate = new DateTime($ticket['editFrom']);
+        $plannedToDate = new DateTime($ticket['editTo']);
+    } else {
+        $plannedFromDate = new DateTime;
+        $plannedToDate = new DateTime;
+        $plannedToDate->add(new DateInterval('P1D'));
     }
 
-    echo implode(",", $jsContent);
+    $author = str_replace("'", '', str_replace('"', '', json_encode($ticket['firstname'].' '.$ticket['lastname'])));
 
-    ?>
+    $jsContent[] = '{
+				id: '.$ticket['id'].", name: '<a href=\"/tickets/showTicket/".$ticket['id'].'">'.str_replace("'", '', str_replace('"', '', json_encode($ticket['headline'])))."</a>', series: [
+					{name: '".$author."', start: new Date(".$plannedFromDate->format('Y').', '.($plannedFromDate->format('m') - 1).', '.$plannedFromDate->format('d').'), end: new Date('.$plannedToDate->format('Y').', '.($plannedToDate->format('m') - 1).', '.$plannedToDate->format('d').') }
+				]
+			}';
+}
+
+echo implode(',', $jsContent);
+
+?>
 
 ];
 
@@ -85,7 +83,7 @@ var ganttData = [
         });
     </script>
 
-    <?php echo $tpl->displayLink('tickets.newTicket', "<i class='fa fa-plus'></i> " . $tpl->__('NEW_TICKET'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+    <?php echo $tpl->displayLink('tickets.newTicket', "<i class='fa fa-plus'></i> ".$tpl->__('NEW_TICKET'), null, ['class' => 'btn btn-primary btn-rounded']) ?>
     <div id="eventMessage" class="alert alert-success" style="display:none;"></div>
     <div id="ganttChart"></div>
 

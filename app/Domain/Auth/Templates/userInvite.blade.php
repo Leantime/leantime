@@ -2,70 +2,9 @@
 
 @section('content')
 
-<?php
-$user = $tpl->get("user");
-?>
-<div class="projectSteps">
-    <div class="progressWrapper">
-        <div class="progress">
-            <div
-                id="progressChecklistBar"
-                class="progress-bar progress-bar-success tx-transition"
-                role="progressbar"
-                aria-valuenow="0"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 12%"
-            ><span class="sr-only">12%</span></div>
-        </div>
+@include("auth::partials.onboardingProgress", ['percentComplete' => 12, 'current' => 'account', 'completed' => []])
 
-
-        <div class="step current" style="left: 12%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                           <i class="fa-regular fa-circle"></i>
-                            Step 1
-                        </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 37%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                           <i class="fa-regular fa-circle"></i>
-                            Step 2
-                        </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 62%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                           <i class="fa-regular fa-circle"></i>
-                        Step 3
-                        </span>
-            </a>
-        </div>
-
-        <div class="step " style="left: 88%;">
-            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <span class="innerCircle"></span>
-                <span class="title">
-                           <i class="fa-regular fa-circle"></i>
-                        Step 4
-                        </span>
-            </a>
-        </div>
-
-    </div>
-</div>
-<br /><br /><br />
-
-
-<h2><?php echo $tpl->language->__("headlines.set_up_your_account"); ?></h2>
+<h2>{{ __('titles.account_details') }}</h2>
 
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 <div class="regcontent">
@@ -78,63 +17,28 @@ $user = $tpl->get("user");
 
         <input type="hidden" name="step" value="1"/>
 
-        <div>
-            <x-global::forms.text-input 
-                type="text" 
-                name="firstname" 
-                id="firstname" 
-                placeholder="{{ $tpl->language->__('input.placeholders.firstname') }}" 
-                value="{{ $tpl->escape($user['firstname']) }}" 
-            />
+        <div class="">
+            <label for="name"><?php echo $tpl->language->__("label.name"); ?></label>
+            <input type="text" name="name" style="margin-bottom:15px" id="name" placeholder="<?php echo $tpl->language->__("input.placeholders.name"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
         </div>
-        
-        <div>
-            <x-global::forms.text-input 
-                type="text" 
-                name="lastname" 
-                id="lastname" 
-                placeholder="{{ $tpl->language->__('input.placeholders.lastname') }}" 
-                value="{{ $tpl->escape($user['lastname']) }}" 
-            />
+        <div class="">
+            <label for="jobTitle"><?php echo $tpl->language->__("label.role_or_title"); ?></label>
+            <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
+
         </div>
-        
-        <div>
-            <x-global::forms.text-input 
-                type="text" 
-                name="jobTitle" 
-                id="jobTitle" 
-                placeholder="{{ $tpl->language->__('input.placeholders.jobtitle') }}" 
-                value="{{ $tpl->escape($user['jobTitle']) }}" 
-            />
+        <div class="">
+            <label for="password"><?php echo $tpl->language->__("label.password"); ?></label>
+            <input type="password" name="password" autocomplete="off" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
+            <span id="pwStrength" style="width:100%;"></span>
         </div>
-        
-        <div>
-            <x-global::forms.text-input 
-                type="password" 
-                name="password" 
-                id="password" 
-                placeholder="{{ $tpl->language->__('input.placeholders.enter_new_password') }}" 
-            />
-            <span id="pwStrength" class="w-full"></span>
-        </div>
-        
-        <div>
-            <x-global::forms.text-input 
-                type="password" 
-                name="password2" 
-                id="password2" 
-                placeholder="{{ $tpl->language->__('input.placeholders.confirm_password') }}" 
-            />
-        </div>
-        
         <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
             <input type="hidden" name="saveAccount" value="1" />
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
-            <x-global::forms.button type="submit" name="createAccount">
-                {{ __('buttons.next') }}
-            </x-global::forms.button>
-            
+            <div class="tw-text-right">
+                <input type="submit" name="createAccount" class="tw-w-auto" style="width:auto" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
+            </div>
+
         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
     </form>

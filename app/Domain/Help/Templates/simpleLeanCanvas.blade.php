@@ -7,8 +7,8 @@ $currentSprint = $tpl->get('sprint');
     <div class="row">
         <div class="col-md-12">
             <div style='width:50%' class='svgContainer'>
-            <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
-            echo"</div>";?>
+            <?php echo file_get_contents(ROOT.'/dist/images/svg/undraw_design_data_khdb.svg');
+echo '</div>'; ?>
 
             <h3 class="primaryColor">{{ __("headlines.welcome_to_simple_research_board") }}</h3><br />
             {{ __("text.simple_lean_canvas_helper_content") }}

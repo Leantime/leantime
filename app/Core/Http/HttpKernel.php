@@ -2,10 +2,17 @@
 
 namespace Leantime\Core\Http;
 
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Facade;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Events\DispatchesEvents;
 
 class HttpKernel extends Kernel
 {
+    use DispatchesEvents;
+
     protected $bootstrappers = [
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
         \Leantime\Core\Bootstrap\LoadConfig::class,
@@ -25,16 +32,20 @@ class HttpKernel extends Kernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \Leantime\Core\Middleware\TrustProxies::class,
-        \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\InitialHeaders::class,
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
         \Leantime\Core\Middleware\Updated::class,
+        \Leantime\Core\Middleware\AuthCheck::class,
+
         \Leantime\Core\Middleware\RequestRateLimiter::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Leantime\Core\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Leantime\Core\Middleware\SetCacheHeaders::class,
+        \Leantime\Core\Middleware\Localization::class,
+        \Leantime\Core\Middleware\LoadPlugins::class,
     ];
 
     /**
@@ -44,16 +55,14 @@ class HttpKernel extends Kernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \Leantime\Core\Middleware\Auth::class,
-            \Leantime\Core\Middleware\Localization::class,
+
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
         'api' => [
-            \Leantime\Core\Middleware\ApiAuth::class,
+            \Leantime\Core\Middleware\AuthCheck::class,
         ],
         'hx' => [
-            \Leantime\Core\Middleware\Auth::class,
-            \Leantime\Core\Middleware\Localization::class,
+            \Leantime\Core\Middleware\AuthCheck::class,
             \Leantime\Core\Middleware\CurrentProject::class,
         ],
     ];
@@ -66,7 +75,7 @@ class HttpKernel extends Kernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth' => \Leantime\Core\Middleware\AuthCheck::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -78,4 +87,78 @@ class HttpKernel extends Kernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        //Events are discovered and available as part of bootstrapping the providers.
+        //Can savely assume events are available here.
+        self::dispatch_event('request_started', ['request' => $request]);
+
+        if ($request instanceof ApiRequest) {
+
+            array_splice($this->middleware, 6, 0, $this->middlewareGroups['api']);
+
+        } else {
+            array_splice($this->middleware, 6, 0, $this->middlewareGroups['web']);
+        }
+
+        //This filter only works for system plugins
+        //Regular plugins are not available until after install verification
+        $this->middleware = self::dispatch_filter('middleware', $this->middleware, ['request' => $request]);
+
+        //Main Pipeline
+        $response = (new \Illuminate\Routing\Pipeline($this->app))
+            ->send($request)
+            ->through($this->middleware)
+            ->then(fn ($request) =>
+                //Then run through plugin pipeline
+            (new \Illuminate\Routing\Pipeline($this->app))
+                ->send($request)
+                ->through(self::dispatch_filter(
+                    hook: 'plugins_middleware',
+                    payload: [],
+                    function: 'handle',
+                ))
+                ->then($this->dispatchToRouter())
+            );
+
+        return $response;
+    }
+
+    public function handle($request)
+    {
+        $this->requestStartedAt = Carbon::now();
+
+        try {
+            $request->enableHttpMethodParameterOverride();
+
+            $response = $this->sendRequestThroughRouter($request);
+        } catch (\Throwable $e) {
+            $this->reportException($e);
+
+            $response = $this->renderException($request, $e);
+        }
+
+        $this->app['events']->dispatch(new RequestHandled($request, $response));
+
+        $response = self::dispatch_filter('beforeSendResponse', $response);
+
+        return $response;
+    }
+
+
+    public function terminate($request, $response)
+    {
+
+        self::dispatchEvent('request_terminated', [$request, $response]);
+
+        parent::terminate($request, $response);
+
+    }
 }
