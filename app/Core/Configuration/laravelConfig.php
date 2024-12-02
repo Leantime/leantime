@@ -3,21 +3,18 @@
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Providers\Redis;
 use Leantime\Core\Providers\Session;
-use Leantime\Core\Providers\Views;
 
 return [
     'app' => [
         'providers' => [
             /*
-             * Package Service Providers...
-             */
-
-            /*
              * Application Service Providers...
              */
             \Leantime\Core\Providers\AppServiceProvider::class,
-            \Leantime\Core\Providers\Redis::class,
+            \Leantime\Core\Providers\LoadMacros::class,
+
             \Leantime\Core\Providers\Cache::class, //\Illuminate\Cache\CacheServiceProvider::class,
+            \Leantime\Core\Providers\Redis::class,
 
             \Leantime\Core\Providers\ConsoleSupport::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
@@ -34,15 +31,16 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             //\Illuminate\Queue\QueueServiceProvider::class,
 
+            //\Illuminate\Redis\RedisServiceProvider::class,
+
+            //\Illuminate\Session\SessionServiceProvider::class,
             \Leantime\Core\Providers\Session::class,
 
-            //\Illuminate\Redis\RedisServiceProvider::class,
-            //\Illuminate\Session\SessionServiceProvider::class,
             //\Illuminate\Translation\TranslationServiceProvider::class,
             \Illuminate\Validation\ValidationServiceProvider::class,
             //\Illuminate\View\ViewServiceProvider::class,
 
-            \Leantime\Core\Providers\Auth::class,
+            \Leantime\Core\Providers\Authentication::class,
             \Leantime\Core\Providers\RateLimiter::class,
             \Leantime\Core\Providers\Db::class,
             \Leantime\Core\Providers\Language::class,
@@ -51,9 +49,14 @@ return [
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
-
-
         ],
+        'name' => env('LEAN_SITENAME', 'Leantime'),
+        'locale' => env('LEAN_LANGUAGE', 'en-US'),
+        'url' => env('LEAN_APP_URL', ''),
+        'timezone' => env('LEAN_DEFAULT_TIMEZONE', 'America/Los_Angeles'),
+        'env' => env('LEAN_ENV', ''),
+        'debug' => env('LEAN_DEBUG', 0),
+        'key' => env('LEAN_SESSION_PASSWORD', '123'),
     ],
     'debug_blacklist' => [
         '_ENV' => [
@@ -70,6 +73,13 @@ return [
             'LEAN_SESSION_PASSWORD',
             'LEAN_OIDC_CLIEND_SECRET',
             'LEAN_S3_SECRET',
+            'LEAN_S3_KEY',
+            'LEAN_EMAIL_SMTP_USERNAME',
+            'ACCOUNTS_DB_NAME',
+            'STRIPE_KEY',
+            'ACCOUNTS_DB_PASSWORD',
+            'STRIPE_SECRET',
+            'MAINKEY',
         ],
         '_POST' => [
             'password',
@@ -81,10 +91,16 @@ return [
             'trace' => false,
         ],
         'channels' => [
+            'stack' => [
+                'driver' => 'stack',
+                // Add the Sentry log channel to the stack
+                'channels' => ['single', 'sentry'],
+            ],
             'single' => [
-                'driver' => 'single',
+                'driver' => 'daily',
                 'path' => storage_path('logs/leantime.log'),
                 'permission' => 0664,
+                'days' => 5,
             ],
             'deprecations' => [
                 'driver' => 'single',
@@ -98,305 +114,13 @@ return [
                 'level' => 'critical',
                 'replace_placeholders' => true,
             ],
-        ],
-        'default' => 'single',
-    ],
-    'debugbar' => [
-
-        /*
-         |--------------------------------------------------------------------------
-         | Debugbar Settings
-         |--------------------------------------------------------------------------
-         |
-         | Debugbar is enabled by default, when debug is set to true in app.php.
-         | You can override the value by setting enable to true or false instead of null.
-         |
-         | You can provide an array of URI's that must be ignored (eg. 'api/*')
-         |
-         */
-
-        'enabled' => null,
-        'except' => [
-            'telescope*',
-            'horizon*',
-        ],
-
-        /*
-         |--------------------------------------------------------------------------
-         | Storage settings
-         |--------------------------------------------------------------------------
-         |
-         | DebugBar stores data for session/ajax requests.
-         | You can disable this, so the debugbar stores data in headers/session,
-         | but this can cause problems with large data collectors.
-         | By default, file storage (in the storage folder) is used. Redis and PDO
-         | can also be used. For PDO, run the package migrations first.
-         |
-         | Warning: Enabling storage.open will allow everyone to access previous
-         | request, do not enable open storage in publicly available environments!
-         | Specify a callback if you want to limit based on IP or authentication.
-         | Leaving it to null will allow localhost only.
-         */
-        'storage' => [
-            'enabled' => true,
-            'open' => true, // bool/callback.
-            'driver' => 'file', // redis, file, pdo, socket, custom
-            'path' => storage_path('debugbar'), // For file driver
-            'connection' => null,   // Leave null for default connection (Redis/PDO)
-            'provider' => '', // Instance of StorageInterface for custom driver
-            'hostname' => '127.0.0.1', // Hostname to use with the "socket" driver
-            'port' => 2304, // Port to use with the "socket" driver
-        ],
-
-        /*
-        |--------------------------------------------------------------------------
-        | Editor
-        |--------------------------------------------------------------------------
-        |
-        | Choose your preferred editor to use when clicking file name.
-        |
-        | Supported: "phpstorm", "vscode", "vscode-insiders", "vscode-remote",
-        |            "vscode-insiders-remote", "vscodium", "textmate", "emacs",
-        |            "sublime", "atom", "nova", "macvim", "idea", "netbeans",
-        |            "xdebug", "espresso"
-        |
-        */
-
-        'editor' => 'phpstorm',
-
-        /*
-         |--------------------------------------------------------------------------
-         | Vendors
-         |--------------------------------------------------------------------------
-         |
-         | Vendor files are included by default, but can be set to false.
-         | This can also be set to 'js' or 'css', to only include javascript or css vendor files.
-         | Vendor files are for css: font-awesome (including fonts) and highlight.js (css files)
-         | and for js: jquery and highlight.js
-         | So if you want syntax highlighting, set it to true.
-         | jQuery is set to not conflict with existing jQuery scripts.
-         |
-         */
-
-        'include_vendors' => true,
-
-        /*
-         |--------------------------------------------------------------------------
-         | Capture Ajax Requests
-         |--------------------------------------------------------------------------
-         |
-         | The Debugbar can capture Ajax requests and display them. If you don't want this (ie. because of errors),
-         | you can use this option to disable sending the data through the headers.
-         |
-         | Optionally, you can also send ServerTiming headers on ajax requests for the Chrome DevTools.
-         |
-         | Note for your request to be identified as ajax requests they must either send the header
-         | X-Requested-With with the value XMLHttpRequest (most JS libraries send this), or have application/json as a Accept header.
-         |
-         | By default `ajax_handler_auto_show` is set to true allowing ajax requests to be shown automatically in the Debugbar.
-         | Changing `ajax_handler_auto_show` to false will prevent the Debugbar from reloading.
-         */
-
-        'capture_ajax' => true,
-        'add_ajax_timing' => true,
-        'ajax_handler_auto_show' => true,
-        'ajax_handler_enable_tab' => true,
-
-        /*
-         |--------------------------------------------------------------------------
-         | Custom Error Handler for Deprecated warnings
-         |--------------------------------------------------------------------------
-         |
-         | When enabled, the Debugbar shows deprecated warnings for Symfony components
-         | in the Messages tab.
-         |
-         */
-        'error_handler' => false,
-
-        /*
-         |--------------------------------------------------------------------------
-         | Clockwork integration
-         |--------------------------------------------------------------------------
-         |
-         | The Debugbar can emulate the Clockwork headers, so you can use the Chrome
-         | Extension, without the server-side code. It uses Debugbar collectors instead.
-         |
-         */
-        'clockwork' => false,
-
-        /*
-         |--------------------------------------------------------------------------
-         | DataCollectors
-         |--------------------------------------------------------------------------
-         |
-         | Enable/disable DataCollectors
-         |
-         */
-
-        'collectors' => [
-            'phpinfo' => true,  // Php version
-            'messages' => true,  // Messages
-            'time' => true,  // Time Datalogger
-            'memory' => true,  // Memory usage
-            'exceptions' => true,  // Exception displayer
-            'log' => true,  // Logs from Monolog (merged in messages if enabled)
-            'db' => false,  // Show database (PDO) queries and bindings
-            'views' => true,  // Views with their data
-            'route' => true,  // Current route information
-            'auth' => false, // Display Laravel authentication status
-            'gate' => false,  // Display Laravel Gate checks
-            'session' => true,  // Display session data
-            'symfony_request' => true,  // Only one can be enabled..
-            'mail' => false,  // Catch mail messages
-            'laravel' => false, // Laravel version and environment
-            'events' => true, // All events fired
-            'default_request' => false, // Regular or special Symfony request logger
-            'logs' => true, // Add the latest log messages
-            'files' => true, // Show the included files
-            'config' => true, // Display config settings
-            'cache' => true, // Display cache events
-            'models' => false,  // Display models
-            'livewire' => false,  // Display Livewire (when available)
-            'jobs' => false, // Display dispatched jobs
-        ],
-
-        /*
-         |--------------------------------------------------------------------------
-         | Extra options
-         |--------------------------------------------------------------------------
-         |
-         | Configure some DataCollectors
-         |
-         */
-
-        'options' => [
-            'time' => [
-                'memory_usage' => false,  // Calculated by subtracting memory start and end, it may be inaccurate
-            ],
-            'messages' => [
-                'trace' => true,   // Trace the origin of the debug message
-            ],
-            'memory' => [
-                'reset_peak' => false,     // run memory_reset_peak_usage before collecting
-                'with_baseline' => false,  // Set boot memory usage as memory peak baseline
-                'precision' => 0,          // Memory rounding precision
-            ],
-            'auth' => [
-                'show_name' => true,   // Also show the users name/email in the debugbar
-                'show_guards' => true, // Show the guards that are used
-            ],
-            'db' => [
-                'with_params' => true,   // Render SQL with the parameters substituted
-                'backtrace' => true,   // Use a backtrace to find the origin of the query in your files.
-                'backtrace_exclude_paths' => [],   // Paths to exclude from backtrace. (in addition to defaults)
-                'timeline' => false,  // Add the queries to the timeline
-                'duration_background' => true,   // Show shaded background on each query relative to how long it took to execute.
-                'explain' => [                 // Show EXPLAIN output on queries
-                    'enabled' => false,
-                    'types' => ['SELECT'],     // Deprecated setting, is always only SELECT
-                ],
-                'hints' => false,    // Show hints for common mistakes
-                'show_copy' => false,    // Show copy button next to the query,
-                'slow_threshold' => false,   // Only track queries that last longer than this time in ms
-                'memory_usage' => false,   // Show queries memory usage
-                'soft_limit' => 100,      // After the soft limit, no parameters/backtrace are captured
-                'hard_limit' => 500,      // After the hard limit, queries are ignored
-            ],
-            'mail' => [
-                'timeline' => false,  // Add mails to the timeline
-                'show_body' => true,
-            ],
-            'views' => [
-                'timeline' => true,    // Add the views to the timeline (Experimental)
-                'data' => true,        //true for all data, 'keys' for only names, false for no parameters.
-                'group' => 50,          // Group duplicate views. Pass value to auto-group, or true/false to force
-                'exclude_paths' => [    // Add the paths which you don't want to appear in the views
-                    'vendor/filament',   // Exclude Filament components by default
-                ],
-            ],
-            'route' => [
-                'label' => true,  // show complete route on bar
-            ],
-            'session' => [
-                'hiddens' => [], // hides sensitive values using array paths
-            ],
-            'symfony_request' => [
-                'hiddens' => [], // hides sensitive values using array paths, example: request_request.password
-            ],
-            'events' => [
-                'data' => true, // collect events data, listeners
-            ],
-            'logs' => [
-                'file' => null,
-            ],
-            'cache' => [
-                'values' => false, // collect cache values
+            'sentry' => [
+                'driver' => 'sentry',
+                'level' => 'error',
+                'bubble' => true,
             ],
         ],
-
-        /*
-         |--------------------------------------------------------------------------
-         | Inject Debugbar in Response
-         |--------------------------------------------------------------------------
-         |
-         | Usually, the debugbar is added just before </body>, by listening to the
-         | Response after the App is done. If you disable this, you have to add them
-         | in your template yourself. See http://phpdebugbar.com/docs/rendering.html
-         |
-         */
-
-        'inject' => true,
-
-        /*
-         |--------------------------------------------------------------------------
-         | DebugBar route prefix
-         |--------------------------------------------------------------------------
-         |
-         | Sometimes you want to set route prefix to be used by DebugBar to load
-         | its resources from. Usually the need comes from misconfigured web server or
-         | from trying to overcome bugs like this: http://trac.nginx.org/nginx/ticket/97
-         |
-         */
-        'route_prefix' => '_debugbar',
-
-        /*
-         |--------------------------------------------------------------------------
-         | DebugBar route middleware
-         |--------------------------------------------------------------------------
-         |
-         | Additional middleware to run on the Debugbar routes
-         */
-        'route_middleware' => [],
-
-        /*
-         |--------------------------------------------------------------------------
-         | DebugBar route domain
-         |--------------------------------------------------------------------------
-         |
-         | By default DebugBar route served from the same domain that request served.
-         | To override default domain, specify it as a non-empty value.
-         */
-        'route_domain' => null,
-
-        /*
-         |--------------------------------------------------------------------------
-         | DebugBar theme
-         |--------------------------------------------------------------------------
-         |
-         | Switches between light and dark theme. If set to auto it will respect system preferences
-         | Possible values: auto, light, dark
-         */
-        'theme' => env('DEBUGBAR_THEME', 'auto'),
-
-        /*
-         |--------------------------------------------------------------------------
-         | Backtrace stack limit
-         |--------------------------------------------------------------------------
-         |
-         | By default, the DebugBar limits the number of frames returned by the 'debug_backtrace()' function.
-         | If you need larger stacktraces, you can increase this number. Setting it to 0 will result in no limit.
-         */
-        'debug_backtrace_limit' => 50,
+        'default' => 'stack',
     ],
     'cache' => [
 
@@ -431,8 +155,12 @@ return [
 
             'installation' => [
                 'driver' => 'file',
-                'connection' => 'default',
                 'path' => storage_path('framework/cache/installation/data'),
+            ],
+
+            'sessions' => [
+                'driver' => 'file',
+                'path' => storage_path('framework/sessions'),
             ],
 
             'array' => [
@@ -451,7 +179,7 @@ return [
         | that reason, you may prefix every cache key to avoid collisions.
         |
         */
-        'prefix' => 'leantime_cache_',
+        'prefix' => '',
 
     ],
     'session' => [
@@ -483,7 +211,7 @@ return [
         |
         */
 
-        'lifetime' => 28800,
+        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), //8 hours
 
         'expire_on_close' => false,
 
@@ -515,19 +243,6 @@ return [
 
         /*
         |--------------------------------------------------------------------------
-        | Session Database Connection
-        |--------------------------------------------------------------------------
-        |
-        | When using the "database" or "redis" session drivers, you may specify a
-        | connection that should be used to manage these sessions. This should
-        | correspond to a connection in your database configuration options.
-        |
-        */
-
-        'connection' => 'session',
-
-        /*
-        |--------------------------------------------------------------------------
         | Session Database Table
         |--------------------------------------------------------------------------
         |
@@ -552,7 +267,7 @@ return [
         |
         */
 
-        'store' => 'installation',
+        'store' => 'sessions',
 
         /*
         |--------------------------------------------------------------------------
@@ -604,7 +319,7 @@ return [
         |
         */
 
-        'domain' => env('SESSION_DOMAIN'),
+        'domain' => '',
 
         /*
         |--------------------------------------------------------------------------
@@ -617,7 +332,7 @@ return [
         |
         */
 
-        'secure' => false,
+        'secure' => env('LEAN_SESSION_SECURE', false),
 
         /*
         |--------------------------------------------------------------------------
@@ -680,16 +395,108 @@ return [
         'compiled' => realpath(storage_path('framework/views')),
 
     ],
-    'blade-icons' => [
-        'path' => 'public/assets/images/svg',
-        'class' => '',
-        'components' => [
-            'default' => 'svg',
+
+    'database' => [
+        'default' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
+        /*
+        |--------------------------------------------------------------------------
+        | Database Connections
+        |--------------------------------------------------------------------------
+        |
+        | Below are all of the database connections defined for your application.
+        | An example configuration is provided for each database system which
+        | is supported by Laravel. You're free to add / remove connections.
+        |
+        */
+        'connections' => [
+            'sqlite' => [
+                'driver' => 'sqlite',
+                'url' => env('LEAN_DB_URL'),
+                'database' => database_path('database.sqlite'),
+                'prefix' => '',
+                'foreign_key_constraints' => env('LEAN_DB_FOREIGN_KEYS', true),
+                'busy_timeout' => null,
+                'journal_mode' => null,
+                'synchronous' => null,
+            ],
+            'mysql' => [
+                'driver' => 'mysql',
+                'url' => env('LEAN_DB_URL'),
+                'host' => env('LEAN_DB_HOST', '127.0.0.1'),
+                'port' => env('LEAN_DB_PORT', '3306'),
+                'database' => env('LEAN_DB_DATABASE', 'laravel'),
+                'username' => env('LEAN_DB_USER', 'root'),
+                'password' => env('LEAN_DB_PASSWORD', ''),
+                'unix_socket' => env('LEAN_DB_SOCKET', ''),
+                'charset' => env('LEAN_DB_CHARSET', 'utf8mb4'),
+                'collation' => env('LEAN_DB_COLLATION', 'utf8mb4_unicode_ci'),
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'strict' => false,
+                'engine' => 'InnoDB',
+                'sslmode' => env('LEAN_DB_SSLMODE', ''),
+                'options' => extension_loaded('pdo_mysql') ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_VERIFY_SERVER', false),
+                    PDO::MYSQL_ATTR_SSL_KEY => env('LEAN_DB_MYSQL_ATTR_SSL_KEY'),
+                    PDO::MYSQL_ATTR_SSL_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_CERT'),
+                    PDO::MYSQL_ATTR_SSL_CA => env('LEAN_DB_MYSQL_ATTR_SSL_CA'),
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                ]) : [],
+            ],
+        ],
+
+    ],
+    /*
+       |--------------------------------------------------------------------------
+       | Redis Databases
+       |--------------------------------------------------------------------------
+       |
+       | Redis is an open source, fast, and advanced key-value store that also
+       | provides a richer body of commands than a typical key-value system
+       | such as Memcached. You may define your connection settings here.
+       |
+    */
+    'redis' => [
+        'client' => 'phpredis',
+        'options' => [
+            'parameters' => ['timeout' => 1.0],
+            'cluster' => 'redis',
+            'context' => [],
+            'compression' => 3, // Redis::COMPRESSION_LZ4
+            'password' => '',
+        ],
+        'default' => [
+            'url' => env('LEAN_REDIS_URL', ''),
+            'scheme' => env('LEAN_REDIS_SCHEME', 'tls'),
+            'host' => env('LEAN_REDIS_HOST', '127.0.0.1'),
+            'password' => env('LEAN_REDIS_PASSWORD', null),
+            'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
+            'database' => '0',
+            'read_timeout' => 1.0,
+            'prefix' => 'leantime_cache',
         ],
     ],
-    'blade-google-material-design-icons' => [
-        'path' => 'public/assets/images/svg',
-        'prefix' => 'gmdi',
-    ],
 
+    // Driver options: eloquent, database (using db query builder),
+    'auth' => [
+        'defaults' => [
+            'guard' => 'leantime',
+            'passwords' => 'users',
+        ],
+        'guards' => [
+            'leantime' => [
+                'driver' => 'leantime',
+                'provider' => 'leantimeUsers',
+            ],
+            'jsonRpc' => [
+                'driver' => 'jsonRpc',
+                'provider' => 'leantimeUsers',
+            ],
+        ],
+        'providers' => [
+            'leantimeUsers' => [
+                'driver' => 'leantimeUsers',
+            ],
+        ],
+    ],
 ];

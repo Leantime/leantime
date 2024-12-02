@@ -8,6 +8,7 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
 use ReflectionClass;
@@ -25,8 +26,9 @@ class Jsonrpc extends Controller
      */
     public function init(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST)) {
-            $this->json_data = json_decode(file_get_contents('php://input'), JSON_OBJECT_AS_ARRAY);
+        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
+            $bodyContent = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
+            $this->json_data = $bodyContent ?? '';
         }
     }
 
@@ -40,7 +42,7 @@ class Jsonrpc extends Controller
      */
     public function post(array $params): Response
     {
-        if (empty($params)) {
+        if (empty($params) || isset($params['act'])) {
             $params = $this->json_data;
         }
 
@@ -128,8 +130,11 @@ class Jsonrpc extends Controller
          * @see https://jsonrpc.org/specification#batch
          */
         if (array_keys($params) == range(0, count($params) - 1)) {
+
             return $this->tpl->displayJson(array_map(
-                fn ($requestParams) => json_decode($this->executeApiRequest($requestParams)->getContent()),
+                function ($requestParams) {
+                    return json_decode($this->executeApiRequest($requestParams)->getContent());
+                },
                 $params
             ));
         }
@@ -307,7 +312,7 @@ class Jsonrpc extends Controller
                 try {
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
-                    report($e);
+                    Log::error($e);
                     throw new \Exception("Could not cast parameter: $name. See server logs for more details.");
                 }
             }

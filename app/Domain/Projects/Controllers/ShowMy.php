@@ -3,30 +3,31 @@
 namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Controller\Controller;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Menu\Services\Menu;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
     class ShowMy extends Controller
     {
         private ProjectService $projectService;
+        
+        private ClientService $clientService;
 
-        private ClientRepository $clientRepo;
+        private TicketService $ticketService;
+
+        private ReportService $reportService;
+
+        private CommentService $commentService;
 
         private Menu $menuService;
 
-        /**
-         * @param  TicketService  $ticketService
-         * @param  ReportService  $reportService
-         * @param  CommentService  $commentService
-         */
         public function init(
             ProjectService $projectService,
-            ClientRepository $clientRepo,
+            ClientService $clientService,
             Menu $menuService
         ): void {
             $this->projectService = $projectService;
-            $this->clientRepo = $clientRepo;
+            $this->clientService = $clientService;
             $this->menuService = $menuService;
         }
 
@@ -41,7 +42,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int) $_GET['client'];
-                $currentClient = $this->clientRepo->getClient($clientId);
+                $currentClient = $this->clientService->get($clientId);
                 if (is_array($currentClient) && count($currentClient) > 0) {
                     $currentClientName = $currentClient['name'];
                 }

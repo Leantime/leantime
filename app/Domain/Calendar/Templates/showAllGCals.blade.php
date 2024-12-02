@@ -75,8 +75,8 @@
 
                 <?php foreach ($tpl->get('allCalendars') as $row) { ?>
                     <tr>
-                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['id'], array('id' => $row['id'])) ?></td>
-                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['name'], array('id' => $row['id'])) ?></a></td>
+                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['id'], ['id' => $row['id']]) ?></td>
+                        <td><?php echo $tpl->displayLink('calendar.editGCal', $row['name'], ['id' => $row['id']]) ?></a></td>
                         <td><?php echo $row['url']; ?></a></td>
                         <td><span class="color: <?php echo $row['colorClass']; ?>" style="padding:2px;"><?php echo $row['colorClass']; ?></span></td>
                     </tr>

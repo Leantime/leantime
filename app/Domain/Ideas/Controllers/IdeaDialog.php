@@ -84,9 +84,8 @@ namespace Leantime\Domain\Ideas\Controllers {
                 return Frontcontroller::redirect($result['redirect']);
             }
 
-
-            $this->tpl->assign('canvasTypes', $result['canvasTypes']??'');
-            $this->tpl->assign('canvasItem', $result['canvasItem']??'');
+            $this->tpl->assign('canvasTypes', $result['canvasTypes'] ?? '');
+            $this->tpl->assign('canvasItem', $result['canvasItem'] ?? '');
 
             $this->tpl->closeModal();
             $this->tpl->htmxRefresh();

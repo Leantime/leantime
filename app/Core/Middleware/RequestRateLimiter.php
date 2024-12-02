@@ -5,6 +5,7 @@ namespace Leantime\Core\Middleware;
 use Closure;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
@@ -55,17 +56,18 @@ class RequestRateLimiter
         }
 
         //Configurable rate limits
-        $rateLimitGeneral = $this->config->ratelimitGeneral ?? 2000;
+        $rateLimitGeneral = $this->config->ratelimitGeneral ?? 10000;
         $rateLimitApi = $this->config->ratelimitApi ?? 10;
         $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
 
         //Key
-        $keyModifier = '-1';
+        //Key lives in domain namespace already
+        $keyModifier = '0';
         if (session()->exists('userdata')) {
             $keyModifier = session('userdata.id');
         }
 
-        $key = $request->getClientIp().'-'.$keyModifier;
+        $key = 'ratelimit-'.md5($request->getClientIp()).'-'.$keyModifier;
 
         //General Limit per minute
         $limit = $rateLimitGeneral;
@@ -81,7 +83,7 @@ class RequestRateLimiter
 
         if ($route == 'auth.login') {
             $limit = $rateLimitAuth;
-            $key = $key.'.loginAttempts';
+            $key = $key.':loginAttempts';
         }
 
         $key = self::dispatchFilter(
@@ -100,8 +102,9 @@ class RequestRateLimiter
                 'key' => $key,
             ],
         );
+
         if ($this->limiter->tooManyAttempts($key, $limit)) {
-            report('too many requests per minute: '.$key);
+            Log::warning('too many requests per minute: '.$key);
 
             return new Response(
                 json_encode(['error' => 'Too many requests per minute.']),

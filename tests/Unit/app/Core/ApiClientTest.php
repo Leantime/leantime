@@ -4,11 +4,10 @@ namespace Test\Unit;
 
 use GuzzleHttp\HandlerStack;
 use Leantime\Core\Http\Client\ApiClient;
-use PHPUnit\Framework\TestCase;
 
-class ApiClientTest extends TestCase
+class ApiClientTest extends \Unit\TestCase
 {
-    public function testOAuth2(): void
+    public function test_o_auth2(): void
     {
         $baseUri = 'http://test.com';
         $stack = HandlerStack::create();
@@ -21,7 +20,7 @@ class ApiClientTest extends TestCase
         $this->assertEquals('oauth', $client->getConfig('auth'));
     }
 
-    public function testOAuth2Grants(): void
+    public function test_o_auth2_grants(): void
     {
         $baseUri = 'http://test.com';
         $creds = [
@@ -34,7 +33,7 @@ class ApiClientTest extends TestCase
         $this->assertInstanceOf(HandlerStack::class, $stack);
     }
 
-    public function testOAuth1(): void
+    public function test_o_auth1(): void
     {
         $baseUri = 'http://test.com';
         $creds = [
@@ -50,7 +49,7 @@ class ApiClientTest extends TestCase
         $this->assertEquals('oauth', $client->getConfig('auth'));
     }
 
-    public function testBasicAuth(): void
+    public function test_basic_auth(): void
     {
         $baseUri = 'http://test.com';
         $creds = [
@@ -64,7 +63,7 @@ class ApiClientTest extends TestCase
         $this->assertEquals($creds, $client->getConfig('auth'));
     }
 
-    public function testDigest(): void
+    public function test_digest(): void
     {
         $baseUri = 'http://test.com';
         $creds = [
@@ -80,7 +79,7 @@ class ApiClientTest extends TestCase
         $this->assertEquals($creds, $config[1]['auth']);
     }
 
-    public function testNtlm(): void
+    public function test_ntlm(): void
     {
         $baseUri = 'http://test.com';
         $creds = [

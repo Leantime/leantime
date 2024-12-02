@@ -197,191 +197,190 @@ var content_css = appUrl
     + version
     + '.min.css';
 
-export const initSimpleEditor = function (callback) {
-    jQuery('textarea.tinymceSimple').tinymce(
-        {
-            // General options
-            width: "100%",
-            skin_url: skin_url,
-            content_css: content_css,
-            content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-            plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
-            toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
-            toolbar_location: 'bottom',
-            autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
-            autosave_restore_when_empty: true,
-            autosave_retention: '120m',
-            autosave_interval: '10s',
-            autosave_ask_before_unload: false,
-            branding: false,
-            statusbar: false,
-            convert_urls: true,
-            paste_data_images: true,
-            menubar:false,
-            relative_urls : true,
-            document_base_url : appUrl + "/",
-            default_link_target: '_blank',
-            table_appearance_options: false,
-            mentions: mentionsConfig,
-            textpattern_patterns: markDownTextPatterns,
-            images_upload_handler: imageUploadHandler,
-            file_picker_callback: filePickerCallback,
-            setup: editorSetup
-        }
-    );
+export const initSimpleEditor = function (callback, specificId) {
+    const selector = specificId ? 
+        `#${specificId}` : 
+        'textarea.tinymceSimple';
+
+    jQuery(selector).tinymce({
+        // General options
+        width: "100%",
+        skin_url: skin_url,
+        content_css: content_css,
+        content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+        plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
+        toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
+        toolbar_location: 'bottom',
+        autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
+        autosave_restore_when_empty: true,
+        autosave_retention: '120m',
+        autosave_interval: '10s',
+        autosave_ask_before_unload: false,
+        branding: false,
+        statusbar: false,
+        convert_urls: true,
+        paste_data_images: true,
+        menubar:false,
+        relative_urls : true,
+        document_base_url : appUrl + "/",
+        default_link_target: '_blank',
+        table_appearance_options: false,
+        mentions: mentionsConfig,
+        textpattern_patterns: markDownTextPatterns,
+        images_upload_handler: imageUploadHandler,
+        file_picker_callback: filePickerCallback,
+        setup: editorSetup
+    });
 };
 
-export const initComplexEditor = function () {
+export const initComplexEditor = function (specificId) {
     var entityId = jQuery("input[name=id]").val();
-
-    //modal is 50px from top. Always
-    //Then reduce headline, save button range padding from modal
     var height = window.innerHeight - 50 - 205;
 
+    const selector = specificId ? 
+        `#${specificId}` : 
+        'textarea.complexEditor';
 
-    jQuery('textarea.complexEditor').tinymce(
-        {
-            // General options
-            width: "100%",
-            skin_url: appUrl
-                + '/dist/css/libs/tinymceSkin/oxide',
-            content_css: appUrl
-                + '/theme/'
-                + theme
-                + '/css/'
-                + colorScheme
-                + '.css,'
-                + appUrl
-                + '/dist/css/editor.'
-                + version
-                + '.min.css',
-            content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-            plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
-            toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
-            autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
-            autosave_restore_when_empty: true,
-            autosave_retention: '120m',
-            autosave_interval: '10s',
-            autosave_ask_before_unload: false,
-            branding: false,
-            statusbar: false,
-            convert_urls: true,
-            menubar:false,
-            resizable: true,
-            templates : appUrl + "/wiki/templates",
-            body_class: 'mce-content-body',
-            paste_data_images: true,
-            relative_urls : true,
-            document_base_url: appUrl + "/",
-            table_appearance_options: false,
-            min_height: 400,
-            max_height: height,
-            default_link_target: '_blank',
-            codesample_global_prismjs: true,
-            codesample_languages: [
-                { text: 'HTML/XML', value: 'markup' },
-                { text: 'JavaScript', value: 'javascript' },
-                { text: 'CSS', value: 'css' },
-                { text: 'PHP', value: 'php' },
-                { text: 'Ruby', value: 'ruby' },
-                { text: 'Rust', value: 'rust' },
-                { text: 'SQL', value: 'sql' },
-                { text: 'Python', value: 'python' },
-                { text: 'Java', value: 'java' },
-                { text: 'Swift', value: 'swift' },
-                { text: 'Objective C', value: 'objectivec' },
-                { text: 'Go', value: 'go' },
-                { text: 'C', value: 'c' },
-                { text: 'C#', value: 'csharp' },
-                { text: 'C++', value: 'cpp' }
-            ],
-            mentions: mentionsConfig,
-            textpattern_patterns: markDownTextPatterns,
-            images_upload_handler: imageUploadHandler,
-            file_picker_callback: filePickerCallback,
-            setup: editorSetup
-        }
-    );
+    jQuery(selector).tinymce({
+        // General options
+        width: "100%",
+        skin_url: appUrl
+            + '/dist/css/libs/tinymceSkin/oxide',
+        content_css: appUrl
+            + '/theme/'
+            + theme
+            + '/css/'
+            + colorScheme
+            + '.css,'
+            + appUrl
+            + '/dist/css/editor.'
+            + version
+            + '.min.css',
+        content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+        plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
+        toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
+        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+        autosave_restore_when_empty: true,
+        autosave_retention: '120m',
+        autosave_interval: '10s',
+        autosave_ask_before_unload: false,
+        branding: false,
+        statusbar: false,
+        convert_urls: true,
+        menubar:false,
+        resizable: true,
+        templates : appUrl + "/wiki/templates",
+        body_class: 'mce-content-body',
+        paste_data_images: true,
+        relative_urls : true,
+        document_base_url: appUrl + "/",
+        table_appearance_options: false,
+        min_height: 400,
+        max_height: height,
+        default_link_target: '_blank',
+        codesample_global_prismjs: true,
+        codesample_languages: [
+            { text: 'HTML/XML', value: 'markup' },
+            { text: 'JavaScript', value: 'javascript' },
+            { text: 'CSS', value: 'css' },
+            { text: 'PHP', value: 'php' },
+            { text: 'Ruby', value: 'ruby' },
+            { text: 'Rust', value: 'rust' },
+            { text: 'SQL', value: 'sql' },
+            { text: 'Python', value: 'python' },
+            { text: 'Java', value: 'java' },
+            { text: 'Swift', value: 'swift' },
+            { text: 'Objective C', value: 'objectivec' },
+            { text: 'Go', value: 'go' },
+            { text: 'C', value: 'c' },
+            { text: 'C#', value: 'csharp' },
+            { text: 'C++', value: 'cpp' }
+        ],
+        mentions: mentionsConfig,
+        textpattern_patterns: markDownTextPatterns,
+        images_upload_handler: imageUploadHandler,
+        file_picker_callback: filePickerCallback,
+        setup: editorSetup
+    });
 };
 
-export const initNotesEditor = function (callback) {
+export const initNotesEditor = function (callback, specificId) {
     var entityId = jQuery("input[name=id]").val();
-
-    //modal is 50px from top. Always
-    //Then reduce headline, save button range padding from modal
     var height = window.innerHeight - 50 - 205;
 
-    jQuery('textarea.notesEditor').tinymce(
-        {
-            // General options
-            width: "100%",
-            skin_url: appUrl
-                + '/dist/css/libs/tinymceSkin/oxide',
-            content_css: appUrl
-                + '/theme/'
-                + theme
-                + '/css/'
-                + colorScheme
-                + '.css,'
-                + appUrl
-                + '/dist/css/editor.'
-                + version
-                + '.min.css',
-            content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; color:var(--secondary-font-color); max-width:none;} img { max-width: 100%; }",
-            plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
-            toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
-            toolbar_location: 'bottom',
-            autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
-            autosave_restore_when_empty: true,
-            autosave_retention: '120m',
-            autosave_interval: '10s',
-            autosave_ask_before_unload: false,
-            branding: false,
-            statusbar: false,
-            convert_urls: true,
-            menubar:false,
-            resizable: true,
-            templates : appUrl + "/wiki/templates",
-            body_class: 'mce-content-body',
-            paste_data_images: true,
-            relative_urls : true,
-            document_base_url: appUrl + "/",
-            table_appearance_options: false,
-            min_height: 400,
-            default_link_target: '_blank',
-            codesample_global_prismjs: true,
-            codesample_languages: [
-                { text: 'HTML/XML', value: 'markup' },
-                { text: 'JavaScript', value: 'javascript' },
-                { text: 'CSS', value: 'css' },
-                { text: 'PHP', value: 'php' },
-                { text: 'Ruby', value: 'ruby' },
-                { text: 'Rust', value: 'rust' },
-                { text: 'SQL', value: 'sql' },
-                { text: 'Python', value: 'python' },
-                { text: 'Java', value: 'java' },
-                { text: 'Swift', value: 'swift' },
-                { text: 'Objective C', value: 'objectivec' },
-                { text: 'Go', value: 'go' },
-                { text: 'C', value: 'c' },
-                { text: 'C#', value: 'csharp' },
-                { text: 'C++', value: 'cpp' }
-            ],
-            textpattern_patterns: markDownTextPatterns,
-            mentions: mentionsConfig,
-            textpattern_patterns: markDownTextPatterns,
-            images_upload_handler: imageUploadHandler,
-            file_picker_callback: filePickerCallback,
-            setup: function(editor) {
-                editorSetup(editor);
+    const selector = specificId ? 
+        `#${specificId}` : 
+        'textarea.notesEditor';
 
-                editor.on("blur", function () {
-                    editor.save();
-                    callback();
-                });
-            },
-        }
-    );
+    jQuery(selector).tinymce({
+        // General options
+        width: "100%",
+        skin_url: appUrl
+            + '/dist/css/libs/tinymceSkin/oxide',
+        content_css: appUrl
+            + '/theme/'
+            + theme
+            + '/css/'
+            + colorScheme
+            + '.css,'
+            + appUrl
+            + '/dist/css/editor.'
+            + version
+            + '.min.css',
+        content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; color:var(--secondary-font-color); max-width:none;} img { max-width: 100%; }",
+        plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
+        toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
+        toolbar_location: 'bottom',
+        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+        autosave_restore_when_empty: true,
+        autosave_retention: '120m',
+        autosave_interval: '10s',
+        autosave_ask_before_unload: false,
+        branding: false,
+        statusbar: false,
+        convert_urls: true,
+        menubar:false,
+        resizable: true,
+        templates : appUrl + "/wiki/templates",
+        body_class: 'mce-content-body',
+        paste_data_images: true,
+        relative_urls : true,
+        document_base_url: appUrl + "/",
+        table_appearance_options: false,
+        min_height: 400,
+        default_link_target: '_blank',
+        codesample_global_prismjs: true,
+        codesample_languages: [
+            { text: 'HTML/XML', value: 'markup' },
+            { text: 'JavaScript', value: 'javascript' },
+            { text: 'CSS', value: 'css' },
+            { text: 'PHP', value: 'php' },
+            { text: 'Ruby', value: 'ruby' },
+            { text: 'Rust', value: 'rust' },
+            { text: 'SQL', value: 'sql' },
+            { text: 'Python', value: 'python' },
+            { text: 'Java', value: 'java' },
+            { text: 'Swift', value: 'swift' },
+            { text: 'Objective C', value: 'objectivec' },
+            { text: 'Go', value: 'go' },
+            { text: 'C', value: 'c' },
+            { text: 'C#', value: 'csharp' },
+            { text: 'C++', value: 'cpp' }
+        ],
+        textpattern_patterns: markDownTextPatterns,
+        mentions: mentionsConfig,
+        textpattern_patterns: markDownTextPatterns,
+        images_upload_handler: imageUploadHandler,
+        file_picker_callback: filePickerCallback,
+        setup: function(editor) {
+            editorSetup(editor);
+
+            editor.on("blur", function () {
+                editor.save();
+                callback();
+            });
+        },
+    });
 };
 
 // Make public what you want to have public, everything else is private
