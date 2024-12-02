@@ -193,10 +193,9 @@
 .ticketBox .ticketBox,
 .projectBox .ticketBox{
     box-shadow: none;
-    border-radius:4px;
+    border-radius:0px;
     padding:0px;
-    padding-left:5px;
-    border-left:3px solid var(--main-border-color);
+    border-top:1px solid var(--main-border-color);
     padding-top:5px;
     margin-top:5px;
     background:transparent;

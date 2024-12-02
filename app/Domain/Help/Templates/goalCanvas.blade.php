@@ -5,8 +5,8 @@
         <div class="col-md-12">
             <h1 style="font-size:var(--font-size-xxxl);">Manage goals and drive outcomes</h1><br />
             <div style='width:50%' class='svgContainer'>
-                <?php echo file_get_contents(ROOT.'/dist/images/svg/undraw_join_re_w1lh.svg');
-echo '</div>'; ?>
+                <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_join_re_w1lh.svg");
+                echo"</div>";?>
 
             </div>
         </div>

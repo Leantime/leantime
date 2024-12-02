@@ -11,13 +11,15 @@ class TicketCard extends HtmxController
     protected static string $view = 'tickets::components.ticket-card';
 
     private Tickets $ticketService;
-    private Timesheets $timesheetService;
 
-
-    public function init(Tickets $ticketService, Timesheets $timesheetService): void
+    /**
+     * Controller constructor
+     *
+     * @param  Timesheets  $timesheetService
+     */
+    public function init(Tickets $ticketService): void
     {
         $this->ticketService = $ticketService;
-        $this->timesheetService = $timesheetService;
     }
 
     public function save(): void
@@ -48,15 +50,15 @@ class TicketCard extends HtmxController
     public function get($params): void
     {
         $ticketId = (int) ($params['id']);
-        $ticket = (array) $this->ticketService->getTicket($ticketId);
+        $ticket = (array)$this->ticketService->getTicket($ticketId);
         $efforts = $this->ticketService->getEffortLabels();
         $statusLabels = $this->ticketService->getStatusLabels();
         $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
 
         $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
-        $this->tpl->assign('ticket', $ticket);
-        $this->tpl->assign('effort', $efforts);
-        $this->tpl->assign('statusLabels', $statusLabels);
-        $this->tpl->assign('milestones', $milestones);
+        $this->tpl->assign("ticket", $ticket);
+        $this->tpl->assign("effort", $efforts);
+        $this->tpl->assign("statusLabels", $statusLabels);
+        $this->tpl->assign("milestones", $milestones);
     }
 }

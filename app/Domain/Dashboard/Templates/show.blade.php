@@ -1,7 +1,3 @@
-@php
-    use Leantime\Core\Support\EditorTypeEnum;
-@endphp
-
 @extends($layout)
 
 @section('content')
@@ -10,6 +6,7 @@
             <a href="#/users/newUser" class="headerCTA">
                 <i class="fa fa-users"></i>
                 {{ __('links.dont_do_it_alone') }}
+
             </a>
         @endif
 
@@ -18,10 +15,14 @@
     </x-global::content.pageheader>
 
     <div class="maincontent">
+
         <div class="row">
+
             <div class="col-md-8">
+
                 <x-global::content.card variation="content">
                     <x-slot:card-context-buttons>
+
                         <x-global::forms.button shape="circle" content-role="tertiary"
                             data-tippy-content="{{ __('label.favorite_tooltip') }}"
                             onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')"
@@ -87,6 +88,7 @@
                 </x-global::content.card>
 
                 <x-global::content.card variation="content">
+
                     <x-slot:card-title>{{ __('headlines.latest_todos') }}</x-slot:card-title>
 
                     @if (count($tickets) == 0)
@@ -143,7 +145,6 @@
             <div class="col-md-4">
                 <x-dashboard::project-updates :id="$project['id']" />
 
-
                 <x-global::content.card variation="content">
                     <x-slot:card-title>
                         {{ __('subtitles.project_progress') }}
@@ -155,6 +156,7 @@
                             {{ round($projectProgress['percent']) }}%
                         </div>
                     </div>
+
 
                     <div class="row" id="milestoneProgressContainer">
                         <div class="col-md-12">
@@ -172,97 +174,99 @@
 
                             @foreach ($milestones as $row)
                                 @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
-                                    @break
-                                @endif
-                                <x-tickets::milestone-card :milestone="$row" />
-                            @endforeach
+                                @break
+                            @endif
+                            <x-tickets::milestone-card :milestone="$row" />
+                        @endforeach
 
-                        </div>
                     </div>
-                </x-global::content.card>
-            </div>
+            </x-global::content.card>
         </div>
+
     </div>
+</div>
+</div>
 
-    @once
-        @push('scripts')
-        <script>
-            @dispatchEvent('scripts.afterOpen')
+@once @push('scripts')
+<script>
+    @dispatchEvent('scripts.afterOpen')
 
-            leantime.editorController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
-            jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 
-                jQuery('#descriptionReadMoreToggle').click(function() {
+        jQuery('#descriptionReadMoreToggle').click(function() {
 
-                    if (jQuery("#projectDescription").hasClass("closed")) {
-                        jQuery("#projectDescription").css("max-height", "100%");
-                        jQuery("#projectDescription").removeClass("closed");
-                        jQuery("#projectDescription").removeClass("kanbanContent");
-                        jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
-                    } else {
-                        jQuery("#projectDescription").css("max-height", "200px");
-                        jQuery("#projectDescription").addClass("closed");
-                        jQuery("#projectDescription").addClass("kanbanContent");
-                        jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
+            if (jQuery("#projectDescription").hasClass("closed")) {
+                jQuery("#projectDescription").css("max-height", "100%");
+                jQuery("#projectDescription").removeClass("closed");
+                jQuery("#projectDescription").removeClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
+            } else {
+                jQuery("#projectDescription").css("max-height", "200px");
+                jQuery("#projectDescription").addClass("closed");
+                jQuery("#projectDescription").addClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
+            }
+        });
+
+        jQuery(".readMoreBox").each(function() {
+            if (jQuery(this).find(".readMoreContent").height() >= 169) {
+
+                jQuery(this).find(".readMoreToggle").show();
+            }
+        });
+
+        jQuery(document).on('click', '.progressWrapper .dropdown-menu', function(e) {
+            e.stopPropagation();
+        });
+
+        @if ($login::userIsAtLeast($roles::$editor))
+            leantime.dashboardController.prepareHiddenDueDate();
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initMilestoneDropdown();
+            leantime.ticketsController.initStatusDropdown();
+        @else
+            leantime.authController.makeInputReadonly(".maincontentinner");
+        @endif
+
+        jQuery("#favoriteProject").click(function() {
+            if (jQuery("#favoriteProject").hasClass("isFavorite")) {
+                leantime.reactionsController.removeReaction(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass(
+                            "fa-regular");
+                        jQuery("#favoriteProject").removeClass("isFavorite");
                     }
-                });
-
-                jQuery(".readMoreBox").each(function() {
-                    if (jQuery(this).find(".readMoreContent").height() >= 169) {
-                        jQuery(this).find(".readMoreToggle").show();
+                );
+            } else {
+                leantime.reactionsController.addReactions(
+                    'project',
+                    {!! $project['id'] !!},
+                    'favorite',
+                    function() {
+                        jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass(
+                            "fa-solid");
+                        jQuery("#favoriteProject").addClass("isFavorite");
                     }
-                });
+                );
+            }
+        });
 
-                jQuery(document).on('click', '.progressWrapper .dropdown-menu', function(e) {
-                    e.stopPropagation();
-                });
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.ticketsController.initDueDateTimePickers();
 
-                @if ($login::userIsAtLeast($roles::$editor))
-                    leantime.dashboardController.prepareHiddenDueDate();
-                    leantime.ticketsController.initEffortDropdown();
-                    leantime.ticketsController.initMilestoneDropdown();
-                    leantime.ticketsController.initStatusDropdown();
-                @else
-                    leantime.authController.makeInputReadonly(".maincontentinner");
-                @endif
+        @if ($completedOnboarding === false)
+            leantime.helperController.firstLoginModal();
+        @endif
 
-                jQuery("#favoriteProject").click(function() {
-                    if (jQuery("#favoriteProject").hasClass("isFavorite")) {
-                        leantime.reactionsController.removeReaction(
-                            'project',
-                            {!! $project['id'] !!},
-                            'favorite',
-                            function() {
-                                jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass("fa-regular");
-                                jQuery("#favoriteProject").removeClass("isFavorite");
-                            }
-                        );
-                    } else {
-                        leantime.reactionsController.addReactions(
-                            'project',
-                            {!! $project['id'] !!},
-                            'favorite',
-                            function() {
-                                jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass("fa-solid");
-                                jQuery("#favoriteProject").addClass("isFavorite");
-                            }
-                        );
-                    }
-                });
+        @php(session(['usersettings.modals.projectDashboardTour' => 1]));
+    });
 
-                leantime.ticketsController.initDueDateTimePickers();
-
-                @if ($completedOnboarding === false)
-                    leantime.helperController.firstLoginModal();
-                @endif
-
-                @php(session(['usersettings.modals.projectDashboardTour' => 1]));
-
-            });
-
-            @dispatchEvent('scripts.beforeClose')
-        </script>
-        @endpush
-    @endonce
+    @dispatchEvent('scripts.beforeClose')
+</script>
+@endpush @endonce
 @endsection

@@ -3,6 +3,7 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\CliRequest;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -55,8 +56,6 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         parent::enableHttpMethodParameterOverride();
 
-        //static::enableHttpMethodParameterOverride();
-
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
                 strtolower($key) => match (true) {
@@ -67,19 +66,49 @@ class IncomingRequest extends \Illuminate\Http\Request
             ])
             ->all();
 
-        $requestUriTest = strtolower($_SERVER['REQUEST_URI'] ?? '');
-
         $request = match (true) {
             isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
-            (isset($headers['x-api-key']) || str_starts_with($requestUriTest, '/api/jsonrpc')) => ApiRequest::createFromGlobals(),
+            isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
             defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
             default => parent::createFromGlobals(),
         };
 
-        //$request->setUrlConstants();
+        $request->setUrlConstants();
 
         return $request;
 
+    }
+
+    /**
+     * Sets the URL constants for the application.
+     *
+     * If the BASE_URL constant is not defined, it will be set based on the value of $appUrl parameter.
+     * If $appUrl is empty or not provided, it will be set using the getSchemeAndHttpHost method of the class.
+     *
+     * The APP_URL environment variable will be set to the value of $appUrl.
+     *
+     * If the CURRENT_URL constant is not defined, it will be set by appending the getRequestUri method result to the BASE_URL.
+     *
+     * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
+     * @return void
+     */
+    public function setUrlConstants($appUrl = '')
+    {
+
+        if (! defined('BASE_URL')) {
+            if (isset($appUrl) && ! empty($appUrl)) {
+                define('BASE_URL', $appUrl);
+
+            } else {
+                define('BASE_URL', parent::getSchemeAndHttpHost());
+            }
+        }
+
+        putenv('APP_URL='.$appUrl);
+
+        if (! defined('CURRENT_URL')) {
+            define('CURRENT_URL', BASE_URL.$this->getRequestUri());
+        }
     }
 
     /**
@@ -271,17 +300,5 @@ class IncomingRequest extends \Illuminate\Http\Request
         }
 
         return '';
-    }
-
-    /**
-     * Checks if the current request is an API request.
-     *
-     * @return bool Returns true if the current request is an API request, false otherwise.
-     */
-    public function isApiRequest(): bool
-    {
-        $requestUri = $this->getRequestUri();
-
-        return str_starts_with($requestUri, '/api/jsonrpc');
     }
 }

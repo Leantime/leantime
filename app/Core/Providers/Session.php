@@ -7,6 +7,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Session\SessionManager;
 use Illuminate\Session\SymfonySessionDecorator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class Session extends ServiceProvider
 {
@@ -20,29 +21,24 @@ class Session extends ServiceProvider
 
         $this->app->singleton('session', function ($app) {
 
-            if (! empty($app['config']['useRedis']) && (bool) $app['config']['useRedis'] === true) {
+            if(! is_dir(storage_path('framework/sessions/'.get_domain_key()))) {
+                mkdir(storage_path('framework/sessions/'.get_domain_key()));
+            }
 
-                $app['config']->set('session.driver', 'redis');
-                $app['config']->set('session.connection', 'sessions');
+            app('config')->set('session.files', storage_path('framework/sessions/'.get_domain_key()));
 
-            } else {
+            if(empty(app('config')['useRedis']) && (bool) app('config')['useRedis'] === true){
+                app('config')->set('session.driver', 'redis');
+            }
 
-                $sessionDir = storage_path('framework/sessions/'.get_domain_key());
-
-                //domain key was created as file. Let's remove that
-                if (file_exists($sessionDir) && ! is_dir($sessionDir)) {
-                    unlink($sessionDir);
-                }
-
-                if (! is_dir($sessionDir) && ! mkdir($sessionDir) && ! is_dir($sessionDir)) {
-                    throw new \RuntimeException(sprintf('Could not create session directory %s', $sessionDir));
-                }
-
-                $app['config']->set('session.files', $sessionDir);
+            //Now that we know where the instance is bing called from
+            //Let's add a domain level cache.
+            $domain = 'localhost';
+            if (! $app->runningInConsole()) {
+                $domain = $app['request']->getFullUrl();
             }
 
             //Most of this is set in the config but some things aren't clear until we get here.
-            $app['config']->set('domain', is_array(parse_url(BASE_URL)) ? (parse_url(BASE_URL)['host'] ?? null) : null);
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);
 
@@ -64,5 +60,6 @@ class Session extends ServiceProvider
         });
 
         $this->app->singleton(SymfonySessionDecorator::class, SymfonySessionDecorator::class);
+
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 use Leantime\Domain\Menu\Repositories\Menu;
-use Leantime\Core\Support\EditorTypeEnum;
 
 defined('RESTRICTED') or die('Restricted access');
 
@@ -40,9 +39,9 @@ $menuTypes = $tpl->get('menuTypes');
                         {{ __("label.accomplish") }}
                         <br /><br />
                     </p>
-
-                    <x-global::forms.text-editor name="details" :type="EditorTypeEnum::Complex->value" :value="$project['details']" />
-
+                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50">
+                        {{ htmlentities($project['details']) }}
+                    </textarea>
                 </div>
             </div>
 

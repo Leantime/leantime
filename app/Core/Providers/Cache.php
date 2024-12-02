@@ -5,6 +5,7 @@ namespace Leantime\Core\Providers;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Support\Str;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
 class Cache extends CacheServiceProvider
@@ -23,31 +24,16 @@ class Cache extends CacheServiceProvider
             //Let's add a domain level cache.
             $domainCacheName = get_domain_key();
 
-            $app['config']->set('cache.stores.'.$domainCacheName, [
+            app('config')->set('cache.stores.'.$domainCacheName, [
                 'driver' => 'file',
+                'connection' => 'default',
                 'path' => storage_path('framework/cache/'.$domainCacheName.'/data'),
             ]);
 
             //If redis is set up let's use redis as cache
             if ($app['config']['useRedis']) {
-
-                $app['config']->set('cache.prefix', '');
-
-                //Default driver just in case it is being asked for
-                $app['config']->set('cache.stores.redis.driver', 'redis');
-                $app['config']->set('cache.stores.redis.connection', 'cache');
-
-                //Only needed when using sessions with redis
-                $app['config']->set('cache.stores.sessions.driver', 'redis');
-                $app['config']->set('cache.stores.sessions.connection', 'sessions');
-
-                $app['config']->set('cache.stores.installation.driver', 'redis');
-                $app['config']->set('cache.stores.installation.connection', 'installation');
-
-                $app['config']->set('cache.stores.'.$domainCacheName.'.driver', 'redis');
-                $app['config']->set('cache.stores.'.$domainCacheName.'.connection', 'cache');
-                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', ''.$domainCacheName.'');
-
+                app('config')->set('cache.stores.installation.driver', 'redis');
+                app('config')->set('cache.stores.'.$domainCacheName, 'redis');
             }
 
             $cacheManager = new \Illuminate\Cache\CacheManager($app);

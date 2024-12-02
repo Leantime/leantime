@@ -17,6 +17,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     {
         private TicketService $ticketService;
 
+
         private ProjectService $projectService;
 
         private TicketRepository $ticketRepo;

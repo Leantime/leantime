@@ -202,7 +202,6 @@ namespace Leantime\Domain\Users\Controllers {
                     ];
 
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
-
                         if ($_POST['newPassword'] == $_POST['confirmPassword']) {
                             if ($this->userService->checkPasswordStrength($_POST['newPassword'])) {
                                 $values['password'] = $_POST['newPassword'];
@@ -308,7 +307,7 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->userRepo->editOwn($values, $this->userId);
 
                     // Storing option messagefrequency
-                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) $_POST['messagesfrequency'] ?? 3600);
+                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) $_POST['messagesfrequency']);
 
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
                 }

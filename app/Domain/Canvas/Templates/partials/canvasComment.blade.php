@@ -6,7 +6,7 @@
 $canvasItem = $tpl->get('canvasItem');
 $canvasTypes = $tpl->get('canvasTypes');
 
-$id = '';
+$id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
@@ -23,7 +23,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div class="showDialogOnLoad" style="display:none;">
 
-  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?= $canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?= $canvasTypes[$canvasItem['box']]['title']; ?></h4>
+  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
 
     @displayNotification()
@@ -45,7 +45,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         leantime.editorController.initSimpleEditor();
 
-        <?php if (! $login::userIsAtLeast($roles::$editor)) { ?>
+        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>

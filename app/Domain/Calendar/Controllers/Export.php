@@ -10,6 +10,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class Export extends Controller
@@ -27,7 +28,8 @@ class Export extends Controller
         Environment $config,
         SettingRepository $settingsRepo,
         Calendar $calendarService
-    ): void {
+     ): void
+    {
         $this->config = $config;
         $this->settingsRepo = $settingsRepo;
         $this->calendarService = $calendarService;
@@ -49,18 +51,18 @@ class Export extends Controller
 
             try {
                 $this->calendarService->generateIcalHash();
-                $this->tpl->setNotification('notifications.ical_success', 'success');
-            } catch (\Exception $e) {
-                $this->tpl->setNotification('There was a problem generating the ical hash', 'error');
+                $this->tpl->setNotification("notifications.ical_success", "success");
+            }catch(\Exception $e) {
+                $this->tpl->setNotification("There was a problem generating the ical hash", "error");
             }
 
         }
 
-        $icalUrl = '';
+        $icalUrl = "";
         try {
             $icalUrl = $this->calendarService->getICalUrl();
-        } catch (\Exception $e) {
-            $this->tpl->setNotification('Could not find ical URL', 'error');
+        }catch(\Exception $e) {
+            $this->tpl->setNotification("Could not find ical URL", "error");
         }
 
         //Add delete handling

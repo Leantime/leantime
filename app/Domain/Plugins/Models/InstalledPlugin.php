@@ -62,7 +62,7 @@ class InstalledPlugin implements PluginDisplayStrategy
 
             $author = is_array($this->authors) ? $this->authors[0] : $this->authors;
 
-            if (is_object($author)) {
+            if(is_object($author)){
                 $links[] = [
                     'prefix' => __('text.by'),
                     'link' => "mailto:{$author->email}",

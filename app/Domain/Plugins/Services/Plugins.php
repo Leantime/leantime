@@ -10,7 +10,6 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
@@ -25,6 +24,9 @@ namespace Leantime\Domain\Plugins\Services {
     {
         use DispatchesEvents;
 
+        /**
+         * @api
+         */
         private string $pluginDirectory = ROOT.'/../app/Plugins/';
 
         /**
@@ -32,6 +34,9 @@ namespace Leantime\Domain\Plugins\Services {
          * custom: Plugin is loaded as a folder, available under discover plugins
          * system: Plugin is defined in config and loaded on start. Cannot delete, or disable plugin
          * marketplace: Plugin comes from maarketplace.
+         *
+         *
+         * @api
          */
         private array $pluginTypes = [
             'custom' => 'custom',
@@ -43,12 +48,21 @@ namespace Leantime\Domain\Plugins\Services {
          * Plugin formats
          * phar: Phar plugins (only from marketplace)
          * folder: Folder plugins
+         *
+         *
+         * @api
          */
         private array $pluginFormat = [
             'phar' => 'phar',
             'folder' => 'phar',
         ];
 
+        /**
+         * Marketplace URL
+         *
+         *
+         * @api
+         */
         public string $marketplaceUrl;
 
         /**
@@ -61,17 +75,11 @@ namespace Leantime\Domain\Plugins\Services {
             private SettingsService $settingsService,
             private UsersService $usersService,
             private EnvironmentCore $config,
-            private ConsoleKernel $leantimeCli
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }
 
         /**
-         * Retrieves all plugins, optionally filtering only the enabled ones.
-         *
-         * @param  bool  $enabledOnly  If set to true, only enabled plugins will be returned.
-         * @return false|array<InstalledPlugin> Returns an array of all plugins or false if an error occurs.
-         *
          * @api
          */
         public function getAllPlugins(bool $enabledOnly = false): false|array
@@ -119,8 +127,9 @@ namespace Leantime\Domain\Plugins\Services {
              * Filters array of plugins from database and config before returning
              *
              * @var array $allPlugins
+             *
              */
-            $allPlugins = self::dispatchFilter('beforeReturnAllPlugins', $installedPluginsById, ['enabledOnly' => $enabledOnly]);
+            $allPlugins = self::dispatchFilter("beforeReturnAllPlugins", $installedPluginsById, array("enabledOnly" => $enabledOnly));
 
             return $allPlugins;
         }
@@ -153,23 +162,25 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            if (Cache::store('installation')->has('plugins.enabledPlugins')) {
-                $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get('plugins.enabledPlugins'), ['enabledOnly' => true]);
+            if (Cache::store("installation")->has("enabledPlugins")
+            && Cache::store("installation")->get("enabledPlugins") !== null) {
+                $enabledPlugins = self::dispatchFilter('beforeReturnCachedPlugins', Cache::store("installation")->get("enabledPlugins"), ['enabledOnly' => true]);
 
                 return $enabledPlugins;
             }
 
-            Cache::store('installation')->set('plugins.enabledPlugins', $this->getAllPlugins(enabledOnly: true));
+            Cache::store("installation")->set("enabledPlugins", $this->getAllPlugins(enabledOnly: true));
 
             /**
              * Filters session array of enabled plugins before returning
              *
              * @var array $enabledPlugins
+             *
              */
             return self::dispatchFilter(
-                hook: 'beforeReturnCachedPlugins',
-                payload: Cache::store('installation')->get('plugins.enabledPlugins'),
-                available_params: ['enabledOnly' => true]);
+                hook: "beforeReturnCachedPlugins",
+                payload: Cache::store("installation")->get("enabledPlugins"),
+                available_params: array("enabledOnly" => true));
 
         }
 
@@ -268,6 +279,9 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
+         * @param int $id
+         * @return bool
+         *
          * @api
          */
         public function enablePlugin(int $id): bool
@@ -314,8 +328,6 @@ namespace Leantime\Domain\Plugins\Services {
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
-            $result = $this->pluginRepository->disablePlugin($id);
-
             if ($pluginModel->format == 'phar') {
                 $phar = new \Phar(
                     Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
@@ -339,7 +351,7 @@ namespace Leantime\Domain\Plugins\Services {
                 }
             }
 
-            return $result;
+            return $this->pluginRepository->disablePlugin($id);
         }
 
         /**
@@ -378,6 +390,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             return $this->pluginRepository->removePlugin($id);
 
+            //TODO remove files savely
         }
 
         /**
@@ -446,7 +459,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             $data = $response->json();
 
-            return build(new MarketplacePlugin)
+            return build(new MarketplacePlugin())
                 ->set('identifier', $identifier ?? '')
                 ->set('name', $data['name'] ?? '')
                 ->set('icon', $data['icon'] ?? '')
@@ -573,20 +586,12 @@ namespace Leantime\Domain\Plugins\Services {
         public function clearCache()
         {
 
-            Cache::store('installation')->forget('domainEvents');
-            Cache::store('installation')->forget('commands');
-            Cache::store('installation')->forget('plugins.enabledPlugins');
+            Cache::store('installation')->forget("domainEvents");
+            Cache::store('installation')->forget("commands");
+            Cache::store('installation')->forget("enabledPlugins");
 
-            session()->forget('template_paths');
-            session()->forget('composers');
-
-            $files = app()->make(\Illuminate\Filesystem\Filesystem::class);
-            $viewPathCachePath = storage_path('framework/viewPaths.php');
-            $files->delete($viewPathCachePath);
-
-            $composerPathCachePath = storage_path('framework/composerPaths.php');
-            $files->delete($composerPathCachePath);
-
+            session()->forget("template_paths");
+            session()->forget("composers");
         }
     }
 }

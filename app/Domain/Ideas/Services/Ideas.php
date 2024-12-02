@@ -57,7 +57,6 @@ namespace Leantime\Domain\Ideas\Services {
             $ideas = $this->ideasRepository->getAllIdeas();
 
             foreach ($ideas as $key => $idea) {
-                $ideas[$key] = $this->prepareDatesForApiResponse($idea);
                 $ideas[$key]['id'] = $idea['id'].'-'.$idea['modified'];
             }
 
@@ -257,7 +256,7 @@ namespace Leantime\Domain\Ideas\Services {
 
             $canvasItem = $this->ideasRepository->getSingleCanvasItem($params['id']);
             $canvasItem->box = $canvasItem->box === '0' ? 'idea' : $canvasItem->box;
-            $canvasItem->tags = explode(',', $canvasItem->tags);
+            $canvasItem->tags = explode(",", $canvasItem->tags);
 
             $result['canvasItem'] = $canvasItem;
             // $result['comments'] = $this->commentRepository->getComments('idea', $canvasItem->id);
@@ -385,7 +384,7 @@ namespace Leantime\Domain\Ideas\Services {
                 'assumptions' => '',
                 'data' => $params['data'],
                 'conclusion' => '',
-                'tags' => is_array($params['tags'] ?? '') ? implode(',', $params['tags']) : '',
+                'tags' => is_array($params['tags'] ?? '') ? implode(",", $params['tags'] ) : "",
                 'itemId' => $params['itemId'] ?? '',
                 'canvasId' => (int) session('currentIdeaCanvas'),
                 'milestoneId' => $params['milestoneId'] ?? '',

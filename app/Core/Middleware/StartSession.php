@@ -9,7 +9,6 @@ use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -51,7 +50,6 @@ class StartSession
      */
     public function handle(IncomingRequest $request, Closure $next)
     {
-
         if (! $this->sessionConfigured()) {
             return $next($request);
         }
@@ -60,12 +58,7 @@ class StartSession
 
         self::dispatchEvent('session_initialized');
 
-        if ($this->shouldLockSession($request)) {
-            return $this->handleRequestWhileBlocking($request, $session, $next);
-        }
-
-        return $this->handleStatefulRequest($request, $session, $next);
-
+        return $this->handleRequestWhileBlocking($request, $session, $next);
     }
 
     /**
@@ -77,29 +70,21 @@ class StartSession
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
-        //Locking session for 2 seconds
-        // How long the lock should be held once acquired
-        $holdLockFor = 3; // Hold lock for x seconds after acquiring
+        $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
-        // Maximum time to wait for acquiring the lock if already held
-        $maxWaitForLock = 10; // Wait for up to y seconds to acquire the lock
-
-        $lock = $this->cache('sessions')
-            ->lock('session_lock_'.$session->getId(), $holdLockFor)
+        $lock = $this->cache('installation')
+            ->lock('session:'.$session->getId(), $lockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 
         try {
-
-            $lock->block($maxWaitForLock);
+            //Acquire lock every 50ms for 20 seconds
+            $lock->block(20);
 
             return $this->handleStatefulRequest($request, $session, $next);
-
         } catch (LockTimeoutException $e) {
-
-            Log::error($e);
+            $lock->block(60);
 
             return $this->handleStatefulRequest($request, $session, $next);
-
         } finally {
             $lock?->release();
         }
@@ -119,8 +104,6 @@ class StartSession
         $request->setLaravelSession(
             $this->startSession($request, $session)
         );
-
-        self::dispatchEvent('session_started');
 
         $this->collectGarbage($session);
 
@@ -162,12 +145,6 @@ class StartSession
      */
     public function getSession(IncomingRequest $request)
     {
-        //Non logged in cookies will be reduced to 60min.
-        //Extend Session Lifetime
-        if (! $request->cookies->has('esl')) {
-            app('config')->set('session.lifetime', 60);
-        }
-
         return tap($this->manager->driver(), function ($session) use ($request) {
             $session->setId($request->cookies->get($session->getName()));
         });
@@ -210,7 +187,8 @@ class StartSession
     {
         if (
             $request->isMethod('GET')
-            && $this->shouldLockSession($request)
+            && ! $request->isApiOrCronRequest()
+            && ! $request->isUnboostedHtmxRequest()
         ) {
             $fullUrl = $request->fullUrl();
             $session->setPreviousUrl($request->fullUrl());
@@ -247,22 +225,9 @@ class StartSession
      */
     protected function saveSession(IncomingRequest $request)
     {
-        if ($this->shouldLockSession($request)) {
-
+        if ($request->isBoostedHtmxRequest() === false) {
             $this->manager->driver()->save();
         }
-    }
-
-    protected function shouldLockSession(IncomingRequest $request)
-    {
-
-        if (
-            $request->isApiOrCronRequest() === false
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

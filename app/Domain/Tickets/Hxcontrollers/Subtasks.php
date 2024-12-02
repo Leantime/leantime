@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Tickets\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Language;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
@@ -12,14 +13,17 @@ class Subtasks extends HtmxController
 
     private Tickets $ticketService;
 
+    private Language $language;
+
     /**
      * Controller constructor
      *
      * @param  Timesheets  $timesheetService
      */
-    public function init(Tickets $ticketService): void
+    public function init(Tickets $ticketService, Language $language): void
     {
         $this->ticketService = $ticketService;
+        $this->language = $language;
     }
 
     public function save(): void

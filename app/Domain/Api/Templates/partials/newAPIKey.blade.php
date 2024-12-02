@@ -8,7 +8,7 @@ $apiKeyValues = $tpl->get('apiKeyValues');
 ?>
 
 <div style="min-width:700px;">
-
+    
     <x-global::content.modal.header>
         New API Key
     </x-global::content.modal.header>
@@ -18,8 +18,8 @@ $apiKeyValues = $tpl->get('apiKeyValues');
     @displayNotification()
     <?php if ($apiKeyValues !== false && isset($apiKeyValues['id'])) {?>
         <p>Your API Key was successfully created. Please copy the key below. This is your only chance to copy it.</p>
-        <input type="text" id="apiKey" value="lt_<?= $apiKeyValues['user'] ?>_<?= $apiKeyValues['passwordClean']?>"  style="width:100%;"/>
-        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('apiKey');"><?= $tpl->__('links.copy_key') ?></button>
+        <input type="text" id="apiKey" value="lt_<?=$apiKeyValues['user'] ?>_<?=$apiKeyValues['passwordClean']?>"  style="width:100%;"/>
+        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('apiKey');"><?=$tpl->__('links.copy_key') ?></button>
     <?php } else { ?>
     <x-global::content.modal.form action="{{ BASE_URL }}/api/newApiKey" method="post" class="stdform formModal" >
 
@@ -40,11 +40,11 @@ $apiKeyValues = $tpl->get('apiKeyValues');
                 <select name="role" id="role">
 
                     <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                        <option value="<?php echo $key; ?>"
+                        <option value="<?php  echo $key; ?>"
                             <?php if ($key == $values['role']) {
                                 ?> selected="selected" <?php
                             } ?>>
-                            <?= $tpl->__('label.roles.'.$role) ?>
+                            <?=$tpl->__("label.roles." . $role) ?>
                         </option>
                     <?php } ?>
 
@@ -53,17 +53,17 @@ $apiKeyValues = $tpl->get('apiKeyValues');
                 <label for="status">{{ __("label.status") }}</label><div class="clearfix"></div>
                 <select name="status" id="status">
                     <option value="a"
-                        <?php if (strtolower($values['status']) == 'a') {
+                        <?php if (strtolower($values['status']) == "a") {
                             ?> selected="selected" <?php
                         } ?>>
-                        <?= $tpl->__('label.active') ?>
+                        <?=$tpl->__("label.active") ?>
                     </option>
 
                     <option value=""
-                        <?php if (strtolower($values['status']) == '') {
+                        <?php if (strtolower($values['status']) == "") {
                             ?> selected="selected" <?php
                         } ?>>
-                        <?= $tpl->__('label.deactivated') ?>
+                        <?=$tpl->__("label.deactivated") ?>
                     </option>
 
                 </select>
@@ -82,21 +82,21 @@ $apiKeyValues = $tpl->get('apiKeyValues');
                 <div class="scrollableItemList">
                     <?php
                     $currentClient = '';
-        $i = 0;
-        $containerOpen = false;
-        foreach ($tpl->get('allProjects') as $row) {
-            if ($currentClient != $row['clientName']) {
-                if ($i > 0 && $containerOpen) {
-                    echo '</div>';
+                    $i = 0;
                     $containerOpen = false;
-                }
-                echo "<h3 id='accordion_link_".$i."'>
-                        <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$tpl->escape($row['clientName'])."</a>
+                    foreach ($tpl->get('allProjects') as $row) {
+                        if ($currentClient != $row['clientName']) {
+                            if ($i > 0 && $containerOpen) {
+                                echo"</div>";
+                                $containerOpen = false;
+                            }
+                            echo "<h3 id='accordion_link_" . $i . "'>
+                        <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
                         </h3>
-                        <div id='accordion_".$i."' class='simpleAccordionContainer'>";
-                $currentClient = $row['clientName'];
-                $containerOpen = true;
-            } ?>
+                        <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
+                            $currentClient = $row['clientName'];
+                            $containerOpen = true;
+                        } ?>
                         <div class="item">
                             <x-global::forms.checkbox
                                 name="projects[]"

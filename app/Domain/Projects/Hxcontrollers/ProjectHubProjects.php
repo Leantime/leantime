@@ -5,7 +5,7 @@ namespace Leantime\Domain\Projects\Hxcontrollers;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -33,7 +33,7 @@ class ProjectHubProjects extends HtmxController
 
     private CalendarRepository $calendarRepo;
 
-    private ClientService $clientService;
+    private Clients $clientRepo;
 
     private Comments $commentsService;
 
@@ -53,7 +53,7 @@ class ProjectHubProjects extends HtmxController
         ReportService $reportsService,
         SettingRepository $settingRepo,
         CalendarRepository $calendarRepo,
-        ClientService $clientService,
+        Clients $clientRepo,
         Comments $commentsService,
         Menu $menuService
     ) {
@@ -64,7 +64,7 @@ class ProjectHubProjects extends HtmxController
         $this->reportsService = $reportsService;
         $this->settingRepo = $settingRepo;
         $this->calendarRepo = $calendarRepo;
-        $this->clientService = $clientService;
+        $this->clientRepo = $clientRepo;
         $this->commentsService = $commentsService;
         $this->menuService = $menuService;
 
@@ -78,7 +78,7 @@ class ProjectHubProjects extends HtmxController
         $currentClientName = '';
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
             $clientId = (int) $_GET['client'];
-            $currentClient = $this->clientService->get($clientId);
+            $currentClient = $this->clientRepo->getClient($clientId);
             if (is_array($currentClient) && count($currentClient) > 0) {
                 $currentClientName = $currentClient['name'];
             }

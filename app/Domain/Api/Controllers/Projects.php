@@ -55,7 +55,7 @@ class Projects extends Controller
 
             return match ($svg['type']) {
                 'uploaded' => $file->displayImageFile($svg['filename']),
-                'generated' => $file->displayImageFile('avatar', $svg['filename'], true),
+                'generated' => $file->displayImageFile('avatar', $svg['filename']),
             };
         }
 

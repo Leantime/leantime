@@ -2,17 +2,14 @@
 
 namespace Leantime\Core\Db;
 
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Facades\DB as dbFacade;
-use Illuminate\Support\Facades\Log;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 
 /**
  * Database Class - Very simple abstraction layer for pdo connection
  */
-class Db extends DatabaseManager
+class Db
 {
     use DispatchesEvents;
 
@@ -22,12 +19,12 @@ class Db extends DatabaseManager
     private string $host = '';
 
     /**
-     * @var string username for database
+     * @var string username for db
      */
     private string $user = '';
 
     /**
-     * @var string password for database
+     * @var string password for db
      */
     private string $password = '';
 
@@ -47,39 +44,37 @@ class Db extends DatabaseManager
     public PDO $database;
 
     /**
-     * @var ConnectionInterface Laravel database connection
-     */
-    private ConnectionInterface $connection;
-
-    /**
-     * __construct - connect to database and select database
+     * __construct - connect to database and select db
      *
      * @return void
      */
-    public function __construct($connection = 'mysql')
+    public function __construct()
     {
 
+        $config = app('config');
+        $this->user = $config->dbUser;
+        $this->password = $config->dbPassword;
+        $this->databaseName = $config->dbDatabase;
+        $this->host = $config->dbHost ?? 'localhost';
+        $this->port = $config->dbPort ?? '3306';
 
-        // Get Laravel's database connection
-        $this->connection = dbFacade::connection($connection);
+        $this->database = new PDO(
+            dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
+            username: $this->user,
+            password: $this->password,
+            options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
+        );
+        $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+        $this->database->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        // Get the PDO connection from Laravel's connection
-        try {
-
-            $this->database = $this->connection->getPdo();
-
-        } catch (\PDOException $e) {
-
-            Log::error("Can't connect to database");
-            throw new \Exception($e);
-        }
     }
 
     /**
-     * This function will generate a PDO binding string (":editors0,:editors1,:editors2,:editors3") to be used in a PDO
+     * This function will generate a pdo binding string (":editors0,:editors1,:editors2,:editors3") to be used in a PDO
      * query that uses the IN() clause, to assist in proper PDO array bindings to avoid SQL injection.
      *
-     * A counted for loop is used rather than foreach with a key to avoid issues if the array passed has any
+     * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      */
     public static function arrayToPdoBindingString(string $name, int $count): string
@@ -102,10 +97,5 @@ class Db extends DatabaseManager
     public static function sanitizeToColumnString(string $string): string
     {
         return preg_replace('/[^a-zA-Z0-9_]/', '', $string);
-    }
-
-    public static function sanitizeComparitorString(string $string): string
-    {
-        return preg_replace('/[^=<>LIKENOT]/', '', $string);
     }
 }

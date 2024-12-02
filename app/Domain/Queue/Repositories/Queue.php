@@ -35,15 +35,10 @@ namespace Leantime\Domain\Queue\Repositories {
                 } elseif (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
                     $theuser = $this->users->getUserByEmail($recipient);
                 } else {
-                    //skip invalid users
-                    continue;
+                    return;
                 }
-
-                //User might not be set because it's a new user
-                if (! $theuser) {
-                    continue;
-                }
-
+                // TODO : exit if no user was found ?
+                // Low risk but still it could be deleted in the meantime
                 $userId = $theuser['id'];
                 $userEmail = $theuser['username'];
                 $msghash = md5($thedate.$subject.$message.$userEmail.$projectId);

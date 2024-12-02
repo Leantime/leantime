@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Setting\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Ramsey\Uuid\Uuid;
@@ -13,8 +12,6 @@ namespace Leantime\Domain\Setting\Services {
      */
     class Setting
     {
-        use DispatchesEvents;
-
         public function __construct(
             public SettingRepository $settingsRepo,
         ) {
@@ -119,17 +116,6 @@ namespace Leantime\Domain\Setting\Services {
             }
 
             return $companyId;
-        }
-
-        public function onboardingHandler()
-        {
-
-            $completedOnboarding = $this->settingsRepo->getSetting('companysettings.completedOnboarding');
-
-            $handler = self::dispatchFilter('completeOnboardingHandler', $completedOnboarding);
-
-            return $handler;
-
         }
     }
 }

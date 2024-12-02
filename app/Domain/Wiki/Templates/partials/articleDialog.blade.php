@@ -26,7 +26,7 @@ if (isset($currentArticle->id)) {
                 </h4>
                 <x-global::forms.select name="parent" :labelText="'Parent'">
                     <x-global::forms.select.select-option value="0">None</x-global::forms.select.select-option>
-
+                
                     @foreach ($wikiHeadlines as $parent)
                         @if ($id != $parent->id)
                             <x-global::forms.select.select-option :value="$parent->id" :selected="$parent->id == $currentArticle->parent">
@@ -35,17 +35,17 @@ if (isset($currentArticle->id)) {
                         @endif
                     @endforeach
                 </x-global::forms.select>
-
+                
                 <x-global::forms.select name="status" :labelText="__('label.status')">
                     <x-global::forms.select.select-option value="draft" :selected="$currentArticle->status == 'draft'">
                         {!! __('label.draft') !!}
                     </x-global::forms.select.select-option>
-
+                
                     <x-global::forms.select.select-option value="published" :selected="$currentArticle->status == 'published'">
                         {!! __('label.published') !!}
                     </x-global::forms.select.select-option>
                 </x-global::forms.select>
-
+                
             </div>
 
             <?php if ($id !== '') { ?>
@@ -83,26 +83,26 @@ if (isset($currentArticle->id)) {
 
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <x-global::forms.select
-                                    name="existingMilestone"
-                                    class="user-select"
-                                    :labelText="__('input.placeholders.filter_by_milestone')"
+                                    <x-global::forms.select 
+                                    name="existingMilestone" 
+                                    class="user-select" 
+                                    :labelText="__('input.placeholders.filter_by_milestone')" 
                                     data-placeholder="{{ __('input.placeholders.filter_by_milestone') }}"
                                 >
                                     <x-global::forms.select.select-option value="">
                                         {!! __('label.all_milestones') !!}
                                     </x-global::forms.select.select-option>
-
+                                
                                     @foreach ($tpl->get('milestones') as $milestoneRow)
-                                        <x-global::forms.select.select-option
-                                            :value="$milestoneRow->id"
+                                        <x-global::forms.select.select-option 
+                                            :value="$milestoneRow->id" 
                                             :selected="isset($searchCriteria['milestone']) && $searchCriteria['milestone'] == $milestoneRow->id"
                                         >
                                             {!! $milestoneRow->headline !!}
                                         </x-global::forms.select.select-option>
                                     @endforeach
                                 </x-global::forms.select>
-
+                                
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="articleId" value="<?php echo $id; ?> " />
                                     <x-global::forms.button type="button" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary">
@@ -174,7 +174,8 @@ if (isset($currentArticle->id)) {
                 value="{!! $tpl->escape($currentArticle->tags) !!}"
             />
 
-            <x-global::forms.text-editor name="description" :type="EditorTypeEnum::Complex->value" :value="$currentArticle->description" />
+            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+
 
                 <div class="row">
                     <div class="col-md-10 padding-top-sm">

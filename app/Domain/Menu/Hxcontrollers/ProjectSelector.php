@@ -34,7 +34,7 @@ class ProjectSelector extends HtmxController
     /**
      * @throws BindingResolutionException
      */
-    public function updateMenu($params): void
+    public function updateMenu(): void
     {
 
         $allAssignedprojects =

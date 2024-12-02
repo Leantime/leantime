@@ -3,13 +3,86 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Leantime\Core\Application;
+use Leantime\Core\Bootloader;
+use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
+use Leantime\Core\Support\Mix;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+if (! function_exists('app')) {
+    /**
+     * Returns the application instance.
+     *
+     *
+     * @return mixed|Application
+     *
+     * @throws BindingResolutionException
+     */
+    function app(string $abstract = '', array $parameters = []): mixed
+    {
+        $app = Application::getInstance();
+
+        return ! empty($abstract) ? $app->make($abstract, $parameters) : $app;
+    }
+}
+
+// if (! function_exists('dd')) {
+//     /**
+//      * Dump the passed variables and end the script.
+//      *
+//      * @param mixed $args
+//      * @return never
+//      */
+//     function dd(...$args): never
+//     {
+//         echo sprintf('<pre>%s</pre>', var_export($args, true));
+//
+//         if (
+//             app()->bound(IncomingRequest::class)
+//             && (
+//                 /** @var IncomingRequest $request */
+//                 ($request = app()->make(IncomingRequest::class)) instanceof HtmxRequest
+//                 || $request->isXmlHttpRequest()
+//             )
+//         ) {
+//             report('this fires');
+//
+//             exit(0);
+//         }
+//
+//         report(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
+//
+//         exit();
+//     }
+// }
+
+if (! function_exists('bootstrap_minimal_app')) {
+    /**
+     * Bootstrap a new IoC container instance.
+     *
+     *
+     * @throws BindingResolutionException
+     */
+    function bootstrap_minimal_app(): Application
+    {
+        $app = app()::setInstance(new Application)::setHasBeenBootstrapped();
+        $app_inst = Bootloader::getInstance($app)->getApplication();
+        $app_inst->make(AppSettings::class)->loadSettings();
+
+        return $app_inst;
+    }
+}
 
 if (! function_exists('__')) {
     /**
@@ -20,6 +93,27 @@ if (! function_exists('__')) {
     function __(string $index, string $default = ''): string
     {
         return app()->make(Language::class)->__(index: $index, default: $default);
+    }
+}
+
+if (! function_exists('view')) {
+    /**
+     * Get the evaluated view contents for the given view.
+     *
+     * @param  string|null  $view
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
+     */
+    function view($view = null, $data = [], $mergeData = [])
+    {
+        $factory = app(\Illuminate\View\Factory::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->make($view, $data, $mergeData);
     }
 }
 
@@ -74,6 +168,32 @@ if (! function_exists('do_once')) {
         }
 
         $callback();
+    }
+}
+
+if (! function_exists('config')) {
+    /**
+     * Get / set the specified configuration value.
+     * If an array is passed as the key, we will assume you want to set an array of values.
+     *
+     *
+     * @return mixed|Application
+     *
+     * @throws BindingResolutionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    function config(array|string|null $key = null, mixed $default = null): mixed
+    {
+        if (is_null($key)) {
+            return app('config');
+        }
+
+        if (is_array($key)) {
+            return app('config')->set($key);
+        }
+
+        return app('config')->get($key, $default);
     }
 }
 
@@ -133,6 +253,29 @@ if (! function_exists('cast')) {
     }
 }
 
+if (! function_exists('mix')) {
+    /**
+     * Get the path to a versioned Mix file. Customized for Leantime.
+     *
+     *
+     * @throws BindingResolutionException
+     */
+    function mix(string $path = '', string $manifestDirectory = ''): Mix|string
+    {
+        if (! ($app = app())->bound(Mix::class)) {
+            $app->instance(Mix::class, new Mix);
+        }
+
+        $mix = $app->make(Mix::class);
+
+        if (empty($path)) {
+            return $mix;
+        }
+
+        return $mix($path, $manifestDirectory);
+    }
+}
+
 if (! function_exists('dtHelper')) {
     /**
      * Get a singleton instance of the DateTimeHelper class.
@@ -150,84 +293,73 @@ if (! function_exists('dtHelper')) {
     }
 }
 
-if (! function_exists('redirect')) {
-    /**
-     * Get an instance of the redirector.
-     *
-     * @param  string|null  $url
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  bool|null  $secure
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
-     */
-    function redirect($url = null, $http_response_code = 302, $headers = [], $secure = null)
-    {
-        return new RedirectResponse(
-            trim(preg_replace('/\s\s+/', '', strip_tags($url))),
-            $http_response_code
-        );
-    }
-}
-
-if (! function_exists('currentRoute')) {
-    /**
-     * Get an instance of the redirector.
-     *
-     * @param  string|null  $to
-     * @param  int  $status
-     * @param  array  $headers
-     * @param  bool|null  $secure
-     */
-    function currentRoute()
-    {
-
-        return app('request')->getCurrentRoute();
-
-    }
-}
-
-if (! function_exists('get_domain_key')) {
-
-    /**
-     * Gets a unique instance key determined by domain
-     */
-    function get_domain_key()
-    {
-
-        //Now that we know where the instance is bing called from
-        //Let's add a domain level cache.
-        $domainCacheName = 'localhost';
-        if (! app()->runningInConsole()) {
-            $domainCacheName = md5(\Illuminate\Support\Str::slug(app('request')->host().app('request')['key']));
-        }
-
-        return $domainCacheName;
-
-    }
-
-}
-
-if (! function_exists('mix')) {
+if (! function_exists('session')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
+     * @param  string  $path
+     * @param  string  $manifestDirectory
      * @return Mix|string
      *
      * @throws BindingResolutionException
      */
-    function mix(string $path = '', string $manifestDirectory = ''): \Leantime\Core\Support\Mix|string
+    function session($key = null, $default = null)
     {
-        if (! ($app = app())->bound(\Leantime\Core\Support\Mix::class)) {
-            $app->instance(\Leantime\Core\Support\Mix::class, new \Leantime\Core\Support\Mix);
+        if (is_null($key)) {
+            return app('session');
         }
 
-        $mix = $app->make(\Leantime\Core\Support\Mix::class);
-
-        if (empty($path)) {
-            return $mix;
+        if (is_array($key)) {
+            return app('session')->put($key);
         }
 
-        return $mix($path, $manifestDirectory);
+        return app('session')->get($key, $default);
+    }
+
+}
+
+if (! function_exists('storage_path')) {
+    function storage_path($path = '')
+    {
+        return app()->storagePath($path);
+    }
+
+}
+
+if (! function_exists('request')) {
+    /**
+     * Get an instance of the current request or an input item from the request.
+     *
+     * @param  list<string>|string|null  $key
+     * @param  mixed  $default
+     * @return ($key is null ? \Illuminate\Http\Request : ($key is string ? mixed : array<string, mixed>))
+     */
+    function request($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return app()->make(IncomingRequest::class);
+        }
+
+        if (is_array($key)) {
+            return app()->make(IncomingRequest::class)->only($key);
+        }
+
+        $value = app()->make(IncomingRequest::class)->__get($key);
+
+        return is_null($value) ? value($default) : $value;
+    }
+}
+
+if (! function_exists('report')) {
+    /**
+     * Report an exception.
+     *
+     * @param  \Throwable|string  $exception
+     * @return void
+     */
+    function report($exception)
+    {
+        Log::critical($exception);
     }
 }
 
@@ -272,6 +404,7 @@ if (! function_exists('currentRoute')) {
      * @param  array  $headers
      * @param  bool|null  $secure
      */
+
     function currentRoute()
     {
 
@@ -284,6 +417,7 @@ if (! function_exists('get_domain_key')) {
 
     /**
      * Gets a unique instance key determined by domain
+     *
      */
     function get_domain_key()
     {

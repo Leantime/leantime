@@ -246,10 +246,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function patchCanvasItem($id, $params): bool
         {
 
-            if (isset($params['act'])) {
-                unset($params['act']);
-            }
-
             $sql = 'UPDATE zp_canvas_items SET ';
 
             foreach ($params as $key => $value) {
@@ -337,10 +333,8 @@ namespace Leantime\Domain\Ideas\Repositories {
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, IdeasModel::class);
 
             $stmn->closeCursor();
-
             return $values;
         }
-
         public function getCanvasItemsIdById($id): false|array
         {
 
@@ -373,7 +367,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function getSingleCanvasItem($id, $key = ''): mixed
         {
             $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
-
+        
             // Base SQL query
             $sql = 'SELECT
                         zp_canvas_items.id,
@@ -400,25 +394,26 @@ namespace Leantime\Domain\Ideas\Repositories {
                     LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                     LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
                     WHERE zp_canvas_items.id = :id';
-
-            if (! empty($key)) {
+        
+            if (!empty($key)) {
                 $sql .= ' AND zp_canvas_items.box = :key';
             }
-
+        
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            if (! empty($key)) {
+        
+            if (!empty($key)) {
                 $stmn->bindValue(':key', $key, PDO::PARAM_STR);
             }
-
+        
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, IdeasModel::class);
             $value = $stmn->fetch();
             $stmn->closeCursor();
-
+        
             return $value;
         }
+        
 
         public function addCanvasItem($values): false|string
         {

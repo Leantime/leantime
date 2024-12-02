@@ -1,3 +1,4 @@
+
 .nav-tabs.nav-stacked>li>a {
     border:none;
 }
@@ -175,7 +176,7 @@ a.barmenu:hover {
 
 
 .bigProjectSelector i.fa {
-    font-size: var(--base-font-size);
+
     position: absolute;
     top: 25px;
     right: 10px;
@@ -356,15 +357,6 @@ a.barmenu:hover {
     cursor:default;
 }
 
-.showMenuIndicator::after {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--red);
-    border-radius: 50%;
-    margin-left: 5px;
-}
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
     background-repeat: no-repeat;
@@ -1386,5 +1378,4 @@ a.barmenu:hover {
     -webkit-border-radius: 0;
     border-radius: 0;
 }
-
 

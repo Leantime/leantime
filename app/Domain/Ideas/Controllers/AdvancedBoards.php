@@ -114,5 +114,7 @@ class AdvancedBoards extends Controller
         $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
         $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());
     }
-
+    /**
+     * run - display template and edit data
+     */
 }

@@ -91,8 +91,7 @@ class Language
      * @param  Environment  $config  The configuration environment.
      * @param  ApiRequest  $request  The API request object.
      */
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->config = app('config');
         $this->request = app('request');
@@ -168,12 +167,6 @@ class Language
             return $this->language;
         }
 
-        $language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', 0, 2);
-        $language = str_replace('_', '-', $language);
-        if ($language && $this->isValidLanguage($language)) {
-            return $this->language;
-        }
-
         $this->language = $this->config->language;
 
         return $this->language;
@@ -199,17 +192,17 @@ class Language
      */
     public function readIni(): array
     {
-        if (Cache::store('installation')->has('languages.lang_'.$this->language)) {
+        if (Cache::store('installation')->has('cache.language_resources_'.$this->language) && $this->config->debug == 0) {
 
             $this->ini_array = self::dispatchFilter(
                 'language_resources',
-                Cache::store('installation')->get('languages.lang_'.$this->language),
+                Cache::store('installation')->get('cache.language_resources_'.$this->language),
                 [
                     'language' => $this->language,
                 ]
-            ) ?? Cache::store('installation')->get('languages.lang_'.$this->language);
+            );
 
-            Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+            Cache::store('installation')->set('cache.language_resources_'.$this->language, $this->ini_array);
 
             return $this->ini_array;
         }
@@ -242,7 +235,7 @@ class Language
             ]
         );
 
-        Cache::store('installation')->set('languages.lang_'.$this->language, $this->ini_array);
+        Cache::store('installation')->set('cache.language_resources_'.$this->language, $this->ini_array);
 
         return $this->ini_array;
     }
@@ -291,8 +284,8 @@ class Language
      */
     public function getLanguageList(): bool|array
     {
-        if (Cache::store('installation')->has('languages.langlist')) {
-            return Cache::store('installation')->get('languages.langlist');
+        if (Cache::store('installation')->has('cache.langlist')) {
+            return Cache::store('installation')->get('cache.langlist');
         }
 
         $langlist = false;
@@ -313,7 +306,7 @@ class Language
         }
 
         $parsedLangList = self::dispatchFilter('languages', $langlist);
-        Cache::store('installation')->set('languages.langlist', $parsedLangList);
+        Cache::store('installation')->set('cache.langlist', $parsedLangList);
 
         return $parsedLangList;
     }
@@ -347,15 +340,6 @@ class Language
         };
 
         return (string) $returnValue;
-    }
-
-    public function mergeLanguageArray($newLanguageArray)
-    {
-
-        if (is_array($newLanguageArray)) {
-            $this->ini_array = array_merge($this->ini_array, $newLanguageArray);
-        }
-
     }
 
     public function get(string $index, $default = '', $locale = '')

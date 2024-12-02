@@ -516,6 +516,7 @@
                 </div>
                 </li>
 
+                <?php } ?>
                 </ul>
 
                 <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink"

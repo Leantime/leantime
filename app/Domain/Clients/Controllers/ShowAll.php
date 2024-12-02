@@ -9,25 +9,25 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
-    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 
     class ShowAll extends Controller
     {
-        private ClientService $clientService;
+        private ClientRepository $clientRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init(ClientService $clientService)
+        public function init(ClientRepository $clientRepo)
         {
-            $this->clientService = $clientService;
+
+            $this->clientRepo = $clientRepo;
         }
 
         /**
-         * get - display template and edit data
+         * run - display template and edit data
          */
-        public function get():Response
+        public function run()
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
@@ -36,9 +36,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 $this->tpl->assign('admin', true);
             }
 
-            $clients = $this->clientService->getAll();
-
-            $this->tpl->assign('allClients', $clients);
+            $this->tpl->assign('allClients', $this->clientRepo->getAll());
 
             return $this->tpl->display('clients.showAll');
         }

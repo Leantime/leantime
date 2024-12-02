@@ -5,7 +5,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
@@ -18,21 +18,17 @@ namespace Leantime\Domain\Users\Controllers {
 
         private UserService $userService;
 
-        private ClientService $clientService;
-
         /**
          * init - initialize private variables
          */
         public function init(
             UserRepository $userRepo,
             ProjectRepository $projectsRepo,
-            UserService $userService,
-            ClientService $clientService 
+            UserService $userService
         ) {
             $this->userRepo = $userRepo;
             $this->projectsRepo = $projectsRepo;
             $this->userService = $userService;
-            $this->clientService = $clientService;
         }
 
         /**
@@ -108,6 +104,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
 
                 $this->tpl->assign('values', $values);
+                $clients = app()->make(ClientRepository::class);
 
                 if (isset($_GET['preSelectProjectId'])) {
                     $preSelected = explode(',', $_GET['preSelectProjectId']);
@@ -123,7 +120,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
 
                 $this->tpl->assign('preSelectedClient', $preSelectedClient);
-                $this->tpl->assign('clients', $this->clientService->getAll());
+                $this->tpl->assign('clients', $clients->getAll());
                 $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
                 $this->tpl->assign('roles', Roles::getRoles());
 

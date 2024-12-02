@@ -110,6 +110,5 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             autocompleteApi.hide();
         }
     });
-
     return {};
 });

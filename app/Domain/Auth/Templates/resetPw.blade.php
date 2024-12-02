@@ -8,7 +8,7 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pagetitle">
-        <h1><?php echo $tpl->language->__('headlines.reset_password'); ?></h1>
+        <h1><?php echo $tpl->language->__("headlines.reset_password"); ?></h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
@@ -20,22 +20,22 @@ $tpl->dispatchTplEvent('beforePageHeaderOpen');
 
         <?php echo $tpl->displayInlineNotification(); ?>
 
-        <p><?php echo $tpl->language->__('text.enter_new_password'); ?><br /><br /></p>
+        <p><?php echo $tpl->language->__("text.enter_new_password"); ?><br /><br /></p>
 
         <div class="">
-            <input type="password" autocomplete="off" name="password" id="password" placeholder="<?php echo $tpl->language->__('input.placeholders.enter_new_password'); ?>" />
+            <input type="password" name="password" id="password" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <div class=" ">
-            <input type="password" autocomplete="off" name="password2" id="password2" placeholder="<?php echo $tpl->language->__('input.placeholders.confirm_password'); ?>" />
+            <input type="password" name="password2" id="password2" placeholder="<?php echo $tpl->language->__("input.placeholders.confirm_password"); ?>" />
         </div>
-        <small><?= $tpl->__('label.passwordRequirements') ?></small><br /><br />
+        <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
 
             <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
             <x-global::forms.button type="submit" name="resetPassword">
                 {{ __('buttons.reset_password') }}
-            </x-global::forms.button>
+            </x-global::forms.button>            
             <div class="forgotPwContainer">
                 <a href="{{ BASE_URL }}/" class="forgotPw"><?php echo $tpl->language->__("links.back_to_login"); ?></a>
             </div>

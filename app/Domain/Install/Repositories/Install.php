@@ -3,11 +3,9 @@
 namespace Leantime\Domain\Install\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Cache;
-    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment;
-    use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Domain\Setting\Repositories\Setting;
     use PDO;
@@ -15,7 +13,7 @@ namespace Leantime\Domain\Install\Repositories {
 
     class Install
     {
-        use DispatchesEvents;
+        use EventhelperCore;
 
         public string $name;
 
@@ -126,7 +124,7 @@ namespace Leantime\Domain\Install\Repositories {
                 );
                 $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                Log::error($e);
+                report($e);
                 echo $e->getMessage();
             }
         }
@@ -145,12 +143,7 @@ namespace Leantime\Domain\Install\Repositories {
         public function checkIfInstalled(): bool
         {
 
-            if (Cache::has('isInstalled') && Cache::get('isInstalled') === true) {
-                return true;
-            }
-
             try {
-
                 $this->database->query('Use `'.$this->config->dbDatabase.'`;');
 
                 $stmn = $this->database->prepare('SELECT COUNT(*) FROM zp_user');
@@ -159,8 +152,6 @@ namespace Leantime\Domain\Install\Repositories {
                 $values = $stmn->fetchAll();
 
                 $stmn->closeCursor();
-
-                Cache::set('isInstalled', true);
 
                 return true;
             } catch (PDOException $e) {
@@ -181,7 +172,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
-                Log::error($e);
+                report($e);
 
                 return false;
             }
@@ -221,7 +212,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
-                Log::error($e);
+                report($e);
 
                 return false;
             }
@@ -293,8 +284,8 @@ namespace Leantime\Domain\Install\Repositories {
 
                             $currentDBVersion = $updateVersion;
                         } catch (PDOException $e) {
-                            Log::error($e);
-                            Log::error($e->getTraceAsString());
+                            report($e);
+                            report($e->getTraceAsString());
 
                             return ['There was a problem updating the database'];
                         }

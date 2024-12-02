@@ -9,7 +9,7 @@ on:
 jobs:
   build_release:
     name: build_release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v3

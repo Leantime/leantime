@@ -3,7 +3,8 @@
 /**
  * Strategy Brief - Template
  */
-defined('RESTRICTED') or exit('Restricted access');
+
+defined('RESTRICTED') or die('Restricted access');
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -114,7 +115,7 @@ $varsToPass = array_merge($__data, ['statusLabels' => []]);
 
             <div class="row canvas-row">
                 <div class="column" style="width:100%">
-                   <h4 class="widgettitle title-primary center"><i class='fas fa-person-falling'></i> <?= $tpl->__('box.sb.risks') ?></h4>
+                   <h4 class="widgettitle title-primary center"><i class='fas fa-person-falling'></i> <?=$tpl->__('box.sb.risks') ?></h4>
                    <div class="contentInner even" style="padding-top: 10px;">
                      <?php echo sprintf($tpl->__('text.sb.risks_analysis'), BASE_URL); ?>
                    </div>

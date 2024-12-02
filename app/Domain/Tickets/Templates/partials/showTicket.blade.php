@@ -1,13 +1,12 @@
 <x-global::content.modal.modal-buttons>
 
-    @if (isset($ticket->date))
-        <x-global::content.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
-    @endif
-    @if ($ticket->id != '')
-        <x-global::content.modal.header-button variant="delete" href="#/tickets/delTicket/{{ $ticket->id }}" />
-        <x-global::content.modal.header-button variant="link"
-            href="{{ BASE_URL }}/dashboard/show/#/tickets/showTicket/{{ $ticket->id }}" />
-    @endif
+        @if(isset($ticket->date))
+            <x-global::content.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
+        @endif
+        @if ($ticket->id != '')
+            <x-global::content.modal.header-button variant="delete" href="#/tickets/delTicket/{{  $ticket->id }}"/>
+            <x-global::content.modal.header-button variant="link" href="{{  BASE_URL }}/dashboard/show/#/tickets/showTicket/{{  $ticket->id }}"/>
+        @endif
 
 </x-global::content.modal.modal-buttons>
 
@@ -17,26 +16,33 @@
     <h1>#{{ $ticket->id }}</h1>
 </div>
 <div class="float-left">
-    <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip" />
+    <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip"/>
 </div>
 
-{{-- <div class="float-left"> --}}
-{{--    <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags> --}}
-{{-- </div> --}}
+{{--<div class="float-left">--}}
+{{--    <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags>--}}
+{{--</div>--}}
 
 <div class="clear"></div>
 
 <div class="row">
     <div class="col-md-7">
 
-        <x-global::forms.text-input type="text" name="headline" value="{!! $tpl->escape($ticket->headline) !!}"
-            placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}" variant="title" class="w-[99%]" autocomplete="off" />
+        <x-global::forms.text-input
+            type="text"
+            name="headline"
+            value="{!! $tpl->escape($ticket->headline) !!}"
+            placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}"
+            variant="title"
+            class="w-[99%]"
+            autocomplete="off"
+        />
 
         <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" label-position="left" />
 
         <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" label-position="left" />
 
-        <x-tickets::duedate :date="$ticket->dateToFinish" label-position="left" variant="input" />
+        <x-tickets::duedate :date="$ticket->dateToFinish" label-position="left" variant="input"/>
 
         {{-- <x-global::forms.select
             id="select-test"
@@ -63,9 +69,8 @@
             </div>
         </div>
         <div class="form-group" id="descriptionEditor" style="display:none;">
-            <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
-                :value="$ticket->description !== null ? $ticket->description : ''" />
-            <br />
+            <textarea name="description" id="ticketDescription"
+                              class="complexEditor"><?php echo $ticket->description !== null ? htmlentities($ticket->description) : ''; ?></textarea><br/>
         </div>
 
 
@@ -107,8 +112,7 @@
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
             <x-slot:contents>
-                <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm"
-                    :checked="true">
+                <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm" :checked="true">
                     Connections
                 </x-global::navigations.tabs.content>
 
@@ -129,7 +133,8 @@
 </div>
 
 <script>
-    jQuery(document).ready(function() {
+
+    jQuery(document).ready(function(){
 
         //leantime.ticketsController.initTagsInput();
 
@@ -156,4 +161,6 @@
     });*/
 
     Prism.highlightAll();
+
 </script>
+

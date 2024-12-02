@@ -8,7 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -23,7 +23,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
         private UserRepository $userRepo;
 
-        private ClientService $clientService;
+        private ClientRepository $clientsRepo;
 
         private QueueRepository $queueRepo;
 
@@ -36,14 +36,14 @@ namespace Leantime\Domain\Projects\Controllers {
             ProjectRepository $projectRepo,
             MenuRepository $menuRepo,
             UserRepository $userRepo,
-            ClientService $clientService,
+            ClientRepository $clientsRepo,
             QueueRepository $queueRepo,
             ProjectService $projectService
         ) {
             $this->projectRepo = $projectRepo;
             $this->menuRepo = $menuRepo;
             $this->userRepo = $userRepo;
-            $this->clientService = $clientService;
+            $this->clientsRepo = $clientsRepo;
             $this->queueRepo = $queueRepo;
             $this->projectService = $projectService;
         }
@@ -153,7 +153,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
             $this->tpl->assign('project', $values);
             $this->tpl->assign('availableUsers', $this->userRepo->getAll());
-            $this->tpl->assign('clients', $this->clientService->getAll());
+            $this->tpl->assign('clients', $this->clientsRepo->getAll());
             $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
 
             $this->tpl->assign('info', $msgKey);

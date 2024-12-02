@@ -4,9 +4,7 @@ namespace Leantime\Command;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Http;
 use Leantime\Core\Configuration\AppSettings;
-use Leantime\Domain\Plugins\Services\Plugins;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'system:update',
-    description: 'Updates Leantime to the latest version from Github',
+    description: 'Updates the system',
 )]
 class UpdateLeantime extends Command
 {
@@ -48,9 +46,7 @@ class UpdateLeantime extends Command
         $io->text('Starting the updater');
         $io->text('Your current version is: v'.$currentVersion);
 
-        //Check Versions  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Version Check');
-        $io->text('Your current version is: v'.$currentVersion);
+        // Get Latest Version
         $url = 'https://github.com/leantime/leantime/releases/latest';
         $io->text('Checking latest version on Github...');
 
@@ -70,17 +66,13 @@ class UpdateLeantime extends Command
         $jsonResponse = json_decode($result, true);
         $latestVersion = $jsonResponse['tag_name'] ?? null;
 
-        $io->text('The latest Leantime version is: '.$latestVersion);
+        $io->text('The current Leantime version is: '.$latestVersion);
 
         // Build download URL
-        if (version_compare($currentVersion, ltrim($latestVersion, 'v'), '>=')) {
-            $io->success('You are on the most up to date version');
-
-            return self::SUCCESS;
+        if ('v'.$currentVersion == $latestVersion) {
+            $io->text('You are on the most up to date version');
         }
 
-        //Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Database Backup');
         $skipBackup = $input->getOption('skipDbBackup');
 
         if ($skipBackup === false) {
@@ -92,68 +84,26 @@ class UpdateLeantime extends Command
             $this->getApplication()->doRun($backUp, $output);
         }
 
-        //Download and extract + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Download & Extract');
-
+        // Build download URL
         $io->text('Downloading latest version...');
         $downloadUrl = 'https://github.com/leantime/leantime/releases/download/'.$latestVersion.'/Leantime-'.$latestVersion.'.zip';
-        $zipFile = storage_path('/framework/cache/latest.zip');
-        Http::sink($zipFile)->get($downloadUrl);
+        $file = file_get_contents($downloadUrl);
+
+        $zipFile = APP_ROOT.'/cache/latest.zip';
+        file_put_contents($zipFile, $file);
 
         $io->text('Extracting Archive...');
 
         $zip = new \ZipArchive;
         $zip->open($zipFile);
-        $zip->extractTo(storage_path('/framework/cache/leantime'));
+        $zip->extractTo(APP_ROOT.'/cache/');
         $zip->close();
 
-        //Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        //If we got here everything is ready to go and we just need to move the files.
-        //Let's disable plugins
-        $io->section('Disabling Plugins');
+        exec('cp -r '.APP_ROOT.'/cache/leantime/* '.APP_ROOT.'/');
 
-        /** @var Plugins $plugins */
-        $plugins = app()->make(Plugins::class);
-        $enabledPlugins = $plugins->getAllPlugins(enabledOnly: true);
-        foreach ($enabledPlugins as $plugin) {
-            if ($plugin->type != 'system' && isset($plugin->id)) {
-                $plugins->disablePlugin($plugin->id);
-                $io->text($plugin->name.': Disabled');
-            }
-        }
+        $io->text('Clean Up');
+        rmdir(APP_ROOT.'/cache/leantime');
 
-        $io->success('Plugins disabled successfully');
-
-        //Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Applying Update');
-        exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/');
-        $io->success('Files were updated');
-
-        //Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Clearing Cache');
-
-        exec('rm -rf "'.APP_ROOT.'/bootstrap/cache/*.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/leantime"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/latest.zip"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/composerPaths.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/viewPaths.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/*.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/views/*.php"');
-
-        $io->success('Clearing Cache Complete');
-
-        //Enable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        $io->section('Re-enabling Plugins');
-        foreach ($enabledPlugins as $plugin) {
-            if ($plugin->type != 'system' && isset($plugin->id)) {
-                $plugins->enablePlugin($plugin->id);
-                $io->text($plugin->name.': Enabled');
-            }
-        }
-
-        $io->success('Plugins were enabled');
-
-        $io->section('Summary');
         $io->success('Update applied Successfully');
 
         return Command::SUCCESS;

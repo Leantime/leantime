@@ -1,5 +1,4 @@
 <?php
-use Leantime\Core\Support\EditorTypeEnum;
 
 /**
  * Dialog
@@ -78,12 +77,11 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <br />
         @endif
     
-        {{-- TODO: need to figure out what this was used for --}}
-        <?php /* } else { ?>
+        <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                 $hiddenRelatesLabels
             ) ?>" />
-        <?php } */ ?>
+        <?php } ?>
 
         @foreach ([1, 2, 3] as $index)
             @if ($dataLabels[$index]['active'])
@@ -109,12 +107,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                     <br />
         
                 @else
-                    <x-global::forms.text-editor
-                        name="{!! $dataLabels[$index]['field'] !!}"
-                        :type="EditorTypeEnum::Simple->value"
-                        value="{!! $canvasItem[$dataLabels[$index]['field']] !!}"
-                        class="w-full"
-                    />
+                    <textarea 
+                        name="{!! $dataLabels[$index]['field'] !!}" 
+                        rows="3" 
+                        cols="10" 
+                        class="modalTextArea tinymceSimple w-full"
+                    >{!! $canvasItem[$dataLabels[$index]['field']] !!}</textarea>
                     <br />
                 @endif
             @else
@@ -280,6 +278,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 ]
             });
         <?php } ?>
+
+        leantime.editorController.initSimpleEditor();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");

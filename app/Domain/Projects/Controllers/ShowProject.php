@@ -8,7 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
@@ -39,7 +39,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
         private UserRepository $userRepo;
 
-        private ClientService $clientService;
+        private ClientRepository $clientsRepo;
 
         private FileRepository $fileRepo;
 
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Projects\Controllers {
             SettingRepository $settingsRepo,
             ProjectRepository $projectRepo,
             UserRepository $userRepo,
-            ClientService $clientService,
+            ClientRepository $clientsRepo,
             FileRepository $fileRepo,
             CommentRepository $commentsRepo,
             MenuRepository $menuRepo
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->settingsRepo = $settingsRepo;
             $this->projectRepo = $projectRepo;
             $this->userRepo = $userRepo;
-            $this->clientService = $clientService;
+            $this->clientsRepo = $clientsRepo;
             $this->fileRepo = $fileRepo;
             $this->commentsRepo = $commentsRepo;
             $this->menuRepo = $menuRepo;
@@ -100,7 +100,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 $project = $this->projectRepo->getProject($id);
 
                 if (isset($project['id']) === false) {
-                    return FrontcontrollerCore::redirect(BASE_URL.'/errors/error404');
+                    return FrontcontrollerCore::redirect(BASE_URL.'/error/error404');
                 }
 
                 if (session('currentProject') != $project['id']) {
@@ -184,7 +184,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 session(['lastPage' => BASE_URL.'/projects/showProject/'.$id]);
 
-                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
+                $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                 if (isset($_POST['submitSettings'])) {
                     if (isset($_POST['labelKeys']) && is_array($_POST['labelKeys']) && count($_POST['labelKeys']) > 0) {
@@ -212,7 +212,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->projectRepo->editProjectRelations($values, $id);
 
-                    $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                    $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                     $this->tpl->setNotification($this->language->__('notifications.user_was_added_to_project'), 'success');
                 }
@@ -241,7 +241,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         } else {
                             $this->projectRepo->editProject($values, $id);
 
-                            $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                            $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                             $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
 
@@ -282,7 +282,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 //Assign vars
                 $this->tpl->assign('availableUsers', $this->userRepo->getAll());
-                $this->tpl->assign('clients', $this->clientService->getAll());
+                $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
                 $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());
 
@@ -298,7 +298,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 return $this->tpl->display('projects.showProject');
             } else {
-                return $this->tpl->display('errors.error404', responseCode: 404);
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

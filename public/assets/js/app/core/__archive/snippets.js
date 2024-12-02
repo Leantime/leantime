@@ -78,20 +78,6 @@ leantime.snippets = (function () {
 
     };
 
-    var toggleBg = function (theme) {
-
-        var themeUrl = jQuery("#themeStyleSheet").attr("href");
-
-        if(theme == "minimal"){
-            themeUrl = themeUrl.replace("default", "minimal");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
-        }else if (theme == "default"){
-            themeUrl = themeUrl.replace("minimal", "default");
-            jQuery("#themeStyleSheet").attr("href", themeUrl);
-        }
-
-    };
-
     var toggleFont = function (font) {
 
         jQuery("#fontStyleSetter").html(":root { --primary-font-family: '"+font+"', 'Helvetica Neue', Helvetica, sans-serif; }")
@@ -116,8 +102,7 @@ leantime.snippets = (function () {
         accordionToggle:accordionToggle,
         toggleTheme:toggleTheme,
         toggleFont:toggleFont,
-        toggleColors:toggleColors,
-        toggleBg:toggleBg
+        toggleColors:toggleColors
     };
 
 })();

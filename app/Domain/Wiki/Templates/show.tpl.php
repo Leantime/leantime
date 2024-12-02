@@ -8,24 +8,32 @@ $wikiHeadlines = $tpl->get('wikiHeadlines');
 $currentWiki = $tpl->get('currentWiki');
 $currentArticle = $tpl->get('currentArticle');
 
-function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\UI\Template $tplObject = null): void
+/**
+ * @param $array
+ * @param $currentParent
+ * @param int                          $currLevel
+ * @param int                          $prevLevel
+ * @param \Leantime\Core\Template|null $tplObject
+ * @return void
+ */
+function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\Template $tplObject = null): void
 {
 
     foreach ($array as $headline) {
-        if ((int) $currentParent === (int) $headline->parent) {
+        if ((int)$currentParent === (int)$headline->parent) {
             if ($currLevel > $prevLevel) {
                 echo "
             <ul class='article-toc'> ";
             }
             if ($currLevel == $prevLevel) {
-                echo '  ';
+                echo "  ";
             }
             echo '
-               <li data-jstree=\'{"icon":"'.$headline->data.'"}\' id="treenode_'.$headline->id.'">&nbsp;<a href="'.BASE_URL.'/wiki/show/'.$headline->id.'">'.$tplObject->escape($headline->title).'';
-            if ($headline->status == 'draft') {
-                echo ' <em>'.$tplObject->__('label.draft_parenth').'</em> ';
+               <li data-jstree=\'{"icon":"' . $headline->data . '"}\' id="treenode_' . $headline->id . '">&nbsp;<a href="' . BASE_URL . '/wiki/show/' . $headline->id . '">' . $tplObject->escape($headline->title) . '';
+            if ($headline->status == "draft") {
+                echo" <em>" . $tplObject->__('label.draft_parenth') . "</em> ";
             }
-            echo '</a>';
+            echo'</a>';
 
             if ($currLevel > $prevLevel) {
                 $prevLevel = $currLevel;
@@ -36,9 +44,9 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
         }
     }
     if ($currLevel == $prevLevel) {
-        echo '</li>
+        echo "</li>
             </ul>
-            ';
+            ";
     }
 }
 
@@ -48,22 +56,22 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
     <div class="pageicon"><span class="fa fa-book"></span></div>
     <div class="pagetitle">
 
-        <h5><?php $tpl->e(session('currentProjectClient')); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectClient")); ?></h5>
 
         <?php if (count($wikis) > 0) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor) && $currentWiki) { ?>
-                        <li><a class="inlineEdit" href="#/wiki/wikiModal/<?= $currentWiki->id ?>"><?= $tpl->__('link.edit_wiki') ?></a></li>
-                        <li><a class="delete" href="#/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?= $tpl->__('links.delete_wiki') ?></a></li>
+                        <li><a class="inlineEdit" href="#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$tpl->__("link.edit_wiki") ?></a></li>
+                        <li><a class="delete" href="#/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a></li>
 
                     <?php } ?>
                 </ul>
             </span>
         <?php } ?>
 
-        <h1><?php echo $tpl->__('headlines.documents'); ?>
+        <h1><?php echo $tpl->__("headlines.documents"); ?>
 
          <?php if (count($wikis) > 0) {?>
              //
@@ -80,11 +88,11 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                 <ul class="dropdown-menu">
 
-                    <li><a class="inlineEdit" href="#/wiki/wikiModal/"><?= $tpl->__('link.new_wiki') ?></a></li>
+                    <li><a class="inlineEdit" href="#/wiki/wikiModal/"><?=$tpl->__("link.new_wiki") ?></a></li>
                     <li class='nav-header border'></li>
                     <?php foreach ($wikis as $wiki) {?>
                         <li>
-                            <a href="<?= BASE_URL.'/wiki/show?setWiki='.$wiki->id ?>"><?= $tpl->escape($wiki->title)?></a>
+                            <a href="<?=BASE_URL . "/wiki/show?setWiki=" . $wiki->id ?>"><?=$tpl->escape($wiki->title)?></a>
                         </li>
                     <?php } ?>
 
@@ -108,20 +116,21 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
         <div class="row">
 
-            <?php if ((! $currentArticle || $currentArticle->id != null) && (! $wikis || count($wikis) == 0)) { ?>
+            <?php if ((!$currentArticle || $currentArticle->id != null) && (!$wikis || count($wikis) == 0)) { ?>
                 <div class="col-md-12">
                     <div class="maincontentinner">
                         <?php
-                        echo "<div class='center'>";
-                echo "<div  style='width:30%' class='svgContainer'>";
-                echo file_get_contents(ROOT.'/dist/images/svg/undraw_book_reading_re_fu2c.svg');
-                echo '</div>';
-                echo '<br /><h3>'.$tpl->__('headlines.no_articles_yet').'</h3><br />';
+                        echo"<div class='center'>";
+                        echo"<div  style='width:30%' class='svgContainer'>";
+                        echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
+                        echo"</div>";
+                        echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3><br />";
 
-                echo ''.$tpl->__('text.create_new_wiki')."<br /><br />
-                                            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>".$tpl->__('links.icon.create_new_board').'</a><br/><br/>';
-                echo '</div>';
-                ?>
+
+                        echo "" . $tpl->__("text.create_new_wiki") . "<br /><br />
+                                            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>" . $tpl->__("links.icon.create_new_board") . "</a><br/><br/>";
+                        echo"</div>";
+                        ?>
                     </div>
                 </div>
 
@@ -146,16 +155,16 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                             <?php
 
-                                    createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
-                        ?>
+                                            createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
+                                            ?>
 
                                             <?php /*
 
-                                       */ ?>
+                                       */?>
                                         </div>
                                             <?php if ($wikis && count($wikis) >= 1 && $login::userIsAtLeast($roles::$editor)) {?>
                                             <div class="creationLinks">
-                                                <a class="inlineEdit " href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?= $tpl->__('link.create_article') ?></a>
+                                                <a class="inlineEdit " href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>
                                             <?php } ?>
 
@@ -168,10 +177,10 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                             <div class="maincontentinner">
                             <div class="articleWrapper">
 
-                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="right">
-                                        <a class="btn btn-default round-button" href="#/wiki/articleDialog/<?= $currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
-                                        <a class="dropdown-toggle btn btn-default round-button" data-toggle="dropdown" href="javascript:void(0)" onclick="leantime.snippets.copyToClipboard('<?= BASE_URL?>/wiki/show/<?= $currentArticle->id; ?>&projectId=<?= session('currentProject'); ?>')"><i class="fa fa-link"></i></a>
+                                        <a class="btn btn-default round-button" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
+                                        <a class="dropdown-toggle btn btn-default round-button" data-toggle="dropdown" href="javascript:void(0)" onclick="leantime.snippets.copyToClipboard('<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=session("currentProject"); ?>')"><i class="fa fa-link"></i></a>
 
 
                                     </div>
@@ -179,44 +188,44 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
 
                                 <h1 class="articleHeadline">
-                                    <i class="<?= $currentArticle->data ?>"></i>
-                                    <?= $tpl->escape($currentArticle->title)?>
+                                    <i class="<?=$currentArticle->data ?>"></i>
+                                    <?=$tpl->escape($currentArticle->title)?>
                                 </h1>
                                 <div class="articleMeta">
                                     <div class="metaContent">
-                                    <?= sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), format($currentArticle->created)->date(), format($currentArticle->modified)->date()); ?>
+                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), format($currentArticle->created)->date(), format($currentArticle->modified)->date()); ?>
                                     <br />
                                     </div>
                                     <div class="tagsinput readonly">
 
                                         <?php
-                                        $tagsArray = explode(',', $currentArticle->tags);
-                        if (count($tagsArray) >= 1) {
-                            echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
-                        }
+                                        $tagsArray = explode(",", $currentArticle->tags);
+                                        if (count($tagsArray) >= 1) {
+                                            echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
+                                        }
 
-                        foreach ($tagsArray as $tag) {
-                            echo "<span class='tag'><span>".$tpl->escape($tag).'</span></span>';
-                        }
+                                        foreach ($tagsArray as $tag) {
+                                            echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
+                                        }
 
-                        ?>
+                                        ?>
                                     </div><br />
 
 
 
                                 </div>
                                 <div class="articleBody mce-content-body centered">
-                                    <?= $tpl->escapeMinimal($currentArticle->description); ?>
+                                    <?=$tpl->escapeMinimal($currentArticle->description); ?>
                                 </div>
 
                                 <?php if ($currentArticle->milestoneHeadline != '') { ?>
                                     <div class="milestonContainer border">
                                         <div hx-trigger="load"
                                              hx-indicator=".htmx-indicator"
-                                             hx-get="<?= BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?= $currentArticle->milestoneId ?>">
+                                             hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$currentArticle->milestoneId ?>">
 
                                             <div class="htmx-indicator">
-                                                <?= $tpl->__('label.loading_milestone') ?>
+                                                <?=$tpl->__("label.loading_milestone") ?>
                                             </div>
                                         </div>
 
@@ -226,12 +235,12 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 <div id="comments">
                                     <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
-                                    <form method="post" action="<?= BASE_URL ?>/wiki/show/<?php echo $currentArticle->id; ?>#comment">
+                                    <form method="post" action="<?=BASE_URL ?>/wiki/show/<?php echo $currentArticle->id; ?>#comment">
                                         <input type="hidden" name="comment" value="1" />
                                         <?php
-                        $tpl->assign('formUrl', BASE_URL.'/wiki/show/'.$currentArticle->id.'');
-                        $tpl->displaySubmodule('comments-generalComment');
-                        ?>
+                                        $tpl->assign('formUrl', BASE_URL . "/wiki/show/" . $currentArticle->id . "");
+                                        $tpl->displaySubmodule('comments-generalComment') ;
+                                        ?>
                                     </form>
                                 </div>
 
@@ -246,17 +255,18 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 <div class="col-md-12">
                                     <div class="maincontentinner">
                                     <?php
-                                    echo "<div class='center'>";
-                        echo "<div  style='width:30%' class='svgContainer'>";
-                        echo file_get_contents(ROOT.'/dist/images/svg/undraw_book_reading_re_fu2c.svg');
-                        echo '</div>';
-                        echo '<br /><h3>'.$tpl->__('headlines.no_articles_yet').'</h3>';
+                                    echo"<div class='center'>";
+                                    echo"<div  style='width:30%' class='svgContainer'>";
+                                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
+                                    echo"</div>";
+                                    echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3>";
 
-                        echo ''.$tpl->__('text.create_new_content')."<br /><br />
-                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> ".$tpl->__('link.create_article').'</a><br/><br/>';
+                                    echo "" . $tpl->__("text.create_new_content") . "<br /><br />
+                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
 
-                        echo '</div>';
-                        ?>
+
+                                    echo"</div>";
+                                    ?>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +287,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
    jQuery(document).ready(function() {
        <?php if ($currentArticle) {?>
-        leantime.wikiController.initTree("#article-toc-wrapper", <?= $currentArticle->id ?>);
+        leantime.wikiController.initTree("#article-toc-wrapper", <?=$currentArticle->id ?>);
        <?php } ?>
 
        <?php if ($login::userHasRole([$roles::$commenter])) { ?>

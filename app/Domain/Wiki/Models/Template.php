@@ -9,7 +9,6 @@ namespace Leantime\Domain\Wiki\Models {
         public $description;
 
         public $content;
-
         public $category;
 
         public function __construct() {}

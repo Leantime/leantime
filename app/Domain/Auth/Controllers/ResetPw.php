@@ -41,7 +41,7 @@ class ResetPw extends Controller
      */
     public function get(array $params): Response
     {
-        if ((isset($params['id']) === true && $this->authService->validateResetLink($params['id']))) {
+        if ((isset($_GET['id']) === true && $this->authService->validateResetLink($_GET['id']))) {
             return $this->tpl->display('auth.resetPw', 'entry');
         } else {
             return $this->tpl->display('auth.requestPwLink', 'entry');
@@ -74,11 +74,11 @@ class ResetPw extends Controller
             if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
                 $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), 'error');
 
-                return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id']);
+                return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$_GET['id']);
             }
 
             if ($this->userService->checkPasswordStrength($_POST['password'])) {
-                if ($this->authService->changePW($_POST['password'], $params['id'])) {
+                if ($this->authService->changePW($_POST['password'], $_GET['id'])) {
                     $this->tpl->setNotification(
                         $this->language->__('notifications.passwords_changed_successfully'),
                         'success',
@@ -93,7 +93,7 @@ class ResetPw extends Controller
                     'error'
                 );
 
-                return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id']);
+                return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$_GET['id']);
             }
 
             $this->tpl->setNotification(
@@ -101,7 +101,7 @@ class ResetPw extends Controller
                 'error'
             );
 
-            return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id']);
+            return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$_GET['id']);
         }
 
         $this->tpl->setNotification(
@@ -109,6 +109,6 @@ class ResetPw extends Controller
             'error'
         );
 
-        return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$params['id'] ?? '');
+        return FrontcontrollerCore::redirect(BASE_URL.'/auth/resetPw/'.$_GET['id'] ?? '');
     }
 }

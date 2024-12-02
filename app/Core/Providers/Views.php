@@ -14,6 +14,7 @@ use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\ViewServiceProvider;
 use Leantime\Core\Support\PathManifestRepository;
+use Leantime\Core\UI\Composer;
 
 class Views extends ViewServiceProvider
 {
@@ -60,11 +61,9 @@ class Views extends ViewServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-            //Backwards compatible view engine resolver
             array_map(fn ($ext) => $factory->addExtension($ext, 'blade'), ['inc.php', 'sub.php', 'tpl.php']);
 
             // reprioritize blade
-            //Use blade engine for all things blade
             $factory->addExtension('blade.php', 'blade');
 
             // We will also set the container instance on this view environment since the
@@ -78,10 +77,7 @@ class Views extends ViewServiceProvider
             $composers = $this->getComposerPaths();
             foreach ($composers as $key => $composerClass) {
                 if (
-                    (is_subclass_of($composerClass, \Leantime\Core\UI\Composer::class)
-                        || is_subclass_of($composerClass, \Leantime\Core\Controller\Composer::class))
-                    &&
-
+                    is_subclass_of($composerClass, Composer::class) &&
                     ! (new \ReflectionClass($composerClass))->isAbstract()
                 ) {
                     $factory->composer($composerClass::$views, $composerClass);
@@ -254,37 +250,7 @@ class Views extends ViewServiceProvider
 
         $enabledPlugins = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
         $pluginComposerClasses = collect($enabledPlugins)
-            ->map(function ($plugin) {
-
-                if ($plugin->format === 'phar') {
-                    $pharPath = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar';
-
-                    if (! file_exists($pharPath)) {
-                        return [];
-                    }
-
-                    try {
-
-                        $composers = [];
-                        $composerPath = 'phar://'.$pharPath.'/Composers';
-                        $p = new \Phar($composerPath, 0);
-                        $paths = collect(new \RecursiveIteratorIterator($p));
-
-                        foreach ($paths as $path) {
-                            $something = $path;
-                            $composers[] = 'Plugins/'.$plugin->foldername.'/Composers/'.$path->getFileName();
-                        }
-
-                        return $composers;
-
-                    } catch (\Exception $e) {
-                        return [];
-                    }
-                }
-
-                //If not a phar, we can just use glob
-                return glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php') ?: [];
-            })
+            ->map(fn ($plugin) => glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php'))
             ->flatten();
 
         $composerList = $appComposerClasses
@@ -331,13 +297,7 @@ class Views extends ViewServiceProvider
                 return [];
             });
 
-        /** @var \Leantime\Domain\Plugins\Services\Plugins $pluginService */
-        $pluginService = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-
-        //We are in discovery mode so enabled plugins should be cleared for new plugins to show up
-        //Otherwise the data comes from viewPaths manifest and doesn't need to be pulled in
-        $pluginService->clearCache();
-        $plugins = collect($pluginService->getEnabledPlugins());
+        $plugins = collect($this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
 
         $pluginPaths = $plugins->mapWithKeys(function ($plugin) use ($domainPaths) {
             //Catch issue when plugins are cached on load but autoloader is not quite done loading.

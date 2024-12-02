@@ -4,30 +4,25 @@
 # Perform tests in browser using the WebDriver or PhpBrowser.
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
 actor: AcceptanceTester
-bootstrap: bootstrap.php
+
 modules:
   enabled:
-    - \Tests\Support\Helper\Acceptance
-    - REST:
-        url: 'https://leantime-dev'
-        depends: PhpBrowser
     - WebDriver:
         url: 'https://leantime-dev'
         host: selenium
-        browser: chrome
+        browser: firefox
         wait: 20
         log_js_errors: true
-        window_size: "2560x1440"
+        window_size: "1920x1080"
         capabilities:
           acceptInsecureCerts: true
-          goog:chromeOptions:
-            args: [ "--headless" ]
+          "moz:firefoxOptions": {
+            args: ["-headless"]
+          }
     - Db:
         dsn: "mysql:host=db;port=3306;dbname=leantime_test"
-        user: root
+        user: leantime
         password: leantime
-        populate: true
-        cleanup: true
 
 step_decorators:
   - Codeception\Step\ConditionalAssertion

@@ -10,61 +10,62 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Models\Clients as ClientModel;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
-    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
     class NewClient extends Controller
     {
-        private ClientService $clientService;
+        private ClientRepository $clientRepo;
+
+        private UserRepository $user;
 
         /**
          * init - initialize private variables
          */
-        public function init(
-            ClientService $clientService 
-        ){
-            $this->clientService = $clientService;
+        public function init(ClientRepository $clientRepo, UserRepository $user)
+        {
+
+            $this->clientRepo = $clientRepo;
+            $this->user = $user;
         }
 
         /**
-         * get - display template and provide empty values object
+         * run - display template and edit data
          */
-        public function get(): Response
+        public function run()
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             //Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
+                $values = [
+                    'name' => '',
+                    'street' => '',
+                    'zip' => '',
+                    'city' => '',
+                    'state' => '',
+                    'country' => '',
+                    'phone' => '',
+                    'internet' => '',
+                    'email' => '',
+                ];
 
-                $values = app() -> make(ClientModel::class);
-            
-                $this->tpl->assign('values', $values);
+                if (isset($_POST['save']) === true) {
+                    $values = [
+                        'name' => ($_POST['name']),
+                        'street' => ($_POST['street']),
+                        'zip' => ($_POST['zip']),
+                        'city' => ($_POST['city']),
+                        'state' => ($_POST['state']),
+                        'country' => ($_POST['country']),
+                        'phone' => ($_POST['phone']),
+                        'internet' => ($_POST['internet']),
+                        'email' => ($_POST['email']),
+                    ];
 
-                return $this->tpl->display('clients.newClient');
-            } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
-            }
-        }
-
-        /**
-         * post - display template and save data
-         */
-        public function post($params): Response
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-            //Only admins
-            if (Auth::userIsAtLeast(Roles::$admin)) {
-                
-                $values = null;
-
-                if (isset($params['save']) === true) {
-
-                    $values = app() -> make(ClientModel::class, ['attributes' => $params]);
-                    if ($values->name !== '') {
-                        if ($this->clientService->isClient($values) !== true) {
-                            $id = $this->clientService->create($values);
+                    if ($values['name'] !== '') {
+                        if ($this->clientRepo->isClient($values) !== true) {
+                            $id = $this->clientRepo->addClient($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
 
                             return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);

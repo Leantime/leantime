@@ -3,7 +3,6 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use PHPMailer\PHPMailer\Exception;
@@ -75,7 +74,7 @@ class Mailer
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                 $this->mailAgent->Debugoutput = function ($str, $level) {
 
-                    Log::debug($level.' '.$str);
+                    report($level.' '.$str);
                 };
             } else {
                 $this->mailAgent->SMTPDebug = 0;
@@ -309,8 +308,8 @@ class Mailer
                     $this->mailAgent->addAddress($recip);
                     $this->mailAgent->send();
                 } catch (Exception $e) {
-                    Log::error($this->mailAgent->ErrorInfo);
-                    Log::error($e);
+                    report($this->mailAgent->ErrorInfo);
+                    report($e);
                 }
 
                 $this->mailAgent->clearAllRecipients();

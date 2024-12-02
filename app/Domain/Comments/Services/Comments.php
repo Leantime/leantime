@@ -99,10 +99,10 @@ namespace Leantime\Domain\Comments\Services {
                 throw new AuthException('User is not authorized to add comments');
             }
 
-            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId) && isset($entity)) {
+            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId)) {
                 $mapper = [
                     'text' => $values['text'],
-                    'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
+                    'date' => $values['date'] ?? dtHelper()->dbNow()->formatDateTimeForDb(),
                     'userId' => (session('userdata.id')),
                     'moduleId' => $entityId,
                     'commentParent' => ($values['father']),

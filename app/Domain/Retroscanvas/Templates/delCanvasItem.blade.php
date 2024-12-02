@@ -3,6 +3,7 @@
 /**
  * Delete Item
  */
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }

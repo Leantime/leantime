@@ -38,7 +38,6 @@ abstract class Controller
 
         /** @var Language */
         protected Language $language,
-
     ) {
         self::dispatchEvent('begin');
 

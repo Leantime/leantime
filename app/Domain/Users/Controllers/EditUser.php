@@ -6,7 +6,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Users\Services\Users;
@@ -18,7 +18,7 @@ namespace Leantime\Domain\Users\Controllers {
 
         private UserRepository $userRepo;
 
-        private ClientService $clientService;
+        private ClientRepository $clientsRepo;
 
         private Users $userService;
 
@@ -28,12 +28,12 @@ namespace Leantime\Domain\Users\Controllers {
         public function init(
             ProjectRepository $projectsRepo,
             UserRepository $userRepo,
-            ClientService $clientService,
+            ClientRepository $clientsRepo,
             Users $userService
         ) {
             $this->projectsRepo = $projectsRepo;
             $this->userRepo = $userRepo;
-            $this->clientService = $clientService;
+            $this->clientsRepo = $clientsRepo;
             $this->userService = $userService;
         }
 
@@ -179,7 +179,7 @@ namespace Leantime\Domain\Users\Controllers {
                 //Assign vars
                 $this->tpl->assign('allProjects', $this->projectsRepo->getAll(true));
                 $this->tpl->assign('roles', Roles::getRoles());
-                $this->tpl->assign('clients', $this->clientService->getAll());
+                $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
                 //Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';

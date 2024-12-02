@@ -13,7 +13,7 @@
     <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
         <h5>{{ __("label.administration") }}</h5>
-        <h1>{{$values->name}}</h1>
+        <h1><?php $tpl->e($values['name']); ?></h1>
     </div>
     <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
@@ -45,7 +45,7 @@
                                     inputType="text" 
                                     name="id" 
                                     id="id" 
-                                    value="{{ $values->id }}" 
+                                    value="{{ $tpl->escape($values['id']) }}" 
                                     labelText="{{ __('label.client_id') }}" 
                                     readonly 
                                 />
@@ -56,7 +56,7 @@
                                     inputType="text" 
                                     name="name" 
                                     id="name" 
-                                    value="{{ $values->name }}" 
+                                    value="{{ $tpl->escape($values['name']) }}" 
                                     labelText="{{ __('label.name') }}" 
                                 />
                             </div>
@@ -66,7 +66,7 @@
                                     inputType="text" 
                                     name="email" 
                                     id="email" 
-                                    value="{{ $values->email }}" 
+                                    value="{{ $tpl->escape($values['email']) }}" 
                                     labelText="{{ __('label.email') }}" 
                                 />
                             </div>
@@ -76,7 +76,7 @@
                                     inputType="text" 
                                     name="internet" 
                                     id="internet" 
-                                    value="{{ $values->internet }}" 
+                                    value="{{ $tpl->escape($values['internet']) }}" 
                                     labelText="{{ __('label.url') }}" 
                                 />
                             </div>
@@ -86,7 +86,7 @@
                                     inputType="text" 
                                     name="street" 
                                     id="street" 
-                                    value="{{ $values->street }}" 
+                                    value="{{ $tpl->escape($values['street']) }}" 
                                     labelText="{{ __('label.street') }}" 
                                 />
                             </div>
@@ -96,7 +96,7 @@
                                     inputType="text" 
                                     name="zip" 
                                     id="zip" 
-                                    value="{{ $values->zip }}" 
+                                    value="{{ $tpl->escape($values['zip']) }}" 
                                     labelText="{{ __('label.zip') }}" 
                                 />
                             </div>
@@ -106,7 +106,7 @@
                                     inputType="text" 
                                     name="city" 
                                     id="city" 
-                                    value="{{ $values->city }}" 
+                                    value="{{ $tpl->escape($values['city']) }}" 
                                     labelText="{{ __('label.city') }}" 
                                 />
                             </div>
@@ -116,7 +116,7 @@
                                     inputType="text" 
                                     name="state" 
                                     id="state" 
-                                    value="{{ $values->state }}" 
+                                    value="{{ $tpl->escape($values['state']) }}" 
                                     labelText="{{ __('label.state') }}" 
                                 />
                             </div>
@@ -126,7 +126,7 @@
                                     inputType="text" 
                                     name="country" 
                                     id="country" 
-                                    value="{{ $values->country }}" 
+                                    value="{{ $tpl->escape($values['country']) }}" 
                                     labelText="{{ __('label.country') }}" 
                                 />
                             </div>
@@ -136,14 +136,14 @@
                                     inputType="text" 
                                     name="phone" 
                                     id="phone" 
-                                    value="{{ $values->phone }}" 
+                                    value="{{ $tpl->escape($values['phone']) }}" 
                                     labelText="{{ __('label.phone') }}" 
                                 />
                             </div>
                         </div>
                                                 <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> {{ __("subtitles.users_assigned_to_this_client") }}</h4>
-                            <a href="#/users/newUser?preSelectedClient={{ $values->id }}" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
+                            <a href="#/users/newUser?preSelectedClient=<?=$values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />
@@ -163,8 +163,8 @@
                                         <td>
                                         <?php printf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])); ?>
                                         </td>
-                                        <td><a href='mailto:{{ $user['username'] }}'> {{ $user['username'] }}</a></td>
-                                        <td>{{$user['phone']}}</td>
+                                        <td><a href='mailto:<?php $tpl->e($user['username']); ?>'><?php $tpl->e($user['username']); ?></a></td>
+                                        <td><?php $tpl->e($user['phone']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
 
@@ -178,22 +178,14 @@
 
                         </div>
 
-                    <div class="row mt-4">
+                    <div class="row">
                         <div class="col-md-6">
-                            <x-global::forms.button type="submit" name="save" value="true" id="save">
+                            <x-global::forms.button type="submit" name="save" id="save">
                                 {{ __('buttons.save') }}
-                            </x-global::forms.button>
-                            
-                            <x-global::forms.button 
-                                tag="a" 
-                                href="/clients/showAll" 
-                                content-role="tertiary"
-                            >
-                                {{ __('buttons.back') }}
-                            </x-global::forms.button>
+                            </x-global::forms.button>                            
                         </div>
                         <div class="col-md-6 align-right">
-                            <a href="{{ BASE_URL }}/clients/delClient/{{ $values->id }}" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a>
+                            <a href="{{ BASE_URL }}/clients/delClient/<?php $tpl->e($_GET['id']); ?>" class="delete"><i class="fa fa-trash"></i> {{ __("links.delete") }}</a>
                         </div>
                     </div>
 
@@ -202,9 +194,9 @@
 
                 <div id='comment'>
 
-                <form method="post" value="true" action="{{ BASE_URL }}/clients/showClient/{{$values->id}}#comment">
+                <form method="post" action="{{ BASE_URL }}/clients/showClient/<?php echo $tpl->e($_GET['id']); ?>#comment">
                     <input type="hidden" name="comment" value="1" />
-                    <x-comments::list :module="'client'" :statusUpdates="'true'" moduleId="{{$values->id}}" />
+                    @include("comments::includes.generalComment", ["formUrl" => BASE_URL . "/clients/showClient/" . $tpl->escape($_GET['id'])])
                 </form>
 
 
@@ -235,9 +227,10 @@
                                 </div>
                             </div>
 
-                            <x-global::forms.button type="submit" name="upload" content-role="primary" >
+                            <x-global::forms.button type="submit" name="upload" class="button">
                                 {{ __('buttons.upload') }}
                             </x-global::forms.button>
+                            
 
                         </form>
                     </div>
@@ -264,7 +257,7 @@
                             <!-- Delete Link (Only for Admins) -->
                             @if ($login::userIsAtLeast($roles::$admin))
                                 <x-global::actions.dropdown.item variant="link"
-                                    href="{{ BASE_URL }}/clients/showClient/{{ $values->id }}?delFile={{ $file['id'] }}"
+                                    href="{{ BASE_URL }}/clients/showClient/{{ $_GET['id'] }}?delFile={{ $file['id'] }}"
                                     class="delete">
                                     <i class="fa fa-trash"></i> {{ __('links.delete') }}
                                 </x-global::actions.dropdown.item>
@@ -274,16 +267,16 @@
                             </x-global::content.context-menu>
 
                             <a class="cboxElement"
-                                href="{{ BASE_URL }}/files/get?module={{$file['module']}}&encName={{$file['encName']}}&ext={{$file['extension']}}&realName={{$file['realName']}}">
+                                href="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>">
                                 <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;'
-                                    src="{{ BASE_URL }}/files/get?module={{$file['module']}}&encName={{$file['encName']}}&ext={{$file['extension']}}&realName={{$file['realName']}}"
+                                    src="<?= BASE_URL ?>/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php $tpl->e($file['extension']); ?>&realName=<?php $tpl->e($file['realName']); ?>"
                                     alt="" />
                                 <?php else : ?>
                                 <img style='max-height: 50px; max-width: 70px;'
-                                    src='{{ BASE_URL }}/dist/images/thumbs/doc.png' />
+                                    src='<?= BASE_URL ?>/dist/images/thumbs/doc.png' />
                                 <?php endif; ?>
-                                <span class="filename">{{$file['realName']}}</span>
+                                <span class="filename"><?php $tpl->e($file['realName']); ?></span>
                             </a>
                             </li>
                             <?php endforeach; ?>
@@ -308,5 +301,3 @@
 
         <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
     </script>
-
-@endsection()

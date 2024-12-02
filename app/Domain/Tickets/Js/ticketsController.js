@@ -1275,9 +1275,9 @@ export const initTicketsTable = function (groupBy) {
             let tr = e.target.closest('tr');
             // let tr = jQuery(this).closest('tr');
             let row = allTickets.row(tr);
-
+            
             console.log("Row data is", row.data());
-
+            
             if (row.child.isShown()) {
                 row.child.hide();
                 tr.removeClass('shown');
@@ -1354,7 +1354,7 @@ export const initTicketsTable = function (groupBy) {
                     "col 12",
                 ])
                 .draw(false);
-
+         
         }
 
         // document.querySelector('#addRow').addEventListener('click', addNewRow);

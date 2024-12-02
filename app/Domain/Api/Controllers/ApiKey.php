@@ -6,7 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Domain\Clients\Services\Clients as ClientService;
+use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ class ApiKey extends Controller
 
     private UserRepository $userRepo;
 
-    private ClientService $clientService;
+    private ClientRepository $clientsRepo;
 
     /**
      * init - initialize private variables
@@ -30,13 +30,13 @@ class ApiKey extends Controller
      *
      * @throws BindingResolutionException
      */
-    public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientService $clientService): void
+    public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void
     {
         self::dispatchEvent('api_key_init', $this);
 
         $this->projectsRepo = $projectsRepo;
         $this->userRepo = $userRepo;
-        $this->clientService = $clientService;
+        $this->clientsRepo = $clientsRepo;
     }
 
     /**
@@ -130,7 +130,7 @@ class ApiKey extends Controller
             // Assign vars
             $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
             $this->tpl->assign('roles', Roles::getRoles());
-            $this->tpl->assign('clients', $this->clientService->getAll());
+            $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';

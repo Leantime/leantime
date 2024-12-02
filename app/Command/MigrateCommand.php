@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'db:migrate',
-    description: 'Runs and pending Leantime Database Migrations',
+    description: 'Runs and pending Database Migrations',
 )]
 class MigrateCommand extends Command
 {

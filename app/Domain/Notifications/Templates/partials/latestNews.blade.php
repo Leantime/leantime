@@ -7,8 +7,8 @@
         @endif
         @foreach ($rss->channel->item as $item)
             <li style="border-bottom:1px solid var(--main-border-color)">
-                <strong><a href="{{ $item->link }}" target="_blank">{{ $item->title }}</a></strong><br/>
-                <small class="tw-pb-1">{{ $item->pubDate }}</small><br />
+                <h2><a href="{{ $item->link }}" target="_blank">{{ $item->title }}</a></h2>
+                <small>{{ $item->pubDate }}</small>
                 <p>{!! $item->description !!}</p>
             </li>
         @endforeach

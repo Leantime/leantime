@@ -1,1 +1,0 @@
-<li class="separator"></li>

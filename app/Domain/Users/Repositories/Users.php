@@ -3,9 +3,11 @@
 namespace Leantime\Domain\Users\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Log;
+    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
     use Leantime\Core\Db\Db as DbCore;
-    use Leantime\Core\Support\Avatarcreator;
     use Leantime\Domain\Files\Repositories\Files;
     use PDO;
     use SVG\SVG;
@@ -32,13 +34,16 @@ namespace Leantime\Domain\Users\Repositories {
 
         public array $status = ['active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited'];
 
+        private ?DbCore $db;
+
+        public Environment $config;
+
         /**
          * __construct - neu db connection
          */
         public function __construct(
-            protected Environment $config,
-            protected DbCore $db,
-            protected Avatarcreator $avatarcreator
+            Environment $config,
+            DbCore $db
         ) {
 
             $this->db = $db;
@@ -605,37 +610,61 @@ namespace Leantime\Domain\Users\Repositories {
                 $stmn->closeCursor();
             }
 
-            //If can't find user, return ghost
-            if (empty($value)) {
-                return $this->avatarcreator->getAvatar('👻');
-            }
+            try {
 
-            //If user uploaded return uploaded file
-            if (! empty($value['profileId'])) {
+                $avatar = (new InitialAvatar)
+                    ->fontName('Verdana')
+                    ->background('#00a887')
+                    ->color('#fff');
 
-                $files = app()->make(Files::class);
-                $file = $files->getFile($value['profileId']);
-
-                if ($file) {
-                    $filePath = $file['encName'].'.'.$file['extension'];
-                    $type = $file['extension'];
-
-                    return ['filename' => $filePath, 'type' => 'uploaded'];
+                if (empty($value)) {
+                    return $avatar->name('👻')->generateSvg();
                 }
 
+            } catch (\Exception $e) {
+                Log::error('Could not generate user avatar.');
+                Log::error($e);
+
+                return ['filename' => 'not_found', 'type' => 'uploaded'];
             }
 
-            //Otherwise return avatar
             $name = $value['firstname'].' '.$value['lastname'];
 
-            $avatar = $this->avatarcreator->getAvatar($name);
+            if (empty($value['profileId'])) {
 
-            if (is_string($avatar)) {
-                return ['filename' => $avatar, 'type' => 'generated'];
+                /** @var Initials $initialsClass */
+                $initialsClass = app()->make(Initials::class);
+                $initialsClass->name($name);
+                $imagename = $initialsClass->getInitials();
+
+                if (! file_exists($filename = APP_ROOT.'/userfiles/avatars/user-'.$imagename.'.svg')) {
+                    $image = $avatar->name($name)->generateSvg();
+
+                    if(!is_dir(APP_ROOT.'/userfiles/avatars')) {
+                        mkdir(APP_ROOT.'/userfiles/avatars');
+                    }
+
+                    if (! is_writable(APP_ROOT.'/userfiles/avatars/')) {
+                        return $image;
+                    }
+
+                    file_put_contents($filename, $image);
+                }
+
+                return ['filename' => $filename, 'type' => 'generated'];
             }
 
-            return $avatar;
+            $files = app()->make(Files::class);
+            $file = $files->getFile($value['profileId']);
 
+            if ($file) {
+                $filePath = $file['encName'].'.'.$file['extension'];
+                $type = $file['extension'];
+
+                return ['filename' => $filePath, 'type' => 'uploaded'];
+            }
+
+            return $avatar->name('👻')->generateSvg();
         }
 
         public function patchUser($id, $params): bool

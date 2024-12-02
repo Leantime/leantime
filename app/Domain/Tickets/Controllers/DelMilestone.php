@@ -63,7 +63,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->setNotification($this->language->__($result['msg']), 'error');
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
 
-            return $this->tpl->displayPartial('tickets.delMilestone');
+            return $this->tpl->displayModal('tickets.delMilestone');
         }
     }
 }

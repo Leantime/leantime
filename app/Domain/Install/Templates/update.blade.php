@@ -4,7 +4,7 @@
 
 <div class="pageheader">
     <div class="pagetitle">
-        <h1><?php echo $tpl->language->__('headlines.update_database'); ?></h1>
+        <h1><?php echo $tpl->language->__("headlines.update_database"); ?></h1>
     </div>
 </div>
 <?php echo $tpl->displayInlineNotification(); ?>

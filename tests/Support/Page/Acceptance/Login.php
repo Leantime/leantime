@@ -21,7 +21,7 @@ class Login
 
     public function login($username, $password)
     {
-        if ($this->loadSessionShapshot('leantime_session')) {
+        if ($this->loadSessionShapshot('sid')) {
             return;
         }
 
@@ -39,10 +39,10 @@ class Login
         $this->I->fillField(['name' => 'username'], $username);
         $this->I->fillField(['name' => 'password'], $password);
         $this->I->click('Login');
-        $this->I->waitForElementVisible('.welcome-widget', 120);
+        $this->I->waitForElementVisible('.stickyHeader', 120);
         $this->I->see('Hi John');
 
-        $this->saveSessionSnapshot('leantime_session');
+        $this->saveSessionSnapshot('ltid');
     }
 
     protected function loadSessionShapshot(string $name): bool

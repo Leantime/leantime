@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Calendar\Services;
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
@@ -27,6 +27,11 @@ class Calendar
 
     private Environment $config;
 
+    /**
+     * @param CalendarRepository $calendarRepo
+     * @param LanguageCore       $language
+     *
+     */
     public function __construct(
         CalendarRepository $calendarRepo,
         LanguageCore $language,
@@ -246,15 +251,15 @@ class Calendar
 
         $calendarEvents = $this->calendarRepo->getCalendarBySecretHash($userHash, $calHash);
 
-        if (! $calendarEvents) {
-            throw new \Exception('Calendar could not be retrieved');
+        if (!$calendarEvents) {
+            throw new \Exception("Calendar could not be retrieved");
         }
 
         $eventObjects = [];
         //Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
             try {
-                $description = str_replace("\r\n", '\\n', strip_tags($event['description']));
+                $description = str_replace("\r\n", "\\n", strip_tags($event['description']));
 
                 $currentEvent = IcalEvent::create()
                     ->image(BASE_URL.'/dist/images/favicon.png', 'image/png', Display::badge())
@@ -280,7 +285,7 @@ class Calendar
                 $eventObjects[] = $currentEvent;
             } catch (\Exception $e) {
                 //Do not include event in ical
-                Log::error($e);
+                report($e);
             }
         }
 
@@ -403,33 +408,31 @@ class Calendar
     {
 
         $userId = -1;
-        if (! empty(session('userdata.id'))) {
-            $userId = session('userdata.id');
+        if (!empty(session("userdata.id"))) {
+            $userId = session("userdata.id");
         }
 
-        $userHash = hash('sha1', $userId.$this->config->sessionPassword);
-        $icalHash = $this->settingsRepo->getSetting('usersettings.'.$userId.'.icalSecret');
+        $userHash = hash('sha1', $userId . $this->config->sessionPassword);
+        $icalHash = $this->settingsRepo->getSetting("usersettings." . $userId. ".icalSecret");
 
         if (empty($icalHash)) {
-            throw new \Exception('User has no ical hash');
+            throw new \Exception("User has no ical hash");
         }
 
-        return BASE_URL.'/calendar/ical/'.$icalHash.'_'.$userHash;
-
+        return  BASE_URL . "/calendar/ical/" . $icalHash . "_" . $userHash;
     }
 
     public function generateIcalHash()
     {
 
-        if (empty(session('userdata.id'))) {
-            throw new \Exception('Session id is not set.');
+        if (empty(session("userdata.id"))) {
+            throw new \Exception("Session id is not set.");
         }
 
         $uuid = Uuid::uuid4();
         $icalHash = $uuid->toString();
 
-        $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.icalSecret', $icalHash);
-
+        $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".icalSecret", $icalHash);
     }
 
     /**

@@ -8,7 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Symfony\Component\HttpFoundation\Response;
@@ -17,19 +17,19 @@ namespace Leantime\Domain\Projects\Controllers {
     {
         private ProjectService $projectService;
 
-        private ClientService $clientService;
+        private ClientRepository $clientRepo;
 
         private ProjectRepository $projectRepo;
 
         public function init(
             ProjectRepository $projectRepo,
-            ClientService $clientService,
+            ClientRepository $clientRepo,
             ProjectService $projectService
         ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $this->projectRepo = $projectRepo;
-            $this->clientService = $clientService;
+            $this->clientRepo = $clientRepo;
             $this->projectService = $projectService;
         }
 
@@ -48,7 +48,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $id = (int) ($_GET['id']);
             $project = $this->projectService->getProject($id);
 
-            $this->tpl->assign('allClients', $this->clientService->getAll());
+            $this->tpl->assign('allClients', $this->clientRepo->getAll());
             $this->tpl->assign('project', $project);
 
             return $this->tpl->displayPartial('projects::partials.duplicateProject');

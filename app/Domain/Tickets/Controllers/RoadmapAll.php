@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller\Controller;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -11,6 +12,8 @@ namespace Leantime\Domain\Tickets\Controllers {
     class RoadmapAll extends Controller
     {
         private ProjectRepository $projectsRepo;
+
+        private ClientRepository $clientRepo;
 
         private SprintService $sprintService;
 
@@ -23,11 +26,13 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function init(
             ProjectRepository $projectsRepo,
+            ClientRepository $clientRepo,
             ClientService $clientService,
             SprintService $sprintService,
             TicketService $ticketService
         ) {
             $this->projectsRepo = $projectsRepo;
+            $this->clientRepo = $clientRepo;
             $this->clientService = $clientService;
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
@@ -42,7 +47,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $currentClientName = '';
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int) $_GET['client'];
-                $currentClient = $this->clientService->get($clientId);
+                $currentClient = $this->clientRepo->getClient($clientId);
                 if (is_array($currentClient) && count($currentClient) > 0) {
                     $currentClientName = $currentClient['name'];
                 }

@@ -40,7 +40,7 @@ class Menu extends Composer
      */
     public function with(): array
     {
-        $allAssignedprojects = $showSettingsIndicator = false;
+        $allAssignedprojects =
         $allAvailableProjects =
         $recentProjects =
         $favoriteProjects =
@@ -75,13 +75,6 @@ class Menu extends Composer
             $currentProject = $projectVars['currentProject'];
         }
 
-        // Check for new widgets to show settings indicator
-        if (session()->exists('userdata')) {
-            $widgetService = app()->make(\Leantime\Domain\Widgets\Services\Widgets::class);
-            $newWidgets = $widgetService->getNewWidgets(session('userdata.id'));
-            $showSettingsIndicator = ! empty($newWidgets);
-        }
-
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
@@ -109,8 +102,6 @@ class Menu extends Composer
             ];
         }
 
-        $settingsLink = self::dispatchFilter('settingsLink', $settingsLink, ['type' => $menuType]);
-
         $newProjectUrl = self::dispatchFilter('startSomething', '#/projects/createnew');
 
         return [
@@ -134,7 +125,6 @@ class Menu extends Composer
             'projectSelectFilter' => $projectSelectFilter,
             'clients' => $clients,
             'startSomethingUrl' => $newProjectUrl,
-            'showSettingsIndicator' => $showSettingsIndicator,
         ];
     }
 }

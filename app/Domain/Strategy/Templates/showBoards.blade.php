@@ -12,7 +12,7 @@ $canvasProgress = $tpl->get('canvasProgress');
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
     <div class="pagetitle">
-        <h1><?= $tpl->__('headlines.blueprints') ?></h1>
+        <h1><?=$tpl->__('headlines.blueprints') ?></h1>
     </div>
 </div>
 
@@ -29,49 +29,49 @@ $canvasProgress = $tpl->get('canvasProgress');
                     <div class="col-md-3">
                         <div class="profileBox">
                             <div class="commentImage icon">
-                                <i class="<?= $board['icon']?>"></i>
+                                <i class="<?=$board['icon']?>"></i>
                             </div>
                             <span class="userName">
-                                    <small><?= $tpl->__($board['name']) ?> (<?= $board['count']?>)</small><br />
+                                    <small><?=$tpl->__($board['name']) ?> (<?=$board['count']?>)</small><br />
 
-                                    <a href="<?= BASE_URL.'/'.$board['module'].'/showCanvas/'.$board['lastCanvasId']?>">
-                                        <?= $tpl->escape($board['lastTitle']) ?>
+                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/" . $board['lastCanvasId']?>">
+                                        <?=$tpl->escape($board['lastTitle']) ?>
                                     </a><br />
-                                <small><?= $tpl->__('label.last_updated')?> <?= format($board['lastUpdate'])->date()?> <?= format($board['lastUpdate'])->time()?></p>
+                                <small><?=$tpl->__('label.last_updated')?> <?=format($board['lastUpdate'])->date()?> <?=format($board['lastUpdate'])->time()?></p>
                                 </small>
                                 </span>
                                <div class="clearall"></div>
                             <?php
                             $percentDone = 0;
-                    if (isset($canvasProgress[$board['module']])) {
-                        $percentDone = round($canvasProgress[$board['module']] * 100);
-                    }
-                    ?>
+                            if (isset($canvasProgress[$board['module']])) {
+                                $percentDone = round($canvasProgress[$board['module']] * 100);
+                            }
+                            ?>
                             <br />
                             <div class="progress">
                                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
-                                    <span class="sr-only"><?= sprintf($tpl->__('text.percent_complete'), $percentDone)?></span>
+                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $percentDone)?></span>
                                 </div>
                             </div>
-                            <?= sprintf($tpl->__('text.percent_complete'), $percentDone)?>
+                            <?=sprintf($tpl->__("text.percent_complete"), $percentDone)?>
 
 
                         </div>
                     </div>
                 <?php } ?>
 
-                <?php if (! is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0) {
+                <?php if (!is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0) {
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
 
                     echo "<div style='width:30%' class='svgContainer'>";
-                    echo file_get_contents(ROOT.'/dist/images/svg/undraw_design_data_khdb.svg');
-                    echo '</div>';
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
+                    echo "</div>";
 
-                    echo '<h3>'.$tpl->__('headline.no_blueprints_yet').'</h3>';
-                    echo '<br />'.$tpl->__('text.no_blueprints_yet');
-                    echo "<br /><a href='".BASE_URL."/valuecanvas/showCanvas' class='btn btn-primary'>".$tpl->__('button.start_here_project_value').'</a>';
+                    echo"<h3>" . $tpl->__("headline.no_blueprints_yet") . "</h3>";
+                    echo "<br />" . $tpl->__("text.no_blueprints_yet");
+                    echo "<br /><a href='" . BASE_URL . "/valuecanvas/showCanvas' class='btn btn-primary'>" . $tpl->__("button.start_here_project_value") . "</a>";
 
-                    echo '</div></div>';
+                    echo"</div></div>";
                 } ?>
                 </div>
 
@@ -112,7 +112,7 @@ $canvasProgress = $tpl->get('canvasProgress');
 
 
                     echo"</div>";
-                } */ ?>
+                } */?>
             </div>
         </div>
     </div>
@@ -126,31 +126,31 @@ $canvasProgress = $tpl->get('canvasProgress');
                         <i class="fa fa-angle-down"></i> Templates
                     </a>
                 </h5>
-                <p style="padding-left:19px;"><?= $tpl->__('description.other_tools') ?></p>
+                <p style="padding-left:19px;"><?=$tpl->__('description.other_tools') ?></p>
                 <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
 
 
                     <?php foreach ($tpl->get('otherBoards') as $board) {
-                        if (! isset($board['visible']) || $board['visible'] === 1) {
+                        if (!isset($board["visible"]) || $board["visible"] === 1) {
                             ?>
                         <div class="col-md-3">
                             <div class="profileBox" style="min-height: 125px;">
                                 <div class="commentImage icon">
-                                    <i class="<?= $board['icon']?>"></i>
+                                    <i class="<?=$board['icon']?>"></i>
                                 </div>
                                 <span class="userName">
-                            <a href="<?= BASE_URL.'/'.$board['module'].'/showCanvas' ?>">
-                                <?= $tpl->__($board['name']) ?>
+                            <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
+                                <?=$tpl->__($board['name']) ?>
                             </a>
                         </span>
-                                <?= $tpl->__($board['description']) ?>
+                                <?=$tpl->__($board['description']) ?>
                                 <div class="clearall"></div>
 
 
                             </div>
                         </div>
                         <?php }
-                        } ?>
+                    } ?>
                 </div>
 
 

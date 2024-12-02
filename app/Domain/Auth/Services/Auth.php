@@ -2,11 +2,9 @@
 
 namespace Leantime\Domain\Auth\Services;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
@@ -20,9 +18,9 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RobThree\Auth\TwoFactorAuth;
 
-class Auth implements Authenticatable
+class Auth
 {
-    use DispatchesEvents, \Illuminate\Auth\Authenticatable;
+    use DispatchesEvents;
 
     /**
      * @var int|null user id from DB
@@ -152,8 +150,7 @@ class Auth implements Authenticatable
 
         // Ensure the role is a valid role
         if (in_array($roleToCheck, Roles::getRoles()) === false) {
-
-            Log::info('Check for invalid role detected: '.$roleToCheck);
+            report('Check for invalid role detected: '.$roleToCheck);
 
             return false;
         }
@@ -215,8 +212,7 @@ class Auth implements Authenticatable
                     if ($userId !== false) {
                         $user = $this->userRepo->getUserByEmail($usernameWDomain);
                     } else {
-
-                        Log::error('Ldap user creation failed.');
+                        report('Ldap user creation failed.');
 
                         return false;
                     }
@@ -239,8 +235,7 @@ class Auth implements Authenticatable
 
                     return true;
                 } else {
-
-                    Log::info('Could not retrieve user by email');
+                    report('Could not retrieve user by email');
 
                     return false;
                 }
@@ -249,7 +244,7 @@ class Auth implements Authenticatable
             // Don't return false, to allow the standard login provider to check the db for contractors or clients not
             // in ldap
         } elseif ($this->config->useLdap === true && ! extension_loaded('ldap')) {
-            Log::error("Can't use ldap. Extension not installed");
+            report("Can't use ldap. Extension not installed");
         }
 
         // TODO: Single Sign On?
@@ -261,12 +256,12 @@ class Auth implements Authenticatable
         if ($user !== false && is_array($user)) {
             $this->setUserSession($user);
 
-            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return true;
         } else {
             $this->logFailedLogin($username);
-            self::dispatch_event('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
+            self::dispatchEvent('afterLoginCheck', ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
 
             return false;
         }
@@ -277,7 +272,7 @@ class Auth implements Authenticatable
      *
      * @throws BindingResolutionException
      */
-    public function setUserSession(mixed $user, bool $isLdap = false)
+    public function setUsersession(mixed $user, bool $isLdap = false)
     {
         if (! $user || ! is_array($user)) {
             return false;
@@ -364,7 +359,7 @@ class Auth implements Authenticatable
             'projectsettings',
             'currentSubscriptions',
             'lastTicketView',
-            'lastFilteredTicketTableView',
+            'lastFilterdTicketTableView',
         ]);
 
         foreach ($sessionsToDestroy as $key) {
@@ -429,8 +424,9 @@ class Auth implements Authenticatable
                     return true;
                 }
             } elseif ($this->config->debug) {
-
-                Log::warning('PW reset failed: maximum request count has been reached for user '.$userFromDB['id']);
+                report(
+                    'PW reset failed: maximum request count has been reached for user '.$userFromDB['id']
+                );
             }
         }
 
@@ -458,7 +454,7 @@ class Auth implements Authenticatable
         $testKey = array_search($role, Roles::getRoles());
 
         if ($role == '' || $testKey === false) {
-            Log::warning('Check for invalid role detected: '.$role);
+            report('Check for invalid role detected: '.$role);
 
             return false;
         }
@@ -521,9 +517,9 @@ class Auth implements Authenticatable
 
     public function verify2FA(string $code): bool
     {
-        $twoFactorAuthentication = new TwoFactorAuth('Leantime');
+        $tfa = new TwoFactorAuth('Leantime');
 
-        return $twoFactorAuthentication->verifyCode(session('userdata.twoFASecret'), $code);
+        return $tfa->verifyCode(session('userdata.twoFASecret'), $code);
     }
 
     public function get2FAVerified(): mixed
@@ -545,46 +541,6 @@ class Auth implements Authenticatable
         $ip = $_SERVER['REMOTE_ADDR'];
         $msg = '['.$date.']['.$ip.'] Login failed for user: '.$user;
 
-        Log::info($msg);
-    }
-
-    public function getAuthIdentifierName()
-    {
-        return 'id';
-    }
-
-    public function getAuthIdentifier()
-    {
-        return $this->userId;
-    }
-
-    public function getAuthPassword()
-    {
-        return $this->password;
-    }
-
-    public function getAuthPasswordName()
-    {
-        return 'password';
-    }
-
-    public function getRememberToken()
-    {
-        return null; // Not implemented yet
-    }
-
-    public function setRememberToken($value)
-    {
-        // Not implemented yet
-    }
-
-    public function getRememberTokenName()
-    {
-        return 'remember_token';
-    }
-
-    public function getUserById($id)
-    {
-        return (object) $this->userRepo->getUser($id);
+        report($msg);
     }
 }

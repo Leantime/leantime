@@ -4,8 +4,6 @@ namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\View;
@@ -45,23 +43,6 @@ class Template
 
     protected array $headers = [];
 
-    public $viewFactory;
-
-    public array $picture = [
-        'calendar' => 'fa-calendar',
-        'clients' => 'fa-people-group',
-        'dashboard' => 'fa-th-large',
-        'files' => 'fa-picture',
-        'leads' => 'fa-signal',
-        'messages' => 'fa-envelope',
-        'projects' => 'fa-bar-chart',
-        'setting' => 'fa-cogs',
-        'tickets' => 'fa-pushpin',
-        'timesheets' => 'fa-table',
-        'users' => 'fa-people-group',
-        'default' => 'fa-off',
-    ];
-
     /**
      * __construct - get instance of frontcontroller
      *
@@ -91,8 +72,6 @@ class Template
 
         /** @var Roles */
         private Roles $roles,
-
-        private Filesystem $files,
 
     ) {
 
@@ -157,10 +136,7 @@ class Template
             'language' => $this->language,
             'dateTimeInfoEnum' => DateTimeInfoEnum::class,
             'tpl' => $this,
-            'request' => $this->incomingRequest,
         ]);
-
-        $this->viewFactory = app('view');
     }
 
     /**
@@ -273,53 +249,19 @@ class Template
 
         $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
 
-        //app('view')->share([]);
-
-        $this->hookContext = 'tpl.'.$templateParts['module'].'.'.$templateParts['path'];
-
-        $viewFactory = app('view');
+        app('view')->share([]);
 
         /** @var View $view */
         $view = app('view')->make($loadFile);
 
-        $path = $view->getPath();
-
-        $this->setHookContext($templateParts, $path);
-
-        /** @todo this can be reduced to just the 'if' code after removal of php template support */
-        if (str_ends_with($path, 'blade.php')) {
-            $view->with(array_merge(
-                $this->vars,
-                ['layout' => $layout]
-            ));
-        } else {
-            $view = app('view')->make($layout, array_merge(
-                $this->vars,
-                ['module' => strtolower($templateParts['module']), 'action' => $templateParts['path']]
-            ));
-        }
+        $view->with(array_merge(
+            $this->vars,
+            ['layout' => $layout]
+        ));
 
         $content = $view->render();
 
         return new Response($content, $responseCode, array_merge($headers, $this->headers));
-    }
-
-    /**
-     * displaySubmodule - display a submodule for a given module
-     *
-     * @throws Exception
-     */
-    public function displaySubmodule(string $alias): void
-    {
-        if (! str_contains($alias, '-')) {
-            throw new Exception('Submodule alias must be in the format module-submodule');
-        }
-
-        [$module, $submodule] = explode('-', $alias);
-
-        $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
-
-        echo app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     public function emptyResponse($responseCode = 200)
@@ -377,16 +319,9 @@ class Template
     public function displayFragment(string $viewPath, string $fragment = ''): Response
     {
         $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
-
         app('view')->share(['tpl' => $this]);
-
         /** @var View $view */
         $view = app('view')->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
-
-        $path = $view->getPath();
-        $viewPathExplode = explode('::', $viewPath);
-
-        $this->setHookContext(['module' => $viewPathExplode[0] ?? '', 'path' => $viewPathExplode[1] ?? ''], $path);
 
         return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
@@ -457,7 +392,7 @@ class Template
      *
      * @throws Exception If template not found.
      */
-    public function getTemplatePath(string $namespace, string $path): string
+    protected function getTemplatePath(string $namespace, string $path): string
     {
         if ($namespace == '' || $path == '') {
             throw new Exception('Both namespace and path must be provided');
@@ -908,41 +843,5 @@ class Template
     public function redirect(string $url): RedirectResponse
     {
         return Frontcontroller::redirect($url);
-    }
-
-    /**
-     * getModulePicture - get module picture
-     *
-     * @throws BindingResolutionException
-     */
-    public function getModulePicture(): string
-    {
-        $module = Frontcontroller::getModuleName($this->template);
-
-        $picture = $this->picture['default'];
-        if (isset($this->picture[$module])) {
-            $picture = $this->picture[$module];
-        }
-
-        return $picture;
-    }
-
-    protected function setHookContext($templateParts, $path)
-    {
-
-        if (str_contains($path, 'app/Plugins')) {
-            $this->hookContext = 'leantime.plugins.'.$templateParts['module'].'.templates.'.$templateParts['path'];
-        } else {
-            $this->hookContext = 'leantime.domain.'.$templateParts['module'].'.templates.'.$templateParts['path'];
-        }
-
-    }
-
-    public function clearViewPathCache()
-    {
-
-        $viewPathCachePath = storage_path('framework/viewPaths.php');
-        $this->files->delete($viewPathCachePath);
-
     }
 }

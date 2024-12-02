@@ -7,16 +7,15 @@
 namespace Leantime\Domain\ModuleManager\Controllers {
 
     use Leantime\Core\Controller\Frontcontroller;
+    use Leantime\Core\Events\DispatchesEvents;
 
     class Notavailable
     {
-        use DispatchesEvents;
-
         public function run($params)
         {
 
             $redirect = BASE_URL.'errors/error404';
-            $redirect = self::dispatchFilter('notAvailableRedirect', $redirect, $params);
+            $redirect = DispatchesEvents::dispatchFilter('notAvailableRedirect', $redirect, $params);
 
             return Frontcontroller::redirect($redirect);
         }

@@ -1,10 +1,14 @@
+version: "3.9"
+
 networks:
   leantime:
-      external: false
-      driver: bridge
+    external: false
+    driver: bridge
+
 volumes:
   mysql:
   s3ninja-data:
+
 services:
   leantime-dev:
     build: .
@@ -12,15 +16,15 @@ services:
       - "8001:8080" #Using ports that are hopefully available. format is: 80XX
       - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     volumes:
-     - "../:/var/www/html"
-     - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
-     - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
+      - "../:/var/www/html"
+      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
+      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
     environment:
-      LEAN_DB_HOST: 'db'
-      LEAN_DB_USER: 'leantime'
-      LEAN_DB_PASSWORD: 'leantime'
-      LEAN_DB_DATABASE: 'leantime'
-      LEAN_DB_PORT: '3306'
+      LEAN_DB_HOST: "db"
+      LEAN_DB_USER: "leantime"
+      LEAN_DB_PASSWORD: "leantime"
+      LEAN_DB_DATABASE: "leantime"
+      LEAN_DB_PORT: "3306"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -34,15 +38,16 @@ services:
       - "6379"
     networks:
       - leantime
+
   db:
     image: mysql:8.0
     ports:
       - "3306"
     environment:
-      MYSQL_ROOT_PASSWORD: 'leantime'
-      MYSQL_USER: 'leantime'
-      MYSQL_PASSWORD: 'leantime'
-      MYSQL_DATABASE: 'leantime'
+      MYSQL_ROOT_PASSWORD: "leantime"
+      MYSQL_USER: "leantime"
+      MYSQL_PASSWORD: "leantime"
+      MYSQL_DATABASE: "leantime"
     networks:
       - leantime
     volumes:
@@ -54,16 +59,17 @@ services:
       retries: 20
 
   selenium:
-    image: selenium/standalone-chromium
+    image: selenium/standalone-firefox
     shm_size: 2gb
     environment:
-      - SCREEN_WIDTH=2560
-      - SCREEN_HEIGHT=1440
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
     ports:
       - "4444"
       - "7900"
     networks:
       - leantime
+
   maildev:
     image: maildev/maildev
     environment:
@@ -73,6 +79,7 @@ services:
       - "8081"
     networks:
       - leantime
+
   phpmyadmin:
     image: phpmyadmin
     ports:
@@ -82,6 +89,7 @@ services:
       - PMA_PORT=3306
     networks:
       - leantime
+
   s3ninja:
     image: scireum/s3-ninja
     ports:

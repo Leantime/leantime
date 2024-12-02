@@ -7,7 +7,6 @@ use Aws\S3\S3Client;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -261,7 +260,7 @@ class Fileupload
 
                 return $url;
             } catch (S3Exception $e) {
-                Log::error($e);
+                report($e);
 
                 return false;
             }
@@ -271,7 +270,7 @@ class Fileupload
                     return '/userfiles/'.$this->file_name;
                 }
             } catch (Exception $e) {
-                Log::error($e);
+                report($e);
 
                 return false;
             }
@@ -301,11 +300,11 @@ class Fileupload
 
             return true;
         } catch (S3Exception $e) {
-            Log::error($e);
+            report($e);
 
             return false;
         } catch (RequestException $e) {
-            Log::error($e);
+            report($e);
 
             return false;
         }
@@ -319,7 +318,7 @@ class Fileupload
                 return true;
             }
         } catch (Exception $e) {
-            Log::error($e);
+            report($e);
 
             return false;
         }
@@ -330,18 +329,15 @@ class Fileupload
     /**
      * displayImageFile - display image file
      */
-    public function displayImageFile(string $imageName, string $fullPath = '', $allowSvg = false): Response
+    public function displayImageFile(string $imageName, string $fullPath = ''): Response
     {
         $mimes = [
             'jpg' => 'image/jpg',
             'jpeg' => 'image/jpg',
             'gif' => 'image/gif',
             'png' => 'image/png',
+            'svg' => 'image/svg+xml',
         ];
-
-        if ($allowSvg) {
-            $mimes['svg'] = 'image/svg+xml';
-        }
 
         $responseFailure = new Response(file_get_contents(ROOT.'/dist/images/doc.png'));
         $sLastModified = filemtime(ROOT.'/dist/images/doc.png');
@@ -391,12 +387,7 @@ class Fileupload
         $path_parts = pathinfo($fullPath);
         $ext = $path_parts['extension'];
 
-        $fileExtensions = ['jpg', 'jpeg', 'gif', 'png'];
-        if ($allowSvg) {
-            $fileExtensions[] = 'svg';
-        }
-
-        if (! in_array($ext, $fileExtensions)) {
+        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'svg'])) {
             throw new HttpResponseException($responseFailure);
         }
 

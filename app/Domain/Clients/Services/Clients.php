@@ -69,32 +69,6 @@ class Clients
     }
 
     /**
-     * Checks if a client exists
-     *
-     * @param  object|array  $values  Object or array to be created
-     * @return bool Returns true or false
-     *
-     * @api
-     */
-    public function isClient(object|array $values): bool
-    {
-        return $this->clientRepository->isClient($values);
-    }
-
-    /**
-     * Checks if a client has tickets
-     *
-     * @param  int  $id  Id of the object to be checked
-     * @return bool Returns true or false
-     *
-     * @api
-     */
-    public function hasTickets(int $id): bool
-    {
-        return $this->clientRepository->hasTickets($id);
-    }
-
-    /**
      * updates the client by key.
      *
      * @param  object|array  $values  expects the entire object to be updated as object or array
@@ -104,9 +78,7 @@ class Clients
      */
     public function editClient(object|array $values): bool
     {
-        $id = is_array($values) ? $values['id'] : (is_object($values) ? $values->id : null);
-        
-        return $this->clientRepository->editClient($values, $id);
+        return $this->clientRepository->editClient($values, $values['id']);
     }
 
     /**
@@ -146,15 +118,5 @@ class Clients
     public function get(int $id): object|array|false
     {
         return $this->clientRepository->getClient($id);
-    }
-
-        /**
-     * Gets number of clients
-     *
-     * @api
-     */
-    public function getNumberOfClients(): mixed
-    {
-        return $this->clientRepository->getNumberOfClients();
     }
 }

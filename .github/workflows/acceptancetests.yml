@@ -1,4 +1,4 @@
-name: Acceptance Tests (Selenium)
+name: Tests
 
 on:
   workflow_dispatch:
@@ -8,8 +8,23 @@ on:
     branches: [ "master", "*.*-dev" ]
 
 jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Unit Tests
+        run: make unit-test
+
+      - name: Store screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: unit-test
+          path: tests/_output
+
   acceptance:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 

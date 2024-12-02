@@ -3,6 +3,10 @@
 /**
  * downloads.php - For Handling Downloads.
  */
+
+use Leantime\Core\Configuration\Environment;
+use Leantime\Domain\Auth\Services\Auth;
+
 define('RESTRICTED', true);
 define('ROOT', __DIR__);
 define('APP_ROOT', dirname(__DIR__, 1));

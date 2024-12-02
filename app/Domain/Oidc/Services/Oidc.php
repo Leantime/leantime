@@ -13,8 +13,6 @@ use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Math\BigInteger;
 use Symfony\Component\HttpFoundation\Response;
 
 class Oidc
@@ -30,8 +28,6 @@ class Oidc
     private bool $configLoaded = false;
 
     private string $providerUrl = '';
-
-    private string $autoDiscoverUrl = '';
 
     private string $clientId = '';
 
@@ -85,7 +81,6 @@ class Oidc
         $providerUrl = $this->config->get('oidcProviderUrl');
 
         $this->providerUrl = ! empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
-        $this->autoDiscoverUrl = $this->config->get('oidcAutoDiscoverUrl', '');
         $this->clientId = $this->config->get('oidcClientId', '');
         $this->clientSecret = $this->config->get('oidcClientSecret', '');
         $this->authUrl = $this->config->get('oidcAuthUrl', '');
@@ -165,7 +160,7 @@ class Oidc
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         }
 
-        if ((! isset($tokens['access_token'])) && (! isset($tokens['access_token']))) {
+        if ((!isset($tokens['access_token'])) && (!isset($tokens['access_token']))) {
             $this->displayError('oidc.error.unsupportedToken');
         }
 
@@ -360,8 +355,7 @@ class Oidc
         }
 
         $httpClient = new Client;
-        // AUTH HEADER?
-        $response = $httpClient->get($this->getJwksUrl()); // https://cloud.lukas-sieper.de/apps/oidc/jwks
+        $response = $httpClient->get($this->getJwksUrl());
         $keys = json_decode($response->getBody()->getContents(), true);
         if (isset($keys['keys'])) {
             $keys = $keys['keys'];
@@ -379,12 +373,7 @@ class Oidc
                 $keySource = '';
                 if (isset($key['x5c'])) {
                     $keySource = '-----BEGIN CERTIFICATE-----'.PHP_EOL.chunk_split($key['x5c'][0], 64, PHP_EOL).'-----END CERTIFICATE-----';
-                } elseif (isset($key['n']) && isset($key['e'])) {
-                    // Parse the public key from n and e
-                    $modulus = $this->base64UrlDecode($key['n']);
-                    $exponent = $this->base64UrlDecode($key['e']);
-                    $keySource = $this->createPublicKey($modulus, exponent: $exponent);
-                } else {
+                } elseif (isset($key['n'])) {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
                 }
             }
@@ -395,30 +384,6 @@ class Oidc
         }
 
         return false;
-    }
-
-    private function base64UrlDecode(string $input): string
-    {
-        $remainder = strlen($input) % 4;
-        if ($remainder) {
-            $padlen = 4 - $remainder;
-            $input .= str_repeat('=', $padlen);
-        }
-
-        return base64_decode(strtr($input, '-_', '+/'));
-    }
-
-    //key to PEM
-    private function createPublicKey(string $modulus, string $exponent): string
-    {
-
-        $rsa = PublicKeyLoader::load([
-            'e' => new BigInteger($exponent, 256),
-            'n' => new BigInteger($modulus, 256),
-        ]);
-
-        return $rsa->__toString();
-
     }
 
     /**
@@ -458,9 +423,7 @@ class Oidc
 
         $httpClient = new Client;
         try {
-            // $uri = strlen() ? $this->autoDiscoverUrl : $this->providerUrl;
-            $uri = empty($this->autoDiscoverUrl) ? $this->providerUrl : $this->autoDiscoverUrl;
-            $response = $httpClient->get($uri.'/.well-known/openid-configuration');
+            $response = $httpClient->get($this->providerUrl.'/.well-known/openid-configuration');
             $endpoints = json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
             report($e);

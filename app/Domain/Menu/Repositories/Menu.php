@@ -110,14 +110,14 @@ namespace Leantime\Domain\Menu\Repositories {
                 10 => [
                     'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
                     'submenu' => [
-                        5 => ['type' => 'item', 'module' => 'timesheets', 'role' => 'manager', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
-                        10 => ['type' => 'item', 'module' => 'projects', 'role' => 'manager', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
-                        15 => ['type' => 'item', 'module' => 'clients', 'role' => 'admin', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
-                        20 => ['type' => 'item', 'module' => 'users', 'role' => 'admin', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
+                        5 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
+                        10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
+                        15 => ['type' => 'item', 'module' => 'clients', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
+                        20 => ['type' => 'item', 'module' => 'users', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
                     ],
                 ],
                 15 => [
-                    'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'admin',
+                    'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'administrator',
                     'submenu' => [
                         5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
                         10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
@@ -128,6 +128,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 ],
             ],
         ];
+
 
         public function __construct(
             /** @var SettingRepository */
@@ -208,14 +209,15 @@ namespace Leantime\Domain\Menu\Repositories {
         /**
          * Builds the menu structure recursively.
          *
-         * @param  array  &$menuStructure  The menu structure to build. Passed by reference.
-         * @param  string  $filter  The filter to apply to the menu structure.
+         * @param array &$menuStructure The menu structure to build. Passed by reference.
+         * @param string $filter The filter to apply to the menu structure.
+         *
          * @return array The built menu structure.
          */
         protected function buildMenuStructure(array &$menuStructure, string $filter): array
         {
 
-            foreach ($menuStructure as &$menuItem) {
+            foreach($menuStructure as &$menuItem) {
 
                 if ($menuItem['type'] !== 'submenu') {
                     continue;
@@ -223,11 +225,11 @@ namespace Leantime\Domain\Menu\Repositories {
 
                 $menuItem['submenu'] = $this->buildMenuStructure($menuItem['submenu'], $filter);
 
-                $filter = $filter.'.'.$menuItem['id'];
+                $filter = $filter . '.' . $menuItem['id'];
 
                 return self::dispatchFilter(
                     hook: $filter,
-                    payload: $menuItem['submenu'],
+                    payload:  $menuItem['submenu'],
                     function: 'getMenuStructure'
                 );
 
@@ -251,13 +253,13 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $this->menuStructures =
                 self::dispatchFilter(
-                    'menuStructures',
+                'menuStructures',
                     $this->menuStructures,
                     ['menuType' => $menuType]
-                );
+            );
 
             //If menu structure cannot be found, don't return anything
-            if (! isset($this->menuStructures[$menuType])) {
+            if(! isset($this->menuStructures[$menuType])) {
                 return [];
             }
 
@@ -265,10 +267,10 @@ namespace Leantime\Domain\Menu\Repositories {
             $filter = "menuStructures.$menuType";
 
             $this->menuStructures[$menuType] = self::dispatchFilter(
-                $filter,
-                $this->menuStructures[$menuType],
-                ['menuType' => $menuType]
-            );
+                        $filter,
+                        $this->menuStructures[$menuType],
+                        ['menuType' => $menuType]
+                    );
 
             $menuStructure = $this->menuStructures[$menuType];
 

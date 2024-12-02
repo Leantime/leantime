@@ -56,10 +56,6 @@ class Helper
      */
     public function getHelperModalByRoute(string $route): string
     {
-        //Turning off helper modals for now.
-        //Todo do something.
-        $this->availableModals = [];
-
         return $this->availableModals[$route] ?? 'notfound';
     }
 

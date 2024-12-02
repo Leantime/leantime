@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'user:add',
-    description: 'Add a new user (email, password, role required options)',
+    description: 'Add a new user',
 )]
 class AddUserCommand extends Command
 {
@@ -138,8 +138,6 @@ class AddUserCommand extends Command
 
             return Command::FAILURE;
         }
-
-        $io->success('User created successfully');
 
         return Command::SUCCESS;
     }

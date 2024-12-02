@@ -39,13 +39,13 @@ class DelAPIKey extends Controller
      *
      * @throws \Exception
      */
-    public function run($params): RedirectResponse|Response
+    public function run(): RedirectResponse|Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         // Only Admins
-        if (isset($params['id']) === true) {
-            $id = (int) ($params['id']);
+        if (isset($_GET['id']) === true) {
+            $id = (int) ($_GET['id']);
             $user = $this->userRepo->getUser($id);
 
             // Delete User

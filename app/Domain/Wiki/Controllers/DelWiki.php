@@ -36,8 +36,8 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 $this->tpl->setNotification($this->language->__('notification.wiki_deleted'), 'success', 'wiki_deleted');
 
-                session()->forget('lastArticle');
-                session()->forget('currentWiki');
+                session()->forget("lastArticle");
+                session()->forget("currentWiki");
 
                 $this->tpl->closeModal();
                 $this->tpl->htmxRefresh();

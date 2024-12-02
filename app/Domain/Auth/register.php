@@ -2,37 +2,37 @@
 
 use Leantime\Core\Events\EventDispatcher;
 
-EventDispatcher::addFilterListener('leantime.domain.auth.template.userInvite.welcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.userInvite.welcomeText', function ($content, $params) {
     $language = app()->make(\Leantime\Core\Language::class);
 
     return $language->__('text.welcome_to_leantime_content');
 });
 
-EventDispatcher::addFilterListener('leantime.domain.auth.template.userInvite2.welcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.userInvite2.welcomeText', function ($content, $params) {
     $language = app()->make(\Leantime\Core\Language::class);
 
     return $language->__('text.welcome_to_leantime_content');
 });
 
-EventDispatcher::addFilterListener('leantime.domain.auth.template.userInvite3.welcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.userInvite3.welcomeText', function ($content, $params) {
     $language = app()->make(\Leantime\Core\Language::class);
 
     return $language->__('text.welcome_to_leantime_content');
 });
 
-EventDispatcher::addFilterListener('leantime.domain.auth.template.userInvite4.welcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.userInvite4.welcomeText', function ($content, $params) {
     $language = app()->make(\Leantime\Core\Language::class);
 
     return $language->__('text.welcome_to_leantime_content');
 });
 
-EventDispatcher::addFilterListener('leantime.domain.auth.template.userInvite5.welcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.userInvite5.welcomeText', function ($content, $params) {
     $language = app()->make(\Leantime\Core\Language::class);
 
     return $language->__('text.welcome_to_leantime_content');
 });
 
-EventDispatcher::addFilterListener('leantime.domain.auth.*.belowWelcomeText', function ($content, $params) {
+EventDispatcher::addFilterListener('leantime.core.template.tpl.auth.*.belowWelcomeText', function ($content, $params) {
 
     $quotes = [];
     $quotes[] = "\"It's the first project management app I've used for more than a week, and it makes sense too.\"<br /><br />- Interior Designer";

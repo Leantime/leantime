@@ -11,7 +11,7 @@
     }
 
    &.select-chip {
-       @apply bg-none leading-6 min-h-6 h-6 w-auto px-0.5 rounded-full ps-1.5 pe-1.5 text-xs align-sub;
+       @apply bg-none leading-6 min-h-6 h-6 w-auto px-0.5 rounded-full ps-1.5 pe-1.5 bg-none text-xs leading-6 min-h-6 h-6 align-sub;
 
        .choices__inner {
             margin-top:2px;
@@ -49,8 +49,6 @@
     select {
         display: none;
     }
-
-    overflow:hidden;
 }
 
 .select.is-open {
@@ -156,6 +154,7 @@
 .choices__inner {
     display: inline-block;
     width: 100%;
+    overflow-y:auto;
 }
 .is-focused .choices__inner, .is-open .choices__inner {}
 .is-open .choices__inner {}
@@ -169,22 +168,15 @@
 /* Single Selected Choices Item */
 .choices__list--single {
     display: inline-block;
-
-    .choices__item {
-
-        width: 100%;
-        align-content: center;
-        @apply px-0 text-sm select-sm;
-
-        .choices__button {
-            display:none;
-        }
-
-    }
-
 }
 
 [dir=rtl] .choices__list--single {}
+
+.choices__list--single .choices__item {
+    width: 100%;
+    align-content: center;
+    @apply px-0 text-sm select-sm;
+}
 
 .select-chip {
     .choices__list--single .choices__item {
@@ -198,20 +190,14 @@
 
 .choices__list--multiple {
     display: inline;
-
-    .choices__item {
-        @apply bg-primary text-primary-content p-1 px-2 text-xs mr-1;
-        display: inline-block;
-        vertical-align: middle;
-        border-radius: 1rem;
-        word-break: break-all;
-        box-sizing: border-box;
-
-        .is-highlighted {
-            @apply bg-primary;
-        }
-    }
-
+}
+.choices__list--multiple .choices__item {
+    @apply bg-primary text-primary-content p-1 px-2 text-xs mr-1;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 1rem;
+    word-break: break-all;
+    box-sizing: border-box;
 }
 .choices__list--multiple .choices__item[data-deletable] {
 }
@@ -220,7 +206,9 @@
     margin-right: 0;
     margin-left: 3.75px;
 }
-.choices__list--multiple .choices__item
+.choices__list--multiple .choices__item.is-highlighted {
+    @apply bg-primary;
+}
 .is-disabled .choices__list--multiple .choices__item {
     @apply bg-neutral;
 }
@@ -365,7 +353,7 @@
 }
 
 .choices__input {
-    background-color: transparent;
+
 }
 
 .choices__input:focus {

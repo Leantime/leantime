@@ -23,6 +23,14 @@ class FileSystemServiceProvider extends ServiceProvider
 
         $this->registerFlysystem();
 
+        $this->app->alias(\Illuminate\Filesystem\Filesystem::class, 'files');
+
+        $this->app->alias(\Illuminate\Filesystem\FilesystemManager::class, 'filesystem');
+        $this->app->alias(\Illuminate\Filesystem\FilesystemManager::class, \Illuminate\Contracts\Filesystem\Factory::class);
+
+        $this->app->alias(\Illuminate\Contracts\Filesystem\Filesystem::class, 'filesystem.disk');
+        $this->app->alias(\Illuminate\Contracts\Filesystem\Cloud::class, 'filesystem.cloud');
+
     }
 
     public function prepareConfig()
@@ -92,13 +100,11 @@ class FileSystemServiceProvider extends ServiceProvider
 
         $this->app->singleton('filesystem.disk', function () {
             $app = Container::getInstance();
-
             return $app['filesystem']->disk($this->getDefaultDriver());
         });
 
         $this->app->singleton('filesystem.cloud', function () {
             $app = Container::getInstance();
-
             return $app['filesystem']->disk($this->getCloudDriver());
         });
     }
@@ -112,7 +118,6 @@ class FileSystemServiceProvider extends ServiceProvider
     {
         $this->app->singleton('filesystem', function () {
             $app = Container::getInstance();
-
             return new FilesystemManager($app);
         });
     }

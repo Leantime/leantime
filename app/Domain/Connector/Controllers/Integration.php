@@ -155,11 +155,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     $fields = unserialize(session('serFields'));
 
                     //confirm and store in DB
-                    $result = $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
-
-                    if ($result !== true) {
-                        $this->tpl->setNotification('There was a problem with the import '.$result, 'error');
-                    }
+                    $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
 
                     //display stored successfully message
                     return $this->tpl->display('connector.integrationConfirm');

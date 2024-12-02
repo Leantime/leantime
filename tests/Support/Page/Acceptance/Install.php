@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Tests\Support\Page\Acceptance;
 
 use Codeception\Util\Fixtures;
+use Leantime\Domain\Setting\Repositories\Setting;
 use Tests\Support\AcceptanceTester;
 
 class Install
 {
     protected AcceptanceTester $I;
 
-    protected $app;
+    protected Setting $settingsRepo;
 
-    public function __construct(AcceptanceTester $I)
+    public function __construct(AcceptanceTester $I, Setting $settingsRepo)
     {
         $this->I = $I;
-        $this->app = $I->getApplication();
+        $this->settingsRepo = $settingsRepo;
     }
 
     public function install($email, $password, $firstname, $lastname, $company): void
@@ -38,7 +39,7 @@ class Install
         $this->I->see('The installation was successful');
 
         // Disable all on-boarding modal popups.
-        $this->app->make(\Leantime\Domain\Setting\Repositories\Setting::class)->saveSetting('companysettings.completedOnboarding', 0);
+        $this->settingsRepo->saveSetting('companysettings.completedOnboarding', 0);
 
         Fixtures::add('installed', true);
     }

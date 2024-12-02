@@ -33,36 +33,36 @@ $projects = $tpl->get('relations');
                     value="<?php echo $values['firstname'] ?>" /><br />
 
 
-                    <x-global::forms.select
-                    name="role"
-                    id="role"
+                    <x-global::forms.select 
+                    name="role" 
+                    id="role" 
                     labelText="{!! __('label.role') !!}"
                 >
                     @foreach ($tpl->get('roles') as $key => $role)
-                        <x-global::forms.select.select-option
-                            value="{{ $key }}"
+                        <x-global::forms.select.select-option 
+                            value="{{ $key }}" 
                             :selected="$key == $values['role']">
                             {!! __('label.roles.' . $role) !!}
                         </x-global::forms.select.select-option>
                     @endforeach
                 </x-global::forms.select>
-
+                
                 <br />
-
-                <x-global::forms.select
-                    name="status"
-                    id="status"
+                
+                <x-global::forms.select 
+                    name="status" 
+                    id="status" 
                     labelText="{!! __('label.status') !!}"
                 >
                     <x-global::forms.select.select-option value="a" :selected="strtolower($values['status']) == 'a'">
                         {!! __('label.active') !!}
                     </x-global::forms.select.select-option>
-
+                
                     <x-global::forms.select.select-option value="" :selected="strtolower($values['status']) == ''">
                         {!! __('label.deactivated') !!}
                     </x-global::forms.select.select-option>
                 </x-global::forms.select>
-
+                
 
                     <div class="clearfix"></div>
 
@@ -78,23 +78,23 @@ $projects = $tpl->get('relations');
                 <div class="scrollableItemList">
                     <?php
                     $currentClient = '';
-$i = 0;
-$containerOpen = false;
-foreach ($tpl->get('allProjects') as $row) {
+                    $i = 0;
+                    $containerOpen = false;
+                    foreach ($tpl->get('allProjects') as $row) {
 
-    if ($currentClient != $row['clientName']) {
-        if ($i > 0 && $containerOpen) {
-            echo '</div>';
-            $containerOpen = false;
-        }
+                        if ($currentClient != $row['clientName']) {
+                            if ($i > 0 && $containerOpen) {
+                                echo"</div>";
+                                $containerOpen = false;
+                            }
 
-        echo "<h3 id='accordion_link_".$i."'>
-                            <a href='#' onclick='accordionToggle(".$i.");' id='accordion_toggle_".$i."'><i class='fa fa-angle-down'></i> ".$tpl->escape($row['clientName'])."</a>
+                            echo "<h3 id='accordion_link_" . $i . "'>
+                            <a href='#' onclick='accordionToggle(" . $i . ");' id='accordion_toggle_" . $i . "'><i class='fa fa-angle-down'></i> " . $tpl->escape($row['clientName']) . "</a>
                             </h3>
-                            <div id='accordion_".$i."' class='simpleAccordionContainer'>";
-        $currentClient = $row['clientName'];
-        $containerOpen = true;
-    } ?>
+                            <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
+                                $currentClient = $row['clientName'];
+                                $containerOpen = true;
+                        } ?>
 
                         <div class="item">
                             <x-global::forms.checkbox

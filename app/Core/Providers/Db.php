@@ -2,9 +2,9 @@
 
 namespace Leantime\Core\Providers;
 
-use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class Db extends DatabaseServiceProvider
+class Db extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -13,10 +13,7 @@ class Db extends DatabaseServiceProvider
      */
     public function register()
     {
-
-        // Register Laravel's database service first
-        parent::register();
-
-        $this->app->singleton(\Leantime\Core\Db\Db::class);
+        $this->app->singleton(\Leantime\Core\Db\Db::class, \Leantime\Core\Db\Db::class);
+        $this->app->alias(\Leantime\Core\Db\Db::class, "db");
     }
 }

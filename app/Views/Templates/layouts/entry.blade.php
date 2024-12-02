@@ -20,9 +20,7 @@
     <div class="col-md-4 hidden-phone regLeft">
 
         <div class="logo">
-            <a href="{!! BASE_URL !!}" target="_blank">
-                <img src="{{ BASE_URL }}/dist/images/logo.svg" />
-            </a>
+            <a href="{!! BASE_URL !!}" target="_blank"><img src="{{ BASE_URL }}/dist/images/logo.svg" /></a>
         </div>
 
         <div class="welcomeContent">
@@ -39,9 +37,7 @@
 
                 @if($logoPath != '')
                     <a href="{!! BASE_URL !!}" target="_blank">
-                        @if(!str_ends_with($logoPath, "dist/images/logo.svg" ))
-                            <img src="{{ $logoPath }}" class="h-full "/>
-                        @endif
+                        <img src="{{{ $logoPath }}}" class="h-full "/>
                     </a>
                 @endif
 

@@ -54,8 +54,8 @@
                                             {{ __('label.describe_outcome') }}
                                             <br /><br />
                                         </p>
+                                        <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']); ?></textarea>
 
-                                        <x-global::forms.text-editor name="details" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
                                     </div>
                                 </div>
                                 <div class="padding-top">
@@ -178,6 +178,7 @@
             leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
             leantime.projectsController.initProjectTabs();
+            leantime.editorController.initComplexEditor();
 
         });
     </script>

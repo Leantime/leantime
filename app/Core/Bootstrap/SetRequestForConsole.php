@@ -22,14 +22,10 @@ class SetRequestForConsole
         $server = $_SERVER;
 
         if (isset($components['path'])) {
-            $server = array_merge([
+            $server = array_merge($server, [
                 'SCRIPT_FILENAME' => $components['path'],
                 'SCRIPT_NAME' => $components['path'],
-            ], $server);
-        }
-
-        if (! defined('BASE_URL')) {
-            define('BASE_URL', $uri);
+            ]);
         }
 
         //IMPORTANT: We can't use the native laravel bootstrapper for this because they inject Illuminate\Http\Request
@@ -37,6 +33,5 @@ class SetRequestForConsole
         $app->instance('request', CliRequest::create(
             $uri, 'GET', [], [], [], $server
         ));
-
     }
 }

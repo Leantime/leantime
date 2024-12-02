@@ -213,7 +213,7 @@ body.loginpage {
 
 
 .row .regLeft {
-    position:fixed;
+    position:relative;
     z-index:3;
     height:100%;
 
@@ -234,10 +234,9 @@ body.loginpage {
 
 .row .regLeft .welcomeContent {
     padding-left:30px;
-    position:absolute;
 }
 
-.row .regLeft:after {
+.row .regLeft::after {
     background:url(/dist/images/backgrounds/bg5.png) no-repeat left center;
     top:0px;
     left:0px;
@@ -247,18 +246,6 @@ body.loginpage {
     width:100%;
     height:100%;
 }
-
-.row .regLeft:before {
-    top:0px;
-    left:0px;
-    content:"";
-    opacity:1;
-    position:absolute;
-    width:100%;
-    height:100%;
-}
-
-
 
 .row .regLeft .logo {
     /* Reduce by margin left and then allow for 25px margin to the right */
@@ -289,8 +276,6 @@ body.loginpage {
 
 .row .regRight {
     position:relative;
-    margin-left:35%;
-    padding:10% 0%;
     z-index:10;
     display: flex;
     align-items: center;
@@ -463,7 +448,7 @@ body.loginpage {
 }
 
 .regcontent {
-    width:550px;
+    width:476px;
     max-width:90vw;
     padding-top:25px;
 }
@@ -1606,8 +1591,7 @@ div.color-picker ul li:hover {
     margin: 0;
     opacity: 0;
     filter: alpha(opacity=0);
-    /* This was causing the tabs to not work in the edit own page*/
-    /* transform: translate(-300px, 0) scale(4); */
+    transform: translate(-300px, 0) scale(4);
     font-size: 24px;
     direction: ltr;
     cursor: pointer;
@@ -1967,7 +1951,7 @@ a.titleInsertLink:hover {
 #pwStrength {
     color:#fff;
     padding:0px 5px;
-    border-radius:var(--box-radius);
+    border-radius:var(--box-radius-small);
     font-size:var(--font-size-xs);
     width:206px;
     margin-top:-2px;
@@ -2180,14 +2164,175 @@ h3.todaysDate {
     font-size:var(--font-size-l);
 }
 
+.minCalendar #calendar {
+    padding-top:10px;
+    position: relative;
+    z-index:5;
+}
 
 
+.minCalendar .fc .fc-toolbar-title {
+    font-size: var(--font-size-xl);
+}
+
+.minCalendar .fc .fc-multimonth {
+    height:100%;
+}
+
+.minCalendar .fc .fc-multimonth,
+.minCalendar .fc-theme-standard td, .fc-theme-standard th{
+    border:none;
+}
+
+.minCalendar .fc .fc-daygrid-day-top {
+    flex-direction: column;
+    text-align:center;
+}
+
+.minCalendar .fc .fc-daygrid-day-bottom {
+    text-align:center;
+    margin-top:-10px !important;
+}
+
+.minCalendar .fc .fc-daygrid-more-link {
+    font-size:0px;
+    float:none;
+}
+
+.minCalendar .fc .fc-daygrid-more-link:after {
+    content: "•";
+    font-size:30px;
+}
+
+.minCalendar .fc .fc-multimonth-title {
+    padding:0px 0px 10px 0px;
+    text-align:left;
+    font-size: var(--font-size-xl);
+    font-weight:normal;
+    display:none;
+}
+
+.minCalendar .fc .fc-multimonth-singlecol .fc-multimonth-header {
+    background:none;
+}
+
+.minCalendar .fc-theme-standard th.fc-col-header-cell:first-child {
+    border-radius:10px 0px 0px 0px;
+}
+
+.minCalendar .fc-theme-standard th.fc-col-header-cell:last-child {
+    border-radius:0px 10px 0px 0px;
+}
+
+.minCalendar .fc-theme-standard .fc-popover {
+    border-radius:var(--box-radius);
+    max-width: 60%;
+}
+
+.minCalendar .fc-popover-body  .fc-h-event .fc-event-title-container {
+    padding-left:5px;
+}
+
+.minCalendar .fc-popover-body  .fc-event {
+    margin-bottom:2px;
+    margin-left:0px !important;
+}
+
+.minCalendar .fc-popover-body .fc-daygrid-event {
+    border-radius:0px !important;
+}
+
+.minCalendar .fc .fc-daygrid-day.fc-day-today {
+    border-radius:var(--element-radius);
+}
+
+.minCalendar .fc .fc-multimonth-daygrid {
+    background:var(--layered-background);
+}
+
+.minCalendar .fc-multimonth-daygrid-table .fc-daygrid-day-events .fc-daygrid-event-harness {
+
+}
+
+.maincontent .fc .fc-timegrid-col.fc-day-today,
+.maincontent .fc .fc-daygrid-day.fc-day-today,
+.maincontent  .fc .fc-button-primary {
+    background-color: var(--col-title-bg);
+    color:var(--primary-font-color);
+    border-radius: var(--element-radius) !important;
+}
+
+.maincontent .fc .fc-day-today .fc-daygrid-day-number {
+    color:var(--main-action-color);
+    background:var(--accent1);
+    border-radius: var(--element-radius) !important;
+}
 
 
+.maincontent .fc .fc-button-primary:focus,
+.maincontent .fc .fc-button-primary:active {
+    box-shadow: none;
+}
 
+.maincontent .fc .fc-button-primary:not(:disabled).fc-button-active,
+.maincontent .fc .fc-button-primary:not(:disabled):active,
+.maincontent .fc .fc-button-primary:not(:disabled):hover {
+    background:var(--secondary-action-hover-bg);
+    color:var(--secondary-action-hover-color);
+}
 
+.maincontent .fc-multimonth-header-table .fc-col-header-cell {
+    padding:5px;
+}
 
+.maincontent .fc-list-event {
+    background:var(--secondary-background);
 
+}
+
+.maincontent .fc-list-event td {
+    padding:5px;
+}
+
+.maincontent .fc-list-event td.fc-list-event-time {
+    padding-left:15px;
+}
+
+.maincontent .fc-v-event {
+    border:none;
+    border-left:5px solid var(--fc-event-border-color);
+}
+
+.maincontent .fc-v-event .fc-event-main-frame {
+    padding-left:5px;
+}
+
+.maincontent .fc-timegrid-event {
+    border-radius: var(--element-radius);
+}
+
+.maincontent .fc-timegrid-event-harness-inset .fc-timegrid-event,
+.maincontent .fc-timegrid-event.fc-event-mirror {
+    box-shadow:var(--regular-shadow);
+}
+
+.maincontent .fc-timegrid-event .fc-event-main {
+    padding: 3px 1px 0px;
+}
+
+.maincontent .fc-event.locked:after {
+    content: "🔒";
+    background:var(--layered-background);
+    padding: 1px 4px;
+    top: 2px;
+    border-radius: 50%;
+    position: absolute;
+    right: 2px;
+}
+
+.maincontent tr.fc-event {
+    position:relative;
+}
 
 .ticketBox {
     cursor:grab;
@@ -2561,26 +2706,4 @@ body a.btn-link.btn-fancy:hover {
 
 .widgetContent {
     padding:0px 2px;
-}
-
-.modalWindowIcon {
-    height:25px;
-    line-height:25px;
-    border:1px solid var(--main-border-color);
-}
-
-
-.modal.fade {
-    display:none;
-}
-
-.regpanelinner .logoSvg path,
-.regpanelinner .logoSvg rect {
-    fill:var(--accent1);
-}
-
-
-
-.newWidget {
-    border:1px solid var(--accent2);
 }

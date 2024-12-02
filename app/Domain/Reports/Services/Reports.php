@@ -12,7 +12,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\UI\Template as TemplateCore;
-    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
@@ -155,7 +155,7 @@ namespace Leantime\Domain\Reports\Services {
         public function getAnonymousTelemetry(
             IdeaRepository $ideaRepository,
             UserRepository $userRepository,
-            ClientService $clientService,
+            ClientRepository $clientRepository,
             CommentRepository $commentsRepository,
             TimesheetRepository $timesheetRepo,
             EacanvaRepository $eaCanvasRepo,
@@ -175,7 +175,7 @@ namespace Leantime\Domain\Reports\Services {
             //Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
-            self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
+            self::dispatchEvent('beforeTelemetrySend', ['companyId' => $companyId]);
 
             $companyLang = $this->settings->getSetting('companysettings.language');
             if ($companyLang != '' && $companyLang !== false) {
@@ -205,7 +205,7 @@ namespace Leantime\Domain\Reports\Services {
 
                 'numStrategies' => $this->projectRepository->getNumberOfProjects(null, 'strategy'),
                 'numPrograms' => $this->projectRepository->getNumberOfProjects(null, 'program'),
-                'numClients' => $clientService->getNumberOfClients(),
+                'numClients' => $clientRepository->getNumberOfClients(),
                 'numComments' => $commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
@@ -281,8 +281,7 @@ namespace Leantime\Domain\Reports\Services {
         {
 
             //Only send once a day
-
-            $allowTelemetry = app('config')->allowTelemetry ?? true;
+            $allowTelemetry = (bool) $this->settings->getSetting('companysettings.telemetry.active');
 
             if ($allowTelemetry === true) {
                 $date_utc = new DateTime('now', new DateTimeZone('UTC'));
@@ -297,7 +296,6 @@ namespace Leantime\Domain\Reports\Services {
                     $httpClient = new Client;
 
                     try {
-
                         $data_string = json_encode($telemetry);
 
                         $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
@@ -310,7 +308,6 @@ namespace Leantime\Domain\Reports\Services {
                         });
 
                         return $promise;
-
                     } catch (\Exception $e) {
                         report($e);
 

@@ -8,6 +8,8 @@ namespace Leantime\Domain\Notifications\Services {
     use Leantime\Domain\Setting\Services\Setting;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+    use function PHPUnit\Framework\throwException;
+
     /**
      * @api
      */
@@ -99,7 +101,7 @@ namespace Leantime\Domain\Notifications\Services {
             if (function_exists('simplexml_load_string')) {
                 $responseXml = simplexml_load_string($response);
             } else {
-                throw new \Exception('Simple XML extension is not installed');
+                throwException("Simple XML load string function doesn't exists");
             }
 
             return $responseXml;

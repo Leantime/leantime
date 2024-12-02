@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Wiki\Services {
 
     use Leantime\Core\Language;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Wiki\Models\Article;
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 
@@ -15,24 +17,33 @@ namespace Leantime\Domain\Wiki\Services {
 
         private Language $language;
 
+        /**
+         * @param WikiRepository $wikiRepository
+         *
+        *
+        */
         public function __construct(WikiRepository $wikiRepository,
-            Language $language)
+       Language $language )
         {
             $this->wikiRepository = $wikiRepository;
             $this->language = $language;
         }
 
         /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         *
          * @api
          */
         public function getArticle($id, $projectId = null): mixed
         {
 
-            if ($projectId == null) {
-                $projectId = session('currentProject');
+            if($projectId == null) {
+                $projectId = session("currentProject");
             }
 
-            if (! is_null($id)) {
+            if (!is_null($id)) {
                 $article = $this->wikiRepository->getArticle($id, $projectId);
 
                 if (! $article) {
@@ -46,8 +57,11 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         *
          * Gets all project wikis. Creates one if there aren't any
          *
+         * @param $projectId
+         * @return array|false
          *
          * @api
          */
@@ -56,12 +70,12 @@ namespace Leantime\Domain\Wiki\Services {
 
             $wikis = $this->wikiRepository->getAllProjectWikis($projectId);
 
-            if (! $wikis || count($wikis) == 0) {
+            if (!$wikis || count($wikis) == 0) {
 
                 $wiki = app()->make(\Leantime\Domain\Wiki\Models\Wiki::class);
-                $wiki->title = $this->language->__('label.default');
+                $wiki->title = $this->language->__("label.default");
                 $wiki->projectId = $projectId;
-                $wiki->author = session('userdata.id');
+                $wiki->author = session("userdata.id");
 
                 $id = $this->createWiki($wiki);
                 $wikis = $this->wikiRepository->getAllProjectWikis($projectId);
@@ -71,6 +85,10 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param $wikiId
+         * @param $userId
+         * @return array|false
+         *
          * @api
          */
         public function getAllWikiHeadlines($wikiId, $userId): false|array
@@ -79,6 +97,9 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param $id
+         * @return mixed
+         *
          * @api
          */
         public function getWiki($id): mixed
@@ -87,6 +108,9 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @return false|string
+         *
          * @api
          */
         public function createWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki): false|string
@@ -100,6 +124,10 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @param $wikiId
+         * @return bool
+         *
          * @api
          */
         public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId): bool
@@ -108,6 +136,9 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param Article $article
+         * @return false|string
+         *
          * @api
          */
         public function createArticle(Article $article): false|string
@@ -116,6 +147,9 @@ namespace Leantime\Domain\Wiki\Services {
         }
 
         /**
+         * @param Article $article
+         * @return bool
+         *
          * @api
          */
         public function updateArticle(Article $article): bool
@@ -123,8 +157,7 @@ namespace Leantime\Domain\Wiki\Services {
             return $this->wikiRepository->updateArticle($article);
         }
 
-        public function setCurrentWiki($id)
-        {
+        public function setCurrentWiki($id) {
 
             //Clear cache
             $this->clearWikiCache();
@@ -132,8 +165,7 @@ namespace Leantime\Domain\Wiki\Services {
 
             if ($wiki) {
                 //Set the session
-                session(['currentWiki' => $id]);
-
+                session(["currentWiki" => $id]);
                 return true;
             }
 
@@ -141,14 +173,13 @@ namespace Leantime\Domain\Wiki\Services {
 
         }
 
-        public function setCurrentArticle($id, $userId)
-        {
+        public function setCurrentArticle($id, $userId) {
 
             $currentArticle = $this->getArticle($id);
 
             if ($currentArticle && $currentArticle->id != null) {
-                session(['currentWiki' => $currentArticle->canvasId]);
-                session(['lastArticle' => $currentArticle->id]);
+                session(["currentWiki" => $currentArticle->canvasId]);
+                session(["lastArticle" => $currentArticle->id]);
 
                 return $currentArticle;
             }
@@ -157,8 +188,7 @@ namespace Leantime\Domain\Wiki\Services {
 
         }
 
-        public function getDefaultArticleForWiki($wikiId, $userId)
-        {
+        public function getDefaultArticleForWiki($wikiId, $userId) {
 
             $wikiHeadlines = $this->getAllWikiHeadlines(
                 $wikiId,
@@ -177,13 +207,13 @@ namespace Leantime\Domain\Wiki\Services {
 
         }
 
-        public function clearWikiCache()
-        {
+        public function clearWikiCache() {
 
-            session()->forget('lastArticle');
-            session()->forget('currentWiki');
+            session()->forget("lastArticle");
+            session()->forget("currentWiki");
 
         }
+
     }
 
 }

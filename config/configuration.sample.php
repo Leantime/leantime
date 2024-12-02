@@ -7,8 +7,6 @@ namespace Leantime\Config;
  * Config class
  * This class is included for backwards compatibility and to be used with subfolder installations
  *
- * @deprecated Please do not use this file to set you configuration. Use the environment file .env instead
- *
  * @see config/sample.env
  */
 class Config
@@ -29,9 +27,9 @@ class Config
 
     public $defaultTheme = 'default';                     //Default theme
 
-    public $primarycolor = '#006d9f';                     //Primary Theme color
+    public $primarycolor = '#1b75bb';                     //Primary Theme color
 
-    public $secondarycolor = '#00a886';                   //Secondary Theme Color
+    public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
 
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
 

@@ -18,7 +18,6 @@ leantime.modals = (function () {
                 beforePostSubmit: function () {
 
                     jQuery(".showDialogOnLoad").show();
-                    console.log(tinymce.editors.length);
 
                     if(tinymce.editors.length>0) {
 
@@ -34,18 +33,6 @@ leantime.modals = (function () {
                 },
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
-
-                    if(tinymce.editors.length>0) {
-
-                        tinymce.editors.forEach(function(editor) {
-                            editor.save();
-                            editor.destroy();
-                            editor.remove();
-                        });
-
-                        tinymce.EditorManager.remove();
-                    }
-
                 },
                 afterShowCont: function () {
                     window.htmx.process('.nyroModalCont');

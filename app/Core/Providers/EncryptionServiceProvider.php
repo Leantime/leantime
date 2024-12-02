@@ -2,6 +2,8 @@
 
 namespace Leantime\Core\Providers;
 
+use Illuminate\Container\Container;
+
 class EncryptionServiceProvider extends \Illuminate\Encryption\EncryptionServiceProvider
 {
     /**
