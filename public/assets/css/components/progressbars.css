@@ -268,7 +268,7 @@
 }
 
 .progressWrapper .step .dropdown-menu li input {
-    float:left;
+    float: none;
     margin-right:5px;
 }
 
