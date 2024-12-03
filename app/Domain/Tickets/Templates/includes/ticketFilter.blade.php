@@ -35,8 +35,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     <x-global::forms.select.select-option value="" data-placeholder="true">All
                         Users</x-global::forms.select.select-option>
                     @foreach ($tpl->get('users') as $userRow)
-                        <x-global::forms.select.option 
-                            value="{{ $userRow['id'] }}" 
+                        <x-global::forms.select.option
+                            value="{{ $userRow['id'] }}"
                             :selected="in_array($userRow['id'], explode(',', $searchCriteria['users'] ?? ''))"
                         >
                             {{ sprintf(__('text.full_name'), e($userRow['firstname']), e($userRow['lastname'])) }}
@@ -122,12 +122,13 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                     {{ __('buttons.search') }}
                 </x-global::forms.button>
             </div>
+
         </x-slot:cardContent>
     </x-global::actions.dropdown>
 
 
-    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
 
+    <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
         <x-global::actions.dropdown contentRole="ghost">
             <x-slot:labelText>
                 {{ __('popover.group_by') }}
@@ -135,9 +136,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 @if ($searchCriteria['groupBy'] !== 'all' && $searchCriteria['groupBy'] !== '')
                     <span class="badge badge-primary">1</span>
                 @endif
-                </button>
             </x-slot:labelText>
-    
+
             <x-slot:menu>
                 @foreach ($groupBy as $input)
                     <x-global::actions.dropdown.item>
@@ -152,13 +152,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             </x-slot:menu>
         </x-global::actions.dropdown>
     <?php } ?>
-    
+
     {{-- @if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar")
-
-
-
-
-
         <x-global::actions.dropdown contentRole="ghost">
             <x-slot:labelText>
                 {{ __('popover.group_by') }}
@@ -182,16 +177,15 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 @endforeach
             </x-slot:menu>
         </x-global::actions.dropdown>
-
     @endif --}}
-    
+
     @if(isset($taskToggle) && $taskToggle === true)
         <div class="" style="float:right; margin-left:5px;">
             <x-global::forms.checkbox labelText="Show Tasks" labelPosition="right" name="showTasks" value="true"
                 :checked="($tpl->get('showTasks') === 'true')" id="taskTypeToggle" class="toggle" onchange="jQuery('#ticketSearch').submit();" />
         </div>
     @endif
-    
+
 
     <div class="clearall"></div>
 
