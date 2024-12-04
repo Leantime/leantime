@@ -1,5 +1,6 @@
+@if (!isset($menuItem['role']) || $login::userIsAtLeast($menuItem['role']))
 <li>
-    <details {{ $menuItem['visual'] == 'closed' ? '' : 'open' }}>
+    <details {{ $menuItem['visual'] === 'closed' ? '' : 'open' }}>
         <summary onclick="leantime.menuController.toggleSubmenu('{{ $menuItem['id'] }}', this.parentNode.open ? 'open' : 'closed')">
             <strong>{!! __($menuItem['title']) !!}</strong>
         </summary>
@@ -26,3 +27,4 @@
         </ul>
     </details>
 </li>
+@endif
