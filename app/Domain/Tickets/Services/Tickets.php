@@ -559,7 +559,7 @@ namespace Leantime\Domain\Tickets\Services {
                                     try {
                                         $endDate = dtHelper()->parseDbDateTime($milestone->editTo)->formatDateForUser();
                                     } catch (\Exception $e) {
-                                        $startDate = $this->language->__('text.no_date_defined');
+                                        $endDate = $this->language->__('text.no_date_defined');
                                     }
 
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
@@ -2160,29 +2160,57 @@ namespace Leantime\Domain\Tickets\Services {
         {
             //Prepare dates for db
             if (! empty($values['dateToFinish'])) {
-                if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                    $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
-                    unset($values['timeToFinish']);
+
+                if ($values['dateToFinish'] instanceof CarbonImmutable) {
+                    $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                 } else {
-                    $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], 'end')->formatDateTimeForDb();
+                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
+                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
+                        unset($values['timeToFinish']);
+                    } else {
+                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], 'end')->formatDateTimeForDb();
+                    }
                 }
             }
 
             if (! empty($values['editFrom'])) {
-                if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                    $values['editFrom'] = dtHelper()->parseUserDateTime($values['editFrom'], $values['timeFrom'], FromFormat::UserDateTime)->formatDateTimeForDb();
-                    unset($values['timeFrom']);
+
+                if ($values['editFrom'] instanceof CarbonImmutable) {
+                    $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
                 } else {
-                    $values['editFrom'] = dtHelper()->parseUserDateTime($values['editFrom'], 'start')->formatDateTimeForDb();
+                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                        $values['editFrom'] = dtHelper()->parseUserDateTime(
+                            $values['editFrom'],
+                            $values['timeFrom'],
+                            FromFormat::UserDateTime
+                        )->formatDateTimeForDb();
+                        unset($values['timeFrom']);
+                    } else {
+                        $values['editFrom'] = dtHelper()->parseUserDateTime(
+                            $values['editFrom'],
+                            'start'
+                        )->formatDateTimeForDb();
+                    }
                 }
             }
 
             if (! empty($values['editTo'])) {
-                if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], $values['timeTo'])->formatDateTimeForDb();
-                    unset($values['timeTo']);
+
+                if ($values['editTo'] instanceof CarbonImmutable) {
+                    $values['editTo'] = $values['editTo']->formatDateTimeForDb();
                 } else {
-                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], 'end')->formatDateTimeForDb();
+                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                        $values['editTo'] = dtHelper()->parseUserDateTime(
+                            $values['editTo'],
+                            $values['timeTo']
+                        )->formatDateTimeForDb();
+                        unset($values['timeTo']);
+                    } else {
+                        $values['editTo'] = dtHelper()->parseUserDateTime(
+                            $values['editTo'],
+                            'end'
+                        )->formatDateTimeForDb();
+                    }
                 }
             }
 

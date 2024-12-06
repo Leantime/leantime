@@ -1,4 +1,4 @@
-@if (!isset($menuItem['role']) || $login::userIsAtLeast($menuItem['role']))
+@if(!isset($menuItem['role']) || $login::userIsAtLeast($menuItem['role'] ?? 'editor'))
 <li>
     <details {{ $menuItem['visual'] === 'closed' ? '' : 'open' }}>
         <summary onclick="leantime.menuController.toggleSubmenu('{{ $menuItem['id'] }}', this.parentNode.open ? 'open' : 'closed')">
@@ -14,6 +14,7 @@
                             'action' => $action,
                         ])
                     @break
+
 
                     @case('item')
                         @include('menu::partials.leftnav.item', [

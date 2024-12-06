@@ -71,8 +71,6 @@ class Db extends DatabaseManager
         } catch (\PDOException $e) {
 
             Log::error("Can't connect to database");
-            Log::error($e);
-
             throw new \Exception($e);
         }
     }

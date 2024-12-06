@@ -12,7 +12,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Core\UI\Template as TemplateCore;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
@@ -155,7 +155,7 @@ namespace Leantime\Domain\Reports\Services {
         public function getAnonymousTelemetry(
             IdeaRepository $ideaRepository,
             UserRepository $userRepository,
-            ClientRepository $clientRepository,
+            ClientService $clientService,
             CommentRepository $commentsRepository,
             TimesheetRepository $timesheetRepo,
             EacanvaRepository $eaCanvasRepo,
@@ -205,7 +205,7 @@ namespace Leantime\Domain\Reports\Services {
 
                 'numStrategies' => $this->projectRepository->getNumberOfProjects(null, 'strategy'),
                 'numPrograms' => $this->projectRepository->getNumberOfProjects(null, 'program'),
-                'numClients' => $clientRepository->getNumberOfClients(),
+                'numClients' => $clientService->getNumberOfClients(),
                 'numComments' => $commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),

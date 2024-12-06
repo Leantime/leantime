@@ -5,13 +5,10 @@ namespace Leantime\Domain\Projects\Repositories {
     use DateInterval;
     use DatePeriod;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Str;
-    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
-    use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
+    use Leantime\Core\Support\Avatarcreator;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -28,8 +25,6 @@ namespace Leantime\Domain\Projects\Repositories {
 
         public int $clientId = 0;
 
-        private ?DbCore $db;
-
         public object $result; // WAS: = '';
 
         /**
@@ -37,11 +32,10 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         public array $state = [0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN'];
 
-        private Environment $config;
-
         public function __construct(
-            Environment $config,
-            DbCore $db
+            protected Environment $config,
+            protected DbCore $db,
+            protected Avatarcreator $avatarcreator
         ) {
             $this->config = $config;
             $this->db = $db;
@@ -268,8 +262,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        // Deprecated
-
+        //This populates the projects show all tab and shows users all the projects that they could access
         public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
         {
 
@@ -282,6 +275,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
+				    project.parent,
 				    project.modified,
 					client.name AS clientName,
 					client.id AS clientId,
@@ -369,6 +363,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.state,
 				    project.menuType,
 				    project.modified,
+				    project.type,
 					client.name AS clientName,
 					client.id AS clientId
 				FROM zp_projects as project
@@ -1133,60 +1128,38 @@ namespace Leantime\Domain\Projects\Repositories {
                 $value = $stmn->fetch();
                 $stmn->closeCursor();
             }
-            try {
-                $avatar = app()->make(InitialAvatar::class)
-                    ->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf')
-                    ->background('#555555')
-                    ->color('#fff');
 
-                if (empty($value)) {
-                    return $avatar->name('🦄')->generateSvg();
-                }
-            } catch (\Exception $e) {
-                Log::error('Could not generate project avatar.');
-                Log::error($e);
+            $this->avatarcreator->setFilePrefix('project');
+            $this->avatarcreator->setBackground('#555555');
 
-                return ['filename' => 'not_found', 'type' => 'uploaded'];
-            }
-            if (empty($value['avatar'])) {
-
-                /** @var Initials $initialsClass */
-                $initialsClass = app()->make(Initials::class);
-                $initialsClass->allowSpecialCharacters(false);
-                $initialsClass->name($value['name']);
-                $imagename = $initialsClass->getInitials();
-                $imagename = Str::of($imagename)->alphaNumeric(true);
-
-                if (is_dir(storage_path('framework/cache/avatars')) === false) {
-                    mkdir(storage_path('framework/cache/avatars'));
-                }
-
-                if (! file_exists($filename = storage_path('framework/cache/avatars/user-'.$imagename.'.svg'))) {
-                    $image = $avatar->name($value['name'])->generateSvg();
-
-                    if (! is_writable(storage_path('framework/cache/avatars/'))) {
-                        Log::warning("Can't write to avatars folders");
-
-                        return $image;
-                    }
-
-                    file_put_contents($filename, $image);
-                }
-
-                return ['filename' => $filename, 'type' => 'generated'];
+            //If can't find user, return ghost
+            if (empty($value)) {
+                return $this->avatarcreator->getAvatar('🦄');
             }
 
-            $files = app()->make(Files::class);
-            $file = $files->getFile($value['avatar']);
+            //If user uploaded return uploaded file
+            if (! empty($value['avatar'])) {
 
-            if ($file) {
-                $filePath = $file['encName'].'.'.$file['extension'];
-                $type = $file['extension'];
+                $files = app()->make(Files::class);
+                $file = $files->getFile($value['avatar']);
 
-                return ['filename' => $filePath, 'type' => 'uploaded'];
+                if ($file) {
+                    $filePath = $file['encName'].'.'.$file['extension'];
+                    $type = $file['extension'];
+
+                    return ['filename' => $filePath, 'type' => 'uploaded'];
+                }
+
             }
 
-            return $avatar->name('🦄')->generateSvg();
+            $avatar = $this->avatarcreator->getAvatar($value['name']);
+
+            if (is_string($avatar)) {
+                return ['filename' => $avatar, 'type' => 'generated'];
+            }
+
+            return $avatar;
+
         }
     }
 

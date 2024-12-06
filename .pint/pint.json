@@ -1,6 +1,7 @@
 {
     "exclude": [
         "storage/",
-        "userfiles/"
+        "userfiles/",
+        "tests/Support/_generated"
     ]
 }

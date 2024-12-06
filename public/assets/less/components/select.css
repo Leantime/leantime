@@ -365,7 +365,7 @@
 }
 
 .choices__input {
-
+    background-color: transparent;
 }
 
 .choices__input:focus {

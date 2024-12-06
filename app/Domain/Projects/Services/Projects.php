@@ -498,11 +498,10 @@ class Projects
     {
 
         //Load all projects user is assigned to
-        $projects = $this->projectRepository->getUserProjects(
+        $projects = $this->projectRepository->getProjectsUserHasAccessTo(
             userId: $userId,
-            projectStatus: $projectStatus,
+            status: $projectStatus,
             clientId: (int) $clientId,
-            accessStatus: 'all'
         );
         $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
@@ -1283,6 +1282,18 @@ class Projects
      *
      * @api
      */
+    public function getClientProjects($id)
+    {
+        return $this->projectRepository->getClientProjects($id);
+    }
+
+
+        /**
+     * Retrieves all projects.
+     *
+     * @return array The projects.
+     * @api
+     */
     public function getAllProjects()
     {
         return $this->projectRepository->getAll();
@@ -1636,7 +1647,7 @@ class Projects
             }
         }
 
-        return $userProjects;
+        return $allProjects;
     }
 
     /**
