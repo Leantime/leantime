@@ -148,14 +148,16 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params): Response
         {
+
             if (! isset($_GET['id'])) {
                 return $this->tpl->display('errors.error400', responseCode: 400);
             }
 
+            
             $tab = '';
             $id = (int) ($_GET['id']);
             $ticket = $this->ticketService->getTicket($id);
-
+            
             if ($ticket === false) {
                 return $this->tpl->display('errors.error500', responseCode: 500);
             }
@@ -183,7 +185,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
 
             //Save Ticket
-            if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
+            // if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
                 $params['projectId'] = $ticket->projectId;
                 $params['id'] = $id;
 
@@ -206,12 +208,49 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     return $response;
                 }
-            }
+            // }
 
-            $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.''.$tab);
+            $response = Frontcontroller::redirect(session('lastPage').'#/tickets/showTicket/'.$id.''.$tab);
             $response->headers->set('HX-Trigger', 'ticketUpdate');
 
             return $response;
+        }
+        public function put($params): Response
+        {
+
+            if (! isset($_GET['id'])) {
+                return $this->tpl->display('errors.error400', responseCode: 400);
+            }
+
+            
+            $tab = '';
+            $id = (int) ($_GET['id']);
+            $ticket = $this->ticketService->getTicket($id);
+            
+            if ($ticket === false) {
+                return $this->tpl->display('errors.error500', responseCode: 500);
+            }
+
+            //Log time
+            // if (isset($params['saveTimes']) === true) {
+            //     $result = $this->timesheetService->logTime($id, $params);
+
+            //     if ($result === true) {
+            //         $this->tpl->setNotification($this->language->__('notifications.time_logged_success'), 'success');
+            //     } else {
+            //         $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+            //     }
+            // }
+
+            //Save Ticket
+            // if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
+                $params['projectId'] = $ticket->projectId;
+                $params['id'] = $id;
+                $result = $this->ticketService->updateTicket($params);
+                // dd($result);
+            // }
+
+            return response()->json(['success' => true]);
         }
     }
 }

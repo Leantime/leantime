@@ -15,7 +15,7 @@ class CommentList extends HtmxController
      */
     private Comments $commentService;
 
-    private Language $language;
+    public Language $language;
 
     /**
      * Controller constructor
