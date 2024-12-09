@@ -1,12 +1,13 @@
 <ul class="sortableTicketList" style="margin-bottom:120px;">
     <li class="">
-        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link" onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> {{ __("links.add_task") }}</a>
-        <div class="ticketBox hideOnLoad" id="subticket_new" >
+        <a href="javascript:void(0);" class="quickAddLink" id="subticket_new_link"
+            onclick="jQuery('#subticket_new').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i
+                class="fas fa-plus-circle"></i> {{ __('links.add_task') }}</a>
+        <div class="ticketBox hideOnLoad" id="subticket_new">
 
             <form method="post" class="form-group"
-                  hx-post="{{ BASE_URL }}/hx//tickets/subtasks/save?ticketId={{ $ticket->id }}"
-                hx-indicator=".htmx-indicator-small"
-                hx-target="#ticketSubtasks">
+                hx-post="{{ BASE_URL }}/hx/tickets/subtasks/save?ticketId={{ $ticket->id }}"
+                hx-indicator=".htmx-indicator-small" hx-target="#ticketSubtasks">
                 <input type="hidden" value="new" name="subtaskId" />
                 <input type="hidden" value="1" name="subtaskSave" />
                 <input name="headline" type="text" title="{{ __('label.headline') }}" style="width:100%"
@@ -19,9 +20,10 @@
                 </div>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
-                <input type="hidden" name="sprint" value="{{ session("currentSprint") }}" />
-                <a href="javascript:void(0);" onclick="jQuery('#subticket_new').toggle('fast'); jQuery('#subticket_new_link').toggle('fast');">
-                    {{ __("links.cancel") }}
+                <input type="hidden" name="sprint" value="{{ session('currentSprint') }}" />
+                <a href="javascript:void(0);"
+                    onclick="jQuery('#subticket_new').toggle('fast'); jQuery('#subticket_new_link').toggle('fast');">
+                    {{ __('links.cancel') }}
                 </a>
             </form>
 
@@ -81,59 +83,62 @@
 
                         <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-9" style="padding:0 15px;">
-                    <div class="row">
-                        <div class="col-md-4">
-                                {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput quickDueDates" data-id="{{ $subticket['id'] }}" name="date" />
-                        </div>
-                        <div class="col-md-4">
-                            <x-global::forms.text-input
-                                type="text"
-                                name="planHours"
-                                value="{{ $subticket['planHours'] }}"
-                                data-label="planHours-{{ $subticket['id'] }}"
-                                class="small-input secretInput asyncInputUpdate w-[40px]"
-                                labelText="{{ __('label.planned_hours') }}"
-                            />
-                        </div>
-
-                        <div class="col-md-4">
-                            <x-global::forms.text-input
-                                type="text"
-                                name="hourRemaining"
-                                value="{{ $subticket['hourRemaining'] }}"
-                                data-label="hourRemaining-{{ $subticket['id'] }}"
-                                class="small-input secretInput asyncInputUpdate w-[40px]"
-                                labelText="{{ __('label.estimated_hours_remaining') }}"
-                            />
-                        </div>
-
                     </div>
                 </div>
-                <div class="col-md-3" style="padding-top:3px;" >
-                    <div class="right">
-                        <div class="dropdown ticketDropdown effortDropdown show">
-                            <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text">@if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0 && isset($efforts[$subticket['storypoints']]))
-                                                                                        {{ $efforts[$subticket['storypoints']] }}
-                                                                                   @else
-                                                                                           {{ __("label.story_points_unkown") }}
-                                                                                    @endif
-                                                                </span>
-                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
-                                <li class="nav-header border">{{ __("dropdown.how_big_todo") }}</li>
-                                @foreach($efforts as $effortKey => $effortValue)
-                                    <li class='dropdown-item'>
-                                        <a href='javascript:void(0);' data-value='{{  $subticket['id'] }}_{{ $effortKey }}' id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'> {{  $effortValue }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
+                <div class="row">
+                    <div class="col-md-9" style="padding:0 15px;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ __('label.due') }}<input type="text" title="{{ __('label.due') }}"
+                                    value="{{ $date }}" class="duedates secretInput quickDueDates"
+                                    data-id="{{ $subticket['id'] }}" name="date" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-global::forms.text-input type="text" name="planHours"
+                                    value="{{ $subticket['planHours'] }}"
+                                    data-label="planHours-{{ $subticket['id'] }}"
+                                    class="small-input secretInput asyncInputUpdate w-[40px]"
+                                    labelText="{{ __('label.planned_hours') }}" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <x-global::forms.text-input type="text" name="hourRemaining"
+                                    value="{{ $subticket['hourRemaining'] }}"
+                                    data-label="hourRemaining-{{ $subticket['id'] }}"
+                                    class="small-input secretInput asyncInputUpdate w-[40px]"
+                                    labelText="{{ __('label.estimated_hours_remaining') }}" />
+                            </div>
+
                         </div>
+                    </div>
+                    <div class="col-md-3" style="padding-top:3px;">
+                        <div class="right">
+                            <div class="dropdown ticketDropdown effortDropdown show">
+                                <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);"
+                                    role="button" id="effortDropdownMenuLink{{ $subticket['id'] }}"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="text">
+                                        @if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0 && isset($efforts[$subticket['storypoints']]))
+                                            {{ $efforts[$subticket['storypoints']] }}
+                                        @else
+                                            {{ __('label.story_points_unkown') }}
+                                        @endif
+                                    </span>
+                                    &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                </a>
+                                <ul class="dropdown-menu"
+                                    aria-labelledby="effortDropdownMenuLink{{ $subticket['id'] }}">
+                                    <li class="nav-header border">{{ __('dropdown.how_big_todo') }}</li>
+                                    @foreach ($efforts as $effortKey => $effortValue)
+                                        <li class='dropdown-item'>
+                                            <a href='javascript:void(0);'
+                                                data-value='{{ $subticket['id'] }}_{{ $effortKey }}'
+                                                id='ticketEffortChange{{ $subticket['id'] . $effortKey }}'>
+                                                {{ $effortValue }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
 
                             @php
                                 if (isset($statusLabels[$subticket['status']])) {

@@ -97,7 +97,7 @@
                 </x-global::navigations.tabs.content>
 
                 <x-global::navigations.tabs.content id="discussion" ariaLabel="Discussion" classExtra="p-sm">
-                    <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
+                    <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$ticket->id" />
                 </x-global::navigations.tabs.content>
 
                 <x-global::navigations.tabs.content id="subtask" ariaLabel="Subtasks" classExtra="p-sm">
@@ -107,9 +107,12 @@
                 <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::files :ticket="$ticket" />
                 </x-global::navigations.tabs.content>
+                <x-global::navigations.tabs.content id="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
+                    <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues" :userHours="$userHours" />
+                </x-global::navigations.tabs.content>
                 <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
-                        :priorities="$priorities" :efforts="$efforts" />
+                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" />
                 </x-global::navigations.tabs.content>
             </x-slot:contents>
         </x-global::navigations.tabs>

@@ -42,14 +42,13 @@ class CommentList extends HtmxController
 
         if ($editComment > 0 && $this->commentService->editComment($_POST, $editComment)) {
             $this->tpl->setNotification($this->language->__('notifications.comment_saved_success'), 'success');
-        } elseif ($editComment == '' && $this->commentService->addComment($_POST, $module, $moduleId)) {
+        } elseif (($editComment == ''||$editComment==null) && $this->commentService->addComment($_POST, $module, $moduleId)) {
             $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
         } else {
             $this->tpl->setNotification($this->language->__('notifications.comment_create_error'), 'error');
         }
 
         $comments = $this->commentService->getComments($module, $moduleId);
-
         $this->tpl->assign('module', $module);
         $this->tpl->assign('moduleId', $moduleId);
         $this->tpl->assign('includeStatus', $includeStatus);
