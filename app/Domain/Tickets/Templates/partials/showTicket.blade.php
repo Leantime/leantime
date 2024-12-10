@@ -44,7 +44,7 @@
                 value="{{ $ticket->headline }}"
                 labelText="Title" 
                 variant="title" />
-
+            
             <div class="viewDescription mce-content-body">
                 <div class="min-h-[100px]">
                     @if (!empty($ticket->description))
@@ -70,15 +70,15 @@
                     variant="primary" 
                     labelText="Save" />
                     
-
                 {{-- TODO: This should just close the modal --}}
                 <x-global::forms.button 
-                    tag="a"
+                    tag="button"
                     variant="link" 
                     contentRole="ghost" 
                     labelText="Cancel" 
-                    href="{{ BASE_URL }}/dashboard/show/#/tickets/showKanban" />
-                    
+                    name="cancel"
+                    type="button"
+                    onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
                 <div id="save-indicator" class="htmx-indicator">
                     <span class="loading loading-spinner"></span> Saving...
                 </div>
@@ -87,7 +87,6 @@
     </div>
 
 
-    {{-- NEW - Calls navigations/tabs component --}}
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
             <x-slot:contents>

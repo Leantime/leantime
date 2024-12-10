@@ -54,7 +54,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->userService = $userService;
 
             if (! session()->exists('lastPage')) {
-                session(['lastPage' => BASE_URL.'/tickets/showKanban/']);
+                session(['lastPage' => BASE_URL . '/tickets/showKanban/']);
             }
         }
 
@@ -117,14 +117,15 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 if (is_array($result) === false) {
                     $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
+                    return response()->json(['success' => true]);
 
-                    if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                        return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result.'?closeModal=1');
-                    } else {
-                        return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result);
-                    }
+                    // if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
+                    //     return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result.'?closeModal=1');
+                    // } else {
+                    //     return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result);
+                    // }
                 } else {
-                    $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+                    // $this->tpl->setNotification($this->language->__($result['msg']), 'error');
 
                     $ticket = app()->makeWith(TicketModel::class, ['values' => $params]);
                     $ticket->userLastname = session('userdata.name');
@@ -150,12 +151,12 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
                     $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-                    return $this->tpl->displayPartial('tickets::partials.newTicketModal');
+                    // return $this->tpl->displayPartial('tickets::partials.newTicketModal');
+                    return response()->json(['success' => false]);
                 }
             }
 
-            return Frontcontroller::redirect(BASE_URL.'/tickets/newTicket');
+            return response()->json(['success' => true]);
         }
     }
-
 }
