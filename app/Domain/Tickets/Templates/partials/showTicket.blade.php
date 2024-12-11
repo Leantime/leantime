@@ -1,4 +1,8 @@
-@php use Leantime\Core\Support\EditorTypeEnum; @endphp
+@php use Leantime\Core\Support\EditorTypeEnum;
+
+$tags = explode(',', $ticket->tags);
+
+@endphp
 
 <x-global::content.modal.modal-buttons>
 
@@ -31,20 +35,20 @@
 <div class="row">
     <div class="col-md-7">
 
-        <form hx-post="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}"
-              hx-trigger="submit"
-              hx-swap="none"
-              hx-indicator="#save-indicator">
+        <form hx-post="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+            hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
             <label class="pl-m pb-sm">📄 Details</label>
 
-            <x-global::forms.text-input 
-                type="text" 
-                name="headline" 
-                value="{{ $ticket->headline }}"
-                labelText="Title" 
+            <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                @endforeach
+            </x-global::forms.select>
+
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" labelText="Title"
                 variant="title" />
-            
+
             <div class="viewDescription mce-content-body">
                 <div class="min-h-[100px]">
                     @if (!empty($ticket->description))
@@ -56,29 +60,18 @@
             </div>
 
             <div class="form-group" id="descriptionEditor" style="display:none;">
-                <x-global::forms.text-editor 
-                    name="description" 
-                    customId="ticketDescription" 
-                    :type="EditorTypeEnum::Complex->value"
+                <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
                     :value="$ticket->description !== null ? $ticket->description : ''" />
                 <br />
             </div>
             <br>
 
             <div class="flex items-center gap-2">
-                <x-global::forms.button 
-                    variant="primary" 
-                    labelText="Save" />
-                    
+                <x-global::forms.button variant="primary" labelText="Save" />
+
                 {{-- TODO: This should just close the modal --}}
-                <x-global::forms.button 
-                    tag="button"
-                    variant="link" 
-                    contentRole="ghost" 
-                    labelText="Cancel" 
-                    name="cancel"
-                    type="button"
-                    onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                <x-global::forms.button tag="button" variant="link" contentRole="ghost" labelText="Cancel"
+                    name="cancel" type="button" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
                 <div id="save-indicator" class="htmx-indicator">
                     <span class="loading loading-spinner"></span> Saving...
                 </div>
@@ -107,7 +100,8 @@
                     <x-tickets::files :ticket="$ticket" />
                 </x-global::navigations.tabs.content>
                 <x-global::navigations.tabs.content id="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
-                    <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues" :userHours="$userHours" />
+                    <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues"
+                        :userHours="$userHours" />
                 </x-global::navigations.tabs.content>
                 <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
@@ -146,4 +140,3 @@
 
     Prism.highlightAll();
 </script>
-

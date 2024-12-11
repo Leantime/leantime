@@ -153,6 +153,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->display('errors.error400', responseCode: 400);
             }
 
+            // dd($params);
             
             $tab = '';
             $id = (int) ($_GET['id']);
@@ -160,6 +161,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             
             if ($ticket === false) {
                 return $this->tpl->display('errors.error500', responseCode: 500);
+            }
+
+            if(!empty($params['tags']) && is_array($params['tags'])){
+                $params['tags'] = implode(',', $params['tags']);
             }
 
             //Upload File
