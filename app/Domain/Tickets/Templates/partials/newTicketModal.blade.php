@@ -17,6 +17,12 @@
                 <input type="hidden" name="saveTicket" value="1">
                 <label class="pl-m pb-sm">📄 Details</label>
 
+                <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
+                    @foreach ($tags as $tag)
+                        <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                    @endforeach
+                </x-global::forms.select>
+
                 <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
                     labelText="Title" variant="title" />
 
