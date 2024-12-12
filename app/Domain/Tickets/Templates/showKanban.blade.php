@@ -246,11 +246,8 @@
             });
 
             jQuery("#modal-wrapper #main-page-modal").on('close', function() {
-                // Refresh specific columns
-                console.log("close modal");
-                jQuery(".column").each(function() {
-                    console.log("refresh column");
-                    htmx.trigger(this, "refresh");
+                jQuery('.ticketColumn').each(function() {
+                    htmx.trigger(this, 'reload');
                 });
             });
         });

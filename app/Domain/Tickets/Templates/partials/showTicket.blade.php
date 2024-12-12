@@ -1,6 +1,7 @@
-@php use Leantime\Core\Support\EditorTypeEnum;
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
 
-$tags = explode(',', $ticket->tags);
+    $tags = explode(',', $ticket->tags);
 
 @endphp
 

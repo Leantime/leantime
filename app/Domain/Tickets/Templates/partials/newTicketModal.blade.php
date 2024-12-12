@@ -1,4 +1,7 @@
-@php use Leantime\Core\Support\EditorTypeEnum; @endphp
+@php use Leantime\Core\Support\EditorTypeEnum; 
+
+$tags = explode(',', $ticket->tags);
+@endphp
 
 
 <x-global::content.modal.modal-buttons />
