@@ -208,17 +208,20 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                    $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
-                    $response->headers->set('HX-Trigger', 'ticketUpdate');
+                    // $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
+                    // $response->headers->set('HX-Trigger', 'ticketUpdate');
 
-                    return $response;
+                    // return $response;
+                    return response()->json(['success' => $result]);
                 }
             // }
 
-            $response = Frontcontroller::redirect(session('lastPage').'#/tickets/showTicket/'.$id.''.$tab);
-            $response->headers->set('HX-Trigger', 'ticketUpdate');
+            // $response = Frontcontroller::redirect(session('lastPage').'#/tickets/showTicket/'.$id.''.$tab);
+            // $response->headers->set('HX-Trigger', 'ticketUpdate');
 
-            return $response;
+            // return $response;
+
+            return response()->json(['success' => $result]);
         }
         public function put($params): Response
         {
