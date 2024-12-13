@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->userService = $userService;
 
             if (session()->exists('lastPage') === false) {
-                session(['lastPage' => BASE_URL.'/tickets/showKanban']);
+                session(['lastPage' => BASE_URL . '/tickets/showKanban']);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (session('currentProject') != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
 
-                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
+                return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id);
             }
 
             //Delete file
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 if ($result = $this->fileService->deleteFile($params['delFile'])) {
                     $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
 
-                    return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
+                    return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '#files');
                 }
 
                 $this->tpl->setNotification($result['msg'], 'error');
@@ -148,23 +148,16 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params): Response
         {
-
             if (! isset($_GET['id'])) {
                 return $this->tpl->display('errors.error400', responseCode: 400);
             }
 
-            // dd($params);
-            
             $tab = '';
             $id = (int) ($_GET['id']);
             $ticket = $this->ticketService->getTicket($id);
-            
+
             if ($ticket === false) {
                 return $this->tpl->display('errors.error500', responseCode: 500);
-            }
-
-            if(!empty($params['tags']) && is_array($params['tags'])){
-                $params['tags'] = implode(',', $params['tags']);
             }
 
             //Upload File
@@ -190,7 +183,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
 
             //Save Ticket
-            // if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
+            if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
                 $params['projectId'] = $ticket->projectId;
                 $params['id'] = $id;
 
@@ -208,57 +201,17 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                    // $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
-                    // $response->headers->set('HX-Trigger', 'ticketUpdate');
+                    $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '?closeModal=1');
+                    $response->headers->set('HX-Trigger', 'ticketUpdate');
 
-                    // return $response;
-                    return response()->json(['success' => $result]);
+                    return $response;
                 }
-            // }
-
-            // $response = Frontcontroller::redirect(session('lastPage').'#/tickets/showTicket/'.$id.''.$tab);
-            // $response->headers->set('HX-Trigger', 'ticketUpdate');
-
-            // return $response;
-
-            return response()->json(['success' => $result]);
-        }
-        public function put($params): Response
-        {
-
-            if (! isset($_GET['id'])) {
-                return $this->tpl->display('errors.error400', responseCode: 400);
             }
 
-            
-            $tab = '';
-            $id = (int) ($_GET['id']);
-            $ticket = $this->ticketService->getTicket($id);
-            
-            if ($ticket === false) {
-                return $this->tpl->display('errors.error500', responseCode: 500);
-            }
+            $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '' . $tab);
+            $response->headers->set('HX-Trigger', 'ticketUpdate');
 
-            //Log time
-            // if (isset($params['saveTimes']) === true) {
-            //     $result = $this->timesheetService->logTime($id, $params);
-
-            //     if ($result === true) {
-            //         $this->tpl->setNotification($this->language->__('notifications.time_logged_success'), 'success');
-            //     } else {
-            //         $this->tpl->setNotification($this->language->__($result['msg']), 'error');
-            //     }
-            // }
-
-            //Save Ticket
-            // if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
-                $params['projectId'] = $ticket->projectId;
-                $params['id'] = $id;
-                $result = $this->ticketService->updateTicket($params);
-                // dd($result);
-            // }
-
-            return response()->json(['success' => true]);
+            return $response;
         }
     }
 }

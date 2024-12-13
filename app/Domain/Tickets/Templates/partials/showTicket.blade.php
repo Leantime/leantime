@@ -36,7 +36,7 @@
 <div class="row">
     <div class="col-md-7">
 
-        <form hx-post="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+        <form hx-post="{{ BASE_URL }}hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
             hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
             <label class="pl-m pb-sm">📄 Details</label>
@@ -106,7 +106,9 @@
                 </x-global::navigations.tabs.content>
                 <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
-                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" />
+                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" 
+                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}"
+                        />
                 </x-global::navigations.tabs.content>
             </x-slot:contents>
         </x-global::navigations.tabs>

@@ -14,16 +14,14 @@ $tags = explode(',', $ticket->tags);
     <div class="row">
 
         <div class="col-md-7">
-            <form hx-post="{{ BASE_URL }}/tickets/newTicket" hx-trigger="submit" hx-swap="none"
+            <form hx-post="{{ BASE_URL }}/hx/tickets/newTicket" hx-trigger="submit" hx-swap="none"
                 hx-indicator="#save-indicator">
                 {{-- @include("tickets::includes.ticketDetails") --}}
                 <input type="hidden" name="saveTicket" value="1">
                 <label class="pl-m pb-sm">📄 Details</label>
 
                 <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
-                    @foreach ($tags as $tag)
-                        <option value="{{ $tag }}" selected>{{ $tag }}</option>
-                    @endforeach
+
                 </x-global::forms.select>
 
                 <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
@@ -41,7 +39,8 @@ $tags = explode(',', $ticket->tags);
 
                 <div class="form-group" id="descriptionEditor" style="display:none;">
                     <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
-                        :value="$ticket->description !== null ? $ticket->description : ''" />
+                        :value="$ticket->description !== null ? $ticket->description : ''" 
+                        url="{{ BASE_URL }}/hx/tickets/newTicket" />
                     <br />
                 </div>
                 <br>
