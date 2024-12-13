@@ -1,3 +1,5 @@
+@php use Leantime\Core\Support\EditorTypeEnum; @endphp
+
 <x-global::content.modal.modal-buttons>
 
     @if (isset($ticket->date))
