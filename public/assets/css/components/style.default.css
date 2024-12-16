@@ -2292,35 +2292,7 @@ h3.todaysDate {
     fill:currentColor
 }
 
-.htmx-indicator,
-.htmx-indicator-small {
-    display:none;
-}
 
-.htmx-indicator img,
-.htmx-indicator-small img{
-    width:75px;
-    margin:auto;
-}
-
-.htmx-request.htmx-indicator {
-    display:block;
-}
-
-.htmx-request.htmx-indicator-small {
-    display:inline-block;
-}
-
-/* Hide or show the actual/previous content based on htmx indicator visibility */
-.htmx-indicator.htmx-loaded-content {
-    display:block;
-    opacity: 1;
-}
-
-.htmx-request.htmx-indicator.htmx-loaded-content {
-    display: none;
-    opacity:0;
-}
 
 h4 .helperTooltip,
 .helperTooltip {

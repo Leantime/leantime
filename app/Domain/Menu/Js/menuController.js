@@ -21,8 +21,6 @@ export const toggleSubmenu = function (submenuName, submenuDisplay) {
 
 export const initProjectSelector = function () {
 
-    jQuery(".project-select").chosen();
-
     jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
         e.stopPropagation();
     });
@@ -143,7 +141,7 @@ export const updateGroupDropdownSetting = function (ID, state, prefix) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const menuController = {
     toggleSubmenu: toggleSubmenu,
     initProjectSelector: initProjectSelector,
     initLeftMenuHamburgerButton: initLeftMenuHamburgerButton,

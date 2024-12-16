@@ -1,5 +1,3 @@
-import i18n from 'i18n';
-
 let phpFormatSeed = {
     'A': 'A', // Uppercase Ante meridiem and Post meridiem: AM or PM
     'a': 'a', // Lowercase Ante meridiem and Post meridiem: am or pm
@@ -184,7 +182,7 @@ export const mapFormat = function (inputPhpFormat, targetFormat) {
 }
 
 export const getFormatFromSettings = function (formattingKey, targetFormat) {
-    let format = i18n.__("language."+formattingKey);
+    let format = leantime.i18n.__("language."+formattingKey);
 
     return mapFormat(format, targetFormat);
 }

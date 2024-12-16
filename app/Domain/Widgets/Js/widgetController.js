@@ -224,7 +224,7 @@ export const resizeWidget = function (el) {
     }
 
 // Make public what you want to have public, everything else is private
-export default {
+export const widgetController = {
     resizeWidget: resizeWidget,
     removeWidget: removeWidget,
     saveGrid: saveGrid,

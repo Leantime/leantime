@@ -1,6 +1,7 @@
-import { appUrl } from './instance-info.module.mjs';
+import { appUrl } from '../core/instance-info.module.mjs';
 import jQuery from 'jquery';
 import tippy from 'tippy.js';
+import htmx from 'htmx.org';
 
 var setCustomModalCallback = function (callback) {
     if (typeof callback === 'function') {
@@ -85,18 +86,20 @@ var closeModal = function () {
     htmx.find("#modal-wrapper #main-page-modal").close();
 }
 
-window.addEventListener("HTMX.closemodal", closeModal);
+var initModalLoader = function () {
 
-//Open page url modal on page load and hash change
+    window.addEventListener("HTMX.closemodal", closeModal);
 
-jQuery(document).ready(function() {
-    window.addEventListener("hashchange", openHashUrlModal);
-    openHashUrlModal();
-});
-
+    //Open page url modal on page load and hash change
+    jQuery(document).ready(function() {
+        window.addEventListener("hashchange", openHashUrlModal);
+        openHashUrlModal();
+    });
+}
 
 export default {
     openPageModal: openPageModal,
     setCustomModalCallback: setCustomModalCallback,
-    closeModal: closeModal
+    closeModal: closeModal,
+    initModalLoader:initModalLoader
 };

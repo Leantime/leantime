@@ -2,9 +2,9 @@ import jQuery from 'jquery';
 import i18n from 'i18n';
 import handleAsyncResponse from 'js/app/core/handleAsyncResponse.module';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { updateUserViewSettings } from 'domain/Users/Js/usersRepository';
-import { initDatePicker } from 'js/app/core/dateController.module';
+import { initDatePicker } from 'js/app/components/dates/dateController.module';
 import Gantt from 'js/libs/simpleGantt/frappe-gantt';
 import Chart from 'chart.js/auto';
 import {
@@ -1616,7 +1616,7 @@ export const addCommentTimesheetContent = function (commentId, taskId) {
     jQuery("#timesheet #description").val(content);
 };
 
-export default {
+export const ticketsController = {
     toggleFilterBar: toggleFilterBar,
     initGanttChart: initGanttChart,
     updateRemainingHours: updateRemainingHours,
