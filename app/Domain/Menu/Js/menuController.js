@@ -2,33 +2,19 @@ import jQuery from 'jquery';
 import { appUrl } from 'js/app/core/instance-info.module';
 import { updateUserMenuSettings } from './menuRepository';
 
-export const toggleSubmenu = function (submenuName) {
-
+export const toggleSubmenu = function (submenuName, submenuDisplay) {
     if (submenuName === "") {
         return;
     }
 
-    var submenuDisplay = jQuery('#submenu-' + submenuName).css('display');
-    var submenuState = '';
-
-    if (submenuDisplay == 'none') {
-        jQuery('#submenu-' + submenuName).css('display', 'block');
-        jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-right');
-        jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-down');
-        submenuState = 'open';
-    } else {
-        jQuery('#submenu-' + submenuName).css('display', 'none');
-        jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-down');
-        jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-right');
-        submenuState = 'closed';
-    }
+    const submenuState = (submenuDisplay === 'none' || submenuDisplay === '' || submenuDisplay === 'closed') ? 'open' : 'closed';
 
     jQuery.ajax({
-        type : 'PATCH',
-        url  : appUrl + '/api/submenu',
-        data : {
-            submenu : submenuName,
-            state   : submenuState
+        type: 'PATCH',
+        url: appUrl + '/api/submenu',
+        data: {
+            submenu: submenuName,
+            state: submenuState
         }
     });
 }

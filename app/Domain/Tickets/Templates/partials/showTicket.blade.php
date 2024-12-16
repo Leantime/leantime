@@ -1,3 +1,7 @@
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
+@endphp
+
 <x-global::content.modal.modal-buttons>
 
     @if (isset($ticket->date))
@@ -121,7 +125,7 @@
                 </x-global::navigations.tabs.content>
 
                 <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
-                    <x-tickets::subtasks :ticket="$ticket" />
+                    <x-tickets::files :ticket="$ticket" />
                 </x-global::navigations.tabs.content>
             </x-slot:contents>
         </x-global::navigations.tabs>
