@@ -20,7 +20,7 @@
     <div class="maincontent">
         <div class="row">
             <div class="col-md-8">
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-context-buttons>
                         <x-global::forms.button shape="circle" content-role="tertiary"
                             data-tippy-content="{{ __('label.favorite_tooltip') }}"
@@ -86,7 +86,7 @@
                     </article>
                 </x-global::content.card>
 
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-title>{{ __('headlines.latest_todos') }}</x-slot:card-title>
 
                     @if (count($tickets) == 0)
@@ -99,7 +99,7 @@
 
                 </x-global::content.card>
 
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-title>{{ __('tabs.team') }}</x-slot:card-title>
                     @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
@@ -143,7 +143,8 @@
             <div class="col-md-4">
                 <x-dashboard::project-updates :id="$project['id']" />
 
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
+
                     <x-slot:card-title>
                         {{ __('subtitles.project_progress') }}
                     </x-slot:card-title>
