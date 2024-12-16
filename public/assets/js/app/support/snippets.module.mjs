@@ -1,5 +1,5 @@
 import i18n from 'i18n';
-import { appUrl } from './instance-info.module.mjs';
+import { appUrl } from '../core/instance-info.module.mjs';
 
 var copyUrl = function (field) {
     // Get the text field

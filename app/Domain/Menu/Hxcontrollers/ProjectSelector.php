@@ -13,7 +13,7 @@ class ProjectSelector extends HtmxController
 {
     use DispatchesEvents;
 
-    protected static string $view = 'menu::partials.projectSelector';
+    protected static string $view = 'menu::includes.projectSelectorDropdown';
 
     private Timesheets $timesheetService;
 

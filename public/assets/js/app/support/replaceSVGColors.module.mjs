@@ -1,4 +1,4 @@
-import { companyColor } from './instance-info.module.mjs';
+import { companyColor } from '../core/instance-info.module.mjs';
 import jQuery from 'jquery';
 
 const replaceSVGColors = function () {

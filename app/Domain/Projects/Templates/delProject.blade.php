@@ -21,7 +21,7 @@ $project = $tpl->get('project');
 
         @displayNotification()
 
-        <h4 class="widget widgettitle">{{ __("subtitles.delete") }}</h4>
+        <h4 class="widget widgettitle">{!! __("subtitles.delete") !!}</h4>
         <div class="widgetcontent">
 
             <form method="post">
@@ -40,3 +40,5 @@ $project = $tpl->get('project');
 
     </div>
 </div>
+
+@endsection

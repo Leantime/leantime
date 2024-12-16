@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/core/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
 import { DateTime } from 'luxon';
 
 export const updateMilestoneDates = function (id, start, end, sortIndex) {

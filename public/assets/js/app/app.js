@@ -1,17 +1,24 @@
-function addToGlobalScope(object) {
-  window.leantime = {
-    ...(window.leantime || {}),
-    ...object,
-  };
-}
+import './core/globalLibraries.js';
+import { addToGlobalScope } from './core/leantimeScope.mjs';
+import { moduleLoader } from './core/moduleLoader.mjs';
+import { initializeCore } from './core/bootstrap.mjs';
 
-/* HTMX */
+addToGlobalScope({moduleLoader: moduleLoader});
+
+// Initialize core application
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeCore();
+});
+
+
+/*
+
 import htmx from "htmx.org";
 htmx.config.defaultSettleDelay = 0;
 window.htmx = htmx;
-require("htmx-ext-head-support");
+import "./htmx-headSupport.js";
 
-/* jQuery */
+
 import jQuery from 'jquery';
 jQuery.noConflict();
 window.jQuery = jQuery;
@@ -34,49 +41,44 @@ import "js/libs/simple-color-picker-master/jquery.simple-color-picker";
 import moment from 'moment';
 window.moment = moment;
 
-/* Confetti */
+
 import confetti from 'canvas-confetti';
 window.confetti = confetti;
 
-/*
- * Uppy
- * TODO: Replace with node module (probably upgrade to version 4)
- */
+
 import 'js/libs/uppy/uppy';
 
 
-/* isotope */
 import Isotope from "isotope-layout";
 import jQueryBridget from "jquery-bridget";
 jQueryBridget("isotope", Isotope, jQuery);
 
-/* LeaderLine */
+
 import LeaderLine from "leader-line";
 window.LeaderLine = LeaderLine;
 
-/* Tippy */
+
 import tippy from "tippy.js";
 window.tippy = tippy;
 
 
-/* Datatables */
 import "datatables.net";
 import "datatables.net-rowgroup";
 import "datatables.net-rowreorder";
 import "datatables.net-buttons";
 
-/* Chart.js */
+
 import "chartjs-adapter-luxon";
 
-/* SlimSelect */
+
 import SlimSelect from 'js/libs/slimselect';
 window.SlimSelect = SlimSelect;
 
-/* Core */
-import modals from './core/modals.module';
-import datePickers from './core/dateController.module';
-import dateHelper from './core/dateHelper.module';
-import editorController from './core/editors.module';
+
+import modals from './components/modals.module.mjs';
+import datePickers from './core/dateController.module.mjs';
+import dateHelper from './core/dateHelper.module.mjs';
+import editorController from './core/editors.module.mjs';
 import getLatestGrowl from './core/getLatestGrowl.module';
 import handleAsyncResponse from './core/handleAsyncResponse.module';
 import instanceInfo from './core/instance-info.module';
@@ -84,7 +86,10 @@ import instanceInfo from './core/instance-info.module';
 import onDocumentReady from './core/on-document-ready.module';
 import replaceSVGColors from './core/replaceSVGColors.module';
 import snippets from './core/snippets.module';
-import selects from './core/selects.module.mjs';
+import selects from './components/selects.module.mjs';
+
+// Import core functionality
+import './core/main.mjs';
 
 addToGlobalScope({
   dateHelper: dateHelper,
@@ -102,7 +107,7 @@ addToGlobalScope({
 jQuery(document).ready(onDocumentReady);
 window.addEventListener("HTMX.ShowNotification", getLatestGrowl);
 
-/* Domain */
+
 import usersService from "domain/Users/Js/usersService";
 import wikiController from "domain/Wiki/Js/wikiController";
 import authController from "domain/Auth/Js/authController";
@@ -144,8 +149,6 @@ import risksCanvasController from "domain/Riskscanvas/Js/risksCanvasController";
 import retroCanvasController from "domain/Retroscanvas/Js/retroCanvasController";
 import minempathyCanvasController from "domain/Minempathycanvas/Js/risksCanvasController";
 import insightsCanvasController from "domain/Insightscanvas/Js/insightsCanvasController";
-import initializeHtmx from './htmx';
-
 
 addToGlobalScope({
   usersService: usersService,
@@ -190,3 +193,6 @@ addToGlobalScope({
   minempathyCanvasController: minempathyCanvasController,
   insightsCanvasController: insightsCanvasController,
 });
+
+
+*/

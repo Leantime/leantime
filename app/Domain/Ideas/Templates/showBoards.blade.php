@@ -87,7 +87,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown class="btn dropdown-toggle" align="start" contentRole="ghost">
+                            <x-global::actions.dropdown align="start" contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_wall') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>
@@ -112,9 +112,9 @@
 
             <div class="clearfix"></div>
             @if (count($allCanvas) > 0)
-                <div id="ideaMason" class="sortableTicketList" style="padding-top:10px;">
+                <div id="ideaMason" class="sortableTicketList flex flex-wrap" style="padding-top:10px;">
                     @foreach ($canvasItems as $row)
-                        <div class="ticketBox" id="item_{{ $row->id }}" data-value="{{ $row->id }}">
+                        <div class="ticketBox ml-3" id="item_{{ $row->id }}" data-value="{{ $row->id }}">
                             <div class="row">
                                 <div class="col-md-12">
                                     @if ($login::userIsAtLeast($roles::$editor))
