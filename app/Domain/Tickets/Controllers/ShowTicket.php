@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->userService = $userService;
 
             if (session()->exists('lastPage') === false) {
-                session(['lastPage' => BASE_URL.'/tickets/showKanban']);
+                session(['lastPage' => BASE_URL . '/tickets/showKanban']);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (session('currentProject') != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
 
-                return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id);
+                return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id);
             }
 
             //Delete file
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 if ($result = $this->fileService->deleteFile($params['delFile'])) {
                     $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
 
-                    return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'#files');
+                    return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '#files');
                 }
 
                 $this->tpl->setNotification($result['msg'], 'error');
@@ -201,14 +201,14 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                    $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
+                    $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '?closeModal=1');
                     $response->headers->set('HX-Trigger', 'ticketUpdate');
 
                     return $response;
                 }
             }
 
-            $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.''.$tab);
+            $response = Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id . '' . $tab);
             $response->headers->set('HX-Trigger', 'ticketUpdate');
 
             return $response;

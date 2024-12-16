@@ -1,14 +1,6 @@
 <?php
 use Leantime\Core\Support\EditorTypeEnum;
 
-foreach ($__data as $var => $val) {
-    $$var = $val; // necessary for blade refactor
-}
-$ticket = $tpl->get('ticket');
-$remainingHours = $tpl->get('remainingHours');
-$statusLabels = $tpl->get('statusLabels');
-$ticketTypes = $tpl->get('ticketTypes');
-
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly />
 

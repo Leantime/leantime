@@ -1,5 +1,8 @@
 @php
     use Leantime\Core\Support\EditorTypeEnum;
+
+    $tags = explode(',', $ticket->tags);
+
 @endphp
 
 <x-global::content.modal.modal-buttons>
@@ -33,81 +36,51 @@
 <div class="row">
     <div class="col-md-7">
 
-        <x-global::forms.text-input type="text" name="headline" value="{!! $tpl->escape($ticket->headline) !!}"
-            placeholder="{!! $tpl->__('input.placeholders.enter_title_of_todo') !!}" variant="title" class="w-[99%]" autocomplete="off" />
+        <form hx-post="{{ BASE_URL }}hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+            hx-indicator="#save-indicator">
+            <input type="hidden" name="saveTicket" value="1">
+            <label class="pl-m pb-sm">📄 Details</label>
 
-        <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" label-position="left" />
+            <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                @endforeach
+            </x-global::forms.select>
 
-        <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" label-position="left" />
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" labelText="Title"
+                variant="title" />
 
-        <x-tickets::duedate :date="$ticket->dateToFinish" label-position="left" variant="input" />
-
-        {{-- <x-global::forms.select
-            id="select-test"
-            name="select-test"
-            labelText="Select an option"
-            labelRight="Optional"
-            caption="Choose wisely"
-            size="lg"
-            state="normal"
-            variant="multiple"
-            validationText="Please select one option"
-            validationState="error"
-            search="true"
-            >
-                <x-global::forms.select.select-option value="1">Option 1</x-global::forms.select.select-option>
-                <x-global::forms.select.select-option value="2">Option 2</x-global::forms.select.select-option>
-                <x-global::forms.select.select-option value="3">Option 3</x-global::forms.select.select-option>
-        </x-global::forms.select> --}}
-
-        <label class="pl-m pb-sm">📄 Details</label>
-        <div class="viewDescription mce-content-body">
-            <div class="pl-sm">
-                <?php echo $tpl->escapeMinimal($ticket->description); ?>
+            <div class="viewDescription mce-content-body">
+                <div class="min-h-[100px]">
+                    @if (!empty($ticket->description))
+                        {!! $ticket->description !!}
+                    @else
+                        <p>Add Description</p>
+                    @endif
+                </div>
             </div>
-        </div>
-        <div class="form-group" id="descriptionEditor" style="display:none;">
-            <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
-                :value="$ticket->description !== null ? $ticket->description : ''" />
-            <br />
-        </div>
 
+            <div class="form-group" id="descriptionEditor" style="display:none;">
+                <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
+                    :value="$ticket->description !== null ? $ticket->description : ''" />
+                <br />
+            </div>
+            <br>
 
+            <div class="flex items-center gap-2">
+                <x-global::forms.button variant="primary" labelText="Save" />
+
+                {{-- TODO: This should just close the modal --}}
+                <x-global::forms.button tag="button" variant="link" contentRole="ghost" labelText="Cancel"
+                    name="cancel" type="button" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                <div id="save-indicator" class="htmx-indicator">
+                    <span class="loading loading-spinner"></span> Saving...
+                </div>
+            </div>
+        </form>
     </div>
-    {{-- Previous Tabs --}}
-    {{-- <div class="col-md-5" style="border-radius:10px; padding:0px;">
-        <x-global::content.tabs class="">
-            <x-slot:headings class="sticky top-0 !bg-[--secondary-background]">
-                <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
-                <x-global::content.tabs.heading name="discussion">Discussions</x-global::content.tabs.heading>
-                <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
-                <x-global::content.tabs.heading name="files">Files</x-global::content.tabs.heading>
-            </x-slot:headings>
-
-            <x-slot:contents>
-                <x-global::content.tabs.content name="connections" class="p-sm">
-                    Connections
-                </x-global::content.tabs.content>
-
-                <x-global::content.tabs.content name="discussion" class="p-sm">
-                    <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
-                </x-global::content.tabs.content>
-
-                <x-global::content.tabs.content name="subtask" class="p-sm">
-                    <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::content.tabs.content>
-
-                <x-global::content.tabs.content name="files" class="p-sm">
-                    <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::content.tabs.content>
-
-            </x-slot:contents>
-        </x-global::content.tabs>
-    </div>
-    -- }}
 
 
-    {{-- NEW - Calls navigations/tabs component --}}
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
             <x-slot:contents>
@@ -117,7 +90,7 @@
                 </x-global::navigations.tabs.content>
 
                 <x-global::navigations.tabs.content id="discussion" ariaLabel="Discussion" classExtra="p-sm">
-                    <x-comments::list :module="'ticket'" :statusUpdates="'false'" :moduleId="$ticket->id" />
+                    <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$ticket->id" />
                 </x-global::navigations.tabs.content>
 
                 <x-global::navigations.tabs.content id="subtask" ariaLabel="Subtasks" classExtra="p-sm">
@@ -126,6 +99,16 @@
 
                 <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::files :ticket="$ticket" />
+                </x-global::navigations.tabs.content>
+                <x-global::navigations.tabs.content id="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
+                    <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues"
+                        :userHours="$userHours" />
+                </x-global::navigations.tabs.content>
+                <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
+                    <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
+                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" 
+                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}"
+                        />
                 </x-global::navigations.tabs.content>
             </x-slot:contents>
         </x-global::navigations.tabs>
@@ -145,10 +128,9 @@
 
     //leantime.editorController.initComplexEditor();
 
-    /*
-    jQuery(".viewDescription").click(function(e){
+    jQuery(".viewDescription").click(function(e) {
 
-        if(!jQuery(e.target).is("a")) {
+        if (!jQuery(e.target).is("a")) {
             e.stopPropagation();
             jQuery(this).hide();
             jQuery('#descriptionEditor').show('fast',
@@ -157,7 +139,7 @@
                 }
             );
         }
-    });*/
+    });
 
     Prism.highlightAll();
 </script>
