@@ -23,10 +23,13 @@
                        onclick="jQuery('#ticket_new').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
                         <i class="fa fa-plus"></i> Add To-Do
                     </a>
-                    <div class="btn-group left">
-                        <button class="btn btn-link dropdown-toggle f-right" type="button" data-toggle="dropdown">{!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}</button>
-                        <ul class="dropdown-menu">
-                            <li><span class="radio">
+                    <div class="flex align-center justify-end">
+                        <x-global::actions.dropdown contentRole="ghost">
+                            <x-slot name="labelText">
+                                {!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}
+                            </x-slot>
+                            <x-slot name="menu">
+                                <li><span>
                                     <input type="radio" name="groupBy"
                                            @if($groupBy == "time") checked='checked' @endif
                                            value="time" id="groupByDate"
@@ -39,7 +42,7 @@
                                         />
                                     <label for="groupByDate">{!! __("label.dates") !!}</label></span></li>
                             <li>
-                                <span class="radio">
+                                <span>
                                     <input type="radio"
                                            name="groupBy"
                                            @if($groupBy == "project") checked='checked' @endif
@@ -55,7 +58,7 @@
                                 </span>
                             </li>
                             <li>
-                                <span class="radio">
+                                <span>
                                     <input type="radio"
                                            name="groupBy"
                                            @if($groupBy == "priority") checked='checked' @endif
@@ -70,18 +73,14 @@
                                     <label for="groupByPriority">{!! __("label.priority") !!}</label>
                                 </span>
                             </li>
-
-                        </ul>
-                    </div>
-                    <div class="btn-group left ">
-                        <button class="btn btn-link dropdown-toggle f-right" type="button" data-toggle="dropdown">
-                            {!! __("links.filter") !!}
-                            @if($projectFilter != '')
-                                <span class='badge badge-primary'>1</span>
-                            @endif
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li
+                            </x-slot>
+                        </x-global::actions.dropdown>
+                        <x-global::actions.dropdown contentRole="ghost">
+                            <x-slot name="labelText">
+                                {!! __("links.filter") !!}
+                            </x-slot>
+                            <x-slot name="menu">
+                                <li
                                 @if($projectFilter == '')
                                     class='active'
                                 @endif
@@ -113,8 +112,8 @@
                                         >{{ $project['name'] }}</a></li>
                                 @endforeach
                             @endif
-
-                        </ul>
+                            </x-slot>
+                        </x-global::actions.dropdown>
                     </div>
 
                     @dispatchEvent("afterTodoWidgetGroupByDropdown")
@@ -132,16 +131,16 @@
                 >
                     <input type="hidden" name="quickadd" value="1"/>
                     <div class="flex" style="display:flex; column-gap: 10px;">
-                        <x-global::forms.text-input 
-                            type="text" 
-                            name="headline" 
-                            placeholder="Enter To-Do Title" 
-                            title="{!! $tpl->__('label.headline') !!}" 
-                            variant="title" 
-                            class="w-full" 
+                        <x-global::forms.text-input
+                            type="text"
+                            name="headline"
+                            placeholder="Enter To-Do Title"
+                            title="{!! $tpl->__('label.headline') !!}"
+                            variant="title"
+                            class="w-full"
                         />
                         <br />
-                    
+
                         <x-global::forms.select name="projectId" :labelText="'Project'">
                             @foreach($allAssignedprojects as $project)
                                 <x-global::forms.select.select-option :value="$project['id']"
@@ -151,7 +150,7 @@
                                 </x-global::forms.select.select-option>
                             @endforeach
                         </x-global::forms.select>
-                        
+
                     </div>
                     <input type="submit" value="Save" name="quickadd" />
                     <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
@@ -219,7 +218,7 @@
                                 @foreach ($ticketGroup['tickets'] as $row)
 
                                     <li class="ui-state-default" id="ticket_{{ $row['id'] }}" >
-                                        <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+                                        <div class="ticketBox priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
                                             <div class="row">
                                                 <div class="col-md-8 titleContainer">
                                                     <small>{{ $row['projectName'] }}</small><br />
@@ -368,22 +367,26 @@
 
 
 
-<script type="text/javascript">
+<script type="module">
 
     @dispatchEvent('scripts.afterOpen');
 
-    jQuery('.todaysDate').text(moment().format('LLLL'));
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+    import "@mix('/js/Domain/Auth/Js/authController.js')"
+    import "@mix('/js/Domain/Dashboard/Js/dashboardController.js')"
+
+    jQuery('.todaysDate').text(DateTime.now().toFormat('LLLL'));
 
     jQuery(document).ready(function(){
         tippy('[data-tippy-content]');
         @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
-            leantime.dashboardController.prepareHiddenDueDate();
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initStatusDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
+            dashboardController.prepareHiddenDueDate();
+            ticketsController.initEffortDropdown();
+            ticketsController.initMilestoneDropdown();
+            ticketsController.initStatusDropdown();
+            ticketsController.initDueDateTimePickers();
         @else
-            leantime.authController.makeInputReadonly(".maincontentinner");
+            authController.makeInputReadonly(".maincontentinner");
         @endif
 
     });

@@ -23,7 +23,7 @@
             <div class="commentReply">
                 <x-global::forms.submit-button name="{{ __('links.save') }}" />
                 <x-global::forms.reset-button name="{{ __('links.cancel') }}"
-                    onclick="leantime.commentsComponent.resetForm(-1, '{{ $formHash }}')" />
+                    onclick="commentsComponent.resetForm(-1, '{{ $formHash }}')" />
             </div>
 
             <input type="hidden" name="saveComment" class="commenterField" value="1" />
@@ -37,3 +37,5 @@
         </div>
     @endif
 </form>
+
+

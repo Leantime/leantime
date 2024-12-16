@@ -36,21 +36,21 @@
     </div>
 </div>
 
-<script>
+<script type="module">
 
-@dispatchEvent('scripts.afterOpen')
+    leantime.moduleLoader.load("@mix('/js/Domain/Widgets/Js/widgetController')").then(()=>
+        widgetController.initGrid()
+    );
 
-jQuery(document).ready(function() {
-
-    leantime.widgetController.initGrid();
 
     @if($completedOnboarding === false)
-        leantime.helperController.firstLoginModal();
+        leantime.moduleLoader.load("@mix('/js/Domain/Help/Js/helperController')").then(()=>
+            helperController.firstLoginModal()
+        );
     @endif
 
     @php(session(["usersettings.modals.homeDashboardTour" => 1]));
 
-});
 </script>
 
 @endsection

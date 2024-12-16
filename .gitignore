@@ -15,9 +15,7 @@ release/*
 logs/*
 target/*
 backupdb/*
-public/js/*.min.js
-public/js/*.map
-public/css/*.css
+public/dist/*
 
 # PHPStorm specific git ignore to be able to share inspection configs and run tools
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -128,4 +126,9 @@ config/.env
 caddy
 frankenphp
 frankenphp-worker.php
+storage/event_cache.json
+config/_configuration.php
+.idea/codebuddy.xml
+.codebuddy/summary.md
 
+herd.yml

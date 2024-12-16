@@ -13,11 +13,11 @@
                 <x-global::forms.button type="button" content-role="ghost">
                     Today
                 </x-global::forms.button>
-                
+
                 <x-global::forms.button type="button" content-role="link">
                     <i class="fa fa-chevron-left"></i>
                 </x-global::forms.button>
-                
+
                 <x-global::forms.button type="button" content-role="link">
                     <i class="fa fa-chevron-right"></i>
                 </x-global::forms.button>
@@ -27,39 +27,39 @@
         <div class="fc-right pull-right">
             <div class="fc-button-group">
                 <x-global::forms.select class="calendarViewSelect">
-                    <x-global::forms.select.select-option 
-                        class="fc-agendaDay-button fc-button fc-state-default fc-corner-right" 
-                        value="multiMonthOneMonth" 
+                    <x-global::forms.select.select-option
+                        class="fc-agendaDay-button fc-button fc-state-default fc-corner-right"
+                        value="multiMonthOneMonth"
                         :selected="$tpl->getToggleState('dashboardCalendarView') == 'multiMonthOneMonth'"
                     >
                         Month
                     </x-global::forms.select.select-option>
-                
-                    <x-global::forms.select.select-option 
-                        class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" 
-                        value="timeGridWeek" 
+
+                    <x-global::forms.select.select-option
+                        class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right"
+                        value="timeGridWeek"
                         :selected="$tpl->getToggleState('dashboardCalendarView') == 'timeGridWeek'"
                     >
                         Week
                     </x-global::forms.select.select-option>
-                
-                    <x-global::forms.select.select-option 
-                        class="fc-agendaWeek-button fc-button fc-state-default" 
-                        value="timeGridDay" 
+
+                    <x-global::forms.select.select-option
+                        class="fc-agendaWeek-button fc-button fc-state-default"
+                        value="timeGridDay"
                         :selected="$tpl->getToggleState('dashboardCalendarView') == 'timeGridDay' || empty($tpl->getToggleState('dashboardCalendarView'))"
                     >
                         Day
                     </x-global::forms.select.select-option>
-                
-                    <x-global::forms.select.select-option 
-                        class="fc-agendaWeek-button fc-button fc-state-default" 
-                        value="listWeek" 
+
+                    <x-global::forms.select.select-option
+                        class="fc-agendaWeek-button fc-button fc-state-default"
+                        value="listWeek"
                         :selected="$tpl->getToggleState('dashboardCalendarView') == 'listWeek'"
                     >
                         List
                     </x-global::forms.select.select-option>
                 </x-global::forms.select>
-                
+
             </div>
         </div>
         <div class="fc-center center pt-[7px] calendarTitle">
@@ -71,7 +71,9 @@
     <div class="minCalendarWrapper minCalendar h-full" style="height:calc(100% - 55px)"></div>
 </div>
 
-<script>
+<script type="module">
+
+    import "@mix('/js/Domain/Calendar/Js/calendarController.js')"
 
         var eventSources = [];
 
@@ -123,9 +125,7 @@
         <?php } ?>
 
         var initialView =   '{{ $tpl->getToggleState("dashboardCalendarView") ? $tpl->getToggleState("dashboardCalendarView") : "timeGridDay" }}';
-        leantime.calendarController.initWidgetCalendar(".minCalendarWrapper", initialView)
-
-
+        calendarController.initWidgetCalendar(".minCalendarWrapper", initialView)
 
     @dispatchEvent('scripts.beforeClose')
 

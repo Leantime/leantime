@@ -2,40 +2,24 @@ import jQuery from 'jquery';
 import { appUrl } from 'js/app/core/instance-info.module';
 import { updateUserMenuSettings } from './menuRepository';
 
-export const toggleSubmenu = function (submenuName) {
-
+export const toggleSubmenu = function (submenuName, submenuDisplay) {
     if (submenuName === "") {
         return;
     }
 
-    var submenuDisplay = jQuery('#submenu-' + submenuName).css('display');
-    var submenuState = '';
-
-    if (submenuDisplay == 'none') {
-        jQuery('#submenu-' + submenuName).css('display', 'block');
-        jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-right');
-        jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-down');
-        submenuState = 'open';
-    } else {
-        jQuery('#submenu-' + submenuName).css('display', 'none');
-        jQuery('#submenu-icon-' + submenuName).removeClass('fa-angle-down');
-        jQuery('#submenu-icon-' + submenuName).addClass('fa-angle-right');
-        submenuState = 'closed';
-    }
+    const submenuState = (submenuDisplay === 'none' || submenuDisplay === '' || submenuDisplay === 'closed') ? 'open' : 'closed';
 
     jQuery.ajax({
-        type : 'PATCH',
-        url  : appUrl + '/api/submenu',
-        data : {
-            submenu : submenuName,
-            state   : submenuState
+        type: 'PATCH',
+        url: appUrl + '/api/submenu',
+        data: {
+            submenu: submenuName,
+            state: submenuState
         }
     });
 }
 
 export const initProjectSelector = function () {
-
-    jQuery(".project-select").chosen();
 
     jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
         e.stopPropagation();
@@ -157,7 +141,7 @@ export const updateGroupDropdownSetting = function (ID, state, prefix) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const menuController = {
     toggleSubmenu: toggleSubmenu,
     initProjectSelector: initProjectSelector,
     initLeftMenuHamburgerButton: initLeftMenuHamburgerButton,
