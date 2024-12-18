@@ -1,60 +1,93 @@
-<x-global::content.modal.modal-buttons/>
+@php use Leantime\Core\Support\EditorTypeEnum; 
 
-<?php
-$ticket = $tpl->get('ticket');
-$projectData = $tpl->get('projectData');
-$todoTypeIcons  = $tpl->get("ticketTypeIcons");
+$tags = explode(',', $ticket->tags);
+@endphp
 
-?>
+
+<x-global::content.modal.modal-buttons />
 
 <div class="min-w-[80vw]">
-    <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
+    <h1><?= $tpl->__('headlines.new_to_do') ?></h1>
 
     @displayNotification()
 
-    <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
+    <div class="row">
 
-        <ul>
-            <li><a href="#ticketdetails">{{ __("tabs.ticketDetails") }}</a></li>
-        </ul>
+        <div class="col-md-7">
+            <form hx-post="{{ BASE_URL }}/hx/tickets/newTicket" hx-trigger="submit" hx-swap="none"
+                hx-indicator="#save-indicator">
+                {{-- @include("tickets::includes.ticketDetails") --}}
+                <input type="hidden" name="saveTicket" value="1">
+                <label class="pl-m pb-sm">📄 Details</label>
 
-        <div id="ticketdetails">
-            <x-global::content.modal.form action="{{ BASE_URL }}/tickets/newTicket">
-                @include("tickets::includes.ticketDetails")
-            </x-global::content.modal.form>
+                <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
+
+                </x-global::forms.select>
+
+                <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
+                    labelText="Title" variant="title" />
+
+                <div class="viewDescription mce-content-body">
+                    <div class="min-h-[100px]">
+                        @if (!empty($ticket->description))
+                            {!! $ticket->description !!}
+                        @else
+                            <p>Add Description</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-group" id="descriptionEditor" style="display:none;">
+                    <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
+                        :value="$ticket->description !== null ? $ticket->description : ''" 
+                        url="{{ BASE_URL }}/hx/tickets/newTicket" />
+                    <br />
+                </div>
+                <br>
+
+                <div class="flex items-center gap-2">
+                    <x-global::forms.button variant="primary" labelText="Save" />
+
+                    <x-global::forms.button tag="button" type="button" variant="link" contentRole="ghost"
+                        labelText="Cancel" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+
+                    <div id="save-indicator" class="htmx-indicator">
+                        <span class="loading loading-spinner"></span> Saving...
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-md-5" style="border-radius:10px; padding:0px;">
+            <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
+                <x-slot:contents>
+                    <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm"
+                        :checked="true">
+                        <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
+                            :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" />
+                    </x-global::navigations.tabs.content>
+                </x-slot:contents>
+            </x-global::navigations.tabs>
         </div>
 
     </div>
 </div>
 
 <script type="text/javascript">
-
-
-    jQuery(document).ready(function(){
-
-        leantime.ticketsController.initTicketTabs();
-
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-
-            leantime.ticketsController.initDueDateTimePickers();
-
-            leantime.dateController.initDatePicker(".dates");
-            leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
-
-            leantime.ticketsController.initTagsInput();
-
-            leantime.ticketsController.initEffortDropdown();
-            leantime.ticketsController.initStatusDropdown();
-
-        <?php } else { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
-
-        <?php } ?>
-
-        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.commentsController.enableCommenterForms();
-        <?php }?>
+    jQuery(document).ready(function() {
 
     });
 
+    jQuery(".viewDescription").click(function(e) {
+
+        if (!jQuery(e.target).is("a")) {
+            e.stopPropagation();
+            jQuery(this).hide();
+            jQuery('#descriptionEditor').show('fast',
+                function() {
+                    //tinymce.activeEditor.show();
+                }
+            );
+        }
+    });
 </script>

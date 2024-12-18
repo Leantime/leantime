@@ -16,7 +16,6 @@
             <div class="error-message" style="display: none; ">There is an error loading this section. Please try again.
             </div>
         </x-global::content.card>
-
     </div>
 @else
     <div id="project-update-card">
@@ -25,7 +24,7 @@
                 @if ($login::userIsAtLeast($roles::$editor))
                     <x-global::forms.button content-role="ghost" data-tippy-content="{{ __('label.copy_url_tooltip') }}"
                         {{-- onclick="leantime.dashboardController.commentsController.toggleCommentBoxes(0); jQuery('.noCommentsMessage').toggle();" --}}
-                        onclick="leantime.commentsComponent.toggleCommentBoxes(0, '{{ $formHash }}')">
+                        onclick="commentsComponent.toggleCommentBoxes(0, '{{ $formHash }}')">
                         <i class="fa fa-plus"></i> {{ __('links.add_new_report') }}
                     </x-global::forms.button>
                 @endif
@@ -45,7 +44,7 @@
                         <div class="readMore mt-[20px]" style="display: none;">
                     @endif
 
-                    <x-dashboard::project-status-comment 
+                    <x-dashboard::project-status-comment
                         :comment="$row"
                         :project_id="$project_id"
                         :ticket="$ticket ?? null"
@@ -55,9 +54,9 @@
                 @endforeach
 
                 @if (count($comments) >= 3)
-            </div> 
+            </div>
 @endif
-</div> 
+</div>
 
 @if (count($comments) == 0)
     <div style="padding-left:0px; clear:both;" class="noCommentsMessage">
@@ -66,5 +65,15 @@
 @endif
 <div class="clearall"></div>
 </x-global::content.card>
-</div>
+    </div>
+    <script type="module">
+        import "@mix('/js/Domain/Comments/Js/commentsComponent.js')"
+
+        jQuery(document).ready(function() {
+            console.log(commentsComponent);
+        });
+
+    </script>
 @endif
+
+

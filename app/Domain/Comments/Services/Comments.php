@@ -58,7 +58,6 @@ namespace Leantime\Domain\Comments\Services {
 
             //Comes back as flat list
             $comments = $this->commentRepository->getComments($module, $moduleId, $parent, $commentOrder);
-
             /* @var array<comments> */
             $commentsArray = [];
 
@@ -99,7 +98,7 @@ namespace Leantime\Domain\Comments\Services {
                 throw new AuthException('User is not authorized to add comments');
             }
 
-            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId) && isset($entity)) {
+            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId)) {
                 $mapper = [
                     'text' => $values['text'],
                     'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
@@ -109,6 +108,7 @@ namespace Leantime\Domain\Comments\Services {
                     'status' => $values['status'] ?? '',
                 ];
 
+
                 $comment = $this->commentRepository->addComment($mapper, $module);
 
                 if ($comment) {
@@ -117,7 +117,7 @@ namespace Leantime\Domain\Comments\Services {
                     $currentUrl = CURRENT_URL;
 
                     switch ($module) {
-                        case 'ticket':
+                        case 'tickets':
                             $entity = $this->ticketService->getTicket($entityId);
                             $subject = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_subject'), $this->language->__('label.'.strtolower($entity->type)), $entity->id, $entity->headline);
                             $message = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_message'), session('userdata.name'), $this->language->__('label.'.strtolower($entity->type)), $entity->headline, $values['text']);

@@ -20,7 +20,7 @@
     <div class="maincontent">
         <div class="row">
             <div class="col-md-8">
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-context-buttons>
                         <x-global::forms.button shape="circle" content-role="tertiary"
                             data-tippy-content="{{ __('label.favorite_tooltip') }}"
@@ -86,7 +86,7 @@
                     </article>
                 </x-global::content.card>
 
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-title>{{ __('headlines.latest_todos') }}</x-slot:card-title>
 
                     @if (count($tickets) == 0)
@@ -99,7 +99,7 @@
 
                 </x-global::content.card>
 
-                <x-global::content.card variation="content">
+                <x-global::content.card variation="widget">
                     <x-slot:card-title>{{ __('tabs.team') }}</x-slot:card-title>
                     @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
@@ -143,8 +143,8 @@
             <div class="col-md-4">
                 <x-dashboard::project-updates :id="$project['id']" />
 
+                <x-global::content.card variation="widget">
 
-                <x-global::content.card variation="content">
                     <x-slot:card-title>
                         {{ __('subtitles.project_progress') }}
                     </x-slot:card-title>
@@ -186,10 +186,13 @@
 
     @once
         @push('scripts')
-        <script>
-            @dispatchEvent('scripts.afterOpen')
+        <script type="module">
 
-            leantime.editorController.initSimpleEditor();
+            import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+            import "@mix('/js/Domain/Auth/Js/authController.js')"
+            import "@mix('/js/Domain/Dashboard/Js/dashboardController.js')"
+            import "@mix('/js/Domain/Help/Js/helperController.js')"
+            import "@mix('/js/Domain/Reactions/Js/reactionsController.js')"
 
             jQuery(document).ready(function() {
 
@@ -219,17 +222,17 @@
                 });
 
                 @if ($login::userIsAtLeast($roles::$editor))
-                    leantime.dashboardController.prepareHiddenDueDate();
-                    leantime.ticketsController.initEffortDropdown();
-                    leantime.ticketsController.initMilestoneDropdown();
-                    leantime.ticketsController.initStatusDropdown();
+                    dashboardController.prepareHiddenDueDate();
+                    ticketsController.initEffortDropdown();
+                    ticketsController.initMilestoneDropdown();
+                    ticketsController.initStatusDropdown();
                 @else
-                    leantime.authController.makeInputReadonly(".maincontentinner");
+                    authController.makeInputReadonly(".maincontentinner");
                 @endif
 
                 jQuery("#favoriteProject").click(function() {
                     if (jQuery("#favoriteProject").hasClass("isFavorite")) {
-                        leantime.reactionsController.removeReaction(
+                        reactionsController.removeReaction(
                             'project',
                             {!! $project['id'] !!},
                             'favorite',
@@ -239,7 +242,7 @@
                             }
                         );
                     } else {
-                        leantime.reactionsController.addReactions(
+                        reactionsController.addReactions(
                             'project',
                             {!! $project['id'] !!},
                             'favorite',
@@ -251,17 +254,16 @@
                     }
                 });
 
-                leantime.ticketsController.initDueDateTimePickers();
+                ticketsController.initDueDateTimePickers();
 
                 @if ($completedOnboarding === false)
-                    leantime.helperController.firstLoginModal();
+                    helperController.firstLoginModal();
                 @endif
 
                 @php(session(['usersettings.modals.projectDashboardTour' => 1]));
 
             });
 
-            @dispatchEvent('scripts.beforeClose')
         </script>
         @endpush
     @endonce

@@ -299,7 +299,12 @@ class Views extends ViewServiceProvider
         return $composerList;
     }
 
-    public function boot() {}
+    public function boot(BladeCompiler $blade)
+    {
+        $blade->directive('mix', function ($expression) {
+            return "<?php echo \Leantime\Core\Support\AssetHelper::mix($expression); ?>";
+        });
+    }
 
     public function getViewPaths()
     {

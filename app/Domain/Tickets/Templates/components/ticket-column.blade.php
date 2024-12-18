@@ -10,8 +10,9 @@
     'onTheClock' => false,
 ])
 @if (!empty($status))
-    <div class="column justify-content-center align-items-center" hx-get="{{ BASE_URL }}/hx/tickets/ticketColumn/get?status={{ $status }}" hx-swap="outerHTML"
-        hx-trigger="load">
+    <div class="column ticketColumn" id="ticketColumn_{{ $status }}"
+        hx-get="{{ BASE_URL }}/hx/tickets/ticketColumn/get?status={{ $status }}" hx-swap="innerHTML"
+        hx-trigger="load, reload from:body">
         <x-global::elements.loader id="loadingthis" size="25px" />
     </div>
 @else

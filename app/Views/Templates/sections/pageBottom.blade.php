@@ -26,6 +26,6 @@
     </script>
 @endif
 
-<script src="{!! BASE_URL !!}/dist/js/compiled-footer.{!! $version !!}.min.js"></script>
+<script src="@mix('js/compiled-footer.js')"></script>
 
 @dispatchEvent('beforeBodyClose')

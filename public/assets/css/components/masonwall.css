@@ -2,7 +2,7 @@
     width: 250px;
     cursor:move;
 
-    position:absolute;
+    /* position:absolute; */
 }
 
 #ideaMason .ticketBox .ticketBox {

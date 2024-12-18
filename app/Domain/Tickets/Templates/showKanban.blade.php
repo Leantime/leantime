@@ -169,10 +169,8 @@
 
     <script type="text/javascript">
         jQuery(document).ready(function() {
-            console.log("ready after settle");
             document.body.addEventListener('htmx:afterSettle', function() {
-               console.log("something");
-                // @if ($login::userIsAtLeast($roles::$editor))
+                @if ($login::userIsAtLeast($roles::$editor))
                     leantime.ticketsController.initUserDropdown();
                     leantime.ticketsController.initMilestoneDropdown();
                     leantime.ticketsController.initDueDateTimePickers();
@@ -185,9 +183,9 @@
                         @endforeach
                     ];
                     leantime.ticketsController.initTicketKanban(ticketStatusList);
-                // @else
+                @else
                     leantime.authController.makeInputReadonly(".maincontentinner");
-                // @endif
+                @endif
 
                 leantime.ticketsController.setUpKanbanColumns();
 
@@ -200,7 +198,8 @@
                 @foreach ($allTicketGroups as $group)
                     @foreach ($group['items'] as $ticket)
                         @if ($ticket['dependingTicketId'] > 0)
-                            var startElement = document.getElementById('subtaskLink_{{ $ticket['dependingTicketId'] }}');
+                            var startElement = document.getElementById(
+                                'subtaskLink_{{ $ticket['dependingTicketId'] }}');
                             var endElement = document.getElementById('ticket_{{ $ticket['id'] }}');
 
                             if (startElement != undefined && endElement != undefined) {
@@ -234,7 +233,8 @@
                                         line{{ $ticket['id'] }}.position();
                                     });
 
-                                jQuery("#ticket_{{ $ticket['dependingTicketId'] }}").mousedown(function() {})
+                                jQuery("#ticket_{{ $ticket['dependingTicketId'] }}").mousedown(
+                                        function() {})
                                     .mousemove(function() {})
                                     .mouseup(function() {
                                         line{{ $ticket['id'] }}.position();
@@ -243,6 +243,12 @@
                         @endif
                     @endforeach
                 @endforeach
+            });
+
+            jQuery("#modal-wrapper #main-page-modal").on('close', function() {
+                jQuery('.ticketColumn').each(function() {
+                    htmx.trigger(this, 'reload');
+                });
             });
         });
     </script>
