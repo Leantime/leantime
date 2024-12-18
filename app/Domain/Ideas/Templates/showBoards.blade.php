@@ -39,7 +39,7 @@
                 @if (count($allCanvas) > 0)
                     <span class="dropdown dropdownWrapper">
                         <x-global::actions.dropdown class="header-title-dropdown canvasSelector" align="start"
-                            contentRole="menu">
+                            contentRole="ghost">
                             <x-slot:labelText>
                                 {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
                             </x-slot:labelText>
@@ -75,9 +75,9 @@
                 <div class="col-md-4">
                     @if ($login::userIsAtLeast($roles::$editor))
                         @if (count($allCanvas) > 0)
-                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment">
-                                <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}
-                            </a>
+                            <x-global::forms.button tag="a" href="#/ideas/ideaDialog?type=idea" scale="sm"
+                                data-toggle="modal" data-target="#addCanvas">
+                                <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!} </x-global::forms.button>
                         @endif
                     @endif
                 </div>

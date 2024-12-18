@@ -2,9 +2,14 @@
     use Leantime\Core\Support\EditorTypeEnum;
 @endphp
 
-@props(['type', 'editorId' => md5(CURRENT_URL . $type), 'value'=>'', 'name' => 'text', 'customId' => null,
-'modal' => false,
-'diameter' => ''
+@props([
+    'type',
+    'editorId' => md5(CURRENT_URL . $type),
+    'value' => '',
+    'name' => 'text',
+    'customId' => null,
+    'modal' => false,
+    'diameter' => '',
 ])
 
 
@@ -14,21 +19,25 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => '']) }}>
-    <textarea rows="5" cols="50" class="{{ $type }} {{ $modalClass }} {{ $diameter }}" id="{{ $id }}" name="{{ $name }}">
+    <textarea rows="5" cols="50" class="{{ $type }} {{ $modalClass }} {{ $diameter }}"
+        id="{{ $id }}" name="{{ $name }}">
         {{ $value }}
     </textarea>
 </div>
 
 @once
-    <script type="text/javascript">
-        jQuery(document).ready(function() {
-            @if ($type == EditorTypeEnum::Simple->value)
-                leantime.editorController.initSimpleEditor(`{{ $id }}`);
-            @elseif ($type == EditorTypeEnum::Complex->value)
-                leantime.editorController.initComplexEditor(`{{ $id }}`);
-            @elseif ($type == EditorTypeEnum::Notes->value)
-                leantime.editorController.initNotesEditor(`{{ $id }}`);
-            @endif
-        });
-    </script>
+    @push('scripts')
+        <script type="module">
+            import "@mix('/js/Components/editors.module.mjs')";
+            jQuery(document).ready(function() {
+                @if ($type == EditorTypeEnum::Simple->value)
+                    leantime.editorController.initSimpleEditor(`{{ $id }}`);
+                @elseif ($type == EditorTypeEnum::Complex->value)
+                    leantime.editorController.initComplexEditor(`{{ $id }}`);
+                @elseif ($type == EditorTypeEnum::Notes->value)
+                    leantime.editorController.initNotesEditor(`{{ $id }}`);
+                @endif
+            });
+        </script>
+    @endpush
 @endonce
