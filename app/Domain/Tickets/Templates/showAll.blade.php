@@ -222,7 +222,7 @@
                                         type="milestone"
                                         :parentId="$row['id']"
                                         :quickaddOption="true"
-                                        quickaddPostUrl="{{ BASE_URL }}/tickets/editMilestone"
+                                        quickaddPostUrl="{{ BASE_URL }}/hx/tickets/Milestones"
                                     >
 
                                         <li class="nav-header">

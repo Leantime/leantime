@@ -19,15 +19,15 @@
 
         <form 
             hx-post={{ $postUrl }}
-            hx-swap="none"
+            hx-swap="beforeend"
+            hx-target="closest .ticketDropdown .chip-list-{{ $type }}"
             {{ $attributes->merge(["class"=> "min-w-50"]) }}
         >
             <x-global::forms.text-input type="text" name="{{ $inputName }}"
             placeholder="Enter {{ $type }} name" title="{{ __('label.headline') }}" />
         
-            
             @if($type == 'milestone')
-                <input type="hidden" name="tags" value="blue" />
+                <input type="hidden" name="tags" value="var(--primary-color)" />
                 <input type="hidden" name="editFrom" value="{{ dtHelper()->userNow()->formatDateForUser() }}" />
                 <input type="hidden" name="editTo" value="{{ dtHelper()->userNow()->addDays(30)->formatDateForUser() }}" />
             @elseif ($type == 'sprint') 

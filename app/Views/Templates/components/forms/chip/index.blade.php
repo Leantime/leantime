@@ -10,10 +10,6 @@
     'extraClass' => '',
 ])
 
-@php
-
-@endphp
-
 <div {{ $attributes->merge([ 'class' => '' ]) }}>
     <div class="dropdown ticketDropdown {{ $type }}Dropdown colorized show px-2 py-0.5 ml-1.5 {{ $extraClass }}">
         <a  
@@ -42,7 +38,7 @@
             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
 
-        <ul class="dropdown-menu" 
+        <ul class="dropdown-menu chip-list-{{ $type }}" 
             aria-labelledby="{{ $type }}DropdownMenuLink{{ $parentId }}"
         >
             {{ $slot }}
