@@ -185,6 +185,10 @@ For timesheets: <br />
 * Delete/Stop existing container
 * Pull the latest docker image and rebuild using your compose file 
 
+## ☁️ Let us install it for you. ##
+
+Hassle free installation service in your environments. We can do full installations, updates, configurations or plugin installations. See our [Marketplace](https://marketplace.leantime.io/product-category/services/technical/) for details.<br/><br/>
+
 ## ☁️ Not interested in hosting yourself? Let us do it for you ##
 
 We offer [managed hosting plans](https://leantime.io/managed-hosting/) as well as a [SaaS product](https://leantime.io/pricing/) so you can get all the benefits of Leantime without the hassle.
