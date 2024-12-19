@@ -1,8 +1,8 @@
 <div class="grid-stack-item" {{ $attributes }}>
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} p-none">
         <div class="{{ ($background == "default") ? "pb-l" : "" }}">
-            <div class="stickyHeader px-0.5 py-3.5 h-12 w-full relative" >
-                <div class="grid-handler-top h-[40px] cursor-grab float-left" style="margin: 0 5px;">
+            <div class="stickyHeader w-full relative" >
+                <div class="grid-handler-top h-[40px] cursor-grab float-left" style="margin: 0 5px;" >
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
                 @if($name != '' && $noTitle == false)
