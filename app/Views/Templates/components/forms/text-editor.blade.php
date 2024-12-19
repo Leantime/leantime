@@ -28,7 +28,6 @@
 @once
     @push('scripts')
         <script type="module">
-            import "@mix('/js/Components/editors.module.mjs')";
             jQuery(document).ready(function() {
                 @if ($type == EditorTypeEnum::Simple->value)
                     leantime.editorController.initSimpleEditor(`{{ $id }}`);

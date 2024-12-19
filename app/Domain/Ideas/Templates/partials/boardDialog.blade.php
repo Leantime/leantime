@@ -24,7 +24,7 @@
             </x-global::forms.button>
         @endif
 
-        <x-global::forms.button scale="xs" type="button" content-role="secondary" data-dismiss="modal">
+        <x-global::forms.button scale="xs" type="button" content-role="ghost" data-dismiss="modal">
             {!! __('buttons.close') !!}
         </x-global::forms.button>
     </div>
