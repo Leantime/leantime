@@ -101,10 +101,20 @@ class UpdateLeantime extends Command
 
         $io->text('Extracting Archive...');
 
-        $zip = new \ZipArchive;
-        $zip->open($zipFile);
-        $zip->extractTo(storage_path('/framework/cache/leantime'));
-        $zip->close();
+        try {
+            $zip = new \ZipArchive;
+        } catch (Exception $e) {
+            $io->text('ZipArchive not found.  Cannot auto-update until the php zip extension is installed. On linux, \'sudo apt install php-zip\'');
+            return self::FAILURE;
+        }
+        if ($zip->open($zipFile) === TRUE) {
+            $zip->extractTo(storage_path('/framework/cache/leantime'));
+            $zip->close();
+            $io->sucess('New update zip file successfully extracted to ' . storage_path('/framework/cache/leantime'));
+        } else {
+            $io->text('Error opening downloaded zip file!');
+            return self::FAILURE;
+        }
 
         //Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         //If we got here everything is ready to go and we just need to move the files.
@@ -125,8 +135,15 @@ class UpdateLeantime extends Command
 
         //Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Applying Update');
-        exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/');
+        exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/', $cp_output, $cp_retval);
+        echo "Returned with status $cp_retval and output:\n";
+        print_r($cp_output);
+
+        if ($cp_retval == 0)
         $io->success('Files were updated');
+        else {
+            return Self::FAILURE;
+        }
 
         //Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Clearing Cache');
