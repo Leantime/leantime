@@ -112,8 +112,5 @@ class ProjectHubProjects extends HtmxController
         $this->tpl->assign('currentClient', $clientId);
         $this->tpl->assign('clients', $clients);
         $this->tpl->assign('allProjects', $projectResults);
-
-        $response = $this->tpl->displayPartial('projects::partials.projectHubProjects');
-        return $response;
     }
 }
