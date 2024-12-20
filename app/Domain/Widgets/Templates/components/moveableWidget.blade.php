@@ -52,7 +52,7 @@
             leantime.widgetController.resizeWidget(gridItem);
         })
 
-        jQuery('#removeWidget').on('click', function(e) {
+        jQuery('.removeWidget').on('click', function(e) {
             // const gridItem = jQuery(this).closest('.grid-stack-item')[0];
             leantime.widgetController.toggleWidgetVisibility();
         });
