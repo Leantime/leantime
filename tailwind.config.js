@@ -8,7 +8,7 @@ module.exports = {
         './app/Core/UI/Template.php',
         './storage/framwork/views/*.php',
         './app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php',
-        './public/less/*'
+        './public/assets/less/*'
     ],
     theme:  {
         fontFamily: {
@@ -59,6 +59,15 @@ module.exports = {
             full: '9999px',
             round: '9999px',
             pill: '3.5rem',
+        },
+        spacing: {
+            0: '0',
+            none: '0',
+            sm: '0.25rem',
+            md: '0.75rem',
+            lg: '1rem',
+            xl: '1.5rm',
+            xxl: '2.5rm',
         },
         colors: {
             transparent: 'transparent',

@@ -108,12 +108,9 @@
                 </li>
                 @dispatchEvent('afterProjectCreateLink')
             @endif
-
-
-                <li>
-                    <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
-                </li>
-
+            <li>
+                <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+            </li>
         </ul>
     </div>
 

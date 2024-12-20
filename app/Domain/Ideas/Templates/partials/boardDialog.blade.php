@@ -8,12 +8,12 @@
 
     <div class="modal-body">
         <x-global::forms.text-input
-        type="text"
-        name="canvastitle"
-        value="{{ $canvasTitle }}"
-        labelText="{{ __('label.title_new') }}"
-        placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
-        variant="title"
+            type="text"
+            name="canvastitle"
+            value="{{ $canvasTitle }}"
+            labelText="{{ __('label.title_new') }}"
+            placeholder="{{ __('input.placeholders.enter_title_for_board') }}"
+            variant="title"
     />
 
     </div>

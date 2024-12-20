@@ -1,8 +1,6 @@
-
 @php
     $lastClient = '';
 @endphp
-
 <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
@@ -45,7 +43,7 @@
             @endif
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
-                @include('menu::includes.projectLink')
+                <x-projects::projectCard :project="$project" variant="compact"></x-projects::projectCard>
                 <div class="clear"></div>
             </li>
         @endif
