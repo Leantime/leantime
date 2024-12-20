@@ -73,7 +73,6 @@ class ProjectHubProjects extends HtmxController
 
     public function get()
     {
-
         $clientId = '';
         $currentClientName = '';
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
@@ -113,5 +112,8 @@ class ProjectHubProjects extends HtmxController
         $this->tpl->assign('currentClient', $clientId);
         $this->tpl->assign('clients', $clients);
         $this->tpl->assign('allProjects', $projectResults);
+
+        $response = $this->tpl->displayPartial('projects::partials.projectHubProjects');
+        return $response;
     }
 }
