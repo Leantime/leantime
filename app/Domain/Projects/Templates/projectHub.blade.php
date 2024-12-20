@@ -105,7 +105,7 @@
                         @endphp
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == true)
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
                                 </div>
                                 @php
