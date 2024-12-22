@@ -39,6 +39,7 @@
  *
  */
 .ts-control {
+    border: none !important;
     border: 1px solid #d0d0d0;
     padding: 8px 8px;
     width: 100%;
@@ -55,7 +56,8 @@
     padding: calc(8px - 2px - 0) 8px calc(8px - 2px - 3px - 0);
 }
 .full .ts-control {
-    background-color: #fff;
+    /* background-color: #fff; */
+    background-color: transparent;
 }
 .disabled .ts-control, .disabled .ts-control * {
     cursor: default !important;
@@ -422,6 +424,7 @@
 .ts-wrapper.single.input-active .ts-control {
     background: #fff;
     cursor: text;
+    background-color: transparent;
 }
 
 .ts-hidden-accessible {
