@@ -205,13 +205,6 @@
 }
 
 
-
-.nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav li,
-.maincontentinner .tab-primary.ui-tabs .ui-tabs-nav li{
-    border-color:var(--neutral)
-}
-
-
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord {
 

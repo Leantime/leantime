@@ -8,7 +8,7 @@ module.exports = {
         './app/Core/UI/Template.php',
         './storage/framwork/views/*.php',
         './app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php',
-        './public/assets/less/*'
+        './public/assets/less/{base,components,utilities}/*.css',
     ],
     theme:  {
         fontFamily: {
@@ -59,15 +59,6 @@ module.exports = {
             full: '9999px',
             round: '9999px',
             pill: '3.5rem',
-        },
-        spacing: {
-            0: '0',
-            none: '0',
-            sm: '0.25rem',
-            md: '0.75rem',
-            lg: '1rem',
-            xl: '1.5rm',
-            xxl: '2.5rm',
         },
         colors: {
             transparent: 'transparent',
@@ -233,7 +224,16 @@ module.exports = {
             },
             "pagetitle-content" : "#fff",
         },
+        extend: {
+            spacing: {
+                'sm': '0.5rem',
+                'md': '1rem',
+                'lg': '1rem',
+            }
+        },
+
     },
+
     daisyui: {
         base: true,
         themes: [{
@@ -264,8 +264,6 @@ module.exports = {
                 'error' :  '#aa0909',             /* Error */
 
                 'text-sm': '0.938rem',
-
-
 
                 "--rounded-box": '1.5rem', // biggest elements, large content cards
                 "--rounded-element": '1rem', //Second biggest element dropdowns, content cards

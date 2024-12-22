@@ -1,6 +1,6 @@
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
-
+    'selectable' => false,
     'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
     'state' => '',
 
@@ -80,3 +80,7 @@
         </ul>
     @endif
 </div>
+
+<script>
+    //selectable logic. When someone selects something the button label needs to change.
+</script>

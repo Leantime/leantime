@@ -4,13 +4,13 @@
     'formHash' => md5(CURRENT_URL."projectBox".mt_rand(0,100)),
 ])
 
-<div class="projectBox @if($variant==='compact') border-none p-0 @endif" id="projectBox-{{ $formHash }}-{{ $project['id'] }}">
+<div class="objectCard {{ $variant }}" id="projectBox-{{ $formHash }}-{{ $project['id'] }}">
     <div class="row">
         <div class="col-md-12 fixed">
-            <div class="row pb-sm">
-                <div class="col-md-10">
-                    <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}">
-                        <span class="projectAvatar">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}" class="objectLink">
+                        <span class="avatar">
                             @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
                                 <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
                             @else

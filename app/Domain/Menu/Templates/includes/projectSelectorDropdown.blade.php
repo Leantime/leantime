@@ -9,35 +9,35 @@
         <span class="title">{{ session("currentProjectName") }}</span>
     </div>
 @else
-    <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
-    <ul class="selectorList projectList" hx-boost="true" hx-indicator="#global-loader">
-        <li>
-            <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
-        </li>
-
-        @if ($login::userIsAtLeast("manager"))
-            @dispatchEvent('beforeProjectCreateLink')
-            <li><a href="{{ $startSomethingUrl }}">
-                    <span class="fancyLink">
-                        {!! __('menu.create_something_new') !!}
-                    </span>
-                </a>
+    <div class="projectSelectorFooter">
+        <ul class="menu p-0" hx-boost="true" hx-indicator="#global-loader">
+            <li>
+                <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
             </li>
-            @dispatchEvent('afterProjectCreateLink')
-        @endif
 
-    </ul>
+            @if ($login::userIsAtLeast("manager"))
+                @dispatchEvent('beforeProjectCreateLink')
+                <li><a href="{{ $startSomethingUrl }}">
+                        <span class="fancyLink">
+                            {!! __('menu.create_something_new') !!}
+                        </span>
+                    </a>
+                </li>
+                @dispatchEvent('afterProjectCreateLink')
+            @endif
+
+        </ul>
     </div>
 @endif
 
-<x-global::content.tabs class="overflow-y-scroll max-h-[500px] border-b !border-b-gray-500">
+<x-global::content.tabs >
     <x-slot:headings>
         <x-global::content.tabs.heading name="myProjects">{{ __('menu.projectselector.my_projects') }}</x-global::content.tabs.heading>
         <x-global::content.tabs.heading name="favorites">{{ __('menu.projectselector.favorites') }}</x-global::content.tabs.heading>
         <x-global::content.tabs.heading name="recent">{{ __('menu.projectselector.recent') }}</x-global::content.tabs.heading>
         <x-global::content.tabs.heading name="allProjects">{{ __('menu.projectselector.all_projects') }}</x-global::content.tabs.heading>
     </x-slot:headings>
-    <x-slot:contents>
+    <x-slot:contents class="max-h-[90vh]">
         <x-global::content.tabs.content name="myProjects" class="">
             @include('menu::includes.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
             <ul class="selectorList projectList htmx-indicator htmx-loaded-content">

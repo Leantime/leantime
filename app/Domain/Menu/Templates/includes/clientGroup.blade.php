@@ -1,7 +1,7 @@
 @php
     $lastClient = '';
 @endphp
-<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup" hx-boost="true" hx-indicator="#global-loader">
+<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $level > 0 ? 'pl-sm' : '' }}" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
         @php
@@ -16,7 +16,6 @@
            )
 
             @if ($lastClient != $project['clientName'])
-
                 @php
                     $lastClient = $project['clientName']
                 @endphp

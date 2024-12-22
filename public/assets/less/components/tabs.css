@@ -1,0 +1,20 @@
+
+.tabs-headings {
+    @apply mb-sm;
+}
+
+.tabs-boxed {
+    @apply bg-base-content/5 rounded-btn p-1;
+
+    .tab {
+        @apply hover:bg-base-content/10;
+
+        &.tab-active {}
+
+    }
+
+}
+
+
+
+
