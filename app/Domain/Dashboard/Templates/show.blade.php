@@ -23,15 +23,16 @@
                 <x-global::content.card variation="widget">
                     <x-slot:card-context-buttons>
                         <x-global::forms.button shape="circle" content-role="tertiary"
+                            id="favoriteProject"
                             data-tippy-content="{{ __('label.favorite_tooltip') }}"
-                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')"
                             class="{{ $isFavorite ? 'btn-active' : '' }}">
                             <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                         </x-global::forms.button>
 
                         <x-global::forms.button shape="circle" content-role="tertiary"
                             data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}')">
+                            onclick="leantime.snippets.copyToClipboard('{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}')"
+                            >
                             <i class='fa fa-link'></i>
                         </x-global::forms.button>
 
