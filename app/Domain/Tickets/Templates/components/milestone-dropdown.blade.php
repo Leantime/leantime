@@ -16,6 +16,7 @@
         contentRole="link"
         position="bottom" 
         align="start"
+        :selectable="true"
     >
         <x-slot:menu>
             <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
@@ -35,6 +36,7 @@
                     data-value="{{ $ticket['id'] . '_' . $milestone->id . '_' . $milestone->tags }}"
                     id="ticketMilestoneChange{{ $ticket['id'] . $milestone->id }}"
                     style="background-color: {{ $milestone->tags }}"
+                    data-style="background-color: {{ $milestone->tags }}"
                 >
                     {{ $milestone->headline }}
                 </x-global::actions.dropdown.item>
