@@ -38,7 +38,7 @@
             $typeClass = 'btn-link text-primary hover:bg-primary/20 ';
             break;
         default:
-            $typeClass = 'btn-primary border-primary hover:bg-primary ';
+            $typeClass = 'btn-primary border-primary hover:bg-primary/80 ';
     }
     $sizeClass = $scale ? 'btn-'.$scale : 'btn-sm';
     $stateClass = $state ? 'btn-'.$state : '';
