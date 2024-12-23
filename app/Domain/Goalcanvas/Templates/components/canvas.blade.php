@@ -22,9 +22,9 @@
                 href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasId }}">
                 <i class="fa fa-plus"></i> Create New Goal
             </x-global::forms.button>
-            <h5 class='subtitle'>
-                <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasId }}'>
-                    {{ $canvasTitle }}
+            <h5 class="text-3xl	font-bold">
+                <a class="text-primary" href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasId }}'>
+                    {{ $canvas->title }}
                 </a>
             </h5>
         </div>
