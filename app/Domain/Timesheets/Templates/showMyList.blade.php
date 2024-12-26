@@ -26,7 +26,7 @@ use Leantime\Core\Support\FromFormat;
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
 
-            <div class="relative">
+            <div class="pull-left">
                 <x-global::actions.dropdown variant="card" content-role="ghost" cardLabel="Filter Options">
                     <x-slot:labelText>
                         {!! __("links.filter") !!} (1)
@@ -40,13 +40,15 @@ use Leantime\Core\Support\FromFormat;
                                    class="dateFrom"
                                    name="dateFrom"
                                    value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
-                                   style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                                   {{-- style="margin-bottom:10px; width:90px; float:left; margin-right:10px" --}}
+                            />
                             <input type="text"
                                    id="dateTo"
                                    class="dateTo"
                                    name="dateTo"
                                    value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
-                                   style="margin-bottom:10px; width:90px" />
+                                   {{-- style="margin-bottom:10px; width:90px"         --}}
+                            />
                         </div>
                 
                         <div>
