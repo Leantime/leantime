@@ -12,7 +12,6 @@
     'diameter' => '',
 ])
 
-
 @php
     $id = $customId ?? "editor-$editorId";
     $modalClass = $modal ? 'modalTextArea' : '';

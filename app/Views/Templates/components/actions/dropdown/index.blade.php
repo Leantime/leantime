@@ -12,6 +12,10 @@
     'buttonVariant' => '',
     'scale' => '',
     'selectable' => false, // Add selectable prop with default false
+    'selectableUpdateColor' => false,
+
+    'buttonStyle' => '', // this is to sytle the button accoridng the saved option
+    'indicatorClass' => '', // this is to sytle the button accoridng the saved option
 ])
 
 @php
@@ -92,6 +96,19 @@
             const $dropdown = $button.closest('.dropdown');
             const $items = $dropdown.find('[data-selectable-item] li, [data-selectable-item] li a');
 
+            @if ($selectable == true)
+                @if (!empty($buttonStyle))
+                    $button.attr('style', '{{ $buttonStyle }}');
+                    $button.attr('style', 'color: #fff;');
+                @endif
+
+                @if (!empty($indicatorClass))
+                    $button.removeClass();
+                    $button.addClass('{{ $indicatorClass }} hover:bg-ghost');
+                    $button.attr('style', 'color: #fff;');
+                @endif
+            @endif
+
             $items.on('click', function(e) {
                 e.preventDefault();
                 const $selectedItem = $(this);
@@ -110,8 +127,17 @@
                     $li.attr('style') ||
                     $li.attr('data-style');
 
+                const indicatorClass = $selectedItem.attr('data-class') || $li.attr(
+                    'data-class');
+
                 if (style) {
                     $button.attr('style', style + '; color: #fff;');
+                }
+
+                if (indicatorClass) {
+                    // Remove all CSS classes from the button element before adding new ones
+                    $button.removeClass();
+                    $button.addClass(indicatorClass + ' hover:bg-ghost');
                 }
             });
         });
