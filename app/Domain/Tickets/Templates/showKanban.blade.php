@@ -167,27 +167,28 @@
 
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+        import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
         jQuery(document).ready(function() {
             document.body.addEventListener('htmx:afterSettle', function() {
                 @if ($login::userIsAtLeast($roles::$editor))
-                    leantime.ticketsController.initUserDropdown();
-                    leantime.ticketsController.initMilestoneDropdown();
-                    leantime.ticketsController.initDueDateTimePickers();
-                    leantime.ticketsController.initEffortDropdown();
-                    leantime.ticketsController.initPriorityDropdown();
+                    ticketsController.initUserDropdown();
+                    ticketsController.initMilestoneDropdown();
+                    ticketsController.initDueDateTimePickers();
+                    ticketsController.initEffortDropdown();
+                    ticketsController.initPriorityDropdown();
 
                     var ticketStatusList = [
                         @foreach ($tpl->get('allTicketStates') as $key => $statusRow)
                             '{{ $key }}',
                         @endforeach
                     ];
-                    leantime.ticketsController.initTicketKanban(ticketStatusList);
+                    ticketsController.initTicketKanban(ticketStatusList);
                 @else
                     leantime.authController.makeInputReadonly(".maincontentinner");
                 @endif
 
-                leantime.ticketsController.setUpKanbanColumns();
+                ticketsController.setUpKanbanColumns();
 
                 @if (isset($_GET['showTicketModal']))
                     @php

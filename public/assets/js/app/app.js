@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initializeCore();
 });
 
-import 'js/libs/uppy/uppy';
 
+// these module are probably not being loaded by the module loader
+import 'js/libs/uppy/uppy';
+import SlimSelect from 'js/libs/slimselect';
+window.SlimSelect = SlimSelect;
 
 /*
 

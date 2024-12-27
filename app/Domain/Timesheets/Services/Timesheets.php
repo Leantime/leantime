@@ -303,7 +303,7 @@ class Timesheets
             //to avoid timezone collisions we disable adding new times to rows that were created in an different timezone
             $timezonedTime = $currentWorkDate->format('H:i:s');
 
-            $groupKey = $timesheet['ticketId'].'-'.$timesheet['kind'].'-'.$timezonedTime;
+            $groupKey = $timesheet['ticketId'] . '-' . $timesheet['kind'] . '-' . $timezonedTime;
             if (! isset($timesheetGroups[$groupKey])) {
                 // Build an array of 7 days for the weekly timesheet. Include the start date of the current users
                 // timezone in UTC. That way we can compare the dates coming from the db
@@ -379,13 +379,13 @@ class Timesheets
             // If the value is not exact but falls within the time period we're adding a new row
             for ($i = 1; $i < 8; $i++) {
 
-                $start = $timesheetGroups[$groupKey]['day'.$i]['start'];
-                $end = $timesheetGroups[$groupKey]['day'.$i]['end'];
+                $start = $timesheetGroups[$groupKey]['day' . $i]['start'];
+                $end = $timesheetGroups[$groupKey]['day' . $i]['end'];
 
                 if ($currentWorkDate->gte($start) && $currentWorkDate->lt($end)) {
-                    $timesheetGroups[$groupKey]['day'.$i]['hours'] += $timesheet['hours'];
-                    $timesheetGroups[$groupKey]['day'.$i]['actualWorkDate'] = $currentWorkDate;
-                    $timesheetGroups[$groupKey]['day'.$i]['description'] = $timesheet['description'];
+                    $timesheetGroups[$groupKey]['day' . $i]['hours'] += $timesheet['hours'];
+                    $timesheetGroups[$groupKey]['day' . $i]['actualWorkDate'] = $currentWorkDate;
+                    $timesheetGroups[$groupKey]['day' . $i]['description'] = $timesheet['description'];
 
                     // No need to check further, we found what we came for
                     break;
@@ -440,7 +440,6 @@ class Timesheets
         }
 
         return $timesheets;
-
     }
 
     /**
@@ -454,7 +453,7 @@ class Timesheets
 
         foreach ($timesheets as $key => $timesheet) {
             $timesheets[$key] = $this->prepareDatesForApiResponse($timesheet);
-            $timesheets[$key]['id'] = $timesheet['id'].'-'.$timesheet['modified'];
+            $timesheets[$key]['id'] = $timesheet['id'] . '-' . $timesheet['modified'];
         }
 
         return $timesheets;
@@ -494,6 +493,5 @@ class Timesheets
         }
 
         return $timesheet;
-
     }
 }
