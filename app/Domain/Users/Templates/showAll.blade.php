@@ -24,7 +24,7 @@ $roles = $tpl->get('roles');
             <div class="col-md-6">
                 <x-global::forms.button
                     href="{{ BASE_URL }}/users/newUser"
-                    cointent-role="primary"
+                    content-role="primary"
                     tag="a"
                 >
                     <i class='fa fa-plus'></i> {{ __('buttons.add_user') }}
