@@ -12,7 +12,6 @@
     'diameter' => '',
 ])
 
-
 @php
     $id = $customId ?? "editor-$editorId";
     $modalClass = $modal ? 'modalTextArea' : '';
@@ -25,18 +24,15 @@
     </textarea>
 </div>
 
-@once
-    @push('scripts')
-        <script type="module">
-            jQuery(document).ready(function() {
-                @if ($type == EditorTypeEnum::Simple->value)
-                    leantime.editorController.initSimpleEditor(`{{ $id }}`);
-                @elseif ($type == EditorTypeEnum::Complex->value)
-                    leantime.editorController.initComplexEditor(`{{ $id }}`);
-                @elseif ($type == EditorTypeEnum::Notes->value)
-                    leantime.editorController.initNotesEditor(`{{ $id }}`);
-                @endif
-            });
-        </script>
-    @endpush
-@endonce
+<script type="module">
+    import "@mix('/js/Components/editors.module.js')"
+    jQuery(document).ready(function() {
+        @if ($type == EditorTypeEnum::Simple->value)
+            editors.initSimpleEditor(`{{ $id }}`);
+        @elseif ($type == EditorTypeEnum::Complex->value)
+            editors.initComplexEditor(`{{ $id }}`);
+        @elseif ($type == EditorTypeEnum::Notes->value)
+            editors.initNotesEditor(`{{ $id }}`);
+        @endif
+    });
+</script>

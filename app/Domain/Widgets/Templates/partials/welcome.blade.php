@@ -14,7 +14,7 @@
     <div style="padding:10px 0px">
 
         <div class="center">
-            <span style="font-size:44px; color:var(--main-titles-color); display: inline-block; margin-top: -100px;">
+            <span style="font-size:44px; color:var(--main-titles-color); display: inline-block; margin-top: 10px;">
                 {{ dtHelper()->userNow()->formatTimeForUser() }}
             </span><br />
             <span style="font-size:24px; color:var(--main-titles-color);">
