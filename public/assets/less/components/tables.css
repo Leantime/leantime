@@ -1,0 +1,53 @@
+/* General */
+.dt-container {
+    @apply flex flex-col gap-4;
+}
+
+.dt-layout-row {
+    @apply flex justify-between items-center;
+}
+
+.dt-layout-table {
+    @apply rounded-box overflow-hidden border border-[#ddd];
+}
+
+.dt-layout-full {
+    @apply w-full overflow-x-auto overflow-y-visible;
+}
+
+/* Pagination */
+.dt-paging [aria-label=pagination] {
+    @apply join overflow-hidden;
+}
+
+.dt-paging-button {
+    @apply btn btn-sm rounded-none join-item;
+}
+
+.dt-paging-button.disabled {
+    @apply btn-disabled;
+}
+
+.dt-paging-button.current,
+.dt-button-active {
+    @apply !btn-active;
+}
+
+/* Inputs */
+select.dt-input {
+    @apply select select-bordered select-sm max-w-max;
+}
+
+.dt-button-background,
+.dt-button-collection {
+    @apply absolute z-10;
+}
+
+.dt-button-collection [role=menu] {
+    @apply menu bg-base-200 rounded-box w-fit;
+}
+
+.dt-button {
+    @apply btn btn-sm btn-ghost;
+}
+

@@ -407,21 +407,17 @@ if (! function_exists('currentRoute')) {
 
     function currentRoute()
     {
-
         return app('request')->getCurrentRoute();
-
     }
 }
 
 if (! function_exists('get_domain_key')) {
-
     /**
      * Gets a unique instance key determined by domain
      *
      */
     function get_domain_key()
     {
-
         //Now that we know where the instance is bing called from
         //Let's add a domain level cache.
         $domainCacheName = 'localhost';
@@ -430,7 +426,147 @@ if (! function_exists('get_domain_key')) {
         }
 
         return $domainCacheName;
-
     }
+}
 
+if (! function_exists('phar_glob')) {
+    /**
+     * Glob function for phar files
+     * @param string $pattern Pattern must start with 'phar://'
+     * @return array Array of matching paths (both files and directories)
+     * @throws \Exception When path doesn't start with 'phar://'
+     */
+    function phar_glob(string $pattern): array
+    {
+        if (!str_starts_with($pattern, 'phar://')) {
+            throw new \Exception('phar_glob only works with phar:// paths');
+        }
+
+        // Remove phar:// prefix for processing
+        $pharPath = substr($pattern, 7);
+
+        // Split into phar archive path and internal path
+        $pharFile = explode('.phar', $pharPath, 2)[0] . '.phar';
+        if (!file_exists($pharFile)) {
+            return [];
+        }
+
+        // Normalize slashes
+        $pattern = str_replace('\\', '/', $pharPath);
+
+        // Split pattern into path segments
+        $segments = explode('/', $pattern);
+        $filename = array_pop($segments);
+
+        // Find the base path (up to first wildcard)
+        $baseSegments = [];
+        foreach ($segments as $segment) {
+            if (strpbrk($segment, '*?[') !== false) {
+                break;
+            }
+            $baseSegments[] = $segment;
+        }
+
+        $basePath = 'phar://' . implode('/', $baseSegments);
+        $segments = array_slice($segments, count($baseSegments));
+
+        $convertToRegex = fn ($string) => strtr(preg_quote($string, '/'), [
+            '\*' => '[^/]*',
+            '\?' => '[^/]',
+            '\[' => '[',
+            '\]' => ']',
+        ]);
+
+        // Convert remaining path segments and filename to regex patterns
+        $pathRegexes = array_map($convertToRegex, $segments);
+        $fileRegex = $convertToRegex($filename);
+
+        $results = [];
+
+        try {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($basePath, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::SELF_FIRST
+            );
+
+            foreach ($iterator as $file) {
+                // Get the path relative to the base
+                $fullPath = str_replace('\\', '/', $file->getPathname());
+                $relativePath = substr($fullPath, strlen($basePath) + 1);
+                if ($relativePath === false) {
+                    continue;
+                }
+
+                $relativeSegments = explode('/', $relativePath);
+
+                // Check if path segments match
+                if (count($relativeSegments) !== count($segments) + 1) {
+                    continue;
+                }
+
+                // Check each directory in the path
+                $match = true;
+                for ($i = 0; $i < count($segments); $i++) {
+                    if (!preg_match('/^' . $pathRegexes[$i] . '$/', $relativeSegments[$i])) {
+                        $match = false;
+                        break;
+                    }
+                }
+
+                // Check final segment
+                if ($match && preg_match('/^' . $fileRegex . '$/', end($relativeSegments))) {
+                    $results[] = $file->getPathname();
+                }
+            }
+        } catch (UnexpectedValueException) {
+            return [];
+        }
+
+        return $results;
+    }
+}
+
+if (! function_exists('safe_add_nested')) {
+    function safe_add_nested(
+        array &$array,
+        string $key,
+        mixed $value,
+        bool $merge = false
+    ): void {
+        if (empty($key) || str_contains($key, '..')) {
+            throw new InvalidArgumentException('Invalid key format');
+        }
+
+        if (str_contains($key, '.')) {
+            $parts = explode('.', $key);
+            $current = &$array;
+
+            foreach ($parts as $part) {
+                $current[$part] ??= [];
+                if (!is_array($current[$part])) {
+                    throw new RuntimeException("Cannot add to non-array value at key '$part'");
+                }
+                $current = &$current[$part];
+            }
+
+            if (is_array($value) && $merge) {
+                $current = array_merge($current, $value);
+            } else {
+                $current = $value;
+            }
+
+            return;
+        }
+
+        if (is_array($value) && $merge) {
+            $array[$key] ??= [];
+            if (!is_array($array[$key])) {
+                throw new RuntimeException("Cannot merge with non-array value at key '$key'");
+            }
+            $array[$key] = array_merge($array[$key], $value);
+            return;
+        }
+
+        $array[$key] = $value;
+    }
 }

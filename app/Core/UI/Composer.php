@@ -32,14 +32,13 @@ abstract class Composer
      *
      * @throws BindingResolutionException
      */
-    public function compose(mixed $parameters): void
+    final public function compose(mixed $parameters): void
     {
-
-        if(is_array($parameters)) {
+        if (is_array($parameters)) {
             $this->view = $parameters[0];
         }
 
-        if($parameters instanceof \Illuminate\Contracts\View\View) {
+        if ($parameters instanceof \Illuminate\Contracts\View\View) {
             $this->view = $parameters;
         }
 

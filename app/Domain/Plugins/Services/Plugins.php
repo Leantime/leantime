@@ -180,8 +180,8 @@ namespace Leantime\Domain\Plugins\Services {
             return self::dispatchFilter(
                 hook: "beforeReturnCachedPlugins",
                 payload: Cache::store("installation")->get("enabledPlugins"),
-                available_params: array("enabledOnly" => true));
-
+                available_params: array("enabledOnly" => true)
+            );
         }
 
         /**

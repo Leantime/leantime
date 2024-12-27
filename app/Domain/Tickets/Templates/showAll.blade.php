@@ -58,7 +58,7 @@
             }
             @endphp
 
-            <x-global::elements.table class="ticketTable display" style="width:100%">
+            <x-global::elements.table class="ticketTable display w-full">
                 <x-slot:header>
                     @foreach ($allTicketGroups as $group)
                         @if ($group['label'] != 'all')

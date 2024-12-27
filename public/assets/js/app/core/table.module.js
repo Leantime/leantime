@@ -1,94 +1,141 @@
-import i18n from 'i18n';
 import DataTable from 'datatables.net';
 import 'datatables.net-buttons';
-// import 'datatables.net-rowgroup';
-// import 'datatables.net-rowreorder';
+import 'datatables.net-buttons/js/buttons.colVis.mjs';
+import 'datatables.net-buttons/js/buttons.html5.mjs';
 import 'datatables.net-colreorder';
 import 'datatables.net-responsive';
 
-const generateTableSettings = () => ({
-    language: {
-        decimal: i18n.__("datatables.decimal"),
-        emptyTable:     i18n.__("datatables.emptyTable"),
-        info:           i18n.__("datatables.info"),
-        infoEmpty:      i18n.__("datatables.infoEmpty"),
-        infoFiltered:   i18n.__("datatables.infoFiltered"),
-        infoPostFix:    i18n.__("datatables.infoPostFix"),
-        thousands:      i18n.__("datatables.thousands"),
-        lengthMenu:     i18n.__("datatables.lengthMenu"),
-        loadingRecords: i18n.__("datatables.loadingRecords"),
-        processing:     i18n.__("datatables.processing"),
-        search:         i18n.__("datatables.search"),
-        zeroRecords:    i18n.__("datatables.zeroRecords"),
-        paginate: {
-            first:      i18n.__("datatables.first"),
-            last:       i18n.__("datatables.last"),
-            next:       i18n.__("datatables.next"),
-            previous:   i18n.__("datatables.previous"),
-        },
-        aria: {
-            sortAscending:  i18n.__("datatables.sortAscending"),
-            sortDescending:i18n.__("datatables.sortDescending"),
-        },
-        buttons: {
-            colvis: i18n.__("datatables.buttons.colvis"),
-            csv: i18n.__("datatables.buttons.download")
-        }
-    },
-    // dom: '<"top">brt<"bottom"><"clear">',
-    // dom: 'Bfrtip',
-    // searching: false,
-    // stateSave: true,
-    // displayLength:100,
-    // order: [],
-    // columnDefs: [
-    //     {
-    //         visible: false,
-    //         targets: 7
-    //     },
-    //     {
-    //         visible: false,
-    //         targets: 8
-    //     },
-    //     {
-    //         target: "no-sort",
-    //         orderable: false
-    //     },
-    // ],
-    colReorder: true,
-    responsive: true,
-    saveState: false,
-    // buttons: true,
-    // buttons: [
-    //     'columnVisibility',
-    //     'collection',
-    //     'colvis',
-    //     'print',
-    //     'colvisGroup',
-    //     'colvisRestore',
-    // ],
-    // layout: {
-    //     topStart: {
-    //         buttons: [
-    //             'collection',
-    //             'columnVisibility',
-    //             'colvis',
-    //             'print',
-    //             'colvisGroup',
-    //             'colvisRestore',
-    //         ],
-    //     },
-    // },
-});
+class ColumnResizer {
+    constructor(table) {
+        this.table = table;
+        this.currentHeader = null;
+        this.startX = null;
+        this.startWidth = null;
 
-const initDataTable = (element) => {
-    const table = new DataTable(element, generateTableSettings());
-    new DataTable.Buttons(table, {
-        buttons: [
-            'copy', 'excel', 'pdf', 'colvis', 'collection'
-        ]
-    });
-    console.log(table);
+        // Store the original mouseDown function
+        this.originalValidateMove = DataTable.ColReorder.prototype._mouseDown;
+
+        // Bind methods to maintain correct 'this' context
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+
+        // Override ColReorder's mouseDown
+        this.overrideColReorder();
+    }
+
+    overrideColReorder() {
+        DataTable.ColReorder.prototype._mouseDown = (e, cell) => {
+            const target = e.target;
+            if (
+                target.classList.contains('resize-handle')
+                || target.closest('.resizing')
+                || target.closest('th')?.classList.contains('resizing')
+            ) {
+                return false;
+            }
+            return this.originalValidateMove.call(this, e, cell);
+        };
+    }
+
+    init(selector) {
+        const handlers = selector.querySelectorAll('.resize-handle');
+        if (!handlers.length) return;
+
+        handlers.forEach(handler => {
+            handler.addEventListener('mousedown', this.handleMouseDown);
+        });
+    }
+
+    handleMouseDown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.currentHeader = e.target.closest('th');
+        this.startX = e.pageX;
+        this.startWidth = this.currentHeader.offsetWidth;
+
+        this.currentHeader.classList.add('resizing');
+
+        window.addEventListener('mousemove', this.handleMouseMove);
+        window.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    handleMouseMove(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!this.currentHeader?.classList.contains('resizing')) return;
+
+        requestAnimationFrame(() => {
+            this.updateColumnWidth(e);
+        });
+    }
+
+    handleMouseUp(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!this.currentHeader) return;
+
+        window.removeEventListener('mousemove', this.handleMouseMove);
+        window.removeEventListener('mouseup', this.handleMouseUp);
+
+        this.currentHeader.classList.remove('resizing');
+        this.currentHeader = null;
+        this.startX = null;
+        this.startWidth = null;
+    }
+
+    updateColumnWidth(e) {
+        // Calculate new width
+        const diffX = e.pageX - this.startX;
+        const newWidth = Math.max(50, this.startWidth + diffX);
+
+        // Get column index
+        const headerRow = this.currentHeader.closest('tr');
+        const columnIndex = Array.from(headerRow.children).indexOf(this.currentHeader);
+
+        // Update header width
+        this.currentHeader.style.width = `${newWidth}px`;
+        this.currentHeader.style.minWidth = `${newWidth}px`;
+
+        const table = this.currentHeader.closest('table');
+        if (!table) return;
+
+        // Update colgroup if it exists
+        const colgroup = table.querySelector('colgroup');
+        if (colgroup?.children[columnIndex]) {
+            colgroup.children[columnIndex].style.width = `${newWidth}px`;
+        }
+
+        // Update body cells
+        const cells = table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`);
+        cells.forEach(cell => {
+            cell.style.width = `${newWidth}px`;
+            cell.style.minWidth = `${newWidth}px`;
+        });
+
+        // Adjust DataTable columns
+        const dtApi = DataTable.Api(table);
+        dtApi.columns.adjust();
+    }
+
+    // Clean up method for removing event listeners and restoring original behavior
+    destroy() {
+        // Restore original ColReorder behavior
+        DataTable.ColReorder.prototype._mouseDown = this.originalValidateMove;
+    }
+}
+
+const initDataTable = (element, settings = {}) => {
+    const selector = document.querySelector(element);
+    if (!selector) return;
+
+    const table = new DataTable(element, settings);
+    const resizer = new ColumnResizer(table);
+    resizer.init(selector);
+
     return table;
 };
 

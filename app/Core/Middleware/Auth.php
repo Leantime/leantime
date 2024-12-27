@@ -38,7 +38,11 @@ class Auth
         private AuthService $authService,
         private ProjectsService $projectsService,
     ) {
-        $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
+        $this->publicActions = self::dispatchFilter(
+            'publicActions',
+            $this->publicActions,
+            ['bootloader' => $this]
+        );
     }
 
     /**

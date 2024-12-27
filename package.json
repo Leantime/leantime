@@ -49,6 +49,7 @@
     "masonry-layout": "^4.2.2",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
+    "recursive-diff": "^1.0.9",
     "shepherd.js": "^11.2.0",
     "tinymce": "5.10.9",
     "tinymce-mention": "^4.0.2",
