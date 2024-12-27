@@ -15,9 +15,9 @@ $statusLabels = $tpl->get('statusLabels');
     }
 </script>
 
-<div class="modal-icons">
+<div class="modal-icons align-right">
+    <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
     <?php if (isset($currentMilestone->id) && $currentMilestone->id != '') {?>
-        <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
     <?php } ?>
 </div>
 
@@ -118,7 +118,8 @@ $statusLabels = $tpl->get('statusLabels');
         placeholder="{!! $tpl->__('input.placeholders.pick_a_color') !!}" 
         labelText="{!! $tpl->__('label.color') !!}" 
         autocomplete="off" 
-        class="simpleColorPicker"
+        {{-- class="simpleColorPicker" --}}
+        type="color"
     />
 
     <x-global::forms.text-input 
