@@ -73,7 +73,6 @@ class ProjectHubProjects extends HtmxController
 
     public function get()
     {
-
         $clientId = '';
         $currentClientName = '';
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
