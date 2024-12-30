@@ -568,7 +568,7 @@ export const initPriorityDropdown = function () {
 
 export const initMilestoneDropdown = function () {
 
-    jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
+    jQuery(".milestoneDropdown .dropdown .menu li  a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
             var dataLabel = jQuery(this).attr('data-label');

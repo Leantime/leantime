@@ -158,7 +158,7 @@
                                     <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
                                         <x-global::actions.dropdown scale="sm" contentRole="link" position="bottom"
                                             align="start" class="f-left status {{ $canvasLabels[$row->box]['class'] }}"
-                                            :button-style="$canvasLabels[$row->box]['class']" :indicator-class="$canvasLabels[$row->box]['class']" selectable="true">
+                                             :indicator-class="$canvasLabels[$row->box]['class']" selectable="true">
                                             <!-- Dropdown Button -->
                                             <x-slot:labelText>
                                                 <span class="text">{{ $canvasLabels[$row->box]['name'] }}</span>&nbsp;<i

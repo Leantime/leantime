@@ -40,7 +40,7 @@
             hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
 
-            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" labelText="Title"
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" placeholder="Add Title"
                 variant="title" />
 
             <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">

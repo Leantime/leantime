@@ -99,23 +99,28 @@
                             <div class="hideOnLoad" id="ticket_new_{{ $key }}"
                                 style="padding-top:5px; padding-bottom:5px;">
 
-                                <form method="post">
-                                    <x-global::forms.text-input type="text" name="headline"
+                                <form hx-post="/hx/tickets/showKanban" hx-indicator="#save-indicator" hx-swap="none"
+                                    class="mb-2 quickadd-ticket" data-key="{{ $key }}">
+                                    <x-global::forms.text-input type="text" class="mb-2" name="headline"
                                         placeholder="Enter To-Do Title" title="{{ __('label.headline') }}" />
 
                                     <input type="hidden" name="milestone" value="{{ $searchCriteria['milestone'] }}" />
                                     <input type="hidden" name="status" value="{{ $key }}" />
                                     <input type="hidden" name="sprint" value="{{ session('currentSprint') }}" />
 
-                                    <x-global::forms.button type="submit" name="quickadd">
+
+                                    <x-global::forms.button type="submit" scale="sm" name="quickadd">
                                         Save
                                     </x-global::forms.button>
 
-                                    <x-global::forms.button tag="a" class="btn btn-default" content-role="secondary"
+                                    <x-global::forms.button tag="a" scale="sm" content-role="secondary"
                                         href="javascript:void(0);"
                                         onclick="jQuery('#ticket_new_{{ $key }}, #ticket_new_link_{{ $key }}').toggle('fast');">
                                         {{ __('links.cancel') }}
                                     </x-global::forms.button>
+                                    <div id="save-indicator" class="htmx-indicator">
+                                        <span class="loading loading-spinner"></span> Saving...
+                                    </div>
 
                                 </form>
 
@@ -245,6 +250,14 @@
                     @endforeach
                 @endforeach
             });
+
+            jQuery(document).on("htmx:afterRequest", ".quickadd-ticket", function() {
+                let key = jQuery(this).data('key');
+                console.log(`ticketColumn_${key}`); 
+                htmx.trigger(`#ticketColumn_${key}`, 'reload');
+                jQuery(this).find('input[name=headline]').val(''); 
+            });
+
 
             jQuery("#modal-wrapper #main-page-modal").on('close', function() {
                 jQuery('.ticketColumn').each(function() {
