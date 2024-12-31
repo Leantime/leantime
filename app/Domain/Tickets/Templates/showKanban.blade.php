@@ -76,12 +76,11 @@
                                 <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
                                     align="end">
                                     <!-- Dropdown Items -->
-                                    <x-global::actions.dropdown.item
-                                        href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}"
-                                        class="editLabelModal">
+                                    <x-global::actions.dropdown.item class="font-normal"
+                                        href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}">
                                         {!! __('headlines.edit_label') !!}
                                     </x-global::actions.dropdown.item>
-                                    <x-global::actions.dropdown.item
+                                    <x-global::actions.dropdown.item class="font-normal"
                                         href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">
                                         {!! __('links.add_remove_col') !!}
                                     </x-global::actions.dropdown.item>
@@ -173,7 +172,9 @@
     </div>
 
     <script type="module">
+
         import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+
         jQuery(document).ready(function() {
             document.body.addEventListener('htmx:afterSettle', function() {
                 @if ($login::userIsAtLeast($roles::$editor))
