@@ -1,4 +1,3 @@
-
 @props([
     'canvasId' => '',
     'canvasTitle' => '',
@@ -19,10 +18,10 @@
 @else
     <div class="row">
         <div class="col-md-12">
-            <a href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasId }}"
-                class="btn btn-primary pull-right">
+            <x-global::forms.button scale="sm" class="pull-right" tag="a"
+                href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasId }}">
                 <i class="fa fa-plus"></i> Create New Goal
-            </a>
+            </x-global::forms.button>
             <h5 class='subtitle'>
                 <a href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasId }}'>
                     {{ $canvasTitle }}

@@ -107,7 +107,7 @@ if (is_array($tpl->get('sprints'))) {
                         <i class="fa-solid fa-plus"></i> {{ $tpl->__("links.create_sprint_no_icon") }}
                     </x-global::actions.dropdown.item>
             
-                    <li class="nav-header border"></li>
+                    <li class="border"></li>
             
                     <!-- Static Menu Items -->
                     <x-global::actions.dropdown.item 

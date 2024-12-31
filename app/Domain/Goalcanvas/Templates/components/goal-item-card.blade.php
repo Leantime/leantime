@@ -59,7 +59,6 @@
                             {{ $row['title'] }}
                         </a>
                     </h4>
-                    <br />
                     <strong>Metric:</strong> {{ $row['description'] }}
                     <br /><br />
 
@@ -102,7 +101,7 @@
                         </x-global::forms._archive.dropdownPill>
                     @endif
 
-                    <div class="right" style="margin-right:10px;">
+                    <div class="right">
                         <span class="fas fa-comments"></span>
                         <small>{{ $nbcomments }}</small>
                     </div>

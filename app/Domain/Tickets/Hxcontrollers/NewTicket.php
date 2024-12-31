@@ -50,8 +50,7 @@ class NewTicket extends HtmxController
             $result = $this->ticketService->addTicket($params);
 
             if (is_array($result) === false) {
-                $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
-                return response()->json(['success' => true]);
+                return response()->json(['success' => true, 'id' => $result]);
             } else {
 
                 $ticket = app()->makeWith(TicketModel::class, ['values' => $params]);
@@ -60,7 +59,11 @@ class NewTicket extends HtmxController
             }
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            
+
+        ]);
     }
 
 
