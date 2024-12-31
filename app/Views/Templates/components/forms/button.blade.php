@@ -25,9 +25,10 @@
         $variantClasses = "w-full input justify-start";
     }
 
+    // btn-outline border-primary text-primary
     switch($contentRole){
         case 'secondary':
-            $typeClass = 'btn-secondary border-primary text-primary hover:bg-primary/20';
+            $typeClass = 'btn-secondary hover:bg-primary/80';
             break;
         case 'tertiary':
         case 'ghost':
@@ -37,9 +38,10 @@
             $typeClass = 'btn-link text-primary hover:bg-primary/20 ';
             break;
         default:
-            $typeClass = 'btn-primary border-primary hover:bg-primary  hover:bg-primary/80';
+            $typeClass = 'btn-primary border-primary hover:bg-primary/80 ';
+
     }
-    $sizeClass = $scale ? 'btn-'.$scale : '';
+    $sizeClass = $scale ? 'btn-'.$scale : 'btn-sm';
     $stateClass = $state ? 'btn-'.$state : '';
     $shapeClass = $shape ? 'btn-'.$shape : '';
 @endphp
