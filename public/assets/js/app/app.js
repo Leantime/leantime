@@ -3,12 +3,14 @@ import { addToGlobalScope } from './core/leantimeScope.mjs';
 import { moduleLoader } from './core/moduleLoader.mjs';
 import { initializeCore } from './core/bootstrap.mjs';
 
-addToGlobalScope({moduleLoader: moduleLoader});
+addToGlobalScope({ moduleLoader: moduleLoader });
 
 // Initialize core application
 document.addEventListener('DOMContentLoaded', async () => {
-    await initializeCore();
+  await initializeCore();
 });
+
+import 'js/libs/uppy/uppy';
 
 
 /*
