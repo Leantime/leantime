@@ -25,9 +25,10 @@
         $variantClasses = "w-full input justify-start";
     }
 
+    // btn-outline border-primary text-primary
     switch($contentRole){
         case 'secondary':
-            $typeClass = 'btn-secondary btn-outline border-primary text-primary hover:bg-primary/20';
+            $typeClass = 'btn-secondary hover:bg-primary/80';
             break;
         case 'tertiary':
         case 'ghost':
@@ -39,12 +40,12 @@
         default:
             $typeClass = 'btn-primary border-primary hover:bg-primary ';
     }
-    $sizeClass = $scale ? 'btn-'.$scale : '';
+    $sizeClass = $scale ? 'btn-'.$scale : 'btn-sm';
     $stateClass = $state ? 'btn-'.$state : '';
     $shapeClass = $shape ? 'btn-'.$shape : '';
 @endphp
 
-<{{ $tag }} role="button" {{ $attributes->merge(['class' => 'btn btn-sm active:shadow-inner '. $typeClass.' '.$sizeClass. ' '.$stateClass. ' '.$shapeClass . ' '.$variantClasses])->class([
+<{{ $tag }} role="button" {{ $attributes->merge(['class' => 'btn active:shadow-inner '. $typeClass.' '.$sizeClass. ' '.$stateClass. ' '.$shapeClass . ' '.$variantClasses])->class([
     'join-item' => $join,
     'mr-1' => ! $join,
     ]) }}>
