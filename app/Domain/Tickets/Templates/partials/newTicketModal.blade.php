@@ -1,6 +1,6 @@
-@php use Leantime\Core\Support\EditorTypeEnum; 
+@php use Leantime\Core\Support\EditorTypeEnum;
 
-$tags = explode(',', $ticket->tags);
+    $tags = explode(',', $ticket->tags);
 @endphp
 
 
@@ -14,18 +14,20 @@ $tags = explode(',', $ticket->tags);
     <div class="row">
 
         <div class="col-md-7">
-            <form hx-post="{{ BASE_URL }}/hx/tickets/newTicket" hx-trigger="submit" hx-swap="none"
-                hx-indicator="#save-indicator">
+            {{-- <form hx-post="{{ BASE_URL }}/hx/tickets/newTicket" hx-trigger="submit" hx-swap="none"
+                hx-indicator="#save-indicator"> --}}
+            <form method="post" action="/tickets/newTicket" >
                 {{-- @include("tickets::includes.ticketDetails") --}}
                 <input type="hidden" name="saveTicket" value="1">
-                <label class="pl-m pb-sm">📄 Details</label>
+
+
+
+                <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
+                    placeholder="Add Title" variant="title" />
 
                 <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
 
                 </x-global::forms.select>
-
-                <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
-                    labelText="Title" variant="title" />
 
                 <div class="viewDescription mce-content-body">
                     <div class="min-h-[100px]">
@@ -39,17 +41,17 @@ $tags = explode(',', $ticket->tags);
 
                 <div class="form-group" id="descriptionEditor" style="display:none;">
                     <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
-                        :value="$ticket->description !== null ? $ticket->description : ''" 
-                        url="{{ BASE_URL }}/hx/tickets/newTicket" />
+                        :value="$ticket->description !== null ? $ticket->description : ''" url="{{ BASE_URL }}/hx/tickets/newTicket" />
                     <br />
                 </div>
                 <br>
 
                 <div class="flex items-center gap-2">
-                    <x-global::forms.button variant="primary" labelText="Save" />
+                    <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
 
-                    <x-global::forms.button tag="button" type="button" variant="link" contentRole="ghost"
-                        labelText="Cancel" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                    <x-global::forms.button tag="button" type="button" variant="link" scale="sm"
+                        contentRole="ghost" labelText="Cancel"
+                        onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
 
                     <div id="save-indicator" class="htmx-indicator">
                         <span class="loading loading-spinner"></span> Saving...

@@ -461,7 +461,8 @@ input.secretInput:focus {
 .viewDescription {
     border-radius:var(--box-radius);
     padding:5px;
-    border:1px solid transparent;
+    border:1px solid ;
+    border-color:#27272733
 }
 
 .viewDescription:hover {
