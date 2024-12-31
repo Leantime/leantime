@@ -35,14 +35,15 @@
                         <i class="fa fa-angle-down"></i>
                     @endif
                     </a>
-                    <a href="javascript:void(0)">
+                    <a href="javascript:void(0)" class="pb-sm">
                         {{ $project['clientName'] }}
                     </a>
                     <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $project['clientId'] }}" class="level-1 projectGroup {{ $parentState }}">
             @endif
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
-                <x-projects::projectCard :project="$project" variant="compact"></x-projects::projectCard>
+                <x-projects::projectCard :project="$project" variant="compact" class="{{ 'pl-md' }}"></x-projects::projectCard>
+
                 <div class="clear"></div>
             </li>
         @endif

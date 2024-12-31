@@ -50,7 +50,7 @@
                 {!! $cardContextButtons !!}
             </div>
         @endif
-        @if($cardTitle)
+        @if(!empty($cardTitle))
             <h2 class="card-title text-base-content font-normal">{{ $cardTitle }}</h2>
         @endif
         {{ $slot }}

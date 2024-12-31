@@ -4,7 +4,7 @@
     'formHash' => md5(CURRENT_URL."projectBox".mt_rand(0,100)),
 ])
 
-<div class="objectCard {{ $variant }}" id="projectBox-{{ $formHash }}-{{ $project['id'] }}">
+<div {{ $attributes->merge(['class' => 'objectCard '.$variant ]) }} id="projectBox-{{ $formHash }}-{{ $project['id'] }}">
     <div class="row">
         <div class="col-md-12 fixed">
             <div class="row">

@@ -7,7 +7,7 @@
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
-    'cardLabel' => 'Card Title!', // Text for the card title
+    'cardLabel' => '', // Text for the card title
     'buttonShape' => '',
     'buttonVariant' => '',
     'scale' => '',

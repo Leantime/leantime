@@ -57,7 +57,7 @@
         $stateClass,
         "w-full",
         // "max-w-xs",
-        ($leadingVisual ? 'pl-10' : '')
+
     ];
 
     //Clean up array and implode for js
@@ -87,16 +87,18 @@
                 </x-global::elements.leadingVisual>
             @endif
 
-            <select
-                {{$attributes->merge([
-                    'class' => $selectClassBuilder,
-                    'data-component' => 'select'
-                ])}}
-                name="{{ $name }}"
-                {{ $state === 'disabled' ? 'disabled' : '' }}
-                {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
-                {{ $slot }}
-            </select>
+            <div class="{{  (!empty($leadingVisual) ? 'ml-10' : '') }}">
+                <select
+                    {{$attributes->merge([
+                        'class' => $selectClassBuilder,
+                        'data-component' => 'select'
+                    ])}}
+                    name="{{ $name }}"
+                    {{ $state === 'disabled' ? 'disabled' : '' }}
+                    {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
+                    {{ $slot }}
+                </select>
+            </div>
         </div>
 
     </div>

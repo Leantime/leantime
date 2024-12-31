@@ -1,7 +1,7 @@
 @php
     $groupState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$parent, 'closed');
 @endphp
-<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}" hx-boost="true" hx-indicator="#global-loader">
+<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }} {{ $level > 0 ? 'pl-sm' : '' }}" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
         @php
@@ -32,7 +32,7 @@
                         @endif
                     </a>
                 @endif
-                <x-projects::projectCard :project="$project" variant="compact"></x-projects::projectCard>
+                <x-projects::projectCard :project="$project" variant="compact" class="{{ 'pl-md' }}"></x-projects::projectCard>
 
                 <div class="clear"></div>
 
