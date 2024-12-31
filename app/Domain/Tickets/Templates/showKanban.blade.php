@@ -76,12 +76,11 @@
                                 <x-global::content.context-menu :label-text="$labelText" contentRole="link" position="bottom"
                                     align="end">
                                     <!-- Dropdown Items -->
-                                    <x-global::actions.dropdown.item
-                                        href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}"
-                                        class="editLabelModal">
+                                    <x-global::actions.dropdown.item class="font-normal"
+                                        href="#/setting/editBoxLabel?module=ticketlabels&label={{ $key }}">
                                         {!! __('headlines.edit_label') !!}
                                     </x-global::actions.dropdown.item>
-                                    <x-global::actions.dropdown.item
+                                    <x-global::actions.dropdown.item class="font-normal"
                                         href="{{ BASE_URL }}/projects/showProject/{{ session('currentProject') }}#todosettings">
                                         {!! __('links.add_remove_col') !!}
                                     </x-global::actions.dropdown.item>
@@ -106,16 +105,17 @@
                                     <input type="hidden" name="milestone" value="{{ $searchCriteria['milestone'] }}" />
                                     <input type="hidden" name="status" value="{{ $key }}" />
                                     <input type="hidden" name="sprint" value="{{ session('currentSprint') }}" />
+                                    <div class="my-2">
+                                        <x-global::forms.button class="mx-0 my-2" type="submit" scale="xs" name="quickadd">
+                                            Save
+                                        </x-global::forms.button>
 
-                                    <x-global::forms.button type="submit" name="quickadd">
-                                        Save
-                                    </x-global::forms.button>
-
-                                    <x-global::forms.button tag="a" class="btn btn-default" content-role="secondary"
-                                        href="javascript:void(0);"
-                                        onclick="jQuery('#ticket_new_{{ $key }}, #ticket_new_link_{{ $key }}').toggle('fast');">
-                                        {{ __('links.cancel') }}
-                                    </x-global::forms.button>
+                                        <x-global::forms.button class="mx-0 mt-2" tag="a" scale="xs" class="btn btn-default"
+                                            content-role="ghost" href="javascript:void(0);"
+                                            onclick="jQuery('#ticket_new_{{ $key }}, #ticket_new_link_{{ $key }}').toggle('fast');">
+                                            {{ __('links.cancel') }}
+                                        </x-global::forms.button>
+                                    </div>
 
                                 </form>
 
@@ -167,7 +167,7 @@
 
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
         jQuery(document).ready(function() {
             document.body.addEventListener('htmx:afterSettle', function() {
                 @if ($login::userIsAtLeast($roles::$editor))

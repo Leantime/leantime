@@ -136,7 +136,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->emptyResponse();
             } else {
                 $result = $this->ticketService->quickAddMilestone($params);
-
                 if (is_numeric($result)) {
                     $params['id'] = $result;
 
