@@ -32,7 +32,7 @@
                 @isset($todoTypeIcons[$type])
                     <small>
                         <i class="fa {{ $todoTypeIcons[$type] }}"></i>
-                        {!!__('label.' . $type) !!}
+                        {!! __('label.' . $type) !!}
                     </small>
                 @endisset
                 <small>#{{ $ticket['id'] }}</small>

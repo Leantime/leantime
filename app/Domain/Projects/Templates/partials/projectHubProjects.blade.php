@@ -10,20 +10,31 @@
                 // Determine label text based on the current client name
                 $labelText = $currentClientName != '' ? $currentClientName : __('headline.all_clients');
             @endphp
+            <x-global::actions.dropdown :label-text="$labelText" contentRole="secondary" position="bottom" align="end"
+                class=""
+            >
+                <x-slot:label-text>
+                    @if ($currentClientName != '')
+                        {{ $currentClientName }}
+                    @else
+                        {{ __("headline.all_clients") }}
+                    @endif
 
-            <x-global::actions.dropdown :label-text="$labelText" contentRole="link" position="bottom" align="start"
-                class="header-title-dropdown btn btn-default">
+                    <i class="fa fa-caret-down"></i>
+                </x-slot:label-text> 
+                
 
                 <x-slot:menu>
                     <!-- All Clients Option -->
-                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/hx/projects/showMy">
+                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/projects/showMy">
                         {{ __('headline.all_clients') }}
                     </x-global::actions.dropdown.item>
 
                     <!-- Clients List -->
                     @foreach ($clients as $key => $value)
                         @if (!empty($key))
-                            <x-global::actions.dropdown.item href="javascript:void(0);"
+                            <x-global::actions.dropdown.item 
+                                href="javascript:void(0);"
                                 hx-get="{{ BASE_URL }}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                 hx-target="#myProjectsHub" hx-swap="outerHTML transition:true">
                                 {{ $value['name'] }}
@@ -63,7 +74,7 @@
                 @endphp
                 @foreach ($allProjects as $project)
                     @if ($project['isFavorite'] == true)
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
                         </div>
                         @php
