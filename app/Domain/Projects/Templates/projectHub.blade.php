@@ -16,7 +16,10 @@
                 <span style="font-size:18px; color:var(--main-titles-color););">
                    {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
-                        <br /><br /><a class="btn btn-default" href="#/projects/createnew">{!! __("menu.create_something_new") !!}</a>
+                        <br /><br />
+                        <x-global::forms.button tag="a" content-role="secondary" href="#/projects/createnew">
+                            {!! __("menu.create_something_new") !!}
+                        </x-global::forms.button>
                     @endif
                 </span>
                 <br />
@@ -38,27 +41,43 @@
 
             @if (count($clients) > 0)
                 <div class="dropdown dropdownWrapper pull-right">
-                    <a href="javascript:void(0)" class="btn btn-default dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                        @if ($currentClientName != '')
-                            {{ $currentClientName }}
-                        @else
-                            {{ __("headline.all_clients") }}
-                        @endif
+                    <x-global::actions.dropdown content-role="secondary" position="bottom" align="end"
+                        class=""
+                    >
+                        <x-slot:label-text>
+                            @if ($currentClientName != '')
+                                {{ $currentClientName }}
+                            @else
+                                {{ __("headline.all_clients") }}
+                            @endif
 
-                        <i class="fa fa-caret-down"></i>
-                    </a>
+                            <i class="fa fa-caret-down"></i>
+                        </x-slot:label-text>
 
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
-                        @foreach ($clients as $key => $value)
-                            <li>
-                                <a  href="javascript:void(0);"
+                        <x-slot:menu>
+                            <!-- All Clients Option -->
+                            <x-global::actions.dropdown.item variant="link"
+                                href="{{ CURRENT_URL }}"
+                            >
+                                {{ __("headline.all_clients") }}
+                            </x-global::actions.dropdown.item>
+
+                            <!-- Clients List -->
+                            @foreach ($clients as $key => $value)
+                                <x-global::actions.dropdown.item variant="link"
+                                    href="javascript:void(0);"
                                     hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                     hx-target="#myProjectsHub"
-                                    hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
+                                    hx-swap="outerHTML transition:true"
+                                >
+                                    {{ $value['name'] }}
+                                </x-global::actions.dropdown.item>
+                            @endforeach
+
+                        </x-slot:menu>
+
+                    </x-global::actions.dropdown>
+
                 </div>
             @endif
 

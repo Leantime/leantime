@@ -8,26 +8,6 @@
         <span class="sub">{{ __("menu.current_project") }}</span><br />
         <span class="title">{{ session("currentProjectName") }}</span>
     </div>
-@else
-    <div class="projectSelectorFooter">
-        <ul class="menu p-0" hx-boost="true" hx-indicator="#global-loader">
-            <li>
-                <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
-            </li>
-
-            @if ($login::userIsAtLeast("manager"))
-                @dispatchEvent('beforeProjectCreateLink')
-                <li><a href="{{ $startSomethingUrl }}">
-                        <span class="fancyLink">
-                            {!! __('menu.create_something_new') !!}
-                        </span>
-                    </a>
-                </li>
-                @dispatchEvent('afterProjectCreateLink')
-            @endif
-
-        </ul>
-    </div>
 @endif
 
 <x-global::content.tabs >
@@ -94,24 +74,22 @@
     </x-slot:contents>
 </x-global::content.tabs>
 
-@if ($menuType == 'project' || $menuType == 'default')
-    <div class="projectSelectorFooter">
-        <ul class="selectorList projectList" hx-boost="true" hx-indicator="#global-loader">
+<div class="projectSelectorFooter border-top">
+    <ul class="menu p-0" hx-boost="true" hx-indicator="#global-loader">
+        <li>
+            <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
+        </li>
 
-            @if ($login::userIsAtLeast("manager"))
-                @dispatchEvent('beforeProjectCreateLink')
-                <li><a href="{{ $startSomethingUrl }}">
+        @if ($login::userIsAtLeast("manager"))
+            @dispatchEvent('beforeProjectCreateLink')
+            <li><a href="{{ $startSomethingUrl }}">
                         <span class="fancyLink">
                             {!! __('menu.create_something_new') !!}
                         </span>
-                    </a>
-                </li>
-                @dispatchEvent('afterProjectCreateLink')
-            @endif
-            <li>
-                <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+                </a>
             </li>
-        </ul>
-    </div>
+            @dispatchEvent('afterProjectCreateLink')
+        @endif
 
-@endif
+    </ul>
+</div>

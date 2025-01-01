@@ -17,7 +17,7 @@
         <br />
 
         <form hx-post="{{ BASE_URL }}/tickets/showTicket/{{ $ticket->id }}#timesheet" hx-trigger="submit"
-            hx-swap="none" class="space-y-4">
+            hx-swap="none" class="space-y-4" hx-indicator="#save-indicator">
             <input type="hidden" name="saveTimes" value="1" />
 
             <x-global::forms.select :label-text="__('label.timesheet_kind')" name="kind" id="kind">
@@ -28,7 +28,7 @@
                 @endforeach
             </x-global::forms.select>
 
-            <x-global::forms.text-input :label-text="__('label.date')" name="date" id="timesheetdate" :value="$values['date']" />
+            <x-global::forms.text-input :label-text="__('label.date')" name="date" id="timesheetdate" :value="format($values['date'])->date()" />
 
             <x-global::forms.text-input :label-text="__('label.hours')" type="number" name="hours" id="hours"
                 :value="$values['hours']" />
@@ -41,7 +41,10 @@
             </div>
 
             <br>
-            <x-global::forms.button variant="primary" labelText="Save" />
+            <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
+            <div id="save-indicator" class="htmx-indicator">
+                <span class="loading loading-spinner"></span> Saving...
+            </div>
         </form>
 
     </div>
@@ -51,40 +54,40 @@
         <br />
         <canvas id="canvas"></canvas>
         <p><br />
-            <?php echo $tpl->__('label.planned_hours'); ?>: <?php echo $ticket->planHours; ?><br />
-            <?php echo $tpl->__('label.booked_hours'); ?>: <?php echo $tpl->get('timesheetsAllHours'); ?><br />
-            <?php echo $tpl->__('label.actual_hours_remaining'); ?>: <?php echo $remainingHours; ?><br />
+            {!! __('label.planned_hours') !!}: {{ $ticket->planHours }}<br />
+            {!! __('label.booked_hours') !!}: {{ $tpl->get('timesheetsAllHours') }}<br />
+            {!! __('label.actual_hours_remaining') !!}: {{ $remainingHours }}<br />
         </p>
     </div>
 </div>
-
-<script type="text/javascript">
+<script type="module">
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
     jQuery(document).ready(function($) {
-
         var d2 = [];
         var d3 = [];
         var labels = [];
-        <?php
-        $sum = 0;
-        $ticketHours = $tpl->get('ticketHours');
-        foreach ($ticketHours as $hours) {
-            $sum = $sum + $hours['summe'];
-        
-            echo "labels.push('" .
-                date('Y-m-d', strtotime($hours['utc'] ?? '')) .
-                "');
-                                            ";
-            echo 'd2.push(' .
-                $sum .
-                ');
-                                            ';
-            echo 'd3.push(' .
-                $ticket->planHours .
-                ');
-                                            ';
-        } ?>
+        @php
+            $sum = 0;
+            $ticketHours = $tpl->get('ticketHours');
+            foreach ($ticketHours as $hours) {
+                $sum = $sum + $hours['summe'];
 
-        leantime.ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")
+                echo "labels.push('" .
+                    date('Y-m-d', strtotime($hours['utc'] ?? '')) .
+                    "');
+                                                                                            ";
+                echo 'd2.push(' .
+                    $sum .
+                    ');
+                                                                                            ';
+                echo 'd3.push(' .
+                    $ticket->planHours .
+                    ');
+                                                                                            ';
+            }
+        @endphp
 
+        ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")
+        console.log('Timesheet chart initialized');
     });
 </script>

@@ -13,7 +13,7 @@
     'caption' => '',
     'validationText' => '',
     'validationState' => '',
-
+    'modalTitle' => '',
     //Variation options
     'variant' => '', //default, title, compact, fullWidth, noBorder
 ])

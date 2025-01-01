@@ -16,6 +16,8 @@
         contentRole="link"
         position="bottom" 
         align="start"
+        :selectable="true"
+        class="milestoneDropdown"
     >
         <x-slot:menu>
             <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
@@ -35,6 +37,8 @@
                     data-value="{{ $ticket['id'] . '_' . $milestone->id . '_' . $milestone->tags }}"
                     id="ticketMilestoneChange{{ $ticket['id'] . $milestone->id }}"
                     style="background-color: {{ $milestone->tags }}"
+                    data-style="background-color: {{ $milestone->tags }}"
+                    buttonStyle="background-color: {{ $milestone->tags }}"
                 >
                     {{ $milestone->headline }}
                 </x-global::actions.dropdown.item>
@@ -42,3 +46,13 @@
         </x-slot:menu>
     </x-global::actions.dropdown>
 </div> 
+
+<script type="module">
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+
+    jquery(document).ready(function() {
+        ticketsController.initMilestoneDropdown();
+    });
+</script>
+
+

@@ -176,11 +176,55 @@ export const initIdeaKanban = function (statusList) {
     });
 };
 
+var initStatusDropdown = function () {
+    jQuery("body").on(
+        "click",
+        ".statusDropdown .dropdown .menu li a",
+        function () {
+
+            var value = jQuery(this).attr("data-value");
+            var dataValue = value.split("_");
+            // var dataValue = jQuery(this).attr("data-value").split("_");
+            var dataLabel = jQuery(this).attr('data-label');
+
+            if (dataValue.length == 3) {
+                var canvasItemId = dataValue[0];
+                var status = dataValue[1];
+                var statusClass = dataValue[2];
+
+
+                jQuery.ajax(
+                    {
+                        type: 'PATCH',
+                        url: appUrl + '/api/ideas',
+                        data:
+                            {
+                                id : canvasItemId,
+                                box:status
+                        }
+                    }
+                )
+                // .done(
+                //     function () {
+                //         jQuery("#statusDropdownMenuLink" + canvasItemId + " span.text").text(dataLabel);
+                //         jQuery("#statusDropdownMenuLink" + canvasItemId).removeClass().addClass("" + statusClass + " dropdown-toggle f-left status ");
+                //         jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated")});
+
+                //     }
+                // );
+            }
+        }
+    );
+
+};
+
 // Make public what you want to have public, everything else is private
-export default {
-    initMasonryWall: initMasonryWall,
+export const  ideasController= {
+    // initMasonryWall: initMasonryWall,
     initBoardControlModal: initBoardControlModal,
     initWallImageModals: initWallImageModals,
     setKanbanHeights: setKanbanHeights,
-    initIdeaKanban: initIdeaKanban
+    initIdeaKanban: initIdeaKanban,
+    initStatusDropdown: initStatusDropdown
+
 };
