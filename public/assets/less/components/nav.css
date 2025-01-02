@@ -29,7 +29,7 @@ body .menu {
 
 .header {
 
-    @apply pt-sm h-14;
+    @apply pt-sm h-16;
 
     .headerinner {
 
