@@ -37,7 +37,7 @@
                 <div class="clear"></div>
 
                 @if(!empty($project['children']) && count($project['children']) >0)
-                    @include('menu::includes.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])
                 @endif
             </li>
 

@@ -15,7 +15,7 @@
 
     //Variation options
     'variant' => 'single', //single, multiple, tags, chip
-    'search' => 'true',
+    'search' => 'false',
     'addChoices' => 'false',
     'autocompleteTags' => false,
     'formHash' => md5(CURRENT_URL."selectChoices".mt_rand(0,100)),
@@ -87,11 +87,12 @@
                 </x-global::elements.leadingVisual>
             @endif
 
-            <div class="{{  (!empty($leadingVisual) ? 'ml-10' : '') }}">
+            <div class="{{  (!empty($leadingVisual) ? 'ml-lg' : '') }}">
                 <select
                     {{$attributes->merge([
                         'class' => $selectClassBuilder,
-                        'data-component' => 'select'
+                        'data-component' => 'select',
+                        'data-component-config' => '{"search": '.$search.'}'
                     ])}}
                     name="{{ $name }}"
                     {{ $state === 'disabled' ? 'disabled' : '' }}

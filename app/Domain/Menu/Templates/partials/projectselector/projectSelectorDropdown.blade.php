@@ -10,7 +10,7 @@
     </div>
 @endif
 
-<x-global::content.tabs >
+<x-global::content.tabs>
     <x-slot:headings>
         <x-global::content.tabs.heading name="myProjects">{{ __('menu.projectselector.my_projects') }}</x-global::content.tabs.heading>
         <x-global::content.tabs.heading name="favorites">{{ __('menu.projectselector.favorites') }}</x-global::content.tabs.heading>
@@ -19,14 +19,14 @@
     </x-slot:headings>
     <x-slot:contents class="max-h-[90vh]">
         <x-global::content.tabs.content name="myProjects" class="">
-            @include('menu::includes.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
+            @include('menu::partials.projectselector.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
             <ul class="selectorList projectList htmx-indicator htmx-loaded-content">
                 @if($projectSelectFilter["groupBy"] == "client")
-                    @include('menu::includes.clientGroup', ['projects' => $allAssignedProjects, 'parent' => 0, 'level'=> 0, "prefix" => "myClientProjects", "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.clientGroup', ['projects' => $allAssignedProjects, 'parent' => 0, 'level'=> 0, "prefix" => "myClientProjects", "currentProject"=>$currentProject])
                 @elseif($projectSelectFilter["groupBy"] == "structure")
-                    @include('menu::includes.projectGroup', ['projects' => $projectHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "myProjects", "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.projectGroup', ['projects' => $projectHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "myProjects", "currentProject"=>$currentProject])
                 @else
-                    @include('menu::includes.noGroup', ['projects' => $allAssignedProjects, "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.noGroup', ['projects' => $allAssignedProjects, "currentProject"=>$currentProject])
                 @endif
             </ul>
         </x-global::content.tabs.content>
@@ -34,7 +34,7 @@
         <x-global::content.tabs.content name="favorites" class="">
             <ul class="selectorList projectList" hx-boost="true" hx-indicator="#global-loader">
                 @if(count($favoriteProjects) >= 1)
-                    @include('menu::includes.noGroup', ['projects' => $favoriteProjects])
+                    @include('menu::partials.projectselector.noGroup', ['projects' => $favoriteProjects])
                 @else
                     <li><span class='info'>
                     {{ __("text.you_have_not_favorited_any_projects") }}
@@ -45,14 +45,14 @@
         </x-global::content.tabs.content>
 
         <x-global::content.tabs.content name="allProjects" class="">
-            @include('menu::includes.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
+            @include('menu::partials.projectselector.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
             <ul class="selectorList projectList htmx-loaded-content"  hx-boost="true" hx-indicator="#global-loader">
                 @if($projectSelectFilter["groupBy"] == "client")
-                    @include('menu::includes.clientGroup', ['projects' => $allAvailableProjects, 'parent' => 0, 'level'=> 0, "prefix" => "allClientProjects", "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.clientGroup', ['projects' => $allAvailableProjects, 'parent' => 0, 'level'=> 0, "prefix" => "allClientProjects", "currentProject"=>$currentProject])
                 @elseif($projectSelectFilter["groupBy"] == "structure")
-                    @include('menu::includes.projectGroup', ['projects' => $allAvailableProjectsHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "allProjects", "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.projectGroup', ['projects' => $allAvailableProjectsHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "allProjects", "currentProject"=>$currentProject])
                 @else
-                    @include('menu::includes.noGroup', ['projects' => $allAvailableProjects, "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.noGroup', ['projects' => $allAvailableProjects, "currentProject"=>$currentProject])
                 @endif
             </ul>
         </x-global::content.tabs.content>
@@ -60,7 +60,7 @@
         <x-global::content.tabs.content name="recent" class="">
             <ul class="selectorList projectList" hx-boost="true" hx-indicator="#global-loader">
                 @if(count($recentProjects) >= 1)
-                    @include('menu::includes.noGroup', ['projects' => $recentProjects])
+                    @include('menu::partials.projectselector.noGroup', ['projects' => $recentProjects])
                 @else
                     <li class='nav-header'></li>
                     <li><span class='info'>

@@ -15,6 +15,11 @@
 
 }
 
+.tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not([disabled]),
+.tab:is(input:checked) {
+    @apply border-primary text-primary font-bold;
+}
+
 
 
 

@@ -1,3 +1,95 @@
 .scrolled .header {
     @apply transition-all shadow-xl backdrop-blur-md motion-reduce:transition-none;
 }
+
+.header {
+
+    & > a.active,
+    & > a:hover {
+        text-decoration: none;
+        color: var(--header-nav-link-color);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .headmenu {
+
+        .dropdown-menu::after {
+            position: absolute;
+            top: -6px;
+            left: 45px;
+            display: inline-block;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid white;
+            border-left: 6px solid transparent;
+            content: '';
+        }
+
+        & > li {
+            display: inline-block;
+            float: left;
+
+            position: relative;
+            height: 50px;
+
+            & > a,
+            .bigProjectSelector > div.text-base-content {
+
+                @apply btn btn-sm btn-ghost text-primary-content p-sm h-auto ;
+                height:50px;
+                line-height:50px;
+                /*min-width: 40px;*/
+                /*position: relative;*/
+                /*display: block;*/
+                /*cursor: pointer;*/
+                /*padding: 0 15px;*/
+                /*font-weight:normal;*/
+                /*height:auto;*/
+
+                &.btn-circle {
+                    width:50px;
+                    border-radius: 9999px;
+                }
+
+                &.count {
+                    position: absolute;
+                    top: 5px;
+                    right: 10px;
+                    opacity: 0.5;
+                }
+
+                .headmenu-label {
+                    text-align: left;
+                    padding-left:10px;
+                }
+
+            }
+
+
+
+        }
+
+        & > li:first-child {
+        }
+
+        & > li.right {
+            float: right;
+        }
+
+
+
+    }
+
+    .headmenu > li > a:hover .count,
+    .headmenu > li.open > a .count {
+        opacity: 1;
+    }
+
+    .headmenu > li > a:hover .headmenu-label,
+    .headmenu > li.open > a .headmenu-label {
+        opacity: 1;
+    }
+
+    .headmenu > li > a:hover .head-icon, .headmenu > li.open a .head-icon {
+        opacity: 1;
+    }
+}

@@ -1,5 +1,5 @@
 @props([
-    'headings',
+    'headings' => '',
     'contents',
     'formHash' => md5(CURRENT_URL."tabs".$headings),
     'variant' => 'boxed',

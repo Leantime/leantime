@@ -2,14 +2,14 @@
 <div class="">
     @dispatchEvent('afterUserinfoMenuOpen')
 
-    <x-global::actions.dropdown content-role='ghost' scale="md"  position="end">
+    <x-global::actions.dropdown content-role='ghost' button-shape="circle" scale="md"  position="end">
         <x-slot:labelText>
             @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
-                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" 
+                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}"
                     />
                     <img src="{{ session("companysettings.logoPath") }}" class="logo"/>
             @else
-                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" 
+                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}"
                     />
             @endif
         </x-slot:labeltext>
@@ -60,7 +60,7 @@
                 </a>
             </x-global::actions.dropdown.item>
         </x-slot:menu>
-        
+
     </x-global::actions.dropdown>
 
     @dispatchEvent('beforeUserinfoMenuClose')

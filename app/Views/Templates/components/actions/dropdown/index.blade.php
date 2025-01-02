@@ -71,7 +71,7 @@
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $cardClass }}">
-            <div class="card-body">
+            <div class="card-body p-1">
                 @if ($cardLabel)
                     <h3 class="card-title">{{ $cardLabel }}</h3>
                 @endif
@@ -87,7 +87,7 @@
     @endif
 </div>
 
-<script>
+<script type="module">
     jQuery(document).ready(function($) {
         const $selectableDropdowns = $('[data-selectable-button]');
 
