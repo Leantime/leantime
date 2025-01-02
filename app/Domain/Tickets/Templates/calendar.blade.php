@@ -40,18 +40,18 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
 
             <x-global::forms.button 
                 type="button" 
-                class="fc-next-button btn btn-default right" 
+                class="right" 
                 style="margin-right:5px;"
-                contentRole='secondary'
+                content-role='secondary'
                 >
                 <span class="fc-icon fc-icon-chevron-right"></span>
             </x-global::forms.button>
             
             <x-global::forms.button 
                 type="button" 
-                class="fc-prev-button btn btn-default right" 
+                class="right" 
                 style="margin-right:5px;"
-                contentRole='secondary'
+                content-role='secondary'
 
                 >
                 <span class="fc-icon fc-icon-chevron-left"></span>
@@ -102,32 +102,27 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
 
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+    import "@mix('/js/Domain/Calendar/Js/calendarController.js')"
     jQuery(document).ready(function(){
 
+        <?php if (isset($_GET['showMilestoneModal'])) {
+            if ($_GET['showMilestoneModal'] == "") {
+                $modalUrl = "";
+            } else {
+                $modalUrl = "/" . (int)$_GET['showMilestoneModal'];
+            }
+            ?>
 
-    <?php if (isset($_GET['showMilestoneModal'])) {
-        if ($_GET['showMilestoneModal'] == "") {
-            $modalUrl = "";
-        } else {
-            $modalUrl = "/" . (int)$_GET['showMilestoneModal'];
-        }
-        ?>
+            ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
+            window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
 
-        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
-
-    <?php } ?>
-
-
-});
+        <?php } ?>
 
 
-
-
-
-
+    });
 
 
     var events = [
@@ -192,7 +187,7 @@ if (!session()->exists("usersettings.submenuToggle.myProjectCalendarView")) {
 
 
     document.addEventListener('DOMContentLoaded', function () {
-        leantime.calendarController.initTicketsCalendar(
+        calendarController.initTicketsCalendar(
             document.getElementById('calendar'),
             '<?=session("usersettings.submenuToggle.myProjectCalendarView") ?>',
             events,
