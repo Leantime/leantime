@@ -5,11 +5,11 @@
     <x-slot:labelText>
         @if ($menuType == 'project' || $menuType == 'default')
             <span class="projectAvatar {{ $currentProjectType }}">
-        @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
-                    <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
-                @else
-                    <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ format($currentProject['modified'] ?? '')->timestamp() }}"/>
-                @endif
+            @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
+                <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
+            @else
+                <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ format($currentProject['modified'] ?? '')->timestamp() }}"/>
+        @endif
         </span>
             {{ $currentProject['name'] ?? "" }}&nbsp;
 
@@ -21,12 +21,12 @@
     </x-slot:labelText>
     <x-slot:card-content>
         <div class="projectselector w-96 h-fit" id="mainProjectSelector">
-            @include('menu::includes.projectSelectorDropdown', [])
+            @include('menu::partials.projectselector.projectSelectorDropdown', [])
         </div>
     </x-slot:card-content>
 </x-global::actions.dropdown>
 
-<script>
+<script type="module">
     jQuery(document).ready(function () {
         jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
             e.stopPropagation();

@@ -53,7 +53,7 @@
 
                             <i class="fa fa-caret-down"></i>
                         </x-slot:label-text>
-                    
+
                         <x-slot:menu>
                             <!-- All Clients Option -->
                             <x-global::actions.dropdown.item variant="link"
@@ -61,7 +61,7 @@
                             >
                                 {{ __("headline.all_clients") }}
                             </x-global::actions.dropdown.item>
-                        
+
                             <!-- Clients List -->
                             @foreach ($clients as $key => $value)
                                 <x-global::actions.dropdown.item variant="link"
@@ -73,9 +73,9 @@
                                     {{ $value['name'] }}
                                 </x-global::actions.dropdown.item>
                             @endforeach
-                            
+
                         </x-slot:menu>
-                    
+
                     </x-global::actions.dropdown>
 
                 </div>
@@ -105,8 +105,8 @@
                         @endphp
                         @foreach ($allProjects as $project)
                             @if($project['isFavorite'] == true)
-                                <div class="col-md-3">
-                                    @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
+                                <div class="col-md-4">
+                                    @include("projects::components.projectCard", ["project" => $project,  "type" => "detailed"])
                                 </div>
                                 @php
                                     $hasFavorites = true;
@@ -134,7 +134,7 @@
                             @if($project['isFavorite'] == false)
 
                                 <div class="col-md-3">
-                                    @include("projects::includes.projectCard", ["project" => $project, "type" => "detailed"])
+                                    @include("projects::components.projectCard", ["project" => $project, "type" => "detailed"])
                                 </div>
 
                             @endif

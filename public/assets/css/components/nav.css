@@ -2,16 +2,16 @@
     border:none;
 }
 
-.leftmenu .nav-header {
-    font-weight: normal;
-    font-size: var(--font-size-l);
-    padding: 15px 20px;
-    text-shadow: none;
-    border-bottom: 1px solid #222;
-    margin-top: 0;
-    color: var(--nav-link-color);
-    line-height: 16px;
-}
+/*.leftmenu .nav-header {*/
+/*    font-weight: normal;*/
+/*    font-size: var(--font-size-l);*/
+/*    padding: 15px 20px;*/
+/*    text-shadow: none;*/
+/*    border-bottom: 1px solid #222;*/
+/*    margin-top: 0;*/
+/*    color: var(--nav-link-color);*/
+/*    line-height: 16px;*/
+/*}*/
 
 .nav li + .nav-header {
     margin-top: 0;
@@ -84,57 +84,6 @@
 /*    border-color:var(--main-border-color);*/
 /*}*/
 
-.logo {
-    width: 170px;
-    text-align: center;
-    height: 50px;
-    padding:7px 5px 5px 5px;
-    margin-left: 55px;
-    display: block;
-    float: left;
-}
-
-.logo a {
-    width: 220px;
-    text-align: center;
-    height: 35px;
-    background-position: left center;
-    display: block;
-    background-repeat: no-repeat;
-    background-size:contain;
-}
-
-.logo a:hover {
-    text-decoration:none;
-}
-
-a.barmenu {
-    position:absolute;
-    left:0px;
-    margin-top:1px;
-    margin-left:20px;
-    font-size:20px;
-    color: var(--header-nav-link-color) !important;
-    cursor:pointer;
-    width:30px;
-    height:50px;
-    line-height:50px;
-    z-index:11;
-}
-
-a.barmenu.open {
-
-}
-
-a.barmenu:hover {
-    color:var(--header-action-hover-color);
-}
-
-
-.logo img {
-    position: relative;
-    height: 50px;
-}
 
 .leftmenu {
     flex: 1;
@@ -247,7 +196,7 @@ a.barmenu:hover {
 /*    margin-bottom: 15px;*/
 /*}*/
 
-
+/*
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
     color: var(--nav-link-color);
 }
@@ -256,7 +205,7 @@ a.barmenu:hover {
     text-decoration: none;
     background-color: #555;
     color: var(--nav-link-color);
-}
+}*/
 
 /*.headmenu .project-selector .chzn-container a {*/
 /*    padding: 0 20px;*/
@@ -285,7 +234,7 @@ a.barmenu:hover {
 /*    font-weight:900;*/
 /*    color: var(--header-nav-link-color);*/
 /*    margin-right:0;*/
-/*}*/
+/*}
 
 .leftmenu .nav-tabs.nav-stacked a {
     color: #555;
@@ -346,7 +295,7 @@ a.barmenu:hover {
     border-color:transparent;
     color:var(--main-menu-link-color);
     cursor:default;
-}
+}*/
 
 .showMenuIndicator::after {
     content: '';
@@ -358,29 +307,29 @@ a.barmenu:hover {
     margin-left: 5px;
 }
 
-.leftmenu .nav-tabs.nav-stacked > li.dropdown > a {
-    background-repeat: no-repeat;
-    background-position: right 19px;
-}
+/*.leftmenu .nav-tabs.nav-stacked > li.dropdown > a {*/
+/*    background-repeat: no-repeat;*/
+/*    background-position: right 19px;*/
+/*}*/
 
-.leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
-    display: block;
+/*.leftmenu .nav-tabs.nav-stacked .dropdown ul li a {*/
+/*    display: block;*/
 
-    padding: 10px 15px 10px 15px;
-    color: var(--nav-link-color);
-    border-radius:var(--box-radius-large);
-    position:relative;
-}
+/*    padding: 10px 15px 10px 15px;*/
+/*    color: var(--nav-link-color);*/
+/*    border-radius:var(--box-radius-large);*/
+/*    position:relative;*/
+/*}*/
 
-.leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background: var(--main-menu-link-hover-bg);
+/*.leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {*/
+/*    background: var(--main-menu-link-hover-bg);*/
 
-}
+/*}*/
 
-.leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
-    text-decoration: none;
-    background:var(--main-menu-link-hover-bg);
-}
+/*.leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {*/
+/*    text-decoration: none;*/
+/*    background:var(--main-menu-link-hover-bg);*/
+/*}*/
 
 .fixedMenuPoint {
     position:fixed;
@@ -460,96 +409,29 @@ a.barmenu:hover {
     color:var(--primary-font-color);
 }
 
-.headmenu .dropdown-menu::after {
-    position: absolute;
-    top: -6px;
-    left: 45px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
-    border-left: 6px solid transparent;
-    content: '';
-}
-
-.headmenu > li {
-    display: inline-block;
-    float: left;
-
-    position: relative;
-    height: 50px;
-}
-
-.headmenu > li:first-child {
-}
-
-.headmenu > li.right {
-    float: right;
-}
-
-.headmenu > li > a {
-    min-width: 40px;
-    position: relative;
-    display: block;
-    color: var(--header-nav-link-color);
-    line-height: 50px;
-    cursor: pointer;
-    padding: 0 15px;
-}
-
-.headmenu > li > a.active,
-.headmenu > li > a:hover {
-    text-decoration: none;
-    color: var(--header-nav-link-color);
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.headmenu > li > a .count {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    opacity: 0.5;
-}
-
-.headmenu > li > a:hover .count, .headmenu > li.open > a .count {
-    opacity: 1;
-}
-
-.headmenu > li > a .headmenu-label {
-    text-align: left;
-    padding-left:10px;
-}
-
-.headmenu > li > a:hover .headmenu-label, .headmenu > li.open > a .headmenu-label {
-    opacity: 1;
-}
-
-.headmenu > li > a:hover .head-icon, .headmenu > li.open a .head-icon {
-    opacity: 1;
-}
-
 .headmenu-label {
 
 }
 
-.leftmenu .nav li.dropdown {
-    overflow: auto;
-    display: flex;
-    flex-flow: column;
-    flex: 1;
-    padding-bottom: 100px;
-}
+/*.leftmenu .nav li.dropdown {*/
+/*    overflow: auto;*/
+/*    display: flex;*/
+/*    flex-flow: column;*/
+/*    flex: 1;*/
+/*    padding-bottom: 100px;*/
+/*}*/
 
-.leftmenu .nav li.dropdown > ul {
-    display:block;
-}
-
-
+/*.leftmenu .nav li.dropdown > ul {*/
+/*    display:block;*/
+/*}*/
 
 
 
-.leftmenu .nav-tabs.nav-stacked.collapsedMenu > li.dropdown ul.submenu li a {
-    padding-left: 0;
-}
+
+
+/*.leftmenu .nav-tabs.nav-stacked.collapsedMenu > li.dropdown ul.submenu li a {*/
+/*    padding-left: 0;*/
+/*}*/
 
 /*.leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector {*/
 /*    display: block;*/
@@ -831,78 +713,6 @@ a.barmenu:hover {
 
 /* Header Navigation */
 
-.header .userloggedinfo img {
-    background-color: #fff;
-    width: auto !important;
-    max-height: 30px;
-    max-width: 30px;
-    border-radius: 50%;
-    border: 1px solid white;
-    margin-top:10px;
-    margin-right: 5px;
-}
-
-.header .userloggedinfo img.logo {
-    border-radius:0px;
-    border:0px;
-    background:transparent;
-    max-width: none;
-    max-height: 18px;
-    margin: 0px;
-    margin-top: 17px;
-    padding: 0px;
-    margin-right: 5px;
-}
-
-
-.userloggedinfo {
-    color: var(--nav-link-color);
-    float: right;
-    position:relative;
-}
-
-.userloggedinfo img {
-    height: 40px;
-    float: left;
-}
-
-.userloggedinfo .userinfo {
-    float: left;
-}
-
-.userloggedinfo .userinfo a.profileHandler {
-    color: var(--header-nav-link-color);
-    padding:0 5px 0 5px;
-    height:50px;
-    line-height:50px;
-    display: block;
-    margin-right:15px;
-}
-
-.userloggedinfo .userinfo small {
-
-    opacity: 0.6;
-    color: var(--nav-link-color);
-    font-style: italic;
-}
-
-.userloggedinfo .dropdown-menu
-{
-    right:14px;
-    left:auto;
-}
-
-.userloggedinfo .dropdown-menu::after{
-    position: absolute;
-    top: -6px;
-    right: 28px;
-    left:auto;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid white;
-    border-left: 6px solid transparent;
-    content: '';
-}
 
 .appsDropdown .dropdown-menu {
     right:-10px;
@@ -944,10 +754,7 @@ a.barmenu:hover {
     font-size: var(--font-size-xs);
 }
 
-.userloggedinfo ul {
-    list-style: none;
-    margin-top:-1px;
-}
+
 
 .notificationDropdown .dropdown-menu li.new {
     border-left:5px solid var(--primary-color);
@@ -998,52 +805,6 @@ a.barmenu:hover {
 
 
 
-.userloggedinfo ul li,
-.appsDropdown ul li{
-
-    line-height: normal;
-    margin-bottom: 1px;
-}
-
-.userloggedinfo ul li a,
-.appsDropdown ul li a{
-    line-height: normal;
-    padding:10px 20px;
-}
-
-.userloggedinfo ul li.border,
-.appsDropdown ul li.border{
-    border-top:1px solid var(--neutral);
-}
-
-.userloggedinfo ul li.nav-header,
-.appsDropdown ul li.nav-header{
-    padding:10px;
-}
-
-.userloggedinfo ul li a span,
-.appsDropdown ul li a span{
-    margin-right: 5px;
-}
-
-/* .userloggedinfo ul li a:hover, */
-/* .appsDropdown ul li a:hover{
-    text-decoration: none;
-
-} */
-
-.userloggedinfo a,
-.appsDropdown a{
-    color: var(--secondary-action-color);
-}
-
-
-
-/* .userloggedinfo a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--nav-link-color);
-    text-decoration: none;
-} */
 
 .submenuCaret {
 

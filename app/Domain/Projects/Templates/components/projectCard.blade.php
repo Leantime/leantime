@@ -1,15 +1,16 @@
 @props([
     'project' => [],
-    'variant' => 'simple' //compact, simple, full
+    'variant' => 'simple', //compact, simple, full
+    'formHash' => md5(CURRENT_URL."projectBox".mt_rand(0,100)),
 ])
 
-<div class="projectBox" id="projectBox-{{ $project['id'] }}">
+<div {{ $attributes->merge(['class' => 'objectCard '.$variant ]) }} id="projectBox-{{ $formHash }}-{{ $project['id'] }}">
     <div class="row">
         <div class="col-md-12 fixed">
-            <div class="row pb-sm">
-                <div class="col-md-10">
-                    <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}">
-                        <span class="projectAvatar">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}" class="objectLink">
+                        <span class="avatar">
                             @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
                                 <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
                             @else
@@ -24,11 +25,12 @@
                         <strong>{{ $project['name'] }} <i class="fa-solid fa-up-right-from-square"></i></strong>
                     </a>
                 </div>
-                <div class="col-md-2 text-right">
+                @if($variant !== 'compact')
+                    <div class="col-md-2 text-right">
                     <a  href="javascript:void(0);"
                         hx-patch="{{ BASE_URL }}/hx/projects/projectCard/toggleFavorite"
                         hx-vals='{"isFavorite": {{ $project['isFavorite'] }}, "projectId": {{ $project['id'] }}}'
-                        hx-target="#projectBox-{{ $project['id'] }}"
+                        hx-target="#projectBox-{{ $formHash }}-{{ $project['id'] }}"
                         onclick="jQuery(this).addClass('go')"
                         hx-swap="none"
                         class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} mr-[5px]"
@@ -36,14 +38,15 @@
                             <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                     </a>
                 </div>
+                @endif
             </div>
 
-            @if($variant != "simple")
-                <div id="projectProgressBox-{{ $project['id'] }}"
+            @if($variant != "simple" && $variant != "compact")
+                <div id="projectProgressBox-{{ $formHash }}-{{ $project['id'] }}"
                     hx-get="{{ BASE_URL }}/hx/projects/projectCardProgress/getProgress?pId={{ $project['id'] }}"
                     hx-trigger="load"
                     hx-swap="innerHTML"
-                    hx-target="#projectProgressBox-{{ $project['id'] }}"
+                    hx-target="#projectProgressBox-{{ $formHash }}-{{ $project['id'] }}"
                     hx-indicator=".htmx-indicator">
                     <div class="htmx-indicator">
                         <x-global::elements.loadingText type="card" count="1" />

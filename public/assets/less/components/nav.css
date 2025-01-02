@@ -1,3 +1,275 @@
 .scrolled .header {
     @apply transition-all shadow-xl backdrop-blur-md motion-reduce:transition-none;
 }
+
+/* Overrides some daisyUI classes */
+body .menu {
+    @apply text-sm;
+}
+
+.leftmenu .menu li > * {
+    @apply text-primary-content rounded-3xl;
+}
+
+.leftmenu .menu li > *:not(ul):not(.menu-title):not(details):active,
+.leftmenu .menu li > *:not(ul):not(.menu-title):not(details).active,
+.leftmenu .menu li > details > summary:active {
+    @apply bg-neutral/40 text-primary-content [@media(hover:hover)]:bg-neutral/40 [@media(hover:hover)]:text-primary-content;
+}
+
+.leftmenu .menu li > *:not(ul):not(.menu-title):not(details):focus,
+.leftmenu .menu li > *:not(ul):not(.menu-title):not(details):hover {
+    @apply bg-neutral/20 text-primary-content [@media(hover:hover)]:bg-neutral/20 [@media(hover:hover)]:text-primary-content;
+}
+
+.leftmenu .menu li > *:not(ul).menu-title:focus,
+.leftmenu .menu li > *:not(ul).menu-title:hover {
+    @apply bg-none [@media(hover:hover)]:bg-none [@media(hover:hover)]:text-primary-content;
+}
+
+.header {
+
+    @apply pt-sm h-14;
+
+    .headerinner {
+
+        &.btn-ghost:focus,
+        &.btn-ghost:hover,
+        &.btn-ghost.active {
+            text-decoration: none;
+            @apply bg-neutral/20 text-primary-content;
+
+        }
+
+        &.btn-ghost:focus {
+            @apply outline-primary;
+        }
+
+        a.barmenu {
+
+            @apply text-primary-content ml-sm;
+
+            position:absolute;
+            left:0px;
+            font-size:20px;
+            cursor:pointer;
+            /*width:50px;*/
+            /*height:50px;*/
+            /*line-height:50px;*/
+            z-index:11;
+
+            &:hover {
+                @apply bg-neutral/20;
+            }
+
+            &:focus {
+                @apply outline-primary;
+            }
+        }
+
+        .logo {
+
+            width: 170px;
+            margin-left: 55px;
+            display: block;
+            float: left;
+
+            a {
+                text-align: center;
+                @apply btn btn-ghost;
+                background-position: left center;
+                display: block;
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+
+            img {
+                position: relative;
+                /*height: 50px;*/
+            }
+        }
+
+
+        .userloggedinfo {
+
+            .text-base-content {
+                @apply mr-sm;
+                /*width:50px;*/
+                /*height:50px;*/
+            }
+
+            img {
+                width: auto !important;
+                max-height: 30px;
+                max-width: 30px;
+                border-radius: 50%;
+                border: 1px solid white;
+                margin-top: 0px;
+                margin-right: 0px;
+            }
+
+            .logo {
+                border-radius:0px;
+                border:0px;
+                background:transparent;
+                max-width: none;
+                max-height: 18px;
+                margin: 0px;
+                margin-top: 17px;
+                padding: 0px;
+                margin-right: 5px;
+            }
+
+            .userinfo a.profileHandler {
+                /*padding:0 5px 0 5px;*/
+                /*!*height:50px;*!*/
+                /*line-height:50px;*/
+                display: block;
+                margin-right:15px
+            }
+
+            .btn-ghost:focus,
+            .btn-ghost:hover,
+            .btn-ghost.active {
+                text-decoration: none;
+                @apply bg-neutral/20 text-primary-content;
+
+            }
+
+            .btn-ghost:focus {
+                @apply outline-none;
+            }
+
+        }
+
+
+    }
+
+    .headmenu {
+
+        .dropdown-menu::after {
+            position: absolute;
+            top: -6px;
+            left: 45px;
+            display: inline-block;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid white;
+            border-left: 6px solid transparent;
+            content: '';
+        }
+
+        & > li {
+            display: inline-block;
+            float: left;
+
+            position: relative;
+            /*height: 50px;*/
+
+            .bigProjectSelector{
+
+                .projectAvatar {
+                    @apply rounded-sm;
+                    width:35px;
+                }
+
+            }
+
+            & > a,
+            .bigProjectSelector > div.text-base-content {
+
+                @apply btn btn-ghost text-primary-content mr-0;
+
+                text-shadow: 0px 1px 3px var(--primary-font-color);
+
+                /*height:50px;*/
+                /*line-height:50px;*/
+                /*min-width: 40px;*/
+                /*position: relative;*/
+                /*display: block;*/
+                /*cursor: pointer;*/
+                /*padding: 0 15px;*/
+                /*font-weight:normal;*/
+                /*height:auto;*/
+
+                &.btn-circle {
+                    /*width:50px;*/
+                    border-radius: 9999px;
+                }
+
+                &.count {
+                    position: absolute;
+                    top: 5px;
+                    right: 10px;
+                    opacity: 0.5;
+                }
+
+                .headmenu-label {
+                    text-align: left;
+                    padding-left:10px;
+                }
+
+                &:focus,
+                &:hover,
+                &.active {
+                    text-decoration: none;
+                    color: var(--header-nav-link-color);
+                    @apply bg-neutral/20;
+                }
+
+                &:focus {
+                    @apply outline-primary;
+                }
+
+                &.active:hover {
+                    @apply bg-neutral/40;
+                }
+
+
+
+            }
+
+            & > .btn:focus,
+            & > .btn:hover,
+            & > .btn.active
+            & > a:focus,
+            & > a:hover,
+            & > a.active {
+                text-decoration: none;
+                color: var(--header-nav-link-color);
+                @apply bg-neutral/20;
+
+            }
+
+            & > .btn.active:hover,
+            & > a.active:hover {
+                @apply bg-neutral/40;
+            }
+        }
+
+        & > li:first-child {
+        }
+
+        & > li.right {
+            float: right;
+        }
+
+
+
+    }
+
+    .headmenu > li > a:hover .count,
+    .headmenu > li.open > a .count {
+        opacity: 1;
+    }
+
+    .headmenu > li > a:hover .headmenu-label,
+    .headmenu > li.open > a .headmenu-label {
+        opacity: 1;
+    }
+
+    .headmenu > li > a:hover .head-icon, .headmenu > li.open a .head-icon {
+        opacity: 1;
+    }
+}
+
+

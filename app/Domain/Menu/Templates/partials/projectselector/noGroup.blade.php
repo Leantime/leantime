@@ -9,7 +9,7 @@
            )
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") ?? 0  == $project['id'] ? "active" : '' }}" >
-                @include('menu::includes.projectLink')
+                <x-projects::projectCard :project="$project" variant="compact"></x-projects::projectCard>
                 <div class="clear"></div>
             </li>
 

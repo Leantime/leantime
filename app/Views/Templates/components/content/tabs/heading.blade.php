@@ -1,1 +1,1 @@
-<li><a {{ $attributes->merge(['href' => "#$name"]) }}>{{ $slot }}</a></li>
+<a role="tab" {{ $attributes->merge(['data-tab-id' => "#$name", 'class' => 'tab']) }}>{{ $slot }}</a>

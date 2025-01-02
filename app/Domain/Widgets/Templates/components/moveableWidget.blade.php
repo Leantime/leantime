@@ -1,12 +1,13 @@
 <div class="grid-stack-item" {{ $attributes }}>
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} p-none">
         <div class="{{ ($background == "default") ? "pb-l" : "" }}">
+
             <div class="stickyHeader w-full relative" >
                 <div class="grid-handler-top h-[40px] cursor-grab float-left" style="margin: 0 5px;" >
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle pb-m float-left mr-sm">{{ __($name) }}</h5>
+                    <h5 class="subtitle pb-m float-left ml-sm mr-sm">{{ __($name) }}</h5>
                 @endif
 
                 <x-global::actions.dropdown content-role="tertiary" position="bottom" align="end"

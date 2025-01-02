@@ -35,6 +35,7 @@ export const initProjectSelector = function () {
         activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
     }
 
+    /*
     jQuery('.projectSelectorTabs').tabs({
         create: function ( event, ui ) {
 
@@ -50,7 +51,7 @@ export const initProjectSelector = function () {
         },
         active: activeTabIndex
 
-    });
+    });*/
 
 };
 

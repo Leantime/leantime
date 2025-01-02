@@ -1,6 +1,5 @@
 import TomSelect from "tom-select/dist/esm/tom-select.complete.js";
 import { appUrl } from "../core/instance-info.module.mjs";
-import { selectManager } from "../componentManager/SelectManager.mjs";
 
 function getOptions(selectElement) {
   const items = [];
@@ -28,14 +27,75 @@ export const initComponent = function () {
 
 }
 
-export const initSelect = function (element, enableSearch, additionalClasses) {
-    return selectManager.initializeSelect(element, {
+export const initSelect = function (element, config= '') {
+
+    let activePlugins = ['no_active_items'];
+
+    console.log(config);
+
+    config = JSON.parse(config);
+
+
+    if(config.search === true) {
+
+        activePlugins.push('dropdown_input');
+    }
+
+    let selectConfig = {
         create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
+        plugins: activePlugins,
+        controlInput: null,
+        //searchField: null,
+        openOnFocus: true,
+        maxOptions: null,
+        maxItems: 1,
+        hideSelected: true,
+        closeAfterSelect: true,
+        loadingClass: "loading-select",
+        duplicates: false,
+        optionClass: 'option',
+        itemClass: 'item',
+        onDelete: function(data) {
+            return false; // Disable remove element.
+        },
+        render: {
+            option: function (data, escape) {
+                return '<div>' + data.text + '</div>';
+            },
+            item: function (data, escape) {
+                return '<div>' + data.text + '</div>';
+            },
+            option_create: function (data, escape) {
+                return '<div class="create">Add <strong>' + escape(data.input) + '</strong>&hellip;</div>';
+            },
+            no_results: function (data, escape) {
+                return '<div class="no-results">No results found for "' + escape(data.input) + '"</div>';
+            },
+            not_loading: function (data, escape) {
+                // no default content
+            },
+            optgroup: function (data) {
+                let optgroup = document.createElement('div');
+                optgroup.className = 'optgroup';
+                optgroup.appendChild(data.options);
+                return optgroup;
+            },
+            optgroup_header: function (data, escape) {
+                return '<div class="optgroup-header">' + escape(data.label) + '</div>';
+            },
+            loading: function (data, escape) {
+                return '<div class="spinner"></div>';
+            },
+            dropdown: function () {
+                return '<div></div>';
+            }
         }
-    });
+    }
+
+    const mergedConfig = { ...selectConfig, ...config };
+
+    return new TomSelect(element, mergedConfig);
+
 };
 
 export const initTags = function (
