@@ -219,13 +219,14 @@ jQuery(document).ready(function(){
                 </x-global::actions.dropdown>
                 
             </div>
-            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
+            <div class="pull-left mb-2" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->formatDateForUser() ?>" style="margin-top:5px;"/>
-                    {{ __("label.until") }}
+                    {{-- {{ __("label.until") }} --}}
+                    <span class="pr-1">{{ __("label.until") }}</span>
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->addDays(6)->formatDateForUser() ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
