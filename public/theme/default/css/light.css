@@ -103,7 +103,7 @@
 
     /* Softer shadows */
     --min-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-    --regular-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+    --regular-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     --large-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
 
     --box-radius-large: 24px;
