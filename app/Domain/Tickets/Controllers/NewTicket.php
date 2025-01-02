@@ -114,49 +114,20 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
 
                 $result = $this->ticketService->addTicket($params);
-
-                if (is_array($result) === false) {
+                if ($result !== false) {
                     $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
-                    return response()->json(['success' => true]);
-
-                    // if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
-                    //     return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result.'?closeModal=1');
-                    // } else {
-                    //     return Frontcontroller::redirectHtmx('#/tickets/showTicket/'.$result);
-                    // }
-                } else {
-                    // $this->tpl->setNotification($this->language->__($result['msg']), 'error');
-
-                    $ticket = app()->makeWith(TicketModel::class, ['values' => $params]);
-                    $ticket->userLastname = session('userdata.name');
-
-                    $this->tpl->assign('ticket', $ticket);
-                    $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
-                    $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
-                    $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-                    $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-                    $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]));
-                    $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session('currentProject')));
-
-                    $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
-                    $this->tpl->assign('ticketHours', 0);
-                    $this->tpl->assign('userHours', 0);
-
-                    $this->tpl->assign('timesheetsAllHours', 0);
-                    $this->tpl->assign('remainingHours', 0);
-
-                    $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
-                    $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
-
-                    $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
-                    $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
-
-                    // return $this->tpl->displayPartial('tickets::partials.newTicketModal');
-                    return response()->json(['success' => false]);
-                }
+                    
+                    if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
+                        return Frontcontroller::redirect('#/tickets/showTicket/'.$result.'?closeModal=1');
+                    } else {
+                        return Frontcontroller::redirect(url: session('lastPage').'#/tickets/showTicket/'.$result);
+                    }
+                } 
             }
 
-            return response()->json(['success' => true]);
+            return Frontcontroller::redirect(url: session('lastPage')."#/tickets/newTicket");
+            // return Frontcontroller::redirect(CURRENT_URL);
+
         }
     }
 }

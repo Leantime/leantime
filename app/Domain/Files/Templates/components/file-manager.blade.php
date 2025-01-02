@@ -31,7 +31,7 @@
 
 
         <div id="fileManager">
-            <div class="maincontentinner">
+            <div class="">
                 @displayNotification()
                 <h5 class="subtitle"><?= $tpl->__('headline.browse_files_headline') ?></h5>
 
@@ -64,7 +64,7 @@
                 </div>
                 <?php } ?>
             </div>
-            <div class="maincontentinner">
+            <div class="">
 
                 <div class='mediamgr'>
 

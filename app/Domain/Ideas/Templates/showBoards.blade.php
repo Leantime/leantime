@@ -39,7 +39,7 @@
                 @if (count($allCanvas) > 0)
                     <span class="dropdown dropdownWrapper">
                         <x-global::actions.dropdown class="header-title-dropdown canvasSelector" align="start"
-                            contentRole="menu">
+                            contentRole="ghost">
                             <x-slot:labelText>
                                 {{ $canvasTitle }}&nbsp;<i class="fa fa-caret-down"></i>
                             </x-slot:labelText>
@@ -75,9 +75,9 @@
                 <div class="col-md-4">
                     @if ($login::userIsAtLeast($roles::$editor))
                         @if (count($allCanvas) > 0)
-                            <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment">
-                                <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!}
-                            </a>
+                            <x-global::forms.button tag="a" href="#/ideas/ideaDialog?type=idea" scale="sm"
+                                data-toggle="modal" data-target="#addCanvas">
+                                <span class="far fa-lightbulb"></span>{!! __('buttons.add_idea') !!} </x-global::forms.button>
                         @endif
                     @endif
                 </div>
@@ -156,8 +156,9 @@
                                     <div class="clearfix" style="padding-bottom: 8px;"></div>
 
                                     <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
-                                        <x-global::actions.dropdown contentRole="link" position="bottom" align="start"
-                                            class="f-left status {{ $canvasLabels[$row->box]['class'] }}">
+                                        <x-global::actions.dropdown scale="sm" contentRole="link" position="bottom"
+                                            align="start" class="f-left status {{ $canvasLabels[$row->box]['class'] }}"
+                                             :indicator-class="$canvasLabels[$row->box]['class']" selectable="true">
                                             <!-- Dropdown Button -->
                                             <x-slot:labelText>
                                                 <span class="text">{{ $canvasLabels[$row->box]['name'] }}</span>&nbsp;<i
@@ -174,7 +175,8 @@
                                                 <!-- Dropdown Items -->
                                                 @foreach ($canvasLabels as $key => $label)
                                                     <x-global::actions.dropdown.item href="javascript:void(0);"
-                                                        class="{{ $label['class'] }}" :data-label="$label['name']" :data-value="$row->id . '_' . $key . '_' . $label['class']"
+                                                        class="{{ $label['class'] }}" :data-label="$label['name']" :data-class="$label['class']"
+                                                        :data-value="$row->id . '_' . $key . '_' . $label['class']"
                                                         id="ticketStatusChange{{ $row->id }}{{ $key }}">
                                                         {{ $label['name'] }}
                                                     </x-global::actions.dropdown.item>
@@ -290,24 +292,17 @@
                     <div class="modal-content">
                         <form action="" method="post">
                             <div class="modal-header">
-                            <x-global::forms.button
-                                type="button"
-                                class="close"
-                                data-dismiss="modal"
-                                aria-hidden="true">
-                                &times;
-                            </x-global::forms.button>
+                                <x-global::forms.button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">
+                                    &times;
+                                </x-global::forms.button>
 
                                 <h4 class="modal-title">{!! __('headlines.start_new_idea_board') !!}</h4>
                             </div>
                             <div class="modal-body">
-                                <x-global::forms.text-input
-                                    type="text"
-                                    name="canvastitle"
+                                <x-global::forms.text-input type="text" name="canvastitle"
                                     placeholder="{{ __('input.placeholders.name_for_idea_board') }}"
-                                    labelText="{{ __('label.topic_idea_board') }}"
-                                    variant="title"
-                                 />
+                                    labelText="{{ __('label.topic_idea_board') }}" variant="title" />
 
                             </div>
                             <div class="modal-footer">
@@ -330,24 +325,17 @@
                     <div class="modal-content">
                         <form action="" method="post">
                             <div class="modal-header">
-                            <x-global::forms.button
-                                type="button"
-                                class="close"
-                                data-dismiss="modal"
-                                aria-hidden="true">
-                                &times;
-                            </x-global::forms.button>
+                                <x-global::forms.button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">
+                                    &times;
+                                </x-global::forms.button>
 
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
-                            <x-global::forms.text-input
-                                type="text"
-                                name="canvastitle"
-                                value="{{ $canvasTitle }}"
-                                labelText="{{ __('label.title_idea_board') }}"
-                                variant="title"
-                            />
+                                <x-global::forms.text-input type="text" name="canvastitle"
+                                    value="{{ $canvasTitle }}" labelText="{{ __('label.title_idea_board') }}"
+                                    variant="title" />
 
                             </div>
                             <div class="modal-footer">
@@ -368,17 +356,20 @@
     </div>
 
 
-    <script type="text/javascript">
+
+    <script type="module">
+        import "@mix('/js/Domain/Ideas/Js/ideasController.js')"
+        import "@mix('/js/Domain/Canvas/Js/canvasController.js')"
         jQuery(document).ready(function() {
             //new SlimSelect({ select: '#searchCanvas' });
 
-            leantime.ideasController.initMasonryWall();
-            leantime.ideasController.initBoardControlModal();
-            leantime.ideasController.initWallImageModals();
+            // initMasonryWall();
+            // initBoardControlModal();
+            // initWallImageModals();
 
+            ideasController.initStatusDropdown();
             @if ($login::userIsAtLeast($roles::$editor))
-            leantime.canvasController.initUserDropdown('ideas');
-            leantime.canvasController.initStatusDropdown('ideas');
+                initUserDropdown('ideas');
             @else
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif
@@ -398,5 +389,4 @@
             @endif
         });
     </script>
-
 @endsection

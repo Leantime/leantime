@@ -36,10 +36,12 @@
 <div class="row">
     <div class="col-md-7">
 
-        <form hx-post="{{ BASE_URL }}hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+        <form hx-post="/hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
             hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
-            <label class="pl-m pb-sm">📄 Details</label>
+
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" placeholder="Add Title"
+                variant="title" />
 
             <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
                 @foreach ($tags as $tag)
@@ -47,16 +49,15 @@
                 @endforeach
             </x-global::forms.select>
 
-            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" labelText="Title"
-                variant="title" />
-
-            <div class="viewDescription mce-content-body">
+            <div class="viewDescription mce-content-body input-bordered">
                 <div class="min-h-[100px]">
-                    @if (!empty($ticket->description))
-                        {!! $ticket->description !!}
-                    @else
-                        <p>Add Description</p>
-                    @endif
+                    <p class="input-bordered">
+                        @if (!empty($ticket->description))
+                            {!! $ticket->description !!}
+                        @else
+                            Add Description
+                        @endif
+                    </p>
                 </div>
             </div>
 
@@ -68,11 +69,12 @@
             <br>
 
             <div class="flex items-center gap-2">
-                <x-global::forms.button variant="primary" labelText="Save" />
+                <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
 
                 {{-- TODO: This should just close the modal --}}
-                <x-global::forms.button tag="button" variant="link" contentRole="ghost" labelText="Cancel"
-                    name="cancel" type="button" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                <x-global::forms.button tag="button" variant="link" scale="sm" contentRole="ghost"
+                    labelText="Cancel" name="cancel" type="button"
+                    onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
                 <div id="save-indicator" class="htmx-indicator">
                     <span class="loading loading-spinner"></span> Saving...
                 </div>
@@ -82,7 +84,7 @@
 
 
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
-        <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
+        <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md" class="mb-2">
             <x-slot:contents>
                 <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm"
                     :checked="true">
@@ -106,9 +108,8 @@
                 </x-global::navigations.tabs.content>
                 <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
-                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" 
-                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}"
-                        />
+                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours"
+                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}" />
                 </x-global::navigations.tabs.content>
             </x-slot:contents>
         </x-global::navigations.tabs>
@@ -124,6 +125,13 @@
         //All accordions start open
         //leantime.editorController.initComplexEditor();
         //tinymce.activeEditor.hide()
+
+        htmx.on('htmx:afterRequest', (event) => {
+            if (event.detail.successful && event.target.matches('form')) {
+                jQuery('#descriptionEditor').hide();
+                jQuery('.viewDescription').show();
+            }
+        });
     });
 
     //leantime.editorController.initComplexEditor();
