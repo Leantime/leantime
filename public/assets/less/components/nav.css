@@ -76,16 +76,24 @@ body .menu {
 
             a {
                 text-align: center;
-                @apply btn btn-ghost;
                 background-position: left center;
                 display: block;
                 background-repeat: no-repeat;
                 background-size: contain;
+                height: 100%;
             }
 
             img {
                 position: relative;
                 /*height: 50px;*/
+            }
+
+            &:hover {
+                @apply bg-neutral/20;
+            }
+
+            &:focus {
+                @apply outline-primary;
             }
         }
 
