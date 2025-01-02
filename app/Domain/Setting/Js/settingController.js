@@ -13,7 +13,7 @@ export const readURL = function (input) {
         var profileImg = jQuery('#logoImg');
         reader.onload = function (e) {
             //profileImg.attr('src', e.currentTarget.result);
-
+            
             this._uploadResult = profileImg
                 .croppie(
                     {
@@ -71,9 +71,8 @@ export const saveCroppie = function () {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const settingController = {
     readURL: readURL,
     clearCroppie: clearCroppie,
     saveCroppie: saveCroppie
 };
-

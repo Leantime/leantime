@@ -153,7 +153,7 @@ export const checkPWStrength = function (pwField) {
 
 }
 
-export default {
+export const usersController = {
     readURL: readURL,
     clearCroppie: clearCroppie,
     saveCroppie: saveCroppie,

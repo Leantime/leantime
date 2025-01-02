@@ -2,17 +2,16 @@
 
 @section('content')
     <?php
-    $companySettings = $tpl->get('companySettings');
+        $companySettings = $tpl->get('companySettings');
     ?>
 
-    <div class="pageheader">
-
-        <div class="pageicon"><span class="fa fa-cogs"></span></div>
-        <div class="pagetitle">
-            <h5><?= $tpl->__('label.administration') ?></h5>
-            <h1><?= $tpl->__('headlines.company_settings') ?></h1>
-        </div>
+<div class="pageheader">
+    <div class="pageicon"><span class="fa fa-cogs"></span></div>
+    <div class="pagetitle">
+        <h5><?= $tpl->__('label.administration') ?></h5>
+        <h1><?= $tpl->__('headlines.company_settings') ?></h1>
     </div>
+</div>
 
 <div class="maincontent">
     @displayNotification()
@@ -173,10 +172,10 @@
 
                                             <div class="col-md-12">
                                                 <?php if ($companySettings['logo'] != "") { ?>
-                                                <img src='<?php echo $companySettings['logo']; ?>' class='logoImg' alt='Logo'
-                                                    id="previousImage" width="260" />
+                                                    <img src='<?php echo $companySettings['logo']; ?>' class='logoImg' alt='Logo'
+                                                        id="previousImage" width="260" />
                                                 <?php } else { ?>
-                                                <?= $tpl->__('text.no_logo') ?>
+                                                    <?= $tpl->__('text.no_logo') ?>
                                                 <?php } ?>
                                                 <div id="logoImg" style="height:auto;">
                                                 </div>
@@ -197,14 +196,14 @@
                                                                     class="fileupload-new"><?= $tpl->__('buttons.select_file') ?></span>
                                                                 <span
                                                                     class='fileupload-exists'><?= $tpl->__('buttons.change') ?></span>
-                                                                <input type='file' name='file'
-                                                                    onchange="leantime.settingController.readURL(this)" />
+                                                                <input type='file' name='file' id='fileInput'/>
                                                             </span>
 
-                                                        <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?=$tpl->__("buttons.remove")?></a>
+                                                            {{-- onclick="leantime.usersController.clearCroppie()" --}}
+                                                        <a href='#' id="removeLogo" style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload'><?=$tpl->__("buttons.remove")?></a>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                                        <x-global::forms.button tag="button" id="saveBtn" onclick="leantime.settingController.saveCroppie()">
+                                                        <x-global::forms.button tag="button" id="saveLogo">
                                                             {{ __('buttons.save') }}
                                                         </x-global::forms.button>
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
@@ -267,17 +266,34 @@
 
 
 
-    </div>
+</div>
 
 
-    <script>
-        jQuery(document).ready(function() {
-            jQuery(".companyTabs").tabs({
-                activate: function(event, ui) {
+<script type="module">
 
-                    window.location.hash = ui.newPanel.selector;
-                }
-            });
+    import "@mix('/js/Domain/Setting/Js/settingController.js')"
+    import "@mix('/js/Domain/Users/Js/usersController.js')"
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            settingController.readURL(e.target);
         });
-    </script>
+        
+        document.getElementById('saveLogo').addEventListener('click', () => {
+            settingController.saveCroppie();
+        });
+        
+        document.getElementById('removeLogo').addEventListener('click', () => {
+            usersController.clearCroppie();
+        });
+
+        // Initialize tabs
+        jQuery(".companyTabs").tabs({
+            activate: function(event, ui) {
+                window.location.hash = ui.newPanel.selector;
+            }
+        });
+    });
+</script>
+
 @endsection
