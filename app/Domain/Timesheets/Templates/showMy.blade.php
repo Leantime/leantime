@@ -93,28 +93,6 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery(".project-select").chosen();
-    jQuery(".ticket-select").chosen();
-    jQuery(".project-select").change(function(){
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
-
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
-            jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
-            jQuery(".ticket-select").chosen("destroy").chosen();
-    });
-
-    jQuery(".ticket-select").change(function() {
-        var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-        jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
-        jQuery(".project-select").trigger("liszt:updated");
-        jQuery(".ticket-select").chosen("destroy").chosen();
-    });
-
     jQuery("#nextWeek").click(function() {
         var date = jQuery("#endDate").datepicker('getDate');
         var endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
@@ -139,6 +117,28 @@ jQuery(document).ready(function(){
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
     });
+
+    // jQuery(".project-select").chosen();
+    // jQuery(".ticket-select").chosen();
+    // jQuery(".project-select").change(function(){
+    //         jQuery(".ticket-select").removeAttr("selected");
+    //         jQuery(".ticket-select").val("");
+    //         jQuery(".ticket-select").trigger("liszt:updated");
+
+    //         jQuery(".ticket-select option").show();
+    //         jQuery("#ticketSelect .chosen-results li").show();
+    //         var selectedValue = jQuery(this).find("option:selected").val();
+    //         jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
+    //         jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
+    //         jQuery(".ticket-select").chosen("destroy").chosen();
+    // });
+
+    // jQuery(".ticket-select").change(function() {
+    //     var selectedValue = jQuery(this).find("option:selected").attr("data-value");
+    //     jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
+    //     jQuery(".project-select").trigger("liszt:updated");
+    //     jQuery(".ticket-select").chosen("destroy").chosen();
+    // });
 
     jQuery(".timesheetTable input").change(function(){
         //Row Sum
@@ -390,7 +390,11 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                    <x-global::forms.select name="kindId">
+                                    <x-global::forms.select 
+                                        data-placeholder="Choose type"
+                                        name="kindId"
+                                    >
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <x-global::forms.select.select-option :value="$key">
                                                 {!! __($kindRow) !!}
