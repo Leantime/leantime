@@ -215,20 +215,19 @@
                                 </x-global::elements.table.cell>
 
                                 <x-global::elements.table.cell data-order="{{ $milestoneHeadline }}">
-                                    <x-global::forms._archive.dropdownPill
-                                        class="ticketDropdown milestoneDropdown colorized show label-default milestone f-left"
-                                        id="{{ $milestoneDropdownId }}"
-                                        :style="'background-color:' . $milestoneColor"
+                                    <x-global::forms.chip
+                                        class="ticketDropdown milestoneDropdown colorized milestone show f-left"
+                                        :bgColor="'background-color:' . $milestoneColor"
                                         :labelText="$milestoneHeadline"
                                         type="milestone"
-                                        :parentId="$row['id']">
-                                        <x-slot name="buttonText">
-                                            {{ $milestoneHeadline }} <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </x-slot>
+                                        :parentId="$row['id']"
+                                        :quickaddOption="true"
+                                        quickaddPostUrl="{{ BASE_URL }}/hx/tickets/Milestones"
+                                    >
 
-                                        <x-global::actions.dropdown.item class="nav-header border">
+                                        <li class="nav-header">
                                             {{ __('dropdown.choose_milestone') }}
-                                        </x-global::actions.dropdown.item>
+                                        </li>
 
                                         <x-global::actions.dropdown.item
                                             href="javascript:void(0);"
@@ -249,7 +248,8 @@
                                                 {{ $tpl->escape($milestone->headline) }}
                                             </x-global::actions.dropdown.item>
                                         @endforeach
-                                    </x-global::forms._archive.dropdownPill>
+
+                                    </x-global::forms.chip>
                                 </x-global::elements.table.cell>
 
                                 <x-global::elements.table.cell data-order="{{ $row['storypoints'] ? $efforts['' . $row['storypoints'] . ''] ?? '?' : $tpl->__('label.story_points_unkown') }}">
