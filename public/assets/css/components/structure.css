@@ -380,7 +380,6 @@
 
 .header {
     clear: both;
-    height: 50px;
     position: sticky;
     top:0px;
     z-index: 15;
