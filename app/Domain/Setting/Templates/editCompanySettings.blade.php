@@ -35,7 +35,7 @@
                             <div class="col-md-8">
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details" >
 
-                                        <h5 class="subtitle"><?= $tpl->__('headlines.company_settings') ?></h5>
+                                        <h2 class="subtitle"><?= $tpl->__('headlines.company_settings') ?></h2>
                                         <p><?= $tpl->__('text.these_are_system_wide_settings') ?></p>
                                         <br />
                                         <input type="hidden" value="1" name="saveSettings" />
@@ -166,7 +166,7 @@
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="subtitle"><?=$tpl->__("headlines.logo")?></h5>
+                                    <h2 class="subtitle"><?=$tpl->__("headlines.logo")?></h2>
                                     <br />
 
                                         <div class="row">
