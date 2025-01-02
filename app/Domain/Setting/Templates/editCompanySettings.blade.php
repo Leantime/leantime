@@ -85,7 +85,7 @@
                                             <div class="col-md-2">
                                                 <label><?= $tpl->__('label.send_telemetry') ?></label>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-8 flex items-center gap-2">
                                                 <x-global::forms.checkbox
                                                     name="telemetryActive"
                                                     id="telemetryActive"
@@ -93,9 +93,9 @@
                                                     class="toggle"
                                                 />
 
-                                    <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
-                                    <div class="clearall"></div><br />
-                                </div>
+                                                <i class="fa fa-question-circle mt-1" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
+                                                <div class="clearall"></div><br />
+                                            </div>
                             </div>
                                     <br />
                             <h4 class="widgettitle title-light"><span
