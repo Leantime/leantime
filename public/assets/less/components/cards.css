@@ -3,5 +3,5 @@
 }
 
 .card-compact .card-body {
-    @apply text-sm;
+    @apply text-sm p-1;
 }

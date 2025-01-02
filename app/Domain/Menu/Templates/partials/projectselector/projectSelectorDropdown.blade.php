@@ -10,7 +10,7 @@
     </div>
 @endif
 
-<x-global::content.tabs>
+<x-global::content.tabs variant="bordered">
     <x-slot:headings>
         <x-global::content.tabs.heading name="myProjects">{{ __('menu.projectselector.my_projects') }}</x-global::content.tabs.heading>
         <x-global::content.tabs.heading name="favorites">{{ __('menu.projectselector.favorites') }}</x-global::content.tabs.heading>
@@ -74,7 +74,7 @@
     </x-slot:contents>
 </x-global::content.tabs>
 
-<div class="projectSelectorFooter border-top">
+<div class="projectSelectorFooter border-t border-neutral mt-lg">
     <ul class="menu p-0" hx-boost="true" hx-indicator="#global-loader">
         <li>
             <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>

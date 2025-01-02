@@ -23,7 +23,7 @@
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this" class="hidden"></span>
 
         </a>
 
@@ -150,7 +150,7 @@
 
 </ul>
 
-<ul class="headmenu">
+<ul class="headmenu" hx-indicator="#global-loader" hx-boost="true">
 
 
     @dispatchEvent('afterHeadMenuOpen')

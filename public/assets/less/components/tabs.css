@@ -1,24 +1,47 @@
 
-.tabs-headings {
-    @apply mb-sm;
-}
 
-.tabs-boxed {
-    @apply bg-base-content/5 rounded-btn p-1;
+
+.tabs {
 
     .tab {
-        @apply hover:bg-base-content/10;
 
-        &.tab-active {}
+        @apply rounded-t-sm p-1;
 
+        &:hover {
+            @apply bg-base-content/10;
+        }
+    }
+
+
+    &.tabs-headings {
+        @apply mb-sm;
+    }
+
+    &.tabs-boxed {
+        @apply bg-base-content/5 rounded-btn;
+
+        .tab {
+            @apply hover:bg-base-content/10;
+
+            &.tab-active {}
+
+        }
+
+    }
+
+    &.tabs-bordered {
+        .tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not([disabled]),
+        .tab:is(input:checked) {
+            @apply border-primary text-primary font-bold;
+        }
     }
 
 }
 
-.tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not([disabled]),
-.tab:is(input:checked) {
-    @apply border-primary text-primary font-bold;
-}
+
+
+
+
 
 
 

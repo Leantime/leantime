@@ -1114,15 +1114,6 @@ ul.list-inline li {
 }
 
 
-.subtitle2, .table th, .msglist li h4,
-.tabbedwizard .stepContainer h4, dt,
-.userloggedinfo .userinfo h5,
-.loginpanel .inputwrapper button,
-.userlist li .uinfo h5 {
-
-    font-weight: normal;
-}
-
 /*** TRANSITION ***/
 
 
