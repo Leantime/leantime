@@ -129,6 +129,7 @@
                 <label>{{ __('label.start_date') }}</label>
                 <input type="text" autocomplete="off" value="{{ format($canvasItem['startDate'])->date() }}"
                     name="startDate" class="startDate" />
+                    
 
                 <label>{{ __('label.end_date') }}</label>
                 <input type="text" autocomplete="off" value="{{ format($canvasItem['endDate'])->date() }}"

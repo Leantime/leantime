@@ -36,10 +36,12 @@
 <div class="row">
     <div class="col-md-7">
 
-        <form hx-post="{{ BASE_URL }}hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+        <form hx-post="/hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
             hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
-            <label class="pl-m pb-sm">📄 Details</label>
+
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" placeholder="Add Title"
+                variant="title" />
 
             <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
                 @foreach ($tags as $tag)
@@ -47,16 +49,15 @@
                 @endforeach
             </x-global::forms.select>
 
-            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" labelText="Title"
-                variant="title" />
-
-            <div class="viewDescription mce-content-body">
+            <div class="viewDescription mce-content-body input-bordered">
                 <div class="min-h-[100px]">
-                    @if (!empty($ticket->description))
-                        {!! $ticket->description !!}
-                    @else
-                        <p>Add Description</p>
-                    @endif
+                    <p class="input-bordered">
+                        @if (!empty($ticket->description))
+                            {!! $ticket->description !!}
+                        @else
+                            Add Description
+                        @endif
+                    </p>
                 </div>
             </div>
 
@@ -68,11 +69,12 @@
             <br>
 
             <div class="flex items-center gap-2">
-                <x-global::forms.button variant="primary" labelText="Save" />
+                <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
 
                 {{-- TODO: This should just close the modal --}}
-                <x-global::forms.button tag="button" variant="link" contentRole="ghost" labelText="Cancel"
-                    name="cancel" type="button" onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                <x-global::forms.button tag="button" variant="link" scale="sm" contentRole="ghost"
+                    labelText="Cancel" name="cancel" type="button"
+                    onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
                 <div id="save-indicator" class="htmx-indicator">
                     <span class="loading loading-spinner"></span> Saving...
                 </div>
@@ -82,36 +84,44 @@
 
 
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
-        <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md">
+        <x-global::content.tabs name="ticket-details" variant="bordered" size="md" class="mb-2">
+            <x-slot:headings>
+                <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="discussion">Discussion</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="files">Files</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="timesheet">Timesheet</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="ticket-settings">Settings</x-global::content.tabs.heading>
+            </x-slot:headings>
+
             <x-slot:contents>
-                <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm"
+                <x-global::content.tabs.content name="connections" ariaLabel="Connections" classExtra="p-sm"
                     :checked="true">
                     Connections
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="discussion" ariaLabel="Discussion" classExtra="p-sm">
+                <x-global::content.tabs.content name="discussion" ariaLabel="Discussion" classExtra="p-sm">
                     <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$ticket->id" />
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="subtask" ariaLabel="Subtasks" classExtra="p-sm">
+                <x-global::content.tabs.content name="subtask" ariaLabel="Subtasks" classExtra="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
+                <x-global::content.tabs.content name="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::files :ticket="$ticket" />
-                </x-global::navigations.tabs.content>
-                <x-global::navigations.tabs.content id="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
+                </x-global::content.tabs.content>
+                <x-global::content.tabs.content name="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
                     <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues"
                         :userHours="$userHours" />
-                </x-global::navigations.tabs.content>
-                <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
+                </x-global::content.tabs.content>
+                <x-global::content.tabs.content name="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
-                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours" 
-                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}"
-                        />
-                </x-global::navigations.tabs.content>
+                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours"
+                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}" />
+                </x-global::content.tabs.content>
             </x-slot:contents>
-        </x-global::navigations.tabs>
+        </x-global::content.tabs>
     </div>
 </div>
 
@@ -124,6 +134,13 @@
         //All accordions start open
         //leantime.editorController.initComplexEditor();
         //tinymce.activeEditor.hide()
+
+        htmx.on('htmx:afterRequest', (event) => {
+            if (event.detail.successful && event.target.matches('form')) {
+                jQuery('#descriptionEditor').hide();
+                jQuery('.viewDescription').show();
+            }
+        });
     });
 
     //leantime.editorController.initComplexEditor();

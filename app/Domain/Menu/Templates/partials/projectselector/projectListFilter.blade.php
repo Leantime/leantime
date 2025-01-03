@@ -2,7 +2,7 @@
 
     <form hx-target="#mainProjectSelector" hx-swap="innerHTML" hx-trigger="change" hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu" hx-indicator=".project-loading-indicator,.htmx-loaded-content">
 
-        <div class="flex flex-row justify-self-start">
+        <div class="flex flex-row justify-self-start gap-x-sm">
             <x-global::forms.select data-placeholder="" name="client">
                 <x-slot:leading-visual>
                     <i class="fas fa-filter"></i>

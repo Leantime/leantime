@@ -36,7 +36,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::components.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -62,7 +62,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-4">
-                            @include("projects::includes.projectCard", ["project" => $project, "type" => $type])
+                            @include("projects::components.projectCard", ["project" => $project, "type" => $type])
                         </div>
 
                     @endif

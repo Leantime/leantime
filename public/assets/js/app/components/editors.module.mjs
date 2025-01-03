@@ -436,5 +436,4 @@ export const editors = {
     initComplexEditor: initComplexEditor,
     initNotesEditor: initNotesEditor
 };
-
 export default editors;

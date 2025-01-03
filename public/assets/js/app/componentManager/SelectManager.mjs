@@ -1,5 +1,5 @@
 import { BaseComponentManager } from './BaseComponentManager.mjs';
-import TomSelect from 'tom-select/dist/esm/tom-select.complete.js';
+import selects from "../components/selects.module.mjs";
 
 class SelectManager extends BaseComponentManager {
     findElements(parentElement) {
@@ -12,16 +12,10 @@ class SelectManager extends BaseComponentManager {
     }
 
     createInstance(element, config = {}) {
-        const defaultConfig = {
-            create: false,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            }
-        };
 
-        const mergedConfig = { ...defaultConfig, ...config };
-        return new TomSelect(element, mergedConfig);
+        let componentConfig = element.dataset.componentConfig;
+        console.log(componentConfig);
+        return selects.initSelect(element, componentConfig);
     }
 
     cleanup(instance) {

@@ -4,5 +4,5 @@
 ])
 
 <option value="{{ $value }}" {{ $selected ? 'selected' : '' }}>
-    {{ $slot }}
+    {!! $slot !!}
 </option>

@@ -8,7 +8,6 @@
 
         $canvasSvc = app()->make(Goalcanvas::class);
 
-
         $elementName = 'goal';
         /**
          * showCanvasTop.inc template - Top part of the main canvas page
@@ -109,22 +108,17 @@
                         $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow['id']);
                     @endphp --}}
 
-                    <x-goalcanvas::canvas
-                        id="{{ $canvasRow['id'] }}"
-                        {{-- canvasTitle="{{ $canvasRow['title'] }}" --}}
-                        {{-- :goalItems="$canvasItems" --}}
+                    <x-goalcanvas::canvas id="{{ $canvasRow['id'] }}" {{-- canvasTitle="{{ $canvasRow['title'] }}" --}} {{-- :goalItems="$canvasItems" --}}
                         {{-- :statusLabels="$statusLabels"
                         :relatesLabels="$relatesLabels"
-                        :users="$users" --}}
-                    />
-            
+                        :users="$users" --}} />
                 @endforeach
             @endif
         </div>
 
 
 
-{{--
+        {{--
  * showCanvasBottom.blade.php template - Bottom part of the main canvas page
  *
  * Required variables:
@@ -144,11 +138,8 @@
 
                 @if ($login::userIsAtLeast($roles::$editor))
                     <br><br>
-                    <x-global::forms.button
-                        tag="a"
-                        href="javascript:void(0)"
-                        class="addCanvasLink btn btn-primary"
-                    >
+                    <x-global::forms.button tag="a" href="javascript:void(0)"
+                        class="addCanvasLink btn btn-primary">
                         {!! __('links.icon.create_new_board') !!}
                     </x-global::forms.button>
                 @endif
@@ -184,7 +175,7 @@
                 leantime.authController.makeInputReadonly(".maincontentinner");
             @endif
 
-});
-</script>
+        });
+    </script>
 
 @endsection

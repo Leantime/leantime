@@ -1,0 +1,98 @@
+.objectCard {
+
+    @apply border shadow-md rounded-btn;
+    background:none;
+
+
+
+    small {
+        color:var(--kanban-col-title-color);
+    }
+
+    a.objectLink {
+        display:block;
+        @apply rounded-btn leading-snug;
+    }
+
+    a.objectLink:hover,
+    a.objectLink:focus
+    {
+        @apply hover:bg-base-content/10;
+    }
+
+    .lastStatus [class*="commentStatus-"]{
+        padding-left:10px;
+    }
+
+    .avatar {
+        float:left;
+        margin-right:10px;
+        text-align:center;
+        border-radius:var(--box-radius-small);
+        background:var(--element-gradient);
+
+        img {
+            border-radius:var(--box-radius-small);
+        }
+
+        .fa {
+            color:var(--main-action-color);
+            font-size: 23px;
+            line-height: 50px;
+        }
+    }
+
+    &.compact {
+        @apply border-none shadow-none;
+
+        a.objectLink {
+            height:40px;
+        }
+
+        .avatar {
+            width:40px;
+            height:40px;
+
+            img {
+                width:40px;
+                height:40px;
+            }
+        }
+    }
+
+    &.simple {
+
+        a.objectLink {
+            height:40px;
+        }
+
+        .avatar {
+            width:40px;
+            height:40px;
+
+            img {
+                width:40px;
+                height:40px;
+            }
+        }
+
+    }
+
+    &.full {
+
+        a.objectLink {
+            height:40px;
+        }
+
+        .avatar {
+            width:50px;
+            height:50px;
+
+            img {
+                width:50px;
+                height:50px;
+            }
+        }
+    }
+
+}

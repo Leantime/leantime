@@ -38,8 +38,8 @@
                     name="description"
                     value="{{ $canvasItem->description }}"
                     placeholder="{{ __('input.placeholders.short_name') }}"
-                    class="main-title-input mt-4"
-                />
+                    variant="title"
+                    />
 
                 <x-global::forms.select name="tags[]" id="tags" variant="tags" maxItemCount=4 >
 
@@ -65,6 +65,7 @@
                 <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
 
                 <x-global::forms.button
+                    scale="xs"
                     type="submit"
                     id="primaryCanvasSubmitButton">
                     {!! __('buttons.save') !!}
@@ -74,7 +75,8 @@
                     type="submit"
                     class="btn btn-primary"
                     value="closeModal"
-                    contentRole="ghost"
+                    contentRole="secondary"
+                    scale="xs"
                     id="saveAndClose">
                     {!! __('buttons.save_and_close') !!}
                 </x-global::forms.button>
@@ -115,7 +117,7 @@
                                 </div>
                                 <div class="row" id="newMilestone" style="display:none;">
                                     <div class="col-md-12">
-                                        <textarea name="newMilestone"></textarea><br />
+                                        <textarea  name="newMilestone"></textarea><br />
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
                                         <x-global::forms.button
