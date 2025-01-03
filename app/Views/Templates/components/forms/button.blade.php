@@ -28,7 +28,7 @@
     // btn-outline border-primary text-primary
     switch($contentRole){
         case 'secondary':
-            $typeClass = 'btn-secondary border-secondary hover:bg-secondary/80';
+            $typeClass = 'btn-secondary hover:bg-secondary/80';
             break;
         case 'tertiary':
         case 'ghost':

@@ -37,7 +37,7 @@
         default => 'menu ' . $menuClassBase, // Default to regular menu
     };
 
-    $cardClassBase = 'dropdown-content rounded-element bg-base-100 p-2 shadow w-fit z-50';
+    $cardClassBase = 'dropdown-content rounded-element bg-base-100 shadow w-fit z-50';
     // Determine the menu class based on the variant
     $cardClass = match ($variant) {
         'card' => 'card card-compact ' . $cardClassBase, // Card variant class
@@ -71,7 +71,7 @@
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $cardClass }}">
-            <div class="card-body p-1">
+            <div {{ $cardContent->attributes->merge(["class" => "card-body" ]) }}>
                 @if ($cardLabel)
                     <h3 class="card-title">{{ $cardLabel }}</h3>
                 @endif
