@@ -132,6 +132,7 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 
 .week-picker {
     width:100px;
+    background-color: transparent;
 }
 
 .timesheetTable select {

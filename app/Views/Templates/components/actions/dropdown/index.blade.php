@@ -38,6 +38,7 @@
     };
 
     $cardClassBase = 'dropdown-content rounded-element bg-base-100 p-2 shadow w-fit z-50';
+
     // Determine the menu class based on the variant
     $cardClass = match ($variant) {
         'card' => 'card card-compact ' . $cardClassBase, // Card variant class
@@ -71,9 +72,9 @@
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $cardClass }}">
-            <div class="card-body p-1">
-                @if ($cardLabel)
-                    <h3 class="card-title">{{ $cardLabel }}</h3>
+            <div class="card-body">
+                @if($cardLabel)
+                    <h2 class="card-title">{{ $cardLabel }}</h2>
                 @endif
 
                 {!! $cardContent ?? '' !!}

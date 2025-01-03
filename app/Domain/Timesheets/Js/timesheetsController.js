@@ -73,6 +73,7 @@ export const initTimesheetsTable = function (groupBy) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
-    initTimesheetsTable: initTimesheetsTable,
-};
+
+export const timesheetsController = {
+    initTimesheetsTable: initTimesheetsTable
+}
