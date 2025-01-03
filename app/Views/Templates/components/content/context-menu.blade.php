@@ -1,4 +1,4 @@
-<x-global::actions.dropdown contentRole="link" position="end" :align="$align ?? 'start'">
+<x-global::actions.dropdown contentRole="ghost" position="end" :align="$align ?? 'start'">
     <x-slot:labelText>
         <i class='fa fa-ellipsis-v' aria-hidden='true'></i>
     </x-slot:labelText>
