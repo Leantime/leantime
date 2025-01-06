@@ -171,18 +171,13 @@
     }
 
     .ts-dropdown {
+        @apply rounded-element bg-base-100 shadow w-fit overflow-hidden;
         position: absolute;
         top: 100%;
         left: 0;
         width: 100%;
         z-index: 10;
-        border: 1px solid #d0d0d0;
-        background: #fff;
-        margin: 0.25rem 0 0;
-        border-top: 0 none;
-        box-sizing: border-box;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-radius: 0 0 3px 3px;
+
     }
     .ts-dropdown [data-selectable] {
         cursor: pointer;

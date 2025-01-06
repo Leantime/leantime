@@ -25,7 +25,7 @@
 
                     <div class="flex mb-2 gap-3">
                         @include('tickets::includes.ticketNewBtn')
-                        @include('tickets::includes.ticketFilter')
+                        @include('tickets::includes.ticketFilterHx')
                     </div>
 
                     <?php
@@ -254,7 +254,6 @@
 
             jQuery(document).on("htmx:afterRequest", ".quickadd-ticket", function() {
                 let key = jQuery(this).data('key');
-                console.log(`ticketColumn_${key}`); 
                 htmx.trigger(`#ticketColumn_${key}`, 'reload');
                 jQuery(this).find('input[name=headline]').val(''); 
             });
