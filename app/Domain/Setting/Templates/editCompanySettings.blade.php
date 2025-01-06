@@ -177,9 +177,12 @@
                                                 <?php } else { ?>
                                                     <?= $tpl->__('text.no_logo') ?>
                                                 <?php } ?>
+                                                
                                                 <div id="logoImg" style="height:auto;">
                                                 </div>
+                                                
                                                 <br />
+                                                
                                                 <div class="par">
 
                                                     <label><?= $tpl->__('label.upload_new_logo') ?></label>
@@ -191,23 +194,22 @@
                                                                 <i class="fa-file fileupload-exists"></i>
                                                                 <span class="fileupload-preview"></span>
                                                             </div>
+
                                                             <span class="btn btn-default btn-file">
-                                                                <span
-                                                                    class="fileupload-new"><?= $tpl->__('buttons.select_file') ?></span>
-                                                                <span
-                                                                    class='fileupload-exists'><?= $tpl->__('buttons.change') ?></span>
-                                                                <input type='file' name='file' id='fileInput'/>
+                                                                <span>{{__('buttons.select_file')}}</span>
+                                                                <input type='file' name='file' id='file-input' />
                                                             </span>
 
-                                                            {{-- onclick="leantime.usersController.clearCroppie()" --}}
-                                                        <a href='#' id="removeLogo" style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload'><?=$tpl->__("buttons.remove")?></a>
-                                                    </div>
-                                                    <p class='stdformbutton'>
-                                                        <x-global::forms.button tag="button" id="saveLogo">
-                                                            {{ __('buttons.save') }}
-                                                        </x-global::forms.button>
-                                                        <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
-                                                    </p>
+                                                            <span id="remove-logo" style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload'>{{__("buttons.remove")}}</span>
+                                                        </div>
+
+                                                        <p class='stdformbutton'>
+                                                            <x-global::forms.button tag="button" id="save-logo">
+                                                                {{ __('buttons.save') }}
+                                                            </x-global::forms.button>
+                                                            <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
+                                                        </p>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -215,7 +217,7 @@
                                 </form>
                                 <hr />
                                 <?=$tpl->__("text.logo_reset")?><br /><br />
-                                {{-- <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a> --}}
+                                
                                 <x-global::forms.button tag="a" contentRole="ghost" href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" scale="sm">
                                     {{ __("buttons.reset_logo") }}
                                 </x-global::forms.button>
@@ -263,9 +265,6 @@
             </div>
         </div>
 
-
-
-
 </div>
 
 
@@ -275,16 +274,18 @@
     import "@mix('/js/Domain/Users/Js/usersController.js')"
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('fileInput').addEventListener('change', (e) => {
+        document.getElementById('file-input').addEventListener('change', (e) => {
             settingController.readURL(e.target);
         });
         
-        document.getElementById('saveLogo').addEventListener('click', () => {
+        document.getElementById('save-logo').addEventListener('click', (e) => {
+            e.preventDefault();
             settingController.saveCroppie();
         });
         
-        document.getElementById('removeLogo').addEventListener('click', () => {
-            usersController.clearCroppie();
+        document.getElementById('remove-logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            settingController.clearCroppie();
         });
 
         // Initialize tabs
