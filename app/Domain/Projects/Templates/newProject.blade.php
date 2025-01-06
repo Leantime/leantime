@@ -1,8 +1,15 @@
+@php
+    use Leantime\Core\Support\EditorTypeEnum;
+@endphp
+
 @extends($layout)
 
 @section('content')
     <?php
     $project = $tpl->get('project');
+    $project = $tpl->get('project');
+    
+        $project = $tpl->get('project');
     
     ?>
 
@@ -52,10 +59,14 @@
                                         <p>
                                             {{ __('label.accomplish') }}
                                             {{ __('label.describe_outcome') }}
+                                        </p>
+                                            <br /><br />
                                             <br /><br />
                                         </p>
+                                        <br /><br />
+                                        </p>
 
-                                        <x-global::forms.text-editor name="details" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
+                                        {{-- <x-global::forms.text-editor name="details" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" /> --}}
                                     </div>
                                 </div>
                                 <div class="padding-top">
@@ -94,21 +105,28 @@
                                 <div style="margin-bottom: 30px;">
                                     <h4 class="widgettitle title-light block"><span
                                             class="fa fa-calendar"></span>{{ __('label.project_dates') }}</h4>
+                                    
                                     <div>
-                                        <label>{{ __('label.project_start') }}</label>
-                                        <div class="">
-                                            <input type="text" class="dates dateFrom" style="width:100px;" name="start"
-                                                autocomplete="off" value="<?php echo $project['start']; ?>"
-                                                placeholder="<?= $tpl->__('language.dateformat') ?>" />
-
-                                        </div>
-                                        <label>{{ __('label.project_end') }}</label>
-                                        <div class="">
-                                            <input type="text" class="dates dateTo" style="width:100px;" name="end"
-                                                autocomplete="off" value="<?php echo $project['end']; ?>"
-                                                placeholder="<?= $tpl->__('language.dateformat') ?>" />
-
-                                        </div>
+                                        <x-global::forms.text-input
+                                            type="text"
+                                            name="start"
+                                            id="dateFrom"
+                                            class="dates dateFrom"
+                                            labelText="{!! __('label.project_start') !!}"
+                                            value="<?php echo $project['start']; ?>"
+                                            variant="compact"
+                                            placeholder="{!! __('language.dateformat') !!}" 
+                                        />
+                                        <x-global::forms.text-input
+                                            type="text"
+                                            name="end"
+                                            id="dateTo"
+                                            class="dates dateTo"
+                                            labelText="{!! __('label.project_end') !!}"
+                                            value="<?php echo $project['end']; ?>"
+                                            variant="compact"
+                                            placeholder="{!! __('language.dateformat') !!}" 
+                                        />
                                     </div>
 
                                 </div>
@@ -121,8 +139,8 @@
                                                 
                                         <x-global::forms.select name="clientId" id="clientId" >
                                             @foreach ($tpl->get('clients') as $row)
-                                                <x-global::forms.select.select-option :value="$row['id']" :selected="$project['clientId'] == $row['id']">
-                                                    {{ $tpl->escape($row['name']) }}
+                                                <x-global::forms.select.select-option :value="$row->id" :selected="$project['clientId'] == $row->id">
+                                                    {{ $tpl->escape($row->name) }}
                                                 </x-global::forms.select.select-option>
                                             @endforeach
                                         </x-global::forms.select>
@@ -171,13 +189,16 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+        import "@mix('/js/components/datePickers.module.js')"
+        import "@mix('js/Domain/Projects/Js/projectsController.js')"
+
         jQuery(document).ready(function() {
 
-            jQuery("#projectdetails select").chosen();
-            leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
+            // jQuery("#projectdetails select").chosen();
+            datePickers.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
-            leantime.projectsController.initProjectTabs();
+            projectsController.initProjectTabs();
 
         });
     </script>
