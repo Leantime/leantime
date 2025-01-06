@@ -46,6 +46,7 @@ import flatpickr from 'flatpickr';
 
 export const initDateRangePicker = function (fromElement, toElement, minDistance) {
 
+    console.log("initDateRangePicker");
         Date.prototype.addDays = function (days) {
             this.setDate(this.getDate() + days);
             return this;

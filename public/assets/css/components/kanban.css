@@ -286,10 +286,10 @@ body .maincontent .priority-border-5 {
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
-    padding: 10px 15px;
+    padding: 0px 10px;
 
     line-height:17px;
-    font-weight: bold;
+    font-weight: 500;
     border-bottom-width:3px;
     border-top-left-radius: var(--box-radius);
     border-top-right-radius: var(--box-radius);

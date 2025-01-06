@@ -22,9 +22,13 @@
 
         @displayNotification()
 
+        {{-- href="{{ BASE_URL }}/clients/newClient" --}}
         <?php
         if ($login::userIsAtLeast('manager')) { ?>
-             <a class="btn btn-primary" href="{{ BASE_URL }}/clients/newClient"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_client') ?></a>
+            <x-global::forms.button tag="a" content-role="primary" href="#/clients/newClient">
+                <i class='fa fa-plus'></i> {!!__('link.new_client') !!}
+            </x-global::forms.button>
+
         <?php } ?>
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
