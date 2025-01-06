@@ -25,7 +25,7 @@
 
                     <div class="flex mb-2 gap-3">
                         @include('tickets::includes.ticketNewBtn')
-                        @include('tickets::includes.ticketFilter')
+                        @include('tickets::includes.ticketFilterHx')
                     </div>
 
                     <?php

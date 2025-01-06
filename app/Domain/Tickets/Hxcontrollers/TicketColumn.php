@@ -31,7 +31,7 @@ class TicketColumn extends HtmxController
     {
         // $ticketId = (int) ($params['id']);
         $statusKey = (int) ($params['status']);
-        $allTickets = $this->ticketService->getAll(['status' => $statusKey]);
+        $allTickets = $this->ticketService->getAll($params);
         $ticketTypeIcons = $this->ticketService->getTypeIcons();
         $priorities = $this->ticketService->getPriorityLabels();
         $efforts = $this->ticketService->getEffortLabels();
