@@ -26,7 +26,7 @@ use Leantime\Core\Support\FromFormat;
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
 
-            <div class="relative">
+            <div class="pull-left">
                 <x-global::actions.dropdown variant="card" content-role="ghost" cardLabel="Filter Options">
                     <x-slot:labelText>
                         {!! __("links.filter") !!} (1)
@@ -34,23 +34,29 @@ use Leantime\Core\Support\FromFormat;
                 
                     <x-slot:cardContent>
                         <div class="filterBoxLeft">
-                            <label for="dateFrom">{{ __("label.date_from") }} {{ __("label.date_to") }}</label>
-                            <input type="text"
-                                   id="dateFrom"
-                                   class="dateFrom"
-                                   name="dateFrom"
-                                   value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
-                                   style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                            <input type="text"
-                                   id="dateTo"
-                                   class="dateTo"
-                                   name="dateTo"
-                                   value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
-                                   style="margin-bottom:10px; width:90px" />
+                            <x-global::forms.text-input
+                                type="text"
+                                name="dateFrom"
+                                id="dateFrom"
+                                class="dateFrom"
+                                labelText="Date from"
+                                value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
+                                variant="fullWidth"
+                            />
+
+                            <x-global::forms.text-input
+                                type="text"
+                                name="dateTo"
+                                id="dateTo"
+                                class="dateTo"
+                                labelText="Date to"
+                                value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
+                                variant="fullWidth"
+                            />
                         </div>
                 
                         <div>
-                            <x-global::forms.select id="kind" name="kind" onchange="submit();">
+                            <x-global::forms.select id="kind" name="kind" labelText="Type" >
                                 <x-global::forms.select.select-option value="all">
                                     {!! __("label.all_types") !!}
                                 </x-global::forms.select.select-option>
@@ -65,20 +71,19 @@ use Leantime\Core\Support\FromFormat;
                         </div>
                 
                         <div>
-                            <label>&nbsp;</label>
-                            <x-global::forms.button type="submit" class="reload">
+                            <x-global::forms.button type="submit" class="reload" contentRole="primary">
                                 {{ __('buttons.search') }}
                             </x-global::forms.button>
                         </div>
                 
                         <div class="clearall"></div>
-                    </x-slot:cardContents>
+                    </x-slot:cardContent>
                 </x-global::actions.dropdown>
                 
             </div>
             <div class="pull-right">
                 <div class="btn-group">
-                    <x-global::actions.dropdown content-role="ghost">
+                    <x-global::actions.dropdown content-role="ghost" align="end">
                         <x-slot:label-text>
                             {!! __('links.list_view') !!} {!! __('links.view') !!} 
                         </x-slot:label-text>
@@ -215,15 +220,24 @@ use Leantime\Core\Support\FromFormat;
                     </tr>
                 </tfoot>
             </table>
+            @php
+                $tpl->dispatchTplEvent('filters.beforeBar');
+                $tpl->dispatchTplEvent('filters.beforeFormClose');
+            @endphp
+        
         </form>
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+
+    import "@mix('/js/Domain/Timesheets/Js/timesheetsController.js')"
+    import "@mix('/js/components/datePickers.module.js')"
+
     jQuery(document).ready(function(){
-        leantime.timesheetsController.initTimesheetsTable();
-        leantime.timesheetsController.initEditTimeModal();
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
+        timesheetsController.initTimesheetsTable();
+        // timesheetsController.initEditTimeModal();
+        datePickers.initDateRangePicker(".dateFrom", ".dateTo", 1);
     });
 </script>
 

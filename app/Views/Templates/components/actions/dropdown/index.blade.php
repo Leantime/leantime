@@ -38,6 +38,7 @@
     };
 
     $cardClassBase = 'dropdown-content rounded-element bg-base-100 shadow w-fit z-50';
+
     // Determine the menu class based on the variant
     $cardClass = match ($variant) {
         'card' => 'card card-compact ' . $cardClassBase, // Card variant class

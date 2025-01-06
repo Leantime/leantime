@@ -93,28 +93,6 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery(".project-select").chosen();
-    jQuery(".ticket-select").chosen();
-    jQuery(".project-select").change(function(){
-            jQuery(".ticket-select").removeAttr("selected");
-            jQuery(".ticket-select").val("");
-            jQuery(".ticket-select").trigger("liszt:updated");
-
-            jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chosen-results li").show();
-            var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
-            jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
-            jQuery(".ticket-select").chosen("destroy").chosen();
-    });
-
-    jQuery(".ticket-select").change(function() {
-        var selectedValue = jQuery(this).find("option:selected").attr("data-value");
-        jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
-        jQuery(".project-select").trigger("liszt:updated");
-        jQuery(".ticket-select").chosen("destroy").chosen();
-    });
-
     jQuery("#nextWeek").click(function() {
         var date = jQuery("#endDate").datepicker('getDate');
         var endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
@@ -139,6 +117,28 @@ jQuery(document).ready(function(){
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
     });
+
+    // jQuery(".project-select").chosen();
+    // jQuery(".ticket-select").chosen();
+    // jQuery(".project-select").change(function(){
+    //         jQuery(".ticket-select").removeAttr("selected");
+    //         jQuery(".ticket-select").val("");
+    //         jQuery(".ticket-select").trigger("liszt:updated");
+
+    //         jQuery(".ticket-select option").show();
+    //         jQuery("#ticketSelect .chosen-results li").show();
+    //         var selectedValue = jQuery(this).find("option:selected").val();
+    //         jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
+    //         jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
+    //         jQuery(".ticket-select").chosen("destroy").chosen();
+    // });
+
+    // jQuery(".ticket-select").change(function() {
+    //     var selectedValue = jQuery(this).find("option:selected").attr("data-value");
+    //     jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
+    //     jQuery(".project-select").trigger("liszt:updated");
+    //     jQuery(".ticket-select").chosen("destroy").chosen();
+    // });
 
     jQuery(".timesheetTable input").change(function(){
         //Row Sum
@@ -219,13 +219,14 @@ jQuery(document).ready(function(){
                 </x-global::actions.dropdown>
                 
             </div>
-            <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
+            <div class="pull-left mb-2" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
                     <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->formatDateForUser() ?>" style="margin-top:5px;"/>
-                    {{ __("label.until") }}
+                    {{-- {{ __("label.until") }} --}}
+                    <span class="pr-1">{{ __("label.until") }}</span>
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->addDays(6)->formatDateForUser() ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
@@ -389,7 +390,11 @@ jQuery(document).ready(function(){
                                 </div>
                             </td>
                             <td width="14%">
-                                    <x-global::forms.select name="kindId">
+                                    <x-global::forms.select 
+                                        data-placeholder="Choose type"
+                                        name="kindId"
+                                    >
+                                        <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
                                         @foreach ($tpl->get('kind') as $key => $kindRow)
                                             <x-global::forms.select.select-option :value="$key">
                                                 {!! __($kindRow) !!}
