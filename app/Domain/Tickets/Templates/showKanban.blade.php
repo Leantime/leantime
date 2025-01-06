@@ -254,7 +254,6 @@
 
             jQuery(document).on("htmx:afterRequest", ".quickadd-ticket", function() {
                 let key = jQuery(this).data('key');
-                console.log(`ticketColumn_${key}`); 
                 htmx.trigger(`#ticketColumn_${key}`, 'reload');
                 jQuery(this).find('input[name=headline]').val(''); 
             });
