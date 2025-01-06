@@ -23,4 +23,16 @@
     @apply text-neutral-50;
 }
 
+.dropdown-hover {
+    @apply bg-base-content/10;
+}
+
+.focus-outline-default {
+    @apply border-base-content/20 outline-base-content/20 outline outline-2;
+}
+
+.border-color-default {
+    @apply border-base-content/30;
+}
+
 

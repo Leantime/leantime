@@ -26,9 +26,12 @@
 @php
 
     $buttonSize = '';
+    $elementHeight = 5;
     if($variant !== 'chip') {
         $buttonSize = 'w-full';
+        $elementHeight = 6;
     }
+
 
 @endphp
 
@@ -46,12 +49,13 @@
     @endif
 
     <x-global::actions.dropdown variant="card" :content-role="$contentRole" class="date-dropdown {{ $buttonSize }}" button-variant="{{ $variant }}">
-        <x-slot:label-text class="font-normal">
+        <x-slot:label-text>
             @if(!empty(trim($leadingVisual)))
-                <div class="h-6 w-6">
+                <div class="h-{{ $elementHeight }} w-{{ $elementHeight }}">
                     {!! $leadingVisual !!}
                 </div>
             @endif
+
             @if(empty($value) || ! dtHelper()->isValidDateString($value))
                 <span class="dateField font-light">{{ $noDateLabel }}</span>
                 <span class="timeField font-light"></span>
@@ -65,15 +69,18 @@
             @endif
         </x-slot:label-text>
         <x-slot:card-content>
-            <button type="button" class="btn btn-default float-right timeToggleButton-{{ $dateName }}" onclick="leantime.dateController.toggleTime('#datepickerDropDown-{{ $dateName }}', this)">
+
+
+            <input type="date" data-component="datepicker" id="datepickerDropDown-{{ $dateName }}" class="datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
+            <button type="button" class="btn btn-sm float-right timeToggleButton-{{ $dateName }}" onclick="datePickers.toggleTime('.datepickerDropDown-{{ $dateName }}', this)">
                 <i class="fa fa-clock"></i>
             </button>
+            <hr class="mb-xs mt-0"/>
+            <div class="flex justify-end gap-x-xs">
+                <button type="button" class="btn btn-sm float-right" onclick="datePickers.clear('.datepickerDropDown-{{ $dateName }}', this);" >Clear</button>
+                <button type="button" class="btn btn-primary btn-sm float-right" onclick="jQuery(body).click()" >Ok</button>
 
-            <input type="date" id="datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
-
-            <hr class="mt-xs"/>
-            <button type="button" class="btn btn-default float-right" onclick="jQuery(body).click()" >Close</button>
-            <button type="button" class="btn btn-default float-right" onclick="datepickerInstance.clear(); timePickerInstance.clear();" >Clear</button>
+            </div>
         </x-slot:card-content>
     </x-global::actions.dropdown>
 
@@ -84,12 +91,18 @@
 
 </x-global::forms.field-row>
 
-<script>
+<script type="module">
 
-    leantime.datePickers.initDateTimePicker("#datepickerDropDown-{{ $dateName }}");
+   import "@mix('/js/components/datePickers.module.js')"
+
+   jQuery(document).ready(function () {
+       jQuery(document).on('click', '.date-dropdown', function (e) {
+           e.stopPropagation();
+       });
+   });
 
     @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
-        leantime.datePickers.toggleTime('#datepickerDropDown-{{ $dateName }}', '.timeToggleButton-{{ $dateName }}');
+        datePickers.toggleTime('.datepickerDropDown-{{ $dateName }}', '.timeToggleButton-{{ $dateName }}');
     @endif
 
 </script>

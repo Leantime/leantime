@@ -5,3 +5,7 @@
 .card-compact .card-body {
     @apply text-sm;
 }
+
+.maincontentinner {
+    @apply relative rounded-box glass-card p-md mb-md shadow-lg;
+}

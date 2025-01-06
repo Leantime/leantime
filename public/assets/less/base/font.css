@@ -87,35 +87,39 @@
 }
 
 .material-symbols-rounded {
-    @apply font-materialIcons align-top;
-    margin-left: -2px;
-    font-size:110%;
-    line-height:inherit;
+
+    @apply font-materialIcons align-middle;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
 
     font-variation-settings:
           'FILL' 0,
-          'wght' 600,
-          'GRAD' 0,
-          'opsz' 48;
+          'wght' 400,
+          'GRAD' -25,
+          'opsz' 20;
 
       &.fill {
-          font-variation-settings:'FILL' 1;
+          font-variation-settings:'FILL' 1,
+          'wght' 400,
+          'GRAD' -25,
+          'opsz' 20;
       }
 
     &.strong {
-        font-variation-settings:'wght' 600;
+        font-variation-settings:'FILL' 1,
+        'wght' 600,
+        'GRAD' -25,
+        'opsz' 20;
     }
 
-    &.large {
-        font-size: 130%;
-        vertical-align: bottom;
-    }
 }
 
 strong .material-symbols-rounded {
-    font-variation-settings:'wght' 600;
+    font-variation-settings:'FILL' 1,
+    'wght' 600,
+    'GRAD' -25,
+    'opsz' 20;
 }
-
-
-
-

@@ -1,5 +1,6 @@
 import { BaseComponentManager } from './BaseComponentManager.mjs';
 import Flatpickr from  'flatpickr'
+import datePickersModule, {initDateTimePicker} from "../components/datePickers.module.mjs";
 
 class DatepickerManager extends BaseComponentManager {
     findElements(parentElement) {
@@ -7,13 +8,8 @@ class DatepickerManager extends BaseComponentManager {
     }
 
     createInstance(element, config = {}) {
-        const defaultConfig = {
-            format: 'yyyy-mm-dd',
-            autohide: true,
-            todayHighlight: true,
-        };
 
-        return new Flatpickr(element, defaultConfig);
+        return datePickersModule.initDateTimePicker(element);
     }
 
     cleanup(instance) {

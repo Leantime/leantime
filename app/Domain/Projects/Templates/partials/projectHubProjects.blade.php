@@ -6,104 +6,75 @@
 
     @if (count($clients) > 0)
         <div class="dropdown dropdownWrapper pull-right">
-            @php
-                // Determine label text based on the current client name
-                $labelText = $currentClientName != '' ? $currentClientName : __('headline.all_clients');
-            @endphp
-            <x-global::actions.dropdown :label-text="$labelText" contentRole="secondary" position="bottom" align="end"
-                class=""
-            >
-                <x-slot:label-text>
-                    @if ($currentClientName != '')
-                        {{ $currentClientName }}
-                    @else
-                        {{ __("headline.all_clients") }}
-                    @endif
-
-                    <i class="fa fa-caret-down"></i>
-                </x-slot:label-text>
-
-
-                <x-slot:menu>
-                    <!-- All Clients Option -->
-                    <x-global::actions.dropdown.item href="{{ BASE_URL }}/projects/showMy">
-                        {{ __('headline.all_clients') }}
-                    </x-global::actions.dropdown.item>
-
-                    <!-- Clients List -->
+            <form  hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
+                   hx-trigger="submit, change"
+                   hx-target="#myProjectsHub"
+                   hx-swap="outerHTML transition:true">
+                <x-global::forms.select name="client">
+                    <x-global::forms.select.option value="" :selected="$currentClient == ''">
+                        All Clients
+                    </x-global::forms.select.option>
                     @foreach ($clients as $key => $value)
-                        @if (!empty($key))
-                            <x-global::actions.dropdown.item
-                                href="javascript:void(0);"
-                                hx-get="{{ BASE_URL }}/hx/projects/projectHubProjects/get?client={{ $key }}"
-                                hx-target="#myProjectsHub" hx-swap="outerHTML transition:true">
-                                {{ $value['name'] }}
-                            </x-global::actions.dropdown.item>
-                        @endif
+                        <x-global::forms.select.option value="{{ $key }}" :selected="($currentClient == $key)">
+                            {{ $value['name'] }}
+                        </x-global::forms.select.option>
                     @endforeach
-                </x-slot:menu>
-
-            </x-global::actions.dropdown>
-
-
+                </x-global::forms.select>
+            </form>
         </div>
     @endif
 
     @if (count($allProjects) == 0)
         <br /><br />
         <div class='center'>
-            <div style='width:70%; color:var(--main-action-color)' class='svgContainer'>
+            <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                 {{ __('notifications.not_assigned_to_any_project') }}
-                @if ($login::userIsAtLeast($roles::$manager))
-                    <br />
-                    <a href='{{ BASE_URL }}/projects/newProject'
-                        class='btn btn-primary'>{{ __('link.new_project') }}</a>
+                @if($login::userIsAtLeast($roles::$manager))
+                    <br /><br />
+                    <a href='{{ BASE_URL }}/projects/newProject' class='btn btn-primary'>{{ __('link.new_project') }}</a>
                 @endif
             </div>
         </div>
     @endif
 
-    <x-global::content.accordion id="myProjectsHub-favorites" class="noBackground">
-        <x-slot name="title">
-            ⭐ My Favorites
-        </x-slot>
+    <x-global::content.accordion id="myProjectsHub-favorites" class="noBackground" light="true">
+        <x-slot name="title">⭐ My Favorites</x-slot>
         <x-slot name="content">
             <div class="row">
                 @php
                     $hasFavorites = false;
                 @endphp
                 @foreach ($allProjects as $project)
-                    @if ($project['isFavorite'] == true)
+                    @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::components.projectCard", ["project" => $project,  "type" => "detailed"])
+                            <x-projects::projectCard :project="$project" variant="full"></x-projects::projectCard>
                         </div>
                         @php
                             $hasFavorites = true;
                         @endphp
                     @endif
                 @endforeach
-                @if ($hasFavorites === false)
-                    <div style="color:var(--main-action-color)">
-                        You don't have any favorites. 😿
+                @if($hasFavorites === false)
+                    <div class="text-primary-content col-md-12">
+                        {{ __("text.no_favorites") }}
                     </div>
                 @endif
             </div>
         </x-slot>
     </x-global::content.accordion>
 
-
-    <x-global::content.accordion id="myProjectsHub-otherProjects" class="noBackground">
+    <x-global::content.accordion id="myProjectsHub-otherProjects" class="noBackground" light="true">
         <x-slot name="title">
-            🗂️ All Assigned Projects
+            {{ __("text.all_assigned_projects")  }}
         </x-slot>
         <x-slot name="content">
-
             <div class="row">
                 @foreach ($allProjects as $project)
-                    @if ($project['isFavorite'] == false)
+                    @if($project['isFavorite'] == false)
                         <div class="col-md-3">
-                            @include("projects::components.projectCard", ["project" => $project, "type" => "detailed"])
+                            <x-projects::projectCard :project="$project" variant="full"></x-projects::projectCard>
                         </div>
+
                     @endif
                 @endforeach
             </div>

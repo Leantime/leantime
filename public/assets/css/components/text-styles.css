@@ -72,31 +72,6 @@ a .label.feature-label:after {
     color: var(--secondary-font-color);
 }
 
-.maincontentinner .subtitle {
-
-    font-size: var(--font-size-xl);
-    color: var(--primary-font-color);
-    margin-bottom: 10px;
-    font-weight:lighter;
-
-}
-
-
-
-.subtitle {
-
-    color: #999;
-    margin-bottom: 5px;
-}
-
-.subtitle2 {
-
-    text-transform: uppercase;
-    color: var(--primary-font-color);
-    margin-bottom: 5px;
-}
-
-
 blockquote {
     font-family: 'PT Serif', Georgia, "Times New Roman", Times, serif;
     font-style: italic;

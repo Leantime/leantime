@@ -197,7 +197,7 @@
                                             {{ $name }} <i class="fa fa-caret-down" aria-hidden="true"></i>
                                         </x-slot>
 
-                                        <x-global::actions.dropdown.item class="nav-header border">
+                                        <x-global::actions.dropdown.item class="header border">
                                             {{ __('dropdown.choose_status') }}
                                         </x-global::actions.dropdown.item>
 
@@ -224,10 +224,11 @@
                                         :quickaddOption="true"
                                         quickaddPostUrl="{{ BASE_URL }}/hx/tickets/Milestones"
                                     >
-
-                                        <li class="nav-header">
+                                        <x-global::actions.dropdown.item variant="header">
                                             {{ __('dropdown.choose_milestone') }}
-                                        </li>
+                                        </x-global::actions.dropdown.item>
+
+
 
                                         <x-global::actions.dropdown.item
                                             href="javascript:void(0);"

@@ -93,8 +93,9 @@
                 <x-global::actions.dropdown :label-text="$userLabelText" contentRole="link" position="bottom" align="start">
                     <!-- Dropdown Items -->
                     <x-slot:menu>
-                        <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}
-                        </li>
+                        <x-global::actions.dropdown.item variant="header">
+                            {{ $tpl->__('dropdown.choose_user') }}
+                        </x-global::actions.dropdown.item>
                         @if (is_array($tpl->get('users')))
                             @foreach ($tpl->get('users') as $user)
                                 <x-global::actions.dropdown.item href="javascript:void(0);"

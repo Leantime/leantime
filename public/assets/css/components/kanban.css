@@ -168,14 +168,6 @@
     list-style:none;
 }
 
-.sortableTicketList li:hover {
-    background:var(--kanban-card-hover);
-}
-
-.sortableTicketList li.no-hover:hover {
-    background:var(--kanban-card-bg);
-}
-
 
 .ticketBox {
     background: var(--kanban-card-bg);

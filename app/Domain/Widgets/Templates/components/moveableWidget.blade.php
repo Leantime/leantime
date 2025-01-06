@@ -2,17 +2,18 @@
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} p-none">
         <div class="{{ ($background == "default") ? "pb-l" : "" }}">
 
-            <div class="stickyHeader w-full relative" >
-                <div class="grid-handler-top h-[40px] cursor-grab float-left" style="margin: 0 5px;" >
+            <div class="stickyHeader w-full relative h-8 mb-md">
+
+                <div class="grid-handler-top text-lg cursor-move float-left pr-sm">
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
+
                 @if($name != '' && $noTitle == false)
-                    <h5 class="subtitle pb-m float-left ml-sm mr-sm">{{ __($name) }}</h5>
+                    <h5 class="text-lg pb-m float-left ml-sm mr-sm">{{ __($name) }}</h5>
                 @endif
 
                 <x-global::actions.dropdown content-role="tertiary" position="bottom" align="end"
-                    class="float-right" button-shape="circle"
-                >
+                    class="float-right" button-shape="circle">
                     <x-slot:label-text>
                         <i class='fa fa-ellipsis-v'></i>
                     </x-slot:label-text>
@@ -34,7 +35,7 @@
                         @endif
                     </x-slot:menu>
                 </x-global::actions.dropdown>
-
+                <span class="clearall"></span>
             </div>
             <span class="clearall"></span>
             <div class="widgetContent {{ ($background == "default") ? 'px-m' : '' }}">

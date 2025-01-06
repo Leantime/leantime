@@ -10,15 +10,15 @@
         </a>
     </li>
 @elseif ($variant === 'header')
-    <li class="nav-header">
-        {!! $slot !!}
+    <li>
+        <h2 class="menu-title">{!! $slot !!}</h2>
     </li>
 @elseif ($variant === 'header-border')
-    <li class="nav-header border">
-        {!! $slot !!}
+    <li class="border-t border-neutral">
+        <h2 class="menu-title">{!! $slot !!}</h2>
     </li>
 @elseif ($variant === 'border')
-    <li class="border"></li>
+    <li class="border-t border-neutral"></li>
 @elseif ($variant === 'list-item')
     <li>
         {!! $slot !!}

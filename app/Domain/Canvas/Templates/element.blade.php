@@ -33,7 +33,9 @@ $canvasItems = $tpl->get('canvasItems');
                     @if ($login::userIsAtLeast($roles::$editor))
                         <x-global::content.context-menu label-text="<i class='fa fa-ellipsis-v' aria-hidden='true'></i>"
                             contentRole="link" position="bottom" align="start">
-                            <li class="nav-header">{{ __('subtitles.edit') }}</li>
+                            <x-global::actions.dropdown.item variant="header">
+                                {{ __('subtitles.edit') }}
+                            </x-global::actions.dropdown.item>
                             <x-global::actions.dropdown.item variant="link"
                                 href="#/{{ $canvasName }}canvas/editCanvasItem/{{ $row['id'] }}"
                                 data="item_{{ $row['id'] }}">
@@ -65,7 +67,10 @@ $canvasItems = $tpl->get('canvasItems');
 
                     <x-slot:menu>
                         <!-- Header Item -->
-                        <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
+
+                        <x-global::actions.dropdown.item variant="header">
+                            {{ __('dropdown.choose_status') }}
+                        </x-global::actions.dropdown.item>
 
                         <!-- Dynamic Status Menu Items -->
                         @foreach ($statusLabels as $key => $data)
@@ -89,7 +94,10 @@ $canvasItems = $tpl->get('canvasItems');
 
                     <x-slot:menu>
                         <!-- Header Item -->
-                        <li class="nav-header border">{{ __('dropdown.choose_relates') }}</li>
+
+                        <x-global::actions.dropdown.item variant="header">
+                            {{ __('dropdown.choose_relates') }}
+                        </x-global::actions.dropdown.item>
 
                         <!-- Dynamic Relates Menu Items -->
                         @foreach ($relatesLabels as $key => $data)
@@ -124,7 +132,9 @@ $canvasItems = $tpl->get('canvasItems');
 
                     <x-slot:menu>
                         <!-- Header Item -->
-                        <li class="nav-header border">{{ __('dropdown.choose_user') }}</li>
+                        <x-global::actions.dropdown.item variant="header">
+                            {{ __('dropdown.choose_user') }}
+                        </x-global::actions.dropdown.item>
 
                         <!-- Dynamic User Menu Items -->
                         @foreach ($tpl->get('users') as $user)

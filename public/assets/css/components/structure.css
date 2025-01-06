@@ -414,18 +414,7 @@
     z-index:5;
 }
 
-.maincontentinner {
-    border-radius:var(--box-radius);
-    background:var(--glass-background);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    position:relative;
-    padding:14px; /* account for 1px border */
-    margin-bottom:20px;
-    box-shadow: var(--large-shadow);
 
-    border: var(--glass-border);
-}
 
 .footer {
     border-radius:var(--box-radius);

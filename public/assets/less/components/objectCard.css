@@ -1,12 +1,8 @@
 .objectCard {
 
-    @apply border shadow-md rounded-btn;
-    background:none;
-
-
+    @apply glass-card shadow-md rounded-box;
 
     small {
-        color:var(--kanban-col-title-color);
     }
 
     a.objectLink {
@@ -14,11 +10,6 @@
         @apply rounded-btn leading-snug;
     }
 
-    a.objectLink:hover,
-    a.objectLink:focus
-    {
-        @apply hover:bg-base-content/10;
-    }
 
     .lastStatus [class*="commentStatus-"]{
         padding-left:10px;
@@ -43,10 +34,16 @@
     }
 
     &.compact {
-        @apply border-none shadow-none;
+        @apply border-none shadow-none rounded-btn;
 
         a.objectLink {
             height:40px;
+
+            &:hover,
+            &:focus
+            {
+                @apply hover:bg-base-content/10;
+            }
         }
 
         .avatar {
@@ -81,7 +78,7 @@
     &.full {
 
         a.objectLink {
-            height:40px;
+            min-height:50px;
         }
 
         .avatar {
@@ -93,6 +90,8 @@
                 height:50px;
             }
         }
+
+
     }
 
 }

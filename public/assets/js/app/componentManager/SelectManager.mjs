@@ -14,7 +14,6 @@ class SelectManager extends BaseComponentManager {
     createInstance(element, config = {}) {
 
         let componentConfig = element.dataset.componentConfig;
-        console.log(componentConfig);
         return selects.initSelect(element, componentConfig);
     }
 

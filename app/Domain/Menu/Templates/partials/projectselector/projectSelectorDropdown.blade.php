@@ -62,7 +62,6 @@
                 @if(count($recentProjects) >= 1)
                     @include('menu::partials.projectselector.noGroup', ['projects' => $recentProjects])
                 @else
-                    <li class='nav-header'></li>
                     <li><span class='info'>
                     {{ __("menu.you_dont_have_projects") }}
                     </span>
