@@ -1,4 +1,4 @@
-.scrolled .header {
+.header {
     @apply transition-all shadow-xl backdrop-blur-md motion-reduce:transition-none;
 }
 
@@ -175,9 +175,13 @@ body .menu {
 
             .bigProjectSelector{
 
-                .projectAvatar {
+                .projectAvatar img {
                     @apply rounded-sm;
                     width:35px;
+                }
+
+                .projectGroup.closed {
+                    display:none;
                 }
 
             }
@@ -198,6 +202,9 @@ body .menu {
                 /*padding: 0 15px;*/
                 /*font-weight:normal;*/
                 /*height:auto;*/
+
+                .projectLineItem {
+                }
 
                 &.btn-circle {
                     /*width:50px;*/
@@ -225,7 +232,7 @@ body .menu {
                 }
 
                 &:focus {
-                    @apply outline-primary;
+                    @apply outline-none;
                 }
 
                 &.active:hover {
