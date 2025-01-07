@@ -144,6 +144,18 @@ export const initTicketsCalendar = function (
         dayHeaderFormat: getFormatFromSettings("dateformat", "luxon"),
         eventTimeFormat: getFormatFromSettings("timeformat", "luxon"),
         slotLabelFormat: getFormatFromSettings("timeformat", "luxon"),
+        views: {
+            timeGridDay: {},
+            timeGridWeek: {},
+            dayGridMonth: {
+                dayHeaderFormat: { weekday: 'short' },
+            },
+            multiMonthYear: {
+                showNonCurrentDates: true,
+                multiMonthTitleFormat: { month: 'long', year: 'numeric' },
+                dayHeaderFormat: { weekday: 'short' },
+            }
+        },
         nowIndicator: true,
         bootstrapFontAwesome: {
             close: 'fa-times',
@@ -155,7 +167,7 @@ export const initTicketsCalendar = function (
         eventDrop: function (event) {
             jQuery.ajax({
                 type : 'PATCH',
-                url  : appUrl + '/api/tickets',
+                url  : leantime.appUrl + '/api/tickets',
                 data : {
                     id: event.event.extendedProps.entityId,
                     editFrom: event.event.startStr,
@@ -166,7 +178,7 @@ export const initTicketsCalendar = function (
         eventResize: function (event) {
             jQuery.ajax({
                 type : 'PATCH',
-                url  : appUrl + '/api/tickets',
+                url  : lentime.appUrl + '/api/tickets',
                 data : {
                     id: event.event.extendedProps.entityId,
                     editFrom: event.event.startStr,
@@ -178,7 +190,7 @@ export const initTicketsCalendar = function (
     });
     calendar.setOption('locale', leantime.i18n.__("language.code"));
     calendar.render();
-    calendar.scrollToTime( 100 );
+    calendar.scrollToTime( Date.now() );
     jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
     jQuery('.fc-prev-button').click(function() {
         calendar.prev();
