@@ -1,13 +1,13 @@
 @props([
     'variant' => 'regular', // Dropdown variant: regular or card
-
+    'selectable' => false,
     'contentRole' => 'primary', // Content role: primary, secondary, accent, ghost, link
     'state' => '',
 
     'position' => 'bottom', // Dropdown position: top, left, bottom, right
     'align' => 'start', // Dropdown alignment: start or end
     'labelText' => 'Dropdown', // Text for the dropdown button
-    'cardLabel' => 'Card Title!', // Text for the card title
+    'cardLabel' => '', // Text for the card title
     'buttonShape' => '',
     'buttonVariant' => '',
     'scale' => '',
@@ -37,7 +37,8 @@
         default => 'menu ' . $menuClassBase, // Default to regular menu
     };
 
-    $cardClassBase = 'dropdown-content rounded-element bg-base-100 p-2 shadow w-fit z-50';
+    $cardClassBase = 'dropdown-content rounded-element bg-base-100 shadow w-fit z-50';
+
     // Determine the menu class based on the variant
     $cardClass = match ($variant) {
         'card' => 'card card-compact ' . $cardClassBase, // Card variant class
@@ -71,7 +72,7 @@
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $cardClass }}">
-            <div class="card-body">
+            <div {{ $cardContent->attributes->merge(["class" => "card-body" ]) }}>
                 @if ($cardLabel)
                     <h3 class="card-title">{{ $cardLabel }}</h3>
                 @endif
@@ -87,7 +88,7 @@
     @endif
 </div>
 
-<script>
+<script type="module">
     jQuery(document).ready(function($) {
         const $selectableDropdowns = $('[data-selectable-button]');
 

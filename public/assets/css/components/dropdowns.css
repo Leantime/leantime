@@ -1,13 +1,13 @@
 /* Ticket Labelled dropdowns */
 
-.dropdown-menu {
-    margin-top: 0;
-    border-radius: var(--box-radius);
-    border:0px;
-    padding: 8px 0;
-    box-shadow: var(--regular-shadow);
-    background:var(--secondary-background);
-}
+/*.dropdown-menu {*/
+/*    margin-top: 0;*/
+/*    border-radius: var(--box-radius);*/
+/*    border:0px;*/
+/*    padding: 8px 0;*/
+/*    box-shadow: var(--regular-shadow);*/
+/*    background:var(--secondary-background);*/
+/*}*/
 
 .bigMenu ul li {
     list-style-type: none;
@@ -52,43 +52,43 @@
 
 
 
-.maincontentinner .viewDropDown .dropdown-menu > li > a:hover .muted,
-body .maincontentinner .viewDropDown .dropdown-menu li a.active,
-.dropdown-menu > li > a.active,
-.dropdown ul li.active a{
-    color: var(--dropdown-link-hover-color);
-    background:var(--dropdown-link-hover-bg);
-}
+/*.maincontentinner .viewDropDown .dropdown-menu > li > a:hover .muted,*/
+/*body .maincontentinner .viewDropDown .dropdown-menu li a.active,*/
+/*.dropdown-menu > li > a.active,*/
+/*.dropdown ul li.active a {*/
+/*    color: var(--dropdown-link-hover-color);*/
+/*    background:var(--dropdown-link-hover-bg);*/
+/*}*/
 
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus,
-.dropdown-submenu:hover > a,
-.dropdown-submenu:focus > a,
-.bigMenu ul li a,
-.bigMenu ul li a:hover,
-.bigMenu ul li a:focus {
-    color: var(--dropdown-link-hover-color) !important;
-    background:var(--dropdown-link-hover-bg) !important;
-}
+/*.dropdown-menu > li > a:hover,*/
+/*.dropdown-menu > li > a:focus,*/
+/*.dropdown-submenu:hover > a,*/
+/*.dropdown-submenu:focus > a,*/
+/*.bigMenu ul li a,*/
+/*.bigMenu ul li a:hover,*/
+/*.bigMenu ul li a:focus {*/
+/*    color: var(--dropdown-link-hover-color) !important;*/
+/*    background:var(--dropdown-link-hover-bg) !important;*/
+/*}*/
 
-.dropdown-menu > li > a:hover small,
-.dropdown-menu > li > a:focus small,
-.dropdown-submenu:hover > a small,
-.dropdown-submenu:focus > a small,
-.bigMenu ul li a small,
-.bigMenu ul li a:hover small,
-.bigMenu ul li a:focus small {
-    color: var(--dropdown-link-hover-color) !important;
-}
+/*.dropdown-menu > li > a:hover small,*/
+/*.dropdown-menu > li > a:focus small,*/
+/*.dropdown-submenu:hover > a small,*/
+/*.dropdown-submenu:focus > a small,*/
+/*.bigMenu ul li a small,*/
+/*.bigMenu ul li a:hover small,*/
+/*.bigMenu ul li a:focus small {*/
+/*    color: var(--dropdown-link-hover-color) !important;*/
+/*}*/
 
 
-.dropdown .dropdown-menu .nav-header {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size:var(--font-size-m);
-    color:var(--primary-font-color);
-    text-transform:none;
-}
+/*.dropdown .dropdown-menu .nav-header {*/
+/*    padding-left: 10px;*/
+/*    padding-right: 10px;*/
+/*    font-size:var(--font-size-m);*/
+/*    color:var(--primary-font-color);*/
+/*    text-transform:none;*/
+/*}*/
 
 .ticketDropdown.show {
     display:inline-block;

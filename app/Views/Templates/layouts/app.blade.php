@@ -10,6 +10,10 @@
 
     @include('global::sections.appAnnouncement')
 
+    <div id="global-loader" class="full-width-loader">
+        <div class="indeterminate" style=""></div>
+    </div>
+
     <div class="mainwrapper menu{{ session('menuState') ?? 'closed' }}">
 
         <div class="header">
@@ -17,11 +21,11 @@
             <div class="headerinner">
                 <a class="btnmenu" href="javascript:void(0);"></a>
 
-                <a class="barmenu" href="javascript:void(0);">
+                <a class="barmenu btn btn-ghost btn-circle" href="javascript:void(0);">
                     <span class="fa fa-bars"></span>
                 </a>
 
-                <div class="logo">
+                <div class="logo btn btn-ghost">
                     <a href="{{ BASE_URL }}"
                         style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')">&nbsp;</a>
                 </div>
@@ -29,12 +33,10 @@
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
-            <div id="global-loader" class="full-width-loader">
-                <div class="indeterminate" style=""></div>
-            </div>
+
         </div><!-- header -->
 
-        <div class="" style="position: relative">
+        <div class="relative mt-lg">
             <div class="leftpanel">
                 <div class="leftmenu">
                     @include('menu::menu')

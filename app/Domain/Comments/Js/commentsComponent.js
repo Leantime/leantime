@@ -19,7 +19,6 @@ const enableCommenterForms = function () {
 };
 
 const toggleCommentBoxes = function (parentId, formHash, commentId, editComment = false, isReply = false) {
-    console.log("commentsBoxes.js updated");
 
     resetForm(parentId, formHash);
 
@@ -55,7 +54,6 @@ const toggleCommentBoxes = function (parentId, formHash, commentId, editComment 
     jQuery('#commentReplyBox-' + formHash + '-' + parentId + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" id="editor-' + formHash + '-' + parentId + '" class="tinymceSimple">' + content + '</textarea>');
     jQuery('#commentReplyBox-' + formHash + '-' + parentId).removeClass('hidden').show();
 
-    console.log(formHash, parentId, commentId, editComment, isReply);
     // Initialize the editor
     editor.initSimpleEditor();
 

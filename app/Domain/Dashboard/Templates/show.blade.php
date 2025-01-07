@@ -194,6 +194,8 @@
             import "@mix('/js/Domain/Help/Js/helperController.js')"
             import "@mix('/js/Domain/Reactions/Js/reactionsController.js')"
 
+            import "@mix('/js/components/editors.module.js')"
+
             jQuery(document).ready(function() {
 
                 jQuery('#descriptionReadMoreToggle').click(function() {

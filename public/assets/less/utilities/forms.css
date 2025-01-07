@@ -10,7 +10,7 @@
 
     &-bordered {
         &:hover {
-            @apply border-base-content/50 bg-none;
+            @apply border-base-content/50 bg-none rounded-md;
         }
     }
 }

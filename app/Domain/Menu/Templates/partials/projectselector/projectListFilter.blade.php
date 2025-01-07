@@ -1,9 +1,9 @@
-<div class="py-2">
+<div class="border-bottom border-neutral">
 
     <form hx-target="#mainProjectSelector" hx-swap="innerHTML" hx-trigger="change" hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu" hx-indicator=".project-loading-indicator,.htmx-loaded-content">
 
-        <div class="flex flex-row justify-self-start">
-            <x-global::forms.select data-placeholder="" name="client">
+        <div class="flex flex-row justify-self-start gap-x-sm px-md">
+            <x-global::forms.select data-placeholder="" name="client" content-role="ghost">
                 <x-slot:leading-visual>
                     <i class="fas fa-filter"></i>
                 </x-slot:leading-visual>
@@ -20,7 +20,7 @@
                 @endforeach
             </x-global::forms.select>
 
-            <x-global::forms.select data-placeholder="" name="groupBy">
+            <x-global::forms.select data-placeholder="" name="groupBy" content-role="ghost">
                 <x-slot:leading-visual>
                     <i class="fa-solid fa-diagram-project"></i>
                 </x-slot:leading-visual>

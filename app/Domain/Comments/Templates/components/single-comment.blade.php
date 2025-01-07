@@ -24,11 +24,11 @@
 
                             <x-global::content.context-menu>
                                 @if($module == "ticket")
-                                    <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent({{ $comment->id }}, {{ $moduleId }});">{!! __("links.add_to_timesheets") !!}</a></li>
+                                    <li><a href="javascript:void(0);" onclick="ticketsController.addCommentTimesheetContent({{ $comment->id }}, {{ $moduleId }});">{!! __("links.add_to_timesheets") !!}</a></li>
                                 @endif
                                 @if (($comment->userId == session("userdata.id")) || $login::userIsAtLeast($roles::$manager))
                                     <li>
-                                        <a href="javascript:void(0);" onclick="leantime.commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}', {{ $comment->id }}, true)">
+                                        <a href="javascript:void(0);" onclick="commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}', {{ $comment->id }}, true)">
                                             <span class="fa fa-edit"></span> {{ __("label.edit") }}
                                         </a>
                                     </li>
@@ -52,7 +52,7 @@
                 @if ($login::userIsAtLeast($roles::$commenter))
                         <a href="javascript:void(0);"
                            class="secondary"
-                           onclick="leantime.commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}')">
+                           onclick="commentsComponent.toggleCommentBoxes({{ $replyParent }}, '{{ $formHash }}')">
                         <span class="fa fa-reply"></span> {{ __('links.reply') }}
                     </a>
                     @endif

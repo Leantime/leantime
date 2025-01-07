@@ -18,7 +18,7 @@ use Leantime\Domain\Users\Services\Users as UserService;
 
 class ProjectCard extends HtmxController
 {
-    protected static string $view = 'projects::includes.projectCard';
+    protected static string $view = 'projects::components.projectCard';
 
     private ProjectService $projectsService;
 

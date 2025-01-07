@@ -84,35 +84,44 @@
 
 
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
-        <x-global::navigations.tabs name="ticket-details" variant="bordered" size="md" class="mb-2">
+        <x-global::content.tabs name="ticket-details" variant="bordered" size="md" class="mb-2">
+            <x-slot:headings>
+                <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="discussion">Discussion</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="files">Files</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="timesheet">Timesheet</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="ticket-settings">Settings</x-global::content.tabs.heading>
+            </x-slot:headings>
+
             <x-slot:contents>
-                <x-global::navigations.tabs.content id="connections" ariaLabel="Connections" classExtra="p-sm"
+                <x-global::content.tabs.content name="connections" ariaLabel="Connections" classExtra="p-sm"
                     :checked="true">
                     Connections
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="discussion" ariaLabel="Discussion" classExtra="p-sm">
+                <x-global::content.tabs.content name="discussion" ariaLabel="Discussion" classExtra="p-sm">
                     <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$ticket->id" />
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="subtask" ariaLabel="Subtasks" classExtra="p-sm">
+                <x-global::content.tabs.content name="subtask" ariaLabel="Subtasks" classExtra="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
 
-                <x-global::navigations.tabs.content id="files" ariaLabel="Files" classExtra="p-sm">
+                <x-global::content.tabs.content name="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::files :ticket="$ticket" />
-                </x-global::navigations.tabs.content>
-                <x-global::navigations.tabs.content id="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
+                </x-global::content.tabs.content>
+                <x-global::content.tabs.content name="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
                     <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues"
                         :userHours="$userHours" />
-                </x-global::navigations.tabs.content>
-                <x-global::navigations.tabs.content id="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
+                </x-global::content.tabs.content>
+                <x-global::content.tabs.content name="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
                     <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
                         :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours"
                         url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}" />
-                </x-global::navigations.tabs.content>
+                </x-global::content.tabs.content>
             </x-slot:contents>
-        </x-global::navigations.tabs>
+        </x-global::content.tabs>
     </div>
 </div>
 

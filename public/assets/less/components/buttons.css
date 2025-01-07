@@ -4,11 +4,10 @@ body .btn-sm {
 }
 
 .btn-link {
-@apply no-underline;
+    @apply no-underline;
 }
 
 .btn-ghost {
-@apply text-primary;
 }
 
 .caret{

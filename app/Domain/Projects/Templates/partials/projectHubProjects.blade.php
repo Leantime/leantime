@@ -21,8 +21,8 @@
                     @endif
 
                     <i class="fa fa-caret-down"></i>
-                </x-slot:label-text> 
-                
+                </x-slot:label-text>
+
 
                 <x-slot:menu>
                     <!-- All Clients Option -->
@@ -33,7 +33,7 @@
                     <!-- Clients List -->
                     @foreach ($clients as $key => $value)
                         @if (!empty($key))
-                            <x-global::actions.dropdown.item 
+                            <x-global::actions.dropdown.item
                                 href="javascript:void(0);"
                                 hx-get="{{ BASE_URL }}/hx/projects/projectHubProjects/get?client={{ $key }}"
                                 hx-target="#myProjectsHub" hx-swap="outerHTML transition:true">
@@ -74,8 +74,8 @@
                 @endphp
                 @foreach ($allProjects as $project)
                     @if ($project['isFavorite'] == true)
-                        <div class="col-md-3">
-                            @include("projects::includes.projectCard", ["project" => $project,  "type" => "detailed"])
+                        <div class="col-md-4">
+                            @include("projects::components.projectCard", ["project" => $project,  "type" => "detailed"])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -102,7 +102,7 @@
                 @foreach ($allProjects as $project)
                     @if ($project['isFavorite'] == false)
                         <div class="col-md-3">
-                            @include("projects::includes.projectCard", ["project" => $project, "type" => "detailed"])
+                            @include("projects::components.projectCard", ["project" => $project, "type" => "detailed"])
                         </div>
                     @endif
                 @endforeach

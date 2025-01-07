@@ -8,7 +8,7 @@ module.exports = {
         './app/Core/UI/Template.php',
         './storage/framwork/views/*.php',
         './app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php',
-        './public/less/*'
+        './public/assets/less/{base,components,utilities}/*.css',
     ],
     theme:  {
         fontFamily: {
@@ -224,7 +224,18 @@ module.exports = {
             },
             "pagetitle-content" : "#fff",
         },
+        extend: {
+            spacing: {
+                'sm': '0.5rem',
+                'md': '1rem',
+                'lg': '1.5rem',
+                'xl': '2rem',
+                'xxl': '3rem',
+            }
+        },
+
     },
+
     daisyui: {
         base: true,
         themes: [{
@@ -256,12 +267,10 @@ module.exports = {
 
                 'text-sm': '0.938rem',
 
-
-
                 "--rounded-box": '1.5rem', // biggest elements, large content cards
-                "--rounded-element": '1rem', //Second biggest element dropdowns, content cards
-                "--rounded-input": '0.5rem', // inputs
-                "--rounded-btn": '0.5rem', // button
+                "--rounded-element": '99999px', //Second biggest element dropdowns, content cards
+                "--rounded-input": '99999px', // inputs
+                "--rounded-btn": '99999px', // button
                 "--rounded-badge": '3.0rem', // border radius rounded-badge utility class, used in badges and similar
                 "--animation-btn": "0.25s", // duration of animation when you click on button
                 "--animation-input": "0.2s", // duration of animation for inputs like checkbox, toggle, radio, etc
