@@ -26,7 +26,7 @@
 
                     <x-slot:contents>
                         <x-global::content.tabs.content name="myProfile">
-                            <form action="" method="post">
+                            <form hx-boost="true" action="" method="post">
                                 <input type="hidden" name="{{ session('formTokenName') }}" value="{{ session('formTokenValue') }}" />
 
                                 <div class="row-fluid">
@@ -101,7 +101,7 @@
                             @if (session("userdata.isLdap") );
                                 <strong> {{  __("text.account_managed_ldap") }}</strong><br /><br />
                             @endif
-                            <form method="post">
+                            <form hx-boost="true" method="post">
                                 <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                 <div class="row-fluid">
                                     <div class="form-group">
@@ -179,7 +179,7 @@
                         </x-global::content.tabs.content>
 
                         <x-global::content.tabs.content name="settings">
-                            <form action="" method="post">
+                            <form hx-boost="true" action="" method="post">
                                 <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                 <div class="row-fluid">
                                     <div class="form-group">
@@ -246,7 +246,7 @@
                         </x-global::content.tabs.content>
 
                         <x-global::content.tabs.content name="theme">
-                            <form action="" method="post">
+                            <form hx-boost="true" action="" method="post">
                                 <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                 <div class="row-fluid">
                                     <div class="form-group">
@@ -326,7 +326,7 @@
                         </x-global::content.tabs.content>
 
                         <x-global::content.tabs.content name="notifications">
-                            <form action="" method="post">
+                            <form hx-boost="true" action="" method="post">
                                 <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                 <div class="row-fluid">
                                     <div class="form-group" style="min-width: 250px; max-width: 400px;" >
