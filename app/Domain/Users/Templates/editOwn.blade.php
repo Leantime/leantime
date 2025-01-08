@@ -263,7 +263,7 @@
                                         <div class="col-md-12">
 
                                             <hr />
-                                            <label for="colormode" >{{ __('label.colormode') }}</label>
+                                            <label for="colormode">{{ __('label.colormode') }}</label>
 
                                             <x-global::forms.select-button :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                                                 <label for="colormode-light" class="w-[100px]">
@@ -283,16 +283,18 @@
                                         <div class="col-md-12">
                                             <hr />
                                             <label>Font</label>
-                                            @foreach($availableFonts as $key => $font)
-
-                                                <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
-                                                    <label for="selectable-{{ $key }}" class="font w-[200px]"
-                                                           style="font-family:'{{ $font }}'; font-size:16px;">
-                                                        The quick brown fox jumps over the lazy dog
-                                                    </label>
-                                                </x-global::forms.select-button>
-
-                                            @endforeach
+                                            <div class="mt-4">
+                                                @foreach($availableFonts as $key => $font)
+    
+                                                    <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" name="themeFont" :value="$font" :label="$font" >
+                                                        <label for="selectable-{{ $key }}" class="font w-[200px]"
+                                                               style="font-family:'{{ $font }}'; font-size:14px;">
+                                                            The quick brown fox jumps over the lazy dog
+                                                        </label>
+                                                    </x-global::forms.select-button>
+    
+                                                @endforeach
+                                            </div>
 
                                         </div>
                                     </div>
@@ -327,13 +329,12 @@
                             <form action="" method="post">
                                 <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                                 <div class="row-fluid">
-                                    <div class="form-group">
+                                    <div class="form-group" style="min-width: 250px; max-width: 400px;" >
                                         <x-global::forms.checkbox
                                             name="notifications"
                                             id="notifications"
                                             value="on"
                                             :checked="$values['notifications'] == '1'"
-                                            {{-- class="input" --}}
                                             labelText="{{ __('label.receive_notifications') }}"
                                             labelPosition="left"
                                         />
@@ -411,7 +412,9 @@
         </div>
         <div class="col-md-4">
             <div class="maincontentinner center">
-                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg rounded-full' alt='Profile Picture' id="previousImage"/>
+                <div class="w-full flex justify-center">
+                    <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg rounded-full' alt='Profile Picture' id="previousImage"/>
+                </div>
                 <div id="profileImg">
                 </div>
 
@@ -422,23 +425,25 @@
                     <div class='fileupload fileupload-new' data-provides='fileupload'>
                         <input type="hidden"/>
                         <div class="input-append">
-                            <div class="uneditable-input span3">
+                            {{-- <div class="uneditable-input span3">
                                 <i class="fa-file fileupload-exists"></i>
                                 <span class="fileupload-preview"></span>
-                            </div>
-                            <span class="btn btn-file">
-                                        <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
-                                        <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
-                                    </span>
+                            </div> --}}    
 
-                            <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                            <x-global::forms.button tag="button" id="file-input" content-role="secondary" class="btn-file" scale="md" >
+                                {{ __('buttons.select_file') }}
+                                <input type='file' name='file' accept=".jpg,.png,.gif,.webp"/>
+                            </x-global::forms.button>
+
+                            <x-global::forms.button tag="button" id="remove-picture" content-role="secondary" class="fileupload-exists" data-dismiss='fileupload' scale="md" >
+                                {{ __('buttons.remove') }}
+                            </x-global::forms.button>
+
                         </div>
                         <p class='stdformbutton'>
-                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                        <span onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}</span>
-                                        <span class="ld ld-ring ld-spin"></span>
-                                    </span>
+                            <x-global::forms.button tag="button" id="save-picture" class="fileupload-exists ld-ext-right">
+                                {{ __('buttons.save') }}
+                            </x-global::forms.button>
                             <input type="hidden" name="profileImage" value="1" />
                             <input id="picSubmit" type="submit" name="savePic" class="hidden"
                                    value="{{ __('buttons.upload') }}"/>
@@ -451,11 +456,35 @@
 </div>
 
 
-<script type="text/javascript">
+<script type="module">
+    import "@mix('/js/Domain/Users/Js/usersController.js')"
+    import snippets from "@mix('/js/app.js')"
 
     jQuery(document).ready(function(){
 
-        leantime.usersController.checkPWStrength('newPassword');
+        usersController.checkPWStrength('newPassword');
+
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            usersController.readURL(e.target);
+        });
+
+        document.getElementById('save-picture').addEventListener('click', (e) => {
+            e.preventDefault();
+            usersController.saveCroppie();
+        });
+
+        document.getElementById('remove-picture').addEventListener('click', (e) => {
+            e.preventDefault();
+            usersController.clearCroppie();
+        });
+
+        // Add event listeners to all font buttons
+        document.querySelectorAll('[name="themeFont"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const font = this.value;
+                snippets.toggleFont(font);
+            });
+        });
 
     });
 </script>

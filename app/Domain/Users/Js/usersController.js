@@ -3,6 +3,8 @@ import i18n from 'i18n';
 import { appUrl } from 'js/app/core/instance-info.module';
 import { saveUserPhoto } from './usersService';
 
+let _croppieInstance = null;
+
 export const readURL = function (input) {
 
     clearCroppie();
@@ -14,7 +16,7 @@ export const readURL = function (input) {
         reader.onload = function (e) {
             //profileImg.attr('src', e.currentTarget.result);
 
-            _uploadResult = profileImg
+            _croppieInstance = profileImg
                 .croppie(
                     {
                         enableExif: true,
@@ -30,7 +32,7 @@ export const readURL = function (input) {
                     }
                 );
 
-            _uploadResult.croppie(
+                _croppieInstance.croppie(
                 'bind',
                 {
                     url: e.currentTarget.result
@@ -52,7 +54,7 @@ export const clearCroppie = function () {
 export const saveCroppie = function () {
     jQuery('#save-picture').addClass('running');
     jQuery('#profileImg').attr('src', appUrl + '/images/loaders/loader28.gif');
-    _uploadResult.croppie(
+    _croppieInstance.croppie(
         'result',
         {
             type: "blob",
@@ -153,10 +155,12 @@ export const checkPWStrength = function (pwField) {
 
 }
 
-export default {
+export const usersController = {
     readURL: readURL,
     clearCroppie: clearCroppie,
     saveCroppie: saveCroppie,
     initUserTable: initUserTable,
     checkPWStrength: checkPWStrength,
 };
+
+export default usersController;
