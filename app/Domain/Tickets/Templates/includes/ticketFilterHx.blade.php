@@ -195,15 +195,17 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 </form>
 
 <script type="module">
-    // import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
+    
     jQuery(document).ready(function() {
         console.log('ready');
 
         jQuery('#ticketSearch').on('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
 
             var form = jQuery(this);
-            var formData = form.serialize(); // Serialize form data to query string
+            var formData = form.serialize();
+
 
             // Update each .ticketColumn's hx-get URL
             jQuery('.ticketColumn').each(function() {
@@ -213,13 +215,13 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 var params = new URLSearchParams(currentUrl.search);
                 form.serializeArray().forEach(function(item) {
                     params.set(item.name, item
-                    .value); // Update existing or add new parameter
+                        .value); // Update existing or add new parameter
                 });
-                
+
                 // Update the hx-get attribute with the modified URL
                 currentUrl.search = params.toString();
                 column.attr('hx-get', currentUrl.toString());
-                console.log( currentUrl.toString());
+                console.log(currentUrl.toString());
             });
 
             // Trigger HTMX reload for each .ticketColumn
