@@ -1,5 +1,5 @@
 @props([
-    'comments' => [],
+    'comments',
     'delUrlBase' => '',
     'id' => '',
     'formHash' => md5(CURRENT_URL),
@@ -48,7 +48,7 @@
                         :project_id="$project_id"
                         :ticket="$ticket ?? null"
                         :formHash="$formHash"
-                        :replyParent="$row['id']"
+                        :replyParent="$row->id"
                     />
                 @endforeach
 
