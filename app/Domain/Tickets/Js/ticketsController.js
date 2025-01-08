@@ -102,19 +102,19 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                             var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                             if (task.projectName !== undefined) {
-                                popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                popUpHTML +=  '<h2><b>' + task.projectName + '</b></h2>';
                             }
-                            popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                            popUpHTML += '<h2>' + task.type + ' #' + task.id + ' </h2>';
 
                             if (task.type === 'milestone') {
-                                popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                popUpHTML += '<h3><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h3><br /> ' +
                                  '<p>' + window.leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                  '' + Math.round(task.progress) + '%</p> ' +
-                                 '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + window.leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                 '<a href="' + appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ';
+                                 '<a class="link" href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + window.leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                 '<a class="link" href="' + appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ';
                             } else {
-                                popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                 '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + window.leantime.i18n.__("links.edit_todo") + '</a> ';
+                                popUpHTML += '<h4><a class="link" href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                 '<a class="link" href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + window.leantime.i18n.__("links.edit_todo") + '</a> ';
                             }
 
                              popUpHTML += '</div>';
@@ -173,11 +173,11 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                             // dates and progress value
                             var end_date = task._end;
                             return '<div class="details-container"> ' +
-                                '<small><b>' + task.projectName + '</b></small>' +
-                                '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
+                                '<h2><b>' + task.projectName + '</b></h2>' +
+                                '<h3>' + htmlEntities(task.name) + '</h3><br /> ' +
                                 '<p>' + window.leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                 '' + Math.round(task.progress) + '%</p> ' +
-                                '<a href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ' +
+                                '<a class="link" href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                 '</div>';
                         },
