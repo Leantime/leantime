@@ -101,7 +101,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
                     } catch (\Throwable $th) {
                         $this->tpl->setNotification($th->getMessage(), 'error');
-
                     }
                     break;
             }
@@ -109,7 +108,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             if ($result['success']) {
                 $this->tpl->setNotification($result['message'], 'success');
 
-                return Frontcontroller::redirect(BASE_URL.'/goalcanvas/showCanvas/');
+                return Frontcontroller::redirect(BASE_URL . '/goalcanvas/showCanvas/');
             } else {
                 $this->tpl->setNotification($result['message'], 'error');
             }

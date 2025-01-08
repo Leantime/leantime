@@ -1,7 +1,8 @@
 <x-global::actions.dropdown
     class="bigProjectSelector {{ $menuType == 'project' ? 'active' : '' }}"
     content-role='ghost'
-    variant="card">
+    variant="card"
+    card-class="!p-0" >
     <x-slot:labelText>
         @if ($menuType == 'project' || $menuType == 'default')
             <span class="projectAvatar {{ $currentProjectType }}">
@@ -19,7 +20,7 @@
 
         <i class="fa fa-caret-down" aria-hidden="true"></i>
     </x-slot:labelText>
-    <x-slot:card-content class="p-1">
+    <x-slot:card-content class="">
         <div class="projectselector w-96 h-fit" id="mainProjectSelector">
             @include('menu::partials.projectselector.projectSelectorDropdown', [])
         </div>
