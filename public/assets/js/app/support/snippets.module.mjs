@@ -78,7 +78,7 @@ var toggleColors = function (accent1, accent2) {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const snippets ={
     copyUrl: copyUrl,
     copyToClipboard: copyToClipboard,
     initConfettiClick: initConfettiClick,
@@ -87,3 +87,5 @@ export default {
     toggleFont: toggleFont,
     toggleColors: toggleColors
 };
+
+export default snippets;
