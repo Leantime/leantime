@@ -31,7 +31,7 @@
                 @endphp
                 @isset($todoTypeIcons[$type])
                     <small>
-                        <i class="fa {{ $todoTypeIcons[$type] }}"></i>
+                        <i class="fa {!! $todoTypeIcons[$type] !!}"></i>
                         {!! __('label.' . $type) !!}
                     </small>
                 @endisset
@@ -93,7 +93,7 @@
                 <x-global::actions.dropdown :label-text="$userLabelText" contentRole="link" position="bottom" align="start">
                     <!-- Dropdown Items -->
                     <x-slot:menu>
-                        <li class="nav-header border">{{ $tpl->__('dropdown.choose_user') }}
+                        <li class="nav-header border">{!! __('dropdown.choose_user') !!}
                         </li>
                         @if (is_array($tpl->get('users')))
                             @foreach ($tpl->get('users') as $user)

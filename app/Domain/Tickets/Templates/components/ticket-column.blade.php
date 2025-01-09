@@ -8,10 +8,24 @@
     'milestones' => [],
     'users' => [],
     'onTheClock' => false,
+    'searchcriteria' => []
 ])
+
+@php
+    $searchcriteria['status'] = $status;
+@endphp
+
+@if (!empty($searchcriteria))
+    @php
+        $queryString = http_build_query($searchcriteria);
+        $url = rtrim('/hx/tickets/ticketColumn/get', '?') . '?' . $queryString;
+    @endphp
+@endif
+
+
 @if (!empty($status))
     <div class="column ticketColumn" id="ticketColumn_{{ $status }}"
-        hx-get="{{ BASE_URL }}/hx/tickets/ticketColumn/get?status={{ $status }}" hx-swap="innerHTML"
+        hx-get="{{ $url }}" hx-swap="innerHTML"
         hx-trigger="load, reload from:body">
         <x-global::elements.loader id="loadingthis" size="25px" />
     </div>
