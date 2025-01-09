@@ -196,37 +196,31 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 
 <script type="module">
     import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
-    
+
     jQuery(document).ready(function() {
         console.log('ready');
 
         jQuery('#ticketSearch').on('submit', function(e) {
             e.preventDefault();
 
-            var form = jQuery(this);
-            var formData = form.serialize();
+            var formData = new URLSearchParams(jQuery(this).serialize());
 
-
-            // Update each .ticketColumn's hx-get URL
             jQuery('.ticketColumn').each(function() {
                 var column = jQuery(this);
-                var currentUrl = new URL(column.attr('hx-get'), window.location.origin);
-                // Add or update search parameters
-                var params = new URLSearchParams(currentUrl.search);
-                form.serializeArray().forEach(function(item) {
-                    params.set(item.name, item
-                        .value); // Update existing or add new parameter
+                var status = column.attr('id').replace('ticketColumn_', '');
+
+                // Construct new URL with search parameters
+                var newUrl = `{{ BASE_URL }}/hx/tickets/ticketColumn/get?status=${status}`;
+                formData.forEach((value, key) => {
+                    if (value) { // Only add non-empty values
+                        newUrl += `&${key}=${encodeURIComponent(value)}`;
+                    }
                 });
 
-                // Update the hx-get attribute with the modified URL
-                currentUrl.search = params.toString();
-                column.attr('hx-get', currentUrl.toString());
-                console.log(currentUrl.toString());
-            });
+                column.attr('hx-get', newUrl);
+                htmx.process(column[0]); // Tell HTMX to process the updated attributes
 
-            // Trigger HTMX reload for each .ticketColumn
-            jQuery('.ticketColumn').each(function() {
-                htmx.trigger(this, 'reload');
+                htmx.trigger(column[0], 'reload');
             });
         });
 
