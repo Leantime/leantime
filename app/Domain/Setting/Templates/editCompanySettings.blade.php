@@ -2,17 +2,16 @@
 
 @section('content')
     <?php
-    $companySettings = $tpl->get('companySettings');
+        $companySettings = $tpl->get('companySettings');
     ?>
 
-    <div class="pageheader">
-
-        <div class="pageicon"><span class="fa fa-cogs"></span></div>
-        <div class="pagetitle">
-            <h5><?= $tpl->__('label.administration') ?></h5>
-            <h1><?= $tpl->__('headlines.company_settings') ?></h1>
-        </div>
+<div class="pageheader">
+    <div class="pageicon"><span class="fa fa-cogs"></span></div>
+    <div class="pagetitle">
+        <h5><?= $tpl->__('label.administration') ?></h5>
+        <h1><?= $tpl->__('headlines.company_settings') ?></h1>
     </div>
+</div>
 
 <div class="maincontent">
     @displayNotification()
@@ -35,7 +34,7 @@
                             <div class="col-md-8">
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings#details" >
 
-                                        <h5 class="subtitle"><?= $tpl->__('headlines.company_settings') ?></h5>
+                                        <h2 class="subtitle"><?= $tpl->__('headlines.company_settings') ?></h2>
                                         <p><?= $tpl->__('text.these_are_system_wide_settings') ?></p>
                                         <br />
                                         <input type="hidden" value="1" name="saveSettings" />
@@ -85,7 +84,7 @@
                                             <div class="col-md-2">
                                                 <label><?= $tpl->__('label.send_telemetry') ?></label>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-8 flex items-center gap-2">
                                                 <x-global::forms.checkbox
                                                     name="telemetryActive"
                                                     id="telemetryActive"
@@ -93,9 +92,9 @@
                                                     class="toggle"
                                                 />
 
-                                    <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
-                                    <div class="clearall"></div><br />
-                                </div>
+                                                <i class="fa fa-question-circle mt-1" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
+                                                <div class="clearall"></div><br />
+                                            </div>
                             </div>
                                     <br />
                             <h4 class="widgettitle title-light"><span
@@ -166,21 +165,24 @@
 
                                 <form class="" method="post" id="" action="{{ BASE_URL }}/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="subtitle"><?=$tpl->__("headlines.logo")?></h5>
+                                    <h2 class="subtitle"><?=$tpl->__("headlines.logo")?></h2>
                                     <br />
 
                                         <div class="row">
 
                                             <div class="col-md-12">
                                                 <?php if ($companySettings['logo'] != "") { ?>
-                                                <img src='<?php echo $companySettings['logo']; ?>' class='logoImg' alt='Logo'
-                                                    id="previousImage" width="260" />
+                                                    <img src='<?php echo $companySettings['logo']; ?>' class='logoImg' alt='Logo'
+                                                        id="previousImage" width="260" />
                                                 <?php } else { ?>
-                                                <?= $tpl->__('text.no_logo') ?>
+                                                    <?= $tpl->__('text.no_logo') ?>
                                                 <?php } ?>
+                                                
                                                 <div id="logoImg" style="height:auto;">
                                                 </div>
+                                                
                                                 <br />
+                                                
                                                 <div class="par">
 
                                                     <label><?= $tpl->__('label.upload_new_logo') ?></label>
@@ -192,23 +194,22 @@
                                                                 <i class="fa-file fileupload-exists"></i>
                                                                 <span class="fileupload-preview"></span>
                                                             </div>
+
                                                             <span class="btn btn-default btn-file">
-                                                                <span
-                                                                    class="fileupload-new"><?= $tpl->__('buttons.select_file') ?></span>
-                                                                <span
-                                                                    class='fileupload-exists'><?= $tpl->__('buttons.change') ?></span>
-                                                                <input type='file' name='file'
-                                                                    onchange="leantime.settingController.readURL(this)" />
+                                                                <span>{{__('buttons.select_file')}}</span>
+                                                                <input type='file' name='file' id='file-input' />
                                                             </span>
 
-                                                        <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?=$tpl->__("buttons.remove")?></a>
-                                                    </div>
-                                                    <p class='stdformbutton'>
-                                                        <x-global::forms.button tag="button" id="saveBtn" onclick="leantime.settingController.saveCroppie()">
-                                                            {{ __('buttons.save') }}
-                                                        </x-global::forms.button>
-                                                        <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
-                                                    </p>
+                                                            <span id="remove-logo" style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload'>{{__("buttons.remove")}}</span>
+                                                        </div>
+
+                                                        <p class='stdformbutton'>
+                                                            <x-global::forms.button tag="button" id="save-logo">
+                                                                {{ __('buttons.save') }}
+                                                            </x-global::forms.button>
+                                                            <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$tpl->__("buttons.upload")?>" />
+                                                        </p>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -216,7 +217,7 @@
                                 </form>
                                 <hr />
                                 <?=$tpl->__("text.logo_reset")?><br /><br />
-                                {{-- <a href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a> --}}
+                                
                                 <x-global::forms.button tag="a" contentRole="ghost" href="{{ BASE_URL }}/setting/editCompanySettings?resetLogo=1" scale="sm">
                                     {{ __("buttons.reset_logo") }}
                                 </x-global::forms.button>
@@ -264,20 +265,36 @@
             </div>
         </div>
 
+</div>
 
 
+<script type="module">
 
-    </div>
+    import "@mix('/js/Domain/Setting/Js/settingController.js')"
+    import "@mix('/js/Domain/Users/Js/usersController.js')"
 
-
-    <script>
-        jQuery(document).ready(function() {
-            jQuery(".companyTabs").tabs({
-                activate: function(event, ui) {
-
-                    window.location.hash = ui.newPanel.selector;
-                }
-            });
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            settingController.readURL(e.target);
         });
-    </script>
+        
+        document.getElementById('save-logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            settingController.saveCroppie();
+        });
+        
+        document.getElementById('remove-logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            settingController.clearCroppie();
+        });
+
+        // Initialize tabs
+        jQuery(".companyTabs").tabs({
+            activate: function(event, ui) {
+                window.location.hash = ui.newPanel.selector;
+            }
+        });
+    });
+</script>
+
 @endsection

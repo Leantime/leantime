@@ -5,7 +5,7 @@
     
     // $todoTypeIcons = $tpl->get('ticketTypeIcons');
     
-    $allTicketGroups = $tpl->get('allTickets');
+    $allTicketGroups = $allTickets;
     
     ?>
 
@@ -25,7 +25,7 @@
 
                     <div class="flex mb-2 gap-3">
                         @include('tickets::includes.ticketNewBtn')
-                        @include('tickets::includes.ticketFilterHx')
+                        @include('tickets::includes.ticketFilter')
                     </div>
 
                     <?php
@@ -57,7 +57,7 @@
             justify-content: flex-start;
             z-index: 9;
             ">
-                @foreach ($tpl->get('allKanbanColumns') as $key => $statusRow)
+                @foreach ($allKanbanColumns as $key => $statusRow)
                     <div class="column">
                         <h4
                             class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
@@ -140,7 +140,7 @@
                     <h5 class="accordionTitle kanbanLane {{ $group['class'] }}" id="accordion_link_{{ $group['id'] }}">
                         <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}"
                             onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                            <i class="fa fa-angle-down"></i>{{ $group['label'] }} ({{ count($group['items']) }})
+                            <i class="fa fa-angle-down"></i>{!! $group['label'] !!} ({{ count($group['items']) }})
                         </a>
                     </h5>
                     <div class="simpleAccordionContainer kanban" id="accordion_content-{{ $group['id'] }}">
@@ -150,7 +150,7 @@
                     <div class="row-fluid">
 
                         @foreach ($allKanbanColumns as $key => $statusRow)
-                            <x-tickets::ticket-column :status="$key" {{-- :allTickets="$allTickets"
+                            <x-tickets::ticket-column :status="$key" :searchCriteria="$searchCriteria" {{-- :allTickets="$allTickets"
                                 :ticketTypeIcons="$ticketTypeIcons"
                                 :priorities="$priorities"
                                 :efforts="$efforts"
@@ -172,7 +172,6 @@
     </div>
 
     <script type="module">
-
         import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
 
         jQuery(document).ready(function() {
@@ -255,7 +254,7 @@
             jQuery(document).on("htmx:afterRequest", ".quickadd-ticket", function() {
                 let key = jQuery(this).data('key');
                 htmx.trigger(`#ticketColumn_${key}`, 'reload');
-                jQuery(this).find('input[name=headline]').val(''); 
+                jQuery(this).find('input[name=headline]').val('');
             });
 
 

@@ -144,7 +144,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                         <span>
                             <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                                 value="{{ $input['field'] }}" id="{{ $input['id'] }}"
-                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
+                                onclick="ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
                             <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
                         </span>
                     </x-global::actions.dropdown.item>
@@ -197,7 +197,9 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 
 </form>
 
-<script>
+<script type="module">
+
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
     jQuery(document).ready(function() {
 
         new SlimSelect({
@@ -231,7 +233,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             },
         });
 
-        leantime.ticketsController.initTicketSearchSubmit('<?= $currentUrlPath ?>');
+        ticketsController.initTicketSearchSubmit('<?= $currentUrlPath ?>');
 
     })
 </script>

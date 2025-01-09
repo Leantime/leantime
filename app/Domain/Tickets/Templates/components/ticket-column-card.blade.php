@@ -31,7 +31,7 @@
                 @endphp
                 @isset($todoTypeIcons[$type])
                     <small>
-                        <i class="fa {{ $todoTypeIcons[$type] }}"></i>
+                        <i class="fa {!! $todoTypeIcons[$type] !!}"></i>
                         {!! __('label.' . $type) !!}
                     </small>
                 @endisset
@@ -96,6 +96,7 @@
                         <x-global::actions.dropdown.item variant="header">
                             {{ $tpl->__('dropdown.choose_user') }}
                         </x-global::actions.dropdown.item>
+
                         @if (is_array($tpl->get('users')))
                             @foreach ($tpl->get('users') as $user)
                                 <x-global::actions.dropdown.item href="javascript:void(0);"

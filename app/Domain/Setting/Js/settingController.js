@@ -2,19 +2,20 @@ import jQuery from "jquery";
 import { saveLogo } from './settingService';
 import { appUrl } from 'js/app/core/instance-info.module.mjs'
 
-let _uploadResult;
+// let _uploadResult;
+let _croppieInstance = null;
 
 export const readURL = function (input) {
     clearCroppie();
-
+    console.log('Input is: ', input);
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
         var profileImg = jQuery('#logoImg');
         reader.onload = function (e) {
             //profileImg.attr('src', e.currentTarget.result);
-
-            this._uploadResult = profileImg
+            
+            _croppieInstance = profileImg
                 .croppie(
                     {
                         enableExif: true,
@@ -31,7 +32,7 @@ export const readURL = function (input) {
                     }
                 );
 
-            this._uploadResult.croppie(
+            _croppieInstance.croppie(
                 'bind',
                 {
                     url: e.currentTarget.result
@@ -45,16 +46,27 @@ export const readURL = function (input) {
     }
 };
 
+
 export const clearCroppie = function () {
-    jQuery('#logoImg').croppie('destroy');
+    const logoImg = jQuery('#logoImg');
+    if (logoImg.data('croppie')) {
+        logoImg.croppie('destroy');
+    }
+    _croppieInstance = null;
     jQuery("#previousImage").show();
 };
 
 export const saveCroppie = function () {
+
+    if (!_croppieInstance) {
+        console.error('No image has been loaded');
+        return;
+    }
+
     jQuery('#save-logo').addClass('running');
 
     jQuery('#logoImg').attr('src', appUrl + '/images/loaders/loader28.gif');
-    _uploadResult.croppie(
+    _croppieInstance.croppie(
         'result',
         {
             type: "blob",
@@ -71,9 +83,8 @@ export const saveCroppie = function () {
 };
 
 // Make public what you want to have public, everything else is private
-export default {
+export const settingController = {
     readURL: readURL,
     clearCroppie: clearCroppie,
     saveCroppie: saveCroppie
 };
-

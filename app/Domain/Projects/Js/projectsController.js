@@ -570,7 +570,7 @@ export const favoriteProject = function(id, element) {
 }
 
 // Make public what you want to have public, everything else is private
-export default {
+export const projectsController = {
     initDates: initDates,
     initProjectTabs: initProjectTabs,
     initProgressBar: initProgressBar,
@@ -587,3 +587,5 @@ export default {
     initProjectsKanban: initProjectsKanban,
     favoriteProject: favoriteProject
 };
+
+export default projectsController;

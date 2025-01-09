@@ -227,5 +227,10 @@ namespace Leantime\Domain\Comments\Services {
 
             return $this->commentRepository->getComment($id);
         }
+
+        public function countComments($module, $moduleId): int
+        {
+            return $this->commentRepository->countComments($module, $moduleId);
+        }
     }
 }

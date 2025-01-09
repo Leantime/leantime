@@ -13,6 +13,7 @@ body .gantt-container {
 
 .gantt .bar-label {
     text-anchor: start;
+    font-weight: normal;
 }
 
 body .gantt .bar-label,
@@ -44,10 +45,25 @@ body .gantt #details .details-container {
     background-color:var(--secondary-background);
     padding:10px;
     box-shadow:var(--regular-shadow);
-    margin-left: -10px;
+    margin-left: -5px;
     opacity:0;
     min-width:100px;
     max-width:300px;
+    border-radius:var(--box-radius);
+    font-size: small;
+
+}
+
+.gantt-container .popup-wrapper h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.gantt-container .popup-wrapper h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
 }
 
 .gantt-container .bar-wrapper {
