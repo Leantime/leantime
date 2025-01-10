@@ -12,8 +12,7 @@
     <div hx-get="{{ BASE_URL }}/hx/goalcanvas/canvas/get?id={{ $id }}" hx-trigger="load"
         hx-swap="innerHtml">
 
-        loading...
-
+        <x-global::elements.loadingText :count="3" :type="'goal-card'" />
     </div>
 @else
     <div class="row">
