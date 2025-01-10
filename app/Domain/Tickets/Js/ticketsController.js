@@ -45,7 +45,7 @@ export const updateRemainingHours = function (element, id) {
         id,
         value,
         function () {
-            jQuery.growl({message: i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
+            jQuery.growl({message: window.leantime.i18n.__("short_notifications.remaining_hours_updated"), style: "success"});
         }
     );
 };
@@ -56,7 +56,7 @@ export const updatePlannedHours = function (element, id) {
         id,
         value,
         function () {
-            jQuery.growl({message: i18n.__("short_notifications.planned_hours_updated"), style: "success"});
+            jQuery.growl({message: window.leantime.i18n.__("short_notifications.planned_hours_updated"), style: "success"});
         }
     );
 };
@@ -88,8 +88,8 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                         arrow_curve: 5,
                         padding:20,
                         view_mode: 'Month',
-                        date_format: i18n.__("language.momentJSDate"),
-                        language: i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
+                        date_format: window.leantime.i18n.__("language.momentJSDate"),
+                        language: window.leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
                         additional_rows: 5,
                         custom_popup_html: function (task) {
 
@@ -102,19 +102,19 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                             var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                             if (task.projectName !== undefined) {
-                                popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                popUpHTML +=  '<h2><b>' + task.projectName + '</b></h2>';
                             }
-                            popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+                            popUpHTML += '<h2>' + task.type + ' #' + task.id + ' </h2>';
 
                             if (task.type === 'milestone') {
-                                popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                 '<p>' + i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
+                                popUpHTML += '<h3><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h3><br /> ' +
+                                 '<p>' + window.leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                  '' + Math.round(task.progress) + '%</p> ' +
-                                 '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + i18n.__("links.edit_milestone") + '</a> | ' +
-                                 '<a href="' + appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + i18n.__("links.view_todos") + '</a> ';
+                                 '<a class="link" href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + window.leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                 '<a class="link" href="' + appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ';
                             } else {
-                                popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                 '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + i18n.__("links.edit_todo") + '</a> ';
+                                popUpHTML += '<h4><a class="link" href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                 '<a class="link" href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + window.leantime.i18n.__("links.edit_todo") + '</a> ';
                             }
 
                              popUpHTML += '</div>';
@@ -173,11 +173,11 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                             // dates and progress value
                             var end_date = task._end;
                             return '<div class="details-container"> ' +
-                                '<small><b>' + task.projectName + '</b></small>' +
-                                '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
-                                '<p>' + i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
+                                '<h2><b>' + task.projectName + '</b></h2>' +
+                                '<h3>' + htmlEntities(task.name) + '</h3><br /> ' +
+                                '<p>' + window.leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                 '' + Math.round(task.progress) + '%</p> ' +
-                                '<a href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + i18n.__("links.view_todos") + '</a> ' +
+                                '<a class="link" href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + window.leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                 '</div>';
                         },
@@ -238,18 +238,18 @@ export const initSprintDates = function () {
                 {
                     numberOfMonths: 1,
                     dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                    dayNames: i18n.__("language.dayNames").split(","),
-                    dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                    dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                    monthNames: i18n.__("language.monthNames").split(","),
-                    currentText: i18n.__("language.currentText"),
-                    closeText: i18n.__("language.closeText"),
-                    buttonText: i18n.__("language.buttonText"),
-                    isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                    nextText: i18n.__("language.nextText"),
-                    prevText: i18n.__("language.prevText"),
-                    weekHeader: i18n.__("language.weekHeader"),
-                    firstDay: i18n.__("language.firstDayOfWeek"),
+                    dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                    currentText: window.leantime.i18n.__("language.currentText"),
+                    closeText: window.leantime.i18n.__("language.closeText"),
+                    buttonText: window.leantime.i18n.__("language.buttonText"),
+                    isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                    nextText: window.leantime.i18n.__("language.nextText"),
+                    prevText: window.leantime.i18n.__("language.prevText"),
+                    weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                    firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -267,18 +267,18 @@ export const initSprintDates = function () {
                 defaultDate: "+1w",
                 numberOfMonths: 1,
                 dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                dayNames: i18n.__("language.dayNames").split(","),
-                dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                monthNames: i18n.__("language.monthNames").split(","),
-                currentText: i18n.__("language.currentText"),
-                closeText: i18n.__("language.closeText"),
-                buttonText: i18n.__("language.buttonText"),
-                isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: i18n.__("language.nextText"),
-                prevText: i18n.__("language.prevText"),
-                weekHeader: i18n.__("language.weekHeader"),
-                firstDay: i18n.__("language.firstDayOfWeek"),
+                dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                currentText: window.leantime.i18n.__("language.currentText"),
+                closeText: window.leantime.i18n.__("language.closeText"),
+                buttonText: window.leantime.i18n.__("language.buttonText"),
+                isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                nextText: window.leantime.i18n.__("language.nextText"),
+                prevText: window.leantime.i18n.__("language.prevText"),
+                weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
             }
         )
         .on(
@@ -309,18 +309,18 @@ export const _initMilestoneDates = function () {
                 {
                     numberOfMonths: 1,
                     dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                    dayNames: i18n.__("language.dayNames").split(","),
-                    dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                    dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                    monthNames: i18n.__("language.monthNames").split(","),
-                    currentText: i18n.__("language.currentText"),
-                    closeText: i18n.__("language.closeText"),
-                    buttonText: i18n.__("language.buttonText"),
-                    isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                    nextText: i18n.__("language.nextText"),
-                    prevText: i18n.__("language.prevText"),
-                    weekHeader: i18n.__("language.weekHeader"),
-                    firstDay: i18n.__("language.firstDayOfWeek"),
+                    dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                    currentText: window.leantime.i18n.__("language.currentText"),
+                    closeText: window.leantime.i18n.__("language.closeText"),
+                    buttonText: window.leantime.i18n.__("language.buttonText"),
+                    isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                    nextText: window.leantime.i18n.__("language.nextText"),
+                    prevText: window.leantime.i18n.__("language.prevText"),
+                    weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                    firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -334,18 +334,18 @@ export const _initMilestoneDates = function () {
                 defaultDate: "+1w",
                 numberOfMonths: 1,
                 dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                dayNames: i18n.__("language.dayNames").split(","),
-                dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                monthNames: i18n.__("language.monthNames").split(","),
-                currentText: i18n.__("language.currentText"),
-                closeText: i18n.__("language.closeText"),
-                buttonText: i18n.__("language.buttonText"),
-                isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: i18n.__("language.nextText"),
-                prevText: i18n.__("language.prevText"),
-                weekHeader: i18n.__("language.weekHeader"),
-                firstDay: i18n.__("language.firstDayOfWeek"),
+                dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                currentText: window.leantime.i18n.__("language.currentText"),
+                closeText: window.leantime.i18n.__("language.closeText"),
+                buttonText: window.leantime.i18n.__("language.buttonText"),
+                isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                nextText: window.leantime.i18n.__("language.nextText"),
+                prevText: window.leantime.i18n.__("language.prevText"),
+                weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
             }
         )
             .on(
@@ -377,18 +377,18 @@ export const initMilestoneDatesAsyncUpdate = function () {
                 {
                     numberOfMonths: 1,
                     dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                    dayNames: i18n.__("language.dayNames").split(","),
-                    dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                    dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                    monthNames: i18n.__("language.monthNames").split(","),
-                    currentText: i18n.__("language.currentText"),
-                    closeText: i18n.__("language.closeText"),
-                    buttonText: i18n.__("language.buttonText"),
-                    isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                    nextText: i18n.__("language.nextText"),
-                    prevText: i18n.__("language.prevText"),
-                    weekHeader: i18n.__("language.weekHeader"),
-                    firstDay: i18n.__("language.firstDayOfWeek"),
+                    dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                    currentText: window.leantime.i18n.__("language.currentText"),
+                    closeText: window.leantime.i18n.__("language.closeText"),
+                    buttonText: window.leantime.i18n.__("language.buttonText"),
+                    isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                    nextText: window.leantime.i18n.__("language.nextText"),
+                    prevText: window.leantime.i18n.__("language.prevText"),
+                    weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                    firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
                 }
             )
             .on(
@@ -406,7 +406,7 @@ export const initMilestoneDatesAsyncUpdate = function () {
                     console.log(date);
                     console.log(dateTo);
                     updateEditFromDates(id, date, function() {
-                        jQuery.growl({message: i18n.__("short_notifications.date_updated"), style: "success"});
+                        jQuery.growl({message: window.leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                     });
 
 
@@ -420,18 +420,18 @@ export const initMilestoneDatesAsyncUpdate = function () {
                 defaultDate: "+1w",
                 numberOfMonths: 1,
                 dateFormat: getFormatFromSettings("dateformat", "jquery"),
-                dayNames: i18n.__("language.dayNames").split(","),
-                dayNamesMin:  i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: i18n.__("language.dayNamesShort").split(","),
-                monthNames: i18n.__("language.monthNames").split(","),
-                currentText: i18n.__("language.currentText"),
-                closeText: i18n.__("language.closeText"),
-                buttonText: i18n.__("language.buttonText"),
-                isRTL: i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: i18n.__("language.nextText"),
-                prevText: i18n.__("language.prevText"),
-                weekHeader: i18n.__("language.weekHeader"),
-                firstDay: i18n.__("language.firstDayOfWeek"),
+                dayNames: window.leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  window.leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: window.leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: window.leantime.i18n.__("language.monthNames").split(","),
+                currentText: window.leantime.i18n.__("language.currentText"),
+                closeText: window.leantime.i18n.__("language.closeText"),
+                buttonText: window.leantime.i18n.__("language.buttonText"),
+                isRTL: window.leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+                nextText: window.leantime.i18n.__("language.nextText"),
+                prevText: window.leantime.i18n.__("language.prevText"),
+                weekHeader: window.leantime.i18n.__("language.weekHeader"),
+                firstDay: window.leantime.i18n.__("language.firstDayOfWeek"),
             }
         )
             .on(
@@ -449,7 +449,7 @@ export const initMilestoneDatesAsyncUpdate = function () {
                     console.log(dateFrom);
                     console.log(date);
                     updateEditToDates(id, date, function() {
-                        jQuery.growl({message: i18n.__("short_notifications.date_updated"), style: "success"});
+                        jQuery.growl({message: window.leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                     });
 
                 }
@@ -506,7 +506,7 @@ export const initEffortDropdown = function () {
             ).done(
                 function () {
                     jQuery("#effortDropdownMenuLink" + ticketId + " span.text").text(storyPointLabels[effortId]);
-                    jQuery.growl({message: i18n.__("short_notifications.effort_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.effort_updated"), style: "success"});
 
                 }
             );
@@ -555,7 +555,7 @@ export const initPriorityDropdown = function () {
                     jQuery("#priorityDropdownMenuLink" + ticketId + "").parents(".ticketBox").addClass("priority-border-" + priorityId);
 
 
-                    jQuery.growl({message: i18n.__("short_notifications.priority_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.priority_updated"), style: "success"});
 
                 }
             );
@@ -568,7 +568,7 @@ export const initPriorityDropdown = function () {
 
 export const initMilestoneDropdown = function () {
 
-    jQuery(".milestoneDropdown .dropdown-menu a").unbind().on("click", function () {
+    jQuery(".milestoneDropdown .dropdown .menu li  a").unbind().on("click", function () {
 
             var dataValue = jQuery(this).attr("data-value").split("_");
             var dataLabel = jQuery(this).attr('data-label');
@@ -594,7 +594,7 @@ export const initMilestoneDropdown = function () {
                 function () {
                     jQuery("#milestoneDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                     jQuery("#milestoneDropdownMenuLink" + ticketId).css("backgroundColor", color);
-                    jQuery.growl({message: i18n.__("short_notifications.milestone_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.milestone_updated"), style: "success"});
                 }
             );
         }
@@ -627,7 +627,7 @@ export const initStatusDropdown = function () {
                 function (response) {
                     jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                     jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
-                    jQuery.growl({message: i18n.__("short_notifications.status_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.status_updated"), style: "success"});
 
                     handleAsyncResponse(response);
 
@@ -664,7 +664,7 @@ export const initUserDropdown = function () {
                 function () {
                     jQuery("#userDropdownMenuLink" + ticketId + " span.text span#userImage" + ticketId + " img").attr("src", appUrl + "/api/users?profileImage=" + userId);
                     jQuery("#userDropdownMenuLink" + ticketId + " span.text span#user" + ticketId).text(dataLabel);
-                    jQuery.growl({message: i18n.__("short_notifications.user_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.user_updated"), style: "success"});
                 }
             );
         }
@@ -694,7 +694,7 @@ export const initAsyncInputChange = function () {
                 }
             ).done(
                 function () {
-                    jQuery.growl({message: i18n.__("notifications.subtask_saved"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("notifications.subtask_saved"), style: "success"});
                 }
             );
         }
@@ -726,7 +726,7 @@ export const initSprintDropdown = function () {
             ).done(
                 function () {
                     jQuery("#sprintDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
-                    jQuery.growl({message: i18n.__("short_notifications.sprint_updated"), style: "success"});
+                    jQuery.growl({message: window.leantime.i18n.__("short_notifications.sprint_updated"), style: "success"});
                 }
             );
         }
@@ -784,7 +784,7 @@ export const initDueDateTimePickers = function () {
         var id = jQuery(this).attr("data-id");
 
         updateDueDates(id, parsed, function () {
-            jQuery.growl({message: i18n.__("short_notifications.duedate_updated"), style: "success"});
+            jQuery.growl({message: window.leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
         });
 
     });
@@ -792,19 +792,21 @@ export const initDueDateTimePickers = function () {
 };
 
 export const initTimeSheetChart = function (labels, d2, d3, canvasId) {
+    console.log(labels);
+    console.log(window.leantime.i18n)
     var ctx = document.getElementById(canvasId).getContext('2d');
     var stackedLine = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets:[{
-                label: i18n.__("label.booked_hours"),
+                label: window.leantime.i18n.__("label.booked_hours"),
                 backgroundColor: 'rgba(201,48,44, 0.5)',
                 borderColor: 'rgb(201,48,44)',
                 data:d2
             },
                 {
-                    label:i18n.__("label.planned_hours"),
+                    label:window.leantime.i18n.__("label.planned_hours"),
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor:'rgb(54, 162, 235)',
                     data:d3
@@ -816,7 +818,7 @@ export const initTimeSheetChart = function (labels, d2, d3, canvasId) {
                     display: true,
                     title: {
                         display: true,
-                        text: i18n.__("label.booked_hours"),
+                        text: window.leantime.i18n.__("label.booked_hours"),
                     },
                     type: 'time',
                     time: {
@@ -827,7 +829,7 @@ export const initTimeSheetChart = function (labels, d2, d3, canvasId) {
                     display: true,
                     title: {
                         display: true,
-                        text: i18n.__("label.planned_hours")
+                        text: window.leantime.i18n.__("label.planned_hours")
                     },
                     ticks: {
                         beginAtZero: true
@@ -1149,31 +1151,31 @@ export const initTicketsTable = function (groupBy) {
 
         var allTickets = jQuery(".ticketTable").DataTable({
             "language": {
-                "decimal":        i18n.__("datatables.decimal"),
-                "emptyTable":     i18n.__("datatables.emptyTable"),
-                "info":           i18n.__("datatables.info"),
-                "infoEmpty":      i18n.__("datatables.infoEmpty"),
-                "infoFiltered":   i18n.__("datatables.infoFiltered"),
-                "infoPostFix":    i18n.__("datatables.infoPostFix"),
-                "thousands":      i18n.__("datatables.thousands"),
-                "lengthMenu":     i18n.__("datatables.lengthMenu"),
-                "loadingRecords": i18n.__("datatables.loadingRecords"),
-                "processing":     i18n.__("datatables.processing"),
-                "search":         i18n.__("datatables.search"),
-                "zeroRecords":    i18n.__("datatables.zeroRecords"),
+                "decimal":        window.leantime.i18n.__("datatables.decimal"),
+                "emptyTable":     window.leantime.i18n.__("datatables.emptyTable"),
+                "info":           window.leantime.i18n.__("datatables.info"),
+                "infoEmpty":      window.leantime.i18n.__("datatables.infoEmpty"),
+                "infoFiltered":   window.leantime.i18n.__("datatables.infoFiltered"),
+                "infoPostFix":    window.leantime.i18n.__("datatables.infoPostFix"),
+                "thousands":      window.leantime.i18n.__("datatables.thousands"),
+                "lengthMenu":     window.leantime.i18n.__("datatables.lengthMenu"),
+                "loadingRecords": window.leantime.i18n.__("datatables.loadingRecords"),
+                "processing":     window.leantime.i18n.__("datatables.processing"),
+                "search":         window.leantime.i18n.__("datatables.search"),
+                "zeroRecords":    window.leantime.i18n.__("datatables.zeroRecords"),
                 "paginate": {
-                    "first":      i18n.__("datatables.first"),
-                    "last":       i18n.__("datatables.last"),
-                    "next":       i18n.__("datatables.next"),
-                    "previous":   i18n.__("datatables.previous"),
+                    "first":      window.leantime.i18n.__("datatables.first"),
+                    "last":       window.leantime.i18n.__("datatables.last"),
+                    "next":       window.leantime.i18n.__("datatables.next"),
+                    "previous":   window.leantime.i18n.__("datatables.previous"),
                 },
                 "aria": {
-                    "sortAscending":  i18n.__("datatables.sortAscending"),
-                    "sortDescending":i18n.__("datatables.sortDescending"),
+                    "sortAscending":  window.leantime.i18n.__("datatables.sortAscending"),
+                    "sortDescending":window.leantime.i18n.__("datatables.sortDescending"),
                 },
                 "buttons": {
-                    colvis: i18n.__("datatables.buttons.colvis"),
-                    csv: i18n.__("datatables.buttons.download")
+                    colvis: window.leantime.i18n.__("datatables.buttons.colvis"),
+                    csv: window.leantime.i18n.__("datatables.buttons.download")
                 }
 
             },
@@ -1292,7 +1294,7 @@ export const initTicketsTable = function (groupBy) {
             buttons: [
                 {
                     extend: 'csvHtml5',
-                    title: i18n.__("label.filename_fileexport"),
+                    title: window.leantime.i18n.__("label.filename_fileexport"),
                     charset: 'utf-8',
                     bom: true,
                     exportOptions: {
@@ -1376,31 +1378,31 @@ export const initTicketsList = function (groupBy) {
 
         var allTickets = jQuery(".listStyleTable").DataTable({
             "language": {
-                "decimal":        i18n.__("datatables.decimal"),
-                "emptyTable":     i18n.__("datatables.emptyTable"),
-                "info":           i18n.__("datatables.info"),
-                "infoEmpty":      i18n.__("datatables.infoEmpty"),
-                "infoFiltered":   i18n.__("datatables.infoFiltered"),
-                "infoPostFix":    i18n.__("datatables.infoPostFix"),
-                "thousands":      i18n.__("datatables.thousands"),
-                "lengthMenu":     i18n.__("datatables.lengthMenu"),
-                "loadingRecords": i18n.__("datatables.loadingRecords"),
-                "processing":     i18n.__("datatables.processing"),
-                "search":         i18n.__("datatables.search"),
-                "zeroRecords":    i18n.__("datatables.zeroRecords"),
+                "decimal":        window.leantime.i18n.__("datatables.decimal"),
+                "emptyTable":     window.leantime.i18n.__("datatables.emptyTable"),
+                "info":           window.leantime.i18n.__("datatables.info"),
+                "infoEmpty":      window.leantime.i18n.__("datatables.infoEmpty"),
+                "infoFiltered":   window.leantime.i18n.__("datatables.infoFiltered"),
+                "infoPostFix":    window.leantime.i18n.__("datatables.infoPostFix"),
+                "thousands":      window.leantime.i18n.__("datatables.thousands"),
+                "lengthMenu":     window.leantime.i18n.__("datatables.lengthMenu"),
+                "loadingRecords": window.leantime.i18n.__("datatables.loadingRecords"),
+                "processing":     window.leantime.i18n.__("datatables.processing"),
+                "search":         window.leantime.i18n.__("datatables.search"),
+                "zeroRecords":    window.leantime.i18n.__("datatables.zeroRecords"),
                 "paginate": {
-                    "first":      i18n.__("datatables.first"),
-                    "last":       i18n.__("datatables.last"),
-                    "next":       i18n.__("datatables.next"),
-                    "previous":   i18n.__("datatables.previous"),
+                    "first":      window.leantime.i18n.__("datatables.first"),
+                    "last":       window.leantime.i18n.__("datatables.last"),
+                    "next":       window.leantime.i18n.__("datatables.next"),
+                    "previous":   window.leantime.i18n.__("datatables.previous"),
                 },
                 "aria": {
-                    "sortAscending":  i18n.__("datatables.sortAscending"),
-                    "sortDescending":i18n.__("datatables.sortDescending"),
+                    "sortAscending":  window.leantime.i18n.__("datatables.sortAscending"),
+                    "sortDescending":window.leantime.i18n.__("datatables.sortDescending"),
                 },
                 "buttons": {
-                    colvis: i18n.__("datatables.buttons.colvis"),
-                    csv: i18n.__("datatables.buttons.download")
+                    colvis: window.leantime.i18n.__("datatables.buttons.colvis"),
+                    csv: window.leantime.i18n.__("datatables.buttons.download")
                 }
 
             },
@@ -1441,31 +1443,31 @@ export const initMilestoneTable = function (groupBy) {
 
         var allTickets = jQuery(".ticketTable").DataTable({
             "language": {
-                "decimal":        i18n.__("datatables.decimal"),
-                "emptyTable":     i18n.__("datatables.emptyTable"),
-                "info":           i18n.__("datatables.info"),
-                "infoEmpty":      i18n.__("datatables.infoEmpty"),
-                "infoFiltered":   i18n.__("datatables.infoFiltered"),
-                "infoPostFix":    i18n.__("datatables.infoPostFix"),
-                "thousands":      i18n.__("datatables.thousands"),
-                "lengthMenu":     i18n.__("datatables.lengthMenu"),
-                "loadingRecords": i18n.__("datatables.loadingRecords"),
-                "processing":     i18n.__("datatables.processing"),
-                "search":         i18n.__("datatables.search"),
-                "zeroRecords":    i18n.__("datatables.zeroRecords"),
+                "decimal":        window.leantime.i18n.__("datatables.decimal"),
+                "emptyTable":     window.leantime.i18n.__("datatables.emptyTable"),
+                "info":           window.leantime.i18n.__("datatables.info"),
+                "infoEmpty":      window.leantime.i18n.__("datatables.infoEmpty"),
+                "infoFiltered":   window.leantime.i18n.__("datatables.infoFiltered"),
+                "infoPostFix":    window.leantime.i18n.__("datatables.infoPostFix"),
+                "thousands":      window.leantime.i18n.__("datatables.thousands"),
+                "lengthMenu":     window.leantime.i18n.__("datatables.lengthMenu"),
+                "loadingRecords": window.leantime.i18n.__("datatables.loadingRecords"),
+                "processing":     window.leantime.i18n.__("datatables.processing"),
+                "search":         window.leantime.i18n.__("datatables.search"),
+                "zeroRecords":    window.leantime.i18n.__("datatables.zeroRecords"),
                 "paginate": {
-                    "first":      i18n.__("datatables.first"),
-                    "last":       i18n.__("datatables.last"),
-                    "next":       i18n.__("datatables.next"),
-                    "previous":   i18n.__("datatables.previous"),
+                    "first":      window.leantime.i18n.__("datatables.first"),
+                    "last":       window.leantime.i18n.__("datatables.last"),
+                    "next":       window.leantime.i18n.__("datatables.next"),
+                    "previous":   window.leantime.i18n.__("datatables.previous"),
                 },
                 "aria": {
-                    "sortAscending":  i18n.__("datatables.sortAscending"),
-                    "sortDescending":i18n.__("datatables.sortDescending"),
+                    "sortAscending":  window.leantime.i18n.__("datatables.sortAscending"),
+                    "sortDescending":window.leantime.i18n.__("datatables.sortDescending"),
                 },
                 "buttons": {
-                    colvis: i18n.__("datatables.buttons.colvis"),
-                    csv: i18n.__("datatables.buttons.download")
+                    colvis: window.leantime.i18n.__("datatables.buttons.colvis"),
+                    csv: window.leantime.i18n.__("datatables.buttons.download")
                 }
 
             },
@@ -1486,7 +1488,7 @@ export const initMilestoneTable = function (groupBy) {
             buttons: [
                 {
                     extend: 'csvHtml5',
-                    title: i18n.__("label.filename_fileexport"),
+                    title: window.leantime.i18n.__("label.filename_fileexport"),
                     charset: 'utf-8',
                     bom: true,
                     exportOptions: {

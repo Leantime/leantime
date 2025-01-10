@@ -41,8 +41,11 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 />
             </form>
         </div>
-
-        <a class="btn btn-primary" href="{{ BASE_URL }}/projects/newProject"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_project') ?></a>
+        
+        <x-global::forms.button tag="a" content-role="primary" href="{{ BASE_URL }}/projects/newProject">
+            <i class='fa fa-plus'></i> {{ __('link.new_project') }}
+        </x-global::forms.button>
+        
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
 
@@ -71,20 +74,22 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <a class="" href="{{ BASE_URL }}/projects/showProject/<?=$row['id']?>"><?= $tpl->escape($row['name']) ?></a>
+                        <a class="link link-hover" href="{{ BASE_URL }}/projects/showProject/{{ $row['id'] }}">{!! $row['name'] !!}</a>
+                    </td>
                     <td>
-                        <a class="" href="{{ BASE_URL }}/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
+                        <a class="link link-hover" href="{{ BASE_URL }}/clients/showClient/{{ $row['clientId'] }}">{!! $row['clientName'] !!}</a>
                     </td>
 
-                    <td> <?=$row['type'] ?> </td>
+                    <td> {{ $row['type'] }} </td>
 
                     <td><?php if ($row['state'] == -1) {
                         echo $tpl->__('label.closed');
                         } else {
                             echo $tpl->__('label.open');
-                        } ?></td>
-                    <td class="center"><?php $tpl->e($row['hourBudget']); ?></td>
-                    <td class="center"><?php $tpl->e($row['dollarBudget']); ?></td>
+                        } ?>
+                    </td>
+                    <td class="center">{{ $row['hourBudget'] }}</td>
+                    <td class="center">{{ $row['dollarBudget'] }}</td>
                 </tr>
              <?php endforeach; ?>
 

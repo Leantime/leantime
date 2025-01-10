@@ -59,9 +59,11 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
         </div>
         <div class="col-md-10">
             <div class="maincontentinner">
-                <div class="row">
+                <div class="row mb-1">
                     <div class="col-md-4">
-                        <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
+                        <x-global::forms.button type="button" class="left" content-role="primary">
+                            <a href="#/calendar/addEvent"><i class='fa fa-plus'></i> {!! __('buttons.add_event') !!}</a>
+                        </x-global::forms.button>
                     </div>
                     <div class="col-md-4">
                         <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -69,7 +71,10 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <a href="#/calendar/export" class="btn btn-default right">Export</a>
+                        <x-global::forms.button type="button" class="right" content-role="secondary">
+                            <a href="#/calendar/export">Export</a>
+                        </x-global::forms.button>
+
                         <x-global::forms.button type="button" class="fc-next-button right" style="margin-right:5px;" content-role="secondary">
                             <span class="fc-icon fc-icon-chevron-right"></span>
                         </x-global::forms.button>
@@ -85,38 +90,38 @@ if (!session()->exists("usersettings.submenuToggle.myCalendarView")) {
 
 
                         <x-global::forms.select
-                        id="my-select"
-                        class="right"
-                        style="margin-right:5px;"
-                    >
-                        <x-global::forms.select.select-option
-                            value="timeGridDay"
-                            :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay'"
+                            id="my-select"
+                            class="right"
+                            style="margin-right:5px;"
                         >
-                            Day
-                        </x-global::forms.select.select-option>
+                            <x-global::forms.select.select-option
+                                value="timeGridDay"
+                                :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridDay'"
+                            >
+                                Day
+                            </x-global::forms.select.select-option>
 
-                        <x-global::forms.select.select-option
-                            value="timeGridWeek"
-                            :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek'"
-                        >
-                            Week
-                        </x-global::forms.select.select-option>
+                            <x-global::forms.select.select-option
+                                value="timeGridWeek"
+                                :selected="session('usersettings.submenuToggle.myCalendarView') == 'timeGridWeek'"
+                            >
+                                Week
+                            </x-global::forms.select.select-option>
 
-                        <x-global::forms.select.select-option
-                            value="dayGridMonth"
-                            :selected="session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth'"
-                        >
-                            Month
-                        </x-global::forms.select.select-option>
+                            <x-global::forms.select.select-option
+                                value="dayGridMonth"
+                                :selected="session('usersettings.submenuToggle.myCalendarView') == 'dayGridMonth'"
+                            >
+                                Month
+                            </x-global::forms.select.select-option>
 
-                        <x-global::forms.select.select-option
-                            value="multiMonthYear"
-                            :selected="session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear'"
-                        >
-                            Year
-                        </x-global::forms.select.select-option>
-                    </x-global::forms.select>
+                            <x-global::forms.select.select-option
+                                value="multiMonthYear"
+                                :selected="session('usersettings.submenuToggle.myCalendarView') == 'multiMonthYear'"
+                            >
+                                Year
+                            </x-global::forms.select.select-option>
+                        </x-global::forms.select>
 
                     </div>
                 </div>

@@ -9,12 +9,12 @@
            ]) --}}
     @if ($login::userIsAtLeast("admin"))
         <li class="appsLink">
-            <a href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
+            <a class="btn-circle" href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
         </li>
     @endif
     <li class="notificationDropdown">
         <a
-            class="dropdown-toggle profileHandler newsDropDownHandler"
+            class="dropdown-toggle profileHandler newsDropDownHandler btn btn-circle"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
             hx-indicator=".htmx-indicator"
@@ -23,7 +23,7 @@
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
-            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this" class="hidden"></span>
 
         </a>
 
@@ -39,7 +39,7 @@
 
         <a
             href='javascript:void(0);'
-            class="dropdown-toggle profileHandler notificationHandler"
+            class="dropdown-toggle profileHandler notificationHandler btn btn-circle"
             data-toggle='dropdown'
             data-tippy-content='{{ __('popover.notifications') }}'
         >
@@ -150,12 +150,12 @@
 
 </ul>
 
-<ul class="headmenu">
+<ul class="headmenu" hx-indicator="#global-loader" hx-boost="true">
 
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
-        @include('menu::includes.projectSelector')
+        @include('menu::partials.projectselector.projectSelector')
     </li>
     <li>
         <a

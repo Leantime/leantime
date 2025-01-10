@@ -1,10 +1,10 @@
 @props([
     'project' => [],
-    'type' => 'simple'
+    'variant' => 'simple' //compact, simple, full
 ])
 
 <div class="projectBox" id="projectBox-{{ $project['id'] }}">
-    <div class="row" >
+    <div class="row">
         <div class="col-md-12 fixed">
             <div class="row pb-sm">
                 <div class="col-md-10">
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            @if($type != "simple")
+            @if($variant != "simple")
                 <div id="projectProgressBox-{{ $project['id'] }}"
                     hx-get="{{ BASE_URL }}/hx/projects/projectCardProgress/getProgress?pId={{ $project['id'] }}"
                     hx-trigger="load"

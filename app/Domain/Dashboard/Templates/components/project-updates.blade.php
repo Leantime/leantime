@@ -1,5 +1,5 @@
 @props([
-    'comments' => [],
+    'comments',
     'delUrlBase' => '',
     'id' => '',
     'formHash' => md5(CURRENT_URL),
@@ -23,7 +23,6 @@
             <x-slot:card-context-buttons>
                 @if ($login::userIsAtLeast($roles::$editor))
                     <x-global::forms.button content-role="ghost" data-tippy-content="{{ __('label.copy_url_tooltip') }}"
-                        {{-- onclick="leantime.dashboardController.commentsController.toggleCommentBoxes(0); jQuery('.noCommentsMessage').toggle();" --}}
                         onclick="commentsComponent.toggleCommentBoxes(0, '{{ $formHash }}')">
                         <i class="fa fa-plus"></i> {{ __('links.add_new_report') }}
                     </x-global::forms.button>
@@ -49,7 +48,7 @@
                         :project_id="$project_id"
                         :ticket="$ticket ?? null"
                         :formHash="$formHash"
-                        :replyParent="$row['id']"
+                        :replyParent="$row->id"
                     />
                 @endforeach
 
@@ -68,11 +67,6 @@
     </div>
     <script type="module">
         import "@mix('/js/Domain/Comments/Js/commentsComponent.js')"
-
-        jQuery(document).ready(function() {
-            console.log(commentsComponent);
-        });
-
     </script>
 @endif
 

@@ -18,7 +18,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
     <input type="hidden" value="<?php echo session('currentProject'); ?>" name="projectId" id="projectIdInput" />
 
     <!-- Trigger for the dropdown -->
-    <x-global::actions.dropdown variant="card" contentRole="ghost" cardLabel="Filter Options">
+    <x-global::actions.dropdown variant="card" contentRole="ghost" cardLabel="Filter Options" scale="sm">
         <x-slot:labelText>
             {{ __('popover.filter') }}
             <span class="fa-solid fa-filter"></span>
@@ -129,7 +129,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 
 
     <?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {?>
-        <x-global::actions.dropdown contentRole="ghost">
+        <x-global::actions.dropdown contentRole="ghost" scale="sm">
             <x-slot:labelText>
                 {{ __('popover.group_by') }}
                 <span class="fa-solid fa-diagram-project"></span>
@@ -144,7 +144,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                         <span>
                             <input type="radio" name="groupBy" @if ($searchCriteria['groupBy'] == $input['field']) checked='checked' @endif
                                 value="{{ $input['field'] }}" id="{{ $input['id'] }}"
-                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
+                                onclick="ticketsController.initTicketSearchUrlBuilder('{{ $currentUrlPath }}')" />
                             <label for="{{ $input['id'] }}">{{ __('label.' . $input['label']) }}</label>
                         </span>
                     </x-global::actions.dropdown.item>
@@ -197,7 +197,9 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 
 </form>
 
-<script>
+<script type="module">
+
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
     jQuery(document).ready(function() {
 
         new SlimSelect({
@@ -231,7 +233,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
             },
         });
 
-        leantime.ticketsController.initTicketSearchSubmit('<?= $currentUrlPath ?>');
+        ticketsController.initTicketSearchSubmit('<?= $currentUrlPath ?>');
 
     })
 </script>

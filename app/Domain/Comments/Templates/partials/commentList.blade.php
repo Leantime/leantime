@@ -17,7 +17,7 @@
                 <x-users::profile-image :user="array('id'=> session('userdata.id'), 'modified' => session('userdata.modified'))"></x-users::profile-image>
             </div>
             <div class="commentReply inactive">
-                <a href="javascript:void(0);" onclick="leantime.commentsComponent.toggleCommentBoxes(0, '{{ $formHash }}')">
+                <a href="javascript:void(0);" onclick="commentsComponent.toggleCommentBoxes(0, '{{ $formHash }}')">
                     {{  __('links.add_new_comment') }}
                 </a>
             </div>
@@ -38,5 +38,6 @@
     <div class="clearall"></div>
 </div>
 
-
-
+<script type="module">
+    import "@mix('/js/Domain/Comments/Js/commentsComponent.js')"
+</script>

@@ -1114,15 +1114,6 @@ ul.list-inline li {
 }
 
 
-.subtitle2, .table th, .msglist li h4,
-.tabbedwizard .stepContainer h4, dt,
-.userloggedinfo .userinfo h5,
-.loginpanel .inputwrapper button,
-.userlist li .uinfo h5 {
-
-    font-weight: normal;
-}
-
 /*** TRANSITION ***/
 
 
@@ -1218,13 +1209,13 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     padding-botom: 12px;
 }
 
-.tabbable > .tab-content {
-    margin-top: 0;
-    border: 1px solid var(--primary-color);
-    border-top: 0;
-    background: #fff;
-    padding: 20px;
-}
+/*.tabbable > .tab-content {*/
+/*    margin-top: 0;*/
+/*    border: 1px solid var(--primary-color);*/
+/*    border-top: 0;*/
+/*    background: #fff;*/
+/*    padding: 20px;*/
+/*}*/
 
 .nav-tabs.nav-stacked > li:first-child > a,
 .nav-tabs.nav-stacked > li:last-child > a {
@@ -2040,24 +2031,6 @@ a.titleInsertLink:hover {
     display: Inline-block;
 }
 
-.projectBox {
-    border:1px solid var(--main-border-color);
-    border-radius:var(--box-radius);
-    box-shadow:var(--regular-shadow);
-    padding:10px;
-    margin-bottom:15px;
-    background:var(--kanban-card-bg);
-}
-
-.projectBox small {
-    color:var(--kanban-col-title-color);
-}
-
-.projectBox .lastStatus [class*="commentStatus-"]{
-    padding-left:10px;
-}
-
-.projectBox .projectAvatar,
 .ticketBox .projectAvatar{
     width:50px;
     height:50px;
@@ -2068,17 +2041,9 @@ a.titleInsertLink:hover {
     background:var(--element-gradient);
 }
 
-.projectBox .projectAvatar img,
 .ticketBox .projectAvatar img{
     width:50px;
     border-radius:var(--box-radius-small);
-}
-
-.projectBox .projectAvatar .fa {
-
-    color:var(--main-action-color);
-    font-size: 23px;
-    line-height: 50px;
 }
 
 .stickyColumn {
@@ -2179,15 +2144,6 @@ h3.todaysDate {
     margin: 0;
     font-size:var(--font-size-l);
 }
-
-
-
-
-
-
-
-
-
 
 .ticketBox {
     cursor:grab;

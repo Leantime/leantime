@@ -15,7 +15,7 @@
 
     //Variation options
     'variant' => 'single', //single, multiple, tags, chip
-    'search' => 'true',
+    'search' => 'false',
     'addChoices' => 'false',
     'autocompleteTags' => false,
     'formHash' => md5(CURRENT_URL."selectChoices".mt_rand(0,100)),
@@ -57,7 +57,7 @@
         $stateClass,
         "w-full",
         // "max-w-xs",
-        ($leadingVisual ? 'pl-10' : '')
+
     ];
 
     //Clean up array and implode for js
@@ -87,16 +87,19 @@
                 </x-global::elements.leadingVisual>
             @endif
 
-            <select
-                {{$attributes->merge([
-                    'class' => $selectClassBuilder,
-                    'data-component' => 'select'
-                ])}}
-                name="{{ $name }}"
-                {{ $state === 'disabled' ? 'disabled' : '' }}
-                {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
-                {{ $slot }}
-            </select>
+            <div class="{{  (!empty($leadingVisual) ? 'ml-lg' : '') }}">
+                <select
+                    {{$attributes->merge([
+                        'class' => $selectClassBuilder,
+                        'data-component' => 'select',
+                        'data-component-config' => '{"search": '.$search.'}'
+                    ])}}
+                    name="{{ $name }}"
+                    {{ $state === 'disabled' ? 'disabled' : '' }}
+                    {{ $variant === 'multiple' || $variant === 'tags' ? 'multiple' : '' }}>
+                    {{ $slot }}
+                </select>
+            </div>
         </div>
 
     </div>

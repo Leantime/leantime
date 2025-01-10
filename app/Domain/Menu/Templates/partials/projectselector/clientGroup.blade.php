@@ -1,9 +1,7 @@
-
 @php
     $lastClient = '';
 @endphp
-
-<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup" hx-boost="true" hx-indicator="#global-loader">
+<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $level > 0 ? 'pl-sm' : '' }}" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
 
         @php
@@ -18,7 +16,6 @@
            )
 
             @if ($lastClient != $project['clientName'])
-
                 @php
                     $lastClient = $project['clientName']
                 @endphp
@@ -28,24 +25,28 @@
                 @endif
 
                 <li class='projectLineItem clientIdHead-{{$project['clientId'] }}'>
-                    <a href="javascript:void(0);"
-                        class="toggler {{ $parentState }}"
-                        id="{{ $prefix }}-toggler-{{ $project["clientId"] }}"
-                        onclick="leantime.menuController.toggleProjectDropDownList('{{ $project["clientId"] }}', '', '{{ $prefix }}')">
-                    @if($parentState == 'closed')
-                        <i class="fa fa-angle-right"></i>
-                    @else
-                        <i class="fa fa-angle-down"></i>
-                    @endif
-                    </a>
-                    <a href="javascript:void(0)">
-                        {{ $project['clientName'] }}
-                    </a>
+
+                    <div style="line-height:40px;">
+                        <a href="javascript:void(0);"
+                            class="toggler {{ $parentState }}"
+                            id="{{ $prefix }}-toggler-{{ $project["clientId"] }}"
+                            onclick="menuController.toggleProjectDropDownList('{{ $project["clientId"] }}', '', '{{ $prefix }}')">
+                        @if($parentState == 'closed')
+                            <i class="fa fa-angle-right"></i>
+                        @else
+                            <i class="fa fa-angle-down"></i>
+                        @endif
+                        </a>
+                        <a href="javascript:void(0)" class="pb-sm">
+                            {{ $project['clientName'] }}
+                        </a>
+                    </div>
                     <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $project['clientId'] }}" class="level-1 projectGroup {{ $parentState }}">
             @endif
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
-                @include('menu::includes.projectLink')
+                <x-projects::projectCard :project="$project" variant="compact" class="{{ 'pl-md' }}"></x-projects::projectCard>
+
                 <div class="clear"></div>
             </li>
         @endif

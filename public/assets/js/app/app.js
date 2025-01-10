@@ -2,14 +2,21 @@ import './core/globalLibraries.js';
 import { addToGlobalScope } from './core/leantimeScope.mjs';
 import { moduleLoader } from './core/moduleLoader.mjs';
 import { initializeCore } from './core/bootstrap.mjs';
+import "croppie/croppie";
 
-addToGlobalScope({moduleLoader: moduleLoader});
+
+addToGlobalScope({ moduleLoader: moduleLoader });
 
 // Initialize core application
 document.addEventListener('DOMContentLoaded', async () => {
-    await initializeCore();
+  await initializeCore();
 });
 
+
+// these module are probably not being loaded by the module loader
+import 'js/libs/uppy/uppy';
+import SlimSelect from 'js/libs/slimselect';
+window.SlimSelect = SlimSelect;
 
 /*
 

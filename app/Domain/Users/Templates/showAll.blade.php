@@ -22,7 +22,14 @@ $roles = $tpl->get('roles');
 
         <div class="row">
             <div class="col-md-6">
-                <a href="{{ BASE_URL }}/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
+                <x-global::forms.button
+                    href="{{ BASE_URL }}/users/newUser"
+                    content-role="primary"
+                    tag="a"
+                >
+                    <i class='fa fa-plus'></i> {{ __('buttons.add_user') }}
+                </x-global::forms.button>
+
             </div>
             <div class="col-md-6 align-right">
 
@@ -86,3 +93,5 @@ $roles = $tpl->get('roles');
     );
 
 </script>
+
+@endsection

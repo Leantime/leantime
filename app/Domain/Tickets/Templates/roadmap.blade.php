@@ -25,8 +25,8 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
 
                 <div class="row p-2">
 
-                    {{-- @include("tickets::includes.ticketNewBtn")
-                    @include("tickets::includes.ticketFilter") --}}
+                    @include("tickets::includes.ticketNewBtn")
+                    @include("tickets::includes.ticketFilter")
                 </div>
 
                 <?php
@@ -120,26 +120,26 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
 
+    import "@mix('/js/Domain/Tickets/Js/ticketsController.js')"
     jQuery(document).ready(function(){
 
+        <?php if (isset($_GET['showMilestoneModal'])) {
+            if ($_GET['showMilestoneModal'] == "") {
+                $modalUrl = "";
+            } else {
+                $modalUrl = "/" . (int)$_GET['showMilestoneModal'];
+            }
+            ?>
 
-    <?php if (isset($_GET['showMilestoneModal'])) {
-        if ($_GET['showMilestoneModal'] == "") {
-            $modalUrl = "";
-        } else {
-            $modalUrl = "/" . (int)$_GET['showMilestoneModal'];
-        }
-        ?>
+            ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
+            window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
 
-        leantime.ticketsController.openMilestoneModalManually("{{ BASE_URL }}/tickets/editMilestone<?php echo $modalUrl; ?>");
-        window.history.pushState({},document.title, '{{ BASE_URL }}/tickets/roadmap');
-
-    <?php } ?>
+        <?php } ?>
 
 
-});
+    });
 
 
     <?php
@@ -148,7 +148,7 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
     if (count($timelineTasks) > 0) {?>
         var tasks = [
 
-            <?php
+            <?php 
             $lastMilestoneSortIndex = array();
 
             //Set sort index first format: 0.0
@@ -217,22 +217,19 @@ $roadmapView = session("usersettings.views.roadmap", "Month");
                     sortIndex: " . $sortIndex . "
 
                 },";
+
             }
             ?>
         ];
 
 
-
-
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
+            ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', false);
         <?php } else { ?>
-        leantime.ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
+            ticketsController.initGanttChart(tasks, '<?=$roadmapView; ?>', true);
         <?php } ?>
 
     <?php } ?>
-
 
 </script>
 

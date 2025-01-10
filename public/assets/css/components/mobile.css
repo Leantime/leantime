@@ -616,9 +616,9 @@ min-width: 1200px
     }
 
     /* bootstrap */
-    .tabbable > .tab-content {
-        padding: 15px;
-    }
+    /*.tabbable > .tab-content {*/
+    /*    padding: 15px;*/
+    /*}*/
 
     .input-append .btn, .input-prepend .btn {
         padding-left: 8px;

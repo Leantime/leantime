@@ -1,8 +1,12 @@
 @php
     $groupState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$parent, 'closed');
 @endphp
-<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}" hx-boost="true" hx-indicator="#global-loader">
+<ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }} {{ $level > 0 ? 'pl-sm' : '' }}" hx-boost="true" hx-indicator="#global-loader">
     @foreach($projects as $project)
+
+        @php
+            $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['id'], 'closed');
+        @endphp
 
         @if(
             !session()->exists("usersettings.projectSelectFilter.client")
@@ -13,9 +17,7 @@
             )
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
-                @php
-                    $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['id'], 'closed');
-                @endphp
+
 
                 @if((empty($project['children']) || count($project['children']) ==0))
                     <span class="toggler"></span>
@@ -30,12 +32,12 @@
                         @endif
                     </a>
                 @endif
-                @include('menu::includes.projectLink')
+                <x-projects::projectCard :project="$project" variant="compact" class="{{ 'pl-md' }}"></x-projects::projectCard>
 
                 <div class="clear"></div>
 
                 @if(!empty($project['children']) && count($project['children']) >0)
-                    @include('menu::includes.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])
+                    @include('menu::partials.projectselector.projectGroup', ['projects' => $project['children'], 'parent' => $project['id'], 'level'=> $level+1, 'prefx' => $prefix, "currentProject"=>$currentProject])
                 @endif
             </li>
 

@@ -67,7 +67,10 @@ namespace Leantime\Domain\Clients\Controllers {
                             $id = $this->clientService->create($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
 
-                            return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
+                            $this->tpl->closeModal();
+                            $this->tpl->htmxRefresh();
+                            return $this->tpl->emptyResponse();
+                            // return Frontcontroller::redirect(BASE_URL.'/clients/showClient/'.$id);
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
                         }
