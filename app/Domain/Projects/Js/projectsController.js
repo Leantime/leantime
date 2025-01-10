@@ -1,7 +1,7 @@
 import jQuery from 'jquery';
 import i18n from 'i18n';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/support/dateHelper.module';
 import { updateUserViewSettings } from 'domain/Users/Js/usersRepository';
 import { updateMilestoneDates } from 'domain/Tickets/Js/ticketsRepository';
 import { removeReaction, addReactions } from 'domain/Reactions/Js/reactionsController';

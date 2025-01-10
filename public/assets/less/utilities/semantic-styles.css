@@ -35,4 +35,7 @@
     @apply border-base-content/30;
 }
 
+.leading-lg {
+    line-height:1.5rem;
+}
 

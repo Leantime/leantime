@@ -21,7 +21,7 @@
     $variantClasses = "";
     $variantPrefix = "btn";
     if($variant == "chip") {
-        $variantClasses = "badge badge-md";
+        $variantClasses = "badge badge-lg";
         $variantPrefix = "badge";
     }else if($variant == "input") {
         $variantClasses = "w-full input justify-start";

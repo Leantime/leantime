@@ -20,7 +20,7 @@ window.DateTime = DateTime;
 
 import instanceInfo from './instance-info.module.mjs';
 import snippets from "../support/snippets.module.mjs";
-import dateHelper from '../components/dates/dateHelper.module.mjs';
+import dateHelper from '../support/dateHelper.module.mjs';
 import handleAsyncResponse from './handleAsyncResponse.module.mjs';
 import getLatestGrowl from "./getLatestGrowl.module.mjs";
 

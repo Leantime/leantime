@@ -1,6 +1,11 @@
 .select {
     @apply select-sm text-sm w-full relative;
 
+    .select-loading-state {
+        @apply absolute top-0 left-0 w-full;
+        z-index: 1;
+    }
+
     &.select-ghost {
         @apply bg-none;
 
@@ -18,16 +23,17 @@
     }
 
    &.select-chip {
-       @apply bg-none w-auto px-0.5 h-5 leading-5 min-h-5;
+       @apply bg-none w-auto px-0.5 h-lg leading-lg min-h-lg;
 
        .ts-control {
-           @apply p-0 rounded-badge h-5 leading-5 min-h-5;
+           @apply p-0 rounded-badge h-lg leading-lg min-h-lg;
+
            border: none;
 
            .badge {
 
                .icon {
-                   @apply h-5 w-5;
+                   @apply h-5;
                }
            }
 
@@ -56,8 +62,11 @@
 
        .badge{
            .icon {
-               @apply h-5 w-5 text-lg;
+               @apply h-lg text-lg;
+               margin-left:-2px;
+               margin-right:2px;
            }
+
        }
 
        .badge-outline{
@@ -71,6 +80,10 @@
 
     &.select {
         padding: 0;
+    }
+
+    &.select-chip {
+        border:none;
     }
 
     .badge {

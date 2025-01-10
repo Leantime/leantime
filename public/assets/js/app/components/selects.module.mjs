@@ -27,11 +27,9 @@ export const initComponent = function () {
 
 }
 
-export const initSelect = function (element, config= '') {
+export const initSelect = function (element, config= '', callback = '') {
 
     let activePlugins = ['no_active_items'];
-
-    console.log("initSelect");
 
     config = JSON.parse(config);
 
@@ -59,6 +57,7 @@ export const initSelect = function (element, config= '') {
         onDelete: function(data) {
             return false; // Disable remove element.
         },
+        onInitialize: callback,
         render: {
             option: function (data, escape) {
                 return '<div>' + data.text + '</div>';

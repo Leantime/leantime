@@ -1,0 +1,7 @@
+.badge-md {
+    @apply text-xs;
+}
+
+.badge-lg {
+    @apply text-sm;
+}

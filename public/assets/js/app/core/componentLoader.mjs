@@ -63,7 +63,6 @@ export async function loadComponentsForPage(container = document, pageName = 'de
         const elements = container.querySelectorAll(`[data-component="${componentType}"]`);
         elements.forEach(element => {
 
-            console.log(element);
             if (!element.hasAttribute('data-component-initialized')) {
                 manager.initializeComponent(element);
                 element.setAttribute('data-component-initialized', 'true');

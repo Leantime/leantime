@@ -1,6 +1,6 @@
 @props([
     'contentRole' => '', //primary, secondary, tertiary, accent, ghost
-    'scale' => 'md', //xs, sm, md, lg
+    'scale' => 'lg', //xs, sm, md, lg
     'state' => '', //default, info, warning, danger, success
     'outline' => false,
     'leadingVisual' => ''

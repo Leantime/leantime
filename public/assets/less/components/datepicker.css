@@ -80,13 +80,8 @@
 
 }
 
-
-
-.datetime-dropdown {
-    max-width:320px;
-    padding:10px;
-    margin-top: 5px;
-    z-index:100;
+.datetime-dropdown .card-body {
+    max-width:300px;
 }
 
 .datetime-dropdown .form-control.input {

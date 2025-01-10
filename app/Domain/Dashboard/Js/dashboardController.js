@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 import jQuery from 'jquery';
 import i18n from 'i18n';
 import { theme } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/support/dateHelper.module';
 import { updateDueDates } from 'domain/Tickets/Js/ticketsRepository';
 import moment from 'moment';
 import {DateTime} from "luxon";

@@ -9,7 +9,8 @@ class DatepickerManager extends BaseComponentManager {
 
     createInstance(element, config = {}) {
 
-        return datePickersModule.initDateTimePicker(element);
+        let componentConfig = element.dataset.componentConfig;
+        return datePickersModule.initDateTimePicker(element, componentConfig);
     }
 
     cleanup(instance) {

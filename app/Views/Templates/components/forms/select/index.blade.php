@@ -84,16 +84,23 @@
 
     <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block w-full' : '')])}} >
         <div class="flex flex-row">
+            <div class="select-loading-state hidden">
+                <x-global::elements.loadingText
+                    type="line"
+                    count="1"
+                    class="w-full min-w-[100px]" />
+            </div>
+
             @if($leadingVisual)
                 <x-global::elements.leadingVisual>
                     {{ $leadingVisual }}
                 </x-global::elements.leadingVisual>
             @endif
 
-            <div class="{{  (!empty($leadingVisual) ? 'ml-lg' : '') }}">
+            <div class="{{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
                 <select
                     {{$attributes->merge([
-                        'class' => $selectClassBuilder,
+                        'class' => "opacity-0 ".$selectClassBuilder,
                         'data-component' => 'select',
                         'data-component-config' => '{"search": '.$search.'}'
                     ])}}
