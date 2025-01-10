@@ -8,9 +8,12 @@
 <div class="clearall">
     <div>
         <div class="commentContent statusUpdate commentStatus-{{ $status }}">
-            <strong class="fancyLink">
-                {{ sprintf(__('text.report_written_on'), format($comment->date)->date(), format($comment->date)->time()) }}
-            </strong>
+            @if (!empty($status))
+                <strong class="fancyLink">
+                    {{ sprintf(__('text.report_written_on'), format($comment->date)->date(), format($comment->date)->time()) }}
+                </strong>
+            @endif
+
             @if ($login::userIsAtLeast($roles::$editor))
                 <div class="inlineDropDownContainer float-right ml-[10px]">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
