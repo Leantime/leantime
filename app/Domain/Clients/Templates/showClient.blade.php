@@ -39,105 +39,105 @@
                             <h4 class="widgettitle title-light">
                                 <span class="fa fa-leaf"></span> {{ __('subtitle.details') }}
                             </h4>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="id" 
-                                    id="id" 
-                                    value="{{ $values->id }}" 
-                                    labelText="{{ __('label.client_id') }}" 
-                                    readonly 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="id"
+                                    id="id"
+                                    value="{{ $values->id }}"
+                                    labelText="{{ __('label.client_id') }}"
+                                    readonly
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="name" 
-                                    id="name" 
-                                    value="{{ $values->name }}" 
-                                    labelText="{{ __('label.name') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="name"
+                                    id="name"
+                                    value="{{ $values->name }}"
+                                    labelText="{{ __('label.name') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="email" 
-                                    id="email" 
-                                    value="{{ $values->email }}" 
-                                    labelText="{{ __('label.email') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="email"
+                                    id="email"
+                                    value="{{ $values->email }}"
+                                    labelText="{{ __('label.email') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="internet" 
-                                    id="internet" 
-                                    value="{{ $values->internet }}" 
-                                    labelText="{{ __('label.url') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="internet"
+                                    id="internet"
+                                    value="{{ $values->internet }}"
+                                    labelText="{{ __('label.url') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="street" 
-                                    id="street" 
-                                    value="{{ $values->street }}" 
-                                    labelText="{{ __('label.street') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="street"
+                                    id="street"
+                                    value="{{ $values->street }}"
+                                    labelText="{{ __('label.street') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="zip" 
-                                    id="zip" 
-                                    value="{{ $values->zip }}" 
-                                    labelText="{{ __('label.zip') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="zip"
+                                    id="zip"
+                                    value="{{ $values->zip }}"
+                                    labelText="{{ __('label.zip') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="city" 
-                                    id="city" 
-                                    value="{{ $values->city }}" 
-                                    labelText="{{ __('label.city') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="city"
+                                    id="city"
+                                    value="{{ $values->city }}"
+                                    labelText="{{ __('label.city') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="state" 
-                                    id="state" 
-                                    value="{{ $values->state }}" 
-                                    labelText="{{ __('label.state') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="state"
+                                    id="state"
+                                    value="{{ $values->state }}"
+                                    labelText="{{ __('label.state') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="country" 
-                                    id="country" 
-                                    value="{{ $values->country }}" 
-                                    labelText="{{ __('label.country') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="country"
+                                    id="country"
+                                    value="{{ $values->country }}"
+                                    labelText="{{ __('label.country') }}"
                                 />
                             </div>
-                        
+
                             <div class="form-group">
-                                <x-global::forms.text-input 
-                                    inputType="text" 
-                                    name="phone" 
-                                    id="phone" 
-                                    value="{{ $values->phone }}" 
-                                    labelText="{{ __('label.phone') }}" 
+                                <x-global::forms.text-input
+                                    inputType="text"
+                                    name="phone"
+                                    id="phone"
+                                    value="{{ $values->phone }}"
+                                    labelText="{{ __('label.phone') }}"
                                 />
                             </div>
                         </div>
@@ -183,10 +183,10 @@
                             <x-global::forms.button type="submit" name="save" value="true" id="save">
                                 {{ __('buttons.save') }}
                             </x-global::forms.button>
-                            
-                            <x-global::forms.button 
-                                tag="a" 
-                                href="/clients/showAll" 
+
+                            <x-global::forms.button
+                                tag="a"
+                                href="/clients/showAll"
                                 content-role="tertiary"
                             >
                                 {{ __('buttons.back') }}
@@ -253,7 +253,10 @@
 
                                     <x-slot:menu>
                                         <!-- File Section Header -->
-                            <li class="nav-header">{{ __('subtitles.file') }}</li>
+
+                                        <x-global::actions.dropdown.item variant="header">
+                                            {{ __('subtitles.file') }}
+                                        </x-global::actions.dropdown.item>
 
                             <!-- Download Link -->
                             <x-global::actions.dropdown.item variant="link"

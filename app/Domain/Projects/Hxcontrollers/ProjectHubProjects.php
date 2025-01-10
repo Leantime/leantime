@@ -75,6 +75,7 @@ class ProjectHubProjects extends HtmxController
     {
         $clientId = '';
         $currentClientName = '';
+
         if (isset($_GET['client']) === true && $_GET['client'] != '') {
             $clientId = (int) $_GET['client'];
             $currentClient = $this->clientService->get($clientId);

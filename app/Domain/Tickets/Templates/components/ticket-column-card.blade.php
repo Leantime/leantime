@@ -57,13 +57,13 @@
         <div class="clearfix" style="padding-bottom: 8px;"></div>
 
         <div class="timerContainer" id="timerContainer-{{ $ticket['id'] }}">
-            <x-tickets::milestone-dropdown :ticket="$ticket" :milestones="$milestones" />
+            <x-tickets::chips.milestone-select :ticket="$ticket" :milestones="$milestones" :label="false"/>
 
             @if ($ticket['storypoints'] != '' && $ticket['storypoints'] > 0)
-                <x-tickets::effort-select :ticket="$ticket" :efforts="$efforts" />
+                <x-tickets::chips.effort-select :ticket="$ticket" :efforts="$efforts" :label="false"/>
             @endif
 
-            <x-tickets::priority-select :ticket="$ticket" :priorities="$priorities" />
+            <x-tickets::chips.priority-select :ticket="$ticket" :priorities="$priorities" :label="false"/>
 
             <div class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
                 @php
@@ -93,8 +93,10 @@
                 <x-global::actions.dropdown :label-text="$userLabelText" contentRole="link" position="bottom" align="start">
                     <!-- Dropdown Items -->
                     <x-slot:menu>
-                        <li class="nav-header border">{!! __('dropdown.choose_user') !!}
-                        </li>
+                        <x-global::actions.dropdown.item variant="header">
+                            {{ $tpl->__('dropdown.choose_user') }}
+                        </x-global::actions.dropdown.item>
+
                         @if (is_array($tpl->get('users')))
                             @foreach ($tpl->get('users') as $user)
                                 <x-global::actions.dropdown.item href="javascript:void(0);"

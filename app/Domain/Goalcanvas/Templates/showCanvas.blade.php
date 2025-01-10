@@ -236,7 +236,7 @@
 
                                                                     <x-slot:menu>
                                                                         <!-- Menu Header -->
-                                                                        <x-global::actions.dropdown.item variant="nav-header">
+                                                                        <x-global::actions.dropdown.item variant="header">
                                                                             {{ __('subtitles.edit') }}
                                                                         </x-global::actions.dropdown.item>
 
@@ -329,7 +329,7 @@
 
                                                                     <x-slot:menu>
                                                                         <!-- Menu Header -->
-                                                                        <x-global::actions.dropdown.item variant="nav-header-border">
+                                                                        <x-global::actions.dropdown.item variant="header-border">
                                                                             {{ __('dropdown.choose_status') }}
                                                                         </x-global::actions.dropdown.item>
 
@@ -385,7 +385,7 @@
                                                             <x-global::actions.dropdown :labelText="html_entity_decode($labelText)" class="f-left"
                                                                 align="start" contentRole="menu">
                                                                 <x-slot:menu>
-                                                                    <x-global::actions.dropdown.item variant="nav-header-border">
+                                                                    <x-global::actions.dropdown.item variant="header-border">
                                                                         {{ __('dropdown.choose_user') }}
                                                                     </x-global::actions.dropdown.item>
 

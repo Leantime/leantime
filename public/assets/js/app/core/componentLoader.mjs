@@ -11,10 +11,20 @@ export async function loadComponentsForPage(container = document, pageName = 'de
     const pageComponents = getPageComponents(pageName);
     pageComponents.forEach(component => components.add(component));
 
+    // Small delay to ensure DOM is fully updated
+    if (container !== document) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
     // Add any additional components found in the DOM
     container.querySelectorAll('[data-component]').forEach(element => {
-        console.debug(element.dataset.component);
         components.add(element.dataset.component);
+    });
+
+    // Clean up old components first
+    components.forEach(componentType => {
+        const manager = componentRegistry.getManager(componentType);
+        if (manager) manager.cleanupElements(container);
     });
 
     // Load required component managers
@@ -52,6 +62,7 @@ export async function loadComponentsForPage(container = document, pageName = 'de
 
         const elements = container.querySelectorAll(`[data-component="${componentType}"]`);
         elements.forEach(element => {
+
             if (!element.hasAttribute('data-component-initialized')) {
                 manager.initializeComponent(element);
                 element.setAttribute('data-component-initialized', 'true');

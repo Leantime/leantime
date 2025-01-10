@@ -30,15 +30,14 @@
     };
 
     // Determine the menu class based on the variant
-    $menuClassBase = 'dropdown-content rounded-element bg-base-100 p-2 shadow w-60 z-50';
+    $menuClassBase = 'dropdown-content rounded-element bg-base-100 p-2 shadow w-60';
     // Determine the menu class based on the variant
     $menuClass = match ($variant) {
         'card' => 'card card-compact ' . $menuClassBase, // Card variant class
         default => 'menu ' . $menuClassBase, // Default to regular menu
     };
 
-    $cardClassBase = 'dropdown-content rounded-element bg-base-100 shadow w-fit z-50';
-
+    $cardClassBase = 'dropdown-content rounded-element bg-base-100 shadow w-fit';
     // Determine the menu class based on the variant
     $cardClass = match ($variant) {
         'card' => 'card card-compact ' . $cardClassBase, // Card variant class
@@ -61,8 +60,6 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
-
-
     <!-- Dropdown Button -->
     <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant"
         :scale="$scale" :data-selectable-button="$selectable">

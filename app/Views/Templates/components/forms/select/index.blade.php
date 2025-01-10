@@ -13,6 +13,8 @@
     'validationText' => '',
     'validationState' => '',
 
+    'dropdownPosition' => 'left',
+
     //Variation options
     'variant' => 'single', //single, multiple, tags, chip
     'search' => 'false',
@@ -36,7 +38,7 @@
 
     switch($contentRole){
         case 'secondary':
-            $contentRoleClass = 'select-bordered';
+            $contentRoleClass = '';
             break;
         case 'tertiary':
         case 'ghost':
@@ -46,7 +48,7 @@
             $contentRoleClass = '';
             break;
         default:
-            $contentRoleClass = 'select-bordered';
+            $contentRoleClass = '';
     }
     $selectClassArray = [
         'select-'.$formHash,
@@ -56,6 +58,7 @@
         $sizeClass,
         $stateClass,
         "w-full",
+        "anchor-".$dropdownPosition
         // "max-w-xs",
 
     ];
@@ -81,16 +84,23 @@
 
     <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block w-full' : '')])}} >
         <div class="flex flex-row">
+            <div class="select-loading-state hidden">
+                <x-global::elements.loadingText
+                    type="line"
+                    count="1"
+                    class="w-full min-w-[100px]" />
+            </div>
+
             @if($leadingVisual)
                 <x-global::elements.leadingVisual>
                     {{ $leadingVisual }}
                 </x-global::elements.leadingVisual>
             @endif
 
-            <div class="{{  (!empty($leadingVisual) ? 'ml-lg' : '') }}">
+            <div class="{{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
                 <select
                     {{$attributes->merge([
-                        'class' => $selectClassBuilder,
+                        'class' => "opacity-0 ".$selectClassBuilder,
                         'data-component' => 'select',
                         'data-component-config' => '{"search": '.$search.'}'
                     ])}}
@@ -108,16 +118,4 @@
         <x-slot:validation-text> {!! $validationText !!}</x-slot:validation-text>
     @endif
 
-
 </x-global::forms.field-row>
-
-<script type="module">
-    document.addEventListener('htmx:afterSettle', () => {
-        const elements = document.querySelectorAll('.select-{{ $formHash }}');
-        elements.forEach(element => {
-            if (!element.hasAttribute('data-component-initialized')) {
-                element.setAttribute('data-component', 'select');
-            }
-        });
-    });
-</script>

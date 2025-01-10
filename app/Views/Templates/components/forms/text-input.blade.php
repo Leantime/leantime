@@ -38,14 +38,19 @@
         $sizeClass = $scale ? 'input-'.$size : '';
 
     } elseif ($variant === 'fullWidth') {
+
         $style= 'input-bordered  input-sm';
         $width = 'w-full';
         $sizeClass = $scale ? 'input-'.$scale : '';
+
     } elseif ($variant === 'noBorder') {
+
         $style= 'input-md';
         $width = 'w-full';
         $sizeClass = $scale ? 'input-'.$scale : '';
+
     } else {
+
         $style= 'input-bordered  input-sm';
         $width = 'w-full';
         $sizeClass = $scale ? 'input-'.$scale : '';

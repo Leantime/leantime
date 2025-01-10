@@ -27,11 +27,9 @@ export const initComponent = function () {
 
 }
 
-export const initSelect = function (element, config= '') {
+export const initSelect = function (element, config= '', callback = '') {
 
     let activePlugins = ['no_active_items'];
-
-    console.log(config);
 
     config = JSON.parse(config);
 
@@ -45,11 +43,12 @@ export const initSelect = function (element, config= '') {
         create: false,
         plugins: activePlugins,
         controlInput: null,
+        allowEmptyOption: true,
         //searchField: null,
         openOnFocus: true,
         maxOptions: null,
         maxItems: 1,
-        hideSelected: true,
+        hideSelected: false,
         closeAfterSelect: true,
         loadingClass: "loading-select",
         duplicates: false,
@@ -58,6 +57,7 @@ export const initSelect = function (element, config= '') {
         onDelete: function(data) {
             return false; // Disable remove element.
         },
+        onInitialize: callback,
         render: {
             option: function (data, escape) {
                 return '<div>' + data.text + '</div>';

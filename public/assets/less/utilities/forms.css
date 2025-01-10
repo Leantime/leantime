@@ -1,11 +1,17 @@
+.input-hover {
+    @apply bg-secondary/80;
+}
+
 .input-shadow {
     @apply shadow-md;
 }
 
 .input,
-.select {
-    &:hover {
-        @apply shadow-md bg-neutral;
+.select,
+.textarea {
+    &:hover,
+    &:focus {
+        @apply input-hover;
     }
 
     &-bordered {

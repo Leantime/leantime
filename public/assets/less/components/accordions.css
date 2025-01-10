@@ -1,0 +1,84 @@
+.accordionTitle .accordion-toggle i.fa:first-child {
+    width: 15px;
+    margin-top: 0px;
+    margin-right: 5px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    border-radius: var(--element-radius);
+    font-size: var(--font-size-m);
+}
+
+.accordionTitle .accordion-toggle i.fa:first-child:hover {
+    background: var(--main-menu-link-active-bg);
+}
+
+.accordionTitle {
+    font-size: var(--font-size-l);
+    color: var(--primary-font-color);
+    margin-bottom: 10px;
+    font-weight:bold;
+    margin-left:0px;
+    border-radius: var(--accordion-header-radius);
+    padding: 5px 0px;
+}
+
+.noBackground .accordionTitle {
+    color: var(--main-titles-color);
+}
+
+.accordionTitle i {
+    display:inline-block;
+    width:15px;
+    text-align:center;
+    margin-right:5px;
+    border-radius:5px;
+}
+
+.accordionTitle:hover i,
+.accordionTitle i:hover {
+    background:var(--col-hover-bg);
+    color:var(--interactive-icon-color);
+}
+
+.accordionTitle[class*="label-"] {
+    margin-left:0px;
+    border-radius: var(--accordion-header-radius);
+    padding: 5px 0px;
+    background: none;
+}
+
+.accordionTitle.label-warning a{
+    background:none;
+    color:var(--yellow);
+}
+
+.accordionTitle.label-important a {
+    background:none;
+    color:var(--red);
+}
+
+.accordionTitle.label-info a {
+    background:none;
+    color:var(--dark-blue);
+}
+
+.accordionTitle.label-danger a {
+    background:none;
+    color:var(--dark-red);
+}
+
+.accordionTitle.label-success a {
+    background:none;
+    color:var(--green);
+}
+
+.accordionTitle.label-default a {
+    background:none;
+    color:var(--grey);
+}
+
+
+.simpleAccordionContainer .dataTables_wrapper{
+    padding-bottom:0px
+}

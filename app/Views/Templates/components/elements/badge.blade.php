@@ -1,12 +1,16 @@
 @props([
     'contentRole' => '', //primary, secondary, tertiary, accent, ghost
-    'scale' => '', //xs, s, m. l
+    'scale' => 'lg', //xs, sm, md, lg
+    'state' => '', //default, info, warning, danger, success
     'outline' => false,
     'leadingVisual' => ''
 ])
 
 @php
     switch($contentRole){
+        case 'primary':
+            $typeClass = 'badge-primary';
+            break;
         case 'secondary':
             $typeClass = 'badge-secondary';
             break;
@@ -18,27 +22,31 @@
             $typeClass = 'badge-ghost';
             break;
         default:
-            $typeClass = 'badge-primary';
+            $typeClass = '';
     }
 
-    if ($scale === 'xs') {
-        $sizeClass = 'badge-xs';
-    } elseif ($scale === 's') {
-        $sizeClass = 'badge-sm';
-    } elseif ($scale === 'l') {
-        $sizeClass = 'badge-lg';
-    } else {
-        $sizeClass = '';
+    $sizeClass = 'badge-'.$scale.' ';
+
+    $outlineClass = $outline ? 'badge-outline border-color-default' : '';
+
+    $stateClass = '';
+    if(!empty($state)) {
+        $mappedStatus = format($state)->getStatusClass();
+
+        if($outline === true) {
+            $stateClass .= "text-".$mappedStatus ." ";
+        }else{
+            $stateClass = "border-". $mappedStatus ." bg-".$mappedStatus."  text-".$mappedStatus."-content";
+        }
+
     }
 
-    $outlineClass = $outline ? 'badge-outline' : '';
 @endphp
 
-
-<div {{ $attributes->merge(['class' => 'badge '.$typeClass.' '.$sizeClass.' '.$outlineClass]) }}>
+<div {{ $attributes->merge(['class' => 'badge text-nowrap '.$typeClass.' '.$sizeClass.' '.$outlineClass. ' '.$stateClass]) }}>
     @if($leadingVisual)
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            {{ $leadingVisual }}>
+        <span class="">
+            {{ $leadingVisual }}
         </span>
     @endif
     {{ $slot }}

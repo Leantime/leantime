@@ -2,9 +2,9 @@ import jQuery from 'jquery';
 import i18n from 'i18n';
 import handleAsyncResponse from 'js/app/core/handleAsyncResponse.module';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/support/dateHelper.module';
 import { updateUserViewSettings } from 'domain/Users/Js/usersRepository';
-import { initDatePicker } from 'js/app/components/dates/dateController.module';
+import { initDatePicker } from 'js/app/components/datePickers.module';
 import Gantt from 'js/libs/simpleGantt/frappe-gantt';
 import Chart from 'chart.js/auto';
 import {

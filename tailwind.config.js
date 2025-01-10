@@ -10,6 +10,35 @@ module.exports = {
         './app/{Views,Domain,Plugins}/**/{Composers,Controllers}/**/*.php',
         './public/assets/less/{base,components,utilities}/*.css',
     ],
+    safelist: [
+        'bg-success',
+        'bg-info',
+        'bg-warning',
+        'bg-error',
+        'bg-critical',
+        'bg-trivial',
+        'border-success',
+        'border-info',
+        'border-warning',
+        'border-error',
+        'border-critical',
+        'border-trivial',
+        'text-success-content',
+        'text-info-content',
+        'text-warning-content',
+        'text-error-content',
+        'text-critical-content',
+        'text-trivial-content',
+        'text-success',
+        'text-info',
+        'text-warning',
+        'text-error',
+        'text-critical',
+        'text-trivial',
+        'badge-sm',
+        'badge-md',
+        'badge-lg',
+    ],
     theme:  {
         fontFamily: {
             sans: ['"Hanken Grotesk"', 'sans'],
@@ -223,15 +252,18 @@ module.exports = {
                 "05": "#f3f3f3"
             },
             "pagetitle-content" : "#fff",
+            'trivial' :  '#777777',
+            'trivial-content' :  '#ffffff',
         },
         extend: {
             spacing: {
+                'xs': '0.25rem',
                 'sm': '0.5rem',
                 'md': '1rem',
                 'lg': '1.5rem',
                 'xl': '2rem',
                 'xxl': '3rem',
-            }
+            },
         },
 
     },
@@ -261,16 +293,26 @@ module.exports = {
                 'base-content' : '#272727',      /* Foreground content color to use on base color */
 
                 'info' : '#0a4aa3',              /* Info */
+                'info-content' : '#ffffff',              /* Info */
+
                 'success' :  '#108e38',           /* Success */
+                'success-content' :  '#ffffff',           /* Success */
+
                 'warning' :  '#f2a20d',           /* Warning */
+                'warning-content' :  '#ffffff',           /* Warning */
+
+                'critical' :  '#aa0909',             /* Error */
+                'critical-content' :  '#ffffff',             /* Error */
+
                 'error' :  '#aa0909',             /* Error */
+                'error-content' :  '#ffffff',             /* Error */
+
+
 
                 'text-sm': '0.938rem',
 
-                "--rounded-box": '1.5rem', // biggest elements, large content cards
-                "--rounded-element": '99999px', //Second biggest element dropdowns, content cards
-                "--rounded-input": '99999px', // inputs
-                "--rounded-btn": '99999px', // button
+                "--rounded-box": '1rem', // biggest elements, large content cards
+                "--rounded-btn": '3.0rem', // button
                 "--rounded-badge": '3.0rem', // border radius rounded-badge utility class, used in badges and similar
                 "--animation-btn": "0.25s", // duration of animation when you click on button
                 "--animation-input": "0.2s", // duration of animation for inputs like checkbox, toggle, radio, etc

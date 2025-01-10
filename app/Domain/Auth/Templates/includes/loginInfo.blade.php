@@ -29,9 +29,10 @@
             </a>
         </x-global::actions.dropdown.item>
 
-        <x-global::actions.dropdown.item class="nav-header border">
+        <x-global::actions.dropdown.item variant="header">
             {!! __("menu.help_support") !!}
         </x-global::actions.dropdown.item>
+
         <x-global::actions.dropdown.item variant='list-item'>
             <a href='javascript:void(0);' onclick="leantime.helperController.showHelperModal('{{ $modal }}', 300, 500);">
                 {!! __("menu.what_is_this_page") !!}

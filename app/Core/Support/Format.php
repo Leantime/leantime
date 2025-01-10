@@ -5,6 +5,7 @@ namespace Leantime\Core\Support;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 use Leantime\Core\Language;
 use PHPUnit\Exception;
 
@@ -314,5 +315,61 @@ class Format
         } else {
             return $this->value->endOfDay()->diffForHumans();
         }
+    }
+
+    /**
+     *
+     * This is the result of years of different frameworks and ways to represent color in
+     * statuses, priorities etc.
+     * Future talk: We should have a few defined semantic colors and then allow hex code colors only
+     *
+     */
+    public function getStatusClass(): string {
+
+        $statusClass = '';
+
+        //If the string starts with the color we can just return the color in [] for tailwind to use
+        if(Str::startsWith($this->value, "#")){
+            return "[".$this->value."]";
+        }
+
+        //Map various semantic color names to our central color names
+        switch($this->value) {
+            case 'green':
+            case 'done':
+            case 'success':
+            case 'label-success':
+            case 4:
+                $statusClass = 'success';
+                break;
+            case 'blue':
+            case 'info':
+            case 'label-info':
+                $statusClass = 'info';
+                break;
+            case 'warning':
+            case 'yellow':
+            case 'inprogress':
+            case 'label-warning':
+            case 3:
+                $statusClass = 'warning';
+                break;
+            case 'error':
+            case 'red':
+            case 'new':
+            case 'label-important':
+            case 2:
+                $statusClass = 'error';
+                break;
+            case 'critical':
+            case 1:
+                $statusClass = 'error';
+                break;
+            default:
+                $statusClass = 'trivial';
+        }
+
+        return $statusClass;
+
     }
 }

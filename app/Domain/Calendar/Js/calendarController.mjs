@@ -3,7 +3,7 @@ import jQuery from 'jquery';
 import htmx from 'htmx.org';
 import {Calendar, ThirdPartyDraggable} from 'fullcalendar';
 import { appUrl } from 'js/app/core/instance-info.module';
-import { getFormatFromSettings } from 'js/app/components/dates/dateHelper.module';
+import { getFormatFromSettings } from 'js/app/support/dateHelper.module';
 import { DateTime } from 'luxon';
 import iCalendarPlugin from '@fullcalendar/icalendar';
 import luxon3Plugin from '@fullcalendar/luxon3'

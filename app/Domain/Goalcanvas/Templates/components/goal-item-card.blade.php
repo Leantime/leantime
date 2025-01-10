@@ -35,7 +35,10 @@
                     <div class="inlineDropDownContainer" style="float:right;">
                         @if ($login::userIsAtLeast($roles::$editor))
                             <x-global::content.context-menu>
-                                <li class="nav-header">{{ __('subtitles.edit') }}</li>
+
+                                <x-global::actions.dropdown.item variant="header">
+                                    {{ __('subtitles.edit') }}
+                                </x-global::actions.dropdown.item>
                                 <x-global::actions.dropdown.item variant="link"
                                     href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal"
                                     data="item_{{ $row['id'] }}">
