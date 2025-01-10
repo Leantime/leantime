@@ -25,7 +25,7 @@
                         <x-global::forms.button shape="circle" content-role="tertiary"
                             id="favoriteProject"
                             data-tippy-content="{{ __('label.favorite_tooltip') }}"
-                            class="{{ $isFavorite ? 'btn-active' : '' }}">
+                            class="{{ $isFavorite ? 'btn-active isFavorite' : '' }}">
                             <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
                         </x-global::forms.button>
 
@@ -95,7 +95,7 @@
                     @endif
 
                     @foreach ($tickets as $row)
-                        <x-tickets::ticket-card :id="$row['id']" />
+                        <x-tickets::ticket-card :id="$row['id']"/>
                     @endforeach
 
                 </x-global::content.card>
@@ -235,7 +235,7 @@
                     if (jQuery("#favoriteProject").hasClass("isFavorite")) {
                         reactionsController.removeReaction(
                             'project',
-                            {!! $project['id'] !!},
+                            {{ $project['id'] }},
                             'favorite',
                             function() {
                                 jQuery("#favoriteProject").find("i").removeClass("fa-solid").addClass("fa-regular");
@@ -245,7 +245,7 @@
                     } else {
                         reactionsController.addReactions(
                             'project',
-                            {!! $project['id'] !!},
+                            {{ $project['id'] }},
                             'favorite',
                             function() {
                                 jQuery("#favoriteProject").find("i").removeClass("fa-regular").addClass("fa-solid");

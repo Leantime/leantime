@@ -55,7 +55,7 @@ class TicketCard extends HtmxController
 
         $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
         $this->tpl->assign('ticket', $ticket);
-        $this->tpl->assign('effort', $efforts);
+        $this->tpl->assign('efforts', $efforts);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('milestones', $milestones);
     }

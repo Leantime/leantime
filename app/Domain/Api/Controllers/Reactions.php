@@ -26,7 +26,24 @@ class Reactions extends Controller
      */
     public function get(array $params): Response
     {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+        if ($params['action'] == 'add') {
+            if (! $this->reactionService->addReaction(session('userdata.id'), $params['module'], $params['moduleId'], $params['reaction'])) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
+            }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
+        }
+
+        if ($params['action'] == 'remove') {
+            if (! $this->reactionService->removeReaction(session('userdata.id'), $params['module'], $params['moduleId'], $params['reaction'])) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
+            }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
+        }
+
+        return $this->tpl->displayJson(['error' => 'Bad Request'], 400);
+        // return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
     }
 
     /**
