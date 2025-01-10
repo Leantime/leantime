@@ -18,8 +18,8 @@
         <h2 class="menu-title">{!! $slot !!}</h2>
     </li>
 @elseif ($variant === 'border')
-    <li class="border-t border-neutral"></li>
-@elseif ($variant === 'list-item')
+    <li class="border-t border-neutral opacity-100"></li>
+@else
     <li>
         {!! $slot !!}
     </li>

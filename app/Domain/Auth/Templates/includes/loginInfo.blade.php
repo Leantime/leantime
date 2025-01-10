@@ -53,7 +53,8 @@
                 {!! __("menu.contact_us") !!}
             </a>
         </x-global::actions.dropdown.item>
-        <x-global::actions.dropdown.item class="border">
+        <x-global::actions.dropdown.item variant='border'></x-global::actions.dropdown.item>
+        <x-global::actions.dropdown.item variant='list-item'>
             <a href='{{ BASE_URL }}/auth/logout'>
                 {!! __("menu.sign_out") !!}
             </a>
