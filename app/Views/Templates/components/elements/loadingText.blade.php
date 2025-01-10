@@ -30,6 +30,19 @@
         </div>
     @endfor
 @endif
+@if($type == 'ticket-column-card')
+    @for ($i = 0; $i < $count; $i++)
+        <div class="loading-text ticketBox">
+            <div class="row mb-l">
+                <div class="col-md-12">
+                    <p style="width:30%">Loading...</p>
+                    <p style="width:60%">Loading...</p>
+                    <p style="width:20%">Loading...</p>
+                </div>
+            </div>
+        </div>
+    @endfor
+@endif
 
 @if($type == 'text')
     @for ($i = 0; $i < $count; $i++)

@@ -55,7 +55,7 @@
             @endif
         </div>
 
-        <div class="replies">
+        <div class="replies pl-lg">
             @foreach ($comment->replies ?? [] as $reply)
                 <x-dashboard::project-status-comment :comment="$reply" :project_id="$project_id" :ticket="$ticket ?? null"
                     :replyParent="$comment->id" />
