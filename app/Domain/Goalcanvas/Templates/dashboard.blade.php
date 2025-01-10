@@ -155,7 +155,12 @@
     </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+
+        import "@mix('/js/Domain/Goalcanvas/Js/goalCanvasController.js')"
+        import "@mix('/js/Domain/Canvas/Js/canvasController.js')"
+        import "@mix('/js/Domain/Auth/Js/authController.js')"
+
         jQuery(document).ready(function() {
             if (jQuery('#searchCanvas').length > 0) {
                 new SlimSelect({
@@ -163,16 +168,16 @@
                 });
             }
 
-            leantime.goalCanvasController.setRowHeights();
-            leantime.canvasController.setCanvasName('goal');
-            leantime.canvasController.initFilterBar();
+            goalCanvasController.setRowHeights();
+            canvasController.setCanvasName('goal');
+            canvasController.initFilterBar();
 
             @if ($login::userIsAtLeast($roles::$editor))
-                leantime.canvasController.initUserDropdown('goalcanvas');
-                leantime.canvasController.initStatusDropdown('goalcanvas');
-                leantime.canvasController.initRelatesDropdown('goalcanvas');
+                canvasController.initUserDropdown('goalcanvas');
+                canvasController.initStatusDropdown('goalcanvas');
+                canvasController.initRelatesDropdown('goalcanvas');
             @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
+                authController.makeInputReadonly(".maincontentinner");
             @endif
 
         });

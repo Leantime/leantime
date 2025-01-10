@@ -50,13 +50,14 @@
                         @endif
                     </div>
 
-                    <h4>
+                    <h4 class="mb-3">
                         <strong>Goal:</strong>
                         <a href="#/goalcanvas/editCanvasItem/{{ $row['id'] }}" class="goalCanvasModal"
                             data-item="item_{{ $row['id'] }}">
                             {{ $row['title'] }}
                         </a>
                     </h4>
+                    
                     <strong>Metric:</strong> {{ $row['description'] }}
                     <br /><br />
 
