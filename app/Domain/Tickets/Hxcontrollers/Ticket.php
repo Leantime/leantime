@@ -8,6 +8,7 @@ namespace Leantime\Domain\Tickets\Hxcontrollers {
     use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Services\Files as FileService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -159,6 +160,26 @@ namespace Leantime\Domain\Tickets\Hxcontrollers {
             }
 
             return Frontcontroller::redirect(BASE_URL.'/tickets/newTicket');
+        }
+
+        public function patch($params): Response
+        {
+
+            if (! AuthService::userIsAtLeast(Roles::$editor)) {
+                return $this->tpl->displayJson(['error' => 'Not Authorized'], 403);
+            }
+
+            if (! isset($params['id'])) {
+                return $this->tpl->displayJson(['error' => 'ID not set'], 400);
+            }
+
+            if (! $this->ticketService->patch($params['id'], $params)) {
+                return $this->tpl->displayJson(['error' => 'Could not update status'], 500);
+            }
+
+            $this->tpl->setNotification($this->tpl->__('notifications.ticket_updated'), 'success');
+
+            return $this->tpl->emptyResponse();
         }
     }
 

@@ -2,16 +2,19 @@
     'contentRole' => 'ghost',
     'variant' => '',
     'labelPosition' => 'top',
-    'ticket' => ''
+    'ticket' => null,
 ])
 
 <x-global::forms.datepicker
     no-date-label="{{ __('text.anytime') }}"
     :value="$ticket->dateToFinish"
-    name="duedate"
+    name="dateToFinish"
     dateName="dueDate-{{ $ticket->id }}"
     :label-position="$labelPosition"
     :variant="$variant"
+    hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+    hx-trigger="change"
+    hx-swap="none"
 >
     <x-slot:leading-visual>
         <x-global::content.icon icon="acute" class="text-lg h-5 w-5 leading-5" />

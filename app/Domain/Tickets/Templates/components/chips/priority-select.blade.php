@@ -4,7 +4,8 @@
     'priorities' => [],
     'label' => true,
     'labelPosition' => 'top',
-    'dropdownPosition' => 'left'
+    'dropdownPosition' => 'left',
+    'ticket' => null,
 ])
 
 <x-global::forms.select
@@ -14,6 +15,9 @@
     :label-position="$labelPosition"
     :variant="$variant"
     :content-role="$contentRole"
+    hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+    hx-trigger="change"
+    hx-swap="none"
     >
 
     @if($label)
@@ -31,7 +35,7 @@
     @foreach ($priorities as $priorityKey => $priorityValue)
         <x-global::forms.select.option
             :value="strtolower($priorityKey)"
-            :selected="strtolower($priorityKey) == strtolower( $ticket->priority ?? '') ? 'true' : 'false'">
+            :selected="strtolower($priorityKey) == strtolower( $ticket->priority ?? '') ? true : false">
 
             <x-global::elements.badge :state="$priorityKey" :outline="true">
                 <x-global::content.icon icon="local_fire_department" fill="true"/> {!! $priorityValue !!}

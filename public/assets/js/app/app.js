@@ -84,7 +84,7 @@ import modals from './components/modals.module.mjs';
 import datePickers from './core/dateController.module.mjs';
 import dateHelper from './core/dateHelper.module.mjs';
 import editorController from './core/editors.module.mjs';
-import getLatestGrowl from './core/getLatestGrowl.module';
+
 import handleAsyncResponse from './core/handleAsyncResponse.module';
 import instanceInfo from './core/instance-info.module';
 
@@ -110,7 +110,7 @@ addToGlobalScope({
 });
 
 jQuery(document).ready(onDocumentReady);
-window.addEventListener("HTMX.ShowNotification", getLatestGrowl);
+
 
 
 import usersService from "domain/Users/Js/usersService";

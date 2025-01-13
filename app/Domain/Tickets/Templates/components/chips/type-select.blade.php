@@ -14,7 +14,17 @@
     ];
 @endphp
 
-<x-global::forms.select id='type' name='type' search="false" :content-role="$contentRole" :label-position="$labelPosition" :variant="$variant">
+<x-global::forms.select
+    id='type'
+    name='type'
+    search="false"
+    :content-role="$contentRole"
+    :label-position="$labelPosition"
+    :variant="$variant"
+    hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+    hx-trigger="change"
+    hx-swap="none"
+>
     @foreach ($ticketTypes as $type)
         <x-global::forms.select.option :value="strtolower($type)" :selected="strtolower($type) == strtolower($ticket->type ?? '') ? 'true' : 'false'">
             <span class="size-sm pr-xs"><x-global::content.icon :icon="strtolower($type)" />

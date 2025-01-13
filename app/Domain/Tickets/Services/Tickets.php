@@ -10,9 +10,12 @@ namespace Leantime\Domain\Tickets\Services {
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Core\Exceptions\AuthException;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -1469,6 +1472,10 @@ namespace Leantime\Domain\Tickets\Services {
             unset($params['id']);
             unset($params['act']);
 
+            if (! AuthService::userIsAtLeast(Roles::$editor)) {
+                throw new AuthException("You are not allowed to edit tickets");
+            }
+
             $params = $this->prepareTicketDates($params);
 
             $return = $this->ticketRepository->patchTicket($id, $params);
@@ -1477,6 +1484,9 @@ namespace Leantime\Domain\Tickets\Services {
 
             //Todo: create events and move notification logic to notification module
             if (isset($params['status']) && $return) {
+
+                self::dispatchEvent('ticket_status_updated');
+
                 $ticket = $this->getTicket($id);
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
                 $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $id;
@@ -1495,6 +1505,7 @@ namespace Leantime\Domain\Tickets\Services {
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
+
             }
 
             return $return;

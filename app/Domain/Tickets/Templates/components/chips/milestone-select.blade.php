@@ -4,7 +4,8 @@
     'milestones' => [],
     'label' => true,
     'labelPosition' => 'top',
-    'dropdownPosition' => 'left'
+    'dropdownPosition' => 'left',
+    'ticket' => null,
 ])
 
 <x-global::forms.select
@@ -14,6 +15,9 @@
     :label-position="$labelPosition"
     :variant="$variant"
     :content-role="$contentRole"
+    hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+    hx-trigger="change"
+    hx-swap="none"
 >
 
     @if($label)

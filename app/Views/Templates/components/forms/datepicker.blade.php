@@ -71,7 +71,16 @@
         <x-slot:card-content>
 
 
-            <input type="date" data-component="datepicker" id="datepickerDropDown-{{ $dateName }}" class="input-md datepickerDropDown-{{ $dateName }}" value="{{ format($value)->isoDateTime() }}" />
+            <input type="date"
+                   data-component="datepicker"
+                   id="datepickerDropDown-{{ $dateName }}"
+                   class="input-md datepickerDropDown-{{ $dateName }}"
+                   value="{{ format($value)->isoDateTime() }}"
+                   {{ $attributes->filter(
+                        function ($value, $key) {
+                            return \Illuminate\Support\Str::contains($key, "hx-");
+                        }) }}
+            />
             <button type="button" class="btn btn-sm float-right timeToggleButton-{{ $dateName }}" onclick="datePickers.toggleTime('.datepickerDropDown-{{ $dateName }}', this)">
                 <i class="fa fa-clock"></i>
             </button>

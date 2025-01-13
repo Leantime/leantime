@@ -82,7 +82,7 @@
         <span class="label-text">{{ $caption }}</span>
     @endif
 
-    <div {{$attributes->merge(['class' => ($variant === 'tags' ? 'tags inline-block w-full' : '')])}} >
+    <div>
         <div class="flex flex-row">
             <div class="select-loading-state hidden">
                 <x-global::elements.loadingText

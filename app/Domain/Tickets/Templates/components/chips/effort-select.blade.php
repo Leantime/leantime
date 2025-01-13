@@ -4,10 +4,21 @@
     'labelPosition' => 'left',
     '$ticket' => '',
     'efforts' => [],
-    'labelPosition' => 'top'
+    'labelPosition' => 'top',
+    'ticket' => null,
 ])
 
-<x-global::forms.select id='storypoints' name='storypoints' search="false" :variant="$variant" :label-position="$labelPosition"  :content-role="$contentRole">
+<x-global::forms.select
+    id=''
+    name='storypoints'
+    search="false"
+    :variant="$variant"
+    :label-position="$labelPosition"
+    :content-role="$contentRole"
+    hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+    hx-trigger="change"
+    hx-swap="none"
+    >
     <x-slot:label-text>
         <x-global::content.icon icon="elevation" /> {{ __('label.effort')  }}
     </x-slot:label-text>
