@@ -302,11 +302,13 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+
+        import "@mix('/js/Domain/Clients/Js/clientsController.js')"
         <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
         jQuery(document).ready(function($) {
-            leantime.clientsController.initClientTabs();
+            clientsController.initClientTabs();
         });
 
         <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
