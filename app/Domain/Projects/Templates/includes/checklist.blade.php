@@ -75,3 +75,20 @@
         </div>
     </div>
 </form>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery('.dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            jQuery(this).next('.dropdown-menu').toggleClass('show');
+        });
+    
+        // Close dropdown when clicking outside
+        jQuery(document).on('click', function(e) {
+            if (!jQuery(e.target).closest('.dropdown-toggle').length) {
+                jQuery('.dropdown-menu.show').removeClass('show');
+            }
+        });
+    });
+</script>
