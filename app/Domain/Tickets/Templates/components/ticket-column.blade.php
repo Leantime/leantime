@@ -27,7 +27,7 @@
     <div class="column ticketColumn" id="ticketColumn_{{ $status }}"
         hx-get="{{ $url }}" hx-swap="innerHTML"
         hx-trigger="load, reload from:body">
-        <x-global::elements.loader id="loadingthis" size="25px" />
+        <x-global::elements.loadingText :count="random_int(1, 5)" :type="'ticket-column-card'" />
     </div>
 @else
     <div class="column">
