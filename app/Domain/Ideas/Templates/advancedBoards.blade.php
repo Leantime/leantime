@@ -10,15 +10,15 @@
 
         //get canvas title
         foreach ($allCanvas as $canvasRow) {
-            if ($canvasRow->title == $currentCanvas) {
+            if ($canvasRow->id == $currentCanvas) {
                 $canvasTitle = $canvasRow->title;
                 break;
             }
         }
 
-    @endphp
+        @endphp
 
-    <div class="pageheader">
+<div class="pageheader">
         <div class="pageicon"><i class="far fa-lightbulb"></i></div>
         <div class="pagetitle">
             <h5><?php $tpl->e(session('currentProjectClient') . ' // ' . session('currentProjectName')); ?></h5>
@@ -67,7 +67,7 @@
 
                                 @foreach ($allCanvas as $canvasRow)
                                     <x-global::actions.dropdown.item
-                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->title }}">
+                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->id }}">
                                         {{ $canvasRow->title }}
                                     </x-global::actions.dropdown.item>
                                 @endforeach
@@ -131,13 +131,13 @@
                 <div id="sortableIdeaKanban" class="sortableTicketList">
                     <div class="row-fluid">
                         @foreach ($canvasLabels as $key => $statusRow)
-                            <div class="column" style="width:{{ $size }}%;">
-                                <h4 class="widgettitle title-primary">
+                            <div class="column">
+                                <h4 class="flex justify-between items-center widgettitle title-primary py-[10px] px-[15px]">
+                                    {{ $statusRow['name'] }}
                                     @if ($login::userIsAtLeast($roles::$manager))
                                         <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
                                             class="editHeadline"><i class="fas fa-edit"></i></a>
                                     @endif
-                                    {{ $statusRow['name'] }}
                                 </h4>
                                 <div class="contentInner status_{{ $key }}">
                                     @foreach ($canvasItems as $row)
@@ -243,11 +243,15 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+        import "@mix('/js/Domain/Ideas/Js/ideasController.js')"
+        import "@mix('/js/Domain/Canvas/Js/canvasController.js')"
+        import "@mix('/js/Domain/Auth/Js/AuthController.js')"
+
         jQuery(document).ready(function() {
 
-            leantime.ideasController.initBoardControlModal();
-            leantime.ideasController.setKanbanHeights();
+            ideasController.initBoardControlModal();
+            ideasController.setKanbanHeights();
 
             @if ($login::userIsAtLeast($roles::$editor))
                 var ideaStatusList = [
@@ -255,10 +259,10 @@
                         '{{ $key }}',
                     @endforeach
                 ];
-                leantime.ideasController.initIdeaKanban(ideaStatusList);
-                leantime.canvasController.initUserDropdown('ideas');
+                ideasController.initIdeaKanban(ideaStatusList);
+                canvasController.initUserDropdown('ideas');
             @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
+                authController.makeInputReadonly(".maincontentinner");
             @endif
 
         });

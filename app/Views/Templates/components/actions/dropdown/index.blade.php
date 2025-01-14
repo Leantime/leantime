@@ -79,7 +79,7 @@
         </div>
     @else
         <!-- Regular Dropdown Menu -->
-        <ul tabindex="0" class="{{ $menuClass }}" {{ $selectable ? 'data-selectable-item' : '' }}>
+        <ul tabindex="0" class="{{ $menuClass }} z-50" {{ $selectable ? 'data-selectable-item' : '' }}>
             {!! $menu !!}
         </ul>
     @endif
