@@ -81,6 +81,7 @@
     jQuery(document).ready(function() {
         jQuery('.dropdown-toggle').on('click', function(e) {
             e.preventDefault();
+            jQuery('.dropdown-menu.show').not(jQuery(this).next('.dropdown-menu')).removeClass('show');
             jQuery(this).next('.dropdown-menu').toggleClass('show');
         });
     
