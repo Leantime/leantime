@@ -1,0 +1,8 @@
+
+.viewDescription {
+    @apply input-bordered p-sm rounded-md;
+
+    &:hover {
+        @apply input-hover;
+    }
+}

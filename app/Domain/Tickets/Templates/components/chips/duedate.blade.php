@@ -3,6 +3,7 @@
     'variant' => '',
     'labelPosition' => 'top',
     'ticket' => null,
+    'showLabel' => false
 ])
 
 @php
@@ -38,9 +39,13 @@
     :state="$state"
 >
     <x-slot:leading-visual>
-        <x-global::content.icon icon="acute" class="text-lg" />
+        <x-global::content.icon icon="alarm" class="text-lg text-trivial" />
     </x-slot:leading-visual>
 
-    <x-slot:label-text></x-slot:label-text>
+    @if($showLabel)
+        <x-slot:label-text>
+            <x-global::content.icon icon="alarm"/> <span>{!!  __('label.due') !!}</span>
+        </x-slot:label-text>
+    @endif
 
 </x-global::forms.datepicker>

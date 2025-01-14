@@ -55,7 +55,7 @@ let dateTimePickerConfig = {
     altInput: true,
     altFormat: getFormatFromSettings("dateformat", "flatpickr"),
     altInputClass: "input input-sm",
-    dateFormat:  "Y-m-d H:i:s",
+    dateFormat:  getFormatFromSettings("dateformat", "flatpickr"),
     shorthandCurrentMonth: true,
     "locale": {
         weekdays: {

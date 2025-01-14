@@ -36,10 +36,9 @@
 
 @endphp
 
-
 <x-global::forms.field-row :label-position="$labelPosition">
 
-    @if($labelText->isNotEmpty())
+    @if($labelText && $labelText->isNotEmpty())
         <x-slot:label-text>{!! $labelText !!}</x-slot:label-text>
     @endif
 
@@ -54,13 +53,13 @@
     <x-global::actions.dropdown variant="card" :content-role="$contentRole" class="date-dropdown {{ $buttonSize }}" :state="$state" button-variant="{{ $variant }}">
         <x-slot:label-text >
             @if(!empty(trim($leadingVisual)))
-                <div class="mr-sm">
+                <div class="">
                     {!! $leadingVisual !!}
                 </div>
             @endif
             <div>
                 @if(empty($value) || ! dtHelper()->isValidDateString($value))
-                    <span class="dateField font-light">{{ $noDateLabel }}</span>
+                    <span class="dateField font-light text-trivial">{{ $noDateLabel }}</span>
                     <span class="timeField font-light"></span>
                 @else
                     <span class="dateField font-light">{{ format($value)->date() }}</span>

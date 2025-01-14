@@ -97,7 +97,7 @@
                 </x-global::elements.leadingVisual>
             @endif
 
-            <div class="{{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
+            <div class="w-full {{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
                 <select
                     {{$attributes->merge([
                         'class' => "opacity-0 ".$selectClassBuilder,
