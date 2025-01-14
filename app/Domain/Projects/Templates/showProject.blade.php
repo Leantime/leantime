@@ -365,7 +365,7 @@
                             <strong><?= $tpl->__('label.webhook_url') ?></strong><br />
                             <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations"
                                 method="post">
-                                @for ($i = 0; $i < $count; $i++)
+                                @for ($i = 1; $i < 3; $i++)
                                     <x-global::forms.text-input type="text"
                                         name="discordWebhookURL{{ $i }}"
                                         id="discordWebhookURL{{ $i }}"
@@ -675,3 +675,5 @@
 
         });
     </script>
+
+    @endsection
