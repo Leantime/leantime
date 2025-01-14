@@ -3,10 +3,11 @@
     'contentRole' => 'ghost', //default, primary, secondary, tertiary (ghost), accent, link
     'state' => '', //default, info, warning, danger, success,
     'scale' => '', //xs, sm, md, lg, xl
+    'name' => '',
 
     //labels & content
     'labelPosition' => 'top',
-    'labelText' => '',
+    'labelText' => false,
     'helpText' => '',
     'leadingVisual' => '',
     'trailingVisual' => '',
@@ -35,38 +36,41 @@
 
 @endphp
 
+
 <x-global::forms.field-row :label-position="$labelPosition">
-    @if($labelText)
+
+    @if($labelText->isNotEmpty())
         <x-slot:label-text>{!! $labelText !!}</x-slot:label-text>
     @endif
 
-    @if($helpText)
+    @if(!empty($helpText))
         <x-slot:help-text>{!! $helpText !!}</x-slot:help-text>
     @endif
 
-    @if($caption)
+     @if(!empty($caption))
         <span class="label-text">{{ $caption }}</span>
     @endif
 
-    <x-global::actions.dropdown variant="card" :content-role="$contentRole" class="date-dropdown {{ $buttonSize }}" button-variant="{{ $variant }}">
-        <x-slot:label-text>
+    <x-global::actions.dropdown variant="card" :content-role="$contentRole" class="date-dropdown {{ $buttonSize }}" :state="$state" button-variant="{{ $variant }}">
+        <x-slot:label-text >
             @if(!empty(trim($leadingVisual)))
-                <div class="h-{{ $elementHeight }} w-{{ $elementHeight }}">
+                <div class="mr-sm">
                     {!! $leadingVisual !!}
                 </div>
             @endif
-
-            @if(empty($value) || ! dtHelper()->isValidDateString($value))
-                <span class="dateField font-light">{{ $noDateLabel }}</span>
-                <span class="timeField font-light"></span>
-            @else
-                <span class="dateField font-light">{{ format($value)->date() }}</span>
-                <span class="timeField font-light">
-                        @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
-                            {{ format($value)->time() }}
-                    @endif
-                </span>
-            @endif
+            <div>
+                @if(empty($value) || ! dtHelper()->isValidDateString($value))
+                    <span class="dateField font-light">{{ $noDateLabel }}</span>
+                    <span class="timeField font-light"></span>
+                @else
+                    <span class="dateField font-light">{{ format($value)->date() }}</span>
+                    <span class="timeField font-light">
+                            @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
+                                {{ format($value)->time() }}
+                        @endif
+                    </span>
+                @endif
+            </div>
         </x-slot:label-text>
         <x-slot:card-content>
 
@@ -75,6 +79,7 @@
                    data-component="datepicker"
                    id="datepickerDropDown-{{ $dateName }}"
                    class="input-md datepickerDropDown-{{ $dateName }}"
+                   name="{{ $name }}"
                    value="{{ format($value)->isoDateTime() }}"
                    {{ $attributes->filter(
                         function ($value, $key) {

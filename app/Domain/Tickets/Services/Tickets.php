@@ -135,11 +135,11 @@ namespace Leantime\Domain\Tickets\Services {
                     $labelKey = filter_var($labelKey, FILTER_SANITIZE_NUMBER_INT);
 
                     $statusArray[$labelKey] = [
-                        'name' => $params['label-' . $labelKey] ?? '',
-                        'class' => $params['labelClass-' . $labelKey] ?? 'label-default',
-                        'statusType' => $params['labelType-' . $labelKey] ?? 'NEW',
-                        'kanbanCol' => $params['labelKanbanCol-' . $labelKey] ?? false,
-                        'sortKey' => $params['labelSort-' . $labelKey] ?? 99,
+                        'name' => $params['label-'.$labelKey] ?? '',
+                        'class' => $params['labelClass-'.$labelKey] ?? 'label-default',
+                        'statusType' => $params['labelType-'.$labelKey] ?? 'NEW',
+                        'kanbanCol' => $params['labelKanbanCol-'.$labelKey] ?? false,
+                        'sortKey' => $params['labelSort-'.$labelKey] ?? 99,
                     ];
                 }
 
@@ -147,7 +147,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 self::dispatchEvent('statusLabels_updated');
 
-                return $this->settingsRepo->saveSetting('projectsettings.' . session('currentProject') . '.ticketlabels', serialize($statusArray));
+                return $this->settingsRepo->saveSetting('projectsettings.'.session('currentProject').'.ticketlabels', serialize($statusArray));
             } else {
                 return false;
             }
@@ -539,7 +539,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $priorities = $this->getPriorityLabels();
                                 if (isset($priorities[$groupedFieldValue])) {
                                     $label = $priorities[$groupedFieldValue];
-                                    $class = 'priority-text-' . $groupedFieldValue;
+                                    $class = 'priority-text-'.$groupedFieldValue;
                                 } else {
                                     $label = 'No Priority Set';
                                 }
@@ -553,7 +553,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 if ($ticket['milestoneid'] > 0) {
                                     $milestone = $this->getTicket($ticket['milestoneid']);
                                     $color = $milestone->tags;
-                                    $class = '" style="color:' . $color . '"';
+                                    $class = '" style="color:'.$color.'"';
 
                                     try {
                                         $startDate = dtHelper()->parseDbDateTime($milestone->editFrom)->formatDateForUser();
@@ -569,14 +569,14 @@ namespace Leantime\Domain\Tickets\Services {
 
                                     $statusLabels = $this->getStatusLabels($milestone->projectId);
                                     $status = $statusLabels[$milestone->status]['name'];
-                                    $class = '" style="color:' . $color . '"';
-                                    $moreInfo = $this->language->__('label.start') . ': ' . $startDate . ' • ' . $this->language->__('label.end') . ': ' . $endDate . ' • ' . $this->language->__('label.status_lowercase') . ': ' . $status;
-                                    $label = $ticket['milestoneHeadline'] . " <a href='#/tickets/editMilestone/" . $ticket['milestoneid'] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                    $class = '" style="color:'.$color.'"';
+                                    $moreInfo = $this->language->__('label.start').': '.$startDate.' • '.$this->language->__('label.end').': '.$endDate.' • '.$this->language->__('label.status_lowercase').': '.$status;
+                                    $label = $ticket['milestoneHeadline']." <a href='#/tickets/editMilestone/".$ticket['milestoneid']."' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
                                 break;
                             case 'editorId':
-                                $label = "<div class='profileImage'><img src='" . BASE_URL . '/api/users?profileImage=' . $ticket['editorId'] . "' /></div> " . $ticket['editorFirstname'] . ' ' . $ticket['editorLastname'];
+                                $label = "<div class='profileImage'><img src='".BASE_URL.'/api/users?profileImage='.$ticket['editorId']."' /></div> ".$ticket['editorFirstname'].' '.$ticket['editorLastname'];
 
                                 if ($ticket['editorFirstname'] == '' && $ticket['editorLastname'] == '') {
                                     $label = 'Not Assigned to Anyone';
@@ -591,7 +591,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 break;
                             case 'type':
                                 $icon = $this->getTypeIcons();
-                                $label = "<i class='fa " . ($icon[strtolower($ticket['type'])] ?? '') . "'></i>" . $ticket['type'];
+                                $label = "<i class='fa ".($icon[strtolower($ticket['type'])] ?? '')."'></i>".$ticket['type'];
                                 break;
                             default:
                                 $label = $groupedFieldValue;
@@ -796,7 +796,7 @@ namespace Leantime\Domain\Tickets\Services {
                         $tickets[$row['projectId']]['tickets'][] = $row;
                     } else {
                         $tickets[$row['projectId']] = [
-                            'labelName' => $row['clientName'] . ' / ' . $row['projectName'],
+                            'labelName' => $row['clientName'].' / '.$row['projectName'],
                             'tickets' => [$row],
                             'groupValue' => $row['projectId'],
                         ];
@@ -889,9 +889,9 @@ namespace Leantime\Domain\Tickets\Services {
                         $tickets[$sprint]['tickets'][] = $row;
                     } else {
                         $tickets[$sprint] = [
-                            'labelName' => $row['projectName'] . ' / ' . $sprintName,
+                            'labelName' => $row['projectName'].' / '.$sprintName,
                             'tickets' => [$row],
-                            'groupValue' => $row['sprint'] . '-' . $row['projectId'],
+                            'groupValue' => $row['sprint'].'-'.$row['projectId'],
                         ];
                     }
                 }
@@ -1190,7 +1190,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             if ($result > 0) {
                 $values['id'] = $result;
-                $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $result;
+                $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$result;
                 $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $params['headline']);
                 $subject = $this->language->__('email_notifications.new_todo_subject');
 
@@ -1337,7 +1337,7 @@ namespace Leantime\Domain\Tickets\Services {
                 if ($addTicketResponse !== false) {
                     $values['id'] = $addTicketResponse;
                     $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, $values['headline']);
-                    $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $addTicketResponse;
+                    $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$addTicketResponse;
                     $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $values['headline']);
 
                     $notification = app()->make(NotificationModel::class);
@@ -1409,7 +1409,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => $values['description'] ?? $currentTicket->description,
                 'projectId' => $values['projectId'] ?? session('currentProject'),
                 'date' => dtHelper()->userNow()->formatDateTimeForDb(),
-                'dateToFinish' => dtHelper()->isValidDateString($values['dateToFinish']??"") ? $values['dateToFinish'] : $currentTicket->dateToFinish,
+                'dateToFinish' => dtHelper()->isValidDateString($values['dateToFinish'] ?? '') ? $values['dateToFinish'] : $currentTicket->dateToFinish,
                 'timeToFinish' => $values['timeToFinish'] ?? $currentTicket->timeToFinish,
                 'status' => $values['status'] ?? $currentTicket->status,
                 'planHours' => $values['planHours'] ?? $currentTicket->planHours,
@@ -1419,13 +1419,13 @@ namespace Leantime\Domain\Tickets\Services {
                 'hourRemaining' => $values['hourRemaining'] ?? $currentTicket->hourRemaining,
                 'priority' => $values['priority'] ?? $currentTicket->priority,
                 'acceptanceCriteria' => $values['acceptanceCriteria'] ?? $currentTicket->acceptanceCriteria,
-                'editFrom' => dtHelper()->isValidDateString($values['editFrom']??"") ? $values['editFrom'] : $currentTicket->editFrom,
-                'timeFrom' => dtHelper()->isValidDateString($values['timeFrom']??"") ? $values['timeFrom'] : $currentTicket->timeFrom,
-                'editTo' => dtHelper()->isValidDateString($values['editTo']??"") ? $values['editTo'] : $currentTicket->editTo,
-                'timeTo' => dtHelper()->isValidDateString($values['timeTo']??"") ? $values['timeTo'] : $currentTicket->timeTo,
+                'editFrom' => dtHelper()->isValidDateString($values['editFrom'] ?? '') ? $values['editFrom'] : $currentTicket->editFrom,
+                'timeFrom' => dtHelper()->isValidDateString($values['timeFrom'] ?? '') ? $values['timeFrom'] : $currentTicket->timeFrom,
+                'editTo' => dtHelper()->isValidDateString($values['editTo'] ?? '') ? $values['editTo'] : $currentTicket->editTo,
+                'timeTo' => dtHelper()->isValidDateString($values['timeTo'] ?? '') ? $values['timeTo'] : $currentTicket->timeTo,
                 'dependingTicketId' => $values['dependingTicketId'] ?? $currentTicket->dependingTicketId,
                 'milestoneid' => $values['milestoneid'] ?? $currentTicket->milestoneid,
-                'editorId' => $values['editorId'] ?? $currentTicket->editorId??session('userdata.id'),
+                'editorId' => $values['editorId'] ?? $currentTicket->editorId ?? session('userdata.id'),
             ];
 
             if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
@@ -1437,7 +1437,7 @@ namespace Leantime\Domain\Tickets\Services {
             //Update Ticket
             if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], $values['headline']);
-                $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $values['id'];
+                $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $values['headline']);
 
                 $notification = app()->make(NotificationModel::class);
@@ -1473,7 +1473,7 @@ namespace Leantime\Domain\Tickets\Services {
             unset($params['act']);
 
             if (! AuthService::userIsAtLeast(Roles::$editor)) {
-                throw new AuthException("You are not allowed to edit tickets");
+                throw new AuthException('You are not allowed to edit tickets');
             }
 
             $params = $this->prepareTicketDates($params);
@@ -1489,7 +1489,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 $ticket = $this->getTicket($id);
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
-                $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $id;
+                $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
 
                 $notification = app()->make(NotificationModel::class);
@@ -1696,7 +1696,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 if ($ticket) {
                     $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
-                    $actual_link = BASE_URL . '/dashboard/home#/tickets/showTicket/' . $id;
+                    $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
                     $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
 
                     $notification = app()->make(NotificationModel::class);
@@ -1798,7 +1798,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getLastTicketViewUrl(): mixed
         {
 
-            $url = BASE_URL . '/tickets/showKanban';
+            $url = BASE_URL.'/tickets/showKanban';
 
             if (session()->exists('lastTicketView') && session('lastTicketView') != '') {
                 if (session('lastTicketView') == 'kanban' && session()->exists('lastFilterdTicketKanbanView') && session('lastFilterdTicketKanbanView') != '') {
@@ -1822,7 +1822,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getLastTimelineViewUrl(): mixed
         {
 
-            $url = BASE_URL . '/tickets/roadmap';
+            $url = BASE_URL.'/tickets/roadmap';
 
             if (session()->exists('lastMilestoneView') && session('lastMilestoneView') != '') {
                 if (session('lastMilestoneView') == 'table' && session()->exists('lastFilterdMilestoneTableView') && session('lastFilterdMilestoneTableView') != '') {
@@ -2048,7 +2048,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $searchUrlString = '';
             if ($numOfFilters > 0 || $searchCriteria['groupBy'] != '') {
-                $searchUrlString = '?' . http_build_query($this->getSetFilters($searchCriteria, true));
+                $searchUrlString = '?'.http_build_query($this->getSetFilters($searchCriteria, true));
             }
 
             return [
@@ -2334,7 +2334,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($milestones as $key => $milestone) {
                 $milestones[$key] = $this->prepareDatesForApiResponse($milestone);
-                $milestones[$key]['id'] = $milestone['id'] . '-' . $milestone['date'];
+                $milestones[$key]['id'] = $milestone['id'].'-'.$milestone['date'];
             }
 
             return $milestones;
@@ -2394,7 +2394,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($todos as $key => $todo) {
                 $todos[$key] = $this->prepareDatesForApiResponse($todo);
-                $todos[$key]['id'] = $todo['id'] . '-' . $todo['date'];
+                $todos[$key]['id'] = $todo['id'].'-'.$todo['date'];
             }
 
             return $todos;

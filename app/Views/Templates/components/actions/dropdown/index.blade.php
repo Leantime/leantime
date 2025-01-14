@@ -61,7 +61,7 @@
 
 <div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
     <!-- Dropdown Button -->
-    <x-global::forms.button tabindex="0" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant"
+    <x-global::forms.button tabindex="0" :state="$state" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant"
         :scale="$scale" :data-selectable-button="$selectable">
         {!! $labelText !!}
     </x-global::forms.button>

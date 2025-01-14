@@ -179,7 +179,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                             @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
                                 @break
                             @endif
-                            <x-tickets::milestone-card
+                            <x-tickets::cards.milestone-card
                                 :milestone="$row"
                             />
                         @endforeach

@@ -24,7 +24,7 @@
     <h1>#{{ $ticket->id }}</h1>
 </div>
 <div class="float-left">
-    <x-tickets::type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip" />
+    <x-tickets::chips.type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip" />
 </div>
 
 {{-- <div class="float-left"> --}}

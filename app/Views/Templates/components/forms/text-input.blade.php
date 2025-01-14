@@ -26,7 +26,7 @@
 
     if ($variant === 'title') {
 
-        $style= 'input-bordered border-b border-t-0 border-l-0 border-r-0 rounded-none text-xxl p-0 ml-[-5px] pl-[5px] hover:bg-transparent mb-4';
+        $style= 'input-bordered border-b border-t-0 border-l-0 border-r-0 rounded-none text-2xl p-0 ml-[-5px] pl-[5px] hover:bg-transparent mb-4';
         $width = 'max-w-full';
         $sizeClass = 'w-full';
         $ghostClass = ' ';

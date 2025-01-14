@@ -177,7 +177,7 @@ namespace Leantime\Domain\Tickets\Hxcontrollers {
                 return $this->tpl->displayJson(['error' => 'Could not update status'], 500);
             }
 
-            $this->tpl->setNotification($this->tpl->__('notifications.ticket_updated'), 'success');
+            //$this->tpl->setNotification($this->tpl->__('notifications.ticket_updated'), 'success');
 
             return $this->tpl->emptyResponse();
         }

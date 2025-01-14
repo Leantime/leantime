@@ -40,9 +40,9 @@
             <div class="timerContainer flex flex-auto justify-end" id="timerContainer-{{ $ticket['id'] }}">
                 <div class="scheduler btn btn-sm btn-ghost btn-circle">
                     @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
-                        <x-global::content.icon icon="event_available" class="text-accent" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"/>
+                        <x-global::content.icon icon="event_available" class="text-accent text-lg" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"/>
                     @else
-                        <x-global::content.icon icon="event_busy" class="text-accent" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
+                        <x-global::content.icon icon="event_busy" class="text-accent text-lg" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
                     @endif
                 </div>
                 @include("tickets::includes.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $timer])
@@ -52,8 +52,8 @@
         <div class="row">
             <div class="col-md-4">
 
+                <x-tickets::chips.duedate :ticket="(object)$ticket" variant="chip" content-role="link"  />
 
-                <x-tickets::chips.duedate :ticket="(object)$ticket" variant="chip" />
 {{--                <i class="fa-solid fa-business-time infoIcon"--}}
 {{--                   data-tippy-content=" {{ __('label.due') }}"></i>--}}
 

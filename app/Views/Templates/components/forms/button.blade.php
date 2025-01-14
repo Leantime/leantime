@@ -20,12 +20,18 @@
 @php
     $variantClasses = "";
     $variantPrefix = "btn";
+    $stateClass = '';
+
     if($variant == "chip") {
         $variantClasses = "badge badge-lg";
         $variantPrefix = "badge";
+        $stateClass = $state ? "text-".$state : '';
     }else if($variant == "input") {
         $variantClasses = "w-full input justify-start";
         $variantPrefix = "btn";
+        $stateClass = $state ? $variantPrefix."-".$state : '';
+    }else{
+        $stateClass = $state ? $variantPrefix."-".$state : '';
     }
 
     // btn-outline border-primary text-primary
@@ -38,13 +44,13 @@
             $typeClass = $variantPrefix.'-ghost text-base-content hover:btn-ghost';
             break;
         case 'link':
-            $typeClass = $variantPrefix.'-link text-primary hover:bg-primary/20 ';
+            $typeClass = $variantPrefix.'-link hover:bg-secondary/80 ';
             break;
         default:
             $typeClass = $variantPrefix.'-primary border-primary hover:bg-primary/80 ';
     }
     $sizeClass = $scale ? $variantPrefix."-".$scale : $variantPrefix.'-sm';
-    $stateClass = $state ? $variantPrefix."-".$state : '';
+
     $shapeClass = $shape ? $variantPrefix."-".$shape : '';
 @endphp
 

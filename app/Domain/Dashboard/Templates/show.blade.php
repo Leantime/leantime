@@ -94,7 +94,7 @@
                     @endif
 
                     @foreach ($tickets as $row)
-                        <x-tickets::ticket-card :id="$row['id']" />
+                        <x-tickets::cards.ticket-card :id="$row['id']" />
                     @endforeach
 
                 </x-global::content.card>
@@ -174,7 +174,7 @@
                                 @if ($row->percentDone >= 100 && new \DateTime($row->editTo) < new \DateTime())
                                     @break
                                 @endif
-                                <x-tickets::milestone-card :milestone="$row" />
+                                <x-tickets::cards.milestone-card :milestone="$row" />
                             @endforeach
 
                         </div>

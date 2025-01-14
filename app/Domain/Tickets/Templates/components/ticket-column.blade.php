@@ -34,7 +34,7 @@
         <div class="contentInner status_{{ $statusKey }}">
             @foreach ($allTickets as $ticket)
                 @if ($ticket['status'] == $statusKey)
-                    <x-tickets::ticket-column-card :ticket="$ticket" :statusKey="$statusKey" :todoTypeIcons="$ticketTypeIcons"
+                    <x-tickets::cards.ticket-card :ticket="$ticket" :statusKey="$statusKey" :todoTypeIcons="$ticketTypeIcons"
                         :priorities="$priorities" :efforts="$efforts" :milestones="$milestones" :users="$users" :onTheClock="$onTheClock" />
                 @endif
             @endforeach
