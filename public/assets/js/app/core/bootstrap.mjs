@@ -9,7 +9,7 @@ export function initializeCore() {
 
         onDocumentReady();
 
-        //Pageload compent loader
+        //Pageload component loader
         loadComponentsForPage(document, 'default');
 
         // Set up global event listeners for component loader
@@ -28,11 +28,9 @@ export function initializeCore() {
 function setupGlobalEventListeners() {
 
     // HTMX content load handler
-    document.addEventListener('htmx:afterSettle', async (event) => {
-        loadComponentsForPage(event.detail.target);
+    document.addEventListener('htmx:afterSwap', async (event) => {
+        loadComponentsForPage(event.detail.elt);
     });
 
     modals.initModalLoader();
 }
-
-

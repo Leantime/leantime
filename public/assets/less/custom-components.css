@@ -1,10 +1,13 @@
 @import "components/dashboard-grid.css";
-@import "components/file-upload.css";
+@import "components/file-uploads.css";
 @import "components/buttons.css";
 @import "components/cards.css";
-@import "components/select.css";
+@import "components/selects.css";
 @import "components/labels.css";
-@import "components/nav.css";
+@import "components/navs.css";
 @import "components/pagetitle.css";
-@import "components/objectCard.css";
+@import "components/objectCards.css";
 @import "components/tabs.css";
+@import "components/datepicker.css";
+@import "components/accordions.css";
+@import "components/badges.css";

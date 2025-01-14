@@ -47,6 +47,15 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('hx')
                 ->group(function () use ($frontController) {
 
+                    Route::any('{moduleName}/{actionName}/{methodName}/{id}', function (IncomingRequest $request, $moduleName, $actionName, $methodName, $id) use ($frontController) {
+
+                        $request->query->set('id', $id);
+
+                        $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, 'Hxcontrollers');
+
+                        return $frontController->executeAction($controllerParts['class'], $controllerParts['method']);
+                    });
+
                     Route::any('{moduleName}/{actionName}/{methodName}', function (IncomingRequest $request, $moduleName, $actionName, $methodName) use ($frontController) {
                         $controllerParts = $frontController->getValidControllerCall($moduleName, $actionName, $methodName, 'Hxcontrollers');
 

@@ -8,7 +8,7 @@
         @apply rounded-t-sm p-1 h-xxl text-sm;
 
         &:hover {
-            @apply bg-base-content/10;
+            @apply dropdown-hover;
         }
     }
 
@@ -21,7 +21,7 @@
         @apply bg-base-content/5 rounded-btn;
 
         .tab {
-            @apply hover:bg-base-content/10;
+            @apply hover:dropdown-hover;
 
             &.tab-active {}
 

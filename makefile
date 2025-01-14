@@ -145,7 +145,7 @@ clear-cache:
 	rm -rf ./bootstrap/cache/*.php
 	rm -rf ./storage/framework/composerPaths.php
 	rm -rf ./storage/framework/viewPaths.php
-	rm -rf ./storage/framework/cache/*.php
+	rm -rf ./storage/framework/cache/*
 	rm -rf ./storage/framework/views/*.php
 
 .PHONY: install-deps build-js build package clean run-dev

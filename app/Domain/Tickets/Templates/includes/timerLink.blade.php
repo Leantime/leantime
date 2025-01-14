@@ -9,7 +9,7 @@
     hx-swap="outerHTML"
     class="timerContainer">
 
-    @if ($onTheClock === false)
+    @if (empty($onTheClock))
         <a href="javascript:void(0);" data-value="{{ $parentTicketId }}"
            hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
            hx-target="#timerHeadMenu"
@@ -19,7 +19,7 @@
         </a>
     @endif
 
-    @if ($onTheClock !== false && $onTheClock["id"] == $parentTicketId)
+    @if (!empty($onTheClock) && $onTheClock["id"] == $parentTicketId)
     <a href="javascript:void(0);" data-value="{{ $parentTicketId }}"
        hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
        hx-target="#timerHeadMenu"
@@ -34,7 +34,7 @@
         @endif
     </a>
     @endif
-    @if ($onTheClock !== false && $onTheClock["id"] != $parentTicketId)
+    @if (!empty($onTheClock) && $onTheClock["id"] != $parentTicketId)
         <span class='working'>
             {{ __("text.timer_set_other_todo") }}
         </span>

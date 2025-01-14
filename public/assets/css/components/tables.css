@@ -58,9 +58,6 @@
     padding-bottom: 150px;
 }
 
-.simpleAccordionContainer .dataTables_wrapper{
-    padding-bottom:0px
-}
 
 .dataTables_length, .dataTables_info {
     padding: 10px;

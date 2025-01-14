@@ -2,7 +2,11 @@
 
 @section('content')
 
-<script type="text/javascript">
+<script type="module">
+    
+    import "@mix('/js/Domain/Timesheets/Js/timesheetsController.js')"
+    import "@mix('/js/components/datePickers.module.js')"
+
     jQuery(document).ready(function(){
         jQuery("#checkAllEmpl").change(function(){
             jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
@@ -37,13 +41,13 @@
             }
         });
 
-        leantime.timesheetsController.initTimesheetsTable();
+        timesheetsController.initTimesheetsTable();
 
-        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-            leantime.timesheetsController.initEditTimeModal();
-        <?php } ?>
+        // <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+        //     timesheetsController.initEditTimeModal();
+        // <?php } ?>
 
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1)
+        datePickers.initDateRangePicker(".dateFrom", ".dateTo", 1);
     });
 </script>
 
@@ -74,10 +78,10 @@
                         <select name="clientId">
                             <option value="-1"><?php echo strip_tags($tpl->__("menu.all_clients")) ?></option>
                             <?php foreach ($tpl->get('allClients') as $client) {?>
-                                <option value="<?=$client['id'] ?>"
-                                    <?php if ($tpl->get('clientFilter') == $client['id']) {
+                                <option value="<?=$client->id ?>"
+                                    <?php if ($tpl->get('clientFilter') == $client->id) {
                                         echo "selected='selected'";
-                                    } ?>><?=$tpl->escape($client['name'])?></option>
+                                    } ?>><?=$tpl->escape($client->name)?></option>
                             <?php } ?>
                         </select>
                     </td>
@@ -116,8 +120,7 @@
                             ?>
                         </select>
                     </td>
-                    <td>
-
+                    {{-- <td>
 
                         <x-global::forms.select name="userId" id="userId" labelText="{{ __('label.all_employees') }}" style="max-width:120px;" onchange="submit();">
                             <x-global::forms.select.select-option value="all">{{ __('label.all_employees') }}</x-global::forms.select.select-option>
@@ -131,13 +134,14 @@
                             @endforeach
                         </x-global::forms.select>
 
-                    </td>
+                    </td> --}}
                     <td>
                         <x-global::forms.checkbox
                             labelText="{{ __('label.invoiced') }}"
                             labelPosition="right"
                             name="invEmpl"
                             id="invEmpl"
+                            size="xs"
                             value="on"
                             :checked="$tpl->get('invEmpl') == '1'"
                             onclick="submit();"
@@ -149,6 +153,7 @@
                             labelPosition="right"
                             name="invComp"
                             id="invComp"
+                            size="xs"
                             value="on"
                             :checked="$tpl->get('invComp') == '1'"
                             onclick="submit();"
@@ -161,6 +166,7 @@
                             labelPosition="right"
                             name="paid"
                             id="paid"
+                            size="xs"
                             value="on"
                             :checked="$tpl->get('paid') == '1'"
                             onclick="submit();"
@@ -168,7 +174,9 @@
                     </td>
                     <td>
                         <input type="hidden" name='filterSubmit' value="1"/>
-                        <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
+                        <x-global::forms.button content-role="ghost" type="submit" class="reload" >
+                            {{ __('buttons.search') }}
+                        </x-global::forms.button>
                     </td>
                 </tr>
             </table>

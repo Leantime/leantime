@@ -12,7 +12,7 @@ $statusLabels = $tpl->get('allTicketStates');
 $taskToggle = $tpl->get('enableTaskTypeToggle');
 
 ?>
-<form action="" method="get" id="ticketSearch">
+<form action="" method="get" id="ticketSearch" hx-boost="true">
 
     <input type="hidden" value="1" name="search" />
     <input type="hidden" value="<?php echo session('currentProject'); ?>" name="projectId" id="projectIdInput" />

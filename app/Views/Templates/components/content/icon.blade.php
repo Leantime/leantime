@@ -1,5 +1,7 @@
 @props([
-    'icon' => ''
+    'icon' => '',
+    'fill' => false,
+    'size' => 'md'
 ])
 
 @php
@@ -18,4 +20,4 @@
 
 @endphp
 
-<span {{ $attributes->merge([ 'class' => 'material-symbols-rounded' ]) }}>{!! $iconMapped !!}</span>
+<span {{ $attributes->merge([ 'class' => 'h-'.$size.' w-'.$size.' icon material-symbols-rounded'. ($fill !== false ? ' fill ': '')  ]) }}>{!! $iconMapped !!}</span>

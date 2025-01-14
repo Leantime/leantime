@@ -362,96 +362,6 @@
     color: var(--dropdown-link-hover-color) !important;
 }
 
-.maincontent .accordionTitle {
-    font-size: var(--font-size-l);
-    color: var(--primary-font-color);
-    margin-bottom: 10px;
-    font-weight:bold;
-    margin-left:0px;
-    border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
-}
-
-.maincontent .noBackground .accordionTitle {
-    color: var(--main-titles-color);
-}
-
-.maincontent .accordionTitle i {
-    display:inline-block;
-    width:15px;
-    text-align:center;
-    margin-right:5px;
-    border-radius:5px;
-}
-
-.maincontent .accordionTitle:hover i,
-.maincontent .accordionTitle i:hover {
-    background:var(--col-hover-bg);
-    color:var(--interactive-icon-color);
-}
-
-.maincontent .accordionTitle[class*="label-"] {
-    margin-left:0px;
-    border-radius: var(--accordion-header-radius);
-    padding: 5px 0px;
-    background: none;
-}
-
-.maincontent .accordionTitle.label-warning a{
-    background:none;
-    color:var(--yellow);
-}
-
-.maincontent .accordionTitle.label-important a {
-    background:none;
-    color:var(--red);
-}
-
-.maincontent .accordionTitle.label-info a {
-    background:none;
-    color:var(--dark-blue);
-}
-
-.maincontent .accordionTitle.label-danger a {
-    background:none;
-    color:var(--dark-red);
-}
-
-.maincontent .accordionTitle.label-success a {
-    background:none;
-    color:var(--green);
-}
-
-.maincontent .accordionTitle.label-default a {
-    background:none;
-    color:var(--grey);
-}
-
-.simpleAccordionContainer {
-    margin-bottom:30px;
-    padding-left: 20px;
-}
-
-.simpleAccordionContainer.kanban {
-    padding-left:0px;
-}
-
-.maincontent .accordionTitle .accordion-toggle i.fa:first-child {
-    width: 15px;
-    margin-top: 0px;
-    margin-right: 5px;
-    height: 15px;
-    line-height: 15px;
-    text-align: center;
-    border-radius: var(--element-radius);
-    font-size: var(--font-size-m);
-}
-
-.maincontent .accordionTitle .accordion-toggle i.fa:first-child:hover {
-    background: var(--main-menu-link-active-bg);
-}
-
-
 .ticketDropdown ul::after {
     position: absolute;
     top:-6px;
@@ -637,3 +547,11 @@
 .inlineLabelDropdown .dropdown {
     padding-top:5px;
 }
+
+
+.dropdown.dropdown-open .dropdown-content,
+.dropdown:not(.dropdown-hover):focus .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+    z-index: 200;
+}
+

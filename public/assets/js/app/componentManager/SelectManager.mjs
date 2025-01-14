@@ -12,9 +12,25 @@ class SelectManager extends BaseComponentManager {
     }
 
     createInstance(element, config = {}) {
+        // Show loading state
+        const loadingState = element.parentElement.querySelector('.select-loading-state');
+        if (loadingState) {
+            loadingState.classList.remove('hidden');
+        }
 
         let componentConfig = element.dataset.componentConfig;
-        return selects.initSelect(element, componentConfig);
+        const instance = selects.initSelect(element, componentConfig, function(){
+            this.wrapper.classList.remove('opacity-0');
+        });
+
+        // Hide loading state and show select
+        if (loadingState) {
+            loadingState.classList.add('hidden');
+        }
+
+
+
+        return instance;
     }
 
     cleanup(instance) {

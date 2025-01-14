@@ -27,14 +27,14 @@
     <div class="column ticketColumn" id="ticketColumn_{{ $status }}"
         hx-get="{{ $url }}" hx-swap="innerHTML"
         hx-trigger="load, reload from:body">
-        <x-global::elements.loader id="loadingthis" size="25px" />
+        <x-global::elements.loadingText :count="random_int(1, 5)" :type="'ticket-column-card'" />
     </div>
 @else
     <div class="column">
         <div class="contentInner status_{{ $statusKey }}">
             @foreach ($allTickets as $ticket)
                 @if ($ticket['status'] == $statusKey)
-                    <x-tickets::ticket-column-card :ticket="$ticket" :statusKey="$statusKey" :todoTypeIcons="$ticketTypeIcons"
+                    <x-tickets::cards.ticket-card :ticket="$ticket" :statusKey="$statusKey" :todoTypeIcons="$ticketTypeIcons"
                         :priorities="$priorities" :efforts="$efforts" :milestones="$milestones" :users="$users" :onTheClock="$onTheClock" />
                 @endif
             @endforeach

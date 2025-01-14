@@ -38,5 +38,6 @@ class Canvas extends HtmxController
         $this->tpl->assign('relatesLabels', $relatesLabels);
         $this->tpl->assign('users', $users);
         $this->tpl->assign('goalItems', $canvasItems);
+        $this->tpl->assign('canvasId', $id);
     }
 }

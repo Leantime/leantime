@@ -8,7 +8,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class TicketCard extends HtmxController
 {
-    protected static string $view = 'tickets::components.ticket-card';
+    protected static string $view = 'tickets::components.cards.ticket-card';
 
     private Tickets $ticketService;
     private Timesheets $timesheetService;
@@ -50,12 +50,14 @@ class TicketCard extends HtmxController
         $ticketId = (int) ($params['id']);
         $ticket = (array) $this->ticketService->getTicket($ticketId);
         $efforts = $this->ticketService->getEffortLabels();
+        $priorities = $this->ticketService->getPriorityLabels();
         $statusLabels = $this->ticketService->getStatusLabels();
         $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
 
         $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('efforts', $efforts);
+        $this->tpl->assign('priorities', $priorities);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('milestones', $milestones);
     }

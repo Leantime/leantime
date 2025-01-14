@@ -61,7 +61,9 @@
                                 style="float:right;">
 
                                 <!-- Menu Header -->
-                        <li class="nav-header">{{ __('subtitles.file') }}</li>
+                                <x-global::actions.dropdown.item variant="header">
+                                    {{ __('subtitles.file') }}
+                                </x-global::actions.dropdown.item>
 
                         <!-- Download File Menu Item -->
                         <x-global::actions.dropdown.item variant="link"

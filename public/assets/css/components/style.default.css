@@ -611,25 +611,6 @@ body.loginpage {
     right: 20px;
 }
 
-
-
-
-
-
-
-.widgetcontent {
-    background: var(--secondary-background);
-    padding: 15px 12px;
-    border: 1px solid var(--neutral) !important;
-    border-top: 0;
-    margin-bottom: 20px;
-
-}
-
-.widgetcontent p {
-    margin: 15px 0;
-}
-
 .widgetright {
     width: 300px !important;
     margin-left: 15px !important;
@@ -1296,16 +1277,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     border-width: 2px;
 }
 
-.badge {
-    font-size: 10px;
-    text-shadow: none;
-    font-weight: normal;
-    line-height: 19px;
-    -moz-border-radius: 50px;
-    -webkit-border-radius: 50px;
-    border-radius: 50px;
-}
-
 .popover, .popover-title {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -1395,7 +1366,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     background: var(--blue);
 }
 
-pre.prettyprint, .accordion {
+pre.prettyprint {
     margin-bottom: 0;
 }
 
@@ -2485,10 +2456,6 @@ body a.btn-link.btn-fancy:hover {
 
 .projectBox {
     color:var(--primary-font-color);
-}
-
-.widgetContent {
-    padding:0px 2px;
 }
 
 .modalWindowIcon {
