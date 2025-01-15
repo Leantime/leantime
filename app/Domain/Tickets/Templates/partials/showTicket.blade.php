@@ -134,6 +134,7 @@
                     <x-tickets::details
                         :ticket="$ticket"
                         :milestones="$milestones"
+                        :sprints="$sprints"
                         :allAssignedprojects="$allAssignedprojects" />
                 </x-global::content.tabs.content>
 

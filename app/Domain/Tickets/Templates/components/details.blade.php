@@ -4,7 +4,8 @@
     'statusLabels' => [],
     'ticketTypes' => [],
     'url' => '',
-    'milestones' => []
+    'milestones' => [],
+    'sprints' => []
 ])
 
 
@@ -40,10 +41,16 @@
     label-position="top"
     dropdown-position="left" />
 
-
+<x-tickets::chips.sprint-select
+    :sprints="$sprints"
+    :ticket="(object)$ticket"
+    :showLabel="true"
+    variant="select"
+    label-position="top"
+    dropdown-position="left" />
 
 <x-global::forms.select
-    name='projectId'
+    name='dependingTicketId'
     search="false"
     dropdown-position="left"
     label-position="top"
