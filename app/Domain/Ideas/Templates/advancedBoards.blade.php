@@ -16,9 +16,9 @@
             }
         }
 
-        @endphp
+    @endphp
 
-<div class="pageheader">
+    <div class="pageheader">
         <div class="pageicon"><i class="far fa-lightbulb"></i></div>
         <div class="pagetitle">
             <h5><?php $tpl->e(session('currentProjectClient') . ' // ' . session('currentProjectName')); ?></h5>
@@ -32,14 +32,14 @@
 
                     <x-global::content.context-menu>
                         @if ($login::userIsAtLeast($roles::$editor))
-                        <x-global::actions.dropdown.item>
-                            {!! __('links.icon.edit') !!}
-                        </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item>
+                                {!! __('links.icon.edit') !!}
+                            </x-global::actions.dropdown.item>
 
-                        <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                            class="delete">
-                            {!! __('links.icon.delete') !!}
-                        </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">
+                                {!! __('links.icon.delete') !!}
+                            </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
                 </span>
@@ -58,7 +58,7 @@
                             </x-slot:labelText>
                             <x-slot:menu>
                                 @if ($login::userIsAtLeast($roles::$editor))
-                                    <x-global::actions.dropdown.item href="javascript:void(0)" class="addCanvasLink">
+                                    <x-global::actions.dropdown.item href="#/ideas/boardDialog">
                                         {!! __('links.icon.create_new_board') !!}
                                     </x-global::actions.dropdown.item>
                                 @endif
@@ -101,8 +101,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown  align="start"
-                                contentRole="ghost">
+                            <x-global::actions.dropdown align="start" contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>
@@ -141,14 +140,9 @@
                                 </h4>
                                 <div class="contentInner status_{{ $key }}">
                                     @foreach ($canvasItems as $row)
-                                        <x-ideas::idea-item 
-                                            :row="$row" 
-                                            :key="$key" 
-                                            {{-- :roles="$roles" 
+                                        <x-ideas::idea-item :row="$row" :key="$key" {{-- :roles="$roles" 
                                             :login="$login"  --}}
-                                            :users="$users" 
-                                        />
-                                
+                                            :users="$users" />
                                     @endforeach
                                 </div>
                             </div>
@@ -192,7 +186,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal" content-role="secondary">
+                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal"
+                                    content-role="secondary">
                                     {!! __('buttons.close') !!}
                                 </x-global::forms.button>
 
@@ -219,9 +214,8 @@
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
-                                <x-global::forms.text-input type="text" name="canvastitle"
-                                    value="{{ $canvasTitle }}" labelText="{{ __('label.title_idea_board') }}"
-                                    variant="title" />
+                                <x-global::forms.text-input type="text" name="canvastitle" value="{{ $canvasTitle }}"
+                                    labelText="{{ __('label.title_idea_board') }}" variant="title" />
 
                             </div>
                             <div class="modal-footer">
