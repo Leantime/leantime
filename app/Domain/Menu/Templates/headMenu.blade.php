@@ -68,7 +68,7 @@
 
             <div class="scroll-wrapper">
 
-                <ul id='notificationsList' class='notifcationViewLists'>
+                <ul id='notificationsList' class='notificationViewLists'>
                     @if ($totalNotificationCount === 0)
                         <p style='padding: 10px'>{{ __('text.no_notifications') }}</p>
                     @endif
@@ -200,7 +200,7 @@
             function toggleNotificationTabs(active) {
                 jQuery(".notifcationTabs").removeClass("active");
                 jQuery('#' + active + 'ListLink').addClass("active");
-                jQuery('.notifcationViewLists').hide();
+                jQuery('.notificationViewLists').hide();
                 jQuery('#' + active + 'List').show();
             }
 
@@ -216,9 +216,22 @@
                             }
                         }
                     ).done(function () {
-                        jQuery(".notifcationViewLists li.new").removeClass("new");
+                        jQuery(".notificationViewLists li.new").removeClass("new");
                         jQuery(".notificationCounter").fadeOut();
                     })
+                });
+
+                jQuery('.dropdown-toggle').on('click', function(e) {
+                    e.preventDefault();
+                    jQuery('.dropdown-menu.show').not(jQuery(this).next('.dropdown-menu')).removeClass('show');
+                    jQuery(this).next('.dropdown-menu').toggleClass('show');
+                });
+    
+                // Close dropdown when clicking outside
+                jQuery(document).on('click', function(e) {
+                    if (!jQuery(e.target).closest('.dropdown-toggle').length) {
+                        jQuery('.dropdown-menu.show').removeClass('show');
+                    }
                 });
 
                 jQuery('.notificationDropdown .dropdown-menu').on('click', function (e) {

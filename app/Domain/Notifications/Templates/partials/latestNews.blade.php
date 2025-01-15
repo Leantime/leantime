@@ -1,4 +1,4 @@
-<h1>Latest From Leantime</h1>
+<h1 style="font-size: var(--font-size-xxl); font-weight: 200; margin-left: 0.8rem; margin-top: 0.2rem;">Latest From Leantime</h1>
 <br />
 <div>
     <ul>
