@@ -231,3 +231,5 @@ export const widgetController = {
     initGrid: initGrid,
     toggleWidgetVisibility: toggleWidgetVisibility
 };
+
+export default widgetController;
