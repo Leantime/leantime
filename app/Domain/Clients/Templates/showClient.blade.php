@@ -161,10 +161,10 @@
                                 <?php foreach ($tpl->get('userClients') as $user) : ?>
                                     <tr>
                                         <td>
-                                        <?php printf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])); ?>
+                                        <?php printf($tpl->escape($user['name'])); ?>
                                         </td>
-                                        <td><a href='mailto:{{ $user['username'] }}'> {{ $user['username'] }}</a></td>
-                                        <td>{{$user['phone']}}</td>
+                                        {{-- <td><a href='mailto:{{ $user['username'] }}'> {{ $user['username'] }}</a></td> --}}
+                                        {{-- <td>{{$user['phone']}}</td> --}}
                                     </tr>
                                 <?php endforeach; ?>
 
@@ -302,11 +302,13 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+
+        import "@mix('/js/Domain/Clients/Js/clientsController.js')"
         <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
         jQuery(document).ready(function($) {
-            leantime.clientsController.initClientTabs();
+            clientsController.initClientTabs();
         });
 
         <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>

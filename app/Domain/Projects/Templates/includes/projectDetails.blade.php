@@ -157,8 +157,8 @@ $menuTypes = $tpl->get('menuTypes');
                             class="fa fa-building"></span>{{ __("label.client_product") }}</h4>
                             <x-global::forms.select name="clientId" id="clientId">
                                 @foreach ($tpl->get('clients') as $row)
-                                    <x-global::forms.select.select-option :value="$row['id']" :selected="$project['clientId'] == $row['id']">
-                                        {!! $tpl->escape($row['name']) !!}
+                                    <x-global::forms.select.select-option :value="$row->id" :selected="$project['clientId'] == $row->id">
+                                        {!! $tpl->escape($row->name) !!}
                                     </x-global::forms.select.select-option>
                                 @endforeach
                             </x-global::forms.select>
