@@ -286,7 +286,7 @@ body .maincontent .priority-border-5 {
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
-    padding: 0px 10px;
+    padding: 5px 10px;
 
     line-height:17px;
     font-weight: 500;

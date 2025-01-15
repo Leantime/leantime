@@ -108,6 +108,7 @@ class AdvancedBoards extends Controller
         if ($allCanvas === null) {
             $allCanvas = $this->ideaRepo->getAllCanvas(session('currentProject'));
         }
+ 
         $this->tpl->assign('currentCanvas', $currentCanvasId);
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
         $this->tpl->assign('allCanvas', $allCanvas);

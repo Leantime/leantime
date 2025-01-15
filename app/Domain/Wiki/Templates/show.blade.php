@@ -256,7 +256,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                             echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3>";
 
                             echo "" . $tpl->__("text.create_new_content") . "<br /><br />
-                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
+                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-sm btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
 
                             echo"</div>";
                             ?>
