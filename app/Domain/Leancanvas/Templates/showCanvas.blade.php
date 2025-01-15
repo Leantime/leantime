@@ -70,6 +70,5 @@
     </div>
     <div class="clearfix"></div>
     <?php } ?>
-
     @include('canvas::showCanvasBottom', array_merge($__data, ['canvasName' => 'lean']))
 @endsection

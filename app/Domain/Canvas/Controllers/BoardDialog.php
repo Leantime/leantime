@@ -125,7 +125,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
             if (! isset($_GET['raw'])) {
-                return $this->tpl->displayPartial('canvas.boardDialog');
+                return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.boardDialog');
             }
         }
     }

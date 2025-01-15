@@ -1,4 +1,3 @@
-
 <?php
 
 $canvasTitle = '';
@@ -56,25 +55,23 @@ $tpl->assign('canvasTitle', $canvasTitle);
         <span class="dropdown dropdownWrapper headerEditDropdown">
             <x-global::content.context-menu>
                 @if ($login::userIsAtLeast($roles::$editor))
-                    <x-global::actions.dropdown.item 
-                        href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas}}">
+                    <x-global::actions.dropdown.item href="#/{{ $canvasName }}canvas/boardDialog/{{ $currentCanvas }}">
                         {!! __('links.icon.edit') !!}
                     </x-global::actions.dropdown.item>
-        
-                    <x-global::actions.dropdown.item 
+
+                    <x-global::actions.dropdown.item
                         href="{{ url($canvasName . 'canvas/export/' . $tpl->get('currentCanvas')) }}">
                         {!! __('links.icon.export') !!}
                     </x-global::actions.dropdown.item>
-        
-                    <x-global::actions.dropdown.item 
-                        href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas}}" 
+
+                    <x-global::actions.dropdown.item href="#/{{ $canvasName }}canvas/delCanvas/{{ $currentCanvas }}"
                         class="delete">
                         {!! __('links.icon.delete') !!}
                     </x-global::actions.dropdown.item>
                 @endif
             </x-global::content.context-menu>
         </span>
-        
+
         <?php } ?>
         <h1><?= $tpl->__("headline.$canvasName.board") ?> //
             <?php if (count($allCanvas) > 0) {?>
