@@ -10,7 +10,7 @@
 
         //get canvas title
         foreach ($allCanvas as $canvasRow) {
-            if ($canvasRow->title == $currentCanvas) {
+            if ($canvasRow->id == $currentCanvas) {
                 $canvasTitle = $canvasRow->title;
                 break;
             }
@@ -32,14 +32,14 @@
 
                     <x-global::content.context-menu>
                         @if ($login::userIsAtLeast($roles::$editor))
-                        <x-global::actions.dropdown.item>
-                            {!! __('links.icon.edit') !!}
-                        </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item>
+                                {!! __('links.icon.edit') !!}
+                            </x-global::actions.dropdown.item>
 
-                        <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
-                            class="delete">
-                            {!! __('links.icon.delete') !!}
-                        </x-global::actions.dropdown.item>
+                            <x-global::actions.dropdown.item href="{{ BASE_URL }}/ideas/delCanvas/{{ $currentCanvas }}"
+                                class="delete">
+                                {!! __('links.icon.delete') !!}
+                            </x-global::actions.dropdown.item>
                         @endif
                     </x-global::content.context-menu>
                 </span>
@@ -58,7 +58,7 @@
                             </x-slot:labelText>
                             <x-slot:menu>
                                 @if ($login::userIsAtLeast($roles::$editor))
-                                    <x-global::actions.dropdown.item href="javascript:void(0)" class="addCanvasLink">
+                                    <x-global::actions.dropdown.item href="#/ideas/boardDialog">
                                         {!! __('links.icon.create_new_board') !!}
                                     </x-global::actions.dropdown.item>
                                 @endif
@@ -67,7 +67,7 @@
 
                                 @foreach ($allCanvas as $canvasRow)
                                     <x-global::actions.dropdown.item
-                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->title }}">
+                                        href="{{ BASE_URL }}/ideas/showBoards/{{ $canvasRow->id }}">
                                         {{ $canvasRow->title }}
                                     </x-global::actions.dropdown.item>
                                 @endforeach
@@ -101,8 +101,7 @@
                 <div class="col-md-4">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
-                            <x-global::actions.dropdown  align="start"
-                                contentRole="ghost">
+                            <x-global::actions.dropdown align="start" contentRole="ghost">
                                 <x-slot:labelText>
                                     {!! __('buttons.idea_kanban') !!} {!! __('links.view') !!}
                                 </x-slot:labelText>
@@ -131,24 +130,19 @@
                 <div id="sortableIdeaKanban" class="sortableTicketList">
                     <div class="row-fluid">
                         @foreach ($canvasLabels as $key => $statusRow)
-                            <div class="column" style="width:{{ $size }}%;">
-                                <h4 class="widgettitle title-primary">
+                            <div class="column">
+                                <h4 class="flex justify-between items-center widgettitle title-primary py-[10px] px-[15px]">
+                                    {{ $statusRow['name'] }}
                                     @if ($login::userIsAtLeast($roles::$manager))
                                         <a href="#/setting/editBoxLabel?module=idealabels&label={{ $key }}"
                                             class="editHeadline"><i class="fas fa-edit"></i></a>
                                     @endif
-                                    {{ $statusRow['name'] }}
                                 </h4>
                                 <div class="contentInner status_{{ $key }}">
                                     @foreach ($canvasItems as $row)
-                                        <x-ideas::idea-item 
-                                            :row="$row" 
-                                            :key="$key" 
-                                            {{-- :roles="$roles" 
+                                        <x-ideas::idea-item :row="$row" :key="$key" {{-- :roles="$roles" 
                                             :login="$login"  --}}
-                                            :users="$users" 
-                                        />
-                                
+                                            :users="$users" />
                                     @endforeach
                                 </div>
                             </div>
@@ -192,7 +186,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal" content-role="secondary">
+                                <x-global::forms.button type="button" class="btn btn-default" data-dismiss="modal"
+                                    content-role="secondary">
                                     {!! __('buttons.close') !!}
                                 </x-global::forms.button>
 
@@ -219,9 +214,8 @@
                                 <h4 class="modal-title">{!! __('headlines.edit_board_name') !!}</h4>
                             </div>
                             <div class="modal-body">
-                                <x-global::forms.text-input type="text" name="canvastitle"
-                                    value="{{ $canvasTitle }}" labelText="{{ __('label.title_idea_board') }}"
-                                    variant="title" />
+                                <x-global::forms.text-input type="text" name="canvastitle" value="{{ $canvasTitle }}"
+                                    labelText="{{ __('label.title_idea_board') }}" variant="title" />
 
                             </div>
                             <div class="modal-footer">
@@ -243,11 +237,15 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script type="module">
+        import "@mix('/js/Domain/Ideas/Js/ideasController.js')"
+        import "@mix('/js/Domain/Canvas/Js/canvasController.js')"
+        import "@mix('/js/Domain/Auth/Js/AuthController.js')"
+
         jQuery(document).ready(function() {
 
-            leantime.ideasController.initBoardControlModal();
-            leantime.ideasController.setKanbanHeights();
+            ideasController.initBoardControlModal();
+            ideasController.setKanbanHeights();
 
             @if ($login::userIsAtLeast($roles::$editor))
                 var ideaStatusList = [
@@ -255,10 +253,10 @@
                         '{{ $key }}',
                     @endforeach
                 ];
-                leantime.ideasController.initIdeaKanban(ideaStatusList);
-                leantime.canvasController.initUserDropdown('ideas');
+                ideasController.initIdeaKanban(ideaStatusList);
+                canvasController.initUserDropdown('ideas');
             @else
-                leantime.authController.makeInputReadonly(".maincontentinner");
+                authController.makeInputReadonly(".maincontentinner");
             @endif
 
         });

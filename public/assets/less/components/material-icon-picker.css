@@ -1,0 +1,38 @@
+.material-icon-picker {
+  position: absolute;
+  background: #fcfcfc;
+  text-align: center;
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+}
+
+.material-icon-picker:focus {
+  outline: none;
+}
+
+.material-icon-picker-prefix {
+  top: .5rem;
+}
+
+.material-icon-picker .icons {
+  max-width: 300px;
+  max-height: 200px;
+  overflow: scroll;
+}
+
+div.material-icon-picker input[type="text"] {
+  width: 100%;
+}
+
+.material-icon-picker .material-icons {
+  font-size: 30px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 3px;
+  transition: .2s;
+}
+
+.material-icon-picker .material-icons:hover {
+  background: #ececec;
+}

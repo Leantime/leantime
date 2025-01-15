@@ -53,7 +53,7 @@
                     <td>
                         <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row->id }}"><i class='fa fa-plus'></i> {{ $row->name }}</a>
                     </td>
-                    <td><a href="{{ $row->internet }}" target="_blank">{{ $row->internet }}</a></td>
+                    <td><a href="{{ $row->internet }}">{{ $row->internet }}</a></td>
                     <td>{{ $row->numberOfProjects }}</td>
                 </tr>
             <?php } ?>
@@ -64,13 +64,15 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+
+    import "@mix('/js/Domain/Clients/Js/clientsController.js')"
 
     <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
     jQuery(document).ready(function() {
 
-        leantime.clientsController.initClientTable();
+        clientsController.initClientTable();
 
 
     });

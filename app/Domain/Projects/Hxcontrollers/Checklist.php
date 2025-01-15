@@ -9,7 +9,7 @@ use Leantime\Domain\Projects\Services\Projects;
 
 class Checklist extends HtmxController
 {
-    protected static string $view = 'projects::partials.checklist';
+    protected static string $view = 'projects::includes.checklist';
 
     private Projects $projectService;
 
