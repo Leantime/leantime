@@ -1,6 +1,4 @@
-
-
-@if (count($tpl->get('allCanvas')) > 0)
+@if (count($allCanvas) > 0)
     {{-- Do something when allCanvas has items --}}
 @else
     <br /><br />
@@ -9,19 +7,19 @@
             {!! file_get_contents(ROOT . '/dist/images/svg/undraw_design_data_khdb.svg') !!}
         </div>
 
-        <h3>{{ __("headlines.$canvasName.analysis") }}</h3>
-        <br />{{ __("text.$canvasName.helper_content") }}
+        <h3>{!! __("headlines.$canvasName.analysis") !!}</h3>
+        <br />{!! __("text.$canvasName.helper_content") !!}
 
         @if ($login::userIsAtLeast($roles::$editor))
             <br /><br />
             <a href="javascript:void(0)" class="addCanvasLink btn btn-primary">
-                {{ __("links.icon.create_new_board") }}
+                {!! __('links.icon.create_new_board') !!}
             </a>.
         @endif
     </div>
 @endif
 
-@if (!empty($disclaimer) && count($tpl->get('allCanvas')) > 0)
+@if (!empty($disclaimer) && count($allCanvas) > 0)
     <small class="align-center">{{ $disclaimer }}</small>
 @endif
 
@@ -30,31 +28,34 @@
 
 
 @section('scripts')
-<script type="text/javascript">
-    jQuery(document).ready(function() {
-        if (jQuery('#searchCanvas').length > 0) {
-            new SlimSelect({
-                select: '#searchCanvas'
-            });
-        }
+    <script type="module">
+        import "@mix('/js/Domain/Canvas/Js/canvasController.js')"
+        import "@mix('/js/Domain/Auth/Js/authController.js')"
 
-        @if (isset($_GET['closeModal']))
-            jQuery.nmTop().close();
-        @endif
+        jQuery(document).ready(function() {
+            if (jQuery('#searchCanvas').length > 0) {
+                new SlimSelect({
+                    select: '#searchCanvas'
+                });
+            }
 
-        leantime.{{ $canvasName }}CanvasController.setRowHeights();
-        leantime.canvasController.setCanvasName('{{ $canvasName }}');
-        leantime.canvasController.initFilterBar();
+            @if (isset($_GET['closeModal']))
+                jQuery.nmTop().close();
+            @endif
 
-        @if ($login::userIsAtLeast($roles::$editor))
-            leantime.canvasController.initCanvasLinks();
-            leantime.canvasController.initUserDropdown('{{ $canvasName }}');
-            leantime.canvasController.initStatusDropdown('{{ $canvasName }}');
-            leantime.canvasController.initRelatesDropdown('{{ $canvasName }}');
-        @elseif
-            leantime.authController.makeInputReadonly(".maincontentinner");
-        @endif
+            {{ $canvasName }}CanvasController.setRowHeights();
+            canvasController.setCanvasName('{{ $canvasName }}');
+            canvasController.initFilterBar();
 
-    });
-</script>
+            @if ($login::userIsAtLeast($roles::$editor))
+                canvasController.initCanvasLinks();
+                canvasController.initUserDropdown('{{ $canvasName }}');
+                canvasController.initStatusDropdown('{{ $canvasName }}');
+                canvasController.initRelatesDropdown('{{ $canvasName }}');
+            @else
+                authController.makeInputReadonly(".maincontentinner");
+            @endif
+
+        });
+    </script>
 @endsection
