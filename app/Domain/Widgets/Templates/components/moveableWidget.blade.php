@@ -46,17 +46,19 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+    import "@mix('/js/Domain/Widgets/Js/widgetController.js')"
+
     jQuery(document).ready(function() {
 
         jQuery('.fitContent').on('click', function(e) {
             const gridItem = jQuery(this).closest('.grid-stack-item')[0];
-            leantime.widgetController.resizeWidget(gridItem);
+            widgetController.resizeWidget(gridItem);
         })
 
         jQuery('.removeWidget').on('click', function(e) {
             // const gridItem = jQuery(this).closest('.grid-stack-item')[0];
-            leantime.widgetController.toggleWidgetVisibility();
+            widgetController.toggleWidgetVisibility();
         });
 
     });
