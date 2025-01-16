@@ -29,13 +29,13 @@
 
 @switch($variation)
     @case('item')
-        <div class="card bg-base-100 card-compact shadow-md mb-2 border {{ $contentClass }}">
+        <div {{ $attributes->merge(['class' => 'card bg-base-100/90 card-compact shadow-md mb-2 border ' . $contentClass]) }}>
         @break
     @case('content')
-        <div class="card bg-base-100/90 mix-blend-luminosity card-compact shadow-lg mb-2 border {{ $contentClass }}">
+        <div {{ $attributes->merge(['class' => 'card bg-base-100/90 card-compact shadow-md mb-2 border ' . $contentClass]) }}>
         @break
     @case('widget')
-        <div class="card bg-base-100/90 card-compact shadow-md mb-2 border {{ $contentClass }}">
+        <div {{ $attributes->merge(['class' => 'card bg-base-100/90 card-compact shadow-md mb-2 border ' . $contentClass]) }}>
         @break
 @endswitch
 
