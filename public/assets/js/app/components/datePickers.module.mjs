@@ -74,7 +74,6 @@ let dateTimePickerConfig = {
         time_24hr: !leantime.i18n.__("language.timeformat").includes("A"),
     },
     onChange: function(selectedDates, dateStr, instance) {
-        console.log(instance);
 
         let userDateFormat = getFormatFromSettings("dateformat", "luxon");
 
@@ -93,16 +92,34 @@ let dateTimePickerConfig = {
     }
 };
 
-export const initDateTimePicker = function (element, callback) {
+export const initDateTimePicker = function (element, config= '', callback = '') {
 
-    datepickerInstance = jQuery(element).flatpickr(dateTimePickerConfig);
+    config = JSON.parse(config);
+
+    let dateTimeClassName = config.dateTimeClassName;
+
+    const mergedConfig = { ...dateTimePickerConfig, ...config };
+
+    datepickerInstance = jQuery(element).flatpickr(mergedConfig);
+
+    jQuery(element).parent().on('click', '.date-dropdown', function (e) {
+        e.stopPropagation();
+    });
+
+    jQuery(element).parent().find('.timeToggleButton').on('click', function() {
+        datePickers.toggleTime(element, this);
+    })
+
+    jQuery(element).closest('.clear-button').on('click', function() {
+        datePickers.toggleTime(element, this);
+    });
+
     return datepickerInstance;
 
 }
 
 export const initDateRangePicker = function (fromElement, toElement, minDistance) {
 
-    console.log("initDateRangePicker");
         Date.prototype.addDays = function (days) {
             this.setDate(this.getDate() + days);
             return this;

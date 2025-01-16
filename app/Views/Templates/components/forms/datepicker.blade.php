@@ -57,13 +57,13 @@
                     {!! $leadingVisual !!}
                 </div>
             @endif
-            <div>
+            <div class="text-nowrap">
                 @if(empty($value) || ! dtHelper()->isValidDateString($value))
-                    <span class="dateField font-light text-trivial">{{ $noDateLabel }}</span>
-                    <span class="timeField font-light"></span>
+                    <span class="dateField text-trivial">{{ $noDateLabel }}</span>
+                    <span class="timeField"></span>
                 @else
-                    <span class="dateField font-light">{{ format($value)->date() }}</span>
-                    <span class="timeField font-light">
+                    <span class="dateField">{{ format($value)->date() }}</span>
+                    <span class="timeField">
                             @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
                                 {{ format($value)->time() }}
                         @endif
@@ -73,9 +73,19 @@
         </x-slot:label-text>
         <x-slot:card-content>
 
+            @php
+
+                $jsConfig = [
+                    'enableTime' => (dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay()
+                                    && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay()),
+                    'dateTimeClassName' => $dateName
+
+                ];
+            @endphp
 
             <input type="date"
                    data-component="datepicker"
+                   data-component-config="{{ json_encode($jsConfig) }}"
                    id="datepickerDropDown-{{ $dateName }}"
                    class="input-md datepickerDropDown-{{ $dateName }}"
                    name="{{ $name }}"
@@ -85,12 +95,12 @@
                             return \Illuminate\Support\Str::contains($key, "hx-");
                         }) }}
             />
-            <button type="button" class="btn btn-sm float-right timeToggleButton-{{ $dateName }}" onclick="datePickers.toggleTime('.datepickerDropDown-{{ $dateName }}', this)">
+            <button type="button" class="btn btn-sm float-right timeToggleButton">
                 <i class="fa fa-clock"></i>
             </button>
             <hr class="mb-xs mt-0"/>
             <div class="flex justify-end gap-x-xs">
-                <button type="button" class="btn btn-sm float-right" onclick="datePickers.clear('.datepickerDropDown-{{ $dateName }}', this);" >Clear</button>
+                <button type="button" class="btn btn-sm float-right clear-button" >Clear</button>
                 <button type="button" class="btn btn-primary btn-sm float-right" onclick="jQuery(body).click()" >Ok</button>
 
             </div>
@@ -101,23 +111,6 @@
         <x-slot:validation-text> {!! $validationText !!}</x-slot:validation-text>
     @endif
 
-
 </x-global::forms.field-row>
-
-<script type="module">
-
-   import "@mix('/js/components/datePickers.module.js')"
-
-   jQuery(document).ready(function () {
-       jQuery(document).on('click', '.date-dropdown', function (e) {
-           e.stopPropagation();
-       });
-   });
-
-    @if(dtHelper()->isValidDateString($value) && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isEndOfDay() && !dtHelper()->parseDbDateTime($value)->setToUserTimezone()->isStartOfDay())
-        datePickers.toggleTime('.datepickerDropDown-{{ $dateName }}', '.timeToggleButton-{{ $dateName }}');
-    @endif
-
-</script>
 
 

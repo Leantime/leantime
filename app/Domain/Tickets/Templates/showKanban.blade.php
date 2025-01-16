@@ -2,11 +2,11 @@
 
 @section('content')
     <?php
-    
+
     // $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
+
     $allTicketGroups = $allTickets;
-    
+
     ?>
 
     @include('tickets::includes.ticketHeader')
@@ -177,12 +177,6 @@
         jQuery(document).ready(function() {
             document.body.addEventListener('htmx:afterSettle', function() {
                 @if ($login::userIsAtLeast($roles::$editor))
-                    ticketsController.initUserDropdown();
-                    ticketsController.initMilestoneDropdown();
-                    ticketsController.initDueDateTimePickers();
-                    ticketsController.initEffortDropdown();
-                    ticketsController.initPriorityDropdown();
-
                     var ticketStatusList = [
                         @foreach ($tpl->get('allTicketStates') as $key => $statusRow)
                             '{{ $key }}',
@@ -195,11 +189,6 @@
 
                 ticketsController.setUpKanbanColumns();
 
-                @if (isset($_GET['showTicketModal']))
-                    @php
-                        $modalUrl = $_GET['showTicketModal'] == '' ? '' : '/' . (int) $_GET['showTicketModal'];
-                    @endphp
-                @endif
 
                 @foreach ($allTicketGroups as $group)
                     @foreach ($group['items'] as $ticket)

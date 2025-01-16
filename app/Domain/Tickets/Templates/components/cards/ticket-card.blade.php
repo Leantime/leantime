@@ -6,6 +6,7 @@
     'priorities' => [],
     'statuses' => [],
     'id' => '',
+    'showProject' => true,
 ])
 
 @if(empty($id) === false)
@@ -25,7 +26,9 @@
     <x-global::content.card>
         <div class="flex">
             <div class="ticket-title leading-none">
-                <small>{{ $ticket['projectName'] }}</small><br/>
+                @if(filter_var($showProject, FILTER_VALIDATE_BOOLEAN))
+                    <small>{{ $ticket['projectName'] }}</small><br/>
+                @endif
                 <div class="join">
                     @if ($ticket['dependingTicketId'] > 0)
                         <a href="#/tickets/showTicket/{{ $ticket['dependingTicketId'] }}"
