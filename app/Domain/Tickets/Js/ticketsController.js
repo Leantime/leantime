@@ -1068,6 +1068,8 @@ export const initTicketKanban = function (ticketStatusListParameter) {
                 ui.item.removeData("move_handler");
 
                 countTickets();
+                ui.item.removeClass("left");
+                ui.item.removeClass("right");
 
                 var statusPostData = {
                     action: "kanbanSort",
