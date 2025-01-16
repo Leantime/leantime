@@ -24,7 +24,7 @@
 
 @else
 
-    <x-global::content.card>
+    <x-global::content.card class="moveable-card">
         <div class="flex">
             <div class="ticket-title leading-none">
                 @if($type !== 'kanban')
