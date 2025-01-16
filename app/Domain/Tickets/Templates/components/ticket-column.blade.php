@@ -43,7 +43,7 @@
                             :milestones="$milestones"
                             :users="$users"
                             :onTheClock="$onTheClock"
-                            show-project="false" />
+                            type="kanban" />
                 @endif
             @endforeach
         </div>

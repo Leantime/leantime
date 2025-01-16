@@ -59,8 +59,7 @@
             ">
                 @foreach ($allKanbanColumns as $key => $statusRow)
                     <div class="column">
-                        <h4
-                            class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                        <h4 class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                             <div>
                                 <strong class="count">0</strong>
                                 {{ $tpl->e($statusRow['name']) }}

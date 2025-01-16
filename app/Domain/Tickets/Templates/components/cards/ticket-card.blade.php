@@ -7,6 +7,7 @@
     'statuses' => [],
     'id' => '',
     'showProject' => true,
+    'type' => 'full'
 ])
 
 @if(empty($id) === false)
@@ -26,10 +27,10 @@
     <x-global::content.card>
         <div class="flex">
             <div class="ticket-title leading-none">
-                @if(filter_var($showProject, FILTER_VALIDATE_BOOLEAN))
+                @if($type !== 'kanban')
                     <small>{{ $ticket['projectName'] }}</small><br/>
                 @endif
-                <div class="join">
+                <div class="join pt-sm">
                     @if ($ticket['dependingTicketId'] > 0)
                         <a href="#/tickets/showTicket/{{ $ticket['dependingTicketId'] }}"
                            class="join-item link link-primary link-hover">{{ $ticket['parentHeadline'] }}</a>
@@ -41,19 +42,21 @@
                 </div>
             </div>
             <div class="timerContainer flex flex-auto justify-end" id="timerContainer-{{ $ticket['id'] }}">
-                <div class="scheduler btn btn-sm btn-ghost btn-circle">
-                    @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
-                        <x-global::content.icon icon="event_available" class="text-accent text-lg" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"/>
-                    @else
-                        <x-global::content.icon icon="event_busy" class="text-accent text-lg" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
-                    @endif
-                </div>
+                @if($type !== 'kanban')
+                    <div class="scheduler btn btn-sm btn-ghost btn-circle">
+                        @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
+                            <x-global::content.icon icon="event_available" class="text-accent text-lg" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"/>
+                        @else
+                            <x-global::content.icon icon="event_busy" class="text-accent text-lg" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}" />
+                        @endif
+                    </div>
+                @endif
                 @include("tickets::includes.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $timer])
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="flex {{ ($type === 'kanban') ? 'flex-col' : '' }} ">
+            <div class="flex flex-grow justify-start">
 
                 <x-tickets::chips.duedate :ticket="(object)$ticket" variant="chip" content-role="link"  />
 
@@ -64,8 +67,8 @@
 {{--                       value="{{ format($ticket['dateToFinish'])->date(__('text.anytime')) }}"--}}
 {{--                       class="duedates secretInput" data-id="{{ $ticket['id'] }}" name="date" />--}}
             </div>
-            <div class="col-md-8 mt-[3px]">
-                <div class="flex justify-end gap-x-xs">
+
+            <div class="flex flex-grow flex-wrap {{ ($type === 'kanban') ? 'justify-start' : 'justify-end' }} gap-x-xs">
 
                         <x-tickets::chips.priority-select
                             :priorities="$priorities"
@@ -167,8 +170,6 @@
 {{--                            @endforeach--}}
 {{--                        </x-slot:menu>--}}
 {{--                    </x-global::actions.dropdown>--}}
-
-                </div>
             </div>
         </div>
     </x-global::content.card>
