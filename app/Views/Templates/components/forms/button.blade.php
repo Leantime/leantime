@@ -44,7 +44,7 @@
             $typeClass = $variantPrefix.'-ghost text-base-content hover:btn-ghost';
             break;
         case 'link':
-            $typeClass = $variantPrefix.'-link hover:bg-secondary/80 ';
+            $typeClass = $variantPrefix.'-link hover:input-hover ';
             break;
         default:
             $typeClass = $variantPrefix.'-primary border-primary hover:bg-primary/80 ';

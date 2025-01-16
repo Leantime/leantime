@@ -59,10 +59,21 @@
     $alignmentClass = $align === 'end' ? 'dropdown-end' : ''; // Adds 'dropdown-end' class if 'end' is selected
 @endphp
 
-<div {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}>
+<div
+    {{ $attributes->merge(['class' => "dropdown $positionClass $alignmentClass"]) }}
+    @if($selectable)
+        data-component="dropdown"
+    @endif
+>
     <!-- Dropdown Button -->
-    <x-global::forms.button tabindex="0" :state="$state" tag="div" :content-role="$contentRole" :shape="$buttonShape" :variant="$buttonVariant"
-        :scale="$scale" :data-selectable-button="$selectable">
+    <x-global::forms.button
+        tabindex="0"
+        :state="$state"
+        tag="div"
+        :content-role="$contentRole"
+        :shape="$buttonShape"
+        :variant="$buttonVariant"
+        :scale="$scale">
         {!! $labelText !!}
     </x-global::forms.button>
 
@@ -79,65 +90,65 @@
         </div>
     @else
         <!-- Regular Dropdown Menu -->
-        <ul tabindex="0" class="{{ $menuClass }} z-50" {{ $selectable ? 'data-selectable-item' : '' }}>
+        <ul tabindex="0" class="{{ $menuClass }} z-50" {{ $selectable ? 'data-selectable-items' : '' }}>
             {!! $menu !!}
         </ul>
     @endif
 </div>
 
-<script type="module">
-    jQuery(document).ready(function($) {
-        const $selectableDropdowns = $('[data-selectable-button]');
+{{--<script type="module">--}}
+{{--    jQuery(document).ready(function($) {--}}
+{{--        const $selectableDropdowns = $('[data-selectable-button]');--}}
 
-        $selectableDropdowns.each(function() {
-            const $button = $(this);
-            const $dropdown = $button.closest('.dropdown');
-            const $items = $dropdown.find('[data-selectable-item] li, [data-selectable-item] li a');
+{{--        $selectableDropdowns.each(function() {--}}
+{{--            const $button = $(this);--}}
+{{--            const $dropdown = $button.closest('.dropdown');--}}
+{{--            const $items = $dropdown.find('[data-selectable-item] li, [data-selectable-item] li a');--}}
 
-            @if ($selectable == true)
-                @if (!empty($buttonStyle))
-                    $button.attr('style', '{{ $buttonStyle }}');
-                    $button.attr('style', 'color: #fff;');
-                @endif
+{{--            @if ($selectable == true)--}}
+{{--                @if (!empty($buttonStyle))--}}
+{{--                    $button.attr('style', '{{ $buttonStyle }}');--}}
+{{--                    $button.attr('style', 'color: #fff;');--}}
+{{--                @endif--}}
 
-                @if (!empty($indicatorClass))
-                    $button.removeClass();
-                    $button.addClass('{{ $indicatorClass }} hover:bg-ghost');
-                    $button.attr('style', 'color: #fff;');
-                @endif
-            @endif
+{{--                @if (!empty($indicatorClass))--}}
+{{--                    $button.removeClass();--}}
+{{--                    $button.addClass('{{ $indicatorClass }} hover:bg-ghost');--}}
+{{--                    $button.attr('style', 'color: #fff;');--}}
+{{--                @endif--}}
+{{--            @endif--}}
 
-            $items.on('click', function(e) {
-                e.preventDefault();
-                const $selectedItem = $(this);
-                const $li = $selectedItem.is('li') ? $selectedItem : $selectedItem.closest(
-                    'li');
+{{--            $items.on('click', function(e) {--}}
+{{--                e.preventDefault();--}}
+{{--                const $selectedItem = $(this);--}}
+{{--                const $li = $selectedItem.is('li') ? $selectedItem : $selectedItem.closest(--}}
+{{--                    'li');--}}
 
-                // Get text from the clicked element
-                const selectedText = $selectedItem.text().trim();
+{{--                // Get text from the clicked element--}}
+{{--                const selectedText = $selectedItem.text().trim();--}}
 
-                // Update button text
-                $button.text(selectedText);
+{{--                // Update button text--}}
+{{--                $button.text(selectedText);--}}
 
-                // Check for style on both the clicked element and its li parent
-                const style = $selectedItem.attr('style') ||
-                    $selectedItem.attr('data-style') ||
-                    $li.attr('style') ||
-                    $li.attr('data-style');
+{{--                // Check for style on both the clicked element and its li parent--}}
+{{--                const style = $selectedItem.attr('style') ||--}}
+{{--                    $selectedItem.attr('data-style') ||--}}
+{{--                    $li.attr('style') ||--}}
+{{--                    $li.attr('data-style');--}}
 
-                const indicatorClass = $selectedItem.attr('data-class') || $li.attr(
-                    'data-class');
+{{--                const indicatorClass = $selectedItem.attr('data-class') || $li.attr(--}}
+{{--                    'data-class');--}}
 
-                if (style) {
-                    $button.attr('style', style + '; color: #fff;');
-                }
+{{--                if (style) {--}}
+{{--                    $button.attr('style', style + '; color: #fff;');--}}
+{{--                }--}}
 
-                if (indicatorClass) {
-                    // Remove all CSS classes from the button element before adding new ones
-                    $button.removeClass();
-                    $button.addClass(indicatorClass + ' hover:bg-ghost');
-                }
-            });
-        });
-    });
-</script>
+{{--                if (indicatorClass) {--}}
+{{--                    // Remove all CSS classes from the button element before adding new ones--}}
+{{--                    $button.removeClass();--}}
+{{--                    $button.addClass(indicatorClass + ' hover:bg-ghost');--}}
+{{--                }--}}
+{{--            });--}}
+{{--        });--}}
+{{--    });--}}
+{{--</script>--}}

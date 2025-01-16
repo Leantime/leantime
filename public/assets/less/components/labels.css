@@ -7,5 +7,5 @@
 }
 
 .label-text {
-    @apply text-sm text-base-content/80;
+    @apply text-sm text-base-content/80 flex gap-xs;
 }

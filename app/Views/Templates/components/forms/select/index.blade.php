@@ -48,7 +48,7 @@
             $contentRoleClass = '';
             break;
         default:
-            $contentRoleClass = '';
+            $contentRoleClass = 'select-bordered';
     }
     $selectClassArray = [
         'select-'.$formHash,
@@ -84,11 +84,11 @@
 
     <div>
         <div class="flex flex-row">
-            <div class="select-loading-state hidden">
+            <div class="select-loading-state">
                 <x-global::elements.loadingText
                     type="line"
                     count="1"
-                    class="w-full min-w-[100px]" />
+                    class="w-full min-w-[150px]" />
             </div>
 
             @if($leadingVisual)
@@ -97,7 +97,7 @@
                 </x-global::elements.leadingVisual>
             @endif
 
-            <div class="{{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
+            <div class="w-full {{ (!empty($leadingVisual) ? 'ml-lg' : '') }}">
                 <select
                     {{$attributes->merge([
                         'class' => "opacity-0 ".$selectClassBuilder,

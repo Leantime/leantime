@@ -243,12 +243,19 @@ var content_css = appUrl
     + version
     + '.min.css';
 
-export const initSimpleEditor = function (callback, specificId) {
-    const selector = specificId ?
-        `#${specificId}` :
-        'textarea.tinymceSimple';
+export const initSimpleEditor = function (specificElement, callback) {
 
-    jQuery(selector).tinymce({
+    let element;
+
+    if(specificElement) {
+        element = jQuery(specificElement);
+    }else{
+        element = jQuery('textarea.tinymceSimple');
+    }
+
+    const entityId = element.attr("id");
+
+    const instance = element.tinymce({
         // General options
         width: "100%",
         skin_url: skin_url,
@@ -277,18 +284,25 @@ export const initSimpleEditor = function (callback, specificId) {
         file_picker_callback: filePickerCallback,
         setup: editorSetup
     });
+
+    return instance;
 };
 
-export const initComplexEditor = function (specificId) {
+export const initComplexEditor = function (specificElement, callback) {
 
-    var entityId = jQuery("input[name=id]").val();
+    let element;
+
+    if(specificElement) {
+        element = jQuery(specificElement);
+    }else{
+        element = jQuery('textarea.tinymceComplex');
+    }
+
+    const entityId = element.attr("id");
+
     var height = window.innerHeight - 50 - 205;
 
-    const selector = specificId ?
-        `#${specificId}` :
-        'textarea.complexEditor';
-
-    jQuery(selector).tinymce({
+    const instance = element.tinymce({
         // General options
         width: "100%",
         skin_url: appUrl
@@ -349,17 +363,25 @@ export const initComplexEditor = function (specificId) {
         file_picker_callback: filePickerCallback,
         setup: editorSetup
     });
+
+    return instance;
 };
 
-export const initNotesEditor = function (callback, specificId) {
-    var entityId = jQuery("input[name=id]").val();
+export const initNotesEditor = function (specificElement, callback) {
+
+    let element;
+
+    if(specificElement) {
+        element = jQuery(specificElement);
+    }else{
+        element = jQuery('textarea.notesEditor');
+    }
+
+    const entityId = element.attr("id");
+
     var height = window.innerHeight - 50 - 205;
 
-    const selector = specificId ?
-        `#${specificId}` :
-        'textarea.notesEditor';
-
-    jQuery(selector).tinymce({
+    const instance = element.tinymce({
         // General options
         width: "100%",
         skin_url: appUrl
@@ -428,12 +450,27 @@ export const initNotesEditor = function (callback, specificId) {
             });
         },
     });
+
+    return instance;
 };
+
+export const initEditor = function(element, config, callback){
+
+    if(config.type == 'simple') {
+        return initSimpleEditor(element, callback);
+    }else if(config.type == 'notes') {
+        return initNotesEditor(element, callback);
+    }else{
+        return initComplexEditor(element, callback);
+    }
+
+}
 
 // Make public what you want to have public, everything else is private
 export const editors = {
     initSimpleEditor: initSimpleEditor,
     initComplexEditor: initComplexEditor,
-    initNotesEditor: initNotesEditor
+    initNotesEditor: initNotesEditor,
+    initEditor:initEditor
 };
 export default editors;

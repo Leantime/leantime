@@ -1,10 +1,10 @@
 import { BaseComponentManager } from './BaseComponentManager.mjs';
-import selects from "../components/selects.module.mjs";
+import dropdowns from "../components/dropdowns.module.mjs";
 
-class SelectManager extends BaseComponentManager {
+class DropdownManager extends BaseComponentManager {
     findElements(parentElement) {
         try {
-            return parentElement?.querySelectorAll('select[data-component="select"]') || [];
+            return parentElement?.querySelectorAll('select[data-component="dropdown"]') || [];
         } catch (error) {
             console.error('Error finding select elements:', error);
             return [];
@@ -16,7 +16,7 @@ class SelectManager extends BaseComponentManager {
         const loadingState = jQuery(element).parent().parent().find('.select-loading-state');
 
         let componentConfig = element.dataset.componentConfig;
-        const instance = selects.initSelect(element, componentConfig, function(){
+        const instance = dropdowns.initSelectable(element, componentConfig, function(){
             this.wrapper.classList.remove('opacity-0');
 
             if (loadingState) {
@@ -38,5 +38,5 @@ class SelectManager extends BaseComponentManager {
     }
 }
 
-export const selectManager = new SelectManager();
+export const selectManager = new DropdownManager();
 export default selectManager;

@@ -1,6 +1,7 @@
 import { BaseComponentManager } from './BaseComponentManager.mjs';
 import tinymce from 'tinymce';
-import editors, {initSimpleEditor} from "../components/editors.module.mjs";
+import editors, {initEditor, initSimpleEditor} from "../components/editors.module.mjs";
+import dropdowns from "../components/dropdowns.module.mjs";
 
 class EditorManager extends BaseComponentManager {
     findElements(parentElement) {
@@ -9,9 +10,17 @@ class EditorManager extends BaseComponentManager {
 
     createInstance(element, config = {}) {
 
-        editors.initSimpleEditor(element);
+        const loadingState = jQuery(element).parent().parent().find('.editor-loading-state');
 
-        return editors.initSimpleEditor(element);
+        let componentConfig = element.dataset.componentConfig;
+        const instance = editors.initEditor(element, componentConfig, function(){
+        });
+
+        if (loadingState) {
+            loadingState.addClass('hidden');
+        }
+
+        return instance;
     }
 
     cleanup(instance) {

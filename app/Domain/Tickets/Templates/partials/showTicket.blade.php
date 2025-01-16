@@ -8,7 +8,7 @@
 <x-global::content.modal.modal-buttons>
 
     @if (isset($ticket->date))
-        <x-global::content.date-info class="leading-8" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
+        <x-global::content.date-info class="leading-8 text-xs" :date="$ticket->date" :type="\Leantime\Core\Support\DateTimeInfoEnum::UpcatedOnAt" /> |
     @endif
     @if ($ticket->id != '')
         <x-global::content.modal.header-button variant="delete" href="#/tickets/delTicket/{{ $ticket->id }}" />
@@ -20,12 +20,15 @@
 
 <div style="min-width:1400px"></div>
 
-<div class="float-left pt-[3px] pr-1">
-    <h1>#{{ $ticket->id }}</h1>
+<div class="flex gap-x-xs">
+    <div class="">
+        <strong>#{{ $ticket->id }}</strong>
+    </div>
+    <div class="">
+        <x-tickets::chips.type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip" />
+    </div>
 </div>
-<div class="float-left">
-    <x-tickets::chips.type-select :ticket="$ticket" :ticketTypes="$ticketTypes" variant="chip" />
-</div>
+
 
 {{-- <div class="float-left"> --}}
 {{--    <x-global::forms.tags value="{{ $ticket->tags }}" name="tags" autocomplete-tags="true"></x-global::forms.tags> --}}
@@ -43,13 +46,44 @@
             <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" placeholder="Add Title"
                 variant="title" />
 
+            <x-tickets::chips.status-select
+                :statuses="$statusLabels"
+                :ticket="(object)$ticket"
+                :showLabel="true"
+                label-position="left"
+                dropdown-position="left" />
+
+            <x-tickets::chips.duedate
+                :ticket="(object)$ticket"
+                variant="chip"
+                content-role="link"
+                :showLabel="true"
+                label-position="left"
+                dropdown-position="left"
+            />
+
+            <x-tickets::chips.priority-select
+                :priorities="$priorities"
+                :ticket="(object)$ticket"
+                :showLabel="true"
+                label-position="left"
+                dropdown-position="left" />
+
+            <x-tickets::chips.effort-select
+                :efforts="$efforts"
+                variant="chip"
+                :ticket="(object)$ticket"
+                :showLabel="true"
+                label-position="left"
+                dropdown-position="left" />
+
             <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
                 @foreach ($tags as $tag)
                     <option value="{{ $tag }}" selected>{{ $tag }}</option>
                 @endforeach
             </x-global::forms.select>
 
-            <div class="viewDescription mce-content-body input-bordered">
+            <div class="viewDescription mce-content-body">
                 <div class="min-h-[100px]">
                     <p class="input-bordered">
                         @if (!empty($ticket->description))
@@ -86,39 +120,36 @@
     <div class="col-md-5" style="border-radius:10px; padding:0px;">
         <x-global::content.tabs name="ticket-details" variant="bordered" size="md" class="mb-2">
             <x-slot:headings>
-                <x-global::content.tabs.heading name="connections">Connections</x-global::content.tabs.heading>
-                <x-global::content.tabs.heading name="discussion">Discussion</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="connections">Details</x-global::content.tabs.heading>
                 <x-global::content.tabs.heading name="subtask">Subtasks</x-global::content.tabs.heading>
+                <x-global::content.tabs.heading name="discussion">Conversation</x-global::content.tabs.heading>
+
                 <x-global::content.tabs.heading name="files">Files</x-global::content.tabs.heading>
                 <x-global::content.tabs.heading name="timesheet">Timesheet</x-global::content.tabs.heading>
-                <x-global::content.tabs.heading name="ticket-settings">Settings</x-global::content.tabs.heading>
             </x-slot:headings>
 
             <x-slot:contents>
                 <x-global::content.tabs.content name="connections" ariaLabel="Connections" classExtra="p-sm"
                     :checked="true">
-                    Connections
+                    <x-tickets::details
+                        :ticket="$ticket"
+                        :milestones="$milestones"
+                        :sprints="$sprints"
+                        :allAssignedprojects="$allAssignedprojects" />
                 </x-global::content.tabs.content>
 
                 <x-global::content.tabs.content name="discussion" ariaLabel="Discussion" classExtra="p-sm">
                     <x-comments::list :module="'tickets'" :statusUpdates="'false'" :moduleId="$ticket->id" />
                 </x-global::content.tabs.content>
-
                 <x-global::content.tabs.content name="subtask" ariaLabel="Subtasks" classExtra="p-sm">
                     <x-tickets::subtasks :ticket="$ticket" />
                 </x-global::content.tabs.content>
-
                 <x-global::content.tabs.content name="files" ariaLabel="Files" classExtra="p-sm">
                     <x-tickets::files :ticket="$ticket" />
                 </x-global::content.tabs.content>
                 <x-global::content.tabs.content name="timesheet" ariaLabel="Timesheet" classExtra="p-sm">
                     <x-tickets::timesheet :ticket="$ticket" :userInfo="$userInfo" :remainingHours="$remainingHours" :timesheetValues="$timesheetValues"
                         :userHours="$userHours" />
-                </x-global::content.tabs.content>
-                <x-global::content.tabs.content name="ticket-settings" ariaLabel="Settings" classExtra="p-sm">
-                    <x-tickets::settings :ticket="$ticket" :allAssignedprojects="$allAssignedprojects" :statusLabels="$statusLabels" :ticketTypes="$ticketTypes"
-                        :priorities="$priorities" :efforts="$efforts" :remainingHours="$remainingHours"
-                        url="{{ BASE_URL }}/hx/tickets/showTicket/{{ $ticket->id }}" />
                 </x-global::content.tabs.content>
             </x-slot:contents>
         </x-global::content.tabs>

@@ -6,6 +6,7 @@
     'priorities' => [],
     'statuses' => [],
     'id' => '',
+    'showProject' => true,
 ])
 
 @if(empty($id) === false)
@@ -22,19 +23,21 @@
 
 @else
 
-    <x-global::content.card>
+    <x-global::content.card class="moveable-card">
         <div class="flex">
             <div class="ticket-title leading-none">
-                <small>{{ $ticket['projectName'] }}</small><br/>
+                @if(filter_var($showProject, FILTER_VALIDATE_BOOLEAN))
+                    <small>{{ $ticket['projectName'] }}</small><br/>
+                @endif
                 <div class="join">
                     @if ($ticket['dependingTicketId'] > 0)
                         <a href="#/tickets/showTicket/{{ $ticket['dependingTicketId'] }}"
-                           class="join-item">{{ $ticket['parentHeadline'] }}</a>
+                           class="join-item link link-primary link-hover">{{ $ticket['parentHeadline'] }}</a>
                         //
                     @endif
 
                     <a href="#/tickets/showTicket/{{ $ticket['id'] }}"
-                       class="join-item"><strong>{{ $ticket['headline'] }}</strong></a>
+                       class="join-item link link-primary link-hover"><strong>{{ $ticket['headline'] }}</strong></a>
                 </div>
             </div>
             <div class="timerContainer flex flex-auto justify-end" id="timerContainer-{{ $ticket['id'] }}">
@@ -67,19 +70,19 @@
                         <x-tickets::chips.priority-select
                             :priorities="$priorities"
                             :ticket="(object)$ticket"
-                            :label="false"
+                            :showLabel="false"
                             dropdown-position="right" />
 
                         <x-tickets::chips.status-select
                             :statuses="$statuses"
                             :ticket="(object)$ticket"
-                            :label="false"
+                            :showLabel="false"
                             dropdown-position="right" />
 
                         <x-tickets::chips.milestone-select
                             :milestones="$milestones"
                             :ticket="(object)$ticket"
-                            :label="false"
+                            :showLabel="false"
                             dropdown-position="right" />
 
 
