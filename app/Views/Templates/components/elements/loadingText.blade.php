@@ -49,7 +49,7 @@
 @endif
 
 @if ($type == 'goal-card')
-    <div class="row " style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
+    <div class="row max-height: 10%" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
         <div class="sortableTicketList disabled col-md-12" style="padding-top:15px;">
             <div class="row">
                 <div class="col-md-12">
@@ -63,7 +63,7 @@
                                                 {{-- Header with menu --}}
                                                 <div class="d-flex justify-content-between mb-3">
                                                     <p style="width:70%">Loading...</p>
-                                                    <p style="width:30px; height:30px;">Loading...</p>
+                                                    <p style="width:30px; height:10px;">Loading...</p>
                                                 </div>
 
                                                 {{-- Goal title --}}
@@ -75,7 +75,7 @@
                                                 <br />
 
                                                 {{-- Progress bar --}}
-                                                <p style="width:100%; height:20px;">Loading...</p>
+                                                <p style="width:100%; height:10px;">Loading...</p>
                                                 <br />
 
                                                 {{-- Metric values --}}
@@ -222,57 +222,3 @@
     </div>
 @endif
 
-@if ($type == 'goal-item-card')
-    @for ($i = 0; $i < $count; $i++)
-        <div class="col-md-4">
-            <x-global::content.card>
-                <div class="loading-text">
-                    <div class="row">
-                        <div class="col-md-12">
-                            {{-- Header with menu --}}
-                            <div class="d-flex justify-content-between mb-3">
-                                <p style="width:70%">Loading...</p>
-                                <p style="width:30px; height:30px;">Loading...</p>
-                            </div>
-
-                            {{-- Goal title --}}
-                            <p style="width:85%">Loading...</p>
-                            <br />
-
-                            {{-- Metric description --}}
-                            <p style="width:60%">Loading...</p>
-                            <br />
-
-                            {{-- Progress bar --}}
-                            <p style="width:100%; height:20px;">Loading...</p>
-                            <br />
-
-                            {{-- Metric values --}}
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <p style="width:90%">Loading...</p>
-                                </div>
-                                <div class="col-md-4 center">
-                                    <p style="width:90%">Loading...</p>
-                                </div>
-                                <div class="col-md-4 text-right">
-                                    <p style="width:90%; float:right">Loading...</p>
-                                </div>
-                            </div>
-                            <br />
-
-                            {{-- Bottom actions --}}
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <p style="width:100px; display:inline-block">Loading...</p>
-                                    <p style="width:100px; display:inline-block; margin-left:10px">Loading...</p>
-                                </div>
-                                <p style="width:30px">Loading...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </x-global::content.card>
-        </div>
-    @endfor
-@endif
