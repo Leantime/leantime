@@ -1,5 +1,5 @@
 .input-hover {
-    @apply bg-secondary/80;
+    @apply bg-base-content/5 text-base-content;
 }
 
 .input-shadow {

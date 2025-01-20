@@ -188,17 +188,9 @@
 
 <script>
     jQuery(document).ready(function() {
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+        <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
 
-        leantime.ticketsController.initAsyncInputChange();
-        leantime.ticketsController.initDueDateTimePickers();
-
-        leantime.ticketsController.initEffortDropdown();
-        leantime.ticketsController.initStatusDropdown();
-
-        <?php } else { ?>
-
-        leantime.authController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 

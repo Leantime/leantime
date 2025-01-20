@@ -139,11 +139,9 @@ export const initTags = function (
     select.setChoices(function (callback) {
       return fetch(appUrl + "/api/tags")
         .then(function (res) {
-          console.log(res);
           return res.json();
         })
         .then(function (data) {
-          console.log(data);
           return data.map(function (release) {
             return { label: release, value: release };
           });

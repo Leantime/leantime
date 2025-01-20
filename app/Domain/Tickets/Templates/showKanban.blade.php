@@ -2,11 +2,11 @@
 
 @section('content')
     <?php
-    
+
     // $todoTypeIcons = $tpl->get('ticketTypeIcons');
-    
+
     $allTicketGroups = $allTickets;
-    
+
     ?>
 
     @include('tickets::includes.ticketHeader')
@@ -59,8 +59,7 @@
             ">
                 @foreach ($allKanbanColumns as $key => $statusRow)
                     <div class="column">
-                        <h4
-                            class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                        <h4 class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                             <div>
                                 <strong class="count">0</strong>
                                 {{ $tpl->e($statusRow['name']) }}
@@ -177,12 +176,6 @@
         jQuery(document).ready(function() {
             document.body.addEventListener('htmx:afterSettle', function() {
                 @if ($login::userIsAtLeast($roles::$editor))
-                    ticketsController.initUserDropdown();
-                    ticketsController.initMilestoneDropdown();
-                    ticketsController.initDueDateTimePickers();
-                    ticketsController.initEffortDropdown();
-                    ticketsController.initPriorityDropdown();
-
                     var ticketStatusList = [
                         @foreach ($tpl->get('allTicketStates') as $key => $statusRow)
                             '{{ $key }}',
@@ -195,11 +188,6 @@
 
                 ticketsController.setUpKanbanColumns();
 
-                @if (isset($_GET['showTicketModal']))
-                    @php
-                        $modalUrl = $_GET['showTicketModal'] == '' ? '' : '/' . (int) $_GET['showTicketModal'];
-                    @endphp
-                @endif
 
                 @foreach ($allTicketGroups as $group)
                     @foreach ($group['items'] as $ticket)

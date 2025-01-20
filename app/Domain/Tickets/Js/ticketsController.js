@@ -1050,7 +1050,7 @@ export const initTicketKanban = function (ticketStatusListParameter) {
 
         jQuery(currentElement).find(".contentInner").sortable({
             connectWith: ".contentInner",
-            items: "> .moveable",
+            items: "> .moveable-card",
             tolerance: 'intersect',
             placeholder: "ui-state-highlight",
             forcePlaceholderSize: true,
@@ -1068,6 +1068,8 @@ export const initTicketKanban = function (ticketStatusListParameter) {
                 ui.item.removeData("move_handler");
 
                 countTickets();
+                ui.item.removeClass("left");
+                ui.item.removeClass("right");
 
                 var statusPostData = {
                     action: "kanbanSort",

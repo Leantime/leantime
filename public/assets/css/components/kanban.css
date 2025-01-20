@@ -287,7 +287,6 @@ body .maincontent .priority-border-5 {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
     padding: 5px 10px;
-
     line-height:17px;
     font-weight: 500;
     border-bottom-width:3px;
