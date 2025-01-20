@@ -18,11 +18,11 @@
         @apply rounded-box;
 
         &:focus {
-            @apply focus-outline-default;
+
         }
     }
 
-   &.select-chip {
+    &.select-chip {
        @apply bg-none w-auto px-0.5 h-lg leading-lg min-h-lg;
 
        .ts-control {
@@ -33,16 +33,15 @@
            .badge {
 
                .icon {
-                   @apply h-5;
+
                }
            }
 
            &:hover,
            &:focus {
-               @apply dropdown-hover;
-
+              /* ts wrapper + select class is controlling hover */
                .badge {
-                   filter: brightness(85%);
+
                }
            }
 
@@ -61,11 +60,7 @@
        }
 
        .badge{
-           .icon {
-               @apply h-lg text-lg;
-               margin-left:-2px;
-               margin-right:2px;
-           }
+
 
        }
 
@@ -74,12 +69,24 @@
        }
 
    }
+
+    .icon {
+
+        margin-left:-2px;
+        margin-right:2px;
+    }
 }
 
 .ts-wrapper {
 
     &.select {
         padding: 0;
+    }
+
+    &.focus,
+    &:focus {
+        @apply focus-outline-default;
+        outline-offset: 2px;
     }
 
     &.select-chip {
@@ -90,6 +97,11 @@
         .icon {
 
         }
+    }
+
+    &.dropdown-active .ts-control {
+        outline-color: transparent;
+        outline: none !important;
     }
 }
 
@@ -129,6 +141,7 @@
     /*border-radius: 3px;*/
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
 
     &> * {
         vertical-align: baseline;
@@ -357,6 +370,7 @@
 }
 
 .plugin-dropdown_input.focus.dropdown-active .ts-control {
+
 }
 .plugin-dropdown_input .dropdown-input {
     border: 1px solid #d0d0d0;

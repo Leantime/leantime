@@ -24,7 +24,7 @@
 }
 
 .dropdown-hover {
-    @apply bg-base-content/10;
+    @apply input-hover;
 }
 
 .focus-outline-default {

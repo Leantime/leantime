@@ -11,14 +11,18 @@ export const componentManifest = {
     'select': {
         module: () => import('../componentManager/SelectManager.mjs'),
         dependencies: ['select']
+    },
+    'dropdown': {
+        module: () => import('../componentManager/DropdownManager.mjs'),
+        dependencies: ['dropdown']
     }
 };
 
 // Page component configurations
 export const pageConfigs = {
     'login': [],
-    'dashboard': ['datepicker', 'editor', 'select'],
-    'default': []
+    'dashboard': [],
+    'default': ['dropdown', 'select', 'datepicker']
 };
 
 export const getPageComponents = (pageName) => {

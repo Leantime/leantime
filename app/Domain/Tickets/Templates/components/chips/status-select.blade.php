@@ -2,7 +2,7 @@
     'contentRole' => 'primary',
     'variant' => 'chip', //chip, select
     'statuses' => [],
-    'label' => true,
+    'showLabel' => false,
     'labelPosition' => 'top',
     'dropdownPosition' => 'left',
     'ticket' => null,
@@ -20,9 +20,9 @@
     hx-swap="none"
     >
 
-    @if($label)
+    @if($showLabel)
         <x-slot:label-text>
-            <x-global::content.icon icon="emergency_heat" /> {!!  __('label.priority') !!}
+            <x-global::content.icon icon="clock_loader_90" /> {!!  __('label.status') !!}
         </x-slot:label-text>
     @endif
 

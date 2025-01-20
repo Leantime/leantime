@@ -2,7 +2,7 @@
     'contentRole' => 'primary',
     'variant' => 'chip', //chip, select
     'milestones' => [],
-    'label' => true,
+    'showLabel' => false,
     'labelPosition' => 'top',
     'dropdownPosition' => 'left',
     'ticket' => null,
@@ -18,28 +18,43 @@
     hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
     hx-trigger="change"
     hx-swap="none"
+    class="{{ $variant !== 'chip' ? 'select-bordered' : '' }}"
 >
 
-    @if($label)
+    @if($showLabel)
         <x-slot:label-text>
-            <x-global::content.icon icon="emergency_heat" /> {!!  __('label.priority') !!}
+            <x-global::content.icon icon="label_important" /> {!!  __('label.milestone') !!}
         </x-slot:label-text>
     @endif
 
     <x-global::forms.select.option :value="''">
-        <x-global::elements.badge state="trivial" content-role="secondary">
-            {!!  __('label.no_milestone') !!}
-        </x-global::elements.badge>
+        @if($variant == 'chip')
+            <x-global::elements.badge state="trivial" content-role="secondary">
+                {!!  __('label.no_milestone') !!}
+            </x-global::elements.badge>
+        @else
+            <span class="text-trivial flex">
+                    <x-global::content.icon icon="label_important"/> {!!  __('label.no_milestone') !!}
+                </span>
+        @endif
     </x-global::forms.select.option>
 
     @foreach ($milestones as $milestone)
         <x-global::forms.select.option
+
             :value="strtolower($milestone->id)"
             :selected="strtolower($milestone->id) == strtolower( $ticket->milestoneId ?? '') ? 'true' : 'false'">
 
-            <x-global::elements.badge :state="$milestone->tags" content-role="primary">
-                <x-global::content.icon icon="label_important"/> {{ $milestone->headline }}
-            </x-global::elements.badge>
+            @if($variant == 'chip')
+
+                <x-global::elements.badge :state="$milestone->tags" content-role="primary">
+                    <x-global::content.icon icon="label_important"/> {{ $milestone->headline }}
+                </x-global::elements.badge>
+            @else
+                <span class="text-{{ $milestone->tags }} flex">
+                    <x-global::content.icon icon="label_important"/> {{ $milestone->headline }}
+                </span>
+            @endif
 
         </x-global::forms.select.option>
     @endforeach

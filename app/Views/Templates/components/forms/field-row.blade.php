@@ -8,10 +8,10 @@
     'caption' => ''
 ])
 
-<div {{ $attributes->merge(['class'=> 'relative md:flex md:items-center mb-1' ]) }} >
+<div {{ $attributes->merge(['class'=> 'relative md:flex md:items-center mb-sm' ]) }} >
 
     @if($labelPosition == 'left')
-        <div class="md:w-1/3">
+        <div class="md:w-1/4">
             @if($labelText)
                 <span {{ $attributes->merge(['class'=> 'label-text' ]) }}>{{ $labelText }}</span>
             @endif
@@ -19,7 +19,7 @@
     @endif
 
     @if($labelPosition == 'left' || $labelPosition == 'right')
-        <div class="md:w-2/3">
+        <div class="md:w-3/4">
     @else
         <div class="w-full">
     @endif

@@ -4,6 +4,7 @@
         "btn-ghost",
         "btn-sm",
         "btn-circle",
+        "text-trivial",
         "float-right",
         ])->merge() }}
     {{ $variant == 'link' ? "onclick=\"leantime.snippets.copyToClipboard('".$href."')\"" : ""}}
@@ -13,7 +14,7 @@
             <i class="fa fa-link"></i>
             @break
         @case("delete")
-            <span class="text-danger"><i class="fa fa-trash"></i></span>
+            <span class="text-error"><i class="fa fa-trash"></i></span>
             @break
     @endswitch
     {{ $slot }}

@@ -1471,9 +1471,14 @@ namespace Leantime\Domain\Tickets\Services {
             //$params is an array of field names. Exclude id
             unset($params['id']);
             unset($params['act']);
+            unset($params['saveTicket']);
 
             if (! AuthService::userIsAtLeast(Roles::$editor)) {
                 throw new AuthException('You are not allowed to edit tickets');
+            }
+
+            if(isset($params['tags']) && is_array($params['tags'])) {
+                $params['tags'] = implode(',', $params['tags']);
             }
 
             $params = $this->prepareTicketDates($params);
