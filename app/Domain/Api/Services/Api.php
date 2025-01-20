@@ -3,10 +3,12 @@
 namespace Leantime\Domain\Api\Services;
 
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
@@ -18,18 +20,22 @@ class Api
 
     private UserRepository $userRepo;
 
+    private Auth $authService;
+
     private ?array $error = null;
 
     /**
      * @api
      */
-    public function __construct(ApiRepository $apiRepository, UserRepository $userRepo)
+    public function __construct(ApiRepository $apiRepository, UserRepository $userRepo, Auth $authService)
     {
         $this->apiRepository = $apiRepository;
         $this->userRepo = $userRepo;
+        $this->authService = $authService;
     }
 
     /**
+     * @throws BindingResolutionException
      * @api
      */
     public function getAPIKeyUser(string $apiKey): bool|array
@@ -54,6 +60,7 @@ class Api
 
         if ($apiUser) {
             if (password_verify($key, $apiUser['password'])) {
+                $this->authService->setUserSession($apiUser);
                 return $apiUser;
             }
         }
