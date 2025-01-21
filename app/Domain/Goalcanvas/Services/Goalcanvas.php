@@ -301,7 +301,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             foreach ($goals as $key => $goal) {
                 $goals[$key] = $this->prepareDatesForApiResponse($goal);
-                $goals[$key]['id'] = $goal['id'].'-'.$goal['modified'];
+                $goals[$key]['id'] = $goal['id'] . '-' . $goal['modified'];
             }
 
             return $goals;
@@ -472,7 +472,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         private function determineCurrentCanvasId(array $allCanvas, array $params): int
         {
-            $sessionKey = 'current'.strtoupper('goal').'Canvas';
+            $sessionKey = 'current' . strtoupper('goal') . 'Canvas';
 
             if (isset($params['id'])) {
                 $currentCanvasId = (int) $params['id'];
@@ -567,7 +567,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         // Retrieves the stored canvas ID from the session
         private function getStoredCanvasId()
         {
-            $sessionKey = 'current'.strtoupper('goal').'Canvas';
+            $sessionKey = 'current' . strtoupper('goal') . 'Canvas';
 
             return session()->exists($sessionKey) ? session($sessionKey) : -1;
         }
@@ -582,7 +582,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
         private function storeCurrentCanvasId($canvasId)
         {
-            $sessionKey = 'current'.strtoupper('goal').'Canvas';
+            $sessionKey = 'current' . strtoupper('goal') . 'Canvas';
             session([$sessionKey => $canvasId]);
         }
 
@@ -615,7 +615,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             $this->notifyUsers('canvas_created', $title);
 
-            session(['current'.strtoupper('goal').'Canvas' => $canvasId]);
+            session(['current' . strtoupper('goal') . 'Canvas' => $canvasId]);
 
             return ['success' => true, 'message' => $this->language->__('notification.board_created')];
         }
@@ -677,7 +677,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 $title
             );
 
-            session(['current'.strtoupper('goal').'Canvas' => $newCanvasId]);
+            session(['current' . strtoupper('goal') . 'Canvas' => $newCanvasId]);
 
             return ['success' => true, 'message' => $this->language->__('notification.board_copied')];
         }
@@ -725,7 +725,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
-            $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.').'.xml';
+            $uploadfile = tempnam(sys_get_temp_dir(), 'leantime.') . '.xml';
 
             if (! move_uploaded_file($file['tmp_name'], $uploadfile)) {
                 throw new \Exception($this->language->__('notification.board_import_failed'));
@@ -734,7 +734,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $services = app()->make(CanvasService::class);
             $importCanvasId = $services->import(
                 $uploadfile,
-                'goal'.'canvas',
+                'goal' . 'canvas',
                 projectId: session('currentProject'),
                 authorId: session('userdata.id')
             );
@@ -744,7 +744,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 throw new \Exception($this->language->__('notification.board_import_failed'));
             }
 
-            session(['current'.strtoupper('goal').'Canvas' => $importCanvasId]);
+            session(['current' . strtoupper('goal') . 'Canvas' => $importCanvasId]);
             $canvas = $this->goalRepository->getSingleCanvas($importCanvasId);
             $this->notifyUsers('canvas_imported', $canvas[0]['title']);
 
@@ -771,7 +771,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
             $message = sprintf(
                 $this->language->__("email_notifications.canvas_{$action}_message"),
                 session('userdata.name'),
-                "<a href='".$actual_link."'>".$canvasTitle.'</a>'
+                "<a href='" . $actual_link . "'>" . $canvasTitle . '</a>'
             );
             $mailer->setHtml($message);
 
@@ -1122,6 +1122,12 @@ namespace Leantime\Domain\Goalcanvas\Services {
             }
 
             return $goal;
+        }
+
+
+        public function patch($id, $params)
+        {
+            return $this->goalRepository->patchCanvasItem($id, $params);
         }
     }
 }

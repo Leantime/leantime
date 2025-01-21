@@ -49,5 +49,5 @@
             {{ $leadingVisual }}
         </span>
     @endif
-    {{ $slot }}
+    {!! $slot !!}
 </div>
