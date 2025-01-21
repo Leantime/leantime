@@ -21,7 +21,7 @@
 
     @foreach ($statuses as $key => $label)
         <x-global::forms.select.option :value="strtolower($key)" :selected="strtolower($key) == strtolower($goal->status ?? '')">
-            <x-global::elements.badge :state="$label['dropdown']" scale="sm" :outline="true">
+            <x-global::elements.badge :state="$label['dropdown']" :outline="true">
 
                 <x-global::content.icon :icon="$label['icon']" /> {{ $label['title'] }}
             </x-global::elements.badge>

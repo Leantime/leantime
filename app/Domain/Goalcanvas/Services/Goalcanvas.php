@@ -835,7 +835,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
                 'numComments' => $numComments,
                 'canvasIcon' => $this->goalRepository->getIcon(),
                 'canvasTypes' => $this->goalRepository->getCanvasTypes(),
-                'statusLabels' => $this->goalRepository->getStatusLabels(),
+                'statusLabels' => $this->getGoalStatusLabels(),
                 'dataLabels' => $this->goalRepository->getDataLabels(),
             ];
         }
