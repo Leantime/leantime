@@ -2,11 +2,11 @@
 
 @section('content')
     <?php
-
+    
     // $todoTypeIcons = $tpl->get('ticketTypeIcons');
-
+    
     $allTicketGroups = $allTickets;
-
+    
     ?>
 
     @include('tickets::includes.ticketHeader')
@@ -59,7 +59,8 @@
             ">
                 @foreach ($allKanbanColumns as $key => $statusRow)
                     <div class="column">
-                        <h4 class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                        <h4
+                            class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                             <div>
                                 <strong class="count">0</strong>
                                 {{ $tpl->e($statusRow['name']) }}
@@ -136,6 +137,12 @@
                 @endphp
 
                 @if ($group['label'] != 'all')
+                    @php
+                        if (!empty($searchCriteria['groupBy']) && !empty($group['id'])) {
+                            $groupBy = $searchCriteria['groupBy'];
+                            $searchCriteria[$groupBy] = rtrim($group['id']);
+                        } 
+                    @endphp
                     <h5 class="accordionTitle kanbanLane {{ $group['class'] }}" id="accordion_link_{{ $group['id'] }}">
                         <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}"
                             onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
@@ -149,6 +156,9 @@
                     <div class="row-fluid">
 
                         @foreach ($allKanbanColumns as $key => $statusRow)
+                            @php
+                                $searchCriteria['status'] = $key;
+                            @endphp
                             <x-tickets::ticket-column :status="$key" :searchCriteria="$searchCriteria" {{-- :allTickets="$allTickets"
                                 :ticketTypeIcons="$ticketTypeIcons"
                                 :priorities="$priorities"
