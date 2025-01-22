@@ -154,99 +154,75 @@
                                     </div>
 
                                     <div class="clearfix" style="padding-bottom: 8px;"></div>
+                                    <div class="flex justify-between">
+                                        <x-ideas::chips.status-select :statuses="$canvasLabels" :idea="$row"
+                                            contentRole="primary" variant="chip" labelPosition="top"
+                                            dropdownPosition="start" />
 
-                                    <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
-                                        <x-global::actions.dropdown scale="sm" contentRole="link" position="bottom"
-                                            align="start" class="f-left status {{ $canvasLabels[$row->box]['class'] }}"
-                                             :indicator-class="$canvasLabels[$row->box]['class']" selectable="true">
-                                            <!-- Dropdown Button -->
-                                            <x-slot:labelText>
-                                                <span class="text">{{ $canvasLabels[$row->box]['name'] }}</span>&nbsp;<i
-                                                    class="fa fa-caret-down" aria-hidden="true"></i>
-                                            </x-slot:labelText>
+                                        <div
+                                            class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
+                                            <x-global::actions.dropdown contentRole="link" position="bottom" align="start"
+                                                class="f-left">
+                                                <!-- Dropdown Trigger -->
+                                                <x-slot:labelText>
+                                                    <span class="text">
+                                                        @if ($row->authorFirstname != '')
+                                                            <span id='userImage{{ $row->id }}'>
+                                                                <img src='{{ BASE_URL }}/api/users?profileImage={{ $row->author }}'
+                                                                    width='25' style='vertical-align: middle;' />
+                                                            </span>
+                                                            <span id='user{{ $row->id }}'></span>
+                                                        @else
+                                                            <span id='userImage{{ $row->id }}'>
+                                                                <img src='{{ BASE_URL }}/api/users?profileImage=false'
+                                                                    width='25' style='vertical-align: middle;' />
+                                                            </span>
+                                                            <span id='user{{ $row->id }}'></span>
+                                                        @endif
+                                                    </span>
+                                                </x-slot:labelText>
 
-                                            <!-- Menu Slot -->
-                                            <x-slot:menu>
-                                                <!-- Dropdown Header -->
-                                                <x-global::actions.dropdown.item variant="header-border">
-                                                    {!! __('dropdown.choose_status') !!}
-                                                </x-global::actions.dropdown.item>
-
-                                                <!-- Dropdown Items -->
-                                                @foreach ($canvasLabels as $key => $label)
-                                                    <x-global::actions.dropdown.item href="javascript:void(0);"
-                                                        class="{{ $label['class'] }}" :data-label="$label['name']" :data-class="$label['class']"
-                                                        :data-value="$row->id . '_' . $key . '_' . $label['class']"
-                                                        id="ticketStatusChange{{ $row->id }}{{ $key }}">
-                                                        {{ $label['name'] }}
+                                                <!-- Menu Slot -->
+                                                <x-slot:menu>
+                                                    <!-- Dropdown Header -->
+                                                    <x-global::actions.dropdown.item variant="header-border">
+                                                        {!! __('dropdown.choose_user') !!}
                                                     </x-global::actions.dropdown.item>
-                                                @endforeach
-                                            </x-slot:menu>
-                                        </x-global::actions.dropdown>
+
+                                                    <!-- Dropdown Items -->
+                                                    @foreach ($users as $user)
+                                                        <x-global::actions.dropdown.item href="javascript:void(0);"
+                                                            :data-label="sprintf(
+                                                                __('text.full_name'),
+                                                                $user['firstname'],
+                                                                $user['lastname'],
+                                                            )" :data-value="$row->id .
+                                                                '_' .
+                                                                $user['id'] .
+                                                                '_' .
+                                                                $user['profileId']"
+                                                            id="userStatusChange{{ $row->id }}{{ $user['id'] }}">
+                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
+                                                                width='25'
+                                                                style='vertical-align: middle; margin-right:5px;' />
+                                                            {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
+                                                        </x-global::actions.dropdown.item>
+                                                    @endforeach
+                                                </x-slot:menu>
+                                            </x-global::actions.dropdown>
+
+                                        </div>
+
+                                        <div class="pull-right" style="margin-right:10px;">
+                                            <a href="#/ideas/ideaDialog/{{ $row->id }}" class=""
+                                                data="item_{{ $row->id }}"
+                                                {{ $row->commentCount == 0 ? 'style="color: grey;"' : '' }}>
+                                                <span class="fas fa-comments"></span>
+                                            </a>
+                                            <small>{{ $row->commentCount }}</small>
+                                        </div>
                                     </div>
 
-                                    <div
-                                        class="dropdown ticketDropdown userDropdown noBg show right lastDropdown dropRight">
-                                        <x-global::actions.dropdown contentRole="link" position="bottom" align="start"
-                                            class="f-left">
-                                            <!-- Dropdown Trigger -->
-                                            <x-slot:labelText>
-                                                <span class="text">
-                                                    @if ($row->authorFirstname != '')
-                                                        <span id='userImage{{ $row->id }}'>
-                                                            <img src='{{ BASE_URL }}/api/users?profileImage={{ $row->author }}'
-                                                                width='25' style='vertical-align: middle;' />
-                                                        </span>
-                                                        <span id='user{{ $row->id }}'></span>
-                                                    @else
-                                                        <span id='userImage{{ $row->id }}'>
-                                                            <img src='{{ BASE_URL }}/api/users?profileImage=false'
-                                                                width='25' style='vertical-align: middle;' />
-                                                        </span>
-                                                        <span id='user{{ $row->id }}'></span>
-                                                    @endif
-                                                </span>
-                                            </x-slot:labelText>
-
-                                            <!-- Menu Slot -->
-                                            <x-slot:menu>
-                                                <!-- Dropdown Header -->
-                                                <x-global::actions.dropdown.item variant="header-border">
-                                                    {!! __('dropdown.choose_user') !!}
-                                                </x-global::actions.dropdown.item>
-
-                                                <!-- Dropdown Items -->
-                                                @foreach ($users as $user)
-                                                    <x-global::actions.dropdown.item href="javascript:void(0);"
-                                                        :data-label="sprintf(
-                                                            __('text.full_name'),
-                                                            $user['firstname'],
-                                                            $user['lastname'],
-                                                        )" :data-value="$row->id .
-                                                            '_' .
-                                                            $user['id'] .
-                                                            '_' .
-                                                            $user['profileId']"
-                                                        id="userStatusChange{{ $row->id }}{{ $user['id'] }}">
-                                                        <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}'
-                                                            width='25'
-                                                            style='vertical-align: middle; margin-right:5px;' />
-                                                        {{ sprintf(__('text.full_name'), $user['firstname'], $user['lastname']) }}
-                                                    </x-global::actions.dropdown.item>
-                                                @endforeach
-                                            </x-slot:menu>
-                                        </x-global::actions.dropdown>
-
-                                    </div>
-
-                                    <div class="pull-right" style="margin-right:10px;">
-                                        <a href="#/ideas/ideaDialog/{{ $row->id }}" class=""
-                                            data="item_{{ $row->id }}"
-                                            {{ $row->commentCount == 0 ? 'style="color: grey;"' : '' }}>
-                                            <span class="fas fa-comments"></span>
-                                        </a>
-                                        <small>{{ $row->commentCount }}</small>
-                                    </div>
                                 </div>
                             </div>
 

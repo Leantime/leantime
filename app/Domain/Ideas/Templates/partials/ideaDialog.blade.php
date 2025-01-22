@@ -1,4 +1,8 @@
-<x-global::content.modal.modal-buttons />
+<x-global::content.modal.modal-buttons>
+    @if ($id !== '')
+        <x-global::content.modal.header-button variant="delete" href="{{ BASE_URL . '/ideas/delCanvasItem/' . $id }}" />
+    @endif
+</x-global::content.modal.modal-buttons>
 @php
     use Leantime\Core\Support\EditorTypeEnum;
 
@@ -8,133 +12,106 @@
 @endphp
 
 
-    <script type="text/javascript">
-        window.onload = function() {
-            if (!window.jQuery) {
-                //It's not a modal
-                location.href = "{{ BASE_URL }}/ideas/showBoards?showIdeaModal={{ $canvasItem->id }}";
-            }
+<script type="text/javascript">
+    window.onload = function() {
+        if (!window.jQuery) {
+            //It's not a modal
+            location.href = "{{ BASE_URL }}/ideas/showBoards?showIdeaModal={{ $canvasItem->id }}";
         }
-    </script>
+    }
+</script>
 
-    <x-global::content.modal.header>
-        Add Ideas
-    </x-global::content.modal.header>
-
-    <x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
+<x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
 
-        <div class="row">
-            <div class="col-md-8">
-                <input type="hidden" value="{{ $currentCanvas }}" name="canvasId" />
-                <input type="hidden" value="{{ $canvasItem->box }}" name="box" id="box" />
-                <input type="hidden" value="{{ $id }}" name="itemId" id="itemId" />
-                <input type="hidden" name="status" value="{{ $canvasItem->status }}" />
-                <input type="hidden" name="milestoneId" value="{{ $canvasItem->milestoneId }}" />
-                <input type="hidden" name="changeItem" value="1" />
+    <div class="row">
+        <div class="col-md-8">
+            <input type="hidden" value="{{ $currentCanvas }}" name="canvasId" />
+            <input type="hidden" value="{{ $canvasItem->box }}" name="box" id="box" />
+            <input type="hidden" value="{{ $id }}" name="itemId" id="itemId" />
+            <input type="hidden" name="status" value="{{ $canvasItem->status }}" />
+            <input type="hidden" name="milestoneId" value="{{ $canvasItem->milestoneId }}" />
+            <input type="hidden" name="changeItem" value="1" />
 
-                <x-global::forms.text-input
-                    type="text"
-                    name="description"
-                    value="{{ $canvasItem->description }}"
-                    placeholder="{{ __('input.placeholders.short_name') }}"
-                    variant="title"
-                    />
+            <x-global::forms.text-input type="text" name="description" value="{{ $canvasItem->description }}"
+                placeholder="{{ __('input.placeholders.short_name') }}" variant="title" />
 
-                <x-global::forms.select name="tags[]" id="tags" variant="tags" maxItemCount=4 >
+            <x-global::forms.select name="tags[]" id="tags" variant="tags" maxItemCount=4>
 
-                   @if(! empty($canvasItem->tags) )
+                @if (!empty($canvasItem->tags))
 
-                        @foreach ($canvasItem->tags as $label)
+                    @foreach ($canvasItem->tags as $label)
+                        <x-global::forms.select.select-option value="{{ $label }}" selected="selected">
 
-                            <x-global::forms.select.select-option
-                                value="{{ $label }}" selected="selected"
-                            >
+                            {!! __($label) !!}
 
-                                {!! __($label) !!}
+                        </x-global::forms.select.select-option>
+                    @endforeach
 
-                            </x-global::forms.select.select-option>
-
-                        @endforeach
-
-                   @endif
-
-                </x-global::forms.select>
-
-
-                <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
-
-                <x-global::forms.button
-                    scale="xs"
-                    type="submit"
-                    id="primaryCanvasSubmitButton">
-                    {!! __('buttons.save') !!}
-                 </x-global::forms.button>
-
-                <x-global::forms.button
-                    type="submit"
-                    class="btn btn-primary"
-                    value="closeModal"
-                    contentRole="secondary"
-                    scale="xs"
-                    id="saveAndClose">
-                    {!! __('buttons.save_and_close') !!}
-                </x-global::forms.button>
-
-
-                @if ($id !== '')
-                    <br />
-                    <hr>
-                    <input type="hidden" name="comment" value="1" />
-
-                    <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
-                    <x-comments::list :module="'idea'" :statusUpdates="'false'" :moduleId="$id" />
                 @endif
-            </div>
 
-            <div class="col-md-4">
-                @if ($id !== '')
-                    <br /><br />
-                    <h4 class="widgettitle title-light">
-                        <span class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!}
-                        <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{!! __('tooltip.link_milestones_tooltip') !!}"></i>
-                    </h4>
+            </x-global::forms.select>
 
-                    <ul class="sortableTicketList" style="width:99%">
-                        @if ($canvasItem->milestoneId == '')
-                            <li class="ui-state-default center" id="milestone_0">
-                                <h4>{!! __('headlines.no_milestone_link') !!}</h4>
-                                {!! __('text.use_milestone_to_track_idea') !!}<br />
-                                <div class="row" id="milestoneSelectors">
-                                    @if ($login::userIsAtLeast($roles::$editor))
-                                        <div class="col-md-12">
-                                            <a href="javascript:void(0);"
-                                                onclick="leantime.canvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
-                                            | <a href="javascript:void(0);"
-                                                onclick="leantime.canvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="row" id="newMilestone" style="display:none;">
+
+            <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
+
+            <x-global::forms.button scale="xs" type="submit" id="primaryCanvasSubmitButton">
+                {!! __('buttons.save') !!}
+            </x-global::forms.button>
+
+            <x-global::forms.button type="submit" class="btn btn-primary" value="closeModal" contentRole="secondary"
+                scale="xs" id="saveAndClose">
+                {!! __('buttons.save_and_close') !!}
+            </x-global::forms.button>
+
+
+            @if ($id !== '')
+                <br />
+                <hr>
+                <input type="hidden" name="comment" value="1" />
+
+                <h4 class="widgettitle title-light"><span class="fa fa-comments"></span>{!! __('subtitles.discussion') !!}</h4>
+                <x-comments::list :module="'idea'" :statusUpdates="'false'" :moduleId="$id" />
+            @endif
+        </div>
+
+        <div class="col-md-4">
+            @if ($id !== '')
+                <br /><br />
+                <h4 class="widgettitle title-light">
+                    <span class="fa fa-link"></span> {!! __('headlines.linked_milestone') !!}
+                    <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="{!! __('tooltip.link_milestones_tooltip') !!}"></i>
+                </h4>
+
+                <ul class="sortableTicketList" style="width:99%">
+                    @if ($canvasItem->milestoneId == '')
+                        <li class="ui-state-default center" id="milestone_0">
+                            <h4>{!! __('headlines.no_milestone_link') !!}</h4>
+                            {!! __('text.use_milestone_to_track_idea') !!}<br />
+                            <div class="row" id="milestoneSelectors">
+                                @if ($login::userIsAtLeast($roles::$editor))
                                     <div class="col-md-12">
-                                        <textarea  name="newMilestone"></textarea><br />
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
-                                        <x-global::forms.button
-                                            type="button"
-                                            onclick="jQuery('#primaryCanvasSubmitButton').click()"
-                                            class="btn btn-primary">
-                                            {!! __('buttons.save') !!}
-                                        </x-global::forms.button>
-
-                                        <x-global::forms.button
-                                            tag="a"
-                                            href="javascript:void(0);"
-                                            contentRole="ghost"
-                                            onclick="leantime.canvasController.toggleMilestoneSelectors('hide');">
-                                            <i class="fas fa-times"></i> {!! __('links.cancel') !!}
-                                         </x-global::forms.button>
+                                        <a href="javascript:void(0);"
+                                            onclick="leantime.canvasController.toggleMilestoneSelectors('new');">{!! __('links.create_link_milestone') !!}</a>
+                                        | <a href="javascript:void(0);"
+                                            onclick="leantime.canvasController.toggleMilestoneSelectors('existing');">{!! __('links.link_existing_milestone') !!}</a>
                                     </div>
+                                @endif
+                            </div>
+                            <div class="row" id="newMilestone" style="display:none;">
+                                <div class="col-md-12">
+                                    <textarea name="newMilestone"></textarea><br />
+                                    <input type="hidden" name="type" value="milestone" />
+                                    <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
+                                    <x-global::forms.button type="button"
+                                        onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary">
+                                        {!! __('buttons.save') !!}
+                                    </x-global::forms.button>
+
+                                    <x-global::forms.button tag="button" variant="link" scale="sm"
+                                        contentRole="ghost" labelText="Cancel" name="cancel" type="button"
+                                        onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
+                                </div>
                             </div>
 
                             <div class="row" id="existingMilestone" style="display:none;">
@@ -156,7 +133,8 @@
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
                                     <x-global::forms.button type="button"
-                                        onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary">
+                                        onclick="jQuery('#primaryCanvasSubmitButton').click()"
+                                        class="btn btn-primary">
                                         {!! __('buttons.save') !!}
                                     </x-global::forms.button>
 
@@ -178,10 +156,6 @@
                                     {!! __('label.loading_milestone') !!}
                                 </div>
                             </div>
-                            <a href="{{ CURRENT_URL }}?removeMilestone={{ $canvasItem->milestoneId }}"
-                                class="{{ $canvasName }}CanvasModal delete formModal"><i class="fa fa-close"></i>
-                                {!! __('links.remove') !!}</a>
-
                         </li>
                     @endif
                 </ul>
@@ -198,17 +172,19 @@
     @endif
 </div>
 
-<script type="text/javascript">
+<script type="module">
+    import "@mix('/js/Domain/Ideas/Js/ideasController.js')"
+    import "@mix('/js/Domain/Auth/Js/authController.js')"
+    import "@mix('/js/Domain/Comments/Js/commentsController.js')"
+
     jQuery(document).ready(function() {
 
-        // leantime.editorController.initComplexEditor();
-
         @if (!$login::userIsAtLeast($roles::$editor))
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+            authController.makeInputReadonly(".nyroModalCont");
         @endif
 
         @if ($login::userHasRole([$roles::$commenter]))
-            leantime.commentsController.enableCommenterForms();
+            commentsController.enableCommenterForms();
         @endif
     })
 </script>

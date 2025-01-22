@@ -105,7 +105,6 @@
             <div class="flex items-center gap-2">
                 <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
 
-                {{-- TODO: This should just close the modal --}}
                 <x-global::forms.button tag="button" variant="link" scale="sm" contentRole="ghost"
                     labelText="Cancel" name="cancel" type="button"
                     onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />

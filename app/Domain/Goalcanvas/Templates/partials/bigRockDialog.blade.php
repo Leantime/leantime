@@ -1,8 +1,5 @@
 <x-global::content.modal.modal-buttons />
 
-<x-global::content.modal.header>
-    Big Rock
-</x-global::content.modal.header>
 
 <h4 class="widgettitle title-light">
     <i class="fa-solid fa-mountain"></i>
@@ -13,13 +10,13 @@
     action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock->id) ? $bigRock->id : '' }}">
 
     <br />
-    <x-global::forms.text-input placeholder="{{ __('label.goal_description') }}" type="text" name="title" id="wikiTitle"
-        value="{{ $bigRock->title }}" variant='title' /><br />
+    <x-global::forms.text-input placeholder="{{ __('label.goal_description') }}" type="text" name="title"
+        id="wikiTitle" value="{{ $bigRock->title }}" variant='title' /><br />
 
     <br />
     <div class="row">
         <div class="col-md-6">
-            <x-global::forms.button scale="xs" type="submit" id="saveBtn">
+            <x-global::forms.button scale="sm" type="submit" id="saveBtn">
                 {{ __('buttons.save') }}
             </x-global::forms.button>
         </div>
