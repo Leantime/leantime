@@ -182,6 +182,12 @@ export const filePickerCallback = function (callback, value, meta) {
 export const editorSetup = function(editor, callback) {
     editor.on('change', function () {
         editor.save();
+
+        const event = new CustomEvent('editor-change', {
+            detail: { content: editor.getContent() },
+            bubbles: true
+        });
+        editor.getElement().dispatchEvent(event);
     });
 
     editor.on("blur", function () {
