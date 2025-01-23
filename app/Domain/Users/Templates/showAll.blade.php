@@ -78,7 +78,7 @@ $roles = $tpl->get('roles');
                             } else {
                                 echo $tpl->__('label.no');
                             } ?></td>
-                        <td><a href="{{ BASE_URL }}/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
+                        <td><a href="#/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
                     </tr>
             <?php } ?>
             </tbody>
