@@ -8,7 +8,7 @@
 
 
 @if (!empty($fetch))
-    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}"
+    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}&variant={{ $variant }}"
         hx-trigger="load delay:500ms" hx-swap="innerHTML">
         loading...
     </div>
@@ -29,7 +29,7 @@
 
     <div class="maincontent">
 
-        <div class="{{ $variant == 'default' ? 'maincontentinner' : '' }}">
+        <div class="{{ $variant == 'default' ? '' : 'maincontentinner' }}">
             <div id="fileManager">
                 <div class="">
                     @displayNotification()

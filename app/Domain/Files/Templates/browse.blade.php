@@ -19,5 +19,5 @@
         </div>
     </div> --}}
 
-    <x-files::file-manager :module="'project'" :moduleId="$moduleId" :fetch="true" variant="standalone" />
+    <x-files::file-manager :module="'project'" :moduleId="$moduleId" :fetch="true" :variant="'standalone'" />
 @endsection
