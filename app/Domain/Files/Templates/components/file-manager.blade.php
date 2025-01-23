@@ -3,13 +3,13 @@
     use Leantime\Core\Fileupload;
 @endphp
 
-@props(['module', 'moduleId', 'fetch' => false])
+@props(['module', 'moduleId', 'fetch' => false, 'variant' => 'default'])
 
 
 
 @if (!empty($fetch))
-    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}" hx-trigger="load delay:500ms"
-        hx-swap="innerHTML">
+    <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}"
+        hx-trigger="load delay:500ms" hx-swap="innerHTML">
         loading...
     </div>
 @else
@@ -29,107 +29,109 @@
 
     <div class="maincontent">
 
-
-        <div id="fileManager">
-            <div class="">
-                @displayNotification()
-                <h5 class="subtitle"><?= $tpl->__('headline.browse_files_headline') ?></h5>
-
-
+        <div class="{{ $variant == 'default' ? 'maincontentinner' : '' }}">
+            <div id="fileManager">
+                <div class="">
+                    @displayNotification()
+                    <h5 class="subtitle"><?= $tpl->__('headline.browse_files_headline') ?></h5>
 
 
-                @displayNotification()
 
-                <?php if ($login::userIsAtLeast($roles::$editor)) {?>
-                <div class="uploadWrapper">
 
-                    <a href="javascript:void(0);" id="cancelLink" class="btn btn-default"
-                        style="display:none;">{{ __('links.cancel') }}</a>
-                    <div class="extra" style="margin-top:5px;"></div>
-                    <div class="fileUploadDrop">
-                        <p><i><?= $tpl->__('text.drop_files') ?></i></p>
-                        <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
-                        <a href="javascript:void(0);" id="webcamClick"><?= $tpl->__('label.webcam') ?></a>
-                        <a href="javascript:void(0);"
-                            id="screencaptureLink"><?= $tpl->__('label.screen_recording') ?></a>
+                    @displayNotification()
+
+                    <?php if ($login::userIsAtLeast($roles::$editor)) {?>
+                    <div class="uploadWrapper">
+
+                        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default"
+                            style="display:none;">{{ __('links.cancel') }}</a>
+                        <div class="extra" style="margin-top:5px;"></div>
+                        <div class="fileUploadDrop">
+                            <p><i><?= $tpl->__('text.drop_files') ?></i></p>
+                            <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
+                            <a href="javascript:void(0);" id="webcamClick"><?= $tpl->__('label.webcam') ?></a>
+                            <a href="javascript:void(0);"
+                                id="screencaptureLink"><?= $tpl->__('label.screen_recording') ?></a>
+                        </div>
+
+                        <!-- Progress bar #1 -->
+                        <div class="input-progress"></div>
+
+                        <div class="input-error"></div>
+
+                        <form id="upload-form"></form>
+
                     </div>
-
-                    <!-- Progress bar #1 -->
-                    <div class="input-progress"></div>
-
-                    <div class="input-error"></div>
-
-                    <form id="upload-form"></form>
-
-                </div>
-                <?php } ?>
-            </div>
-            <div class="">
-
-                <div class='mediamgr'>
-
-                    <div class="mediamgr_content">
-
-                        <ul id='medialist' class='listfile'>
-                            <?php foreach ($tpl->get('files') as $file) {?>
-                            <li class="file-module-<?php echo $file['moduleId']; ?>">
-                                <div class="inlineDropDownContainer dropright" style="float:right;">
-                                    <x-global::content.context-menu>
-
-                                        <!-- Menu Header -->
-
-                                        <x-global::actions.dropdown.item variant="header">
-                                            {{ __('subtitles.file') }}
-                                        </x-global::actions.dropdown.item>
-
-                            <!-- Download File Menu Item -->
-                            <x-global::actions.dropdown.item variant="link"
-                                href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}"
-                                target="_blank">
-                                {!! __('links.download') !!}
-                            </x-global::actions.dropdown.item>
-
-                            <!-- Conditional Delete File Menu Item -->
-                            @if ($login::userIsAtLeast($roles::$editor))
-                                <x-global::actions.dropdown.item variant="link"
-                                    href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}"
-                                    class="delete deleteFile">
-                                    <i class="fa fa-trash"></i> {!! __('links.delete') !!}
-                                </x-global::actions.dropdown.item>
-                            @endif
-
-                            </x-global::content.context-menu>
-                    </div>
-
-
-                    <a class="imageLink" data-ext="<?php echo $file['extension']; ?>"
-                        href="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
-                        <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                        <img style='max-height: 50px; max-width: 70px;'
-                            src="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
-                            alt="" />
-                        <?php else : ?>
-                        <img style='max-height: 50px; max-width: 70px;'
-                            src='{{ BASE_URL }}/dist/images/doc.png' />
-                        <?php endif; ?>
-                        <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension']; ?></span>
-                    </a>
-                    </li>
                     <?php } ?>
+                </div>
+                <div class="">
 
-                    <br class="clearall" />
-                    </ul>
+                    <div class='mediamgr'>
 
-                    <br class="clearall" />
+                        <div class="mediamgr_content">
 
-                </div><!--mediamgr_content-->
+                            <ul id='medialist' class='listfile'>
+                                <?php foreach ($tpl->get('files') as $file) {?>
+                                <li class="file-module-<?php echo $file['moduleId']; ?>">
+                                    <div class="inlineDropDownContainer dropright" style="float:right;">
+                                        <x-global::content.context-menu>
 
-                <br class="clearall" />
-            </div><!--mediamgr-->
+                                            <!-- Menu Header -->
+
+                                            <x-global::actions.dropdown.item variant="header">
+                                                {{ __('subtitles.file') }}
+                                            </x-global::actions.dropdown.item>
+
+                                            <!-- Download File Menu Item -->
+                                            <x-global::actions.dropdown.item variant="link"
+                                                href="{{ BASE_URL }}/files/get?module={{ $file['module'] }}&encName={{ $file['encName'] }}&ext={{ $file['extension'] }}&realName={{ $file['realName'] }}"
+                                                target="_blank">
+                                                {!! __('links.download') !!}
+                                            </x-global::actions.dropdown.item>
+
+                                            <!-- Conditional Delete File Menu Item -->
+                                            @if ($login::userIsAtLeast($roles::$editor))
+                                                <x-global::actions.dropdown.item variant="link"
+                                                    href="{{ BASE_URL }}/files/showAll?delFile={{ $file['id'] }}"
+                                                    class="delete deleteFile">
+                                                    <i class="fa fa-trash"></i> {!! __('links.delete') !!}
+                                                </x-global::actions.dropdown.item>
+                                            @endif
+
+                                        </x-global::content.context-menu>
+                                    </div>
+
+
+                                    <a class="imageLink" data-ext="<?php echo $file['extension']; ?>"
+                                        href="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>">
+                                        <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
+                                        <img style='max-height: 50px; max-width: 70px;'
+                                            src="{{ BASE_URL }}/files/get?module=<?php echo $file['module']; ?>&encName=<?php echo $file['encName']; ?>&ext=<?php echo $file['extension']; ?>&realName=<?php echo $file['realName']; ?>"
+                                            alt="" />
+                                        <?php else : ?>
+                                        <img style='max-height: 50px; max-width: 70px;'
+                                            src='{{ BASE_URL }}/dist/images/doc.png' />
+                                        <?php endif; ?>
+                                        <span class="filename"><?php echo substr($file['realName'], 0, 10) . '(...).' . $file['extension']; ?></span>
+                                    </a>
+                                </li>
+                                <?php } ?>
+
+                                <br class="clearall" />
+                            </ul>
+
+                            <br class="clearall" />
+
+                        </div><!--mediamgr_content-->
+
+                        <br class="clearall" />
+                    </div><!--mediamgr-->
+                </div>
+
+            </div>
         </div>
 
     </div>
-
     <script type='text/javascript'>
         jQuery(document).ready(function() {
 
@@ -221,7 +223,7 @@
                 }
             });
             uppy.use(Uppy.XHRUpload, {
-                endpoint: '{{ BASE_URL }}/api/files?module={{$module}}&moduleId={{$moduleId}}',
+                endpoint: '{{ BASE_URL }}/api/files?module={{ $module }}&moduleId={{ $moduleId }}',
                 formData: true,
                 fieldName: 'file',
             });
