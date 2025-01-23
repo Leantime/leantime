@@ -21,7 +21,7 @@
     }
 </script>
 
-<div>
+<x-global::content.modal.form action="{{ BASE_URL }}/ideas/ideaDialog/{{ $id }}">
 
 
     <div class="row">
@@ -34,9 +34,7 @@
             <input type="hidden" name="changeItem" value="1" />
 
             <x-global::forms.text-input type="text" name="description" value="{{ $canvasItem->description }}"
-                placeholder="{{ __('input.placeholders.short_name') }}" variant="title"
-                hx-post="{{ BASE_URL }}/hx/ideas/ideaDialog/patch/{{ $canvasItem->id }}" hx-trigger="change"
-                hx-swap="none" />
+                placeholder="{{ __('input.placeholders.short_name') }}" variant="title" />
 
             <x-global::forms.select name="tags[]" id="tags" variant="tags" maxItemCount=4>
 
@@ -55,17 +53,15 @@
             </x-global::forms.select>
 
 
-            <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data"
-                hx-post="{{ BASE_URL }}/hx/ideas/ideaDialog/patch/{{ $canvasItem->id }}" hx-trigger="change"
-                hx-swap="none" />
+            <x-global::forms.text-editor name="data" :type="EditorTypeEnum::Complex->value" :value="$canvasItem->data" />
 
             <x-global::forms.button scale="xs" type="submit" id="primaryCanvasSubmitButton">
                 {!! __('buttons.save') !!}
             </x-global::forms.button>
 
             <x-global::forms.button type="submit" class="btn btn-primary" value="closeModal" contentRole="secondary"
-                scale="xs" id="cancel">
-                {!! __('buttons.cancel') !!}
+                scale="xs" id="saveAndClose">
+                {!! __('buttons.save_and_close') !!}
             </x-global::forms.button>
 
 
@@ -167,7 +163,7 @@
         </div>
     </div>
 
-</div>
+</x-global::content.modal.form>
 
 <div class="showDialogOnLoad">
     @if ($id != '')
@@ -190,17 +186,5 @@
         @if ($login::userHasRole([$roles::$commenter]))
             commentsController.enableCommenterForms();
         @endif
-
-        jQuery('#primaryCanvasSubmitButton').click(function() {
-            jQuery.growl({
-                message: "Idea Updated",
-                style: "success"
-            });
-            htmx.find("#modal-wrapper #main-page-modal").close();
-        });
-
-        jQuery('#cancel').click(function() {
-            htmx.find("#modal-wrapper #main-page-modal").close();
-        });
     })
 </script>

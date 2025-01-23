@@ -95,6 +95,16 @@
                 </div>
 
                 <br>
+                @if ($login::userIsAtLeast($roles::$editor))
+                    <x-global::forms.button type="submit" id="saveBtn">
+                        {{ __('buttons.save') }}
+                    </x-global::forms.button>
+
+                    <x-global::forms.button id="close-canvas" content-role="secondary"
+                        onclick="leantime.goalCanvasController.setCloseModal();">
+                        {{ __('buttons.cancel') }}
+                    </x-global::forms.button>
+                @endif
             </div>
 
             <div class="col-md-4">
@@ -221,6 +231,18 @@
     jQuery(document).ready(function() {
 
         // datePickers.initDateRangePicker(".startDate", ".endDate");
+
+        jQuery('#saveBtn').click(function() {
+            jQuery.growl({
+                message: "Goal Updated",
+                style: "success"
+            });
+            htmx.find("#modal-wrapper #main-page-modal").close();
+        });
+
+        jQuery('#close-canvas').click(function() {
+            htmx.find("#modal-wrapper #main-page-modal").close();
+        });
 
         @if (!empty($statusLabels))
             new SlimSelect({
