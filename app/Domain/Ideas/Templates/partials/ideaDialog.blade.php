@@ -107,8 +107,7 @@
                                     <textarea name="newMilestone"></textarea><br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="{{ $id }}" />
-                                    <x-global::forms.button type="button"
-                                        onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary">
+                                    <x-global::forms.button type="button" class="btn btn-primary">
                                         {!! __('buttons.save') !!}
                                     </x-global::forms.button>
 
