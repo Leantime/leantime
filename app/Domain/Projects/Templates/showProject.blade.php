@@ -23,13 +23,24 @@
 
             <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-                <a href="{{ BASE_URL }}/projects/duplicateProject/<?= $project['id'] ?>"
-                    class="btn btn-default duplicateProjectModal"
-                    data-tippy-content="<?= $tpl->__('link.duplicate_project') ?>"><i class="fa-regular fa-copy"></i>
-                    Copy</a>
-                <a href="{{ BASE_URL }}/projects/delProject/<?= $project['id'] ?>"
-                    data-tippy-content="<?= $tpl->__('link.delete_project') ?>" class="btn btn-danger-outline delete"><i
-                        class="fa fa-trash"></i> Delete</a>
+                <x-global::forms.button content-role="secondary"
+                    tag="a"
+                    href="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}"
+                    data-tippy-content="{{ __('link.duplicate_project') }}"
+                    class="duplicateProjectModal"
+                >
+                    <i class="fa-regular fa-copy"></i> Copy
+                </x-global::forms.button>
+
+                <x-global::forms.button content-role="secondary"
+                    tag="a"
+                    state="danger"
+                    href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
+                    data-tippy-content="{{ __('link.delete_project') }}"
+                    class="delete"
+                >
+                    <i class="fa fa-trash"></i> Delete
+                </x-global::forms.button>
 
 
             </div>
