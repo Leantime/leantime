@@ -514,6 +514,13 @@
                                         </li>
                                     @endforeach
                                 </ul>
+
+                                <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink"
+                                style="text-align:left;"><?= $tpl->__('links.add_status') ?></a>
+                                <br />
+                                <input type="submit" value="<?= $tpl->__('buttons.save') ?>" name="submitSettings"
+                                class="btn btn-primary" />
+                            
                             </form>
                     </x-global::content.tabs.content>
 
