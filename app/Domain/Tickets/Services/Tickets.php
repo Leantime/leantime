@@ -2017,7 +2017,7 @@ namespace Leantime\Domain\Tickets\Services {
             $currentSprint = $this->sprintService->getCurrentSprintId(session('currentProject'));
 
             $searchCriteria = $this->prepareTicketSearchArray($params);
-            // $searchCriteria['orderBy'] = 'kanbansort';
+            $searchCriteria['orderBy'] = 'kanbansort';
 
             // $allTickets = $this->getAllGrouped($searchCriteria);
             // dd($allTickets);
