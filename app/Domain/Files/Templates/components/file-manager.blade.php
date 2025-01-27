@@ -10,7 +10,16 @@
 @if (!empty($fetch))
     <div hx-get="{{ BASE_URL }}/hx/files/fileManager?module={{ $module }}&moduleId={{ $moduleId }}&variant={{ $variant }}"
         hx-trigger="load delay:500ms" hx-swap="innerHTML">
-        loading...
+        <div class="maincontent mt-10">
+            <div class="maincontentinner">
+                <div>
+                    <p style="width:40%">&nbsp;</p>
+                    <br />
+                    <x-global::elements.loadingText :count="5" :type="'plugincard'" />
+                </div>
+                <br />
+            </div>
+        </div>
     </div>
 @else
     @php
