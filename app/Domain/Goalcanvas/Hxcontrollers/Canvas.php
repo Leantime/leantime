@@ -33,6 +33,8 @@ class Canvas extends HtmxController
         $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
         $canvasItems = $this->goalService->getCanvasItemsById($id);
 
+        
+        $this->tpl->assign("canvasId", $id);
         $this->tpl->assign('canvas', $canvas);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('relatesLabels', $relatesLabels);

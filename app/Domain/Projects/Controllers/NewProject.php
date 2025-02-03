@@ -56,7 +56,7 @@ namespace Leantime\Domain\Projects\Controllers {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             if (! session()->exists('lastPage')) {
-                session(['lastPage' => BASE_URL.'/projects/showAll']);
+                session(['lastPage' => BASE_URL . '/projects/showAll']);
             }
 
             $msgKey = '';
@@ -122,7 +122,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $mailer->setContext('project_created');
                     $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
-                    $actual_link = BASE_URL.'/projects/showProject/'.$id.'';
+                    $actual_link = BASE_URL . '/projects/showProject/' . $id . '';
                     $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, session('userdata.name'));
                     $mailer->setHtml($message);
 
@@ -139,12 +139,12 @@ namespace Leantime\Domain\Projects\Controllers {
                     $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
                     //Take the old value to avoid nl character
-                    $values['details'] = $_POST['details'];
+                    $values['details'] = $_POST['details'] ?? $_POST;
 
                     $this->tpl->sendConfetti();
-                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL.'/leancanvas/simpleCanvas/'), 'success', 'project_created');
+                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', 'project_created');
 
-                    return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
+                    return Frontcontroller::redirect(BASE_URL . '/projects/showProject/' . $id);
                 }
 
                 $this->tpl->assign('project', $values);
@@ -161,5 +161,4 @@ namespace Leantime\Domain\Projects\Controllers {
             return $this->tpl->display('projects.newProject');
         }
     }
-
 }

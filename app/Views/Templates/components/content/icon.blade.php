@@ -1,7 +1,7 @@
 @props([
     'icon' => '',
     'fill' => false,
-    'size' => 'md'
+    'size' => 'md',
 ])
 
 @php
@@ -12,12 +12,13 @@
         'task' => 'task',
     ];
 
-    if(key_exists($icon, $leantimeEntityTypeMaps)) {
+    if (key_exists($icon, $leantimeEntityTypeMaps)) {
         $iconMapped = $leantimeEntityTypeMaps[$icon];
-    }else{
-        $iconMapped = $icon;
+    } else {
+        $iconMapped = '<i class=' . $icon . '></i>';
     }
 
 @endphp
 
-<span {{ $attributes->merge([ 'class' => 'h-'.$size.' w-'.$size.' icon material-symbols-rounded'. ($fill !== false ? ' fill ': '')  ]) }}>{!! $iconMapped !!}</span>
+<span
+    {{ $attributes->merge(['class' => 'h-' . $size . ' w-' . $size . ' icon material-symbols-rounded' . ($fill !== false ? ' fill ' : '')]) }}>{!! $iconMapped !!}</span>

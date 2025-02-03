@@ -104,19 +104,18 @@
             @displayNotification()
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-12">
                     @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-                        <x-global::forms.button href="#/goalcanvas/editCanvasItem?type={{ $elementName }}"
+                        <x-global::forms.button scale="sm" class="pull-right" tag="a"
+                            href="#/goalcanvas/editCanvasItem?type={{ $elementName }}&canvasId={{ $currentCanvas }}"
                             id="{{ $elementName }}">
                             {!! __('links.add_new_canvas_itemgoal') !!}
                         </x-global::forms.button>
                     @endif
                 </div>
 
-                <div class="col-md-6 center">
-                </div>
 
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                     <div class="pull-right">
                         <div class="btn-group viewDropDown">
                             @if (count($allCanvas) > 0 && !empty($statusLabels))
@@ -124,7 +123,7 @@
                                     $filterStatus = $filter['status'] ?? 'all';
                                     $filterRelates = $filter['relates'] ?? 'all';
                                 @endphp
-                                <x-global::actions.dropdown  align="start" contentRole="ghost">
+                                <x-global::actions.dropdown align="start" contentRole="ghost">
                                     <!-- Dropdown Trigger -->
                                     <x-slot:labelText>
                                         @if ($filter['status'] == 'all')
@@ -198,7 +197,7 @@
                             @endif
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="clearfix"></div>
