@@ -1,3 +1,5 @@
+<x-global::content.modal.modal-buttons/>
+
 <?php
 $status = $tpl->get('status');
 $values = $tpl->get('values');
@@ -6,30 +8,36 @@ $projects = $tpl->get('relations');
 
 @displayNotification()
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-people-group"></span></div>
-    <div class="pagetitle">
+{{-- <div class="pageheader"> --}}
+    {{-- <div class="pageicon"><span class="fa fa-people-group"></span></div> --}}
+    {{-- <div class="pagetitle">
         <h5>{{ __("label.administration") }}</h5>
         <h1>{{ __("headlines.edit_user") }}</h1>
-    </div>
-</div><!--pageheader-->
+    </div> --}}
+{{-- </div> --}}
+<!--pageheader-->
 
-<form action="" method="post" class="stdform userEditModal">
+<form action="{{ BASE_URL }}/users/editUser" method="post" class="stdform userEditModal">
         <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
-        <div class="maincontent">
-            <div class="row">
+            <div class="row row-fluid">
                 <div class="col-md-7">
-                    <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __("label.profile_information") }}</h4>
 
-                    <label for="firstname">{{ __("label.firstname") }}</label> <input
-                        type="text" name="firstname" id="firstname"
-                        value="<?php echo $values['firstname'] ?>" /><br />
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="firstname"
+                            id="firstname"
+                            value="{{ $values['firstname'] }}"
+                            labelText="{{ __('label.firstname') }}"
+                        />
 
-                    <label for="lastname">{{ __("label.lastname") }}</label> <input
-                        type="text" name="lastname" id="lastname"
-                        value="<?php echo $values['lastname'] ?>" /><br />
-
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="lastname"
+                            id="lastname"
+                            value="{{ $values['lastname'] }}"
+                            labelText="{{ __('label.lastname') }}"
+                        />
 
 
                         <x-global::forms.select name="role" id="role" :labelText="__('label.role')">
@@ -98,8 +106,8 @@ $projects = $tpl->get('relations');
                         @endif
                     
                         @foreach ($tpl->get('clients') as $client)
-                            <x-global::forms.select.select-option :value="$client['id']" :selected="$client['id'] == $values['clientId']">
-                                {!! $tpl->escape($client['name']) !!}
+                            <x-global::forms.select.select-option :value="$client->id" :selected="$client->id == $values['clientId']">
+                                {!! $tpl->escape($client->name) !!}
                             </x-global::forms.select.select-option>
                         @endforeach
                     </x-global::forms.select>
@@ -109,24 +117,47 @@ $projects = $tpl->get('relations');
 
                         <h4 class="widgettitle title-light">{{ __("label.contact_information") }}</h4>
 
-                        <label for="user">{{ __("label.email") }}</label> <input
-                            type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
-
-                        <label for="phone">{{ __("label.phone") }}</label> <input
-                            type="text" name="phone" id="phone"
-                            value="<?php echo $values['phone'] ?>" /><br /><br />
-
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="user"
+                            id="user"
+                            value="{{ $values['user'] }}"
+                            labelText="{{ __('label.email') }}"
+                        />
+                        
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="phone"
+                            id="phone"
+                            value="{{ $values['phone'] }}"
+                            labelText="{{ __('label.phone') }}"
+                        />
 
                         <h4 class="widgettitle title-light">{{ __("label.employee_information") }}</h4>
-                        <label for="jobTitle">{{ __("label.jobTitle") }}</label> <input
-                            type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
+                        
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="phone"
+                            id="phone"
+                            value="{{ $values['phone'] }}"
+                            labelText="{{ __('label.phone') }}"
+                        />
 
-                        <label for="jobLevel">{{ __("label.jobLevel") }}</label> <input
-                            type="text" name="jobLevel" id="jobLevel" value="<?php echo $values['jobLevel'] ?>" /><br />
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="jobLevel"
+                            id="jobLevel"
+                            value="{{ $values['jobLevel'] }}"
+                            labelText="{{ __('label.jobLevel') }}"
+                        />
 
-                        <label for="department">{{ __("label.department") }}</label> <input
-                            type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
-
+                        <x-global::forms.text-input
+                            inputType="text"
+                            name="department"
+                            id="department"
+                            value="{{ $values['department'] }}"
+                            labelText="{{ __('label.department') }}"
+                        />
 
 
                     <p class="stdformbutton">
@@ -134,10 +165,8 @@ $projects = $tpl->get('relations');
                             {{ __('buttons.save') }}
                         </x-global::forms.button>
                                             </p>
-                    </div>
                 </div>
                 <div class="col-md-5">
-                    <div class="maincontentinner">
                     <h4 class="widgettitle title-light">{{ __("label.project_assignment") }}</h4>
 
                     <div class="scrollableItemList">
@@ -180,10 +209,7 @@ $projects = $tpl->get('relations');
 
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
 </form>
 
 <script>
