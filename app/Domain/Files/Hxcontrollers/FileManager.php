@@ -35,7 +35,7 @@ class FileManager extends HtmxController
     $moduleId = $params['moduleId'];
     $currentModule = session('currentProject');
 
-    
+
     if ($module === 'project') {
       $moduleId = session('currentProject');
     }
@@ -62,6 +62,7 @@ class FileManager extends HtmxController
     }
 
 
+    $this->tpl->assign('variant', $params['variant']);
     $this->tpl->assign('currentModule', $currentModule);
     $this->tpl->assign('moduleId', $moduleId);
     $this->tpl->assign('module', $module);

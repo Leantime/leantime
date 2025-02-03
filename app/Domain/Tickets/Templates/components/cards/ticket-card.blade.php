@@ -74,19 +74,19 @@
                             :priorities="$priorities"
                             :ticket="(object)$ticket"
                             :showLabel="false"
-                            dropdown-position="right" />
+                            dropdown-position="start" />
 
                         <x-tickets::chips.status-select
                             :statuses="$statuses"
                             :ticket="(object)$ticket"
                             :showLabel="false"
-                            dropdown-position="right" />
+                            dropdown-position="start" />
 
                         <x-tickets::chips.milestone-select
                             :milestones="$milestones"
                             :ticket="(object)$ticket"
                             :showLabel="false"
-                            dropdown-position="right" />
+                            dropdown-position="start" />
 
 
 {{--                    <x-global::actions.dropdown--}}

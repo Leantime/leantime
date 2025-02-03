@@ -29,8 +29,7 @@ export const initMasonryWall = function () {
         },
     });
 
-    function tilt_direction(item)
-    {
+    function tilt_direction(item) {
         var left_pos = item.position().left,
             move_handler = function (e) {
                 if (e.pageX >= left_pos) {
@@ -48,15 +47,14 @@ export const initMasonryWall = function () {
     // bind drag events to Packery
     $grid.packery('bindUIDraggableEvents', $items);
 
-    function orderItems()
-    {
+    function orderItems() {
         var ideaSort = [];
 
         var itemElems = $grid.packery('getItemElements');
-        jQuery(itemElems).each(function ( i, itemElem ) {
+        jQuery(itemElems).each(function (i, itemElem) {
             var sortIndex = i + 1;
             var ideaId = jQuery(itemElem).attr("data-value");
-            ideaSort.push({"id":ideaId, "sortIndex":sortIndex});
+            ideaSort.push({ "id": ideaId, "sortIndex": sortIndex });
         });
 
         // POST to server using $.post or $.ajax
@@ -64,7 +62,7 @@ export const initMasonryWall = function () {
             type: 'POST',
             url: appUrl + '/api/ideas',
             data: {
-                action:"ideaSort",
+                action: "ideaSort",
                 payload: ideaSort
             }
 
@@ -72,7 +70,7 @@ export const initMasonryWall = function () {
     }
 
 
-    $grid.on('dragItemPositioned',orderItems);
+    $grid.on('dragItemPositioned', orderItems);
 };
 
 export const initBoardControlModal = function () {
@@ -102,7 +100,7 @@ export const initIdeaKanban = function (statusList) {
     console.log('update');
     jQuery("#sortableIdeaKanban .ticketBox").hover(function () {
         jQuery(this).css("background", "var(--kanban-card-hover)");
-    },function () {
+    }, function () {
         jQuery(this).css("background", "var(--kanban-card-bg)");
     });
 
@@ -112,7 +110,7 @@ export const initIdeaKanban = function (statusList) {
         tolerance: 'pointer',
         placeholder: "ui-state-highlight",
         forcePlaceholderSize: true,
-        cancel: ".portlet-toggle, .dropdown-toggle, .dropdown-menu, .inlineDropDownContainer, .dropdown-bottom",
+        cancel: ".portlet-toggle,.dropdown, :input,a,input, .dropdown-toggle, .dropdown-menu, .inlineDropDownContainer, .dropdown-bottom",
         start: function (event, ui) {
             ui.item.addClass('tilt');
             tilt_direction(ui.item);
@@ -140,14 +138,13 @@ export const initIdeaKanban = function (statusList) {
             jQuery.ajax({
                 type: 'POST',
                 url: appUrl + '/api/ideas',
-                data:statusPostData
+                data: statusPostData
             });
 
         }
     });
 
-    function tilt_direction(item)
-    {
+    function tilt_direction(item) {
         var left_pos = item.position().left,
             move_handler = function (e) {
                 if (e.pageX >= left_pos) {
@@ -198,9 +195,9 @@ var initStatusDropdown = function () {
                         type: 'PATCH',
                         url: appUrl + '/api/ideas',
                         data:
-                            {
-                                id : canvasItemId,
-                                box:status
+                        {
+                            id: canvasItemId,
+                            box: status
                         }
                     }
                 )
@@ -219,7 +216,7 @@ var initStatusDropdown = function () {
 };
 
 // Make public what you want to have public, everything else is private
-export const  ideasController= {
+export const ideasController = {
     // initMasonryWall: initMasonryWall,
     initBoardControlModal: initBoardControlModal,
     initWallImageModals: initWallImageModals,

@@ -39,43 +39,25 @@
 <div class="row">
     <div class="col-md-7">
 
-        <form hx-post="/hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
+        <div hx-post="/hx/tickets/showTicket/{{ $ticket->id }}" hx-trigger="submit" hx-swap="none"
             hx-indicator="#save-indicator">
             <input type="hidden" name="saveTicket" value="1">
 
-            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}" placeholder="Add Title"
-                variant="title" />
+            <x-global::forms.text-input type="text" name="headline" value="{{ $ticket->headline }}"
+                placeholder="Add Title" hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+                hx-trigger="change" hx-swap="none" variant="title" />
 
-            <x-tickets::chips.status-select
-                :statuses="$statusLabels"
-                :ticket="(object)$ticket"
-                :showLabel="true"
-                label-position="left"
+            <x-tickets::chips.status-select :statuses="$statusLabels" :ticket="(object) $ticket" :showLabel="true" label-position="left"
                 dropdown-position="left" />
 
-            <x-tickets::chips.duedate
-                :ticket="(object)$ticket"
-                variant="chip"
-                content-role="link"
-                :showLabel="true"
-                label-position="left"
-                dropdown-position="left"
-            />
+            <x-tickets::chips.duedate :ticket="(object) $ticket" variant="chip" content-role="link" :showLabel="true"
+                label-position="left" dropdown-position="left" />
 
-            <x-tickets::chips.priority-select
-                :priorities="$priorities"
-                :ticket="(object)$ticket"
-                :showLabel="true"
-                label-position="left"
-                dropdown-position="left" />
+            <x-tickets::chips.priority-select :priorities="$priorities" :ticket="(object) $ticket" :showLabel="true"
+                label-position="left" dropdown-position="left" />
 
-            <x-tickets::chips.effort-select
-                :efforts="$efforts"
-                variant="chip"
-                :ticket="(object)$ticket"
-                :showLabel="true"
-                label-position="left"
-                dropdown-position="left" />
+            <x-tickets::chips.effort-select :efforts="$efforts" variant="chip" :ticket="(object) $ticket" :showLabel="true"
+                label-position="left" dropdown-position="left" />
 
             <x-global::forms.select label-text="Tags" name="tags[]" content-role="secondary" variant="tags">
                 @foreach ($tags as $tag)
@@ -97,15 +79,15 @@
 
             <div class="form-group" id="descriptionEditor" style="display:none;">
                 <x-global::forms.text-editor name="description" customId="ticketDescription" :type="EditorTypeEnum::Complex->value"
-                    :value="$ticket->description !== null ? $ticket->description : ''" />
+                    :value="$ticket->description !== null ? $ticket->description : ''" hx-post="{{ BASE_URL }}/hx/tickets/ticket/patch/{{ $ticket->id }}"
+                    hx-trigger="change" hx-swap="none" />
                 <br />
             </div>
             <br>
 
             <div class="flex items-center gap-2">
-                <x-global::forms.button variant="primary" labelText="Save" scale="sm" />
+                <x-global::forms.button variant="primary" labelText="Save" scale="sm" id="tix-submit" />
 
-                {{-- TODO: This should just close the modal --}}
                 <x-global::forms.button tag="button" variant="link" scale="sm" contentRole="ghost"
                     labelText="Cancel" name="cancel" type="button"
                     onclick="htmx.find('#modal-wrapper #main-page-modal').close();" />
@@ -113,7 +95,7 @@
                     <span class="loading loading-spinner"></span> Saving...
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 
 
@@ -131,11 +113,7 @@
             <x-slot:contents>
                 <x-global::content.tabs.content name="connections" ariaLabel="Connections" classExtra="p-sm"
                     :checked="true">
-                    <x-tickets::details
-                        :ticket="$ticket"
-                        :milestones="$milestones"
-                        :sprints="$sprints"
-                        :allAssignedprojects="$allAssignedprojects" />
+                    <x-tickets::details :ticket="$ticket" :milestones="$milestones" :sprints="$sprints" :allAssignedprojects="$allAssignedprojects" />
                 </x-global::content.tabs.content>
 
                 <x-global::content.tabs.content name="discussion" ariaLabel="Discussion" classExtra="p-sm">
@@ -172,6 +150,14 @@
                 jQuery('.viewDescription').show();
             }
         });
+    });
+
+    jQuery('#tix-submit').click(function() {
+        jQuery.growl({
+            message: "Ticket Updated",
+            style: "success"
+        });
+        htmx.find("#modal-wrapper #main-page-modal").close();
     });
 
     //leantime.editorController.initComplexEditor();

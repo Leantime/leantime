@@ -35,11 +35,9 @@ class TicketColumn extends HtmxController
         $allTickets = $this->ticketService->getAll($params);
 
 
-        // $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-        // $searchCriteria['orderBy'] = 'kanbansort';
-
-        // $allTickets = $this->ticketService->getAllGrouped($searchCriteria);
-        // dd($params);
+        $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
+        $searchCriteria['status'] = $statusKey;
+        $searchCriteria['orderBy'] = 'kanbansort';
 
         $ticketTypeIcons = $this->ticketService->getTypeIcons();
         $priorities = $this->ticketService->getPriorityLabels();
@@ -56,5 +54,6 @@ class TicketColumn extends HtmxController
         $this->tpl->assign("ticketTypeIcons", $ticketTypeIcons);
         $this->tpl->assign("priorities", $priorities);
         $this->tpl->assign("statusKey", $statusKey);
+        $this->tpl->assign("searchCriteria", $searchCriteria);
     }
 }
