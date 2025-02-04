@@ -25,7 +25,7 @@
 
                 <x-global::forms.button content-role="secondary"
                     tag="a"
-                    href="{{ BASE_URL }}/projects/duplicateProject/{{ $project['id'] }}"
+                    href="#/projects/duplicateProject/{{ $project['id'] }}"
                     data-tippy-content="{{ __('link.duplicate_project') }}"
                     class="duplicateProjectModal"
                 >
@@ -35,7 +35,7 @@
                 <x-global::forms.button content-role="secondary"
                     tag="a"
                     state="danger"
-                    href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
+                    href="#/projects/delProject/{{ $project['id'] }}"
                     data-tippy-content="{{ __('link.delete_project') }}"
                     class="delete"
                 >
@@ -47,14 +47,15 @@
           
             <x-global::content.tabs name="projectTabs" variant="bordered" size="md" class="mb-2">
                 <x-slot:headings class="col-md-5">
-                    <x-global::content.tabs.heading name="projectdetails"><span class="fa fa-leaf"></span> &nbsp {{ __('tabs.projectdetails') }}</x-global::content.tabs.heading>
+                    <x-global::content.tabs.heading name="projectdetails" checked="checked"><span class="fa fa-leaf"></span> &nbsp {{ __('tabs.projectdetails') }}</x-global::content.tabs.heading>
                     <x-global::content.tabs.heading name="team"><span class="fa fa-group"></span> &nbsp {{ __('tabs.team') }}</x-global::content.tabs.heading>
                     <x-global::content.tabs.heading name="integrations"><span class="fa fa-asterisk"></span> &nbsp {{ __('tabs.Integrations') }}</x-global::content.tabs.heading>
                     <x-global::content.tabs.heading name="todosettings"><span class="fa fa-list-ul"></span> &nbsp {{ __('tabs.todosettings') }}</x-global::content.tabs.heading>
                 </x-slot:headings>
                 
                 <x-slot:contents>
-                    <x-global::content.tabs.content name="projectdetails" ariaLabel="Project Details" classExtra="p-sm" :checked="true">
+                    {{-- :checked="true" --}}
+                    <x-global::content.tabs.content name="projectdetails" ariaLabel="Project Details" classExtra="p-sm">
                         @include('projects::includes.projectDetails')
                     </x-global::content.tabs.content>
 
@@ -414,10 +415,10 @@
         
                                                     <div class="col-md-1">
                                                         <x-global::forms.text-input type="text"
-                                                            name="labelSort-{{ $key }}" class="sorter"
+                                                            name="labelSort-{{ $key }}"
                                                             id="labelSort-{{ $key }}"
                                                             value="{{ $tpl->escape($ticketStatus['sortKey']) }}"
-                                                            class="w-[50px]"
+                                                            class="w-[50px] sorter"
                                                             labelText="{{ $tpl->__('label.sortindex') }}" />
                                                     </div>
         
@@ -513,7 +514,7 @@
                                                     <div class="remove">
                                                         <br />
                                                         <?php if($key != -1){ ?>
-                                                        <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus(<?= $key ?>)"
+                                                        <a href="javascript:void(0);" onclick="projectsController.removeStatus(<?= $key ?>)"
                                                             class="delete"><span class="fa fa-trash"></span></a>
                                                         <?php } ?>
                                                     </div>
@@ -526,11 +527,13 @@
                                     @endforeach
                                 </ul>
 
-                                <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink"
+                                <a href="javascript:void(0);" onclick="projectsController.addToDoStatus();" class="quickAddLink"
                                 style="text-align:left;"><?= $tpl->__('links.add_status') ?></a>
                                 <br />
-                                <input type="submit" value="<?= $tpl->__('buttons.save') ?>" name="submitSettings"
-                                class="btn btn-primary" />
+
+                                <x-global::forms.button type="submit" name="submitSettings">
+                                    {{ $tpl->__('buttons.save') }}
+                                </x-global::forms.button>
                             
                             </form>
                     </x-global::content.tabs.content>
@@ -554,18 +557,17 @@
                     <br />
                     <span class="fa fa-sort"></span>
                 </div>
+                    
                 <div class="col-md-1">
-                    <div class="col-md-1">
-                        <x-global::forms.text-input type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX"
-                            value="" class="w-[50px] sorter" labelText="{{ $tpl->__('label.sortindex') }}" />
-                    </div>
-
-                    <div class="col-md-2">
-                        <x-global::forms.text-input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX"
-                            value="" labelText="{{ $tpl->__('label.label') }}" />
-                    </div>
-
+                    <x-global::forms.text-input type="text" name="labelSort-XXNEWKEYXX" id="labelSort-XXNEWKEYXX"
+                        value="" class="w-[50px] sorter" labelText="{{ $tpl->__('label.sortindex') }}" />
                 </div>
+
+                <div class="col-md-2">
+                    <x-global::forms.text-input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX"
+                        value="" labelText="{{ $tpl->__('label.label') }}" />
+                </div>
+
                 <div class="col-md-2">
                     <x-global::forms.select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen"
                         :labelText="__('label.color')">
@@ -639,20 +641,23 @@
                     </x-global::forms.select>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-2 flex align-middle">
                     <x-global::forms.checkbox name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"
                         {{-- :checked="$ticketStatus['kanbanCol']" --}} labelText="{{ __('label.showInKanban') }}" labelPosition="left" />
                 </div>
                 <div class="remove">
                     <br />
-                    <a href="javascript:void(0);" onclick="leantime.projectsController.removeStatus('XXNEWKEYXX')"
+                    <a href="javascript:void(0);" onclick="projectsController.removeStatus('XXNEWKEYXX')"
                         class="delete"><span class="fa fa-trash"></span></a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type='text/javascript'>
+    <script type='module'>
+
+        import "@mix('/js/Domain/Projects/Js/projectsController.js')"
+
         jQuery(document).ready(function() {
             jQuery("#projectdetails select").chosen();
 
@@ -677,15 +682,15 @@
                 firstDay: leantime.i18n.__("language.firstDayOfWeek"),
             });
 
-            leantime.projectsController.initProjectTabs();
-            leantime.projectsController.initDuplicateProjectModal();
-            leantime.projectsController.initTodoStatusSortable("#todoStatusList");
-            leantime.projectsController.initSelectFields();
-            leantime.usersController.initUserEditModal();
+            projectsController.initProjectTabs();
+            projectsController.initDuplicateProjectModal();
+            projectsController.initTodoStatusSortable("#todoStatusList");
+            projectsController.initSelectFields();
+            // leantime.usersController.initUserEditModal();
 
             leantime.editorController.initComplexEditor();
 
         });
     </script>
 
-    @endsection
+@endsection
