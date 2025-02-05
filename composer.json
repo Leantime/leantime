@@ -57,7 +57,7 @@
         "htmlawed/htmlawed": "^1.2",
         "symfony/dotenv": "^7.1.6",
         "lasserafn/php-initial-avatar-generator": "^4.2",
-        "guzzlehttp/oauth-subscriber": "^0.6.0",
+        "guzzlehttp/oauth-subscriber": "^0.8.1",
         "kamermans/guzzle-oauth2-subscriber": "^1.0",
         "league/csv": "^9.8",
         "dragonmantank/cron-expression": "^3.3",
