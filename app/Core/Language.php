@@ -102,7 +102,6 @@ class Language
 
         $lang = $this->getCurrentLanguage();
         $this->readIni();
-
     }
 
     /**
@@ -122,7 +121,6 @@ class Language
         session(['usersettings.language' => $lang]);
 
         if ((! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) && ! $this->request->isApiOrCronRequest()) {
-
             $isAPIRequest = $this->request->isApiOrCronRequest();
 
             EventDispatcher::addFilterListener(
@@ -199,8 +197,7 @@ class Language
      */
     public function readIni(): array
     {
-        if (Cache::store('installation')->has('languages.lang_'.$this->language)) {
-
+        if (@Cache::store('installation')->has('languages.lang_'.$this->language)) {
             $this->ini_array = self::dispatchFilter(
                 'language_resources',
                 Cache::store('installation')->get('languages.lang_'.$this->language),
@@ -221,16 +218,18 @@ class Language
 
         $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER.'en-US.ini', false, INI_SCANNER_RAW);
 
-        foreach ($languageFiles = self::dispatchFilter('language_files', [
-            // Complement english with english customization
-            static::CUSTOM_LANG_FOLDER.'en-US.ini' => false,
+        foreach (
+            $languageFiles = self::dispatchFilter('language_files', [
+                // Complement english with english customization
+                static::CUSTOM_LANG_FOLDER.'en-US.ini' => false,
 
-            // Overwrite english language by non-english language
-            static::DEFAULT_LANG_FOLDER.$this->language.'.ini' => true,
+                // Overwrite english language by non-english language
+                static::DEFAULT_LANG_FOLDER.$this->language.'.ini' => true,
 
-            // Overwrite with non-engish customizations
-            static::CUSTOM_LANG_FOLDER.$this->language.'.ini' => true,
-        ], ['language' => $this->language]) as $language_file => $isForeign) {
+                // Overwrite with non-engish customizations
+                static::CUSTOM_LANG_FOLDER.$this->language.'.ini' => true,
+            ], ['language' => $this->language]) as $language_file => $isForeign
+        ) {
             $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $language_file, $isForeign);
         }
 
@@ -355,7 +354,6 @@ class Language
         if (is_array($newLanguageArray)) {
             $this->ini_array = array_merge($this->ini_array, $newLanguageArray);
         }
-
     }
 
     public function get(string $index, $default = '', $locale = '')

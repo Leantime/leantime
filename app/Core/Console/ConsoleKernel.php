@@ -43,13 +43,28 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         $this->commandStartedAt = Carbon::now();
 
+        //        // Process global subdomain option if present
+        //        if ($input->hasParameterOption('--subdomain')) {
+        //            $subdomain = $input->getParameterOption('--subdomain');
+        //            if ($subdomain) {
+        //                session(['subdomain' => $subdomain]);
+        //                session(['configSubdomain' => $subdomain]);
+        //            }
+        //        }
+
         try {
+
+            $domain = $input->getParameterOption('--domain');
+            $this->setDomain($domain);
 
             if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
                 $this->bootstrapWithoutBootingProviders();
             }
 
             $this->bootstrap();
+
+            self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $input]);
+
             $cli = $this->getArtisan();
             $output = $cli->run($input, $output);
 
@@ -63,6 +78,29 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
             return 1;
         }
+    }
+
+    public function call($command, array $parameters = [], $outputBuffer = null)
+    {
+
+        if (array_key_exists('--domain', $parameters)) {
+            $this->setDomain($parameters['--domain']);
+        }
+
+        if (in_array($command, ['env:encrypt', 'env:decrypt'], true)) {
+            $this->bootstrapWithoutBootingProviders();
+        }
+
+        $this->bootstrap();
+
+        //        if(isset($parameters['subdomain'])) {
+        //            session(["subdomain" => $parameters['subdomain']]);
+        //            unset($parameters['subdomain']);
+        //        }
+
+        self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $command]);
+
+        return $this->getArtisan()->call($command, $parameters, $outputBuffer);
     }
 
     /**
@@ -99,7 +137,6 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
     public function bootstrap()
     {
-
         if (! $this->app->hasBeenBootstrapped()) {
 
             $this->app->bootstrapWith($this->bootstrappers());
@@ -150,6 +187,23 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         config(['app.timezone' => config('defaultTimezone')]);
 
         self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
+
+    }
+
+    public function setDomain(string $domain)
+    {
+
+        if ($domain) {
+            putenv('LEAN_APP_URL='.$domain);
+            putenv('APP_URL='.$domain);
+
+            //When calling commands inside the app we can switch domains
+            if (isset($this->app['config'])) {
+                config(['app.url' => $domain]);
+                config(['appUrl' => $domain]);
+            }
+
+        }
 
     }
 }

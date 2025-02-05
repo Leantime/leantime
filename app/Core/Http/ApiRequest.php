@@ -67,12 +67,14 @@ class ApiRequest extends IncomingRequest
      */
     public function getBearerToken(): ?string
     {
-        $headers = $this->getAuthorizationHeader();
-        // HEADER: Get the access token from the header
-        if (! empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
+        // Check for Sanctum token first
+        $header = $this->getAuthorizationHeader();
+        if (str_starts_with($header, 'Bearer ')) {
+            return substr($header, 7);
+        }
+
+        if ($token = $this->bearerToken()) {
+            return $token;
         }
 
         return null;
