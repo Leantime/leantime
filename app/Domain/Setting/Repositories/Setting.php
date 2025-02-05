@@ -119,22 +119,12 @@ namespace Leantime\Domain\Setting\Repositories {
         public function checkIfInstalled(): bool
         {
 
-            if (session()->exists('isInstalled') && session('isInstalled')) {
+            $cachedValue = $this->cache->get('isInstalled');
+            if ($cachedValue !== null) {
                 return true;
             }
 
             try {
-                $stmn = $this->db->database->prepare("SHOW TABLES LIKE 'zp_user'");
-
-                $stmn->execute();
-                $values = $stmn->fetchAll();
-                $stmn->closeCursor();
-
-                if (! count($values)) {
-                    session(['isInstalled' => false]);
-
-                    return false;
-                }
 
                 $stmn = $this->db->database->prepare('SELECT COUNT(*) FROM zp_user');
 
@@ -142,13 +132,12 @@ namespace Leantime\Domain\Setting\Repositories {
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                session(['isInstalled' => true]);
+                $this->cache->set('isInstalled', true);
 
                 return true;
 
             } catch (Exception $e) {
                 report($e);
-                session(['isInstalled' => false]);
 
                 return false;
             }

@@ -21,7 +21,13 @@ class Registration
     public function registerMiddleware(array $middleware)
     {
 
-        EventDispatcher::add_filter_listener('leantime.core.middleware.loadplugins.handle.pluginMiddlware',
+        EventDispatcher::add_filter_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents',
+            function (array $existing) use ($middleware) {
+                return array_merge($existing, $middleware);
+            }
+        );
+
+        EventDispatcher::add_filter_listener('leantime.core.http.httpkernel.*.plugins_middleware',
             function (array $existing) use ($middleware) {
                 return array_merge($existing, $middleware);
             }
@@ -29,10 +35,13 @@ class Registration
 
     }
 
-    public function registerLanguageFiles(array $languages)
+    public function registerLanguageFiles(array $languages = [])
     {
-
         $pluginId = $this->pluginId;
+
+        if(empty($languages)) {
+            $languages = $this->findLanguageFiles();
+        }
 
         EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () use ($languages) {
 
@@ -55,6 +64,41 @@ class Registration
             }
 
         }, 5);
+
+    }
+
+    private function findLanguageFiles(): array{
+        $pluginPath = APP_ROOT.'/app/Plugins/';
+        $languageDir = "/Language/";
+
+        // Check both possible locations for language files
+        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar" . $languageDir;
+        $regularPath = "{$pluginPath}{$this->pluginId}" . $languageDir;
+
+        $languageFiles = [];
+
+        // Check regular directory first
+        if (is_dir($regularPath)) {
+            $files = scandir($regularPath);
+            foreach ($files as $file) {
+                if (substr($file, -4) === '.ini') {
+                    $languageFiles[] = substr($file, 0, -4);
+                }
+            }
+        }
+
+        // Check phar if no files found in regular directory
+        if (empty($languageFiles) && file_exists($pharPath)) {
+            $files = scandir($pharPath);
+            foreach ($files as $file) {
+                if (substr($file, -4) === '.ini') {
+                    $languageFiles[] = substr($file, 0, -4);
+                }
+            }
+        }
+
+        return !empty($languageFiles) ? $languageFiles : [];
+
 
     }
 

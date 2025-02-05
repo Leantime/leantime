@@ -196,10 +196,17 @@ if (! function_exists('get_domain_key')) {
 
         //Now that we know where the instance is bing called from
         //Let's add a domain level cache.
-        $domainCacheName = 'localhost';
-        if (! app()->runningInConsole()) {
-            $domainCacheName = md5(\Illuminate\Support\Str::slug(app('request')->host().app('request')['key']));
+
+        $host = app('request')->host();
+
+        $url = config('app.url');
+        if ($url && isset($url['host'])) {
+            $host = $url['host'];
         }
+
+        $domainKeyParts = config('app.url').config('app.key');
+        $slug = \Illuminate\Support\Str::slug($domainKeyParts);
+        $domainCacheName = md5($slug);
 
         return $domainCacheName;
 
@@ -280,22 +287,17 @@ if (! function_exists('currentRoute')) {
     }
 }
 
-if (! function_exists('get_domain_key')) {
+if (! function_exists('get_release_version')) {
 
     /**
      * Gets a unique instance key determined by domain
      */
-    function get_domain_key()
+    function get_release_version()
     {
 
-        //Now that we know where the instance is bing called from
-        //Let's add a domain level cache.
-        $domainCacheName = 'localhost';
-        if (! app()->runningInConsole()) {
-            $domainCacheName = md5(\Illuminate\Support\Str::slug(app('request')->host().app('request')['key']));
-        }
+        $appSettings = app()->make(\Leantime\Core\Configuration\AppSettings::class);
 
-        return $domainCacheName;
+        return $appSettings->appVersion;
 
     }
 
