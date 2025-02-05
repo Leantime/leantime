@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use LasseRafn\InitialAvatarGenerator\InitialAvatar;
 use LasseRafn\Initials\Initials;
-use Leantime\Core\UI\Theme;
 use SVG\SVG;
 
 class Avatarcreator
@@ -17,21 +16,13 @@ class Avatarcreator
 
     public function __construct(
         protected InitialAvatar $avatarGenerator,
-        protected Initials $initials,
-        protected Theme $theme
+        protected Initials $initials
     ) {
         $this->initials->allowSpecialCharacters(true);
 
-        $colorschemes = $theme->getAvailableColorSchemes();
-        $bgColor = '#00a887';
-        if (isset($colorschemes['companyColors']) && isset($colorschemes['companyColors']['secondaryColor'])) {
-            $bgColor = $colorschemes['companyColors']['secondaryColor'];
-        }
-
         //Set some default values
-        $this->avatarGenerator->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf')
-            ->background('#00a887')
-            ->color('#fff');
+        $this->avatarGenerator->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf');
+        $this->avatarGenerator->background('#00a887')->color('#fff');
 
     }
 
@@ -84,6 +75,7 @@ class Avatarcreator
 
     protected function saveAvatar(): string|SVG
     {
+
         if (is_dir(storage_path('framework/cache/avatars')) === false) {
             mkdir(storage_path('framework/cache/avatars'));
 

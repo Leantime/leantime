@@ -106,7 +106,8 @@ a .label.feature-label:after {
     color: var(--secondary-font-color);
 }
 
-.maincontentinner .subtitle {
+.maincontentinner .subtitle,
+.stickyHeader .subtitle {
 
     font-size: var(--font-size-xl);
     color: var(--primary-font-color);
