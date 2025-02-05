@@ -115,17 +115,16 @@ namespace Leantime\Domain\Users\Repositories {
             $sql = 'SELECT * FROM `zp_user` WHERE username = :email ';
 
             if ($status == 'a') {
-                $sql .= " and status = 'a'";
+                $sql .= " and LOWER(status) = 'a'";
             }
 
             if ($status == 'i') {
-                $sql .= " and status = 'i'";
+                $sql .= " and LOWER(status) = 'i'";
             }
 
             $sql .= ' LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
             $stmn->bindValue(':email', $email, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -607,7 +606,9 @@ namespace Leantime\Domain\Users\Repositories {
 
             //If can't find user, return ghost
             if (empty($value)) {
-                return $this->avatarcreator->getAvatar('👻');
+                $avatar = $this->avatarcreator->getAvatar('👻');
+
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
             //If user uploaded return uploaded file
