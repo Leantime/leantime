@@ -3,8 +3,9 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
@@ -26,6 +27,7 @@ class AuthCheck
         'auth.login',
         'auth.resetPw',
         'auth.userInvite',
+        'auth.getToken',
         'install',
         'install.index',
         'install.update',
@@ -37,12 +39,101 @@ class AuthCheck
         'oidc.login',
         'oidc.callback',
         'cron.run',
+        'auth.callback',
+        'auth.redirect',
     ];
 
     public function __construct(
-        protected Environment $config
+        protected Environment $config,
+        protected Auth $auth,
+        protected AuthManager $authManager,
     ) {
         $this->publicActions = self::dispatchFilter('publicActions', $this->publicActions, ['bootloader' => $this]);
+    }
+
+    /**
+     * Handle the request
+     */
+    public function handle(IncomingRequest $request, Closure $next): Response
+    {
+
+        if ($this->isPublicController($request->getCurrentRoute())) {
+            return $next($request);
+        }
+
+        $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
+
+        if ($request instanceof ApiRequest) {
+            self::dispatchEvent('before_api_request', ['application' => app()], 'leantime.core.middleware.apiAuth.handle');
+        }
+
+        $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect, $next);
+
+        //If auth fails either return json response or do the redirect
+        if ($authCheckResponse !== true) {
+            return $authCheckResponse;
+        }
+
+        self::dispatchEvent('logged_in', ['application' => $this]);
+
+        $response = $next($request);
+
+        if ($authCheckResponse === true) {
+            $this->setCookie($response);
+        }
+
+        return $response;
+    }
+
+    protected function authenticate($request, array $guards, $loginRedirect, $next)
+    {
+        if ($request->isApiOrCronRequest()) {
+            return $this->authenticateApi($request, $guards);
+        }
+
+        return $this->authenticateWeb($request, $guards, $loginRedirect, $next);
+    }
+
+    protected function authenticateWeb($request, array $guards, $loginRedirect, $next)
+    {
+
+        if (empty($guards)) {
+            $guards = [null];
+        }
+
+        foreach ($guards as $guard) {
+            if ($this->auth->guard($guard)->check()) {
+                $this->auth->shouldUse($guard);
+
+                // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
+                if (session('userdata.twoFAEnabled')
+                    && ! session('userdata.twoFAVerified')) {
+                    return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
+                }
+
+                return true;
+            }
+        }
+
+        if ($request instanceof APIRequest) {
+            return new Response(json_encode(['error' => 'Invalid API Key']), 401);
+        }
+
+        return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
+
+    }
+
+    protected function authenticateApi($request, array $guards)
+    {
+        foreach ($guards as $guard) {
+            if ($this->auth->guard($guard)->check()) {
+                $this->auth->shouldUse($guard);
+
+                return true;
+            }
+        }
+
+        return new Response(json_encode(['error' => 'Unauthorized']), 401);
     }
 
     /**
@@ -68,78 +159,24 @@ class AuthCheck
         return new RedirectResponse($destination.$queryParams);
     }
 
-    /**
-     * Handle the request
-     */
-    public function handle(IncomingRequest $request, Closure $next): Response
+    public function setCookie($response)
     {
 
-        if ($this->isPublicController($request->getCurrentRoute())) {
-            return $next($request);
-        }
-
-        $loginRedirect = self::dispatch_filter('loginRoute', 'auth.login', ['request' => $request]);
-
-        if ($request instanceof ApiRequest) {
-            self::dispatchEvent('before_api_request', ['application' => app()], 'leantime.core.middleware.apiAuth.handle');
-        }
-        $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect, $next);
-
-        if ($authCheckResponse !== true) {
-            return $authCheckResponse;
-        }
-
-        // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
-        if (session('userdata.twoFAEnabled') && ! session('userdata.twoFAVerified')) {
-            return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
-        }
-
-        self::dispatchEvent('logged_in', ['application' => $this]);
-
-        $response = $next($request);
-
-        if ($authCheckResponse === true) {
-
-            //Set cookie to increase session timeout
-            $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
-                'esl', //Extend Session Lifetime
-                'true',
-                Date::instance(
-                    Carbon::now()->addRealMinutes(app('config')['session']['lifetime'])
-                ),
-                app('config')['session']['path'],
-                app('config')['session']['domain'],
-                false,
-                app('config')['session']['http_only'] ?? true,
-                false,
-                app('config')['session']['same_site'] ?? null,
-                app('config')['session']['partitioned'] ?? false
-            ));
-        }
-
-        return $response;
-    }
-
-    protected function authenticate($request, array $guards, $loginRedirect, $next)
-    {
-        if (empty($guards)) {
-            $guards = [null];
-        }
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                Auth::shouldUse($guard);
-
-                return true;
-            }
-        }
-
-        if ($request instanceof APIRequest) {
-            return new Response(json_encode(['error' => 'Invalid API Key']), 401);
-        }
-
-        return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
-
+        //Set cookie to increase session timeout
+        $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
+            'esl', //Extend Session Lifetime
+            'true',
+            Date::instance(
+                Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))
+            ),
+            $this->config->get('session.path'),
+            $this->config->get('session.domain'),
+            false,
+            $this->config->get('session.http_only', true),
+            false,
+            $this->config->get('session.same_site', null),
+            $this->config->get('session.partitioned', false)
+        ));
     }
 
     public function isPublicController($currentPath)

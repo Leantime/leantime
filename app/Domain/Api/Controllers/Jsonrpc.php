@@ -42,7 +42,7 @@ class Jsonrpc extends Controller
      */
     public function post(array $params): Response
     {
-        if (empty($params) || isset($params['act'])) {
+        if (empty($params)) {
             $params = $this->json_data;
         }
 

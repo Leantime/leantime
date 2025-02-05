@@ -15,8 +15,6 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-
-
         <div class="row">
             <div class="col-md-6">
                 <div class="ticketBox tw-p-[20px]">

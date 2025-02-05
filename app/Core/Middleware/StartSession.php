@@ -60,6 +60,12 @@ class StartSession
 
         self::dispatchEvent('session_initialized');
 
+        // For API requests, use array driver
+        if ($request->isApiOrCronRequest()) {
+            config(['session.driver' => 'array']);
+            $this->manager->setDefaultDriver('array');
+        }
+
         if ($this->shouldLockSession($request)) {
             return $this->handleRequestWhileBlocking($request, $session, $next);
         }
@@ -257,7 +263,8 @@ class StartSession
     {
 
         if (
-            $request->isApiOrCronRequest() === false
+            $request->isApiOrCronRequest() === false &&
+            $this->sessionConfigured()
         ) {
             return true;
         }
