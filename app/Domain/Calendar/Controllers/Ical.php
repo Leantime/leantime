@@ -34,11 +34,21 @@ class Ical extends Controller
      *
      * @throws BindingResolutionException
      */
-    public function run(): RedirectResponse|Response
+    public function run($params): RedirectResponse|Response
     {
 
-        $calId = $_GET['id'] ?? '';
-        $idParts = explode('_', $calId);
+        //calendar id is not a standardized format. We'll have to parse it out
+        //format is calendar.ical.CALENDARID
+        $actParts = explode(".", $params['act'] ?? '');
+
+        if(is_array($actParts) && count($actParts) === 3) {
+            $calId = $actParts[2];
+            $idParts = explode('_', $calId);
+        }else{
+            $calId = $_GET['id'] ?? '';
+            $idParts = explode('_', $calId);
+        }
+
 
         if (count($idParts) != 2) {
             return Frontcontroller::redirect(BASE_URL.'/errors/404');
