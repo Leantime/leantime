@@ -117,7 +117,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             return;
         }
 
-        //$customCommands = $customPluginCommands = null;
+        // $customCommands = $customPluginCommands = null;
 
         $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
         $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
@@ -150,7 +150,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             $this->commandsLoaded = true;
         }
 
-        //$this->bindSchedule();
+        // $this->bindSchedule();
 
     }
 
@@ -197,7 +197,7 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             putenv('LEAN_APP_URL='.$domain);
             putenv('APP_URL='.$domain);
 
-            //When calling commands inside the app we can switch domains
+            // When calling commands inside the app we can switch domains
             if (isset($this->app['config'])) {
                 config(['app.url' => $domain]);
                 config(['appUrl' => $domain]);

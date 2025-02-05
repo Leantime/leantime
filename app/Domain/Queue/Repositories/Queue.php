@@ -35,11 +35,11 @@ namespace Leantime\Domain\Queue\Repositories {
                 } elseif (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
                     $theuser = $this->users->getUserByEmail($recipient);
                 } else {
-                    //skip invalid users
+                    // skip invalid users
                     continue;
                 }
 
-                //User might not be set because it's a new user
+                // User might not be set because it's a new user
                 if (! $theuser) {
                     continue;
                 }

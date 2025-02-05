@@ -83,7 +83,7 @@ class StartSession
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
-        //Locking session for 2 seconds
+        // Locking session for 2 seconds
         // How long the lock should be held once acquired
         $holdLockFor = 3; // Hold lock for x seconds after acquiring
 
@@ -130,7 +130,7 @@ class StartSession
 
         $this->collectGarbage($session);
 
-        //Going deeper down the rabbit hole and executing the rest of the middleware and stack.
+        // Going deeper down the rabbit hole and executing the rest of the middleware and stack.
         $response = $next($request);
 
         // Done processing the request, closing out the session
@@ -168,8 +168,8 @@ class StartSession
      */
     public function getSession(IncomingRequest $request)
     {
-        //Non logged in cookies will be reduced to 60min.
-        //Extend Session Lifetime
+        // Non logged in cookies will be reduced to 60min.
+        // Extend Session Lifetime
         if (! $request->cookies->has('esl')) {
             app('config')->set('session.lifetime', 60);
         }

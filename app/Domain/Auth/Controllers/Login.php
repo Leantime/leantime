@@ -43,7 +43,7 @@ class Login extends Controller
         if (isset($_GET['redirect']) && trim($_GET['redirect']) !== '' && trim($_GET['redirect']) !== '/') {
             $url = urldecode($_GET['redirect']);
 
-            //Check for open redirects, don't allow redirects to external sites.
+            // Check for open redirects, don't allow redirects to external sites.
             if (
                 filter_var($url, FILTER_VALIDATE_URL) === false &&
                 ! in_array($url, ['/auth/logout'])
@@ -87,7 +87,7 @@ class Login extends Controller
 
             self::dispatch_event('beforeAuthServiceCall', ['post' => $_POST]);
 
-            //If login successful redirect to the correct url to avoid post on reload
+            // If login successful redirect to the correct url to avoid post on reload
             if ($this->authService->login($username, $password) === true) {
 
                 self::dispatch_event('successfulLogin', ['post' => $_POST]);

@@ -66,7 +66,7 @@ class Get extends Controller
             'png' => 'image/png',
         ];
 
-        //TODO: Replace with ROOT
+        // TODO: Replace with ROOT
         $path = realpath(APP_ROOT.'/'.$this->config->userFilePath.'/');
 
         $fullPath = $path.'/'.$encName.'.'.$ext;

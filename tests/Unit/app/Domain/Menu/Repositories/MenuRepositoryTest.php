@@ -29,7 +29,7 @@ class MenuRepositoryTest extends TestCase
             define('BASE_URL', 'http://localhost');
         }
 
-        //Mock classes
+        // Mock classes
         $settingsRepo = $this->make(Setting::class);
         $language = $this->make(Language::class);
         $config = $this->make(Environment::class);
@@ -42,7 +42,7 @@ class MenuRepositoryTest extends TestCase
             },
         ]);
 
-        //Load class to be tested
+        // Load class to be tested
         $this->menu = new Menu(
             settingsRepo: $settingsRepo,
             language: $language,
@@ -57,7 +57,7 @@ class MenuRepositoryTest extends TestCase
         $this->menu = null;
     }
 
-    //Write tests below
+    // Write tests below
 
     /**
      * Test GetMenuTypes method
@@ -80,8 +80,8 @@ class MenuRepositoryTest extends TestCase
         $expected = $this->menu::DEFAULT_MENU;
         $defaultStructure = $this->menu->getMenuStructure();
 
-        //Menu structure checks if roles are set in a menu item and will disable a menu item if not allowed to see
-        //User executing the test is not logged in, has no session so it being disabled is correct
+        // Menu structure checks if roles are set in a menu item and will disable a menu item if not allowed to see
+        // User executing the test is not logged in, has no session so it being disabled is correct
         $this->menu->menuStructures[$expected][10]['submenu'][60]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][40]['submenu'][80]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][30]['submenu'][30]['href'] = '/ideas/showBoards';

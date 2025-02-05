@@ -66,10 +66,10 @@ namespace Leantime\Domain\Setting\Repositories {
                 return $values['value'];
             }
 
-            //value is not in the db, which is fine. Let's cache that too
+            // value is not in the db, which is fine. Let's cache that too
             $this->cache->set($type, false);
 
-            //TODO: This needs to return null or throw an exception if the setting doesn't exist.
+            // TODO: This needs to return null or throw an exception if the setting doesn't exist.
             return false;
         }
 

@@ -129,7 +129,7 @@ class ShowMy extends Controller
                     'kind' => $kind,
                 ];
 
-                //This should not be the case since we set the input to disabled, but check anyways
+                // This should not be the case since we set the input to disabled, but check anyways
                 if ($timestamp !== 'false' && $timestamp != false) {
                     try {
                         $this->timesheetService->upsertTime($ticketId, $values);

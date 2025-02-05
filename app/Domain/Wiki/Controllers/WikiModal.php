@@ -43,7 +43,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             if (isset($_GET['id'])) {
                 $id = (int) $_GET['id'];
-                //Update
+                // Update
                 $wiki->title = $params['title'];
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification('notification.wiki_updated_successfully', 'success', 'wiki_updated');
@@ -51,14 +51,14 @@ namespace Leantime\Domain\Wiki\Controllers {
                 return Frontcontroller::redirect(BASE_URL.'/wiki/wikiModal/'.$id);
 
             } else {
-                //New
+                // New
                 $wiki->title = $params['title'];
                 $wiki->projectId = session('currentProject');
                 $wiki->author = session('userdata.id');
 
                 $id = $this->wikiService->createWiki($wiki);
 
-                //session(["currentWiki" => $id]);
+                // session(["currentWiki" => $id]);
 
                 if ($id) {
                     $this->tpl->setNotification('notification.wiki_created_successfully', 'success', 'wiki_created');

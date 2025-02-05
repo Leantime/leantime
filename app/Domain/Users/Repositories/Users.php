@@ -604,14 +604,14 @@ namespace Leantime\Domain\Users\Repositories {
                 $stmn->closeCursor();
             }
 
-            //If can't find user, return ghost
+            // If can't find user, return ghost
             if (empty($value)) {
                 $avatar = $this->avatarcreator->getAvatar('👻');
 
                 return ['filename' => $avatar, 'type' => 'generated'];
             }
 
-            //If user uploaded return uploaded file
+            // If user uploaded return uploaded file
             if (! empty($value['profileId'])) {
 
                 $files = app()->make(Files::class);
@@ -626,7 +626,7 @@ namespace Leantime\Domain\Users\Repositories {
 
             }
 
-            //Otherwise return avatar
+            // Otherwise return avatar
             $name = $value['firstname'].' '.$value['lastname'];
 
             $avatar = $this->avatarcreator->getAvatar($name);

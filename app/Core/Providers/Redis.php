@@ -21,8 +21,8 @@ class Redis extends ServiceProvider
         }
 
         $this->app->singleton('redis', function ($app) {
-            //Setting up three different redis stores
-            //We are using a slightly different config structure and keep redis at the root level of our config
+            // Setting up three different redis stores
+            // We are using a slightly different config structure and keep redis at the root level of our config
 
             $cacheConfig = $app['config']['redis']['default'];
             $cacheConfig['prefix'] = 'leantime_cache:';
@@ -33,15 +33,15 @@ class Redis extends ServiceProvider
             $sessionsConfig = $app['config']['redis']['default'];
             $sessionsConfig['prefix'] = 'leantime_sessions:';
 
-            //Prepare available redis connections
-            //These connections (cache, installation, sessions) can be used for sessions and cache
+            // Prepare available redis connections
+            // These connections (cache, installation, sessions) can be used for sessions and cache
             if ($app['config']->useCluster) {
-                //Cluster configs and prefix management works differently than regular connections
+                // Cluster configs and prefix management works differently than regular connections
                 $app['config']->set('redis.clusters.default', [$app['config']['redis']['default']]);
                 $options = $app['config']['redis']['options'];
 
-                //The default config is not needed anymore and shouldn't be used since the connection is a cluster
-                //connection and won't work in the standard config setup
+                // The default config is not needed anymore and shouldn't be used since the connection is a cluster
+                // connection and won't work in the standard config setup
                 $app['config']->set('redis.default', null);
                 $app['config']->set('redis.cluster', true);
 

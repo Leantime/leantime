@@ -52,7 +52,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $currentLabel = '';
 
                 if (isset($params['module']) && isset($params['label'])) {
-                    //Move to settings service
+                    // Move to settings service
                     if ($params['module'] == 'ticketlabels') {
                         $stateLabels = $this->ticketsRepo->getStateLabels();
                         $currentLabel = $stateLabels[$params['label']]['name'];
@@ -87,12 +87,12 @@ namespace Leantime\Domain\Setting\Controllers {
          */
         public function post($params)
         {
-            //If ID is set its an update
+            // If ID is set its an update
             $sanitizedString = '';
             if (isset($_GET['module']) && isset($_GET['label'])) {
                 $sanitizedString = strip_tags($params['newLabel']);
 
-                //Move to settings service
+                // Move to settings service
                 if ($_GET['module'] == 'ticketlabels') {
                     $currentStateLabels = $this->ticketsRepo->getStateLabels();
 

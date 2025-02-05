@@ -19,7 +19,7 @@ $efforts = $tpl->get('efforts');
 $priorities = $tpl->get('priorities');
 $statusLabels = $tpl->get('allTicketStates');
 
-//All states >0 (<1 is archive)
+// All states >0 (<1 is archive)
 $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 

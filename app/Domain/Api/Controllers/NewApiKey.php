@@ -66,7 +66,7 @@ class NewApiKey extends Controller
             'source' => 'api',
         ];
 
-        //only Admins
+        // only Admins
         if (Auth::userIsAtLeast(Roles::$admin)) {
             $projectRelation = [];
 
@@ -89,7 +89,7 @@ class NewApiKey extends Controller
 
                 $apiKeyValues = $this->APIService->createAPIKey($values);
 
-                //Update Project Relationships
+                // Update Project Relationships
                 if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
                     if ($_POST['projects'][0] !== '0') {
                         $this->projectsRepo->editUserProjectRelations($apiKeyValues['id'], $_POST['projects']);

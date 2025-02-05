@@ -26,9 +26,9 @@ class ApiRequest extends IncomingRequest
         foreach (
             [
                 'Authorization',
-                //Nginx or fast CGI
+                // Nginx or fast CGI
                 'HTTP_AUTHORIZATION',
-                //Nginx or fast CGI
+                // Nginx or fast CGI
                 'REDIRECT_HTTP_AUTHORIZATION',
             ] as $key
         ) {

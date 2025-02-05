@@ -25,7 +25,7 @@ session(['filter_status' => $filter['status']]);
 $filter['relates'] = $_GET['filter_relates'] ?? (session('filter_relates') ?? 'all');
 session(['filter_relates' => $filter['relates']]);
 
-//get canvas title
+// get canvas title
 foreach ($tpl->get('allCanvas') as $canvasRow) {
     if ($canvasRow['id'] == $tpl->get('currentCanvas')) {
         $canvasTitle = $canvasRow['title'];

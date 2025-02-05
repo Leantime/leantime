@@ -46,7 +46,7 @@ namespace Leantime\Domain\Users\Services {
             $this->authService = $authService;
         }
 
-        //GET
+        // GET
 
         /**
          * @return string[]|SVG
@@ -128,7 +128,7 @@ namespace Leantime\Domain\Users\Services {
             return $this->userRepo->getAllBySource($source);
         }
 
-        //POST
+        // POST
 
         /**
          * @throws BindingResolutionException
@@ -203,7 +203,7 @@ namespace Leantime\Domain\Users\Services {
         public function createUserInvite(array $values): bool|int
         {
 
-            //Generate strong password
+            // Generate strong password
             $tempPasswordVar = Uuid::uuid4()->toString();
             $inviteCode = Uuid::uuid4()->toString();
 

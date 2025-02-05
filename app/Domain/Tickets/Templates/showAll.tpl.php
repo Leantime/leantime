@@ -23,7 +23,7 @@ $statusLabels = $tpl->get('allTicketStates');
 
 $newField = $tpl->get('newField');
 
-//All states >0 (<1 is archive)
+// All states >0 (<1 is archive)
 $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 

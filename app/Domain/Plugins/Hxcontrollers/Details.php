@@ -49,7 +49,7 @@ class Details extends HtmxController
             $this->pluginService->installMarketplacePlugin($pluginModel, $version);
         } catch (RequestException $e) {
 
-            //Parse and clean up error message
+            // Parse and clean up error message
             $errorJson = str_replace('HTTP request returned status code 500:', '', $e->getMessage());
             $errorJson = str_replace('HTTP request returned status code 200:', '', $errorJson);
             $errors = json_decode(trim($errorJson));

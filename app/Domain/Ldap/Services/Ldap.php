@@ -21,7 +21,7 @@ class Ldap
 
     private mixed $ldapUri;
 
-    private mixed $ldapDn; //DN where users are located (including baseDn)
+    private mixed $ldapDn; // DN where users are located (including baseDn)
 
     private mixed $ldapKeys = [
         'username' => 'uid',
@@ -59,15 +59,15 @@ class Ldap
 
         if (! $differentConfig) {
             $this->config = app()->make(Environment::class);
-            //Map config vars
+            // Map config vars
             $this->useLdap = $this->config->useLdap;
 
-            //Don't do anything else if ldap is turned off
+            // Don't do anything else if ldap is turned off
             if ($this->useLdap === false) {
                 return false;
             }
 
-            //Prepare and map in case we want to get the config from somewhere else in the future
+            // Prepare and map in case we want to get the config from somewhere else in the future
             $this->host = $this->config->ldapHost;
             $this->ldapDn = $this->config->ldapDn;
             $this->defaultRoleKey = $this->config->ldapDefaultRoleKey;
@@ -133,7 +133,7 @@ class Ldap
         if ($username != '' && $password != '') {
             $passwordBind = $password;
 
-            //AD allows usenrame login
+            // AD allows usenrame login
             if ($this->directoryType == 'AD') {
                 $usernameDN = $username;
 
@@ -147,7 +147,7 @@ class Ldap
                     return true;
                 }
             } else {
-                //OL requires distinguished name login
+                // OL requires distinguished name login
                 $usernameDN = $this->ldapKeys->username.'='.$username.','.$this->ldapDn;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
@@ -226,7 +226,7 @@ class Ldap
             return false;
         }
 
-        //Find Role
+        // Find Role
         $role = $this->defaultRoleKey;
 
         foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
@@ -250,7 +250,7 @@ class Ldap
             $firstname = isset($entries[0][strtolower($this->ldapKeys->firstname)]) ? $entries[0][strtolower($this->ldapKeys->firstname)][0] : '';
         */
 
-        //Find Firstname & Lastname
+        // Find Firstname & Lastname
         $firstname = isset($entries[0][strtolower($this->ldapKeys->firstname)]) ? $entries[0][strtolower($this->ldapKeys->firstname)][0] : '';
         $lastname = isset($entries[0][strtolower($this->ldapKeys->lastname)]) ? $entries[0][strtolower($this->ldapKeys->lastname)][0] : '';
         $phone = isset($entries[0][strtolower($this->ldapKeys->phone)]) ? $entries[0][strtolower($this->ldapKeys->phone)][0] : '';
@@ -347,13 +347,13 @@ class Ldap
         $userRepo = app()->make(UserRepository::class);
 
         foreach ($ldapUsers as $user) {
-            //Update
+            // Update
             $checkUser = $userRepo->getUserByEmail($user['user']);
 
             if (is_array($checkUser)) {
                 $userRepo->patchUser($checkUser['id'], ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'role' => $user['role']]);
             } else {
-                //Insert
+                // Insert
                 $userArray = [
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],

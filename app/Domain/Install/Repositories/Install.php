@@ -107,7 +107,7 @@ namespace Leantime\Domain\Install\Repositories {
          */
         public function __construct(Environment $config, AppSettingCore $settings)
         {
-            //Some scripts might take a long time to execute. Set timeout to 5minutes
+            // Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
             $this->config = $config;
@@ -237,7 +237,7 @@ namespace Leantime\Domain\Install\Repositories {
         public function updateDB(): array|bool
         {
 
-            //Forget all the versions we think we know and start fresh
+            // Forget all the versions we think we know and start fresh
             session()->forget('db-version');
             $settingsCacheService = app()->make(SettingCache::class);
             $settingsCacheService->forget('db-version');
@@ -283,7 +283,7 @@ namespace Leantime\Domain\Install\Repositories {
                 return true;
             }
 
-            //Find all update functions that need to be executed
+            // Find all update functions that need to be executed
             foreach ($this->dbUpdates as $updateVersion) {
                 if ($currentDBVersion < $updateVersion) {
                     $functionName = 'update_sql_'.$updateVersion;
@@ -293,14 +293,14 @@ namespace Leantime\Domain\Install\Repositories {
                     if ($result !== true) {
                         $errors = array_merge($errors, $result);
                     } else {
-                        //Update version number in db
+                        // Update version number in db
                         try {
 
                             $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
                             $settingsService->saveSetting('db-version', $this->settings->dbVersion);
 
-                            //$stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
-                            //$stmn->execute();
+                            // $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
+                            // $stmn->execute();
 
                             $currentDBVersion = $updateVersion;
                         } catch (PDOException $e) {
@@ -1855,8 +1855,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    //Just swallow your pride
-                    //One day we'll get ALTER IF EXISTS
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
                 }
             }
 
@@ -1882,8 +1882,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    //Just swallow your pride
-                    //One day we'll get ALTER IF EXISTS
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
                 }
             }
 
@@ -1946,8 +1946,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    //Just swallow your pride
-                    //One day we'll get ALTER IF EXISTS
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
                 }
             }
 

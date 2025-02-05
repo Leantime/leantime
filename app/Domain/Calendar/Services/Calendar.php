@@ -251,7 +251,7 @@ class Calendar
         }
 
         $eventObjects = [];
-        //Create array of event objects for ical generator
+        // Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
 
             try {
@@ -282,7 +282,7 @@ class Calendar
                 $eventObjects[] = $currentEvent;
 
             } catch (\Exception $e) {
-                //Do not include event in ical
+                // Do not include event in ical
                 Log::error($e);
             }
         }

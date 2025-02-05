@@ -174,17 +174,17 @@ class Auth implements Authenticatable
 
         // different identity providers can live here
         // they all need to
-        //// A: ensure the user is in leantime (with a valid role) and if not create the user
-        //// B: set the session variables
-        //// C: update users from the identity provider,
+        // // A: ensure the user is in leantime (with a valid role) and if not create the user
+        // // B: set the session variables
+        // // C: update users from the identity provider,
         // Try Ldap
         if ($this->config->useLdap === true && extension_loaded('ldap')) {
             $ldap = app()->make(Ldap::class);
 
             if ($ldap->connect() && $ldap->bind($username, $password)) {
-                //Update username to include domain
+                // Update username to include domain
                 $usernameWDomain = $ldap->getEmail($username);
-                //Get user
+                // Get user
                 $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
                 $ldapUser = $ldap->getSingleUser($username);
@@ -305,7 +305,7 @@ class Auth implements Authenticatable
 
         $this->updateUserSessionDB($currentUser['id'], session()->getId());
 
-        //Clear user theme cache on login
+        // Clear user theme cache on login
         Theme::clearCache();
     }
 
@@ -417,7 +417,7 @@ class Auth implements Authenticatable
                 $result = $this->authRepo->setPWResetLink($username, $resetLink);
 
                 if ($result) {
-                    //Don't queue, send right away
+                    // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
@@ -448,7 +448,7 @@ class Auth implements Authenticatable
     public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
     {
 
-        //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+        // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
         if ($roleToCheck === false) {
@@ -490,7 +490,7 @@ class Auth implements Authenticatable
     public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
     {
 
-        //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+        // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
         if (is_array($role) && in_array($roleToCheck, $role)) {

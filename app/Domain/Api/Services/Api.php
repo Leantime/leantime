@@ -36,6 +36,7 @@ class Api
 
     /**
      * @throws BindingResolutionException
+     *
      * @api
      */
     public function getAPIKeyUser(string $apiKey): bool|array
@@ -61,6 +62,7 @@ class Api
         if ($apiUser) {
             if (password_verify($key, $apiUser['password'])) {
                 $this->authService->setUserSession($apiUser);
+
                 return $apiUser;
             }
         }

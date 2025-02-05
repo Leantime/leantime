@@ -99,12 +99,12 @@ namespace Leantime\Domain\Reports\Services {
                     || session('reportCompleted.'.session('currentProject')) != 1
                 )
             ) {
-                //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
-                //Get current Sprint Id, if no sprint available, dont run the sprint burndown
+                // Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
+                // Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
                 $lastEntries = $this->reportRepository->checkLastReportEntries(session('currentProject'));
 
-                //If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
+                // If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
 
                 if (count($lastEntries) == 0) {
                     $currentSprint = $this->sprintRepository->getCurrentSprint(session('currentProject'));
@@ -172,7 +172,7 @@ namespace Leantime\Domain\Reports\Services {
             WikiRepository $wikiRepo
         ): array {
 
-            //Get anonymous company guid
+            // Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
             self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
@@ -280,7 +280,7 @@ namespace Leantime\Domain\Reports\Services {
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
-            //Only send once a day
+            // Only send once a day
 
             $allowTelemetry = app('config')->allowTelemetry ?? true;
 
@@ -293,7 +293,7 @@ namespace Leantime\Domain\Reports\Services {
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
-                    //Do the curl
+                    // Do the curl
                     $httpClient = new Client;
 
                     try {
@@ -389,7 +389,7 @@ namespace Leantime\Domain\Reports\Services {
 
             $telemetry['date'] = $today;
 
-            //Do the curl
+            // Do the curl
             $httpClient = new Client;
 
             try {

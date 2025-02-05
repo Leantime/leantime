@@ -51,22 +51,22 @@ class LoadConfig extends LoadConfiguration
         if (! isset($loadedFromCache)) {
             $this->loadConfigurationFiles($app, $config);
 
-            //Now extend config with laravel configs if they exist
+            // Now extend config with laravel configs if they exist
             $app->extend('config', function (Repository $laravelConfig) use ($app) {
 
                 $leantimeConfig = $app->make(Environment::class);
 
-                //Add all laravel configs to leantime config
+                // Add all laravel configs to leantime config
                 foreach ($laravelConfig->all() as $key => $value) {
                     $leantimeConfig->set($key, $value);
                 }
 
-                //At this point we have the leantime config and loaded laravel configs
-                //Re-aranging and setting some of the laravel defaults that were not set
-                //as part of the file loader. Laravel config vars were already added.
+                // At this point we have the leantime config and loaded laravel configs
+                // Re-aranging and setting some of the laravel defaults that were not set
+                // as part of the file loader. Laravel config vars were already added.
                 $finalConfig = $this->mapLeantime2LaravelConfig($laravelConfig, $leantimeConfig);
 
-                //Additional adjustments
+                // Additional adjustments
                 $finalConfig->set('APP_DEBUG', $finalConfig->get('debug') ? true : false);
 
                 if (preg_match('/.+\/$/', $finalConfig->get('appUrl'))) {
@@ -82,12 +82,12 @@ class LoadConfig extends LoadConfiguration
                     $finalConfig->set('app.url', $url);
                 }
 
-                //Handle trailing slashes
+                // Handle trailing slashes
                 return $finalConfig;
             });
         }
 
-        //Need to run this in case config is coming from cache
+        // Need to run this in case config is coming from cache
         $this->setBaseConstants($app['config']->get('appUrl'), $app);
 
         $config = $app['config'];
@@ -168,8 +168,8 @@ class LoadConfig extends LoadConfiguration
         $reflectionClass = new \ReflectionClass(DefaultConfig::class);
         $properties = $reflectionClass->getProperties();
 
-        //Parsing through all the leantime config options.
-        //Default tracks a mapping via attributes
+        // Parsing through all the leantime config options.
+        // Default tracks a mapping via attributes
         foreach ($properties as $configVar) {
             $attributes = $configVar->getAttributes(LaravelConfig::class);
 
@@ -178,8 +178,8 @@ class LoadConfig extends LoadConfiguration
                 $laravelConfigKey = $attributes[0]->newInstance()->config;
                 $defaultConfigkey = $configVar->name;
 
-                //set laravel config.
-                //Leantime env file has priority and can override previously defined laravel configs
+                // set laravel config.
+                // Leantime env file has priority and can override previously defined laravel configs
                 $leantimeConfig->set($laravelConfigKey, $leantimeConfig->get($defaultConfigkey));
             }
         }

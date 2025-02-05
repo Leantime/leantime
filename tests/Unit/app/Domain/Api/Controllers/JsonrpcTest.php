@@ -111,8 +111,8 @@ class JsonrpcTest extends \Unit\TestCase
             ],
         ];
 
-        //Each batched call will call displayJson once and then the final invokation will combine the results of the
-        //first 2 invocations to an array of 2 results
+        // Each batched call will call displayJson once and then the final invokation will combine the results of the
+        // first 2 invocations to an array of 2 results
         $countInvocations = 0;
         $this->template->method('displayJson')
             ->willReturnCallback(function ($response) use (&$countInvocations) {
@@ -120,13 +120,13 @@ class JsonrpcTest extends \Unit\TestCase
                 $this->assertIsArray($response);
 
                 if ($countInvocations < 3) {
-                    //Each individual invocation will have the regular jsonrpc response which gets mapped to the main
+                    // Each individual invocation will have the regular jsonrpc response which gets mapped to the main
                     // response
                     $this->assertCount(3, $response);
                 }
 
                 if ($countInvocations == 3) {
-                    //The last invocation has 2 array items each being the result set of the jsonrpc call
+                    // The last invocation has 2 array items each being the result set of the jsonrpc call
                     $this->assertCount(2, $response);
                 }
 

@@ -227,7 +227,7 @@ namespace Leantime\Domain\Files\Repositories {
         public function upload($file, $module, $moduleId): false|string|array
         {
 
-            //Clean module mess
+            // Clean module mess
             if ($module == 'projects') {
                 $module = 'project';
             }
@@ -245,7 +245,7 @@ namespace Leantime\Domain\Files\Repositories {
             $return = false;
 
             if ($upload->error == '') {
-                //Just something unique to avoid collision in s3 (each customer has their own folder)
+                // Just something unique to avoid collision in s3 (each customer has their own folder)
                 $newname = md5(session('userdata.id').time());
 
                 $upload->renameFile($newname);
@@ -270,7 +270,7 @@ namespace Leantime\Domain\Files\Repositories {
                         $return = false;
                     }
                 } else {
-                    //report($upload->error);
+                    // report($upload->error);
                     return $upload->error;
                 }
             }
@@ -281,7 +281,7 @@ namespace Leantime\Domain\Files\Repositories {
         public function uploadCloud($name, $url, $module, $moduleId): void
         {
 
-            //Add cloud stuff ehre.
+            // Add cloud stuff ehre.
         }
     }
 

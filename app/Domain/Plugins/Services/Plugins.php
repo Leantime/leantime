@@ -84,7 +84,7 @@ namespace Leantime\Domain\Plugins\Services {
                 $installedPlugins = [];
             }
 
-            //Build array with pluginId as $key
+            // Build array with pluginId as $key
             foreach ($installedPlugins as &$plugin) {
                 $plugin->type = $plugin->format === $this->pluginFormat['phar']
                     ? $plugin->type = $this->pluginTypes['marketplace']
@@ -359,7 +359,7 @@ namespace Leantime\Domain\Plugins\Services {
             }
 
             try {
-                //Any installation calls should happen right here.
+                // Any installation calls should happen right here.
                 $pluginClassName = $this->getPluginClassName($plugin);
                 $newPluginSvc = app()->make($pluginClassName);
 
@@ -373,7 +373,7 @@ namespace Leantime\Domain\Plugins\Services {
                     }
                 }
             } catch (\Exception $e) {
-                //Silence is golden
+                // Silence is golden
             }
 
             return $this->pluginRepository->removePlugin($id);

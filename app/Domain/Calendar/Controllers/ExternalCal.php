@@ -62,7 +62,7 @@ class ExternalCal extends Controller
         }
 
         header('Content-type: text/calendar; charset=utf-8');
-        //header('Content-disposition: attachment;filename="external.ics"');
+        // header('Content-disposition: attachment;filename="external.ics"');
 
         echo $content;
 

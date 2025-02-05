@@ -38,7 +38,7 @@ class Application extends \Illuminate\Console\Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        //$this->setDomain($input);
+        // $this->setDomain($input);
 
         self::dispatchEvent('beforeRun', ['application' => $this, 'input' => $input, 'output' => $output]);
 

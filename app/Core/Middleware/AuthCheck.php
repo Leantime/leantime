@@ -69,7 +69,7 @@ class AuthCheck
 
         $authCheckResponse = $this->authenticate($request, array_keys($this->config->get('auth.guards')), $loginRedirect, $next);
 
-        //If auth fails either return json response or do the redirect
+        // If auth fails either return json response or do the redirect
         if ($authCheckResponse !== true) {
             return $authCheckResponse;
         }
@@ -162,9 +162,9 @@ class AuthCheck
     public function setCookie($response)
     {
 
-        //Set cookie to increase session timeout
+        // Set cookie to increase session timeout
         $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
-            'esl', //Extend Session Lifetime
+            'esl', // Extend Session Lifetime
             'true',
             Date::instance(
                 Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))
@@ -182,11 +182,11 @@ class AuthCheck
     public function isPublicController($currentPath)
     {
 
-        //path comes in with dots as separator.
-        //We only need to compare the first 2 segments
+        // path comes in with dots as separator.
+        // We only need to compare the first 2 segments
         $currentPath = explode('.', $currentPath);
 
-        //Todo: We may want to take out hx if we have public htmx paths
+        // Todo: We may want to take out hx if we have public htmx paths
         if (! is_array($currentPath)) {
             return false;
         }

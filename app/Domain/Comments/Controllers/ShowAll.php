@@ -53,7 +53,7 @@ namespace Leantime\Domain\Comments\Controllers {
             $this->tpl->assign('numComments', count($comments));
             $this->tpl->assign('comments', $comments);
 
-            //Delete comment
+            // Delete comment
             if (isset($params['delComment']) === true) {
                 $commentId = (int) ($params['delComment']);
 

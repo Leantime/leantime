@@ -229,12 +229,12 @@ class Fileupload
      */
     public function upload(): bool
     {
-        //S3 upload
+        // S3 upload
         if ($this->config->useS3) {
             return $this->uploadToS3();
         }
 
-        //Local upload
+        // Local upload
         return $this->uploadLocal();
     }
 
@@ -407,15 +407,15 @@ class Fileupload
 
         $oStreamResponse = new BinaryFileResponse($fullPath);
         $oStreamResponse->headers->set('Content-Type', $mimes[$ext]);
-        //$oStreamResponse->headers->set("Content-Length", $sFileSize);
-        //$oStreamResponse->headers->set("ETag", $sEtag);
+        // $oStreamResponse->headers->set("Content-Length", $sFileSize);
+        // $oStreamResponse->headers->set("ETag", $sEtag);
 
         if (app()->make(Environment::class)->debug == false) {
             $oStreamResponse->headers->set('Pragma', 'public');
             $oStreamResponse->headers->set('Cache-Control', 'max-age=86400');
             $oStreamResponse->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', $sLastModified).' GMT');
         }
-        //$oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
+        // $oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
 
         return $oStreamResponse;
     }

@@ -35,7 +35,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $article = $this->wikiService->getArticle($params['id'], session('currentProject'));
             }
 
-            //Delete milestone relationship
+            // Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
                 $article->milestoneId = '';
                 $results = $this->wikiService->updateArticle($article);
@@ -103,7 +103,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                     $this->tpl->setNotification('notification.article_updated_successfully', 'success', 'article_updated');
                 }
             } else {
-                //New
+                // New
                 $article->title = $params['title'];
                 $article->author = session('userdata.id');
                 $article->canvasId = session('currentWiki');

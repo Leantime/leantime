@@ -63,7 +63,7 @@ class ResetPw extends Controller
         }
 
         if (isset($_POST['username']) === true) {
-            //Always return success to prevent db attacks checking which email address are in there
+            // Always return success to prevent db attacks checking which email address are in there
             $this->authService->generateLinkAndSendEmail($_POST['username']);
             $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), 'success');
 

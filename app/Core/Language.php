@@ -97,7 +97,7 @@ class Language
         $this->config = app('config');
         $this->request = app('request');
 
-        //Get list of available languages
+        // Get list of available languages
         $this->langlist = $this->getLanguageList();
 
         $lang = $this->getCurrentLanguage();
@@ -326,7 +326,7 @@ class Language
      */
     public function __(string $index, string $default = ''): string
     {
-        //If index cannot be found return default or original string
+        // If index cannot be found return default or original string
         if (! isset($this->ini_array[$index])) {
             if (! empty($default)) {
                 return $default;

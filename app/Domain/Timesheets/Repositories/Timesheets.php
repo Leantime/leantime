@@ -203,7 +203,7 @@ class Timesheets extends Repository
                         OR (:requesterRole = 'admin' OR :requesterRole = 'manager')
                     )";
 
-        //If user is not a manager, only pull their own timesheet entries
+        // If user is not a manager, only pull their own timesheet entries
         if (session('userdata.role') !== 'admin' && session('userdata.role') !== 'manager') {
             $query .= ' AND zp_timesheets.userId = :userId';
         }

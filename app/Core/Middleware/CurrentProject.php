@@ -23,7 +23,7 @@ class CurrentProject
 
             $actionPath = $request->getModuleName();
 
-            //Only change/set project if the request is not htmx, api or cron
+            // Only change/set project if the request is not htmx, api or cron
             if (! ($request instanceof HtmxRequest) && $actionPath != 'api' && $actionPath != 'cron') {
                 app()->make(ProjectService::class)->setCurrentProject();
             }

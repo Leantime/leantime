@@ -200,7 +200,7 @@ class Widgets
             }
         }
 
-        //Sort Widgets
+        // Sort Widgets
         $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
 
         Cache::set($activeWidgetKey, $widgets, CarbonImmutable::now()->addDays(30));

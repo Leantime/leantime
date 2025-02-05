@@ -231,12 +231,12 @@ class EventDispatcher implements Dispatcher
             }
         }
 
-        //Call system plugins (defined via config)
+        // Call system plugins (defined via config)
         if (
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)
         ) {
-            //TODO: Do phar plugins get to be system plugins? Right now they dont
+            // TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
                 if (file_exists($pluginEventsPath = APP_ROOT.'/app/Plugins/'.$plugin.'/register.php')) {
                     include_once $pluginEventsPath;
@@ -256,10 +256,10 @@ class EventDispatcher implements Dispatcher
 
             foreach ($enabledPlugins as $plugin) {
 
-                //Catch issue when plugins are cached on load but autoloader is not quite done loading.
-                //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
-                //Clearing session cache in that case.
-                //@TODO: Check on callstack to make sure autoload loads before sessions
+                // Catch issue when plugins are cached on load but autoloader is not quite done loading.
+                // Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
+                // Clearing session cache in that case.
+                // @TODO: Check on callstack to make sure autoload loads before sessions
                 if (is_a($plugin, '__PHP_Incomplete_Class')) {
                     continue;
                 }
@@ -319,7 +319,7 @@ class EventDispatcher implements Dispatcher
         int $priority = 10
     ): void {
 
-        //Some backwards compatibility rules
+        // Some backwards compatibility rules
         if (str_starts_with($eventName, 'leantime.core.template.tpl')) {
             $eventParts = explode('.', $eventName);
 
@@ -460,7 +460,7 @@ class EventDispatcher implements Dispatcher
         $isEvent = $registryType == 'events';
         $filteredPayload = null;
 
-        //sort matches by priority
+        // sort matches by priority
         usort($registry, fn ($a, $b) => match (true) {
             $a['priority'] > $b['priority'] => 1,
             $a['priority'] == $b['priority'] => 0,

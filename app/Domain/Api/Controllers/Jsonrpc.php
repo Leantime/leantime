@@ -171,8 +171,8 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
-        //Check method attributes
-        //TODO: Check if method is available for api
+        // Check method attributes
+        // TODO: Check if method is available for api
 
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
@@ -227,9 +227,9 @@ class Jsonrpc extends Controller
             throw new Exception("Method string doesn't start with \"leantime.rpc.\"");
         }
 
-        //method parameter breakdown
-        //00000000.111.22222222.3333333333333.444444444444
-        //leantime.rpc.{module}.{servicename}.{methodname}
+        // method parameter breakdown
+        // 00000000.111.22222222.3333333333333.444444444444
+        // leantime.rpc.{module}.{servicename}.{methodname}
         $methodStringPieces = explode('.', $methodstring);
 
         if (count($methodStringPieces) !== 4 && count($methodStringPieces) !== 5) {
@@ -359,7 +359,7 @@ class Jsonrpc extends Controller
     private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
 
-        //TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
+        // TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
             'error' => [

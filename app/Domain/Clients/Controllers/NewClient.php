@@ -36,7 +36,7 @@ namespace Leantime\Domain\Clients\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
                 $values = [
                     'name' => '',

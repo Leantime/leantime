@@ -231,7 +231,7 @@ class Template
 
         $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
 
-        //app('view')->share([]);
+        // app('view')->share([]);
 
         $this->hookContext = 'tpl.'.$templateParts['module'].'.'.$templateParts['path'];
 
@@ -393,8 +393,8 @@ class Template
             'path' => '',
         ];
 
-        //view path style
-        //module::path.name
+        // view path style
+        // module::path.name
         if (str_contains($viewName, '::')) {
             $parts = explode('::', $viewName);
             $pathParts['module'] = $parts[0];
@@ -403,8 +403,8 @@ class Template
             return $pathParts;
         }
 
-        //leantime path
-        //module.name
+        // leantime path
+        // module.name
         if (str_contains($viewName, '.')) {
             $parts = explode('.', $viewName);
             $pathParts['module'] = $parts[0];
@@ -830,7 +830,7 @@ class Template
         try {
             $this->dispatchTplHook('event', $hookName, $payload);
         } catch (\Exception $e) {
-            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            // If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
         }
     }
@@ -842,7 +842,7 @@ class Template
             return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
 
         } catch (\Exception $e) {
-            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            // If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
 
             return $payload;

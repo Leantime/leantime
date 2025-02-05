@@ -134,11 +134,11 @@ namespace Leantime\Domain\Projects\Controllers {
                         }
                     }
 
-                    //$mailer->sendMail($to, session("userdata.name"));
+                    // $mailer->sendMail($to, session("userdata.name"));
                     // NEW Queuing messaging system
                     $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
-                    //Take the old value to avoid nl character
+                    // Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
                     $this->tpl->sendConfetti();

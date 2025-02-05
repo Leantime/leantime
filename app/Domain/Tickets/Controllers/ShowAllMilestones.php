@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $params['excludeType'] = '';
             }
 
-            //Sets the filter module to show a quick toggle for task types
+            // Sets the filter module to show a quick toggle for task types
             $this->tpl->assign('enableTaskTypeToggle', true);
             $this->tpl->assign('showTasks', $params['showTasks'] ?? 'false');
 

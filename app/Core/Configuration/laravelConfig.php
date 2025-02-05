@@ -13,38 +13,38 @@ return [
             \Leantime\Core\Providers\AppServiceProvider::class,
             \Leantime\Core\Providers\LoadMacros::class,
 
-            \Leantime\Core\Providers\Cache::class, //\Illuminate\Cache\CacheServiceProvider::class,
+            \Leantime\Core\Providers\Cache::class, // \Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Core\Providers\Redis::class,
 
             \Leantime\Core\Providers\ConsoleSupport::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
-            //\Illuminate\Database\DatabaseServiceProvider::class,
+            // \Illuminate\Database\DatabaseServiceProvider::class,
             \Leantime\Core\Providers\EncryptionServiceProvider::class,
             \Leantime\Core\Providers\FileSystemServiceProvider::class,
 
             \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
             \Illuminate\Hashing\HashServiceProvider::class,
-            //\Illuminate\Mail\MailServiceProvider::class,
+            // \Illuminate\Mail\MailServiceProvider::class,
             \Illuminate\Notifications\NotificationServiceProvider::class,
             \Illuminate\Pagination\PaginationServiceProvider::class,
-            //\Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+            // \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
             \Illuminate\Pipeline\PipelineServiceProvider::class,
-            //\Illuminate\Queue\QueueServiceProvider::class,
+            // \Illuminate\Queue\QueueServiceProvider::class,
 
-            //\Illuminate\Redis\RedisServiceProvider::class,
+            // \Illuminate\Redis\RedisServiceProvider::class,
 
-            //\Illuminate\Session\SessionServiceProvider::class,
+            // \Illuminate\Session\SessionServiceProvider::class,
             \Leantime\Core\Providers\Session::class,
 
-            //\Illuminate\Translation\TranslationServiceProvider::class,
+            // \Illuminate\Translation\TranslationServiceProvider::class,
             \Illuminate\Validation\ValidationServiceProvider::class,
-            //\Illuminate\View\ViewServiceProvider::class,
+            // \Illuminate\View\ViewServiceProvider::class,
 
             \Leantime\Core\Providers\Authentication::class,
             \Leantime\Core\Providers\RateLimiter::class,
             \Leantime\Core\Providers\Db::class,
             \Leantime\Core\Providers\Language::class,
-            //\Leantime\Core\Providers\RouteServiceProvider::class,
+            // \Leantime\Core\Providers\RouteServiceProvider::class,
 
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
@@ -212,7 +212,7 @@ return [
         |
         */
 
-        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), //8 hours
+        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), // 8 hours
 
         'expire_on_close' => false,
 

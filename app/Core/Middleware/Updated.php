@@ -27,8 +27,8 @@ class Updated
         $settingsDbVersion = app()->make(AppSettings::class)->dbVersion;
 
         if ($dbVersion !== false) {
-            //Setting dbVersion only if there is one in the db
-            //Otherwise leave dbVersion unset so we can recheck every time the settings db returns false.
+            // Setting dbVersion only if there is one in the db
+            // Otherwise leave dbVersion unset so we can recheck every time the settings db returns false.
             session(['dbVersion' => $dbVersion]);
         }
 

@@ -41,14 +41,14 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function get($params)
         {
             if (isset($params['id'])) {
-                //Delete comment
+                // Delete comment
                 if (isset($params['delComment']) === true) {
                     $commentId = (int) ($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
                     $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', 'ideacomment_deleted');
                 }
 
-                //Delete milestone relationship
+                // Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
                     $milestoneId = (int) ($params['removeMilestone']);
                     $this->ideaRepo->patchCanvasItem($params['id'], ['milestoneId' => '']);
@@ -137,7 +137,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 }
             }
 
-            //changeItem is set for new or edited item changes.
+            // changeItem is set for new or edited item changes.
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) === true) {

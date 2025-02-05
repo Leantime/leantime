@@ -19,8 +19,8 @@ class Cache extends CacheServiceProvider
 
         $this->app->singleton('cache', function ($app) {
 
-            //Now that we know where the instance is bing called from
-            //Let's add a domain level cache.
+            // Now that we know where the instance is bing called from
+            // Let's add a domain level cache.
             $domainCacheName = get_domain_key();
 
             $app['config']->set('cache.stores.'.$domainCacheName, [
@@ -28,16 +28,16 @@ class Cache extends CacheServiceProvider
                 'path' => storage_path('framework/cache/'.$domainCacheName.'/data'),
             ]);
 
-            //If redis is set up let's use redis as cache
+            // If redis is set up let's use redis as cache
             if ($app['config']['useRedis']) {
 
                 $app['config']->set('cache.prefix', '');
 
-                //Default driver just in case it is being asked for
+                // Default driver just in case it is being asked for
                 $app['config']->set('cache.stores.redis.driver', 'redis');
                 $app['config']->set('cache.stores.redis.connection', 'cache');
 
-                //Only needed when using sessions with redis
+                // Only needed when using sessions with redis
                 $app['config']->set('cache.stores.sessions.driver', 'redis');
                 $app['config']->set('cache.stores.sessions.connection', 'sessions');
 

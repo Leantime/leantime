@@ -26,7 +26,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get(): Response
         {
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
 
                 if (isset($_GET['id'])) {
@@ -65,7 +65,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $id = (int) ($_GET['id']);
             }
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
                 if (isset($params['del'])) {
                     $result = $this->ticketService->delete($id);

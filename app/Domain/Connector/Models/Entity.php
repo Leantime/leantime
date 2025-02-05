@@ -12,13 +12,13 @@ namespace Leantime\Domain\Connector\Models {
 
         public string $notes;
 
-        //Leantime domain object
+        // Leantime domain object
         public mixed $leantimeEntity;
 
-        //Array of field objects
+        // Array of field objects
         public array $fieldMappings = [];
 
-        //External domain object
+        // External domain object
         public mixed $providerEntity;
 
         public function __construct() {}

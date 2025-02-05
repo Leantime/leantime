@@ -55,7 +55,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post(array $params): Response
         {
-            //QuickAdd
+            // QuickAdd
             if (isset($_POST['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
 

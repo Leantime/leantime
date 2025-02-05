@@ -40,13 +40,13 @@ class ApplicationUrlTest extends \Unit\TestCase
         $this->assertEquals('http://localhost', $this->config->get('app.url'));
 
         // Test with LEAN_APP_URL set
-        //putenv('LEAN_APP_URL=https://example.com');
+        // putenv('LEAN_APP_URL=https://example.com');
         $_ENV['LEAN_APP_URL'] = 'https://example.com';
 
         // Reinitialize application to test new environment
         $this->bootstrapApplication();
 
-        //dd($this->config);
+        // dd($this->config);
 
         $this->assertEquals('https://example.com', $this->config->get('app.url'));
         $this->assertEquals('https://example.com', $this->config->get('appUrl'));

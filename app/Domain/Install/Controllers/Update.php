@@ -59,7 +59,7 @@ namespace Leantime\Domain\Install\Controllers {
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
                         $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
-                        //report($errorMessage);
+                        // report($errorMessage);
                     }
                     $this->tpl->setNotification('There was a problem updating your database. Please check your error logs to verify your database is up to date.', 'error');
 

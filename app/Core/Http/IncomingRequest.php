@@ -53,10 +53,10 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public static function capture()
     {
-        //static::$httpMethodParameterOverride = false;
-        //parent::enableHttpMethodParameterOverride();
+        // static::$httpMethodParameterOverride = false;
+        // parent::enableHttpMethodParameterOverride();
 
-        //static::enableHttpMethodParameterOverride();
+        // static::enableHttpMethodParameterOverride();
 
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
@@ -77,7 +77,7 @@ class IncomingRequest extends \Illuminate\Http\Request
             default => parent::createFromGlobals(),
         };
 
-        //$request->setUrlConstants();
+        // $request->setUrlConstants();
 
         return $request;
 
@@ -137,7 +137,7 @@ class IncomingRequest extends \Illuminate\Http\Request
 
         $params = $this->query->all();
 
-        //Merge query vars wigh post or patch vars
+        // Merge query vars wigh post or patch vars
         return match ($method) {
             'PATCH' => array_merge($params, $patch_vars),
             'POST' => array_merge($this->request->all(), $params),
@@ -264,7 +264,7 @@ class IncomingRequest extends \Illuminate\Http\Request
         $completeName ??= $this->getCurrentRoute();
         $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
 
-        //If not action name was given, call index controller
+        // If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
             return 'index';
         } elseif (is_array($actionParts) && count($actionParts) == 2) {

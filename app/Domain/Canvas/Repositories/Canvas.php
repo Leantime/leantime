@@ -665,8 +665,8 @@ namespace Leantime\Domain\Canvas\Repositories {
             // programs
 
             // project
-            //boards
-            //goals
+            // boards
+            // goals
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);

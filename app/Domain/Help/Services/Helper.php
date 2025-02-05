@@ -56,8 +56,8 @@ class Helper
      */
     public function getHelperModalByRoute(string $route): string
     {
-        //Turning off helper modals for now.
-        //Todo do something.
+        // Turning off helper modals for now.
+        // Todo do something.
         $this->availableModals = [];
 
         return $this->availableModals[$route] ?? 'notfound';
@@ -77,11 +77,11 @@ class Helper
 
         $steps = [
             0 => ['class' => "Leantime\Domain\Help\Services\ProjectIntroStep", 'next' => 20],
-            //10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
+            // 10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
             20 => ['class' => "Leantime\Domain\Help\Services\InviteTeamStep", 'next' => 'end'],
         ];
 
-        //make array of onboarding steps.
+        // make array of onboarding steps.
         $steps = self::dispatch_filter('filterSteps', $steps);
 
         return $steps;

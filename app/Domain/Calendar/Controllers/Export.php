@@ -45,7 +45,7 @@ class Export extends Controller
 
         }
 
-        //Add Post handling
+        // Add Post handling
         if (isset($_POST['generateUrl'])) {
 
             try {
@@ -64,7 +64,7 @@ class Export extends Controller
             $this->tpl->setNotification('Could not find ical URL', 'error');
         }
 
-        //Add delete handling
+        // Add delete handling
         $this->tpl->assign('url', $icalUrl);
 
         return $this->tpl->displayPartial('calendar.export');

@@ -54,7 +54,7 @@ class ClearAll extends Command
         Cache::store('installation')->forget('languages.lang_en-US');
         $this->components->info('cleared language file cache');
 
-        //$this->call("cache:clear", ["installation"]);
+        // $this->call("cache:clear", ["installation"]);
 
         $io->text('Clear Bootstrap Cache');
         $commandOut = exec('rm -rf ./storage/framework/composerPaths.php');

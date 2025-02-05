@@ -88,7 +88,7 @@ class CheckEventListeners extends Command
     {
         try {
             if ($this->option('debug')) {
-                //$this->info("Parsing file: {$file->getPathname()}");
+                // $this->info("Parsing file: {$file->getPathname()}");
             }
 
             $documentor->parse($file);

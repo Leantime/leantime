@@ -5,7 +5,7 @@ foreach ($__data as $var => $val) {
 $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 
-//Controller may not redirect. Make sure delComment is only added once
+// Controller may not redirect. Make sure delComment is only added once
 if (str_contains($formUrl, '?delComment=')) {
     $urlParts = explode('?delComment=', $formUrl);
     $deleteUrlBase = $urlParts[0].'?delComment=';

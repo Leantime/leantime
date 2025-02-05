@@ -38,22 +38,22 @@ namespace Leantime\Domain\Connector\Services {
                     $flags[] = 'Project Name and Client Id re required fields';
                 } else {
                     if ($entity == 'users') {
-                        //TODO add flags for users
+                        // TODO add flags for users
                         $flags[] = 'First Name, Role, Email, and Send Invite are required fields';
                         $flags[] = 'The Send Invite field should be either Yes/No or else the user will not be imported. If Send Invite is set to No the user will have to reset the password on their own.';
                         $flags[] = "Roles have to be one of the following values 'readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'.";
                     } else {
                         if ($entity == 'ideas') {
-                            //TODO add flags for ideas
+                            // TODO add flags for ideas
                             $flags[] = 'Description, Data, and CanvasId are required fields.';
                             $flags[] = 'If you do not have an Author field then you will be assigned as the Author.';
                         } else {
                             if ($entity == 'goals') {
-                                //TODO add flags for goals
+                                // TODO add flags for goals
                                 $flags[] = 'Title, CanvasId, Start Value, Current Value, and End Value are required fields';
                             } else {
                                 if ($entity == 'milestones') {
-                                    //TODO add flags for milestones
+                                    // TODO add flags for milestones
                                     $flags[] = 'If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.';
                                     $flags[] = 'Headline, Edit From, Edit To and Project are required fields';
                                 }
@@ -155,7 +155,7 @@ namespace Leantime\Domain\Connector\Services {
                 }
             }
 
-            //PROJECT Name Check
+            // PROJECT Name Check
             $matchingProjectSourceField = '';
             foreach ($fields as $item) {
                 if ($item['leantimeField'] === 'projectName') {
@@ -183,7 +183,7 @@ namespace Leantime\Domain\Connector\Services {
                 $flags[] = 'You must have a column matching to a valid Project.';
             }
 
-            //Status Field Mapping
+            // Status Field Mapping
             $matchingStatusField = '';
             foreach ($fields as $item) {
                 if ($item['leantimeField'] === 'status') {
@@ -203,7 +203,7 @@ namespace Leantime\Domain\Connector\Services {
                 }
             }
 
-            //Status Field Mapping
+            // Status Field Mapping
             $matchingDateField = '';
             $dateArray = ['date', 'dateToFinish', 'editFrom', 'editTo'];
             foreach ($fields as $item) {
@@ -423,7 +423,7 @@ namespace Leantime\Domain\Connector\Services {
 
         private function parseGoals($fields, $values)
         {
-            //TODO add import logic and validation
+            // TODO add import logic and validation
             $matchingStartValueSourceField = '';
             $matchingCurrentValueSourceField = '';
             $matchingCanvasIdSourceField = '';
@@ -530,7 +530,7 @@ namespace Leantime\Domain\Connector\Services {
                 }
             }
 
-            //PROJECT Name Check
+            // PROJECT Name Check
             $matchingProjectSourceField = '';
 
             foreach ($fields as $item) {
@@ -683,7 +683,7 @@ namespace Leantime\Domain\Connector\Services {
 
         private function importUsers($finalMappings, $finalValues)
         {
-            //TODO add  users
+            // TODO add  users
             foreach ($finalValues as $row) {
                 $values = [];
                 for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
@@ -692,7 +692,7 @@ namespace Leantime\Domain\Connector\Services {
                     }
                 }
                 $values['notifications'] = 1;
-                $values['source'] = 'csvImport'; //TODO: will have to change when other integrations are added
+                $values['source'] = 'csvImport'; // TODO: will have to change when other integrations are added
                 if (isset($row['id']) && $row['id'] > 0) {
                     $currentUser = $this->userService->getUser($row['id']);
                     $currentUser['user'] = $values['user'];
@@ -752,7 +752,7 @@ namespace Leantime\Domain\Connector\Services {
 
         private function importMilestones($finalMappings, $finalValues)
         {
-            //TODO add milestones
+            // TODO add milestones
             foreach ($finalValues as $row) {
                 $ticket = [];
 

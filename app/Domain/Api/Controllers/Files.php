@@ -40,7 +40,7 @@ class Files extends Controller
      */
     public function post(array $params): Response
     {
-        //FileUpload
+        // FileUpload
         if (isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
             $module = htmlentities($_GET['module']);
             $id = (int) $_GET['moduleId'];

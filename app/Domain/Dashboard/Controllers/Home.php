@@ -67,7 +67,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
          */
         public function get(): Response
         {
-            //Debug uncomment to reset dashboard
+            // Debug uncomment to reset dashboard
             if (isset($_GET['resetDashboard']) === true) {
                 $this->widgetService->resetDashboard(session('userdata.id'));
             }
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $this->tpl->assign('completedOnboarding', $completedOnboarding);
 
-            //Fallback in case telemetry does not get executed as part of the cron job
+            // Fallback in case telemetry does not get executed as part of the cron job
             try {
                 $reportService = app()->make(Reports::class);
                 $promise = $reportService->sendAnonymousTelemetry();
