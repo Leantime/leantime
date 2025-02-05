@@ -134,17 +134,35 @@ $menuTypes = $tpl->get('menuTypes');
 
 
                         <label class="control-label">{{ __("label.project_start") }}</label>
-                        <div class="">
-                            <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
-                                   value="<?php echo format($project['start'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
-                        </div>
+                        <x-global::forms.datepicker
+                            no-date-label="{{ __('text.anytime') }}"
+                            value="{{ format($project['start'])->date() }}"
+                            name="start"
+                            dateName="start"
+                            variant="chip"
+                            content-role="secondary"
+                        >
+                            <x-slot:leading-visual>
+                                <x-global::content.icon icon="alarm" class="text-lg text-trivial" />
+                            </x-slot:leading-visual>
+                            
+                        </x-global::forms.datepicker>
+
                         <label class="control-label">{{ __("label.project_end") }}</label>
-                        <div class="">
-                            <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
-                                   value="<?php echo format($project['end'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
-
-                        </div>
+                        <x-global::forms.datepicker
+                            no-date-label="{{ __('text.anytime') }}"
+                            value="{{ format($project['end'])->date() }}"
+                            name="end"
+                            dateName="end"
+                            variant="chip"
+                            content-role="secondary"
+                        >
+                            <x-slot:leading-visual>
+                                <x-global::content.icon icon="alarm" class="text-lg text-trivial" />
+                            </x-slot:leading-visual>
+                            
+                        </x-global::forms.datepicker>
                     </div>
 
                 </div>

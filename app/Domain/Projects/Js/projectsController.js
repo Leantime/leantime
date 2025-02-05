@@ -156,7 +156,7 @@ export const addToDoStatus = function (id) {
     var statusCopy = jQuery(".newStatusTpl").clone();
 
     statusCopy.html(function (i, oldHTML) {
-        return updatedContent = oldHTML.replaceAll('XXNEWKEYXX', newKey);
+        return oldHTML.replaceAll('XXNEWKEYXX', newKey);
     });
 
     jQuery('#todoStatusList').append("<li>" + statusCopy.html() + "</li>");
