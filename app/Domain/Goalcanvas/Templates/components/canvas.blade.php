@@ -19,7 +19,8 @@
         <div class="col-md-12">
             <x-global::forms.button scale="sm" class="pull-right" tag="a"
                 href="#/goalcanvas/editCanvasItem?type=goal&canvasId={{ $canvasId }}">
-                <i class="fa fa-plus"></i> Create New Goal
+                {!! __('links.add_new_canvas_itemgoal') !!}
+
             </x-global::forms.button>
             <h5 class="text-lg font-extralight">
                 <a class="text-primary" href='{{ BASE_URL }}/goalcanvas/showCanvas/{{ $canvasId }}'>

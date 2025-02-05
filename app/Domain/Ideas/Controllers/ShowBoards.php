@@ -50,7 +50,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             }
 
             if (isset($result['redirect'])) {
-                return Frontcontroller::redirect(BASE_URL.'ideas/showBoards');
+                return Frontcontroller::redirect(BASE_URL . 'ideas/showBoards');
             }
 
             return $this->tpl->display($result['template'] ?? 'ideas.showBoards');
@@ -70,5 +70,4 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('users', $result['users']);
         }
     }
-
 }

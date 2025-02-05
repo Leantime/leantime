@@ -1,9 +1,5 @@
 <x-global::content.modal.modal-buttons />
 
-<x-global::content.modal.header>
-    Idea Board
-</x-global::content.modal.header>
-
 <x-global::content.modal.form
     action="{{ BASE_URL }}/ideas/boardDialog{{ isset($_GET['id']) ? '/' . (int) $_GET['id'] : '' }}">
 
@@ -19,12 +15,12 @@
             <input type="hidden" name="editCanvas" value="{{ (int) $_GET['id'] ?? '' }}">
         @else
             <input type="hidden" name="newCanvas" value="true">
-            <x-global::forms.button scale="xs" type="submit" content-role="primary">
+            <x-global::forms.button scale="sm" type="submit" content-role="primary">
                 {!! __('buttons.create_board') !!}
             </x-global::forms.button>
         @endif
 
-        <x-global::forms.button scale="xs" type="button" content-role="ghost" data-dismiss="modal">
+        <x-global::forms.button scale="sm" type="button" content-role="ghost" data-dismiss="modal">
             {!! __('buttons.close') !!}
         </x-global::forms.button>
     </div>

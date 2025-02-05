@@ -3,7 +3,6 @@ import { addToGlobalScope } from './core/leantimeScope.mjs';
 import { moduleLoader } from './core/moduleLoader.mjs';
 import { initializeCore } from './core/bootstrap.mjs';
 import "croppie/croppie";
-import 'emoji-picker-element';
 
 
 

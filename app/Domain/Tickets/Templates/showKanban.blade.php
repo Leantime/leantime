@@ -1,13 +1,7 @@
 @extends($layout)
 
 @section('content')
-    <?php
 
-    // $todoTypeIcons = $tpl->get('ticketTypeIcons');
-
-    $allTicketGroups = $allTickets;
-
-    ?>
 
     @include('tickets::includes.ticketHeader')
 
@@ -44,22 +38,12 @@
             <div class="clearfix"></div>
 
 
-            @if (isset($allTicketGroups['all']))
-                @php
-                    $allTickets = $allTicketGroups['all']['items'];
-                @endphp
-            @endif
-            <div class=""
-                style="
-            display: flex;
-            position: sticky;
-            top: 110px;
-            justify-content: flex-start;
-            z-index: 9;
-            ">
+            <div class="flex sticky top-[110px] justify-start z-[9]">
+
                 @foreach ($allKanbanColumns as $key => $statusRow)
                     <div class="column">
-                        <h4 class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
+                        <h4
+                            class="flex justify-between items-center widgettitle title-primary title-border-{{ $statusRow['class'] }}">
                             <div>
                                 <strong class="count">0</strong>
                                 {{ $tpl->e($statusRow['name']) }}
@@ -130,43 +114,9 @@
                 @endforeach
             </div>
 
-            @foreach ($allTicketGroups as $group)
-                @php
-                    $allTickets = $group['items'];
-                @endphp
+            <x-tickets::kanban-board :allKanbanColumns="$allKanbanColumns" :searchCriteria="$searchCriteria" />
 
-                @if ($group['label'] != 'all')
-                    <h5 class="accordionTitle kanbanLane {{ $group['class'] }}" id="accordion_link_{{ $group['id'] }}">
-                        <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_{{ $group['id'] }}"
-                            onclick="leantime.snippets.accordionToggle('{{ $group['id'] }}');">
-                            <i class="fa fa-angle-down"></i>{!! $group['label'] !!} ({{ count($group['items']) }})
-                        </a>
-                    </h5>
-                    <div class="simpleAccordionContainer kanban" id="accordion_content-{{ $group['id'] }}">
-                @endif
-
-                <div class="sortableTicketList kanbanBoard" id="kanboard-{{ $group['id'] }}" style="margin-top:-5px;">
-                    <div class="row-fluid">
-
-                        @foreach ($allKanbanColumns as $key => $statusRow)
-                            <x-tickets::ticket-column :status="$key" :searchCriteria="$searchCriteria" {{-- :allTickets="$allTickets"
-                                :ticketTypeIcons="$ticketTypeIcons"
-                                :priorities="$priorities"
-                                :efforts="$efforts"
-                                :milestones="$milestones"
-                                :users="$users"
-                                :onTheClock="$onTheClock" --}} />
-                        @endforeach
-                        <div class="clearfix"></div>
-                    </div>
-                </div>
-
-                @if ($group['label'] != 'all')
         </div>
-        @endif
-        @endforeach
-
-    </div>
 
     </div>
 
@@ -189,54 +139,7 @@
                 ticketsController.setUpKanbanColumns();
 
 
-                @foreach ($allTicketGroups as $group)
-                    @foreach ($group['items'] as $ticket)
-                        @if ($ticket['dependingTicketId'] > 0)
-                            var startElement = document.getElementById(
-                                'subtaskLink_{{ $ticket['dependingTicketId'] }}');
-                            var endElement = document.getElementById('ticket_{{ $ticket['id'] }}');
 
-                            if (startElement != undefined && endElement != undefined) {
-                                var startAnchor = LeaderLine.mouseHoverAnchor({
-                                    element: startElement,
-                                    showEffectName: 'draw',
-                                    style: {
-                                        background: 'none',
-                                        backgroundColor: 'none'
-                                    },
-                                    hoverStyle: {
-                                        background: 'none',
-                                        backgroundColor: 'none',
-                                        cursor: 'pointer'
-                                    }
-                                });
-
-                                var line{{ $ticket['id'] }} = new LeaderLine(startAnchor, endElement, {
-                                    startPlugColor: 'var(--accent1)',
-                                    endPlugColor: 'var(--accent2)',
-                                    gradient: true,
-                                    size: 2,
-                                    path: "grid",
-                                    startSocket: 'bottom',
-                                    endSocket: 'auto'
-                                });
-
-                                jQuery("#ticket_{{ $ticket['id'] }}").mousedown(function() {})
-                                    .mousemove(function() {})
-                                    .mouseup(function() {
-                                        line{{ $ticket['id'] }}.position();
-                                    });
-
-                                jQuery("#ticket_{{ $ticket['dependingTicketId'] }}").mousedown(
-                                        function() {})
-                                    .mousemove(function() {})
-                                    .mouseup(function() {
-                                        line{{ $ticket['id'] }}.position();
-                                    });
-                            }
-                        @endif
-                    @endforeach
-                @endforeach
             });
 
             jQuery(document).on("htmx:afterRequest", ".quickadd-ticket", function() {

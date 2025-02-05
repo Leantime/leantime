@@ -49,45 +49,45 @@ import "js/libs/tinymce-plugins/advancedTemplate/plugin.js"
 
 
 const markDownTextPatterns = [
-    {start: '*', end: '*', format: 'italic'},
-    {start: '_', end: '_', format: 'italic'},
+    { start: '*', end: '*', format: 'italic' },
+    { start: '_', end: '_', format: 'italic' },
 
-    {start: '**', end: '**', format: 'bold'},
-    {start: '__', end: '__', format: 'bold'},
+    { start: '**', end: '**', format: 'bold' },
+    { start: '__', end: '__', format: 'bold' },
 
-    {start: '~~', end: '~~', format: 'bold'},
+    { start: '~~', end: '~~', format: 'bold' },
 
-    {start: '#', format: 'h1'},
-    {start: '##', format: 'h2'},
-    {start: '###', format: 'h3'},
-    {start: '####', format: 'h4'},
-    {start: '#####', format: 'h5'},
-    {start: '######', format: 'h6'},
+    { start: '#', format: 'h1' },
+    { start: '##', format: 'h2' },
+    { start: '###', format: 'h3' },
+    { start: '####', format: 'h4' },
+    { start: '#####', format: 'h5' },
+    { start: '######', format: 'h6' },
 
     // The following text patterns require the `lists` plugin
-    {start: '* ', cmd: 'InsertUnorderedList'},
-    {start: '- ', cmd: 'InsertUnorderedList'},
-    {start: '1. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' }},
-    {start: '1) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' }},
-    {start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' }},
-    {start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' }},
-    {start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' }},
-    {start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' }},
-    {start: '[ ] ', cmd: 'InsertChecklist' },
+    { start: '* ', cmd: 'InsertUnorderedList' },
+    { start: '- ', cmd: 'InsertUnorderedList' },
+    { start: '1. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+    { start: '1) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'decimal' } },
+    { start: 'a. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+    { start: 'a) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-alpha' } },
+    { start: 'i. ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+    { start: 'i) ', cmd: 'InsertOrderedList', value: { 'list-style-type': 'lower-roman' } },
+    { start: '[ ] ', cmd: 'InsertChecklist' },
 
-    {start: '>', format: 'blockquote' },
+    { start: '>', format: 'blockquote' },
 
-    {start: '`', end: '`', format: 'code' },
+    { start: '`', end: '`', format: 'code' },
 
-    {start: '```', end: '```', format: 'pre' },
+    { start: '```', end: '```', format: 'pre' },
 
-    {start: '~', end: '~', cmd: 'createLink'},
+    { start: '~', end: '~', cmd: 'createLink' },
 
 
-    {start: '---', replacement: '<hr/>'},
-    {start: '--', replacement: '—'},
-    {start: '-', replacement: '—'},
-    {start: '(c)', replacement: '©'}
+    { start: '---', replacement: '<hr/>' },
+    { start: '--', replacement: '—' },
+    { start: '-', replacement: '—' },
+    { start: '(c)', replacement: '©' }
 ];
 
 const mentionsConfig = {
@@ -106,7 +106,7 @@ const mentionsConfig = {
                 for (let i = 0; i < data.length; i++) {
                     users[i] = {
                         "name": data[i].firstname + " " + data[i].lastname,
-                        "id":  data[i].id,
+                        "id": data[i].id,
                         "email": data[i].username
                     };
                 }
@@ -128,7 +128,7 @@ const mentionsConfig = {
     items: 10
 };
 
-export const imageUploadHandler = function(blobInfo, success, failure) {
+export const imageUploadHandler = function (blobInfo, success, failure) {
     var xhr, formData;
 
     xhr = new XMLHttpRequest();
@@ -157,7 +157,7 @@ export const filePickerCallback = function (callback, value, meta) {
 
     var shortOptions = {
         afterShowCont: function () {
-            jQuery(".fileModal").nyroModal({callbacks:shortOptions});
+            jQuery(".fileModal").nyroModal({ callbacks: shortOptions });
 
         }
     };
@@ -179,9 +179,16 @@ export const filePickerCallback = function (callback, value, meta) {
     jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
 }
 
-export const editorSetup = function(editor, callback) {
+export const editorSetup = function (editor, callback) {
     editor.on('change', function () {
         editor.save();
+
+        const event = new CustomEvent('editor-change', {
+            detail: { content: editor.getContent() },
+            bubbles: true
+        });
+        editor.getElement().dispatchEvent(event);
+        console.log('editor-change event dispatched');
     });
 
     editor.on("blur", function () {
@@ -201,13 +208,13 @@ export const editorSetup = function(editor, callback) {
         }
 
         //&& !editor.plugins.autosave.hasDraft()
-        if (editor.getContent() === '' ) {
+        if (editor.getContent() === '') {
             editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
         }
     });
 
     //and remove it on focus
-    editor.on('focus',function () {
+    editor.on('focus', function () {
         var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
         if (placeholder.length > 0) {
             while (placeholder[0]) {
@@ -247,9 +254,9 @@ export const initSimpleEditor = function (specificElement, callback) {
 
     let element;
 
-    if(specificElement) {
+    if (specificElement) {
         element = jQuery(specificElement);
-    }else{
+    } else {
         element = jQuery('textarea.tinymceSimple');
     }
 
@@ -261,8 +268,8 @@ export const initSimpleEditor = function (specificElement, callback) {
         skin_url: skin_url,
         content_css: content_css,
         content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-        plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
-        toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
+        plugins: "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
+        toolbar: "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
         toolbar_location: 'bottom',
         autosave_prefix: 'leantime-simpleEditor-autosave-{path}{query}-{id}-',
         autosave_restore_when_empty: true,
@@ -273,9 +280,9 @@ export const initSimpleEditor = function (specificElement, callback) {
         statusbar: false,
         convert_urls: true,
         paste_data_images: true,
-        menubar:false,
-        relative_urls : true,
-        document_base_url : appUrl + "/",
+        menubar: false,
+        relative_urls: true,
+        document_base_url: appUrl + "/",
         default_link_target: '_blank',
         table_appearance_options: false,
         mentions: mentionsConfig,
@@ -292,9 +299,9 @@ export const initComplexEditor = function (specificElement, callback) {
 
     let element;
 
-    if(specificElement) {
+    if (specificElement) {
         element = jQuery(specificElement);
-    }else{
+    } else {
         element = jQuery('textarea.tinymceComplex');
     }
 
@@ -318,9 +325,9 @@ export const initComplexEditor = function (specificElement, callback) {
             + version
             + '.min.css',
         content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-        plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
-        toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
-        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+        plugins: "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
+        toolbar: "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
+        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-' + entityId,
         autosave_restore_when_empty: true,
         autosave_retention: '120m',
         autosave_interval: '10s',
@@ -328,12 +335,12 @@ export const initComplexEditor = function (specificElement, callback) {
         branding: false,
         statusbar: false,
         convert_urls: true,
-        menubar:false,
+        menubar: false,
         resizable: true,
-        templates : appUrl + "/wiki/templates",
+        templates: appUrl + "/wiki/templates",
         body_class: 'mce-content-body',
         paste_data_images: true,
-        relative_urls : true,
+        relative_urls: true,
         document_base_url: appUrl + "/",
         table_appearance_options: false,
         min_height: 400,
@@ -371,9 +378,9 @@ export const initNotesEditor = function (specificElement, callback) {
 
     let element;
 
-    if(specificElement) {
+    if (specificElement) {
         element = jQuery(specificElement);
-    }else{
+    } else {
         element = jQuery('textarea.notesEditor');
     }
 
@@ -397,10 +404,10 @@ export const initNotesEditor = function (specificElement, callback) {
             + version
             + '.min.css',
         content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; color:var(--secondary-font-color); max-width:none;} img { max-width: 100%; }",
-        plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
-        toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
+        plugins: "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
+        toolbar: "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
         toolbar_location: 'bottom',
-        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
+        autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-' + entityId,
         autosave_restore_when_empty: true,
         autosave_retention: '120m',
         autosave_interval: '10s',
@@ -408,12 +415,12 @@ export const initNotesEditor = function (specificElement, callback) {
         branding: false,
         statusbar: false,
         convert_urls: true,
-        menubar:false,
+        menubar: false,
         resizable: true,
-        templates : appUrl + "/wiki/templates",
+        templates: appUrl + "/wiki/templates",
         body_class: 'mce-content-body',
         paste_data_images: true,
-        relative_urls : true,
+        relative_urls: true,
         document_base_url: appUrl + "/",
         table_appearance_options: false,
         min_height: 400,
@@ -441,7 +448,7 @@ export const initNotesEditor = function (specificElement, callback) {
         textpattern_patterns: markDownTextPatterns,
         images_upload_handler: imageUploadHandler,
         file_picker_callback: filePickerCallback,
-        setup: function(editor) {
+        setup: function (editor) {
             editorSetup(editor);
 
             editor.on("blur", function () {
@@ -454,13 +461,13 @@ export const initNotesEditor = function (specificElement, callback) {
     return instance;
 };
 
-export const initEditor = function(element, config, callback){
+export const initEditor = function (element, config, callback) {
 
-    if(config.type == 'simple') {
+    if (config.type == 'simple') {
         return initSimpleEditor(element, callback);
-    }else if(config.type == 'notes') {
+    } else if (config.type == 'notes') {
         return initNotesEditor(element, callback);
-    }else{
+    } else {
         return initComplexEditor(element, callback);
     }
 
@@ -471,6 +478,6 @@ export const editors = {
     initSimpleEditor: initSimpleEditor,
     initComplexEditor: initComplexEditor,
     initNotesEditor: initNotesEditor,
-    initEditor:initEditor
+    initEditor: initEditor
 };
 export default editors;

@@ -60,11 +60,6 @@
                                     <div class="loading-text">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                {{-- Header with menu --}}
-                                                <div class="d-flex justify-content-between mb-3">
-                                                    <p style="width:70%">&nbsp;</p>
-                                                    <p style="width:30px; height:10px;">&nbsp;</p>
-                                                </div>
 
                                                 {{-- Goal title --}}
                                                 <p style="width:85%">&nbsp;</p>
@@ -90,17 +85,7 @@
                                                         <p style="width:90%; float:right">&nbsp;</p>
                                                     </div>
                                                 </div>
-                                                <br />
 
-                                                {{-- Bottom actions --}}
-                                                <div class="d-flex justify-content-between">
-                                                    <div>
-                                                        <p style="width:100px; display:inline-block">&nbsp;</p>
-                                                        <p style="width:100px; display:inline-block; margin-left:10px">
-                                                            &nbsp;</p>
-                                                    </div>
-                                                    <p style="width:30px">&nbsp;</p>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
