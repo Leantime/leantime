@@ -12,27 +12,14 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
-/**
- *
- */
 class Api
 {
     use DispatchesEvents;
 
-    /**
-     * @var ApiRepository
-     */
     private ApiRepository $apiRepository;
 
-    /**
-     * @var UserRepository
-     */
     private UserRepository $userRepo;
 
-
-    /**
-     * @var array|null
-     */
     private ?array $error = null;
 
     /**
@@ -82,9 +69,8 @@ class Api
     }
 
     /**
-     * @param array $user
-     * @param bool $isExternalAuth
      * @return void
+     *
      * @throws BindingResolutionException
      *
      * Note: This is deliberately a duplicate of the authService setSession method to not have to load the authService

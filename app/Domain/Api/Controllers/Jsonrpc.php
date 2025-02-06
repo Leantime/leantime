@@ -43,8 +43,10 @@ class Jsonrpc extends Controller
     public function post(array $params): Response
     {
 
-        //Remove act from params array
-        if(isset($params['act'])) unset($params['act']);
+        // Remove act from params array
+        if (isset($params['act'])) {
+            unset($params['act']);
+        }
 
         if (empty($params)) {
             $params = $this->json_data;
