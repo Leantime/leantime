@@ -26,9 +26,9 @@ class ApplicationUrlTest extends \Unit\TestCase
     {
 
         $this->app = new Application(APP_ROOT);
-        $this->app->boot();
 
         $this->app->bootstrapWith([LoadConfig::class, SetRequestForConsole::class]);
+        $this->app->boot();
 
         $this->config = $this->app['config'];
     }

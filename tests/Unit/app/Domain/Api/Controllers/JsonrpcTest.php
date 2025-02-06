@@ -20,6 +20,8 @@ class JsonrpcTest extends \Unit\TestCase
         parent::setUp();
 
         $this->app = new Application(APP_ROOT);
+        $this->app->bootstrapWith([LoadConfig::class, SetRequestForConsole::class]);
+
         $this->app->boot();
         $this->app['view'] = $this->createMock(\Illuminate\View\Factory::class);
         $this->app['session'] = $this->createMock(\Illuminate\Session\SessionManager::class);

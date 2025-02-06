@@ -164,8 +164,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
     {
-
-        return env($envVar) ?? $_ENV[$envVar] ?? $currentValue;
+        return $_ENV[$envVar] ?? env($envVar) ?? $currentValue;
     }
 
     /**
