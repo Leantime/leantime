@@ -898,14 +898,14 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getAllMilestones($searchCriteria, string $sortBy = 'duedate'): false|array
+        public function getAllMilestones($searchCriteria, string $sortBy = 'duedate'): array
         {
 
             if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
                 return $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
             }
 
-            return false;
+            return [];
         }
 
         /**

@@ -151,8 +151,15 @@ clear-cache:
 	rm -rf ./bootstrap/cache/*.php
 	rm -rf ./storage/framework/composerPaths.php
 	rm -rf ./storage/framework/viewPaths.php
-	rm -rf ./storage/framework/cache/**/*
-	rm -rf ./storage/framework/sessions/**/*
-	rm -rf ./storage/framework/views/*.php
+
+	find ./storage/framework/cache -type f ! -name '.gitignore' -delete
+	find ./storage/framework/cache -type d -empty -delete
+
+	find ./storage/framework/sessions -type f ! -name '.gitignore' -delete
+	find ./storage/framework/sessions -type d -empty -delete
+
+	find ./storage/framework/views -type f ! -name '.gitignore' -delete
+	find ./storage/framework/views -type d -empty -delete
+
 
 .PHONY: install-deps build-js build package clean run-dev

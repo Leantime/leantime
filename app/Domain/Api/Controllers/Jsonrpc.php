@@ -28,7 +28,7 @@ class Jsonrpc extends Controller
     {
         if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
             $bodyContent = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
-            $this->json_data = $bodyContent ?? '';
+            $this->json_data = $bodyContent ?? [];
         }
     }
 
@@ -42,6 +42,10 @@ class Jsonrpc extends Controller
      */
     public function post(array $params): Response
     {
+
+        //Remove act from params array
+        if(isset($params['act'])) unset($params['act']);
+
         if (empty($params)) {
             $params = $this->json_data;
         }
