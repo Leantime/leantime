@@ -581,7 +581,7 @@ class EventDispatcher implements Dispatcher
 
     public static function addEventListener($event, $listener, $priority = 10, $source = 'leantime')
     {
-        return self::add_event_listener($event, $listener, $priority, $source);
+        self::add_event_listener($event, $listener, $priority, $source);
     }
 
     public static function add_filter_listener(

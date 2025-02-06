@@ -12,26 +12,36 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
+/**
+ *
+ */
 class Api
 {
     use DispatchesEvents;
 
+    /**
+     * @var ApiRepository
+     */
     private ApiRepository $apiRepository;
 
+    /**
+     * @var UserRepository
+     */
     private UserRepository $userRepo;
 
-    private Auth $authService;
 
+    /**
+     * @var array|null
+     */
     private ?array $error = null;
 
     /**
      * @api
      */
-    public function __construct(ApiRepository $apiRepository, UserRepository $userRepo, Auth $authService)
+    public function __construct(ApiRepository $apiRepository, UserRepository $userRepo)
     {
         $this->apiRepository = $apiRepository;
         $this->userRepo = $userRepo;
-        $this->authService = $authService;
     }
 
     /**
@@ -71,6 +81,16 @@ class Api
         return false;
     }
 
+    /**
+     * @param array $user
+     * @param bool $isExternalAuth
+     * @return void
+     * @throws BindingResolutionException
+     *
+     * Note: This is deliberately a duplicate of the authService setSession method to not have to load the authService
+     * which will run db connections when we are not ready yet.
+     * TODO: Move session management into a dedicated service
+     */
     public function setApiUserSession(array $user, bool $isExternalAuth = false)
     {
 
@@ -207,8 +227,6 @@ class Api
     /**
      * Check the manifest for the asset and serve if found.
      *
-     *
-     *
      * @api
      */
     public function getCaseCorrectPathFromManifest(string $filepath): string|false
@@ -229,6 +247,9 @@ class Api
         return $basePath.array_search($referenceValue, $correctManifest);
     }
 
+    /**
+     * @return true
+     */
     public function healthCheck()
     {
         return true;
