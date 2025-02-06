@@ -54,6 +54,7 @@ namespace Leantime\Domain\Install\Controllers {
         public function post($params): Response
         {
             if (isset($_POST['updateDB'])) {
+                session()->forget('db-version');
                 $success = $this->installRepo->updateDB();
 
                 if (is_array($success) === true) {

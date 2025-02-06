@@ -2,7 +2,7 @@
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsHub"
-     hx-swap="outerHTML transition:true">
+     hx-swap="outerHTML">
 
     @if (count($clients) > 0)
         <div class="dropdown dropdownWrapper pull-right">
@@ -24,7 +24,7 @@
                             <a href="javascript:void(0);"
                                hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
                                hx-target="#myProjectsHub"
-                               hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
+                               hx-swap="outerHTML">{{ $value['name'] }}</a>
                         </li>
                     @endif
                 @endforeach

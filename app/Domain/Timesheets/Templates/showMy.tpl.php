@@ -291,7 +291,8 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                     <a href="#/tickets/showTicket/<?php echo $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
                                 </td>
                                 <td width="10%">
-                                <?php echo $tpl->__($tpl->get('kind')[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
+                                <?php
+                                echo $tpl->__($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
                             <?php if ($timeRow['hasTimesheetOffset']) { ?>
                                     <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">

@@ -37,17 +37,18 @@ class Ical extends Controller
     public function run($params): RedirectResponse|Response
     {
 
-        // calendar id is not a standardized format. We'll have to parse it out
-        // format is calendar.ical.CALENDARID
-        $actParts = explode('.', $params['act'] ?? '');
+        //calendar id is not a standardized format. We'll have to parse it out
+        //format is calendar.ical.CALENDARID
+        $actParts = explode(".", $params['act'] ?? '');
 
-        if (is_array($actParts) && count($actParts) === 3) {
+        if(is_array($actParts) && count($actParts) === 3) {
             $calId = $actParts[2];
             $idParts = explode('_', $calId);
-        } else {
+        }else{
             $calId = $_GET['id'] ?? '';
             $idParts = explode('_', $calId);
         }
+
 
         if (count($idParts) != 2) {
             return Frontcontroller::redirect(BASE_URL.'/errors/404');

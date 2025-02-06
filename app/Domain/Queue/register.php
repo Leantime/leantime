@@ -15,13 +15,16 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
 
     $scheduler
         ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::EMAILS))
+        ->name('queue:emails')
         ->everyMinute();
 
     $scheduler
         ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::HTTPREQUESTS))
+        ->name('queue:httprequests')
         ->everyFiveMinutes();
 
     $scheduler
         ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::DEFAULT))
+        ->name('queue:default')
         ->everyFiveMinutes();
 });

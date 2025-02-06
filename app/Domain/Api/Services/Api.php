@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
-use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
@@ -61,13 +61,40 @@ class Api
 
         if ($apiUser) {
             if (password_verify($key, $apiUser['password'])) {
-                $this->authService->setUserSession($apiUser);
+
+                $this->setApiUserSession($apiUser, true);
 
                 return $apiUser;
             }
         }
 
         return false;
+    }
+
+    public function setApiUserSession(array $user, bool $isExternalAuth = false)
+    {
+
+        $currentUser = [
+            'id' => (int) $user['id'],
+            'name' => strip_tags($user['firstname']),
+            'profileId' => $user['profileId'],
+            'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
+            'clientId' => $user['clientId'],
+            'role' => Roles::getRoleString($user['role']),
+            'settings' => $user['settings'] ? unserialize($user['settings']) : [],
+            'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
+            'twoFAVerified' => false,
+            'twoFASecret' => $user['twoFASecret'] ?? '',
+            'isExternalAuth' => $isExternalAuth,
+            'createdOn' => ! empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
+            'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
+        ];
+
+        $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
+
+        //Session handler for api is array
+        session(['userdata' => $currentUser]);
+
     }
 
     /**

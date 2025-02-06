@@ -244,7 +244,6 @@ namespace Leantime\Domain\Tickets\Controllers {
                 if (isset($params['saveAndCloseTicket']) === true && $params['saveAndCloseTicket'] == 1) {
                     $response = Frontcontroller::redirect(BASE_URL.'/tickets/showTicket/'.$id.'?closeModal=1');
                     $response->headers->set('HX-Trigger', 'ticketUpdate');
-
                     return $response;
                 }
             }

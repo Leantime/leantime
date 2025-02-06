@@ -24,8 +24,8 @@ class Authentication extends ServiceProvider
      */
     public function register()
     {
-        // $this->app->singleton(AuthService::class, AuthService::class);
-        // $this->app->singleton(OidcService::class, OidcService::class);
+        //$this->app->singleton(AuthService::class, AuthService::class);
+        //$this->app->singleton(OidcService::class, OidcService::class);
 
         $this->registerAuthenticator();
         $this->registerUserResolver();

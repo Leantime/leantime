@@ -9,6 +9,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\AppSettings;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
@@ -61,7 +62,8 @@ namespace Leantime\Domain\Plugins\Services {
             private EnvironmentCore $config,
             private SettingsService $settingsService,
             private UsersService $usersService,
-            private ConsoleKernel $leantimeCli
+            private ConsoleKernel $leantimeCli,
+            private AppSettings $appSettings,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }
@@ -404,7 +406,7 @@ namespace Leantime\Domain\Plugins\Services {
             $plugins = Http::withoutVerifying()->get(
                 "{$this->marketplaceUrl}/ltmp-api"
                 .(! empty($query) ? "/search/$query" : '/index')
-                ."/$page"
+                ."/$page".'?lt-v='.$this->appSettings->appVersion
             );
 
             $pluginArray = $plugins->collect()->toArray();
@@ -438,7 +440,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getMarketplacePlugin(string $identifier): MarketplacePlugin|false
         {
-            $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier");
+            $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier?lt-v=".$this->appSettings->appVersion);
 
             if (! $response->ok()) {
                 return false;
@@ -479,8 +481,7 @@ namespace Leantime\Domain\Plugins\Services {
                 'X-License-Key' => $plugin->license,
                 'X-Instance-Id' => $this->settingsService->getCompanyId(),
                 'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-            ])
-                ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
+            ])->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
 
             if (! $response->ok()) {
                 throw new RequestException($response);

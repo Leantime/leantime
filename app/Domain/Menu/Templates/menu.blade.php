@@ -43,7 +43,7 @@
                 @if ($menuType == 'personal')
                     <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                         <a href="@if(isset($settingsLink['url'])) {{ $settingsLink['url']  }} @else {{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }} @endif">
-                            {!! __($settingsLink['label'])  !!}
+                            {!! __($settingsLink['label']) !!}
                             @if($showSettingsIndicator)
                                 <span class='label label-primary feature-label'>New</span>
                             @endif

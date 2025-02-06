@@ -21,17 +21,19 @@
                 {!! __("menu.my_profile") !!}
             </a>
         </li>
+        @dispatchEvent('afterMyProfile')
         <li>
             <a href='{{ BASE_URL }}/users/editOwn#theme'>
                 {!! __("menu.theme") !!}
             </a>
         </li>
+        @dispatchEvent('afterTheme')
         <li>
             <a href='{{ BASE_URL }}/users/editOwn#settings'>
                 {!! __("menu.settings") !!}
             </a>
         </li>
-
+        @dispatchEvent('afterSettings')
         <li class="nav-header border">{!! __("menu.help_support") !!}</li>
         <li>
             <a href='javascript:void(0);'
@@ -40,7 +42,7 @@
             </a>
         </li>
         <li>
-            <a href='https://leantime.io/knowledge-base' target="_blank">
+            <a href='https://support.leantime.io' target="_blank">
                 {!! __("menu.knowledge_base") !!}
             </a>
         </li>

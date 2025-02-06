@@ -12,6 +12,27 @@
             <a href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
         </li>
     @endif
+{{--    <li class="notificationDropdown">--}}
+{{--        <a hx-get="{{ BASE_URL }}/crisp/helpWidget"--}}
+{{--        hx-target="#helpDropdown"--}}
+{{--        hx-indicator=".htmx-indicator"--}}
+{{--        hx-trigger="click"--}}
+{{--        data-toggle='dropdown'--}}
+{{--        data-tippy-content='Get help'--}}
+{{--        >--}}
+{{--        <span class="fa-solid fa-question"></span>--}}
+
+{{--        </a>--}}
+
+{{--        <div class='dropdown-menu tw-p-0 tw-overflow-y-auto' id='helpDropdown' style="padding:0px; height:90vh; margin-top:5px;">--}}
+{{--            <div class="htmx-indicator">--}}
+{{--                <x-global::loadingText type="text" count="3" includeHeadline="true" />--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+
+{{--    </li>--}}
+
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"

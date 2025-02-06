@@ -112,13 +112,14 @@ class Theme
 
     private array|false $iniData;
 
-    /**
-     * possible color schemes.
-     */
-    public array $colorSchemes = [
+    private array $colorSchemes = [
         'themeDefault' => 'themeDefault',
         'companyColors' => 'companyColors',
     ];
+
+    private array $backgroundTypes = ['gradient', 'image'];
+
+    private array $backgroundSources = ['unsplash', 'upload'];
 
     /**
      * possible font choices
@@ -195,6 +196,43 @@ class Theme
     public function getAvailableFonts()
     {
         return self::dispatchFilter('fonts', $this->fonts);
+    }
+
+    public function getBackgroundImage(): ?string
+    {
+        if (Auth::isLoggedIn()) {
+            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+        }
+
+        return null;
+    }
+
+    public function setBackgroundImage(string $url): void
+    {
+        if (Auth::isLoggedIn()) {
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', 'image');
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundImage', $url);
+        }
+    }
+
+    public function getBackgroundType(): string
+    {
+        if (Auth::isLoggedIn()) {
+            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType') ?? 'gradient';
+        }
+
+        return 'gradient';
+    }
+
+    public function setBackgroundType(string $type): void
+    {
+        if (Auth::isLoggedIn()) {
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', $type);
+            if ($type == 'gradient') {
+                $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+            }
+
+        }
     }
 
     /**

@@ -140,11 +140,9 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                         <td data-order="<?= $tpl->e($row['headline']); ?>">
                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                <small><a href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>"><?= $tpl->escape($row['parentHeadline']) ?></a></small> //<br />
+                                <small><a href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>" preload="mouseover"><?= $tpl->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
-                            <a class='ticketModal' href="#/tickets/showTicket/<?= $tpl->e($row['id']); ?>"><?= $tpl->e($row['headline']); ?></a></td>
-
-
+                            <a class='ticketModal' href="#/tickets/showTicket/<?= $tpl->e($row['id']); ?>" preload="mouseover"><?= $tpl->e($row['headline']); ?></a></td>
 
                             <?php
 

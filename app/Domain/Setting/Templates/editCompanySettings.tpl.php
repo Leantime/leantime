@@ -25,6 +25,7 @@ $companySettings = $tpl->get('companySettings');
                     <ul>
                         <li><a href="#details"><span class="fa fa-building"></span> <?php echo $tpl->__('tabs.details'); ?></a></li>
                         <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> <?php echo $tpl->__('tabs.apiKeys'); ?></a></li>
+                        <?php $tpl->dispatchTplEvent('tabs') ?>
                     </ul>
 
 
@@ -34,117 +35,115 @@ $companySettings = $tpl->get('companySettings');
                         <div class="row">
                             <div class="col-md-8">
                                 <form class="" method="post" id="" action="<?= BASE_URL ?>/setting/editCompanySettings#details" >
+                                    <p><?= $tpl->__('text.these_are_system_wide_settings')?></p>
+                                    <br />
+                                    <input type="hidden" value="1" name="saveSettings" />
 
-                                    <h5 class="subtitle"><?= $tpl->__('headlines.company_settings')?></h5>
-                            <p><?= $tpl->__('text.these_are_system_wide_settings')?></p>
-                            <br />
-                            <input type="hidden" value="1" name="saveSettings" />
-
-                            <h4 class="widgettitle title-light"><span
-                                    class="fa fa-building"></span><?php echo $tpl->__('subtitles.companydetails'); ?>
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label><?= $tpl->__('label.language')?></label>
-                                </div>
-                                <div class="col-md-8">
-                                    <select name="language" id="language">
-                                        <?php foreach ($tpl->get('languageList') as $languagKey => $languageValue) {?>
-                                            <option
-                                                value="<?= $languagKey?>"
-                                                <?php if ($companySettings['language'] == $languagKey) {
-                                                    echo "selected='selected'";
-                                                } ?>><?= $languageValue?></option>
-                                        <?php } ?>
-                                    </select>
+                                    <h4 class="widgettitle title-light"><span
+                                            class="fa fa-building"></span><?php echo $tpl->__('subtitles.companydetails'); ?>
+                                    </h4>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label><?= $tpl->__('label.language')?></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select name="language" id="language">
+                                                <?php foreach ($tpl->get('languageList') as $languagKey => $languageValue) {?>
+                                                    <option
+                                                        value="<?= $languagKey?>"
+                                                        <?php if ($companySettings['language'] == $languagKey) {
+                                                            echo "selected='selected'";
+                                                        } ?>><?= $languageValue?></option>
+                                                <?php } ?>
+                                            </select>
 
 
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label><?= $tpl->__('label.company_name')?></label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" name="name" id="companyName"  value="<?php echo $companySettings['name']; ?>" class="pull-left"/>
-                                    <small><?= $tpl->__('text.company_name_helper')?></small>
-                                </div>
-                            </div>
-                            <br />
-                            <h4 class="widgettitle title-light"><span
-                                    class="fa fa-cog"></span><?php echo $tpl->__('subtitles.defaults'); ?>
-                            </h4>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label for="messageFrequency"><?php echo $tpl->__('label.messages_frequency') ?></label>
-                                </div>
-                                <div class="col-md-8">
-                                                    <span class='field'>
-                                                        <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
-                                                            <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
-                                                            <option
-                                                                value="300"
-                                                                <?php if ($companySettings['messageFrequency'] == '300') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.5min') ?></option>
-                                                            <option
-                                                                value="900"
-                                                                <?php if ($companySettings['messageFrequency'] == '900') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.15min') ?></option>
-                                                            <option
-                                                                value="1800"
-                                                                <?php if ($companySettings['messageFrequency'] == '1800') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.30min') ?></option>
-                                                            <option
-                                                                value="3600"
-                                                                <?php if ($companySettings['messageFrequency'] == '3600') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.1h') ?></option>
-                                                            <option
-                                                                value="10800"
-                                                                <?php if ($companySettings['messageFrequency'] == '10800') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.3h') ?></option>
-                                                            <option
-                                                                value="36000"
-                                                                <?php if ($companySettings['messageFrequency'] == '36000') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.6h') ?></option>
-                                                            <option
-                                                                value="43200"
-                                                                <?php if ($companySettings['messageFrequency'] == '43200') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.12h') ?></option>
-                                                            <option
-                                                                value="86400"
-                                                                <?php if ($companySettings['messageFrequency'] == '86400') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.24h') ?></option>
-                                                            <option
-                                                                value="172800"
-                                                                <?php if ($companySettings['messageFrequency'] == '172800') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.48h') ?></option>
-                                                            <option
-                                                                value="604800"
-                                                                <?php if ($companySettings['messageFrequency'] == '604800') {
-                                                                    echo ' selected ';
-                                                                } ?>><?php echo $tpl->__('label.1w') ?></option>
-                                                        </select> <br/>
-                                                    </span>
-                                </div>
-                            </div>
-                            <input type="submit" value="<?= $tpl->__('buttons.save')?>" id="saveBtn"/>
-                        </form>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label><?= $tpl->__('label.company_name')?></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <input type="text" name="name" id="companyName"  value="<?php echo $companySettings['name']; ?>" class="pull-left"/>
+                                            <small><?= $tpl->__('text.company_name_helper')?></small>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <h4 class="widgettitle title-light"><span
+                                            class="fa fa-cog"></span><?php echo $tpl->__('subtitles.defaults'); ?>
+                                    </h4>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="messageFrequency"><?php echo $tpl->__('label.messages_frequency') ?></label>
+                                        </div>
+                                        <div class="col-md-8">
+                                                            <span class='field'>
+                                                                <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
+                                                                    <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
+                                                                    <option
+                                                                        value="300"
+                                                                        <?php if ($companySettings['messageFrequency'] == '300') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.5min') ?></option>
+                                                                    <option
+                                                                        value="900"
+                                                                        <?php if ($companySettings['messageFrequency'] == '900') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.15min') ?></option>
+                                                                    <option
+                                                                        value="1800"
+                                                                        <?php if ($companySettings['messageFrequency'] == '1800') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.30min') ?></option>
+                                                                    <option
+                                                                        value="3600"
+                                                                        <?php if ($companySettings['messageFrequency'] == '3600') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.1h') ?></option>
+                                                                    <option
+                                                                        value="10800"
+                                                                        <?php if ($companySettings['messageFrequency'] == '10800') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.3h') ?></option>
+                                                                    <option
+                                                                        value="36000"
+                                                                        <?php if ($companySettings['messageFrequency'] == '36000') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.6h') ?></option>
+                                                                    <option
+                                                                        value="43200"
+                                                                        <?php if ($companySettings['messageFrequency'] == '43200') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.12h') ?></option>
+                                                                    <option
+                                                                        value="86400"
+                                                                        <?php if ($companySettings['messageFrequency'] == '86400') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.24h') ?></option>
+                                                                    <option
+                                                                        value="172800"
+                                                                        <?php if ($companySettings['messageFrequency'] == '172800') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.48h') ?></option>
+                                                                    <option
+                                                                        value="604800"
+                                                                        <?php if ($companySettings['messageFrequency'] == '604800') {
+                                                                            echo ' selected ';
+                                                                        } ?>><?php echo $tpl->__('label.1w') ?></option>
+                                                                </select> <br/>
+                                                            </span>
+                                        </div>
+                                    </div>
+                                    <input type="submit" value="<?= $tpl->__('buttons.save')?>" id="saveBtn"/>
+                                </form>
                             </div>
                             <div class="col-md-4">
 
                                 <form class="" method="post" id="" action="<?= BASE_URL ?>/setting/editCompanySettings" >
                                     <input type="hidden" value="1" name="saveLogo" />
-                                    <h5 class="subtitle"><?= $tpl->__('headlines.logo')?></h5>
+                                    <h5 class="widgettitle title-light"><?= $tpl->__('headlines.logo')?></h5>
                                     <br />
 
                                     <div class="row">
@@ -226,6 +225,8 @@ $companySettings = $tpl->get('companySettings');
                         </ul>
 
                     </div>
+
+                    <?php $tpl->dispatchTplEvent('tabsContent') ?>
 
             </div>
         </div>

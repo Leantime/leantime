@@ -1135,7 +1135,9 @@ namespace Leantime\Domain\Projects\Repositories {
 
             // If can't find user, return ghost
             if (empty($value)) {
-                return $this->avatarcreator->getAvatar('🦄');
+                $avatar = $this->avatarcreator->getAvatar('🦄');
+
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
             // If user uploaded return uploaded file

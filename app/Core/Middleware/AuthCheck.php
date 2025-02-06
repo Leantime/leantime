@@ -162,9 +162,9 @@ class AuthCheck
     public function setCookie($response)
     {
 
-        // Set cookie to increase session timeout
+        //Set cookie to increase session timeout
         $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
-            'esl', // Extend Session Lifetime
+            'esl', //Extend Session Lifetime
             'true',
             Date::instance(
                 Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))

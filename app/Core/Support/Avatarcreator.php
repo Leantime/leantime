@@ -20,7 +20,7 @@ class Avatarcreator
     ) {
         $this->initials->allowSpecialCharacters(true);
 
-        // Set some default values
+        //Set some default values
         $this->avatarGenerator->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf');
         $this->avatarGenerator->background('#00a887')->color('#fff');
 

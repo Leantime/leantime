@@ -21,11 +21,12 @@
                 background="{{ $widget->widgetBackground }}"
                 noTitle="{{ $widget->noTitle }}"
                 name="{{ $widget->name }}"
+                :fixed="(empty($widget->fixed) ? false : true )"
                 alwaysVisible="{{ $widget->alwaysVisible }}">
                 <div hx-get="{{$widget->widgetUrl }}"
                      hx-trigger="revealed"
                      id="{{ $widget->id }}"
-                    hx-swap="#{{ $widget->id }} transition:true">
+                    hx-swap="#{{ $widget->id }}">
                     <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>

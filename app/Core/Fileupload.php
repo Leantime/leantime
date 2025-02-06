@@ -80,11 +80,16 @@ class Fileupload
             $s3Config = [
                 'version' => 'latest',
                 'region' => $this->config->s3Region,
-                'credentials' => [
+
+            ];
+
+            //AWS SDK allows you to connect to aws resource using the role attached to an instance
+            if (! empty($this->config->s3Key) && ! empty($this->config->s3Secret)) {
+                $s3Config['credentials'] = [
                     'key' => $this->config->s3Key,
                     'secret' => $this->config->s3Secret,
-                ],
-            ];
+                ];
+            }
 
             if (
                 ! empty($this->config->s3EndPoint)
@@ -94,7 +99,10 @@ class Fileupload
                 $s3Config['endpoint'] = $this->config->s3EndPoint;
             }
 
-            if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === 'true') {
+            if (($this->config->s3UsePathStyleEndpoint === true
+                || $this->config->s3UsePathStyleEndpoint === 'true')
+            && ($this->config->s3UsePathStyleEndpoint !== 'false')
+            ) {
                 $s3Config['use_path_style_endpoint'] = true;
             }
 

@@ -1,5 +1,6 @@
 <?php
 
+use Laravel\Sanctum\Sanctum;
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Providers\Redis;
 use Leantime\Core\Providers\Session;
@@ -15,6 +16,7 @@ return [
 
             \Leantime\Core\Providers\Cache::class, // \Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Core\Providers\Redis::class,
+            \Laravel\Socialite\SocialiteServiceProvider::class,
 
             \Leantime\Core\Providers\ConsoleSupport::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
@@ -24,21 +26,18 @@ return [
 
             \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
             \Illuminate\Hashing\HashServiceProvider::class,
-            // \Illuminate\Mail\MailServiceProvider::class,
+            \Laravel\Sanctum\SanctumServiceProvider::class,
+            \Leantime\Core\Providers\Sanctum::class,
+
             \Illuminate\Notifications\NotificationServiceProvider::class,
             \Illuminate\Pagination\PaginationServiceProvider::class,
-            // \Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+
             \Illuminate\Pipeline\PipelineServiceProvider::class,
-            // \Illuminate\Queue\QueueServiceProvider::class,
+            \Illuminate\Queue\QueueServiceProvider::class,
 
-            // \Illuminate\Redis\RedisServiceProvider::class,
-
-            // \Illuminate\Session\SessionServiceProvider::class,
             \Leantime\Core\Providers\Session::class,
 
-            // \Illuminate\Translation\TranslationServiceProvider::class,
             \Illuminate\Validation\ValidationServiceProvider::class,
-            // \Illuminate\View\ViewServiceProvider::class,
 
             \Leantime\Core\Providers\Authentication::class,
             \Leantime\Core\Providers\RateLimiter::class,
@@ -49,6 +48,11 @@ return [
             \Leantime\Core\Providers\Frontcontroller::class,
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
+
+            //Console support
+            \Illuminate\Database\MigrationServiceProvider::class,
+            Illuminate\Foundation\Providers\ComposerServiceProvider::class,
+
         ],
         'name' => env('LEAN_SITENAME', 'Leantime'),
         'locale' => env('LEAN_LANGUAGE', 'en-US'),
@@ -64,37 +68,74 @@ return [
             'LEAN_EMAIL_SMTP_PASSWORD',
             'LEAN_DB_PASSWORD',
             'LEAN_SESSION_PASSWORD',
-            'LEAN_OIDC_CLIEND_SECRET',
+            'LEAN_OIDC_CLIENT_SECRET',
             'LEAN_S3_SECRET',
+            'LEAN_S3_KEY',
+            'LEAN_EMAIL_SMTP_USERNAME',
+            'LEAN_ACCOUNTS_DB_NAME',
+            'LEAN_STRIPE_KEY',
+            'LEAN_ACCOUNTS_DB_PASSWORD',
+            'LEAN_STRIPE_SECRET',
+            'LEAN_MAINKEY',
+            'LEAN_BEDROCK_SECRET',
+            'LEAN_CRISP_IDENTIFIER',
+            'LEAN_CRISP_WEBSITE_ID',
+            'LEAN_CRISP_KEY',
+            'LEAN_SENTRY_DSN',
+            'LEAN_BEDROCK_KEY',
+            'LEAN_DB_DATABASE',
+            'LEAN_MAINKEY',
+            'LEAN_ACCOUNTS_DB_HOST',
+            'LEAN_REDIS_HOST',
+            'LEAN_DB_USER',
+            'LEAN_DB_HOST',
+            'LEAN_BEDROCK_AGENT',
+            'LEAN_BEDROCK_AGENT_ALIAS',
+            'LEAN_ACCOUNTS_DB_USER',
+            'username',
+            'password',
+            'host',
         ],
-
         '_SERVER' => [
             'LEAN_EMAIL_SMTP_PASSWORD',
             'LEAN_DB_PASSWORD',
             'LEAN_SESSION_PASSWORD',
-            'LEAN_OIDC_CLIEND_SECRET',
+            'LEAN_OIDC_CLIENT_SECRET',
             'LEAN_S3_SECRET',
             'LEAN_S3_KEY',
             'LEAN_EMAIL_SMTP_USERNAME',
-            'ACCOUNTS_DB_NAME',
-            'STRIPE_KEY',
-            'ACCOUNTS_DB_PASSWORD',
-            'STRIPE_SECRET',
-            'MAINKEY',
+            'LEAN_ACCOUNTS_DB_NAME',
+            'LEAN_STRIPE_KEY',
+            'LEAN_ACCOUNTS_DB_PASSWORD',
+            'LEAN_STRIPE_SECRET',
+            'LEAN_MAINKEY',
+            'LEAN_BEDROCK_SECRET',
+            'LEAN_CRISP_IDENTIFIER',
+            'LEAN_CRISP_WEBSITE_ID',
+            'LEAN_CRISP_KEY',
+            'LEAN_SENTRY_DSN',
+            'LEAN_BEDROCK_KEY',
+            'LEAN_DB_DATABASE',
+            'LEAN_MAINKEY',
+            'LEAN_ACCOUNTS_DB_HOST',
+            'LEAN_REDIS_HOST',
+            'LEAN_DB_USER',
+            'LEAN_DB_HOST',
+            'LEAN_BEDROCK_AGENT',
+            'LEAN_BEDROCK_AGENT_ALIAS',
+            'LEAN_ACCOUNTS_DB_USER',
+            'username',
+            'password',
+            'host',
         ],
         '_POST' => [
             'password',
         ],
     ],
     'logging' => [
-        'deprecations' => [
-            'channel' => 'deprecations',
-            'trace' => false,
-        ],
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                // Add the Sentry log channel to the stack
                 'channels' => ['single', 'sentry'],
             ],
             'single' => [
@@ -102,18 +143,11 @@ return [
                 'path' => storage_path('logs/leantime.log'),
                 'permission' => 0664,
                 'days' => 5,
+                'bubble' => true,
             ],
             'deprecations' => [
                 'driver' => 'single',
                 'path' => storage_path('logs/deprecations.log'),
-            ],
-            'slack' => [
-                'driver' => 'slack',
-                'url' => '',
-                'username' => 'Laravel Log',
-                'emoji' => ':boom:',
-                'level' => 'critical',
-                'replace_placeholders' => true,
             ],
             'sentry' => [
                 'driver' => 'sentry',
@@ -445,6 +479,7 @@ return [
                 ]) : [],
             ],
         ],
+        'migrations' => 'migrations',
 
     ],
     /*
@@ -471,14 +506,14 @@ return [
             'scheme' => env('LEAN_REDIS_SCHEME', 'tls'),
             'host' => env('LEAN_REDIS_HOST', '127.0.0.1'),
             'password' => env('LEAN_REDIS_PASSWORD', null),
-            'port' => env('LEAN_REDIS_PORT', '127.0.0.1'),
+            'port' => env('LEAN_REDIS_PORT', '6379'),
             'database' => '0',
             'read_timeout' => 1.0,
             'prefix' => 'leantime_cache',
         ],
     ],
 
-    // Driver options: eloquent, database (using db query builder),
+    // Driver options: eloquent, database (using database query builder),
     'auth' => [
         'defaults' => [
             'guard' => 'leantime',
@@ -488,6 +523,8 @@ return [
             'leantime' => [
                 'driver' => 'leantime',
                 'provider' => 'leantimeUsers',
+            ],
+            'sanctum' => [
             ],
             'jsonRpc' => [
                 'driver' => 'jsonRpc',
@@ -499,5 +536,315 @@ return [
                 'driver' => 'leantimeUsers',
             ],
         ],
+    ],
+    'sentry' => [
+        // @see https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+        'dsn' => env('LEAN_SENTRY_LARAVEL_DSN', env('LEAN_SENTRY_DSN')),
+
+        // @see https://spotlightjs.com/
+        // 'spotlight' => env('LEAN_SENTRY_SPOTLIGHT', false),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#logger
+        //'logger' => (env('LEAN_DEBUG') === "1" || env('LEAN_DEBUG') === "true") ? Sentry\Logger\DebugFileLogger::class : null, // By default this will log to `storage_path('logs/sentry.log')`
+
+        // The release version of your application
+        // Example with dynamic git hash: trim(exec('git --git-dir ' . base_path('.git') . ' log --pretty="%h" -n1 HEAD'))
+        'release' => 'leantime-backend@'.get_release_version(),
+
+        // When left empty or `null` the Laravel environment will be used (usually discovered from `APP_ENV` in your `.env`)
+        'environment' => env('LEAN_ENV', 'dev'),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#sample-rate
+        'sample_rate' => env('LEAN_SENTRY_SAMPLE_RATE') === null ? 1.0 : (float) env('LEAN_SENTRY_SAMPLE_RATE'),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#traces-sample-rate
+        'traces_sample_rate' => env('LEAN_SENTRY_TRACES_SAMPLE_RATE') === null ? null : (float) env('LEAN_SENTRY_TRACES_SAMPLE_RATE'),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#profiles-sample-rate
+        'profiles_sample_rate' => env('LEAN_SENTRY_PROFILES_SAMPLE_RATE') === null ? null : (float) env('LEAN_SENTRY_PROFILES_SAMPLE_RATE'),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#send-default-pii
+        'send_default_pii' => env('LEAN_SENTRY_SEND_DEFAULT_PII', false),
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-exceptions
+        // 'ignore_exceptions' => [],
+
+        // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-transactions
+        'ignore_transactions' => [
+            // Ignore Laravel's default health URL
+            '/up',
+            '/cron/run',
+        ],
+
+        // Breadcrumb specific configuration
+        'breadcrumbs' => [
+            // Capture Laravel logs as breadcrumbs
+            'logs' => env('LEAN_SENTRY_BREADCRUMBS_LOGS_ENABLED', true),
+
+            // Capture Laravel cache events (hits, writes etc.) as breadcrumbs
+            'cache' => env('LEAN_SENTRY_BREADCRUMBS_CACHE_ENABLED', false),
+
+            // Capture Livewire components like routes as breadcrumbs
+            'livewire' => env('LEAN_SENTRY_BREADCRUMBS_LIVEWIRE_ENABLED', false),
+
+            // Capture SQL queries as breadcrumbs
+            'sql_queries' => env('LEAN_SENTRY_BREADCRUMBS_SQL_QUERIES_ENABLED', true),
+
+            // Capture SQL query bindings (parameters) in SQL query breadcrumbs
+            'sql_bindings' => env('LEAN_SENTRY_BREADCRUMBS_SQL_BINDINGS_ENABLED', false),
+
+            // Capture queue job information as breadcrumbs
+            'queue_info' => env('LEAN_SENTRY_BREADCRUMBS_QUEUE_INFO_ENABLED', true),
+
+            // Capture command information as breadcrumbs
+            'command_info' => env('LEAN_SENTRY_BREADCRUMBS_COMMAND_JOBS_ENABLED', true),
+
+            // Capture HTTP client request information as breadcrumbs
+            'http_client_requests' => env('LEAN_SENTRY_BREADCRUMBS_HTTP_CLIENT_REQUESTS_ENABLED', true),
+
+            // Capture send notifications as breadcrumbs
+            'notifications' => env('LEAN_SENTRY_BREADCRUMBS_NOTIFICATIONS_ENABLED', true),
+        ],
+
+        // Performance monitoring specific configuration
+        'tracing' => [
+            // Trace queue jobs as their own transactions (this enables tracing for queue jobs)
+            'queue_job_transactions' => env('LEAN_SENTRY_TRACE_QUEUE_ENABLED', true),
+
+            // Capture queue jobs as spans when executed on the sync driver
+            'queue_jobs' => env('LEAN_SENTRY_TRACE_QUEUE_JOBS_ENABLED', true),
+
+            // Capture SQL queries as spans
+            'sql_queries' => env('LEAN_SENTRY_TRACE_SQL_QUERIES_ENABLED', true),
+
+            // Capture SQL query bindings (parameters) in SQL query spans
+            'sql_bindings' => env('LEAN_SENTRY_TRACE_SQL_BINDINGS_ENABLED', false),
+
+            // Capture where the SQL query originated from on the SQL query spans
+            'sql_origin' => env('LEAN_SENTRY_TRACE_SQL_ORIGIN_ENABLED', true),
+
+            // Define a threshold in milliseconds for SQL queries to resolve their origin
+            'sql_origin_threshold_ms' => env('LEAN_SENTRY_TRACE_SQL_ORIGIN_THRESHOLD_MS', 100),
+
+            // Capture views rendered as spans
+            'views' => env('LEAN_SENTRY_TRACE_VIEWS_ENABLED', true),
+
+            // Capture Livewire components as spans
+            'livewire' => env('LEAN_SENTRY_TRACE_LIVEWIRE_ENABLED', false),
+
+            // Capture HTTP client requests as spans
+            'http_client_requests' => env('LEAN_SENTRY_TRACE_HTTP_CLIENT_REQUESTS_ENABLED', true),
+
+            // Capture Laravel cache events (hits, writes etc.) as spans
+            'cache' => env('LEAN_SENTRY_TRACE_CACHE_ENABLED', true),
+
+            // Capture Redis operations as spans (this enables Redis events in Laravel)
+            'redis_commands' => env('LEAN_USE_REDIS', true),
+
+            // Capture where the Redis command originated from on the Redis command spans
+            'redis_origin' => env('LEAN_USE_REDIS', true),
+
+            // Capture send notifications as spans
+            'notifications' => env('LEAN_SENTRY_TRACE_NOTIFICATIONS_ENABLED', true),
+
+            // Enable tracing for requests without a matching route (404's)
+            'missing_routes' => env('LEAN_SENTRY_TRACE_MISSING_ROUTES_ENABLED', false),
+
+            // Configures if the performance trace should continue after the response has been sent to the user until the application terminates
+            // This is required to capture any spans that are created after the response has been sent like queue jobs dispatched using `dispatch(...)->afterResponse()` for example
+            'continue_after_response' => env('LEAN_SENTRY_TRACE_CONTINUE_AFTER_RESPONSE', true),
+
+            // Enable the tracing integrations supplied by Sentry (recommended)
+            'default_integrations' => env('LEAN_SENTRY_TRACE_DEFAULT_INTEGRATIONS_ENABLED', true),
+        ],
+    ],
+    'sanctum' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Stateful Domains
+        |--------------------------------------------------------------------------
+        |
+        | Requests from the following domains / hosts will receive stateful API
+        | authentication cookies. Typically, these should include your local
+        | and production domains which access your API via a frontend SPA.
+        |
+        */
+
+        'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+            '%s%s',
+            'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+            Sanctum::currentApplicationUrlWithPort()
+        ))),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Sanctum Guards
+        |--------------------------------------------------------------------------
+        |
+        | This array contains the authentication guards that will be checked when
+        | Sanctum is trying to authenticate a request. If none of these guards
+        | are able to authenticate the request, Sanctum will use the bearer
+        | token that's present on an incoming request for authentication.
+        |
+        */
+
+        'guard' => [],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Expiration Minutes
+        |--------------------------------------------------------------------------
+        |
+        | This value controls the number of minutes until an issued token will be
+        | considered expired. This will override any values set in the token's
+        | "expires_at" attribute, but first-party sessions are not affected.
+        |
+        */
+
+        'expiration' => null,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Token Prefix
+        |--------------------------------------------------------------------------
+        |
+        | Sanctum can prefix new tokens in order to take advantage of numerous
+        | security scanning initiatives maintained by open source platforms
+        | that notify developers if they commit tokens into repositories.
+        |
+        | See: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
+        |
+        */
+
+        'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Sanctum Middleware
+        |--------------------------------------------------------------------------
+        |
+        | When authenticating your first-party SPA with Sanctum you may need to
+        | customize some of the middleware Sanctum uses while processing the
+        | request. You may change the middleware listed below as required.
+        |
+        */
+
+        'middleware' => [
+            //'authenticate_session' => \Leantime\Core\Middleware\AuthenticateSession::class,
+            //'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
+            //'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
+        ],
+
+    ],
+    'queue' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Default Queue Connection Name
+        |--------------------------------------------------------------------------
+        |
+        | Laravel's queue supports a variety of backends via a single, unified
+        | API, giving you convenient access to each backend using identical
+        | syntax for each. The default queue connection is defined below.
+        |
+        */
+
+        'default' => env('QUEUE_CONNECTION', 'database'),
+
+        /*
+        |--------------------------------------------------------------------------
+        | Queue Connections
+        |--------------------------------------------------------------------------
+        |
+        | Here you may configure the connection options for every queue backend
+        | used by your application. An example configuration is provided for
+        | each backend supported by Laravel. You're also free to add more.
+        |
+        | Drivers: "sync", "database", "beanstalkd", "sqs", "redis", "null"
+        |
+        */
+
+        'connections' => [
+
+            'sync' => [
+                'driver' => 'sync',
+            ],
+
+            'database' => [
+                'driver' => 'database',
+                'connection' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
+                'table' => 'zp_jobs',
+                'queue' => 'default',
+                'retry_after' => 90,
+                'after_commit' => false,
+            ],
+
+            'beanstalkd' => [
+                'driver' => 'beanstalkd',
+                'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),
+                'queue' => 'default',
+                'retry_after' => 90,
+                'block_for' => 0,
+                'after_commit' => false,
+            ],
+
+            'sqs' => [
+                'driver' => 'sqs',
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
+                'queue' => 'default',
+                'suffix' => env('SQS_SUFFIX'),
+                'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+                'after_commit' => false,
+            ],
+
+            'redis' => [
+                'driver' => 'redis',
+                'connection' => 'default',
+                'queue' => 'default',
+                'retry_after' => 90,
+                'block_for' => null,
+                'after_commit' => false,
+            ],
+
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Job Batching
+        |--------------------------------------------------------------------------
+        |
+        | The following options configure the database and table that store job
+        | batching information. These options can be updated to any database
+        | connection and table which has been defined by your application.
+        |
+        */
+
+        'batching' => [
+            'database' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
+            'table' => 'job_batches',
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Failed Queue Jobs
+        |--------------------------------------------------------------------------
+        |
+        | These options configure the behavior of failed queue job logging so you
+        | can control how and where failed jobs are stored. Laravel ships with
+        | support for storing failed jobs in a simple file or in a database.
+        |
+        | Supported drivers: "database-uuids", "dynamodb", "file", "null"
+        |
+        */
+
+        'failed' => [
+            'driver' => 'database-uuids',
+            'database' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
+            'table' => 'failed_jobs',
+        ],
+
     ],
 ];

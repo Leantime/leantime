@@ -427,7 +427,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
         {
 
-            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId ?? session('userdata.id'), $project);
 
             $ticketArray = [];
 
@@ -2089,7 +2089,7 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if (isset($params['projectFilter'])) {
-                $projectFilter = $params['projectFilter'];
+                $projectFilter = $params['projectFilter'] != 'all' ? $params['projectFilter'] : '';
                 session(['userHomeProjectFilter' => $projectFilter]);
             }
 
