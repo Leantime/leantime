@@ -25,9 +25,6 @@ class NewApiKey extends Controller
     /**
      * init - initialize private variables
      *
-     *
-     *
-     *
      * @throws BindingResolutionException
      */
     public function init(
@@ -98,7 +95,7 @@ class NewApiKey extends Controller
                     }
                 }
 
-                $this->tpl->setNotification('notification.api_key_created', 'success', 'apikey_created');
+                $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
 
                 $this->tpl->assign('apiKeyValues', $apiKeyValues);
             }
