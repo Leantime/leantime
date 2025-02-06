@@ -92,7 +92,7 @@ class Api
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
-        //Session handler for api is array
+        // Session handler for api is array
         session(['userdata' => $currentUser]);
 
     }

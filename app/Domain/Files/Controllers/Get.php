@@ -146,7 +146,7 @@ class Get extends Controller
 
         ];
 
-        //AWS SDK allows you to connect to aws resource using the role attached to an instance
+        // AWS SDK allows you to connect to aws resource using the role attached to an instance
         if (! empty($this->config->s3Key) && ! empty($this->config->s3Secret)) {
             $s3Config['credentials'] = [
                 'key' => $this->config->s3Key,

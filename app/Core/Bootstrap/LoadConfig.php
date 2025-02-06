@@ -48,19 +48,19 @@ class LoadConfig extends LoadConfiguration
         if (! isset($loadedFromCache)) {
             $this->loadConfigurationFiles($app, $config);
 
-            //Now extend config with laravel configs if they exist
+            // Now extend config with laravel configs if they exist
             $app->extend('config', function (Repository $config) use ($app) {
 
-                //$leantimeConfig = $app->make(Environment::class);
+                // $leantimeConfig = $app->make(Environment::class);
 
-                //Add all laravel configs to leantime config
+                // Add all laravel configs to leantime config
                 //                foreach ($laravelConfig->all() as $key => $value) {
                 //                    $leantimeConfig->set($key, $value);
                 //                }
 
-                //At this point we have the leantime config and loaded laravel configs
-                //Re-aranging and setting some of the laravel defaults that were not set
-                //as part of the file loader. Laravel config vars were already added.
+                // At this point we have the leantime config and loaded laravel configs
+                // Re-aranging and setting some of the laravel defaults that were not set
+                // as part of the file loader. Laravel config vars were already added.
                 $finalConfig = $this->mapLeantime2LaravelConfig($config);
 
                 // Additional adjustments
@@ -174,8 +174,8 @@ class LoadConfig extends LoadConfiguration
                 $laravelConfigKey = $attributes[0]->newInstance()->config;
                 $defaultConfigkey = $configVar->name;
 
-                //set laravel config.
-                //Leantime env file has priority and can override previously defined laravel configs
+                // set laravel config.
+                // Leantime env file has priority and can override previously defined laravel configs
                 $config->set($laravelConfigKey, $config->get($defaultConfigkey));
             }
         }

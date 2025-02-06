@@ -46,7 +46,7 @@ class ApplicationUrlTest extends \Unit\TestCase
         // Reinitialize application to test new environment
         $this->bootstrapApplication();
 
-        //dd($this->config);
+        // dd($this->config);
 
         $this->assertEquals('https://example.com', $this->config->get('app.url'));
         $this->assertEquals('https://example.com', $this->config->get('appUrl'));

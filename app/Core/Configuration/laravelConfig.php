@@ -49,7 +49,7 @@ return [
             \Leantime\Core\Providers\Views::class,
             \Leantime\Core\Providers\TemplateServiceProvider::class,
 
-            //Console support
+            // Console support
             \Illuminate\Database\MigrationServiceProvider::class,
             Illuminate\Foundation\Providers\ComposerServiceProvider::class,
 
@@ -545,7 +545,7 @@ return [
         // 'spotlight' => env('LEAN_SENTRY_SPOTLIGHT', false),
 
         // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#logger
-        //'logger' => (env('LEAN_DEBUG') === "1" || env('LEAN_DEBUG') === "true") ? Sentry\Logger\DebugFileLogger::class : null, // By default this will log to `storage_path('logs/sentry.log')`
+        // 'logger' => (env('LEAN_DEBUG') === "1" || env('LEAN_DEBUG') === "true") ? Sentry\Logger\DebugFileLogger::class : null, // By default this will log to `storage_path('logs/sentry.log')`
 
         // The release version of your application
         // Example with dynamic git hash: trim(exec('git --git-dir ' . base_path('.git') . ' log --pretty="%h" -n1 HEAD'))
@@ -731,9 +731,9 @@ return [
         */
 
         'middleware' => [
-            //'authenticate_session' => \Leantime\Core\Middleware\AuthenticateSession::class,
-            //'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
-            //'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
+            // 'authenticate_session' => \Leantime\Core\Middleware\AuthenticateSession::class,
+            // 'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
+            // 'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
         ],
 
     ],

@@ -613,7 +613,7 @@ class Auth implements Authenticatable
         if ($user) {
             $this->setUserSession($user);
 
-            //Turn off 2FA for token verification
+            // Turn off 2FA for token verification
             $this->set2FAVerified();
 
             return true;

@@ -369,14 +369,14 @@ class Views extends ViewServiceProvider
                 return [];
             });
 
-        //Not all plugins will be enabled but that is okay, considering the alternative is doing a db request while
+        // Not all plugins will be enabled but that is okay, considering the alternative is doing a db request while
         // registering a service provider
         $pluginPaths = collect(glob($this->app->basePath().'/app/Plugins/*'))
             ->mapWithKeys(function ($path) {
 
                 $pluginFolder = basename($path);
 
-                //To far or not to phar
+                // To far or not to phar
                 $path = 'phar://'.APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar/Templates';
                 if (is_dir($path)) {
                     return [strtolower($pluginFolder) => [$path]];

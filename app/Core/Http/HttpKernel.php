@@ -32,24 +32,24 @@ class HttpKernel extends Kernel
      */
     protected $middleware = [
 
-        //\Illuminate\Session\Middleware\StartSession::class,
-        //\Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        //\Illuminate\Auth\Middleware\Authenticate::class,
-        //\Illuminate\Session\Middleware\AuthenticateSession::class,
-        //\Illuminate\Routing\Middleware\SubstituteBindings::class,
-        //\Illuminate\Auth\Middleware\Authorize::class,
+        // \Illuminate\Session\Middleware\StartSession::class,
+        // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        // \Illuminate\Auth\Middleware\Authenticate::class,
+        // \Illuminate\Session\Middleware\AuthenticateSession::class,
+        // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        // \Illuminate\Auth\Middleware\Authorize::class,
         // \App\Http\Middleware\TrustHosts::class,
 
-        //\Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-        //\Illuminate\Cookie\Middleware\EncryptCookies::class,
-        //\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        // \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        // \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 
         \Leantime\Core\Middleware\TrustProxies::class,
         \Leantime\Core\Middleware\InitialHeaders::class,
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
         \Leantime\Core\Middleware\Updated::class,
-        //\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
         \Leantime\Core\Middleware\AuthCheck::class,
         \Leantime\Core\Middleware\AuthenticateSession::class,

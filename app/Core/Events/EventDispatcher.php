@@ -137,9 +137,9 @@ class EventDispatcher implements Dispatcher
         string $context = ''
     ): void {
 
-        //Laravel events can be objects. Let's get those into the right format
-        //Event comes out as string, either as class string or regular old string
-        //No-op for leantime events
+        // Laravel events can be objects. Let's get those into the right format
+        // Event comes out as string, either as class string or regular old string
+        // No-op for leantime events
         [$event, $payload] = [
             ...self::parseEventAndPayload($event, $payload),
         ];
@@ -172,7 +172,7 @@ class EventDispatcher implements Dispatcher
     private static function defineParams(mixed $paramAttr, string $eventName): array|object
     {
         // make this static so we only have to call once
-        //static $default_params;
+        // static $default_params;
 
         $default_params = [
             'current_route' => Frontcontroller::getCurrentRoute(),
@@ -187,10 +187,10 @@ class EventDispatcher implements Dispatcher
 
         return $paramAttr;
 
-        //Not entirely sure about all of this...
+        // Not entirely sure about all of this...
         //
 
-        //$finalParams = [];
+        // $finalParams = [];
 
         if (is_array($paramAttr)) {
             $default_params = array_merge($default_params, $paramAttr);
@@ -252,7 +252,7 @@ class EventDispatcher implements Dispatcher
         $filteredPayload = null;
 
         try {
-            //sort matches by priority
+            // sort matches by priority
             usort($registry, fn ($a, $b) => match (true) {
                 $a['priority'] > $b['priority'] => 1,
                 $a['priority'] == $b['priority'] => 0,
@@ -263,10 +263,10 @@ class EventDispatcher implements Dispatcher
 
                 $handler = $listener['listener'];
 
-                //Part 1: Handle Events
+                // Part 1: Handle Events
                 if ($isEvent) {
 
-                    //parsing listener to determine whether we;re dealing with a closure, class, object, string etc
+                    // parsing listener to determine whether we;re dealing with a closure, class, object, string etc
                     $parsedListener = self::makeListener($handler);
 
                     if ($listener['source'] == 'laravel') {
@@ -280,7 +280,7 @@ class EventDispatcher implements Dispatcher
                     continue;
                 }
 
-                //Part 2: Handle Filters
+                // Part 2: Handle Filters
                 if ($index === 0) {
                     $filteredPayload = $payload;
                 }
@@ -352,9 +352,9 @@ class EventDispatcher implements Dispatcher
         array|object $available_params = [])
     {
 
-        //Won't be a filter, cause it's an event
+        // Won't be a filter, cause it's an event
 
-        //sort matches by priority
+        // sort matches by priority
         usort($registry, fn ($a, $b) => match (true) {
             $a['priority'] > $b['priority'] => 1,
             $a['priority'] == $b['priority'] => 0,
@@ -362,8 +362,8 @@ class EventDispatcher implements Dispatcher
         });
 
         foreach ($registry as $index => $listener) {
-            //Leantime events are strings.
-            //the handler can be either ca closure a class string or a callable
+            // Leantime events are strings.
+            // the handler can be either ca closure a class string or a callable
 
         }
 
@@ -381,14 +381,14 @@ class EventDispatcher implements Dispatcher
     private static function isHandleableClass($handler): bool
     {
 
-        //Option Handler is a class and we just need to call the handle string
+        // Option Handler is a class and we just need to call the handle string
         return is_object($handler) && method_exists($handler, 'handle');
     }
 
     private static function isHandleableObject($handler): bool
     {
 
-        //Option $handler is an array
+        // Option $handler is an array
         if (is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1] ?? 'handle')) {
             return true;
         }
@@ -558,7 +558,7 @@ class EventDispatcher implements Dispatcher
         $listenerSource = 'leantime'
     ): void {
 
-        //Some backwards compatibility rules
+        // Some backwards compatibility rules
         if (str_starts_with($event, 'leantime.core.template.tpl')) {
             $eventParts = explode('.', $event);
 
@@ -575,11 +575,12 @@ class EventDispatcher implements Dispatcher
             self::$eventRegistry[$event] = [];
         }
 
-        //Laravel adds the listener directly without having priority. Keep that in mind!!
+        // Laravel adds the listener directly without having priority. Keep that in mind!!
         self::$eventRegistry[$event][] = ['listener' => $listener, 'priority' => $priority, 'source' => $listenerSource];
     }
 
-    public static function addEventListener($event, $listener, $priority = 10, $source = 'leantime') {
+    public static function addEventListener($event, $listener, $priority = 10, $source = 'leantime')
+    {
         return self::add_event_listener($event, $listener, $priority, $source);
     }
 
@@ -603,7 +604,7 @@ class EventDispatcher implements Dispatcher
         self::add_filter_listener($filtername, $listener, $priority);
     }
 
-    //Laravel listen. They can do whatever.
+    // Laravel listen. They can do whatever.
     public function listen($events, $listener = null)
     {
 
@@ -626,13 +627,13 @@ class EventDispatcher implements Dispatcher
         }
     }
 
-    //Different options for events and listeners
+    // Different options for events and listeners
 
-    //Event itself is object
-    //Event itself is class string
-    //Event itself is just string
+    // Event itself is object
+    // Event itself is class string
+    // Event itself is just string
 
-    //Listener options
+    // Listener options
 
     // 2 Listener is closure
     // 3 Listener is callable (array)
@@ -655,7 +656,7 @@ class EventDispatcher implements Dispatcher
             return self::createClassListener($listener, $wildcard);
         }
 
-        //If listener is a closure, we're preparing a closure to call the closure...
+        // If listener is a closure, we're preparing a closure to call the closure...
         return function ($event, $payload) use ($listener, $wildcard) {
             if ($wildcard) {
                 return $listener($event, $payload);

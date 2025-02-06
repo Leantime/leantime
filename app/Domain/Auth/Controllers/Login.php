@@ -103,7 +103,7 @@ class Login extends Controller
             $password = $_POST['password'];
 
             try {
-                //Allow login interruptions through events
+                // Allow login interruptions through events
                 self::dispatch_event('beforeAuthServiceCall', ['post' => $_POST]);
 
             } catch (\Exception $e) {

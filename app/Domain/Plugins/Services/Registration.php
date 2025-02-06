@@ -39,7 +39,7 @@ class Registration
     {
         $pluginId = $this->pluginId;
 
-        if(empty($languages)) {
+        if (empty($languages)) {
             $languages = $this->findLanguageFiles();
         }
 
@@ -67,13 +67,14 @@ class Registration
 
     }
 
-    private function findLanguageFiles(): array{
+    private function findLanguageFiles(): array
+    {
         $pluginPath = APP_ROOT.'/app/Plugins/';
-        $languageDir = "/Language/";
+        $languageDir = '/Language/';
 
         // Check both possible locations for language files
-        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar" . $languageDir;
-        $regularPath = "{$pluginPath}{$this->pluginId}" . $languageDir;
+        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar".$languageDir;
+        $regularPath = "{$pluginPath}{$this->pluginId}".$languageDir;
 
         $languageFiles = [];
 
@@ -97,8 +98,7 @@ class Registration
             }
         }
 
-        return !empty($languageFiles) ? $languageFiles : [];
-
+        return ! empty($languageFiles) ? $languageFiles : [];
 
     }
 

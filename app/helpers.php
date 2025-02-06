@@ -194,8 +194,8 @@ if (! function_exists('get_domain_key')) {
     function get_domain_key()
     {
 
-        //Now that we know where the instance is bing called from
-        //Let's add a domain level cache.
+        // Now that we know where the instance is bing called from
+        // Let's add a domain level cache.
 
         $host = app('request')->host();
 
