@@ -19,9 +19,9 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
         ];
 
         protected array $statusLabels = [
-            'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green', 'title' => 'status.goal.ontrack', 'dropdown' => 'success', 'active' => true],
-            'status_atrisk' => ['icon' => 'fa-triangle-exclamation', 'color' => 'yellow', 'title' => 'status.goal.atrisk', 'dropdown' => 'warning', 'active' => true],
-            'status_miss' => ['icon' => 'fa-circle-xmark', 'color' => 'red', 'title' => 'status.goal.miss', 'dropdown' => 'danger', 'active' => true],
+            'status_ontrack' => ['icon' => 'check_circle', 'color' => 'green', 'title' => 'status.goal.ontrack', 'dropdown' => 'success', 'active' => true],
+            'status_atrisk' => ['icon' => 'warning', 'color' => 'yellow', 'title' => 'status.goal.atrisk', 'dropdown' => 'warning', 'active' => true],
+            'status_miss' => ['icon' => 'dangerous', 'color' => 'red', 'title' => 'status.goal.miss', 'dropdown' => 'danger', 'active' => true],
         ];
 
         protected array $relatesLabels = [];

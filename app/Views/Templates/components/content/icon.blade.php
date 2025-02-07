@@ -15,7 +15,7 @@
     if (key_exists($icon, $leantimeEntityTypeMaps)) {
         $iconMapped = $leantimeEntityTypeMaps[$icon];
     } else {
-        $iconMapped = '<i class=' . $icon . '></i>';
+        $iconMapped = $icon;
     }
 
 @endphp

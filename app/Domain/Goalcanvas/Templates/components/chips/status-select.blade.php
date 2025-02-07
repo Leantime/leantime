@@ -14,7 +14,7 @@
 
     @if ($showLabel)
         <x-slot:label-text>
-            <x-global::content.icon icon="clock_loader_90" /> {!! __('label.status') !!}
+            <x-global::content.icon icon="check_circle" /> {!! __('label.status') !!}
         </x-slot:label-text>
     @endif
 
