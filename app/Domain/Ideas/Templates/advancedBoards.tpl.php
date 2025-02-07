@@ -8,11 +8,11 @@ $allCanvas = $tpl->get('allCanvas');
 $canvasLabels = $tpl->get('canvasLabels');
 $canvasTitle = '';
 
-//All states >0 (<1 is archive)
+// All states >0 (<1 is archive)
 $numberofColumns = count($tpl->get('canvasLabels'));
 $size = floor((100 / $numberofColumns) * 100) / 100;
 
-//get canvas title
+// get canvas title
 foreach ($tpl->get('allCanvas') as $canvasRow) {
     if ($canvasRow['id'] == $tpl->get('currentCanvas')) {
         $canvasTitle = $canvasRow['title'];

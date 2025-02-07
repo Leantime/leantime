@@ -51,8 +51,8 @@ namespace Leantime\Domain\Notifications\Services {
             $latestGuid = strval($rss?->channel?->item[0]?->guid);
             $this->settingService->saveSetting('usersettings.'.$userId.'.lastNewsGuid', strval($latestGuid));
 
-            //Todo: check last article the user read
-            //Only load rss feed once a day
+            // Todo: check last article the user read
+            // Only load rss feed once a day
             return $rss;
 
         }

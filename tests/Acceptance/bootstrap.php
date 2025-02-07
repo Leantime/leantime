@@ -95,7 +95,7 @@ $bootstrapper = get_class(new class
     {
         $this->createStep('Setting folder permissions on cache folder');
 
-        //Set file permissions
+        // Set file permissions
         $this->executeCommand(
             array_filter(
                 [

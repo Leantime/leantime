@@ -13,7 +13,7 @@
     {!! $tpl->displayNotification() !!}
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="maincontentinner">
                 <div class="tabbedwidget tab-primary accountTabs">
 
@@ -21,63 +21,134 @@
                         <li><a href="#myProfile">{!! __('tabs.myProfile') !!}</a></li>
                         <li><a href="#security">{!! __('tabs.security') !!}</a></li>
                         <li><a href="#settings">{!! __('tabs.settings') !!}</a></li>
-                        <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
                         <li><a href="#notifications">{!! __('tabs.notifications') !!}</a></li>
+                        <li><a href="#theme">{!! __('tabs.theme') !!}</a></li>
+                        @dispatchEvent('tabs')
                     </ul>
 
                     <div id="myProfile">
-                        <form action="" method="post">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form action="" method="post">
+                                    <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
+                                    <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
+                                    <div class="row-fluid">
+                                        <div class="form-group">
+                                            <label for="firstname" >{{ __('label.firstname') }}</label>
+                                            <span>
+                                                <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                                value="{{ $values['firstname'] }}"/><br/>
+                                            </span>
+                                        </div>
 
-                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
-                            <div class="row-fluid">
-                                <div class="form-group">
-                                    <label for="firstname" >{{ __('label.firstname') }}</label>
-                                    <span>
-                                        <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['firstname'] }}"/><br/>
-                                    </span>
-                                </div>
+                                        <div class="form-group">
+                                            <label for="lastname" >{{ __('label.lastname') }}</label>
+                                            <span>
+                                                <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                                value="{{ $values['lastname']  }}"/><br/>
+                                            </span>
+                                        </div>
 
-                                <div class="form-group">
-                                    <label for="lastname" >{{ __('label.lastname') }}</label>
-                                    <span>
-                                        <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['lastname']  }}"/><br/>
-                                    </span>
-                                </div>
+                                        <div class="form-group">
+                                            <label for="user" >{{ __('label.email') }}</label>
+                                            <span>
+                                                <input type="text" name="user" class="input" id="user" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                                value="{{ $values['user']  }}"/><br/>
+                                            </span>
+                                        </div>
 
-                                <div class="form-group">
-                                    <label for="user" >{{ __('label.email') }}</label>
-                                    <span>
-                                        <input type="text" name="user" class="input" id="user" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['user']  }}"/><br/>
-                                    </span>
-                                </div>
+                                        <div class="form-group">
+                                            <label for="phone" >{{ __('label.phone') }}</label>
+                                            <span>
+                                                <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
+                                                value="{{ $values['phone']  }}"/><br/>
+                                            </span>
+                                        </div>
+                                        <p class='stdformbutton'>
+                                            <input type="hidden" name="profileInfo" value="1" />
 
-                                <div class="form-group">
-                                    <label for="phone" >{{ __('label.phone') }}</label>
-                                    <span>
-                                        <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
-                                               value="{{ $values['phone']  }}"/><br/>
-                                    </span>
-                                </div>
+                                            <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button"/>
+                                        </p>
+                                        <br />
+                                        <h4 class="widgettitle title-light">{{ __('label.employee_information') }}</h4>
+                                        <em>{{ __('text.only_admins_can_change_user_info') }}</em><br /><br />
+                                        <div class="form-group">
+                                            <label for="phone" >{{ __('label.jobTitle') }}</label>
+                                            <span>
+                                                <input type="text" name="jobTitle" readonly class="input" id="jobTitle"}}
+                                                value="{{ $values['jobTitle']  }}"/><br/>
+                                            </span>
+                                        </div>
 
+                                        <div class="form-group">
+                                            <label for="phone" >{{ __('label.jobLevel') }}</label>
+                                            <span>
+                                                <input type="text" name="jobLevel" readonly class="input" id="jobLevel"}}
+                                                       value="{{ $values['jobLevel']  }}"/><br/>
+                                            </span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="phone" >{{ __('label.department') }}</label>
+                                            <span>
+                                                <input type="text" name="department" readonly class="input" id="department"}}
+                                                       value="{{ $values['department']  }}"/><br/>
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+
+                                </form>
                             </div>
-                            <p class='stdformbutton'>
-                                <input type="hidden" name="profileInfo" value="1" />
+                            <div class="col-md-4">
+                                <div class="center">
+                                    <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw-rounded-full' alt='Profile Picture' id="previousImage"/>
+                                    <div id="profileImg">
+                                    </div>
 
-                                <input type="submit" name="save" id="save" value="{{ __('buttons.save') }}" class="button"/>
-                            </p>
+                                    <div class="par">
 
-                        </form>
+                                        <label>{{ __('label.upload') }}</label>
+
+                                        <div class='fileupload fileupload-new' data-provides='fileupload'>
+                                            <input type="hidden"/>
+                                            <div class="input-append">
+                                                <div class="uneditable-input span3">
+                                                    <i class="fa-file fileupload-exists"></i>
+                                                    <span class="fileupload-preview"></span>
+                                                </div>
+                                                <span class="btn btn-file">
+                                        <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
+                                        <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
+                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
+                                    </span>
+
+                                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
+                                            </div>
+                                            <p class='stdformbutton'>
+                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
+                                        <span onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}</span>
+                                        <span class="ld ld-ring ld-spin"></span>
+                                    </span>
+                                                <input type="hidden" name="profileImage" value="1" />
+                                                <input id="picSubmit" type="submit" name="savePic" class="hidden"
+                                                       value="{{ __('buttons.upload') }}"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div id="security">
                         <h4 class="widgettitle title-light">
                             {!! __('headlines.change_password') !!}
                         </h4>
-                        @if (session("userdata.isLdap") );
-                            <strong> {{  __("text.account_managed_ldap") }}</strong><br /><br />
+                        @if (session("userdata.isExternalAuth") )
+                            <strong> {{  __("text.account_managed_external_auth") }}</strong><br /><br />
                         @endif
                         <form method="post">
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
@@ -85,7 +156,7 @@
                                 <div class="form-group">
                                     <label for="currentPassword" >{{ __('label.old_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
+                                        <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="currentPassword"/><br/>
                                     </span>
                                 </div>
@@ -93,7 +164,7 @@
                                 <div class="form-group">
                                     <label for="newPassword" >{{ __('label.new_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
+                                        <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="newPassword"/>
                                         <span id="pwStrength"></span>
 
@@ -103,16 +174,16 @@
                                 <div class="form-group">
                                     <label for="confirmPassword" >{{ __('label.password_repeat') }}</label>
                                     <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
+                                        <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isExternalAuth") ? "disabled='disabled'" : '' }}
                                                id="confirmPassword"/><br/>
-                                        @if (!session("userdata.isLdap") );
+                                        @if (!session("userdata.isExternalAuth") )
                                         <small>{{ __('label.passwordRequirements') }}</small>
                                        @endif
                                     </span>
 
                                 </div>
                             </div>
-                            @if (!session("userdata.isLdap") );
+                            @if (!session("userdata.isExternalAuth") )
                                 <input type="hidden" name="savepw" value="1" />
                                 <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button"/>
                             @endif
@@ -210,20 +281,20 @@
                             <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="themeSelect" >{{ __('label.theme') }}</label>
-                                    <span class='field'>
-                                        <select name="theme" id="themeSelect" style="width: 220px">
+                                    <label for="themeSelect">Optimal Stimulation</label>
+                                    <span class='field tw-flex tw-w-80'>
 
-                                            @foreach ($availableThemes as $key => $theme)
-                                                <option value="{{  $key  }}"
-                                                    @if ($userTheme == $key)
-                                                     selected='selected'
-                                                   @endif >{{ __($theme['name']) }}</option>
-                                            @endforeach
-                                        </select>
+                                         <?php
+                                         foreach ($availableThemes as $key => $theme) { ?>
+                                             <x-global::selectable selected="{{ ($userTheme == $key ? 'true' : 'false') }}" :id="''" :name="'theme'" :value="$key" :label="''" class="tw-w-1/2" onclick="leantime.snippets.toggleBg('{{ $key }}')">
+                                                <img src="{{ BASE_URL }}/dist/images/background-{{$key}}.png" style="margin:0; border-radius:10px;" />
+                                                     <br /><?= $tpl->__($theme['name']) ?>
+                                             </x-global::selectable>
 
+                                        <?php } ?>
                                     </span>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-md-12">
 
@@ -279,6 +350,8 @@
                             <input type="hidden" name="saveTheme" value="1" />
                             <input type="submit" name="save" id="saveTheme" value="{{ __('buttons.save') }}" class="button"/>
                         </form>
+
+                        @dispatchEvent('themecontent')
                     </div>
 
                     <div id="notifications">
@@ -288,7 +361,7 @@
                                 <div class="form-group">
                                     <label for="notifications" >{{ __('label.receive_notifications') }}</label>
                                     <span>
-                                        <input type="checkbox" value="" name="notifications" class="input"
+                                        <input type="checkbox" value="on" name="notifications" class="input"
                                                id="notifications"
                                                @if ($values['notifications'] == "1" )
                                                    checked='checked'
@@ -342,44 +415,8 @@
                             <input type="submit" name="save" value="{{ __('buttons.save') }}" class="button"/>
                         </form>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="maincontentinner center">
-                <img src='{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}?v={{ format($user['modified'])->timestamp() }}'  class='profileImg tw-rounded-full' alt='Profile Picture' id="previousImage"/>
-                <div id="profileImg">
-                </div>
 
-                <div class="par">
-
-                    <label>{{ __('label.upload') }}</label>
-
-                    <div class='fileupload fileupload-new' data-provides='fileupload'>
-                        <input type="hidden"/>
-                        <div class="input-append">
-                            <div class="uneditable-input span3">
-                                <i class="fa-file fileupload-exists"></i>
-                                <span class="fileupload-preview"></span>
-                            </div>
-                            <span class="btn btn-file">
-                                        <span class="fileupload-new">{{ __('buttons.select_file') }}</span>
-                                        <span class='fileupload-exists'>{{ __('buttons.change') }}</span>
-                                        <input type='file' name='file' onchange="leantime.usersController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
-                                    </span>
-
-                            <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()">{{ __('buttons.remove') }}</a>
-                        </div>
-                        <p class='stdformbutton'>
-                                    <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
-                                        <span onclick="leantime.usersController.saveCroppie()">{{ __('buttons.save') }}</span>
-                                        <span class="ld ld-ring ld-spin"></span>
-                                    </span>
-                            <input type="hidden" name="profileImage" value="1" />
-                            <input id="picSubmit" type="submit" name="savePic" class="hidden"
-                                   value="{{ __('buttons.upload') }}"/>
-                        </p>
-                    </div>
+                    @dispatchEvent('tabsContent')
                 </div>
             </div>
         </div>

@@ -64,6 +64,10 @@ jQuery(document).ready(function () {
 
 });
 
+htmx.onLoad(function(element){
+    tippy('[data-tippy-content]');
+});
+
 window.addEventListener("HTMX.ShowNotification", function(evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         let notification = JSON.parse(data);

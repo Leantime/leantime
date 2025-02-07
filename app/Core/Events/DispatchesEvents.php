@@ -21,7 +21,7 @@ namespace Leantime\Core\Events {
         }
 
         // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
-        //Temporary for backwards compatibility
+        // Temporary for backwards compatibility
         public static function dispatchEvent(string $hook, mixed $available_params = [], string|int|null $function = null): void
         {
             EventDispatcher::dispatch_event($hook, $available_params, static::get_event_context($function));
@@ -39,7 +39,7 @@ namespace Leantime\Core\Events {
         }
 
         // The new dispatchEvent method is below. We're keeping both for backwards compatibility until v4.0
-        //Temporary for backwards compatibility
+        // Temporary for backwards compatibility
         public static function dispatchFilter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
         {
             return EventDispatcher::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
@@ -60,7 +60,7 @@ namespace Leantime\Core\Events {
 
                 $function = $function;
 
-                //If context starts with leantime, the full context was provided by caller
+                // If context starts with leantime, the full context was provided by caller
                 if (str_starts_with($function, 'leantime.')) {
                     $eventContext = '';
                 }

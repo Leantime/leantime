@@ -60,7 +60,7 @@ namespace Leantime\Domain\Projects\Controllers {
         public function post($params): Response
         {
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 $id = (int) ($_GET['id']);
                 $projectName = $params['projectName'];

@@ -306,7 +306,7 @@ class DefaultConfig
         "jobLevel":"level",
         "department":"department"
         }';
-    //For AD use
+    // For AD use
     /*
       public $ldapKeys = '{
       "username":"cn",
@@ -356,7 +356,7 @@ class DefaultConfig
             "ldapRole":"administrators"
           }
         }';
-    //Default Leantime Role on creation. (set to editor)
+    // Default Leantime Role on creation. (set to editor)
 
     /**
      * @var int Default Leantime Role on creation. (set to editor)

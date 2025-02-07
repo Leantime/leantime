@@ -32,7 +32,7 @@ namespace Leantime\Domain\Reactions\Services {
                 return false;
             }
 
-            //Check if user already reacted in that category
+            // Check if user already reacted in that category
             $userReactions = $this->getUserReactions($userId, $module, $moduleId);
 
             $currentReactionType = $this->getReactionType($reaction);

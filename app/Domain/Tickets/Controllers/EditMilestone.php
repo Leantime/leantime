@@ -49,7 +49,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
             if (isset($params['id'])) {
-                //Delete comment
+                // Delete comment
                 if (isset($params['delComment']) === true) {
                     $commentId = (int) ($params['delComment']);
                     $this->commentsService->deleteComment($commentId);
@@ -66,7 +66,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap/');
                 }
 
-                //Ensure this ticket belongs to the current project
+                // Ensure this ticket belongs to the current project
                 if (session('currentProject') != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
 
@@ -81,7 +81,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $today = new DateTime;
                 $milestone->editFrom = $today->format('Y-m-d');
 
-                //Add 1 week
+                // Add 1 week
                 $interval = new DateInterval('P1W');
                 $next_week = $today->add($interval);
 
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params)
         {
-            //If ID is set its an update
+            // If ID is set its an update
             if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
                 $params['id'] = (int) $_GET['id'];
                 $milestone = $this->ticketRepo->getTicket($params['id']);

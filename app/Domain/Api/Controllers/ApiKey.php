@@ -25,9 +25,6 @@ class ApiKey extends Controller
     /**
      * init - initialize private variables
      *
-     *
-     *
-     *
      * @throws BindingResolutionException
      */
     public function init(ProjectRepository $projectsRepo, UserRepository $userRepo, ClientRepository $clientsRepo): void

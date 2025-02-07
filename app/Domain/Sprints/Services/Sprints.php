@@ -77,12 +77,12 @@ namespace Leantime\Domain\Sprints\Services {
                 return session('currentSprint');
             }
 
-            //$sprint = $this->sprintRepository->getCurrentSprint($projectId);
+            // $sprint = $this->sprintRepository->getCurrentSprint($projectId);
 
-            //if ($sprint) {
+            // if ($sprint) {
             //    session(["currentSprint" => $sprint->id]);
             //    return $sprint->id;
-            //}
+            // }
 
             session(['currentSprint' => '']);
 
@@ -112,7 +112,7 @@ namespace Leantime\Domain\Sprints\Services {
 
             $sprints = $this->sprintRepository->getAllSprints($projectId);
 
-            //Caution: Empty arrays will be false
+            // Caution: Empty arrays will be false
             if ($sprints) {
                 return $sprints;
             }
@@ -199,13 +199,13 @@ namespace Leantime\Domain\Sprints\Services {
 
             $allKeys = array_keys($sprintData);
 
-            //If the first day is set in our reports table
+            // If the first day is set in our reports table
             if (isset($allKeys[0])) {
                 $plannedHoursStart = $sprintData[$allKeys[0]]->sum_planned_hours;
                 $plannedNumStart = $sprintData[$allKeys[0]]->sum_todos;
                 $plannedEffortStart = $sprintData[$allKeys[0]]->sum_points;
             } else {
-                //If the sprint started today and we don't have any data to report, planned is 0
+                // If the sprint started today and we don't have any data to report, planned is 0
                 $plannedHoursStart = 0;
                 $plannedNumStart = 0;
                 $plannedEffortStart = 0;
@@ -218,7 +218,7 @@ namespace Leantime\Domain\Sprints\Services {
 
             $period = $dateStart->daysUntil($dateEnd);
 
-            $sprintLength++; //Diff is 1 day less than actual sprint days (eg even if a sprint starts and ends today it should still be a 1 day sprint, but the diff would be 0)
+            $sprintLength++; // Diff is 1 day less than actual sprint days (eg even if a sprint starts and ends today it should still be a 1 day sprint, but the diff would be 0)
 
             $dailyHoursPlanned = $plannedHoursStart / $sprintLength;
             $dailyNumPlanned = $plannedNumStart / $sprintLength;
@@ -249,7 +249,7 @@ namespace Leantime\Domain\Sprints\Services {
                         $burnDown[$i]['actualNum'] = $plannedNumStart;
                         $burnDown[$i]['actualEffort'] = $plannedEffortStart;
                     } else {
-                        //If the date is in the future. Set to 0
+                        // If the date is in the future. Set to 0
                         $today = new DateTime;
                         if ($value->format('Ymd') < $today->format('Ymd')) {
                             $burnDown[$i]['actualHours'] = $burnDown[$i - 1]['actualHours'];
@@ -332,7 +332,7 @@ namespace Leantime\Domain\Sprints\Services {
                         $burnDown[$i]['done']['actualNum'] = 0;
                         $burnDown[$i]['done']['actualEffort'] = 0;
                     } else {
-                        //If the date is in the future. Set to 0
+                        // If the date is in the future. Set to 0
                         $today = new DateTime;
                         if ($value->format('Ymd') < $today->format('Ymd')) {
                             $burnDown[$i]['open']['actualHours'] = $burnDown[$i - 1]['open']['actualHours'];

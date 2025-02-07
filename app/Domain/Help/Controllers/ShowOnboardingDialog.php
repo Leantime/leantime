@@ -12,7 +12,7 @@ namespace Leantime\Domain\Help\Controllers {
         public function get($params)
         {
 
-            //show modals only once per session
+            // show modals only once per session
             if (! session()->exists('usersettings.modals')) {
                 session(['usersettings.modals' => []]);
             }

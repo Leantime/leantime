@@ -44,7 +44,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
-            //Create default canvas.
+            // Create default canvas.
             if (! $allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__('label.board'),
@@ -57,7 +57,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             if (session()->exists('current'.strtoupper(static::CANVAS_NAME).'Canvas')) {
                 $currentCanvasId = session('current'.strtoupper(static::CANVAS_NAME).'Canvas');
-                //Ensure canvas id is in the list of currentCanvases (could be old value after project select
+                // Ensure canvas id is in the list of currentCanvases (could be old value after project select
 
                 $found = false;
                 foreach ($allCanvas as $row) {

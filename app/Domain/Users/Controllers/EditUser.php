@@ -45,7 +45,7 @@ namespace Leantime\Domain\Users\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            //Only admins
+            // Only admins
 
             if (isset($_GET['id']) === true) {
                 $id = (int) ($_GET['id']);
@@ -53,7 +53,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $edit = false;
                 $infoKey = '';
 
-                //Build values array
+                // Build values array
                 $values = [
                     'id' => $row['id'],
                     'firstname' => $row['firstname'],
@@ -78,7 +78,7 @@ namespace Leantime\Domain\Users\Controllers {
                         session('lastInvite.'.$values['id']) < time() - 240) {
                         session(['lastInvite.'.$values['id'] => time()]);
 
-                        //If pw reset is empty for whatever reason, create new invite code
+                        // If pw reset is empty for whatever reason, create new invite code
                         if (empty($values['pwReset'])) {
                             $inviteCode = Uuid::uuid4()->toString();
                             $this->userRepo->patchUser($values['id'], ['pwReset' => $inviteCode]);
@@ -150,7 +150,7 @@ namespace Leantime\Domain\Users\Controllers {
                     }
                 }
 
-                //Was everything okay?
+                // Was everything okay?
                 if ($edit !== false) {
                     $this->userRepo->editUser($values, $id);
 
@@ -161,7 +161,7 @@ namespace Leantime\Domain\Users\Controllers {
                             $this->projectsRepo->deleteAllProjectRelations($id);
                         }
                     } else {
-                        //If projects is not set, all project assignments have been removed.
+                        // If projects is not set, all project assignments have been removed.
                         $this->projectsRepo->deleteAllProjectRelations($id);
                     }
                     $this->tpl->setNotification($this->language->__('notifications.user_edited'), 'success');
@@ -176,12 +176,12 @@ namespace Leantime\Domain\Users\Controllers {
                     $projectrelation[] = $projectId['projectId'];
                 }
 
-                //Assign vars
+                // Assign vars
                 $this->tpl->assign('allProjects', $this->projectsRepo->getAll(true));
                 $this->tpl->assign('roles', Roles::getRoles());
                 $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
-                //Sensitive Form, generate form tokens
+                // Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
                 session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
                 session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);

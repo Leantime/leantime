@@ -35,7 +35,7 @@ class I18n extends Controller
             $languageIni[$index] = $this->language->__($index, true);
         }
 
-        //Fullcalendar and other scripts can handle local to use the browser timezone
+        // Fullcalendar and other scripts can handle local to use the browser timezone
         $languageIni['usersettings.timezone'] = session('usersettings.timezone') ?? 'local';
 
         $decodedString = json_encode($languageIni);
@@ -57,9 +57,9 @@ class I18n extends Controller
         $response->headers->set('Content-Type', 'application/javascript');
         $response->headers->set('Pragma', 'public');
 
-        //Disable cache for this file since datetime format settings is stored in here as well.
-        //Need to find a better cache busting option for this.
-        //$response->headers->set("Cache-Control", 'max-age=86400');
+        // Disable cache for this file since datetime format settings is stored in here as well.
+        // Need to find a better cache busting option for this.
+        // $response->headers->set("Cache-Control", 'max-age=86400');
 
         return $response;
     }

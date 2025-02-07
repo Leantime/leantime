@@ -59,8 +59,8 @@ class Menu
         $allAssignedprojectsHierarchy = $projects['allAssignedProjectsHierarchy'];
         $favoriteProjects = $projects['favoriteProjects'];
 
-        //Filtered
-        $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open', $client);
+        // Filtered
+        $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open', empty($client) ? session('userdata.clientId') : $client);
         $allAvailableProjects = $projects['allAvailableProjects'];
         $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
 
@@ -69,7 +69,7 @@ class Menu
         $recent = $this->settingSvc->getSetting('usersettings.'.$userId.'.recentProjects');
         $recentArr = unserialize($recent);
 
-        //Make sure the suer has access to the project
+        // Make sure the suer has access to the project
         if (is_array($recentArr) && is_array($allAvailableProjects)) {
             $availableProjectColumn = array_column($allAvailableProjects, 'id');
             foreach ($recentArr as $recentItem) {

@@ -25,7 +25,6 @@ class TicketsCest
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
         $I->click('.tagsinput');
         $I->type('test-tag,');
-        $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);

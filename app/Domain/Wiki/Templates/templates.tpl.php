@@ -8,8 +8,8 @@ foreach ($__data as $var => $val) {
 $today = date($tpl->__('language.dateformat'));
 $author = session('userdata.name').' ('.session('userdata.mail').')';
 
-//Templates for tinymce templates
-//All Templates require title, description, content
+// Templates for tinymce templates
+// All Templates require title, description, content
 
 $templates = [];
 
@@ -156,7 +156,7 @@ $prdTpl->content = '
 ';
 $templates[] = $prdTpl;
 
-//Project Outline
+// Project Outline
 $projectOutline = app()->make(Template::class);
 $projectOutline->title = 'Project Outline';
 $projectOutline->category = $tpl->__('templates.documents');
@@ -257,7 +257,7 @@ Status: <span class="label label-default">Draft</span><br />
 </table>';
 $templates[] = $projectOutline;
 
-//User Story
+// User Story
 $userStoryTpl = app()->make(Template::class);
 $userStoryTpl->title = 'User Story';
 $userStoryTpl->category = $tpl->__('templates.todos');

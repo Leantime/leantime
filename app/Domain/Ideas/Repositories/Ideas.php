@@ -91,7 +91,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 
                 $labels = [];
 
-                //preseed state labels with default values
+                // preseed state labels with default values
                 foreach ($this->canvasTypes as $key => $label) {
                     $labels[$key] = [
                         'name' => $this->language->__($label),
@@ -525,10 +525,10 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function bulkUpdateIdeaStatus($params): bool
         {
 
-            //Jquery sortable serializes the array for kanban in format
-            //statusKey: item[]=X&item[]=X2...,
-            //statusKey2: item[]=X&item[]=X2...,
-            //This represents status & kanban sorting
+            // Jquery sortable serializes the array for kanban in format
+            // statusKey: item[]=X&item[]=X2...,
+            // statusKey2: item[]=X&item[]=X2...,
+            // This represents status & kanban sorting
             foreach ($params as $status => $ideaList) {
                 $ideas = explode('&', $ideaList);
 

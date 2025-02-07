@@ -34,7 +34,7 @@ namespace Leantime\Domain\Users\Controllers {
          */
         public function get(): Response
         {
-            //Only Admins
+            // Only Admins
             if (! Auth::userIsAtLeast(Roles::$admin)) {
                 return $this->tpl->display('errors.error403');
             }
@@ -59,7 +59,7 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl = app()->make(TemplateCore::class);
             $this->ldapService = app()->make(LdapService::class);
 
-            //Password Submit to connect to ldap and retrieve users. Sets tmp session var
+            // Password Submit to connect to ldap and retrieve users. Sets tmp session var
             if (isset($params['pwSubmit'])) {
                 $username = $this->ldapService->extractLdapFromUsername(session('userdata.mail'));
 
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
             }
 
-            //Import/Update User Post
+            // Import/Update User Post
             if (isset($params['importSubmit'])) {
                 if (is_array($params['users'])) {
                     $users = [];

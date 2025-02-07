@@ -66,7 +66,7 @@ namespace Leantime\Domain\Reports\Controllers {
         public function get(): Response
         {
 
-            //Project Progress
+            // Project Progress
             $progress = $this->projectService->getProjectProgress(session('currentProject'));
 
             $this->tpl->assign('projectProgress', $progress);
@@ -75,7 +75,7 @@ namespace Leantime\Domain\Reports\Controllers {
                 $this->projectService->getProjectName(session('currentProject'))
             );
 
-            //Sprint Burndown
+            // Sprint Burndown
 
             $allSprints = $this->sprintService->getAllSprints(session('currentProject'));
 
@@ -112,7 +112,7 @@ namespace Leantime\Domain\Reports\Controllers {
 
             $this->tpl->assign('states', $this->ticketService->getStatusLabels());
 
-            //Milestones
+            // Milestones
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);

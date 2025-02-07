@@ -60,11 +60,11 @@ class Views extends ViewServiceProvider
 
             $factory = $this->createFactory($resolver, $finder, $app['events']);
 
-            //Backwards compatible view engine resolver
+            // Backwards compatible view engine resolver
             array_map(fn ($ext) => $factory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
 
             // reprioritize blade
-            //Use blade engine for all things blade
+            // Use blade engine for all things blade
             $factory->addExtension('blade.php', 'blade');
 
             // We will also set the container instance on this view environment since the
@@ -74,7 +74,7 @@ class Views extends ViewServiceProvider
 
             $factory->share('app', $app);
 
-            //Find and set composers
+            // Find and set composers
             $composers = $this->getComposerPaths();
             foreach ($composers as $key => $composerClass) {
                 if (
@@ -282,7 +282,7 @@ class Views extends ViewServiceProvider
                     }
                 }
 
-                //If not a phar, we can just use glob
+                // If not a phar, we can just use glob
                 return glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php') ?: [];
             })
             ->flatten();
@@ -299,7 +299,45 @@ class Views extends ViewServiceProvider
         return $composerList;
     }
 
-    public function boot() {}
+    public function boot()
+    {
+
+        app('blade.compiler')->directive(
+            'dispatchEvent',
+            fn ($args) => "<?php \$tpl->dispatchTplEvent($args); ?>",
+        );
+
+        app('blade.compiler')->directive(
+            'dispatchFilter',
+            fn ($args) => "<?php echo \$tpl->dispatchTplFilter($args); ?>",
+        );
+
+        app('blade.compiler')->directive(
+            'spaceless',
+            fn ($args) => '<?php ob_start(); ?>',
+        );
+
+        app('blade.compiler')->directive(
+            'endspaceless',
+            fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
+        );
+
+        app('blade.compiler')->directive(
+            'formatDate',
+            fn ($args) => "<?php echo format($args)->date(); ?>",
+        );
+
+        app('blade.compiler')->directive(
+            'formatTime',
+            fn ($args) => "<?php echo format($args)->time(); ?>",
+        );
+
+        app('blade.compiler')->directive(
+            'displayNotification',
+            fn ($args) => '<?php echo $tpl->displayNotification(); ?>',
+        );
+
+    }
 
     public function getViewPaths()
     {
@@ -331,38 +369,26 @@ class Views extends ViewServiceProvider
                 return [];
             });
 
-        /** @var \Leantime\Domain\Plugins\Services\Plugins $pluginService */
-        $pluginService = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+        // Not all plugins will be enabled but that is okay, considering the alternative is doing a db request while
+        // registering a service provider
+        $pluginPaths = collect(glob($this->app->basePath().'/app/Plugins/*'))
+            ->mapWithKeys(function ($path) {
 
-        //We are in discovery mode so enabled plugins should be cleared for new plugins to show up
-        //Otherwise the data comes from viewPaths manifest and doesn't need to be pulled in
-        $pluginService->clearCache();
-        $plugins = collect($pluginService->getEnabledPlugins());
+                $pluginFolder = basename($path);
 
-        $pluginPaths = $plugins->mapWithKeys(function ($plugin) use ($domainPaths) {
-            //Catch issue when plugins are cached on load but autoloader is not quite done loading.
-            //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
-            //Clearing session cache in that case.
-            //@TODO: Check on callstack to make sure autoload loads before sessions
-            if (! is_a($plugin, '__PHP_Incomplete_Class')) {
-                if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
-                    //Clear cache, something is up
-                    //session()->forget("enabledPlugins");
-                    return [];
+                // To far or not to phar
+                $path = 'phar://'.APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar/Templates';
+                if (is_dir($path)) {
+                    return [strtolower($pluginFolder) => [$path]];
                 }
 
-                if ($plugin->format == 'phar') {
-                    $path = 'phar://'.APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar/Templates';
-                } else {
-                    $path = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Templates';
+                $path = APP_ROOT.'/app/Plugins/'.$pluginFolder.'/Templates';
+                if (is_dir($path)) {
+                    return [strtolower($pluginFolder) => [$path]];
                 }
 
-                return [$basename => [$path]];
-            }
-
-            //session()->forget("enabledPlugins");
-            return [];
-        });
+                return [];
+            });
 
         $storePaths = $domainPaths
             ->merge($pluginPaths)

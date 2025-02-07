@@ -91,7 +91,7 @@
                                 hx-target="#yourToDoContainer"
                                 hx-swap="outerHTML"
                                 hx-indicator="#todos .htmx-indicator"
-                                hx-vals='{"projectFilter": "", "groupBy": "{{ $groupBy }}" }'
+                                hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
 
                                 >{{ __('labels.all_projects') }}
 
@@ -213,14 +213,14 @@
                                 @foreach ($ticketGroup['tickets'] as $row)
 
                                     <li class="ui-state-default" id="ticket_{{ $row['id'] }}" >
-                                        <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+                                        <div class="ticketBox priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
                                             <div class="row">
                                                 <div class="col-md-8 titleContainer">
                                                     <small>{{ $row['projectName'] }}</small><br />
                                                     @if($row['dependingTicketId'] > 0)
-                                                        <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ $row['parentHeadline'] }}</a> //
+                                                        <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}" preload="mouseover">{{ $row['parentHeadline'] }}</a> //
                                                     @endif
-                                                    <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a></strong>
+                                                    <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" preload="mouseover">{{ $row['headline'] }}</a></strong>
 
                                                 </div>
                                                 <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
@@ -236,11 +236,14 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4" style="padding:0 15px;">
+                                                <div class="col-md-4 tw-flex" style="padding:0 15px;">
                                                     <div class="date-picker-form-control">
                                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content="{{ __("label.due") }}"></i>
-                                                        <input id="due-date-picker-{{ $row['id'] }}" type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
+                                                        <input id="due-date-picker-{{ $row['id'] }}" type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px; width:100px;" data-id="{{ $row['id'] }}" name="date" />
                                                         <button class="reset-button" data-id="{{ $row['id'] }}" id="reset-date-{{ $row['id'] }}"><span class="sr-only">{{ __("language.resetDate") }}</span><i class="fa fa-close"></i></button>
+                                                    </div>
+                                                    <div>
+                                                        @dispatchEvent('afterDueDate',  ['ticket' => (object)$row])
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8 dropdownContainer" style="padding-top:5px;">

@@ -57,7 +57,7 @@ class ProjectSelector extends Composer
         ]);
 
         if (session()->exists('userdata')) {
-            //Getting all projects (ignoring client filter, clients are filtered on the frontend)
+            // Getting all projects (ignoring client filter, clients are filtered on the frontend)
             $projectVars = $this->menuService->getUserProjectList(session('userdata.id'), $projectSelectFilter['client']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];

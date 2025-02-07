@@ -23,7 +23,7 @@ $statusLabels = $tpl->get('allTicketStates');
 
 $newField = $tpl->get('newField');
 
-//All states >0 (<1 is archive)
+// All states >0 (<1 is archive)
 $numberofColumns = count($tpl->get('allTicketStates')) - 1;
 $size = floor(100 / $numberofColumns);
 
@@ -140,11 +140,9 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                         <td data-order="<?= $tpl->e($row['headline']); ?>">
                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                <small><a href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>"><?= $tpl->escape($row['parentHeadline']) ?></a></small> //<br />
+                                <small><a href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>" preload="mouseover"><?= $tpl->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
-                            <a class='ticketModal' href="#/tickets/showTicket/<?= $tpl->e($row['id']); ?>"><?= $tpl->e($row['headline']); ?></a></td>
-
-
+                            <a class='ticketModal' href="#/tickets/showTicket/<?= $tpl->e($row['id']); ?>" preload="mouseover"><?= $tpl->e($row['headline']); ?></a></td>
 
                             <?php
 
@@ -237,7 +235,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                             <td  data-order="<?php
                             if ($row['priority'] != '' && $row['priority'] > 0) {
-                                echo $priorities[$row['priority']];
+                                echo $priorities[$row['priority']] ?? $tpl->__('label.priority_unkown');
                             } else {
                                 echo $tpl->__('label.priority_unkown');
                             }?>">
@@ -245,7 +243,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                     <a class="dropdown-toggle label-default priority priority-bg-<?= $row['priority']?>  f-left" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?= $row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['priority'] != '' && $row['priority'] > 0) {
-                                                                    echo $priorities[$row['priority']];
+                                                                    echo $priorities[$row['priority']] ?? $tpl->__('label.priority_unkown');
                                                                 } else {
                                                                     echo $tpl->__('label.priority_unkown');
                                                                 }?>

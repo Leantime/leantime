@@ -33,7 +33,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 if (isset($_GET['id']) === true) {
                     $id = (int) ($_GET['id']);
@@ -54,7 +54,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         return Frontcontroller::redirect(BASE_URL.'/projects/showAll');
                     }
 
-                    //Assign vars
+                    // Assign vars
                     $project = $this->projectRepo->getProject($id);
                     if ($project === false) {
                         return FrontcontrollerCore::redirect(BASE_URL.'/errors/error404');

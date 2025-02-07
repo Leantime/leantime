@@ -29,7 +29,7 @@ class MenuRepositoryTest extends TestCase
             define('BASE_URL', 'http://localhost');
         }
 
-        //Mock classes
+        // Mock classes
         $settingsRepo = $this->make(Setting::class);
         $language = $this->make(Language::class);
         $config = $this->make(Environment::class);
@@ -42,7 +42,7 @@ class MenuRepositoryTest extends TestCase
             },
         ]);
 
-        //Load class to be tested
+        // Load class to be tested
         $this->menu = new Menu(
             settingsRepo: $settingsRepo,
             language: $language,
@@ -57,12 +57,12 @@ class MenuRepositoryTest extends TestCase
         $this->menu = null;
     }
 
-    //Write tests below
+    // Write tests below
 
     /**
      * Test GetMenuTypes method
      */
-    public function testGetMenuTypes()
+    public function test_get_menu_types()
     {
         $result = $this->menu->getMenuTypes();
 
@@ -75,13 +75,13 @@ class MenuRepositoryTest extends TestCase
         // Further assertions can be done depending on use case and requirements
     }
 
-    public function testGetDefaultMenuStructure()
+    public function test_get_default_menu_structure()
     {
         $expected = $this->menu::DEFAULT_MENU;
         $defaultStructure = $this->menu->getMenuStructure();
 
-        //Menu structure checks if roles are set in a menu item and will disable a menu item if not allowed to see
-        //User executing the test is not logged in, has no session so it being disabled is correct
+        // Menu structure checks if roles are set in a menu item and will disable a menu item if not allowed to see
+        // User executing the test is not logged in, has no session so it being disabled is correct
         $this->menu->menuStructures[$expected][10]['submenu'][60]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][40]['submenu'][80]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][30]['submenu'][30]['href'] = '/ideas/showBoards';
@@ -89,7 +89,7 @@ class MenuRepositoryTest extends TestCase
         $this->assertEquals($this->menu->menuStructures[$expected], $defaultStructure, 'Default menu structure does not match the expected structure');
     }
 
-    public function testGetFullMenuStructure()
+    public function test_get_full_menu_structure()
     {
         $expected = 'full_menu';
         $fullMenuStructure = $this->menu->getMenuStructure('full_menu');
@@ -98,14 +98,14 @@ class MenuRepositoryTest extends TestCase
         $this->assertEquals($this->menu->menuStructures[$expected], $fullMenuStructure, 'Full menu structure does not match the expected structure');
     }
 
-    public function testGetInvalidMenuStructure()
+    public function test_get_invalid_menu_structure()
     {
         $expected = [];
         $invalidMenuStructure = $this->menu->getMenuStructure('invalid');
         $this->assertEquals($expected, $invalidMenuStructure, 'Invalid menu structure does not match the expected structure');
     }
 
-    public function testGetFilteredMenuStructure()
+    public function test_get_filtered_menu_structure()
     {
 
         \Leantime\Core\Events\EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.company', function ($menu) {
@@ -125,7 +125,7 @@ class MenuRepositoryTest extends TestCase
 
     }
 
-    public function testInjectNewProjectMenuType()
+    public function test_inject_new_project_menu_type()
     {
 
         \Leantime\Core\Events\EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures', function ($menuStructure) {

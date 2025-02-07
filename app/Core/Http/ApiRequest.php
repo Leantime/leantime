@@ -26,9 +26,9 @@ class ApiRequest extends IncomingRequest
         foreach (
             [
                 'Authorization',
-                //Nginx or fast CGI
+                // Nginx or fast CGI
                 'HTTP_AUTHORIZATION',
-                //Nginx or fast CGI
+                // Nginx or fast CGI
                 'REDIRECT_HTTP_AUTHORIZATION',
             ] as $key
         ) {
@@ -67,26 +67,16 @@ class ApiRequest extends IncomingRequest
      */
     public function getBearerToken(): ?string
     {
-        $headers = $this->getAuthorizationHeader();
-        // HEADER: Get the access token from the header
-        if (! empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
+        // Check for Sanctum token first
+        $header = $this->getAuthorizationHeader();
+        if (str_starts_with($header, 'Bearer ')) {
+            return substr($header, 7);
+        }
+
+        if ($token = $this->bearerToken()) {
+            return $token;
         }
 
         return null;
-    }
-
-    /**
-     * Checks if the current request is an API request.
-     *
-     * @return bool Returns true if the current request is an API request, false otherwise.
-     */
-    public function isApiRequest(): bool
-    {
-        $requestUri = $this->getRequestUri();
-
-        return str_starts_with($requestUri, '/api/jsonrpc');
     }
 }

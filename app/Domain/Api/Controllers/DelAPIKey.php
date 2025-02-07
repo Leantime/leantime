@@ -65,7 +65,7 @@ class DelAPIKey extends Controller
             session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
             session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
 
-            //Assign variables
+            // Assign variables
             $this->tpl->assign('user', $user);
 
             return $this->tpl->display('api.delKey');

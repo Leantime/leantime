@@ -357,12 +357,13 @@ body {
 .rightpanel:before {
 
     position: absolute;
-    height: 100%;
+    height: calc(100% + 50px);
     width: 100%;
     left: 0;
-    top: 0px;
+    top: -50px;
     content: " ";
-    opacity: .2;
+    opacity: .5;
+    mix-blend-mode: multiply;
     background-size:cover;
     background-image:url(/dist/images/backgrounds/bg5.png);
     background-repeat:no-repeat;
@@ -415,13 +416,13 @@ body {
 .header {
     clear: both;
     height: 50px;
-    position: sticky;
+    position: fixed;
     top:0px;
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-    backdrop-filter: var(--glass-blur);
-    background:var(--header-bg-color);
+    backdrop-filter: blur(15px);
+    /*background:var(--header-bg-color);*/
 }
 
 .header .headmenu > li > a {
@@ -429,6 +430,7 @@ body {
 }
 
 .rightpanel {
+    padding-top:50px;
 }
 
 .rightpanel:after {

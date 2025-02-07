@@ -55,8 +55,8 @@ namespace Leantime\Domain\Connector\Controllers {
             }
 
             if (isset($params['provider'])) {
-                //New integration with provider
-                //Get the provider
+                // New integration with provider
+                // Get the provider
                 $provider = $this->providerService->getProvider($params['provider']);
                 $this->tpl->assign('provider', $provider);
 
@@ -69,14 +69,14 @@ namespace Leantime\Domain\Connector\Controllers {
 
                 /* Steps + + + + + + + + + + + + + + + + + + + + + + + */
 
-                //STEP 0: No Step defined, new integration
+                // STEP 0: No Step defined, new integration
                 if (! isset($params['step'])) {
                     return $this->tpl->display('connector.newIntegration');
                 }
 
-                //STEP 1: Initiate connection
+                // STEP 1: Initiate connection
                 if ($params['step'] == 'connect') {
-                    //This should handle connection UI
+                    // This should handle connection UI
                     $connection = $provider->connect();
 
                     if ($connection instanceof \Symfony\Component\HttpFoundation\Response) {
@@ -84,16 +84,16 @@ namespace Leantime\Domain\Connector\Controllers {
                     }
                 }
 
-                //STEP 2: Choose Entities to sync
+                // STEP 2: Choose Entities to sync
                 if ($params['step'] == 'entity') {
                     $this->tpl->assign('providerEntities', $provider->getEntities());
                     $this->tpl->assign('leantimeEntities', $this->leantimeEntities->availableLeantimeEntities);
 
-                    //TODO UI to show entity picker/mapper
+                    // TODO UI to show entity picker/mapper
                     return $this->tpl->display('connector.integrationEntity');
                 }
 
-                //STEP 3: Choose Entities to sync
+                // STEP 3: Choose Entities to sync
                 if ($params['step'] == 'fields') {
                     if (isset($_POST['leantimeEntities'])) {
                         $entity = $_POST['leantimeEntities'];
@@ -123,24 +123,24 @@ namespace Leantime\Domain\Connector\Controllers {
                     return $this->tpl->display('connector.integrationFields');
                 }
 
-                //STEP 4: Choose Entities to sync
+                // STEP 4: Choose Entities to sync
                 if ($params['step'] == 'sync') {
-                    //TODO UI to show sync schedule/options
+                    // TODO UI to show sync schedule/options
                     return $this->tpl->display('connector.integrationSync');
                 }
 
-                //STEP 5: import Review
+                // STEP 5: import Review
                 if ($params['step'] == 'parse') {
                     $this->values = $provider->geValues();
 
-                    //Fetching the field matching and putting it in an array
+                    // Fetching the field matching and putting it in an array
                     $this->fields = [];
                     $this->fields = $this->connectorService->getFieldMappings($_POST);
 
                     $flags = [];
                     $flags = $this->connectorService->parseValues($this->fields, $this->values, session('currentImportEntity'));
 
-                    //show the imported data as confirmation
+                    // show the imported data as confirmation
                     $this->tpl->assign('values', $this->values);
                     $this->tpl->assign('fields', $this->fields);
                     $this->tpl->assign('flags', $flags);
@@ -148,16 +148,20 @@ namespace Leantime\Domain\Connector\Controllers {
                     return $this->tpl->display('connector.integrationImport');
                 }
 
-                //STEP 6: Do the import
+                // STEP 6: Do the import
                 if ($params['step'] == 'import') {
-                    //Store data in DB
+                    // Store data in DB
                     $values = unserialize(session('serValues'));
                     $fields = unserialize(session('serFields'));
 
-                    //confirm and store in DB
-                    $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
+                    // confirm and store in DB
+                    $result = $this->connectorService->importValues($fields, $values, session('currentImportEntity'));
 
-                    //display stored successfully message
+                    if ($result !== true) {
+                        $this->tpl->setNotification('There was a problem with the import '.$result, 'error');
+                    }
+
+                    // display stored successfully message
                     return $this->tpl->display('connector.integrationConfirm');
                 }
             }

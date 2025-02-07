@@ -92,13 +92,16 @@ namespace Leantime\Domain\Users\Controllers {
 
             $availableColorSchemes = $this->themeCore->getAvailableColorSchemes();
 
-            //Build values array
+            // Build values array
             $values = [
                 'firstname' => $row['firstname'],
                 'lastname' => $row['lastname'],
                 'user' => $row['username'],
                 'phone' => $row['phone'],
                 'role' => $row['role'],
+                'jobTitle' => $row['jobTitle'],
+                'jobLevel' => $row['jobLevel'],
+                'department' => $row['department'],
                 'notifications' => $row['notifications'],
                 'twoFAEnabled' => $row['twoFAEnabled'],
                 'messagesfrequency' => $this->settingsService->getSetting('usersettings.'.$row['id'].'.messageFrequency'),
@@ -141,13 +144,13 @@ namespace Leantime\Domain\Users\Controllers {
         public function post(): Response
         {
 
-            //Save Profile Info
+            // Save Profile Info
             $tab = '';
 
             if (session()->exists('formTokenName') && isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
                 $row = $this->userRepo->getUser($this->userId);
 
-                //profile Info
+                // profile Info
                 if (isset($_POST['profileInfo'])) {
                     $tab = '#myProfile';
 
@@ -165,7 +168,7 @@ namespace Leantime\Domain\Users\Controllers {
                         $changedEmail = 1;
                     }
 
-                    //Validation
+                    // Validation
                     if ($values['user'] !== '') {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
                             if ($changedEmail == 1) {
@@ -187,7 +190,7 @@ namespace Leantime\Domain\Users\Controllers {
                     }
                 }
 
-                //Save Password
+                // Save Password
                 if (isset($_POST['savepw'])) {
                     $tab = '#security';
 
@@ -202,6 +205,7 @@ namespace Leantime\Domain\Users\Controllers {
                     ];
 
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
+
                         if ($_POST['newPassword'] == $_POST['confirmPassword']) {
                             if ($this->userService->checkPasswordStrength($_POST['newPassword'])) {
                                 $values['password'] = $_POST['newPassword'];
@@ -254,7 +258,7 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'themsettings_updated');
                 }
 
-                //Save Look & Feel
+                // Save Look & Feel
                 if (isset($_POST['saveSettings'])) {
                     $tab = '#settings';
 
@@ -280,12 +284,12 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
                 }
 
-                //Save Profile Image
+                // Save Profile Image
                 if (isset($_POST['profileImage'])) {
                     $tab = '#myProfile';
                 }
 
-                //Save Notifications
+                // Save Notifications
                 if (isset($_POST['savenotifications'])) {
                     $tab = '#notifications';
 
@@ -307,7 +311,7 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->userRepo->editOwn($values, $this->userId);
 
                     // Storing option messagefrequency
-                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) $_POST['messagesfrequency']);
+                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) $_POST['messagesfrequency'] ?? 3600);
 
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
                 }
@@ -315,7 +319,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $this->tpl->setNotification($this->language->__('notification.form_token_incorrect'), 'error');
             }
 
-            //Redirect
+            // Redirect
             return FrontcontrollerCore::redirect(BASE_URL.'/users/editOwn'.$tab);
         }
 

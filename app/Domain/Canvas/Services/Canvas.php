@@ -227,7 +227,7 @@ namespace Leantime\Domain\Canvas\Services {
 
             $progressResults = [];
 
-            //Once the count is done calculate progress per canvastype Id
+            // Once the count is done calculate progress per canvastype Id
             foreach ($results as $key => &$canvas) {
                 $repoName = Str::studly($key);
                 $classname = app()->getNamespace()."Domain\\$key\\Repositories\\$key";

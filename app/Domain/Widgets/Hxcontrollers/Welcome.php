@@ -58,7 +58,7 @@ class Welcome extends HtmxController
         $currentUser = $this->usersService->getUser(session('userdata.id'));
         $this->tpl->assign('currentUser', $currentUser);
 
-        //Todo: Write queries.
+        // Todo: Write queries.
         $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done');
 
         $closedTicketsCount = 0;

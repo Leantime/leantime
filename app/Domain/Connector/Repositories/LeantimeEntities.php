@@ -15,7 +15,7 @@ namespace Leantime\Domain\Connector\Repositories {
         public function __construct()
         {
 
-            //TODO: there's gotta be a better way to manage these fields using the tickets model we already have.
+            // TODO: there's gotta be a better way to manage these fields using the tickets model we already have.
             $this->availableLeantimeEntities = [
                 'tickets' => [
                     'name' => 'To-Dos',
@@ -87,19 +87,19 @@ namespace Leantime\Domain\Connector\Repositories {
                     'name' => 'Goals',
                     'fields' => [
                         'itemId' => ['name' => 'Id'],
-                        'title' => ['name' => 'Title'], //required
+                        'title' => ['name' => 'Title'], // required
                         'description' => ['name' => 'Metric'],
                         'status' => ['name' => 'Status'],
                         'relates' => ['name' => 'Relates'],
-                        'startValue' => ['name' => 'Start Value'], //required
-                        'currentValue' => ['name' => 'Current Value'], //required
-                        'canvasId' => ['name' => 'CanvasId'], //required
-                        'endValue' => ['name' => 'End Value'], //required
+                        'startValue' => ['name' => 'Start Value'], // required
+                        'currentValue' => ['name' => 'Current Value'], // required
+                        'canvasId' => ['name' => 'CanvasId'], // required
+                        'endValue' => ['name' => 'End Value'], // required
                         'kpi' => ['name' => 'Strategy KPI'],
                         'startDate' => ['name' => 'Start Date'],
                         'endDate' => ['name' => 'End Date'],
                         'setting' => ['name' => 'Setting'],
-                        'metricType' => ['name' => 'Metric Type'], //should be number percent or currency
+                        'metricType' => ['name' => 'Metric Type'], // should be number percent or currency
                         'assignedTo' => ['name' => 'Assigned To'],
                         'parent' => ['name' => 'Parent'],
                     ],

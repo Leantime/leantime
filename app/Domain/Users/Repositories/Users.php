@@ -3,12 +3,9 @@
 namespace Leantime\Domain\Users\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Str;
-    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
-    use LasseRafn\Initials\Initials;
     use Leantime\Core\Configuration\Environment;
     use Leantime\Core\Db\Db as DbCore;
+    use Leantime\Core\Support\Avatarcreator;
     use Leantime\Domain\Files\Repositories\Files;
     use PDO;
     use SVG\SVG;
@@ -35,16 +32,13 @@ namespace Leantime\Domain\Users\Repositories {
 
         public array $status = ['active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited'];
 
-        private ?DbCore $db;
-
-        public Environment $config;
-
         /**
          * __construct - neu db connection
          */
         public function __construct(
-            Environment $config,
-            DbCore $db
+            protected Environment $config,
+            protected DbCore $db,
+            protected Avatarcreator $avatarcreator
         ) {
 
             $this->db = $db;
@@ -121,17 +115,16 @@ namespace Leantime\Domain\Users\Repositories {
             $sql = 'SELECT * FROM `zp_user` WHERE username = :email ';
 
             if ($status == 'a') {
-                $sql .= " and status = 'a'";
+                $sql .= " and LOWER(status) = 'a'";
             }
 
             if ($status == 'i') {
-                $sql .= " and status = 'i'";
+                $sql .= " and LOWER(status) = 'i'";
             }
 
             $sql .= ' LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
             $stmn->bindValue(':email', $email, PDO::PARAM_STR);
 
             $stmn->execute();
@@ -611,66 +604,39 @@ namespace Leantime\Domain\Users\Repositories {
                 $stmn->closeCursor();
             }
 
-            try {
+            // If can't find user, return ghost
+            if (empty($value)) {
+                $avatar = $this->avatarcreator->getAvatar('👻');
 
-                $avatar = app()->make(InitialAvatar::class)
-                    ->font(APP_ROOT.'/public/dist/fonts/roboto/Roboto-Medium.ttf')
-                    ->background('#00a887')
-                    ->color('#fff');
-
-                if (empty($value)) {
-                    return $avatar->name('👻')->generateSvg();
-                }
-
-            } catch (\Exception $e) {
-                Log::error('Could not generate user avatar.');
-                Log::error($e);
-
-                return ['filename' => 'not_found', 'type' => 'uploaded'];
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
+            // If user uploaded return uploaded file
+            if (! empty($value['profileId'])) {
+
+                $files = app()->make(Files::class);
+                $file = $files->getFile($value['profileId']);
+
+                if ($file) {
+                    $filePath = $file['encName'].'.'.$file['extension'];
+                    $type = $file['extension'];
+
+                    return ['filename' => $filePath, 'type' => 'uploaded'];
+                }
+
+            }
+
+            // Otherwise return avatar
             $name = $value['firstname'].' '.$value['lastname'];
 
-            if (empty($value['profileId'])) {
+            $avatar = $this->avatarcreator->getAvatar($name);
 
-                /** @var Initials $initialsClass */
-                $initialsClass = app()->make(Initials::class);
-                $initialsClass->allowSpecialCharacters(false);
-                $initialsClass->name($name);
-
-                $imagename = $initialsClass->getInitials();
-                $imagename = Str::of($imagename)->alphaNumeric(true);
-
-                if (is_dir(storage_path('framework/cache/avatars')) === false) {
-                    mkdir(storage_path('framework/cache/avatars'));
-                }
-
-                if (! file_exists($filename = storage_path('framework/cache/avatars/user-'.$imagename.'.svg'))) {
-                    $image = $avatar->name($name)->generateSvg();
-
-                    if (! is_writable(storage_path('framework/cache/avatars/'))) {
-                        Log::warning("Can't write to avatars folders");
-
-                        return $image;
-                    }
-
-                    file_put_contents($filename, $image);
-                }
-
-                return ['filename' => $filename, 'type' => 'generated'];
+            if (is_string($avatar)) {
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
-            $files = app()->make(Files::class);
-            $file = $files->getFile($value['profileId']);
+            return $avatar;
 
-            if ($file) {
-                $filePath = $file['encName'].'.'.$file['extension'];
-                $type = $file['extension'];
-
-                return ['filename' => $filePath, 'type' => 'uploaded'];
-            }
-
-            return $avatar->name('👻')->generateSvg();
         }
 
         public function patchUser($id, $params): bool

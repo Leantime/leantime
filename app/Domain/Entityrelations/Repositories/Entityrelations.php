@@ -56,7 +56,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 return $values['value'];
             }
 
-            //TODO: This needs to return null or throw an exception if the setting doesn't exist.
+            // TODO: This needs to return null or throw an exception if the setting doesn't exist.
             return false;
         }
 

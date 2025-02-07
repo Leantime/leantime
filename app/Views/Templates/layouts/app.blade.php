@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body class="">
+<body class="" hx-ext="preload">
 
     @include('global::sections.appAnnouncement')
 
@@ -34,7 +34,7 @@
 
 
 
-        <div class="" style="position: relative">
+        <div class="overlay" style="position: relative">
             <div class="leftpanel">
                 <div class="leftmenu">
                     @include('menu::menu')

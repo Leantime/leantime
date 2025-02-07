@@ -52,7 +52,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     mix // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
-    .js('./public/assets/js/app/htmx-headSupport.js', `public/dist/js/compiled-htmx-headSupport.${version}.min.js`)
+    .js('./public/assets/js/app/htmx-extensions.js', `public/dist/js/compiled-htmx-extensions.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/editors.js",
@@ -98,7 +98,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/leader-line/leader-line.min.js",
         "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
         "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
-        "./node_modules/@lottiefiles/lottie-player/dist/lottie-player.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
         "./node_modules/ical.js/build/ical.min.js",
@@ -153,6 +152,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
+        "./public/assets/js/libs/tinymce-plugins/llamadorian/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
