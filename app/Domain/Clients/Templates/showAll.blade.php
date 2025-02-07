@@ -51,7 +51,7 @@
                 <tr>
                     <td>{{ $row->id }}</td>
                     <td>
-                        <a class="" href="{{ BASE_URL }}/clients/showClient/{{ $row->id }}"><i class='fa fa-plus'></i> {{ $row->name }}</a>
+                        <a class="" href="#/clients/showClient/{{ $row->id }}"><i class='fa fa-plus'></i> {{ $row->name }}</a>
                     </td>
                     <td><a href="{{ $row->internet }}">{{ $row->internet }}</a></td>
                     <td>{{ $row->numberOfProjects }}</td>

@@ -67,7 +67,11 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('canvasTypes', $result['canvasTypes']);
             $this->tpl->assign('canvasItem', $result['canvasItem']);
 
-            return $this->tpl->displayPartial('ideas::partials.ideaDialog');
+            if(!empty($result['canvasItem']->id)) {
+                return $this->tpl->displayPartial('ideas::partials.ideaDialog');
+            } else {
+                return $this->tpl->displayPartial('ideas::partials.newIdeaDialog');
+            }
         }
 
         /**

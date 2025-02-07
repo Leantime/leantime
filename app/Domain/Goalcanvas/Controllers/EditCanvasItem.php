@@ -70,7 +70,11 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             ]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
-            return $this->tpl->displayPartial('goalcanvas::partials.canvasDialog');
+            if (!empty($params['id'])) {
+                return $this->tpl->displayPartial('goalcanvas::partials.canvasDialog');
+            } else {
+                return $this->tpl->displayPartial('goalcanvas::partials.newCanvasDialog');
+            }
         }
 
         /**
@@ -84,7 +88,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     $this->notifyOnCommentCreation($params, $commentId);
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
 
-                    return Frontcontroller::redirect(BASE_URL.'/goalcanvas/editCanvasItem/'.$_GET['id']);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
                 }
             }
 
@@ -94,13 +98,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 if ($result) {
                     $this->notifyOnItemUpdate($result['canvasItem']);
                     $canvasTypes = $this->goalService->getCanvasTypes();
-                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully '.($result['isNew'] ? 'created' : 'updated'), 'success');
+                    $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully ' . ($result['isNew'] ? 'created' : 'updated'), 'success');
 
                     $this->tpl->closeModal();
                     $this->tpl->htmxRefresh();
 
                     return $this->tpl->emptyResponse();
-
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -115,7 +118,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $_GET['id'],
+                'url' => BASE_URL . '/goalcanvas/editCanvasItem/' . (int) $_GET['id'],
                 'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = array_merge($params, ['id' => $commentId]);
@@ -135,7 +138,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
             $notification = app()->make(NotificationModel::class);
             $notification->url = [
-                'url' => BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $canvasItem['canvasId'],
+                'url' => BASE_URL . '/goalcanvas/editCanvasItem/' . (int) $canvasItem['canvasId'],
                 'text' => $this->language->__('email_notifications.canvas_item_update_cta'),
             ];
             $notification->entity = $canvasItem;

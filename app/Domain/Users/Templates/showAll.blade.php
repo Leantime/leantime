@@ -61,9 +61,9 @@ $roles = $tpl->get('roles');
             <?php foreach ($tpl->get('allUsers') as $row) { ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                             <a href="{{ BASE_URL }}/users/editUser/<?=$row['id']?>"><?=sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])); ?></a>
+                             <a href="#/users/editUser/<?=$row['id']?>"><?=sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])); ?></a>
                         </td>
-                        <td><a href="{{ BASE_URL }}/users/editUser/<?=$row['id']?>"><?=$tpl->escape($row['username']); ?></a></td>
+                        <td><a href="#/users/editUser/<?=$row['id']?>"><?=$tpl->escape($row['username']); ?></a></td>
                         <td><?=$tpl->escape($row['clientName']); ?></td>
                         <td><?=$tpl->__("label.roles." . $roles[$row['role']]); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
@@ -78,7 +78,7 @@ $roles = $tpl->get('roles');
                             } else {
                                 echo $tpl->__('label.no');
                             } ?></td>
-                        <td><a href="{{ BASE_URL }}/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
+                        <td><a href="#/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
                     </tr>
             <?php } ?>
             </tbody>

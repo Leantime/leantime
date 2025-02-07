@@ -31,7 +31,7 @@
     @foreach ($statuses as $key => $label)
         <x-global::forms.select.option
             :value="strtolower($key)"
-            :selected="strtolower($key) == strtolower( $ticket->status ?? '') ? 'true' : 'false'">
+            :selected="strtolower($key) == strtolower( $ticket->status ?? '')">
 
             <x-global::elements.badge :state="$label['class']" :outline="true">
 

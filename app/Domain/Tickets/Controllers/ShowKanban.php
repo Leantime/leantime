@@ -34,7 +34,6 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
-
             $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
 
             return $this->tpl->display('tickets.showKanban');
@@ -57,5 +56,4 @@ namespace Leantime\Domain\Tickets\Controllers {
             return Frontcontroller::redirect(CURRENT_URL);
         }
     }
-
 }

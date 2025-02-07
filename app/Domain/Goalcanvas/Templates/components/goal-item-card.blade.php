@@ -60,7 +60,7 @@
                             {{ $row['title'] }}
                         </a>
                     </h4>
-                    
+
                     <strong>Metric:</strong> {{ $row['description'] }}
                     <br /><br />
 
@@ -85,39 +85,25 @@
                         </div>
                     </div>
 
-                    <x-global::actions.dropdown :label-text="'status'" contentRole="link" position="bottom" align="start"
-                        :selectable="true" class="status">
-                        <x-slot:menu>
-                            <li class="nav-header border">{{ __('dropdown.choose_milestone') }}</li>
-                            <x-global::actions.dropdown.item style="background-color: #b0b0b0"
-                                href="javascript:void(0);" data-label="Select status" data-value="status">
-                                {!! __('dropdown.choose_status') !!}
-                            </x-global::actions.dropdown.item>
+                    <div class="flex justify-between mt-2">
+                        <x-goalcanvas::chips.status-select :statuses="$statusLabels" :goal="(object) $row" :showLabel="false"
+                            dropdown-position="start" />
 
-                            @foreach ($statusLabels as $key => $data)
-                                <li class='dropdown-item'>
-                                    <a href="javascript:void(0);" class="label-{{ $data['dropdown'] }}"
-                                        data-label='{{ $data['title'] }}' data-value="{{ $row['id'] . '/' . $key }}"
-                                        id="ticketStatusChange{{ $row['id'] . $key }}">{!! $data['title'] !!}</a>
-                                </li>
-                            @endforeach
-                        </x-slot:menu>
-                    </x-global::actions.dropdown>
+                        @if (!empty($relatesLabels))
+                            <x-global::forms._archive.dropdownPill>
+                                @foreach ($relatesLabels as $key => $data)
+                                    <x-global::forms._archive.dropdownPillOption value="{{ $key }}"
+                                        :selected="$row['relates'] === $key">
+                                        {{ $data['title'] }}
+                                    </x-global::forms._archive.dropdownPillOption>
+                                @endforeach
+                            </x-global::forms._archive.dropdownPill>
+                        @endif
 
-                    @if (!empty($relatesLabels))
-                        <x-global::forms._archive.dropdownPill>
-                            @foreach ($relatesLabels as $key => $data)
-                                <x-global::forms._archive.dropdownPillOption value="{{ $key }}"
-                                    :selected="$row['relates'] === $key">
-                                    {{ $data['title'] }}
-                                </x-global::forms._archive.dropdownPillOption>
-                            @endforeach
-                        </x-global::forms._archive.dropdownPill>
-                    @endif
-
-                    <div class="right">
-                        <span class="fas fa-comments"></span>
-                        <small>{{ $nbcomments }}</small>
+                        <div class="right">
+                            <span class="fas fa-comments"></span>
+                            <small>{{ $nbcomments }}</small>
+                        </div>
                     </div>
                 </div>
             </div>
