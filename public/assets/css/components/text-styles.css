@@ -113,7 +113,10 @@ a .label.feature-label:after {
     color: var(--primary-font-color);
     margin-bottom: 10px;
     font-weight:lighter;
+}
 
+.grid-stack-item-content .stickyHeader .subtitle {
+    margin-top:-5px;
 }
 
 
