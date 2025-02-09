@@ -930,7 +930,8 @@ class Projects
     public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
     {
 
-        $startDate = datetime::createFromFormat($this->language->__('language.dateformat'), $userStartDate);
+
+        $startDate =  dtHelper()->parseUserDateTime($userStartDate)->startOfDay();
 
         // Ignoring
         // Comments, files, timesheets, personalCalendar EventDispatcher
@@ -996,7 +997,7 @@ class Projects
         }
 
         try {
-            $projectStart = dtHelper()->parseUserDateTime($startDate)->startOfDay();
+            $projectStart = $startDate;
         } catch (\Exception $e) {
             $projectStart = dtHelper()->now()->startOfDay();
         }
@@ -1012,22 +1013,19 @@ class Projects
             $dateToFinishValue = '';
             if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
                 $dateToFinish = dtHelper()->parseDbDateTime($ticket->dateToFinish);
-                $dateToFinish->add($interval);
-                $dateToFinishValue = $dateToFinish->formatDateTimeForDb();
+                $dateToFinishValue = $dateToFinish->add($interval)->formatDateTimeForDb();
             }
 
             $editFromValue = '';
             if (dtHelper()->isValidDateString($ticket->editFrom)) {
                 $editFrom = dtHelper()->parseDbDateTime($ticket->editFrom);
-                $editFrom->add($interval);
-                $editFromValue = $editFrom->formatDateTimeForDb();
+                $editFromValue = $editFrom->add($interval)->formatDateTimeForDb();
             }
 
             $editToValue = '';
             if (dtHelper()->isValidDateString($ticket->editTo)) {
                 $editTo = dtHelper()->parseDbDateTime($ticket->editTo);
-                $editTo->add($interval);
-                $editToValue = $editTo->formatDateTimeForDb();
+                $editToValue =  $editTo->add($interval)->formatDateTimeForDb();
             }
 
             $ticketValues = [
@@ -1082,7 +1080,7 @@ class Projects
             $newTicketId = $ticketIdList[$ticket->id] ?? null;
 
             if ($newTicketId && ! empty($values)) {
-                $this->ticketRepository->patchTicket($ticket, $values);
+                $this->ticketRepository->patchTicket($newTicketId, $values);
             }
         }
 
@@ -1205,8 +1203,8 @@ class Projects
                 $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
                 foreach ($canvasItems as $newItem) {
                     $newCanvasItemValues = [
-                        'relates' => $idMap[$newItem['relates']] ?? '',
-                        'parent' => $idMap[$newItem['parent']] ?? '',
+                        'relates' => isset($newItem['relates']) ? ($idMap[$newItem['relates']] ?? '') : '',
+                        'parent' => isset($newItem['parent']) ? ($idMap[$newItem['parent']] ?? '') : '',
                     ];
 
                     $canvasRepo->patchCanvasItem($newItem['id'], $newCanvasItemValues);
