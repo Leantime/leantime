@@ -70,7 +70,6 @@ class Welcome extends HtmxController
             $showSettingsIndicator = ! empty($newWidgets);
         }
 
-
         // Todo: Write queries.
         $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done');
 

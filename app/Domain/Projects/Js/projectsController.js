@@ -302,8 +302,8 @@ leantime.projectsController = (function () {
                             view_modes: ['Day', 'Week', 'Month'],
                             bar_height: 40,
                             static_progress_indicator: true,
-                            bar_corner_radius: 5,
-                            arrow_curve: 5,
+                            bar_corner_radius: 10,
+                            arrow_curve: 10,
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
@@ -351,7 +351,7 @@ leantime.projectsController = (function () {
 
 
                                 if (entityType == "ticket") {
-                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, project._index);
+                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, project._index+1);
                                 } else {
                                     jQuery.ajax(
                                         {
@@ -362,7 +362,7 @@ leantime.projectsController = (function () {
                                                     id : entityId,
                                                     start:start,
                                                     end:end,
-                                                    sortIndex: project._index
+                                                    sortIndex: project._index+1,
                                             }
                                         }
                                     ).done(
@@ -385,7 +385,7 @@ leantime.projectsController = (function () {
                                 };
 
                                 for (var i = 0; i < projects.length; i++) {
-                                    statusPostData.payload[projects[i].id] = projects[i]._index;
+                                    statusPostData.payload[projects[i].id] = projects[i]._index+1;
                                 }
 
                                 // POST to server using $.post or $.ajax

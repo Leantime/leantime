@@ -120,11 +120,12 @@ if ($roadmapView == 'Day') {
 
         foreach ($timelineTasks as $mlst) {
             if ($mlst->type == 'milestone') {
-                $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex != '' ? $mlst->sortIndex : 999;
+                $lastMilestoneSortIndex[$mlst->id] = ($mlst->sortIndex != '') ? $mlst->sortIndex : 999;
             }
         }
 
         foreach ($timelineTasks as $mlst) {
+
             $headline = $tpl->__('label.'.strtolower($mlst->type)).': '.$mlst->headline;
             if ($mlst->type == 'milestone') {
                 $headline .= ' ('.format($mlst->percentDone)->decimal().'% Done)';
@@ -135,21 +136,21 @@ if ($roadmapView == 'Day') {
                 $color = $mlst->tags;
             }
 
-            $sortIndex = 0;
+            $sortIndex = $mlst->sortIndex;
 
             // Item is milestone itself, set first index + .0
-            if ($mlst->type == 'milestone') {
-                $sortIndex = $lastMilestoneSortIndex[$mlst->id].'.000';
-            } else {
-                // If it has a milestone dependency, add milestone index
-                if ($mlst->dependingTicketId > 0) {
-                    $sortIndex = ($lastMilestoneSortIndex[$mlst->dependingTicketId] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-                } elseif ($mlst->milestoneid > 0) {
-                    $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-                } else {
-                    $sortIndex = '999'.'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-                }
-            }
+            //            if ($mlst->type == 'milestone') {
+            //                $sortIndex = $lastMilestoneSortIndex[$mlst->id].'.000';
+            //            } else {
+            //                // If it has a milestone dependency, add milestone index
+            //                if ($mlst->dependingTicketId > 0) {
+            //                    $sortIndex = ($lastMilestoneSortIndex[$mlst->dependingTicketId] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
+            //                } elseif ($mlst->milestoneid > 0) {
+            //                    $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
+            //                } else {
+            //                    $sortIndex = '999'.'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
+            //                }
+            //            }
 
             $dependencyList = [];
 
@@ -162,22 +163,18 @@ if ($roadmapView == 'Day') {
             }
 
             echo "{
-                    id :'".$mlst->id."',
-                    name :".json_encode($headline).",
-                    start :'".(($mlst->editFrom != '0000-00-00 00:00:00' && ! str_starts_with(
-                $mlst->editFrom,
-                '1969-12-31'
-            )) ? $mlst->editFrom : date('Y-m-d', strtotime('+1 day', time())))."',
-                    end :'".(($mlst->editTo != '0000-00-00 00:00:00' && ! str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo : date('Y-m-d', strtotime('+1 week', time())))."',
-                    progress :'".format($mlst->percentDone)->decimal()."',
-                    dependencies :'".implode(',', $dependencyList)."',
-                    custom_class :'',
-                    type: '".strtolower($mlst->type)."',
-                    bg_color: '".$color."',
-                    thumbnail: '".BASE_URL.'/api/users?profileImage='.$mlst->editorId."',
-                    sortIndex: ".$sortIndex.'
-
-                },';
+                        id :'".$mlst->id."',
+                        name :".json_encode($headline).",
+                        start :'".(dtHelper()->isValidDateString($mlst->editFrom) ? $mlst->editFrom : dtHelper()->userNow()->addDays(2)->format('Y-m-d'))."',
+                        end :'".(dtHelper()->isValidDateString($mlst->editTo) ? $mlst->editTo : dtHelper()->userNow()->addDays(2)->format('Y-m-d'))."',
+                        progress :'".format($mlst->percentDone)->decimal()."',
+                        dependencies :'".implode(',', $dependencyList)."',
+                        custom_class :'',
+                        type: '".strtolower($mlst->type)."',
+                        bg_color: '".$color."',
+                        thumbnail: '".BASE_URL.'/api/users?profileImage='.$mlst->editorId."',
+                        sortIndex: ".$sortIndex.'
+                    },';
         }
         ?>
         ];
