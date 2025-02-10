@@ -18,7 +18,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
     <input type="hidden" value="<?php echo session('currentProject'); ?>" name="projectId" id="projectIdInput" />
 
     <!-- Trigger for the dropdown -->
-    <x-global::actions.dropdown scaleCard="w-96" variant="card" contentRole="ghost" cardLabel="Filter Options"
+    <x-global::actions.dropdown scaleCard="w-60" variant="card" contentRole="ghost" cardLabel="Filter Options"
         scale="sm">
         <x-slot:labelText>
             <span class="fa-solid fa-filter"></span>
