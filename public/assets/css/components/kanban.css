@@ -169,7 +169,6 @@
 }
 
 .sortableTicketList li:hover {
-    background:var(--kanban-card-hover);
 }
 
 .sortableTicketList li.no-hover:hover {

@@ -19,8 +19,12 @@
                 <a href="{{ BASE_URL }}/users/editOwn#theme" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}">
                     <i class="fa-solid fa-palette"></i>
                 </a>
+
                 <a href="#/widgets/widgetManager" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
                     <span class="fa fa-fw fa-cogs"></span>
+                    @if($showSettingsIndicator)
+                        <span class='new-indicator'></span>
+                    @endif
                 </a>
             </div>
         </div>

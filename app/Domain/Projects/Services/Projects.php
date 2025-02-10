@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
@@ -974,132 +975,114 @@ class Projects
         $allTickets = $this->ticketRepository->getAllByProjectId($projectId);
 
         // Checks the oldest editFrom date and makes this the start date
-        $oldestTicket = new DateTime;
+        $oldestTicket = dtHelper()->now();
 
         foreach ($allTickets as $ticket) {
-            if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->editFrom);
+
+            if (dtHelper()->isValidDateString($ticket->editFrom)) {
+                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->editFrom);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
 
-            if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
+            if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
                 $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->dateToFinish);
+                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->editFrom);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
         }
 
-        $projectStart = new DateTime($startDate);
+        try {
+            $projectStart = dtHelper()->parseUserDateTime($startDate)->startOfDay();
+        } catch (\Exception $e) {
+            $projectStart = dtHelper()->now()->startOfDay();
+        }
+
+        // Get interval from oldest ticket to project start date
         $interval = $oldestTicket->diff($projectStart);
 
         // oldId = > newId
         $ticketIdList = [];
 
-        // Iterate through root tickets first
+        // Create all tickets first
         foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid == 0 || $ticket->milestoneid == '' || $ticket->milestoneid == null) {
-                $dateToFinishValue = '';
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
-                    $dateToFinish = new DateTime($ticket->dateToFinish);
-                    $dateToFinish->add($interval);
-                    $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
-                }
-
-                $editFromValue = '';
-                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                    $editFrom = new DateTime($ticket->editFrom);
-                    $editFrom->add($interval);
-                    $editFromValue = $editFrom->format('Y-m-d H:i:s');
-                }
-
-                $editToValue = '';
-                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
-                    $editTo = new DateTime($ticket->editTo);
-                    $editTo->add($interval);
-                    $editToValue = $editTo->format('Y-m-d H:i:s');
-                }
-
-                $ticketValues = [
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session('userdata.id'),
-                    'date' => date('Y-m-d H:i:s'),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => '',
-                    'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'dependingTicketId' => '',
-                    'milestoneid' => '',
-                ];
-
-                $newTicketId = $this->ticketRepository->addTicket($ticketValues);
-
-                $ticketIdList[$ticket->id] = $newTicketId;
+            $dateToFinishValue = '';
+            if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
+                $dateToFinish = dtHelper()->parseDbDateTime($ticket->dateToFinish);
+                $dateToFinish->add($interval);
+                $dateToFinishValue = $dateToFinish->formatDateTimeForDb();
             }
+
+            $editFromValue = '';
+            if (dtHelper()->isValidDateString($ticket->editFrom)) {
+                $editFrom = dtHelper()->parseDbDateTime($ticket->editFrom);
+                $editFrom->add($interval);
+                $editFromValue = $editFrom->formatDateTimeForDb();
+            }
+
+            $editToValue = '';
+            if (dtHelper()->isValidDateString($ticket->editTo)) {
+                $editTo = dtHelper()->parseDbDateTime($ticket->editTo);
+                $editTo->add($interval);
+                $editToValue = $editTo->formatDateTimeForDb();
+            }
+
+            $ticketValues = [
+                'headline' => $ticket->headline,
+                'type' => $ticket->type,
+                'description' => $ticket->description,
+                'projectId' => $newProjectId,
+                'editorId' => $ticket->editorId,
+                'userId' => session('userdata.id'),
+                'date' => date('Y-m-d H:i:s'),
+                'dateToFinish' => $dateToFinishValue,
+                'status' => $ticket->status,
+                'storypoints' => $ticket->storypoints,
+                'hourRemaining' => $ticket->hourRemaining,
+                'planHours' => $ticket->planHours,
+                'priority' => $ticket->priority,
+                'sprint' => '',
+                'acceptanceCriteria' => $ticket->acceptanceCriteria,
+                'tags' => $ticket->tags,
+                'editFrom' => $editFromValue,
+                'editTo' => $editToValue,
+                'dependingTicketId' => '',
+                'milestoneid' => '',
+            ];
+
+            $newTicketId = $this->ticketRepository->addTicket($ticketValues);
+
+            $ticketIdList[$ticket->id] = $newTicketId;
         }
 
-        // Iterate through childObjects
+        // Iterate through all and update relationships
         foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid != '' && $ticket->milestoneid > 0) {
-                $dateToFinishValue = '';
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
-                    $dateToFinish = new DateTime($ticket->dateToFinish);
-                    $dateToFinish->add($interval);
-                    $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
+
+            $values = [];
+
+            if (! empty($ticket->milestoneid)) {
+                $values['milestoneId'] = $ticketIdList[$ticket->milestoneid] ?? null;
+
+                if ($values['milestoneId'] === null) {
+                    Log::warning('Issue copying project. New Milestone was not found.');
                 }
+            }
 
-                $editFromValue = '';
-                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                    $editFrom = new DateTime($ticket->editFrom);
-                    $editFrom->add($interval);
-                    $editFromValue = $editFrom->format('Y-m-d H:i:s');
+            if (! empty($ticket->dependingTicketId)) {
+                $values['dependingTicketId'] = $ticketIdList[$ticket->dependingTicketId] ?? null;
+
+                if ($values['dependingTicketId'] === null) {
+                    Log::warning('Issue copying project. New ticket dependency was not found.');
                 }
+            }
 
-                $editToValue = '';
-                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
-                    $editTo = new DateTime($ticket->editTo);
-                    $editTo->add($interval);
-                    $editToValue = $editTo->format('Y-m-d H:i:s');
-                }
+            $newTicketId = $ticketIdList[$ticket->id] ?? null;
 
-                $ticketValues = [
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session('userdata.id'),
-                    'date' => date('Y-m-d H:i:s'),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => '',
-                    'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'milestoneid' => $ticketIdList[$ticket->milestoneid],
-                ];
-
-                $newTicketId = $this->ticketRepository->addTicket($ticketValues);
-
-                $ticketIdList[$ticket->id] = $newTicketId;
+            if ($newTicketId && ! empty($values)) {
+                $this->ticketRepository->patchTicket($ticket, $values);
             }
         }
 
@@ -1128,6 +1111,8 @@ class Projects
             originalProjectId: $projectId,
             newProjectId: $newProjectId
         );
+
+        self::dispatchEvent("copyProject", ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
 
         return $newProjectId;
     }

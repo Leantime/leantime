@@ -7,6 +7,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Users\Services\Users as UserService;
+use Leantime\Domain\Widgets\Services\Widgets as WidgetService;
 
 class Welcome extends HtmxController
 {
@@ -17,6 +18,8 @@ class Welcome extends HtmxController
     private TicketService $ticketsService;
 
     private UserService $usersService;
+
+    private WidgetService $widgetService;
 
     /**
      * Initializes the class by assigning the given services and setting the last page session variable.
@@ -30,10 +33,12 @@ class Welcome extends HtmxController
         ProjectService $projectsService,
         TicketService $ticketsService,
         UserService $usersService,
+        WidgetService $widgetService
     ) {
         $this->projectsService = $projectsService;
         $this->ticketsService = $ticketsService;
         $this->usersService = $usersService;
+        $this->widgetService = $widgetService;
         session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
 
@@ -58,6 +63,14 @@ class Welcome extends HtmxController
         $currentUser = $this->usersService->getUser(session('userdata.id'));
         $this->tpl->assign('currentUser', $currentUser);
 
+        // Check for new widgets to show settings indicator
+        $showSettingsIndicator = false;
+        if (session()->exists('userdata')) {
+            $newWidgets = $this->widgetService->getNewWidgets(session('userdata.id'));
+            $showSettingsIndicator = ! empty($newWidgets);
+        }
+
+
         // Todo: Write queries.
         $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done');
 
@@ -81,6 +94,7 @@ class Welcome extends HtmxController
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
+        $this->tpl->assign('showSettingsIndicator', $showSettingsIndicator = true);
         $this->tpl->assign('totalTickets', $totalTickets);
         $this->tpl->assign('closedTicketsCount', $closedTicketsCount);
         $this->tpl->assign('ticketsInGoals', $ticketsInGoals);
