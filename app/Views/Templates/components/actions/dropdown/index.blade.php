@@ -11,8 +11,10 @@
     'buttonShape' => '',
     'buttonVariant' => '',
     'scale' => '',
+    'scaleCard' => '',
     'selectable' => false, // Add selectable prop with default false
     'selectableUpdateColor' => false,
+
 
     'buttonStyle' => '', // this is to sytle the button accoridng the saved option
     'indicatorClass' => '', // this is to sytle the button accoridng the saved option
@@ -80,10 +82,11 @@
     @if ($variant === 'card')
         <!-- Card Body for Card Variant -->
         <div tabindex="0" class="{{ $cardClass }}">
-            <div {{ $cardContent->attributes->merge(["class" => "card-body" ]) }}>
+            <div {{ $cardContent->attributes->merge(["class" => "card-body " . $scaleCard ?? ""]) }}>
                 @if ($cardLabel)
                     <h3 class="card-title">{{ $cardLabel }}</h3>
                 @endif
+
 
                 {!! $cardContent ?? '' !!}
             </div>

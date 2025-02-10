@@ -18,7 +18,8 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
     <input type="hidden" value="<?php echo session('currentProject'); ?>" name="projectId" id="projectIdInput" />
 
     <!-- Trigger for the dropdown -->
-    <x-global::actions.dropdown variant="card" contentRole="ghost" cardLabel="Filter Options" scale="sm">
+    <x-global::actions.dropdown scaleCard="w-96" variant="card" contentRole="ghost" cardLabel="Filter Options"
+        scale="sm">
         <x-slot:labelText>
             <span class="fa-solid fa-filter"></span>
             {{ __('popover.filter') }}
@@ -111,8 +112,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
 
             <div>
                 <x-global::forms.text-input name="termInput" id="termInput" :value="$searchCriteria['term']" variant="noBorder"
-                    caption="{{ __('label.search_term') }}" placeholder="{{ __('label.search_term') }}"
-                    class="h-8" />
+                    placeholder="{{ __('label.search_term') }}" class="h-8" />
             </div>
 
             <div style="margin-top: 15px;">
