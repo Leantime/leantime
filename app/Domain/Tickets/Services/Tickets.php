@@ -898,14 +898,124 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getAllMilestones($searchCriteria, string $sortBy = 'duedate'): array
+        public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array|false
         {
-
             if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
-                return $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
+                $items = $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
+
+                return $this->sortItemsHierarchically($items);
             }
 
             return [];
+        }
+
+        private function buildTicketTree(array $elements, $parentId = 0)
+        {
+
+            $branch = [];
+
+            foreach ($elements as $element) {
+
+                if ($element->type === 'milestone') {
+                    $elementParentId = $element->milestoneid;
+                } elseif ($element->dependingTicketId > 0) {
+                    $elementParentId = $element->dependingTicketId;
+                } elseif ($element->milestoneid > 0) {
+                    $elementParentId = $element->milestoneid;
+                }
+
+                if ($elementParentId == $parentId) {
+                    $children = $this->buildTicketTree($elements, $element->id);
+                    if ($children) {
+                        usort($children, function ($a, $b) {
+
+                            if ($a->sortIndex > 0 && $b->sortIndex > 0) {
+                                return $a->sortIndex > $b->sortIndex ? 1 : -1;
+                            }
+
+                            // Otherwise compare dates
+                            if (dtHelper()->isValidDateString($a->editFrom) && dtHelper()->isValidDateString($b->editFrom)) {
+                                if (dtHelper()->parseDbDateTime($a->editFrom) > dtHelper()->parseDbDateTime($b->editFrom)) {
+                                    return 1;
+                                } elseif (dtHelper()->parseDbDateTime($a->editFrom) < dtHelper()->parseDbDateTime($b->editFrom)) {
+                                    return -1;
+                                }
+                            }
+
+                            return 0;
+                        });
+
+                        $element->children = $children;
+                    }
+                    $branch[] = $element;
+                }
+            }
+
+            return $branch;
+        }
+
+        private function flattenTree($items, &$r)
+        {
+            foreach ($items as $item) {
+                $c = isset($item->children) ? $item->children : null;
+                unset($item->children);
+                $r[] = $item;
+                if ($c) {
+                    $this->flattenTree($c, $r);
+                }
+            }
+        }
+
+        private function sortItemsHierarchically($items): array
+        {
+            $tree = [];
+            $lookup = [];
+
+            $tree = $this->buildTicketTree($items);
+
+            $flattened = [];
+            if (is_array($tree)) {
+                $this->flattenTree($tree, $flattened);
+                $final = $flattened;
+                $sortKey = 0;
+                foreach ($flattened as &$item) {
+                    $sortKey++;
+                    $item->sortIndex = $sortKey;
+                }
+
+                return $flattened;
+            }
+
+            return $tree;
+        }
+
+        private function sortTicketsWithinMilestone($tickets): array
+        {
+            usort($tickets, function ($a, $b) {
+                // First priority: Dependencies
+                if ($a->dependingTicketId == $b->id) {
+                    return 1;
+                }
+                if ($b->dependingTicketId == $a->id) {
+                    return -1;
+                }
+
+                // Second priority: sortIndex
+                if ($a->sortIndex !== '' && $b->sortIndex !== '') {
+                    if ($a->sortIndex != $b->sortIndex) {
+                        return $a->sortIndex - $b->sortIndex;
+                    }
+                }
+
+                // Third priority: editFrom date
+                if ($a->editFrom && $b->editFrom) {
+                    return strtotime($a->editFrom) - strtotime($b->editFrom);
+                }
+
+                return $a->id - $b->id;
+            });
+
+            return $tickets;
         }
 
         /**
@@ -1034,7 +1144,6 @@ namespace Leantime\Domain\Tickets\Services {
 
         public function getBulkMilestoneProgress(array $milestones)
         {
-
             if (empty($milestones)) {
                 return $milestones;
             }
@@ -1043,6 +1152,11 @@ namespace Leantime\Domain\Tickets\Services {
                 if ($milestone->type == 'milestone') {
                     $milestoneProgress = $this->getMilestoneProgress($milestone->id);
                     $milestone->percentDone = $milestoneProgress;
+
+                    // Handle associated tickets
+                    if (isset($milestone->tickets)) {
+                        $milestone->tickets = $this->sortTicketsWithinMilestone($milestone->tickets);
+                    }
                 }
             }
 
@@ -2134,8 +2248,6 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
-
             $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
 
             return [
@@ -2146,7 +2258,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'ticketTypes' => $ticketTypes,
                 'statusLabels' => $statusLabels,
                 'milestones' => $milestoneArray,
-                'allAssignedprojects' => $allAssignedprojects,
+                'allAssignedprojects' => $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open'),
                 'projectFilter' => $projectFilter,
                 'groupBy' => $groupBy,
             ];
