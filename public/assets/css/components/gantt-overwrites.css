@@ -42,12 +42,13 @@ body .gantt #details .details-container {
 
 .gantt-container .popup-wrapper {
     background-color:var(--secondary-background);
-    padding:10px;
+    padding:15px;
     box-shadow:var(--regular-shadow);
     margin-left: -10px;
     opacity:0;
     min-width:100px;
     max-width:300px;
+    border-radius:var(--box-radius);
 }
 
 .gantt-container .bar-wrapper {

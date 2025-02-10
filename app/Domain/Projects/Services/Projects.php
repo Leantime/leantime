@@ -1112,7 +1112,7 @@ class Projects
             newProjectId: $newProjectId
         );
 
-        self::dispatchEvent("copyProject", ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
+        self::dispatchEvent('copyProject', ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
 
         return $newProjectId;
     }

@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Dashboard\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Setting\Services\Setting;
@@ -13,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Home extends Controller
 {
-
     private Setting $settingsSvc;
 
     private Widgets $widgetService;
@@ -49,7 +47,6 @@ class Home extends Controller
 
         $this->tpl->assign('completedOnboarding', $completedOnboarding);
 
-
         return $this->tpl->display('dashboard.home');
     }
 
@@ -69,4 +66,3 @@ class Home extends Controller
         return Frontcontroller::redirect(BASE_URL.'/dashboard/home');
     }
 }
-
