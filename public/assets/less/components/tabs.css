@@ -5,7 +5,7 @@
 
     .tab {
 
-        @apply rounded-t-sm p-1 h-xxl text-sm;
+        @apply p-1 h-xxl text-sm;
 
         &:hover {
             @apply dropdown-hover;

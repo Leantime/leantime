@@ -267,7 +267,6 @@
       <path value="$PROJECT_DIR$/vendor/illuminate/conditionable" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/vendor/mpdf/mpdf" />
-      <path value="$PROJECT_DIR$/vendor/php-http/message-factory" />
       <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
       <path value="$PROJECT_DIR$/vendor/illuminate/session" />
@@ -278,12 +277,7 @@
       <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
       <path value="$PROJECT_DIR$/vendor/illuminate/log" />
       <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
-      <path value="$PROJECT_DIR$/vendor/php-http/client-common" />
       <path value="$PROJECT_DIR$/vendor/clue/stream-filter" />
-      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
-      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
-      <path value="$PROJECT_DIR$/vendor/php-http/message" />
-      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
       <path value="$PROJECT_DIR$/vendor/maximebf/debugbar" />
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />
       <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
