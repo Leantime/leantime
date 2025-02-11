@@ -31,13 +31,13 @@
         <div class="column">
             <div class="contentInner status_{{ $statusKey }}">
                 @foreach ($allTickets as $ticket)
-                    <div class="moveable-card">
-                        @if ($ticket['status'] == $statusKey)
+                    @if ($ticket['status'] == $statusKey)
+                        <div class="moveable-card" id="ticket-{{ $ticket['id'] }}">
                             <x-tickets::cards.ticket-card :ticket="$ticket" :statusKey="$statusKey" :todoTypeIcons="$ticketTypeIcons"
                                 :priorities="$priorities" :efforts="$efforts" :milestones="$milestones" :users="$users"
                                 :onTheClock="$onTheClock" type="kanban" />
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 @endforeach
             </div>
         </div>

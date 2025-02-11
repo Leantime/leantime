@@ -48,7 +48,8 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
-
+            $allTickets = $this->ticketService->getAllGrouped($template_assignments['searchCriteria']);
+            $this->tpl->assign('allTickets', $allTickets);
             return $this->tpl->display('tickets.showAll');
         }
     }
