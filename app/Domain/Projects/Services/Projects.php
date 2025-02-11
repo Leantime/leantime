@@ -930,7 +930,15 @@ class Projects
     public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
     {
 
-        $startDate = datetime::createFromFormat($this->language->__('language.dateformat'), $userStartDate);
+        if (! empty($userStartDate)) {
+
+            try {
+                $startDate = dtHelper()->parseUserDateTime($userStartDate)->startOfDay();
+            } catch (\Exception $e) {
+                $startDate = dtHelper()->userNow()->startOfDay();
+            }
+
+        }
 
         // Ignoring
         // Comments, files, timesheets, personalCalendar EventDispatcher
@@ -996,7 +1004,7 @@ class Projects
         }
 
         try {
-            $projectStart = dtHelper()->parseUserDateTime($startDate)->startOfDay();
+            $projectStart = $startDate;
         } catch (\Exception $e) {
             $projectStart = dtHelper()->now()->startOfDay();
         }
@@ -1012,22 +1020,19 @@ class Projects
             $dateToFinishValue = '';
             if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
                 $dateToFinish = dtHelper()->parseDbDateTime($ticket->dateToFinish);
-                $dateToFinish->add($interval);
-                $dateToFinishValue = $dateToFinish->formatDateTimeForDb();
+                $dateToFinishValue = $dateToFinish->add($interval)->formatDateTimeForDb();
             }
 
             $editFromValue = '';
             if (dtHelper()->isValidDateString($ticket->editFrom)) {
                 $editFrom = dtHelper()->parseDbDateTime($ticket->editFrom);
-                $editFrom->add($interval);
-                $editFromValue = $editFrom->formatDateTimeForDb();
+                $editFromValue = $editFrom->add($interval)->formatDateTimeForDb();
             }
 
             $editToValue = '';
             if (dtHelper()->isValidDateString($ticket->editTo)) {
                 $editTo = dtHelper()->parseDbDateTime($ticket->editTo);
-                $editTo->add($interval);
-                $editToValue = $editTo->formatDateTimeForDb();
+                $editToValue = $editTo->add($interval)->formatDateTimeForDb();
             }
 
             $ticketValues = [
@@ -1112,7 +1117,7 @@ class Projects
             newProjectId: $newProjectId
         );
 
-        self::dispatchEvent("copyProject", ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
+        self::dispatchEvent('projectDuplicated', ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
 
         return $newProjectId;
     }
