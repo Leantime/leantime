@@ -147,8 +147,6 @@ class HttpKernel extends Kernel
         $this->requestStartedAt = Carbon::now();
 
         try {
-            $request->enableHttpMethodParameterOverride();
-
             $response = $this->sendRequestThroughRouter($request);
         } catch (\Throwable $e) {
             $this->reportException($e);
