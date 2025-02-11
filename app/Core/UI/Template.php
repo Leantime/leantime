@@ -487,7 +487,7 @@ class Template
 
         if (! empty($note) && $note['msg'] != '' && $note['type'] != '') {
             $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
+                '<script type="text/javascript">jQuery.growl({message: "{!! $message !!}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
                     'style' => $note['type'],
