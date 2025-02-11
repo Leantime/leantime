@@ -4,7 +4,6 @@ namespace Leantime\Core\Http\RequestType;
 
 use Illuminate\Support\Collection;
 use Leantime\Core\Http\IncomingRequest;
-use Psr\SimpleCache\CacheInterface;
 
 class RequestTypeDetector
 {
@@ -12,7 +11,6 @@ class RequestTypeDetector
      * @var Collection<RequestTypeInterface>
      */
     protected Collection $requestTypes;
-
 
     public function __construct()
     {
@@ -41,5 +39,4 @@ class RequestTypeDetector
 
         return $requestClass;
     }
-
 }

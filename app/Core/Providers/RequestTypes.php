@@ -18,7 +18,7 @@ class RequestTypes extends ServiceProvider
     {
         $detector = $this->app->make(RequestTypeDetector::class);
 
-        $detector->register(new ApiRequestType());
-        $detector->register(new HtmxRequestType());
+        $detector->register(new ApiRequestType);
+        $detector->register(new HtmxRequestType);
     }
 }
