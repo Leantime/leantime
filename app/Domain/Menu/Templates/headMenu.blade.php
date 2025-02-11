@@ -208,12 +208,14 @@
                 jQuery('.notificationHandler').on('click', function () {
                     jQuery.ajax(
                         {
-                            type: 'PATCH',
-                            url: leantime.appUrl + '/api/notifications',
+                            method: 'GET',
+                            url: '/api/notifications',
                             data: {
-                                id: 'all',
-                                action: 'read'
-                            }
+                                userId: 'all',
+                                read: 1,
+                                // action: 'read'
+                            },
+                            dataType: 'json'
                         }
                     ).done(function () {
                         jQuery(".notificationViewLists li.new").removeClass("new");
