@@ -47,7 +47,7 @@
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
-    --glass-background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%,  rgba(0,0,0,0.55) 50%,  rgba(0,0,0,0.4) 70%,  rgba(0,0,0,0.4) 100%);
+    --glass-background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%,  rgba(0,0,0,0.7) 50%,  rgba(0,0,0,0.4) 70%,  rgba(0,0,0,0.4) 100%);
     --glass-border: 1px solid rgba(0,0,0,1);
 
     --main-action-bg: var(--accent1);
@@ -111,7 +111,7 @@
     --element-radius: 15px;
     --input-radius: 15px;
     --input-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);
-    --input-padding: 4px 14px;
+    --input-padding: 4px 10px;
 
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);
@@ -175,13 +175,22 @@
     opacity:0.1;
 }
 
-.primaryContent,
+.overlay:after {
+    content:"";
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0, 0.7);
+}
+
+.overlay,
 .row .regLeft:before {
     background: rgba(0,0,0, 0.7);
 }
 
 .mainwrapper.menuopen .header {
-    background: rgba(0,0,0, 0.7);
 }
 
 

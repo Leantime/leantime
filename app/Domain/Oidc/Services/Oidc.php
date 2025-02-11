@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Oidc\Services;
 
-//This class Handles authentication via OpenID Connect (OIDC)
+// This class Handles authentication via OpenID Connect (OIDC)
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -53,7 +53,7 @@ class Oidc
 
     private bool $createUser = false;
 
-    private int $defaultRole = 20; //20 == editor
+    private int $defaultRole = 20; // 20 == editor
 
     private string $fieldEmail = '';
 
@@ -155,18 +155,18 @@ class Oidc
         $tokens = $this->requestTokens($code);
 
         $userInfo = null;
-        //echo '<pre>' . print_r($tokens, true) . '</pre>';
+        // echo '<pre>' . print_r($tokens, true) . '</pre>';
         if (isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
         } elseif (isset($tokens['access_token'])) {
-            //fallback to OAuth userinfo endpoint
+            // fallback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         } else {
             $this->displayError('oidc.error.unsupportedToken');
         }
 
         if ($userInfo == null) {
-            //TODO: invalid token
+            // TODO: invalid token
             $this->displayError('oidc.error.invalidToken');
         }
 
@@ -197,7 +197,7 @@ class Oidc
 
         if ($user === false) {
             if ($this->createUser) {
-                //create user if it doesn't exist yet
+                // create user if it doesn't exist yet
                 $userArray = [
                     'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
                     'lastname' => $this->readMultilayerKey($userInfo, $this->fieldLastName),
@@ -224,7 +224,7 @@ class Oidc
                 $this->displayError('oidc.error.user_not_found');
             }
         } else {
-            //update user if it exists
+            // update user if it exists
             $user['user'] = $user['username'];
             $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != '' ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
             $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName) != '' ? $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['lastname'];
@@ -237,7 +237,7 @@ class Oidc
 
             $this->userRepo->editUser($user, $user['id']);
 
-            //Get updated user
+            // Get updated user
             $user = $this->userRepo->getUserByEmail($userName);
         }
 
@@ -367,7 +367,7 @@ class Oidc
             $keySource = '';
 
             if (is_string($possibleKid)) {
-                //old format like https://www.googleapis.com/oauth2/v1/certs
+                // old format like https://www.googleapis.com/oauth2/v1/certs
                 if ($possibleKid == $kid) {
                     $keySource = $key;
                 }
@@ -404,7 +404,7 @@ class Oidc
         return base64_decode(strtr($input, '-_', '+/'));
     }
 
-    //key to PEM
+    // key to PEM
     private function createPublicKey(string $modulus, string $exponent): string
     {
 
@@ -463,7 +463,7 @@ class Oidc
 
             return false;
         }
-        //load all not yet defined endpoints from well-known configuration
+        // load all not yet defined endpoints from well-known configuration
 
         if (! $this->authUrl || $this->authUrl == '') {
             $this->authUrl = $endpoints['authorization_endpoint'];
@@ -528,7 +528,7 @@ class Oidc
 
     private function verifyState(string $state): bool
     {
-        //TODO
+        // TODO
         return true;
     }
 

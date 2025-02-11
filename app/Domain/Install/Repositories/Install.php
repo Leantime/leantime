@@ -10,6 +10,7 @@ namespace Leantime\Domain\Install\Repositories {
     use Leantime\Core\Events\DispatchesEvents;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Domain\Setting\Services\SettingCache;
     use PDO;
     use PDOException;
 
@@ -88,6 +89,7 @@ namespace Leantime\Domain\Install\Repositories {
             20407,
             30002,
             30003,
+            30400,
         ];
 
         /**
@@ -105,7 +107,7 @@ namespace Leantime\Domain\Install\Repositories {
          */
         public function __construct(Environment $config, AppSettingCore $settings)
         {
-            //Some scripts might take a long time to execute. Set timeout to 5minutes
+            // Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
             $this->config = $config;
@@ -235,6 +237,11 @@ namespace Leantime\Domain\Install\Repositories {
         public function updateDB(): array|bool
         {
 
+            // Forget all the versions we think we know and start fresh
+            session()->forget('db-version');
+            $settingsCacheService = app()->make(SettingCache::class);
+            $settingsCacheService->forget('db-version');
+
             $errors = [];
 
             $this->database->query('Use `'.$this->config->dbDatabase.'`;');
@@ -276,7 +283,7 @@ namespace Leantime\Domain\Install\Repositories {
                 return true;
             }
 
-            //Find all update functions that need to be executed
+            // Find all update functions that need to be executed
             foreach ($this->dbUpdates as $updateVersion) {
                 if ($currentDBVersion < $updateVersion) {
                     $functionName = 'update_sql_'.$updateVersion;
@@ -286,10 +293,14 @@ namespace Leantime\Domain\Install\Repositories {
                     if ($result !== true) {
                         $errors = array_merge($errors, $result);
                     } else {
-                        //Update version number in db
+                        // Update version number in db
                         try {
-                            $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
-                            $stmn->execute();
+
+                            $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
+                            $settingsService->saveSetting('db-version', $this->settings->dbVersion);
+
+                            // $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
+                            // $stmn->execute();
 
                             $currentDBVersion = $updateVersion;
                         } catch (PDOException $e) {
@@ -344,74 +355,73 @@ namespace Leantime\Domain\Install\Repositories {
 
             $sql = "
                 CREATE TABLE `zp_calendar` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) DEFAULT NULL,
-                  `dateFrom` datetime DEFAULT NULL,
-                  `dateTo` datetime DEFAULT NULL,
-                  `description` text,
-                  `kind` varchar(255) DEFAULT NULL,
-                  `allDay` varchar(10) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) DEFAULT NULL,
+                    `dateFrom` datetime DEFAULT NULL,
+                    `dateTo` datetime DEFAULT NULL,
+                    `description` text,
+                    `kind` varchar(255) DEFAULT NULL,
+                    `allDay` varchar(10) DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_canvas` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `title` varchar(255) DEFAULT NULL,
-                  `author` int(10) DEFAULT NULL,
-                  `created` datetime DEFAULT NULL,
-                  `projectId` INT NULL,
-                  `type` VARCHAR(45) NULL,
-                  `description` TEXT,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `title` varchar(255) DEFAULT NULL,
+                    `author` int(10) DEFAULT NULL,
+                    `created` datetime DEFAULT NULL,
+                    `projectId` INT NULL,
+                    `type` VARCHAR(45) NULL,
+                    `description` TEXT,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_canvas`(`id`,`title`,`author`,`created`, `projectId`, `type`) values (1,'Lean Canvas',1,'2015-11-13 13:03:46', 3, 'leancanvas');
+                INSERT INTO `zp_canvas`(`id`,`title`,`author`,`created`, `projectId`, `type`) VALUES (1,'Lean Canvas',1,'2015-11-13 13:03:46', 3, 'leancanvas');
 
                 CREATE TABLE `zp_canvas_items` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `description` MEDIUMTEXT,
-                  `assumptions` text,
-                  `data` MEDIUMTEXT,
-                  `conclusion` text,
-                  `box` varchar(255) DEFAULT NULL,
-                  `author` int(11) DEFAULT NULL,
-                  `created` datetime DEFAULT NULL,
-                  `modified` datetime DEFAULT NULL,
-                  `canvasId` int(11) DEFAULT NULL,
-                  `sortindex` int(11) DEFAULT NULL,
-                  `status` varchar(255) DEFAULT NULL,
-                  `relates` varchar(255) DEFAULT NULL,
-                  `milestoneId` VARCHAR(255) NULL,
-                  `title` varchar(255) NULL,
-                  `parent` int NULL,
-                  `featured` int NULL,
-                  `tags` text NULL,
-                  `kpi` INT NULL DEFAULT NULL,
-                  `data1` MEDIUMTEXT NULL DEFAULT NULL,
-                  `data2` MEDIUMTEXT NULL DEFAULT NULL,
-                  `data3` MEDIUMTEXT NULL DEFAULT NULL,
-                  `data4` MEDIUMTEXT NULL DEFAULT NULL,
-                  `data5` MEDIUMTEXT NULL DEFAULT NULL,
-                  `startDate` DATETIME NULL DEFAULT NULL,
-                  `endDate` DATETIME NULL DEFAULT NULL,
-                  `setting` TEXT NULL DEFAULT NULL,
-                  `metricType` VARCHAR(45) DEFAULT NULL,
-                  `startValue` double(10,2) NULL DEFAULT NULL,
-                  `currentValue` double(10,2) NULL DEFAULT NULL,
-                  `endValue` double(10,2) NULL DEFAULT NULL,
-                  `impact` INT NULL DEFAULT NULL,
-                  `effort` INT NULL DEFAULT NULL,
-                  `probability` INT NULL DEFAULT NULL,
-                  `action` TEXT NULL DEFAULT NULL,
-                  `assignedTo` INT NULL DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  KEY `CanvasLookUp` (`canvasId` ASC, `box` ASC)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `description` MEDIUMTEXT,
+                    `assumptions` text,
+                    `data` MEDIUMTEXT,
+                    `conclusion` text,
+                    `box` varchar(255) DEFAULT NULL,
+                    `author` int(11) DEFAULT NULL,
+                    `created` datetime DEFAULT NULL,
+                    `modified` datetime DEFAULT NULL,
+                    `canvasId` int(11) DEFAULT NULL,
+                    `sortindex` int(11) DEFAULT NULL,
+                    `status` varchar(255) DEFAULT NULL,
+                    `relates` varchar(255) DEFAULT NULL,
+                    `milestoneId` VARCHAR(255) NULL,
+                    `title` varchar(255) NULL,
+                    `parent` int NULL,
+                    `featured` int NULL,
+                    `tags` text NULL,
+                    `kpi` INT NULL DEFAULT NULL,
+                    `data1` MEDIUMTEXT NULL DEFAULT NULL,
+                    `data2` MEDIUMTEXT NULL DEFAULT NULL,
+                    `data3` MEDIUMTEXT NULL DEFAULT NULL,
+                    `data4` MEDIUMTEXT NULL DEFAULT NULL,
+                    `data5` MEDIUMTEXT NULL DEFAULT NULL,
+                    `startDate` DATETIME NULL DEFAULT NULL,
+                    `endDate` DATETIME NULL DEFAULT NULL,
+                    `setting` TEXT NULL DEFAULT NULL,
+                    `metricType` VARCHAR(45) DEFAULT NULL,
+                    `startValue` double(10,2) NULL DEFAULT NULL,
+                    `currentValue` double(10,2) NULL DEFAULT NULL,
+                    `endValue` double(10,2) NULL DEFAULT NULL,
+                    `impact` INT NULL DEFAULT NULL,
+                    `effort` INT NULL DEFAULT NULL,
+                    `probability` INT NULL DEFAULT NULL,
+                    `action` TEXT NULL DEFAULT NULL,
+                    `assignedTo` INT NULL DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `CanvasLookUp` (`canvasId` ASC, `box` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                CREATE TABLE `zp_approvals`
-                (
+                CREATE TABLE `zp_approvals` (
                     `id` int auto_increment,
                     `module` varchar(100) NULL,
                     `entityId` int NULL,
@@ -424,235 +434,235 @@ namespace Leantime\Domain\Install\Repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_clients` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `name` varchar(200) DEFAULT NULL,
-                  `street` varchar(200) DEFAULT NULL,
-                  `zip` int(10) DEFAULT NULL,
-                  `city` varchar(50) DEFAULT NULL,
-                  `state` varchar(50) DEFAULT NULL,
-                  `country` varchar(50) DEFAULT NULL,
-                  `phone` varchar(50) DEFAULT NULL,
-                  `internet` varchar(200) DEFAULT NULL,
-                  `published` int(1) DEFAULT NULL,
-                  `age` int(3) DEFAULT NULL,
-                  `email` varchar(255) DEFAULT NULL,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `name` varchar(200) DEFAULT NULL,
+                    `street` varchar(200) DEFAULT NULL,
+                    `zip` int(10) DEFAULT NULL,
+                    `city` varchar(50) DEFAULT NULL,
+                    `state` varchar(50) DEFAULT NULL,
+                    `country` varchar(50) DEFAULT NULL,
+                    `phone` varchar(50) DEFAULT NULL,
+                    `internet` varchar(200) DEFAULT NULL,
+                    `published` int(1) DEFAULT NULL,
+                    `age` int(3) DEFAULT NULL,
+                    `email` varchar(255) DEFAULT NULL,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_clients`(`id`,`name`,`street`,`zip`,`city`,`state`,`country`,`phone`,`internet`,`published`,`age`,`email`) values (1,:company,'',0,'','','','','',NULL,NULL,'');
+                INSERT INTO `zp_clients`(`id`,`name`,`street`,`zip`,`city`,`state`,`country`,`phone`,`internet`,`published`,`age`,`email`) VALUES (1,:company,'',0,'','','','','',NULL,NULL,'');
 
                 CREATE TABLE `zp_comment` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `module` varchar(200) DEFAULT NULL,
-                  `userId` int(11) DEFAULT NULL,
-                  `commentParent` int(11) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  `moduleId` int(11) DEFAULT NULL,
-                  `text` text,
-                  `status` varchar(50) null,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `module` varchar(200) DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    `commentParent` int(11) DEFAULT NULL,
+                    `date` datetime DEFAULT NULL,
+                    `moduleId` int(11) DEFAULT NULL,
+                    `text` text,
+                    `status` varchar(50) null,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_file` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `module` enum('project','ticket','client','user','lead','export','private') DEFAULT NULL,
-                  `moduleId` int(11) DEFAULT NULL,
-                  `userId` int(11) DEFAULT NULL,
-                  `extension` varchar(10) DEFAULT NULL,
-                  `encName` varchar(255) DEFAULT NULL,
-                  `realName` varchar(255) DEFAULT NULL,
-                  `date` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `module` enum('project','ticket','client','user','lead','export','private') DEFAULT NULL,
+                    `moduleId` int(11) DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    `extension` varchar(10) DEFAULT NULL,
+                    `encName` varchar(255) DEFAULT NULL,
+                    `realName` varchar(255) DEFAULT NULL,
+                    `date` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_gcallinks` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `userId` int(255) DEFAULT NULL,
-                  `url` text,
-                  `name` varchar(255) DEFAULT NULL,
-                  `colorClass` varchar(100) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `userId` int(255) DEFAULT NULL,
+                    `url` text,
+                    `name` varchar(255) DEFAULT NULL,
+                    `colorClass` varchar(100) DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_note` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) DEFAULT NULL,
-                  `title` varchar(255) DEFAULT NULL,
-                  `description` text,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) DEFAULT NULL,
+                    `title` varchar(255) DEFAULT NULL,
+                    `description` text,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_projects` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `name` varchar(100) DEFAULT NULL,
-                  `clientId` int(100) DEFAULT NULL,
-                  `details` text,
-                  `state` int(2) DEFAULT NULL,
-                  `hourBudget` varchar(255) NOT NULL,
-                  `dollarBudget` int(11) DEFAULT NULL,
-                  `active` int(11) DEFAULT NULL,
-				  `menuType` MEDIUMTEXT DEFAULT NULL,
-                  `psettings` MEDIUMTEXT NULL,
-                  `parent` INT(11) NULL,
-                   `type` VARCHAR(45) NULL,
-                   `start` DATETIME NULL,
-                   `end` DATETIME NULL,
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `name` varchar(100) DEFAULT NULL,
+                    `clientId` int(100) DEFAULT NULL,
+                    `details` text,
+                    `state` int(2) DEFAULT NULL,
+                    `hourBudget` varchar(255) NOT NULL,
+                    `dollarBudget` int(11) DEFAULT NULL,
+                    `active` int(11) DEFAULT NULL,
+                    `menuType` MEDIUMTEXT DEFAULT NULL,
+                    `psettings` MEDIUMTEXT NULL,
+                    `parent` INT(11) NULL,
+                    `type` VARCHAR(45) NULL,
+                    `start` DATETIME NULL,
+                    `end` DATETIME NULL,
                     `created` DATETIME NULL,
                     `modified` DATETIME NULL,
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
                     `sortIndex` INT(11) NULL,
-                  PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '".MenuRepository::DEFAULT_MENU."',NULL);
+                INSERT INTO `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) VALUES (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '".MenuRepository::DEFAULT_MENU."',NULL);
 
                 CREATE TABLE `zp_punch_clock` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) NOT NULL,
-                  `minutes` int(11) DEFAULT NULL,
-                  `hours` int(11) DEFAULT NULL,
-                  `punchIn` int(11) DEFAULT NULL,
-                  PRIMARY KEY (`id`,`userId`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) NOT NULL,
+                    `minutes` int(11) DEFAULT NULL,
+                    `hours` int(11) DEFAULT NULL,
+                    `punchIn` int(11) DEFAULT NULL,
+                    PRIMARY KEY (`id`,`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_read` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `module` enum('ticket','message') DEFAULT NULL,
-                  `moduleId` int(11) DEFAULT NULL,
-                  `userId` int(11) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `module` enum('ticket','message') DEFAULT NULL,
+                    `moduleId` int(11) DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_relationuserproject` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) DEFAULT NULL,
-                  `projectId` int(11) DEFAULT NULL,
-                  `wage` int(11) DEFAULT NULL,
-                  `projectRole` varchar(20),
-                  PRIMARY KEY (`id`),
-                  KEY zp_relationuserproject_projectId_index (`projectId`),
-                  KEY zp_relationuserproject_userId_index  (`userId`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) DEFAULT NULL,
+                    `projectId` int(11) DEFAULT NULL,
+                    `wage` int(11) DEFAULT NULL,
+                    `projectRole` varchar(20),
+                    PRIMARY KEY (`id`),
+                    KEY zp_relationuserproject_projectId_index (`projectId`),
+                    KEY zp_relationuserproject_userId_index  (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) values (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
+                INSERT INTO `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) VALUES (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
 
                 CREATE TABLE `zp_tickethistory` (
-                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) DEFAULT NULL,
-                  `ticketId` int(11) DEFAULT NULL,
-                  `changeType` varchar(255) DEFAULT NULL,
-                  `changeValue` varchar(150) DEFAULT NULL,
-                  `dateModified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) DEFAULT NULL,
+                    `ticketId` int(11) DEFAULT NULL,
+                    `changeType` varchar(255) DEFAULT NULL,
+                    `changeValue` varchar(150) DEFAULT NULL,
+                    `dateModified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_tickets` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `projectId` int(11) DEFAULT NULL,
-                  `headline` varchar(255) DEFAULT NULL,
-                  `description` text,
-                  `acceptanceCriteria` text,
-                  `date` datetime DEFAULT NULL,
-                  `dateToFinish` datetime DEFAULT NULL,
-                  `priority` varchar(60) DEFAULT NULL,
-                  `status` int(2) DEFAULT NULL,
-                  `userId` int(11) DEFAULT NULL,
-                  `os` varchar(30) DEFAULT NULL,
-                  `browser` varchar(30) DEFAULT NULL,
-                  `resolution` varchar(30) DEFAULT NULL,
-                  `component` varchar(100) DEFAULT NULL,
-                  `version` varchar(20) DEFAULT NULL,
-                  `url` varchar(100) DEFAULT NULL,
-                  `dependingTicketId` int(100) DEFAULT NULL,
-                  `editFrom` datetime DEFAULT NULL,
-                  `editTo` datetime DEFAULT NULL,
-                  `editorId` varchar(75) DEFAULT NULL,
-                  `planHours` float DEFAULT NULL,
-                  `hourRemaining` float DEFAULT NULL,
-                  `type` varchar(255) DEFAULT NULL,
-                  `production` int(1) DEFAULT '0',
-                  `staging` int(1) DEFAULT '0',
-                  `storypoints` float DEFAULT NULL,
-                  `sprint` int(100) DEFAULT NULL,
-                  `sortindex` bigint(20) DEFAULT NULL,
-                  `kanbanSortIndex` bigint(20) DEFAULT NULL,
-                  `tags` varchar(255) DEFAULT NULL,
-                  `milestoneid` INT NULL,
-                  `leancanvasitemid` INT NULL,
-                  `retrospectiveid` INT NULL,
-                  `ideaid` INT NULL,
-                  `zp_ticketscol` VARCHAR(45) NULL,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  KEY `ProjectUserId` (`projectId`,`userId`),
-                  KEY `StatusSprint` (`status`,`sprint`),
-                  KEY `Sorting` (`sortindex`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `projectId` int(11) DEFAULT NULL,
+                    `headline` varchar(255) DEFAULT NULL,
+                    `description` text,
+                    `acceptanceCriteria` text,
+                    `date` datetime DEFAULT NULL,
+                    `dateToFinish` datetime DEFAULT NULL,
+                    `priority` varchar(60) DEFAULT NULL,
+                    `status` int(2) DEFAULT NULL,
+                    `userId` int(11) DEFAULT NULL,
+                    `os` varchar(30) DEFAULT NULL,
+                    `browser` varchar(30) DEFAULT NULL,
+                    `resolution` varchar(30) DEFAULT NULL,
+                    `component` varchar(100) DEFAULT NULL,
+                    `version` varchar(20) DEFAULT NULL,
+                    `url` varchar(100) DEFAULT NULL,
+                    `dependingTicketId` int(100) DEFAULT NULL,
+                    `editFrom` datetime DEFAULT NULL,
+                    `editTo` datetime DEFAULT NULL,
+                    `editorId` varchar(75) DEFAULT NULL,
+                    `planHours` float DEFAULT NULL,
+                    `hourRemaining` float DEFAULT NULL,
+                    `type` varchar(255) DEFAULT NULL,
+                    `production` int(1) DEFAULT '0',
+                    `staging` int(1) DEFAULT '0',
+                    `storypoints` float DEFAULT NULL,
+                    `sprint` int(100) DEFAULT NULL,
+                    `sortindex` bigint(20) DEFAULT NULL,
+                    `kanbanSortIndex` bigint(20) DEFAULT NULL,
+                    `tags` varchar(255) DEFAULT NULL,
+                    `milestoneid` INT NULL,
+                    `leancanvasitemid` INT NULL,
+                    `retrospectiveid` INT NULL,
+                    `ideaid` INT NULL,
+                    `zp_ticketscol` VARCHAR(45) NULL,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `ProjectUserId` (`projectId`,`userId`),
+                    KEY `StatusSprint` (`status`,`sprint`),
+                    KEY `Sorting` (`sortindex`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
+                INSERT INTO `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) VALUES
                 (9,3,'Getting Started with Leantime', '".$gettingStartedDescription."','','".date('Y-m-d')."','".date('Y-m-d')."',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
-                  `id` int(255) NOT NULL AUTO_INCREMENT,
-                  `userId` int(11) DEFAULT NULL,
-                  `ticketId` int(11) DEFAULT NULL,
-                  `workDate` datetime DEFAULT NULL,
-                  `hours` float DEFAULT NULL,
-                  `description` text,
-                  `kind` varchar(175) DEFAULT NULL,
-                  `invoicedEmpl` int(2) DEFAULT NULL,
-                  `invoicedComp` int(2) DEFAULT NULL,
-                  `invoicedEmplDate` datetime DEFAULT NULL,
-                  `invoicedCompDate` datetime DEFAULT NULL,
-                  `rate` varchar(255) DEFAULT NULL,
-                  `paid` int(2) DEFAULT NULL,
-                  `paidDate` datetime DEFAULT NULL,
-                  `modified` datetime DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
+                    `id` int(255) NOT NULL AUTO_INCREMENT,
+                    `userId` int(11) DEFAULT NULL,
+                    `ticketId` int(11) DEFAULT NULL,
+                    `workDate` datetime DEFAULT NULL,
+                    `hours` float DEFAULT NULL,
+                    `description` text,
+                    `kind` varchar(175) DEFAULT NULL,
+                    `invoicedEmpl` int(2) DEFAULT NULL,
+                    `invoicedComp` int(2) DEFAULT NULL,
+                    `invoicedEmplDate` datetime DEFAULT NULL,
+                    `invoicedCompDate` datetime DEFAULT NULL,
+                    `rate` varchar(255) DEFAULT NULL,
+                    `paid` int(2) DEFAULT NULL,
+                    `paidDate` datetime DEFAULT NULL,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_user` (
-                  `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `username` varchar(175) NOT NULL,
-                  `password` varchar(255) NOT NULL DEFAULT '',
-                  `firstname` varchar(100) NOT NULL,
-                  `lastname` varchar(100) NOT NULL,
-                  `phone` varchar(25) NOT NULL,
-                  `profileId` varchar(100) NOT NULL DEFAULT '',
-                  `lastlogin` datetime DEFAULT NULL,
-                  `status` varchar(1) NOT NULL DEFAULT 'A',
-                  `expires` DATETIME DEFAULT NULL,
-                  `role` varchar(200) NOT NULL,
-                  `session` varchar(100) DEFAULT NULL,
-                  `sessiontime` varchar(50) DEFAULT NULL,
-                  `wage` int(11) DEFAULT NULL,
-                  `hours` int(11) DEFAULT NULL,
-                  `description` text,
-                  `clientId` int(11) DEFAULT NULL,
-                  `notifications` int(2) DEFAULT NULL,
-                  `pwReset` varchar(100) DEFAULT NULL,
-                  `pwResetExpiration` datetime DEFAULT NULL,
-                  `pwResetCount` INT(5) DEFAULT NULL,
-                  `forcePwReset` TINYINT DEFAULT NULL,
-                  `lastpwd_change` DATETIME DEFAULT NULL,
-                  `settings` TEXT NULL,
-                  `twoFAEnabled` tinyint(1) DEFAULT '0',
-                  `twoFASecret` varchar(200) DEFAULT NULL,
-                  `createdOn` DATETIME DEFAULT NULL,
-                  `source` varchar(200) DEFAULT NULL,
-                  `jobTitle` VARCHAR(200) NULL,
-                  `jobLevel` VARCHAR(50) NULL,
-                  `department` VARCHAR(200) NULL,
-                  `modified` DATETIME DEFAULT NULL,
-                  PRIMARY KEY (`id`),
-                  UNIQUE KEY `username` (`username`)
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `username` varchar(175) NOT NULL,
+                    `password` varchar(255) NOT NULL DEFAULT '',
+                    `firstname` varchar(100) NOT NULL,
+                    `lastname` varchar(100) NOT NULL,
+                    `phone` varchar(25) NOT NULL,
+                    `profileId` varchar(100) NOT NULL DEFAULT '',
+                    `lastlogin` datetime DEFAULT NULL,
+                    `status` varchar(1) NOT NULL DEFAULT 'A',
+                    `expires` DATETIME DEFAULT NULL,
+                    `role` varchar(200) NOT NULL,
+                    `session` varchar(100) DEFAULT NULL,
+                    `sessiontime` varchar(50) DEFAULT NULL,
+                    `wage` int(11) DEFAULT NULL,
+                    `hours` int(11) DEFAULT NULL,
+                    `description` text,
+                    `clientId` int(11) DEFAULT NULL,
+                    `notifications` int(2) DEFAULT NULL,
+                    `pwReset` varchar(100) DEFAULT NULL,
+                    `pwResetExpiration` datetime DEFAULT NULL,
+                    `pwResetCount` INT(5) DEFAULT NULL,
+                    `forcePwReset` TINYINT DEFAULT NULL,
+                    `lastpwd_change` DATETIME DEFAULT NULL,
+                    `settings` TEXT NULL,
+                    `twoFAEnabled` tinyint(1) DEFAULT '0',
+                    `twoFASecret` varchar(200) DEFAULT NULL,
+                    `createdOn` DATETIME DEFAULT NULL,
+                    `source` varchar(200) DEFAULT NULL,
+                    `jobTitle` VARCHAR(200) NULL,
+                    `jobLevel` VARCHAR(50) NULL,
+                    `department` VARCHAR(200) NULL,
+                    `modified` DATETIME DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`)
-                values (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
+                INSERT INTO `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`)
+                VALUES (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
 
                 CREATE TABLE `zp_sprints` (
                     `id` INT NOT NULL AUTO_INCREMENT,
@@ -707,18 +717,18 @@ namespace Leantime\Domain\Install\Repositories {
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true');
 
                 CREATE TABLE `zp_audit` (
-                      `id` INT NOT NULL AUTO_INCREMENT,
-                      `userId` INT NULL,
-                      `projectId` INT NULL,
-                      `action` VARCHAR(45) NULL,
-                      `entity` VARCHAR(45) NULL,
-                      `entityId` INT NULL,
-                      `values` TEXT NULL,
-                      `date` DATETIME NULL,
-                      PRIMARY KEY (`id`),
-                      KEY `projectId` (`projectId` ASC),
-                      KEY `projectAction` (`projectId` ASC, `action` ASC),
-                      KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `userId` INT NULL,
+                    `projectId` INT NULL,
+                    `action` VARCHAR(45) NULL,
+                    `entity` VARCHAR(45) NULL,
+                    `entityId` INT NULL,
+                    `values` TEXT NULL,
+                    `date` DATETIME NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `projectId` (`projectId` ASC),
+                    KEY `projectAction` (`projectId` ASC, `action` ASC),
+                    KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_queue` (
@@ -735,81 +745,126 @@ namespace Leantime\Domain\Install\Repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_plugins` (
-                  `id` INT NOT NULL AUTO_INCREMENT,
-                  `name` VARCHAR(45) NULL,
-                  `enabled` TINYINT NULL,
-                  `description` VARCHAR(255) NULL,
-                  `version` VARCHAR(45) NULL,
-                  `installdate` DATETIME NULL,
-                  `foldername` VARCHAR(45),
-                  `homepage` VARCHAR(255) NULL,
-                  `authors` VARCHAR(255) NULL,
-                  `license` TEXT NULL DEFAULT NULL,
-                  `format` VARCHAR(45) NULL DEFAULT NULL,
-                  PRIMARY KEY (`id`)
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `name` VARCHAR(45) NULL,
+                    `enabled` TINYINT NULL,
+                    `description` VARCHAR(255) NULL,
+                    `version` VARCHAR(45) NULL,
+                    `installdate` DATETIME NULL,
+                    `foldername` VARCHAR(45),
+                    `homepage` VARCHAR(255) NULL,
+                    `authors` VARCHAR(255) NULL,
+                    `license` TEXT NULL DEFAULT NULL,
+                    `format` VARCHAR(45) NULL DEFAULT NULL,
+                    PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_notifications` (
-                  `id` INT NOT NULL AUTO_INCREMENT,
-                  `userId` INT NOT NULL,
-                  `read` INT NULL,
-                  `type` VARCHAR(45) NULL,
-                  `module` VARCHAR(45) NULL,
-                  `moduleId` INT NULL,
-                  `datetime` DATETIME NULL,
-                  `url` VARCHAR(255) NULL,
-                  `authorId` INT NULL,
-                  `message` TEXT NULL,
-                  PRIMARY KEY (`id`),
-                  INDEX `userId` (`userId` ASC),
-                  INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
-                  INDEX `userId,read` (`userId` ASC, `read` DESC)
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `userId` INT NOT NULL,
+                    `read` INT NULL,
+                    `type` VARCHAR(45) NULL,
+                    `module` VARCHAR(45) NULL,
+                    `moduleId` INT NULL,
+                    `datetime` DATETIME NULL,
+                    `url` VARCHAR(255) NULL,
+                    `authorId` INT NULL,
+                    `message` TEXT NULL,
+                    PRIMARY KEY (`id`),
+                    INDEX `userId` (`userId` ASC),
+                    INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
+                    INDEX `userId,read` (`userId` ASC, `read` DESC)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+                CREATE TABLE `zp_entity_relationship` (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `enitityA` INT NULL,
+                    `entityAType` VARCHAR(45) NULL,
+                    `entityB` INT NULL,
+                    `entityBType` VARCHAR(45) NULL,
+                    `relationship` VARCHAR(45) NULL,
+                    `createdOn` DATETIME NULL,
+                    `createdBy` INT NULL,
+                    `meta` TEXT NULL,
+                    PRIMARY KEY (`id`),
+                    INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
+                    INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                  CREATE TABLE `zp_entity_relationship` (
-                  `id` INT NOT NULL AUTO_INCREMENT,
-                  `enitityA` INT NULL,
-                  `entityAType` VARCHAR(45) NULL,
-                  `entityB` INT NULL,
-                  `entityBType` VARCHAR(45) NULL,
-                  `relationship` VARCHAR(45) NULL,
-                  `createdOn` DATETIME NULL,
-                  `createdBy` INT NULL,
-                  `meta` TEXT NULL,
-                  PRIMARY KEY (`id`),
-                  INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
-                  INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                CREATE TABLE `zp_integration` (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `providerId` VARCHAR(45) NULL,
+                    `method` VARCHAR(45) NULL,
+                    `entity` VARCHAR(45) NULL,
+                    `fields` TEXT NULL,
+                    `schedule` VARCHAR(45) NULL,
+                    `notes` VARCHAR(45) NULL,
+                    `auth` TEXT NULL,
+                    `meta` VARCHAR(45) NULL,
+                    `createdOn` DATETIME NULL,
+                    `createdBy` INT NULL,
+                    `lastSync` VARCHAR(45) NULL,
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                  CREATE TABLE `zp_integration` (
-                      `id` INT NOT NULL AUTO_INCREMENT,
-                      `providerId` VARCHAR(45) NULL,
-                      `method` VARCHAR(45) NULL,
-                      `entity` VARCHAR(45) NULL,
-                      `fields` TEXT NULL,
-                      `schedule` VARCHAR(45) NULL,
-                      `notes` VARCHAR(45) NULL,
-                      `auth` TEXT NULL,
-                      `meta` VARCHAR(45) NULL,
-                      `createdOn` DATETIME NULL,
-                      `createdBy` INT NULL,
-                      `lastSync` VARCHAR(45) NULL,
-                      PRIMARY KEY (`id`)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                CREATE TABLE `zp_reactions` (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `userId` INT NULL,
+                    `moduleId` INT NULL,
+                    `module` VARCHAR(45) NULL,
+                    `reaction` VARCHAR(45) NULL,
+                    `date` DATETIME NULL,
+                    PRIMARY KEY (`id`),
+                    INDEX `entity` (`moduleId` ASC, `module` ASC, `reaction` ASC),
+                    INDEX `user` (`userId` ASC, `moduleId` ASC, `module` ASC, `reaction` ASC)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+                CREATE TABLE `zp_access_tokens` (
+                    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+                    `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `tokenable_id` bigint unsigned NOT NULL,
+                    `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+                    `last_used_at` timestamp NULL DEFAULT NULL,
+                    `expires_at` timestamp NULL DEFAULT NULL,
+                    `created_at` timestamp NULL DEFAULT NULL,
+                    `updated_at` timestamp NULL DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+                    KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                  CREATE TABLE `zp_reactions` (
-                      `id` INT NOT NULL AUTO_INCREMENT,
-                      `userId` INT NULL,
-                      `moduleId` INT NULL,
-                      `module` VARCHAR(45) NULL,
-                      `reaction` VARCHAR(45) NULL,
-                      `date` DATETIME NULL,
-                      PRIMARY KEY (`id`),
-                      INDEX `entity` (`moduleId` ASC, `module` ASC, `reaction` ASC),
-                      INDEX `user` (`userId` ASC, `moduleId` ASC, `module` ASC, `reaction` ASC)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                CREATE TABLE `zp_jobs` (
+                    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+                    `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `attempts` tinyint unsigned NOT NULL,
+                    `reserved_at` int unsigned DEFAULT NULL,
+                    `available_at` int unsigned NOT NULL,
+                    `created_at` int unsigned NOT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `zp_jobs_queue_index` (`queue`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+                CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `entityId` INT NOT NULL,
+                    `module` VARCHAR(50) NOT NULL,
+                    `type` VARCHAR(50) NOT NULL,
+                    `trigger` VARCHAR(50) NOT NULL,
+                    `interval` INT NOT NULL DEFAULT 1,
+                    `weekDays` TEXT NULL,
+                    `monthDay` INT NULL,
+                    `months` TEXT NULL,
+                    `action` VARCHAR(20) NOT NULL DEFAULT 'reset',
+                    `lastProcessed` DATETIME NULL,
+                    `nextProcessingDate` DATETIME NULL,
+                    `enabled` TINYINT(1) NOT NULL DEFAULT 1,
+                    PRIMARY KEY (`id`),
+                    INDEX `entityId` (`entityId`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
             ";
 
             return $sql;
@@ -1800,8 +1855,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    //Just swallow your pride
-                    //One day we'll get ALTER IF EXISTS
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
                 }
             }
 
@@ -1827,12 +1882,77 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    //Just swallow your pride
-                    //One day we'll get ALTER IF EXISTS
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
+                }
+            }
+
+            return true;
+        }
+
+        public function update_sql_30400(): bool|array
+        {
+
+            $errors = [];
+
+            $sql = [
+                'CREATE TABLE `zp_access_tokens` (
+                    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+                    `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `tokenable_id` bigint unsigned NOT NULL,
+                    `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+                    `last_used_at` timestamp NULL DEFAULT NULL,
+                    `expires_at` timestamp NULL DEFAULT NULL,
+                    `created_at` timestamp NULL DEFAULT NULL,
+                    `updated_at` timestamp NULL DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+                    KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
+                'CREATE TABLE `zp_jobs` (
+                    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+                    `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `attempts` tinyint unsigned NOT NULL,
+                    `reserved_at` int unsigned DEFAULT NULL,
+                    `available_at` int unsigned NOT NULL,
+                    `created_at` int unsigned NOT NULL,
+                    PRIMARY KEY (`id`),
+                    KEY `zp_jobs_queue_index` (`queue`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
+                'CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `entityId` INT NOT NULL,
+                    `module` VARCHAR(50) NOT NULL,
+                    `type` VARCHAR(50) NOT NULL,
+                    `trigger` VARCHAR(50) NOT NULL,
+                    `interval` INT NOT NULL DEFAULT 1,
+                    `weekDays` TEXT NULL,
+                    `monthDay` INT NULL,
+                    `months` TEXT NULL,
+                    `action` VARCHAR(20) NOT NULL DEFAULT "reset",
+                    `lastProcessed` DATETIME NULL,
+                    `nextProcessingDate` DATETIME NULL,
+                    `enabled` TINYINT(1) NOT NULL DEFAULT 1,
+                    PRIMARY KEY (`id`),
+                    INDEX `entityId` (`entityId`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    // Just swallow your pride
+                    // One day we'll get ALTER IF EXISTS
                 }
             }
 
             return true;
         }
     }
+
 }

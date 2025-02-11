@@ -3,7 +3,7 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Console\CliRequest;
+use Leantime\Core\Http\RequestType\RequestTypeDetector;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -48,39 +48,18 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public static function createFromGlobals(): static
     {
-        return parent::createFromGlobals();
+        return parent::createFromBase(parent::createFromGlobals());
     }
 
     public static function capture()
     {
-        //static::$httpMethodParameterOverride = false;
-        //parent::enableHttpMethodParameterOverride();
+        parent::enableHttpMethodParameterOverride();
 
-        //static::enableHttpMethodParameterOverride();
+        $detector = app()->make(RequestTypeDetector::class);
+        $request = parent::createFromGlobals();
+        $requestClass = $detector->detect($request);
 
-        $headers = collect(getallheaders())
-            ->mapWithKeys(fn ($val, $key) => [
-                strtolower($key) => match (true) {
-                    in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
-                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
-                    default => $val,
-                },
-            ])
-            ->all();
-
-        $requestUriTest = strtolower($_SERVER['REQUEST_URI'] ?? '');
-
-        $request = match (true) {
-            isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
-            (isset($headers['x-api-key']) || str_starts_with($requestUriTest, '/api/jsonrpc')) => ApiRequest::createFromGlobals(),
-            defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
-            default => parent::createFromGlobals(),
-        };
-
-        //$request->setUrlConstants();
-
-        return $request;
-
+        return $requestClass::createFromBase($request);
     }
 
     /**
@@ -99,7 +78,6 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getRequestUri($appUrl = ''): string
     {
-
         $requestUri = parent::getRequestUri();
 
         if (empty($appUrl)) {
@@ -137,7 +115,7 @@ class IncomingRequest extends \Illuminate\Http\Request
 
         $params = $this->query->all();
 
-        //Merge query vars wigh post or patch vars
+        // Merge query vars with post or patch vars
         return match ($method) {
             'PATCH' => array_merge($params, $patch_vars),
             'POST' => array_merge($this->request->all(), $params),
@@ -167,7 +145,7 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         $requestUri = $this->getRequestUri();
 
-        return str_starts_with($requestUri, '/api') || str_starts_with($requestUri, '/cron');
+        return str_starts_with(strtolower($requestUri), '/api/jsonrpc') || str_starts_with($requestUri, '/cron');
     }
 
     /**
@@ -212,9 +190,7 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public function getCurrentRoute()
     {
-
         if ($this->currentRoute == null) {
-
             $route = '';
             $segments = parent::segments();
             if (count($segments) > 0) {
@@ -264,7 +240,7 @@ class IncomingRequest extends \Illuminate\Http\Request
         $completeName ??= $this->getCurrentRoute();
         $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
 
-        //If not action name was given, call index controller
+        // If no action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
             return 'index';
         } elseif (is_array($actionParts) && count($actionParts) == 2) {
@@ -283,6 +259,11 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         $requestUri = $this->getRequestUri();
 
-        return str_starts_with($requestUri, '/api/jsonrpc');
+        return str_starts_with(strtolower($requestUri), '/api/jsonrpc');
+    }
+
+    public function user($guard = null)
+    {
+        return parent::user($guard);
     }
 }

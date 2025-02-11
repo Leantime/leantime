@@ -58,7 +58,7 @@ namespace Leantime\Domain\Sprints\Controllers {
          */
         public function post($params)
         {
-            //If ID is set its an update
+            // If ID is set its an update
 
             if ($params['startDate'] == '' || $params['endDate'] == '') {
                 $this->tpl->setNotification('First day and last day are required', 'error');

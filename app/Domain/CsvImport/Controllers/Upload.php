@@ -60,8 +60,8 @@ class Upload extends Controller
             return $this->tpl->displayJson(json_encode(['error' => $e->getMessage()]), 500);
         }
 
-        $header = $records->getHeader();  //returns the CSV header record
-        $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
+        $header = $records->getHeader();  // returns the CSV header record
+        $records = $csv->getRecords(); // returns all the CSV records as an Iterator object
 
         $rows = [];
         foreach ($records as $offset => $record) {
@@ -71,7 +71,7 @@ class Upload extends Controller
         $integration = app()->make(Integration::class);
         $integration->fields = implode(',', $header);
 
-        //Temporarily store results in meta
+        // Temporarily store results in meta
 
         session(['csv_records' => iterator_to_array($records)]);
 

@@ -96,19 +96,19 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
-            //Project Progress
+            // Project Progress
             $progress = $this->projectService->getProjectProgress($currentProjectId);
             $this->tpl->assign('projectProgress', $progress);
             $this->tpl->assign('currentProjectName', $this->projectService->getProjectName($currentProjectId));
 
-            //Milestones
+            // Milestones
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(CommentRepository::class);
 
-            //Delete comment
+            // Delete comment
             if (isset($_GET['delComment']) === true) {
                 $commentId = (int) ($_GET['delComment']);
 

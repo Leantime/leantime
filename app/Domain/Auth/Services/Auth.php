@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\HasApiTokens;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
@@ -14,6 +15,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -22,7 +24,7 @@ use RobThree\Auth\TwoFactorAuth;
 
 class Auth implements Authenticatable
 {
-    use DispatchesEvents, \Illuminate\Auth\Authenticatable;
+    use DispatchesEvents, HasApiTokens, \Illuminate\Auth\Authenticatable;
 
     /**
      * @var int|null user id from DB
@@ -103,6 +105,8 @@ class Auth implements Authenticatable
 
     public UserRepository $userRepo;
 
+    private AccessTokenRepository $tokenRepo;
+
     /**
      * __construct - getInstance of session and get sessionId and refers to login if post is set
      *
@@ -114,7 +118,8 @@ class Auth implements Authenticatable
         LanguageCore $language,
         SettingRepository $settingsRepo,
         AuthRepository $authRepo,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        AccessTokenRepository $tokenRepo
     ) {
         $this->config = $config;
         $this->session = $session;
@@ -122,6 +127,7 @@ class Auth implements Authenticatable
         $this->settingsRepo = $settingsRepo;
         $this->authRepo = $authRepo;
         $this->userRepo = $userRepo;
+        $this->tokenRepo = $tokenRepo;
 
         $this->cookieTime = $this->config->sessionExpiration;
     }
@@ -174,17 +180,17 @@ class Auth implements Authenticatable
 
         // different identity providers can live here
         // they all need to
-        //// A: ensure the user is in leantime (with a valid role) and if not create the user
-        //// B: set the session variables
-        //// C: update users from the identity provider,
+        // // A: ensure the user is in leantime (with a valid role) and if not create the user
+        // // B: set the session variables
+        // // C: update users from the identity provider,
         // Try Ldap
         if ($this->config->useLdap === true && extension_loaded('ldap')) {
             $ldap = app()->make(Ldap::class);
 
             if ($ldap->connect() && $ldap->bind($username, $password)) {
-                //Update username to include domain
+                // Update username to include domain
                 $usernameWDomain = $ldap->getEmail($username);
-                //Get user
+                // Get user
                 $user = $this->userRepo->getUserByEmail($usernameWDomain);
 
                 $ldapUser = $ldap->getSingleUser($username);
@@ -273,11 +279,23 @@ class Auth implements Authenticatable
     }
 
     /**
+     * Create a new personal access token
+     */
+    public function createToken(string $name, array $abilities = ['*']): array
+    {
+        if (! $this->loggedIn()) {
+            throw new \Exception('User must be authenticated to create token');
+        }
+
+        return $this->tokenRepo->createToken($this->getUserId(), $name, $abilities);
+    }
+
+    /**
      * @return false|void
      *
      * @throws BindingResolutionException
      */
-    public function setUserSession(mixed $user, bool $isLdap = false)
+    public function setUserSession(mixed $user, bool $isExternalAuth = false)
     {
         if (! $user || ! is_array($user)) {
             return false;
@@ -294,7 +312,7 @@ class Auth implements Authenticatable
             'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
             'twoFAVerified' => false,
             'twoFASecret' => $user['twoFASecret'] ?? '',
-            'isLdap' => $isLdap,
+            'isExternalAuth' => $isExternalAuth,
             'createdOn' => ! empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
             'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
         ];
@@ -305,7 +323,7 @@ class Auth implements Authenticatable
 
         $this->updateUserSessionDB($currentUser['id'], session()->getId());
 
-        //Clear user theme cache on login
+        // Clear user theme cache on login
         Theme::clearCache();
     }
 
@@ -417,7 +435,7 @@ class Auth implements Authenticatable
                 $result = $this->authRepo->setPWResetLink($username, $resetLink);
 
                 if ($result) {
-                    //Don't queue, send right away
+                    // Don't queue, send right away
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('password_reset');
                     $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
@@ -448,7 +466,7 @@ class Auth implements Authenticatable
     public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
     {
 
-        //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+        // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
         if ($roleToCheck === false) {
@@ -490,7 +508,7 @@ class Auth implements Authenticatable
     public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
     {
 
-        //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
+        // Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
         $roleToCheck = self::getRoleToCheck($forceGlobalRoleCheck);
 
         if (is_array($role) && in_array($roleToCheck, $role)) {
@@ -586,5 +604,46 @@ class Auth implements Authenticatable
     public function getUserById($id)
     {
         return (object) $this->userRepo->getUser($id);
+    }
+
+    public function validateToken(string $token): bool
+    {
+        $user = $this->getUserByToken($token);
+
+        if ($user) {
+            $this->setUserSession($user);
+
+            // Turn off 2FA for token verification
+            $this->set2FAVerified();
+
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public function getUserByToken(string $token): array|bool
+    {
+        $tokenModel = $this->tokenRepo->findToken($token);
+
+        if (! $tokenModel) {
+            return false;
+        }
+
+        if ($tokenModel['expires_at'] && strtotime($tokenModel['expires_at']) < time()) {
+            return false;
+        }
+
+        // Load the user associated with this token
+        $user = $this->userRepo->getUser($tokenModel['tokenable_id']);
+        if (! $user) {
+            return false;
+        }
+
+        $this->tokenRepo->updateLastUsedAt($tokenModel['id']);
+
+        return $user;
+
     }
 }

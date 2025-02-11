@@ -7,7 +7,7 @@ $allCanvas = $tpl->get('allCanvas');
 $canvasTitle = '';
 $canvasLabels = $tpl->get('canvasLabels');
 
-//get canvas title
+// get canvas title
 foreach ($tpl->get('allCanvas') as $canvasRow) {
     if ($canvasRow['id'] == $tpl->get('currentCanvas')) {
         $canvasTitle = $canvasRow['title'];

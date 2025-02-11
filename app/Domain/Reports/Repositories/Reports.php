@@ -31,7 +31,7 @@ namespace Leantime\Domain\Reports\Repositories {
             $ticketRepo = app()->make(TicketRepository::class);
             $statusGroups = $ticketRepo->getStatusListGroupedByType($projectId);
 
-            //Ticket Reports
+            // Ticket Reports
             $query = 'SELECT ';
 
             if ($sprintId !== '') {
@@ -99,7 +99,7 @@ namespace Leantime\Domain\Reports\Repositories {
                 $storyPoints = 1;
             }
 
-            //Timesheet Reports
+            // Timesheet Reports
             $query = "SELECT
 
                         ROUND(SUM(zp_timesheets.hours), 2) as sum_logged_hours,
@@ -131,7 +131,7 @@ namespace Leantime\Domain\Reports\Repositories {
 
             $stmn->closeCursor();
 
-            //Number of users
+            // Number of users
             $projectService = app()->make(ProjectRepository::class);
             $users = $projectService->getUsersAssignedToProject($projectId);
 

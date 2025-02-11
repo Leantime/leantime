@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
-class LeantimeGuard implements Guard
+class WebGuard implements Guard
 {
     protected $provider;
 

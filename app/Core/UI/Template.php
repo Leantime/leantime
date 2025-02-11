@@ -96,49 +96,7 @@ class Template
 
     ) {
 
-        $this->setupDirectives();
         $this->setupGlobalVars();
-    }
-
-    /**
-     * setupDirectives - setup blade directives
-     */
-    public function setupDirectives(): void
-    {
-        app('blade.compiler')->directive(
-            'dispatchEvent',
-            fn ($args) => "<?php \$tpl->dispatchTplEvent($args); ?>",
-        );
-
-        app('blade.compiler')->directive(
-            'dispatchFilter',
-            fn ($args) => "<?php echo \$tpl->dispatchTplFilter($args); ?>",
-        );
-
-        app('blade.compiler')->directive(
-            'spaceless',
-            fn ($args) => '<?php ob_start(); ?>',
-        );
-
-        app('blade.compiler')->directive(
-            'endspaceless',
-            fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
-        );
-
-        app('blade.compiler')->directive(
-            'formatDate',
-            fn ($args) => "<?php echo format($args)->date(); ?>",
-        );
-
-        app('blade.compiler')->directive(
-            'formatTime',
-            fn ($args) => "<?php echo format($args)->time(); ?>",
-        );
-
-        app('blade.compiler')->directive(
-            'displayNotification',
-            fn ($args) => '<?php echo $tpl->displayNotification(); ?>',
-        );
     }
 
     /**
@@ -273,7 +231,7 @@ class Template
 
         $loadFile = $this->getTemplatePath($templateParts['module'], $templateParts['path']);
 
-        //app('view')->share([]);
+        // app('view')->share([]);
 
         $this->hookContext = 'tpl.'.$templateParts['module'].'.'.$templateParts['path'];
 
@@ -320,6 +278,16 @@ class Template
         $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
         echo app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
+    }
+
+    public function getRenderedTemplate(string $template): string
+    {
+
+        [$module, $partial] = explode('.', $template);
+
+        $relative_path = $this->getTemplatePath($module, "partials.$partial");
+
+        return app('view')->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     public function emptyResponse($responseCode = 200)
@@ -425,8 +393,8 @@ class Template
             'path' => '',
         ];
 
-        //view path style
-        //module::path.name
+        // view path style
+        // module::path.name
         if (str_contains($viewName, '::')) {
             $parts = explode('::', $viewName);
             $pathParts['module'] = $parts[0];
@@ -435,8 +403,8 @@ class Template
             return $pathParts;
         }
 
-        //leantime path
-        //module.name
+        // leantime path
+        // module.name
         if (str_contains($viewName, '.')) {
             $parts = explode('.', $viewName);
             $pathParts['module'] = $parts[0];
@@ -519,7 +487,7 @@ class Template
 
         if (! empty($note) && $note['msg'] != '' && $note['type'] != '') {
             $notification .= app('blade.compiler')::render(
-                '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
+                '<script type="text/javascript">jQuery.growl({message: "{!! $message !!}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
                     'style' => $note['type'],
@@ -862,7 +830,7 @@ class Template
         try {
             $this->dispatchTplHook('event', $hookName, $payload);
         } catch (\Exception $e) {
-            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            // If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
         }
     }
@@ -874,7 +842,7 @@ class Template
             return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
 
         } catch (\Exception $e) {
-            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            // If some plugin or other event decides to go rouge it shouldn't take down the entire page
             report($e);
 
             return $payload;

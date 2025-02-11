@@ -59,7 +59,7 @@ class Menu extends Composer
         ];
 
         if (session()->exists('userdata')) {
-            //Getting all projects (ignoring client filter, clients are filtered on the frontend)
+            // Getting all projects (ignoring client filter, clients are filtered on the frontend)
             $projectVars = $this->menuService->getUserProjectList(session('userdata.id'), $projectSelectFilter['client']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
@@ -73,13 +73,6 @@ class Menu extends Composer
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
             $currentProject = $projectVars['currentProject'];
-        }
-
-        // Check for new widgets to show settings indicator
-        if (session()->exists('userdata')) {
-            $widgetService = app()->make(\Leantime\Domain\Widgets\Services\Widgets::class);
-            $newWidgets = $widgetService->getNewWidgets(session('userdata.id'));
-            $showSettingsIndicator = ! empty($newWidgets);
         }
 
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
@@ -134,7 +127,6 @@ class Menu extends Composer
             'projectSelectFilter' => $projectSelectFilter,
             'clients' => $clients,
             'startSomethingUrl' => $newProjectUrl,
-            'showSettingsIndicator' => $showSettingsIndicator,
         ];
     }
 }

@@ -59,7 +59,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 session(['currentIdeaCanvas' => $currentCanvasId]);
             }
 
-            //Add Canvas
+            // Add Canvas
             if (isset($_POST['newCanvas']) === true) {
                 if (isset($_POST['canvastitle']) === true) {
                     $values = ['title' => $_POST['canvastitle'], 'author' => session('userdata.id'), 'projectId' => session('currentProject')];
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), session('userdata.name'), "<a href='".CURRENT_URL."'>".$values['title'].'</a>.<br />');
 
                     $mailer->setHtml($message);
-                    //$mailer->sendMail($users, session("userdata.name"));
+                    // $mailer->sendMail($users, session("userdata.name"));
 
                     // NEW Queuing messaging system
                     $queue = app()->make(QueueRepository::class);
@@ -90,7 +90,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 }
             }
 
-            //Edit Canvas
+            // Edit Canvas
             if (isset($_POST['editCanvas']) === true && $currentCanvasId > 0) {
                 if (isset($_POST['canvastitle']) === true) {
                     $values = ['title' => $_POST['canvastitle'], 'id' => $currentCanvasId];

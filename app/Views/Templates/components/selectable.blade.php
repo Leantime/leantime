@@ -16,7 +16,10 @@
 
 @pushonce('scripts')
     <script>
-        jQuery(document).ready(function() {
+
+
+
+        function setSelectables() {
             jQuery(".selectable").each(function(){
 
                 jQuery(this).mousedown(function(){
@@ -48,9 +51,19 @@
                     }
                 });
             });
+        }
 
-        })
+        jQuery(document).ready(function() {
+            setSelectables();
+        });
+
+        htmx.onLoad(function(){
+            setSelectables();
+        });
+
+
     </script>
 @endpushonce
+
 
 @dispatchEvent('afterSelectableClose')

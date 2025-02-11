@@ -57,18 +57,18 @@ class RequestRateLimiter
 
         $route = $request->getCurrentRoute();
 
-        //Only check rate limits for login page and api calls
+        // Only check rate limits for login page and api calls
         if ($route != 'auth.login' && ! $request->isApiOrCronRequest()) {
             return $next($request);
         }
 
-        //Configurable rate limits
+        // Configurable rate limits
         $rateLimitGeneral = $this->config->ratelimitGeneral ?? 10000;
         $rateLimitApi = $this->config->ratelimitApi ?? 10;
         $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
 
-        //Key
-        //Key lives in domain namespace already
+        // Key
+        // Key lives in domain namespace already
         $keyModifier = '0';
         if (session()->exists('userdata')) {
             $keyModifier = session('userdata.id');
@@ -76,13 +76,13 @@ class RequestRateLimiter
 
         $key = 'ratelimit-'.md5($request->getClientIp()).'-'.$keyModifier;
 
-        //General Limit per minute
+        // General Limit per minute
         $limit = $rateLimitGeneral;
 
-        //API Routes Limit
+        // API Routes Limit
         if ($request instanceof ApiRequest) {
             $apiKey = '';
-            $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
+            // $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
             $limit = $rateLimitApi;
         }
 

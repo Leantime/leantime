@@ -37,7 +37,7 @@ namespace Leantime\Domain\Connector\Controllers {
          */
         public function post($params)
         {
-            //Redirect.
+            // Redirect.
         }
     }
 

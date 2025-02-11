@@ -48,7 +48,7 @@ class CalendarServiceTest extends TestCase
             'sessionPassword' => '123abc',
         ]);
 
-        //Load class to be tested
+        // Load class to be tested
         $this->calendar = new \Leantime\Domain\Calendar\Services\Calendar(
             calendarRepo: $this->calendarRepository,
             language: $this->language,
@@ -64,7 +64,7 @@ class CalendarServiceTest extends TestCase
         $this->calendar = null;
     }
 
-    //Write tests below
+    // Write tests below
 
     /**
      * Test GetMenuTypes method
@@ -72,7 +72,7 @@ class CalendarServiceTest extends TestCase
     public function test_get_i_cal_url()
     {
 
-        //Sha is generated from id -1 and sessionpassword 123abc
+        // Sha is generated from id -1 and sessionpassword 123abc
         $sha = 'ba62fbd0d08f6607d6b3213dcccc1b50f4d82f19';
         $url = $this->calendar->getICalUrl(1);
 

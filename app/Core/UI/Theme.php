@@ -112,13 +112,14 @@ class Theme
 
     private array|false $iniData;
 
-    /**
-     * possible color schemes.
-     */
-    public array $colorSchemes = [
+    private array $colorSchemes = [
         'themeDefault' => 'themeDefault',
         'companyColors' => 'companyColors',
     ];
+
+    private array $backgroundTypes = ['gradient', 'image'];
+
+    private array $backgroundSources = ['unsplash', 'upload'];
 
     /**
      * possible font choices
@@ -197,6 +198,43 @@ class Theme
         return self::dispatchFilter('fonts', $this->fonts);
     }
 
+    public function getBackgroundImage(): ?string
+    {
+        if (Auth::isLoggedIn()) {
+            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+        }
+
+        return null;
+    }
+
+    public function setBackgroundImage(string $url): void
+    {
+        if (Auth::isLoggedIn()) {
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', 'image');
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundImage', $url);
+        }
+    }
+
+    public function getBackgroundType(): string
+    {
+        if (Auth::isLoggedIn()) {
+            return $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.backgroundType') ?? 'gradient';
+        }
+
+        return 'gradient';
+    }
+
+    public function setBackgroundType(string $type): void
+    {
+        if (Auth::isLoggedIn()) {
+            $this->settingsRepo->saveSetting('usersettings.'.session('userdata.id').'.backgroundType', $type);
+            if ($type == 'gradient') {
+                $this->settingsRepo->deleteSetting('usersettings.'.session('userdata.id').'.backgroundImage');
+            }
+
+        }
+    }
+
     /**
      * getActive - Return active theme id
      *
@@ -213,9 +251,9 @@ class Theme
         }
 
         // Return user specific theme, if active
-        //This is an active logged in session.
+        // This is an active logged in session.
         if (Auth::isLoggedIn()) {
-            //User is logged in, we don't have a theme yet, check settings
+            // User is logged in, we don't have a theme yet, check settings
             $theme = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.theme');
             if ($theme !== false) {
                 $this->setActive($theme);
@@ -224,22 +262,22 @@ class Theme
             }
         }
 
-        //No generic theme set. Check if cookie is set
+        // No generic theme set. Check if cookie is set
         if (isset($_COOKIE['theme'])) {
             $this->setActive($_COOKIE['theme']);
 
             return $_COOKIE['theme'];
         }
 
-        //Return configured
-        //Nothing set, get default theme from config
+        // Return configured
+        // Nothing set, get default theme from config
         if (isset($this->config->defaultTheme) && ! empty($this->config->defaultTheme)) {
             $this->setActive($this->config->defaultTheme);
 
             return $this->config->defaultTheme;
         }
 
-        //Return default
+        // Return default
         return static::DEFAULT;
     }
 
@@ -251,13 +289,13 @@ class Theme
     public function getColorMode()
     {
 
-        //Return generic theme
+        // Return generic theme
         if (session()->exists('usersettings.colorMode') && Auth::isLoggedIn()) {
             return session('usersettings.colorMode');
         }
 
         if (Auth::isLoggedIn()) {
-            //User is logged in, we don't have a theme yet, check settings
+            // User is logged in, we don't have a theme yet, check settings
             $colorMode = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.colorMode');
             if ($colorMode !== false) {
                 $this->setColorMode($colorMode);
@@ -266,14 +304,14 @@ class Theme
             }
         }
 
-        //No generic theme set. Check if cookie is set
+        // No generic theme set. Check if cookie is set
         if (isset($_COOKIE['colorMode'])) {
             $this->setColorMode($_COOKIE['colorMode']);
 
             return $_COOKIE['colorMode'];
         }
 
-        //Return default
+        // Return default
         session(['usersettings.colorMode' => 'light']);
 
         return 'light';
@@ -289,7 +327,7 @@ class Theme
     public function getColorScheme()
     {
 
-        //Return generic theme
+        // Return generic theme
         if (session()->exists('usersettings.colorScheme') && Auth::isLoggedIn()) {
             $this->setAccentColors(session('usersettings.colorScheme'));
 
@@ -297,7 +335,7 @@ class Theme
         }
 
         if (Auth::isLoggedIn()) {
-            //User is logged in, we don't have a theme yet, check settings
+            // User is logged in, we don't have a theme yet, check settings
 
             $colorScheme = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.colorScheme');
             if ($colorScheme !== false) {
@@ -314,12 +352,12 @@ class Theme
         }
 
         if (! empty($this->config->primarycolor) && ! empty($this->config->secondarycolor)) {
-            //Return default
+            // Return default
             $this->setColorScheme('companyColors');
 
             return 'companyColors';
         } else {
-            //Return default
+            // Return default
             $this->setColorScheme('themeDefault');
 
             return 'themeDefault';
@@ -335,7 +373,7 @@ class Theme
     public function getFont()
     {
 
-        //Return generic theme
+        // Return generic theme
         if (session()->exists('usersettings.themeFont') && Auth::isLoggedIn()) {
             $this->setFont(session('usersettings.themeFont'));
 
@@ -344,7 +382,7 @@ class Theme
 
         if (Auth::isLoggedIn()) {
 
-            //User is logged in, we don't have a theme yet, check settings
+            // User is logged in, we don't have a theme yet, check settings
             $themeFont = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.themeFont');
             if ($themeFont !== false) {
                 $this->setFont($themeFont);
@@ -359,7 +397,7 @@ class Theme
             return $_COOKIE['themeFont'];
         }
 
-        //Return default
+        // Return default
         $this->setFont('roboto');
 
         return 'roboto';
@@ -381,12 +419,12 @@ class Theme
             $id = static::DEFAULT;
         }
 
-        //not a valid theme. Use default
+        // not a valid theme. Use default
         if (! is_dir(ROOT.'/theme/'.$id) || ! file_exists(ROOT.'/theme/'.$id.'/'.static::DEFAULT_INI.'.ini')) {
             $id = static::DEFAULT;
         }
 
-        //Only set if user is logged in
+        // Only set if user is logged in
         if (Auth::isLoggedIn()) {
             session(['usersettings.theme' => $id]);
         }
@@ -415,7 +453,7 @@ class Theme
             $colorMode = 'light';
         }
 
-        //Only store colors in session for logged in users
+        // Only store colors in session for logged in users
         if (Auth::isLoggedIn()) {
             session(['usersettings.colorMode' => $colorMode]);
         }
@@ -514,7 +552,7 @@ class Theme
                 continue;
             }
 
-            //Ready theme ini
+            // Ready theme ini
             $themeIni = ROOT
                 .'/theme/'
                 .$themeDir
@@ -711,8 +749,8 @@ class Theme
     public function getLogoUrl(): string|false
     {
 
-        //Session Logo Path needs to be set here
-        //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
+        // Session Logo Path needs to be set here
+        // Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
         $logoPath = false;
         if (session()->exists('companysettings.logoPath') === false || session('companysettings.logoPath') == '') {
@@ -732,7 +770,7 @@ class Theme
                 return session('companysettings.logoPath');
             }
 
-            //If we can't find a logo in the db, the company doesn't have a logo. Stop trying
+            // If we can't find a logo in the db, the company doesn't have a logo. Stop trying
             session(['companysettings.logoPath' => false]);
         }
 
@@ -764,7 +802,7 @@ class Theme
      */
     public function setThemeDefaultColors()
     {
-        //Using default css values
+        // Using default css values
         session(['usersettings.colors.primaryColor' => false]);
         session(['usersettings.colors.secondaryColor' => false]);
     }

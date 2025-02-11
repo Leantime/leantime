@@ -19,11 +19,11 @@ namespace Leantime\Domain\Connector\Services {
         public function loadProviders(): void
         {
 
-            //Default Providers
+            // Default Providers
             $provider = app()->make(\Leantime\Domain\CsvImport\Services\CsvImport::class);
             $this->providers[$provider->id] = $provider;
 
-            //providerId => provider
+            // providerId => provider
             $this->providers = self::dispatch_filter('providerList', $this->providers);
         }
 

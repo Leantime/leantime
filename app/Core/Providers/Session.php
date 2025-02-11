@@ -29,7 +29,7 @@ class Session extends ServiceProvider
 
                 $sessionDir = storage_path('framework/sessions/'.get_domain_key());
 
-                //domain key was created as file. Let's remove that
+                // domain key was created as file. Let's remove that
                 if (file_exists($sessionDir) && ! is_dir($sessionDir)) {
                     unlink($sessionDir);
                 }
@@ -41,7 +41,7 @@ class Session extends ServiceProvider
                 $app['config']->set('session.files', $sessionDir);
             }
 
-            //Most of this is set in the config but some things aren't clear until we get here.
+            // Most of this is set in the config but some things aren't clear until we get here.
             $app['config']->set('domain', is_array(parse_url(BASE_URL)) ? (parse_url(BASE_URL)['host'] ?? null) : null);
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);

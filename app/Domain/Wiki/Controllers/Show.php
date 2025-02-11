@@ -31,10 +31,10 @@ namespace Leantime\Domain\Wiki\Controllers {
             $currentArticle = '';
             $wikiHeadlines = [];
 
-            //Get all project wikis, creates one if none exists
+            // Get all project wikis, creates one if none exists
             $wikis = $this->wikiService->getAllProjectWikis(session('currentProject'));
 
-            //Special case: Setting wiki (active action), set wiki, headlines and current Article
+            // Special case: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {
 
                 $wikiId = (int) $_GET['setWiki'];
@@ -64,14 +64,14 @@ namespace Leantime\Domain\Wiki\Controllers {
                     return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$currentArticle->id);
                 }
 
-                //If neither session is set nor the params id we are coming in fresh. Grab the article from wiki if there is one
+                // If neither session is set nor the params id we are coming in fresh. Grab the article from wiki if there is one
             } else {
 
-                //False is okay, just an empty wiki
+                // False is okay, just an empty wiki
                 $success = $this->wikiService->setCurrentWiki(session('currentWiki'));
                 if ($success === false) {
 
-                    //Try getting the first wiki
+                    // Try getting the first wiki
                     $success = $this->wikiService->setCurrentWiki($wikis[0]->id);
 
                     if ($success === false) {
@@ -87,26 +87,26 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                     return Frontcontroller::redirect(BASE_URL.'/wiki/show/'.$defaultArticle->id);
                 }
-                //If not it's really just empty.
+                // If not it's really just empty.
 
             }
 
-            //At this point we should have a currentWiki. Even if non exist
+            // At this point we should have a currentWiki. Even if non exist
             $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session('currentWiki'), session('userdata.id'));
             if (! $wikiHeadlines) {
                 $wikiHeadlines = [];
             }
 
-            //Get the actual wiki content
+            // Get the actual wiki content
             $currentWiki = $this->wikiService->getWiki(session('currentWiki'));
             if (empty($currentWiki)) {
                 $this->wikiService->clearWikiCache();
 
-                //If we can't find a current wiki at this point something went wrong
+                // If we can't find a current wiki at this point something went wrong
                 return Frontcontroller::redirect(BASE_URL.'/errors/error404');
             }
 
-            //Delete comment
+            // Delete comment
             if (isset($_GET['delComment']) === true) {
                 $commentId = (int) ($_GET['delComment']);
 

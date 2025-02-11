@@ -17,7 +17,7 @@ namespace Leantime\Domain\Auth\Models {
             public bool $twoFAEnabled,
             public bool $twoFAVerified,
             public string $twoFASecret,
-            public bool $isLdap,
+            public bool $isExternalAuth,
             public CarbonImmutable $createdOn,
             public CarbonImmutable $modified,
         ) {}

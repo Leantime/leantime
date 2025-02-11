@@ -11,17 +11,22 @@
 
 <div class="welcome-widget">
 
-    <div style="padding:10px 0px">
+    <div style="padding:0px 0px">
+        <div style="font-size:18px; color:var(--main-titles-color); padding-bottom:15px; padding-top:8px">
+            👋 {{ __('text.hi') }} {{ session()->get("userdata.name") }}
 
-        <div class="center">
-            <span style="font-size:44px; color:var(--main-titles-color); display: inline-block; margin-top: -100px;">
-                {{ dtHelper()->userNow()->formatTimeForUser() }}
-            </span><br />
-            <span style="font-size:24px; color:var(--main-titles-color);">
-                {{ __("welcome_widget.hi") }} {{ $currentUser['firstname'] }}
-            </span><br />
-            @dispatchEvent('afterGreeting')
-            <br />
+            <div class="tw-float-right">
+                <a href="{{ BASE_URL }}/users/editOwn#theme" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_theme') }}">
+                    <i class="fa-solid fa-palette"></i>
+                </a>
+
+                <a href="#/widgets/widgetManager" class="btn btn-link" style="color:var(--main-titles-color); padding:0px; width:31px; line-height:31px; text-align: center;" data-tippy-content="{{ __('text.update_dashboard') }}">
+                    <span class="fa fa-fw fa-cogs"></span>
+                    @if($showSettingsIndicator)
+                        <span class='new-indicator'></span>
+                    @endif
+                </a>
+            </div>
         </div>
 
         <div class="tw-flex tw-gap-x-[10px]">

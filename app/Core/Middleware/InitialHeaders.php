@@ -23,7 +23,7 @@ class InitialHeaders
 
         $response = $next($request);
 
-        //Content Security Policy
+        // Content Security Policy
         $cspParts = [
             "default-src 'self' 'unsafe-inline'",
             "base-uri 'self';",

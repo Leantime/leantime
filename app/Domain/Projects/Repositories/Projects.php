@@ -186,7 +186,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
 				WHERE (project.active > '-1' OR project.active IS NULL)";
 
-            //All Projects this user has access to
+            // All Projects this user has access to
             if ($accessStatus == 'all') {
                 $query .= " AND
 				(
@@ -197,7 +197,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
 				)";
 
-                //All projects the user is assigned to OR the users client is assigned to
+                // All projects the user is assigned to OR the users client is assigned to
             } elseif ($accessStatus == 'clients') {
                 $query .= " AND
 				(
@@ -205,7 +205,7 @@ namespace Leantime\Domain\Projects\Repositories {
                     OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
 				)";
 
-                //Only assigned
+                // Only assigned
             } else {
                 $query .= ' AND
 				(relation.userId = :id)';
@@ -263,7 +263,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        //This populates the projects show all tab and shows users all the projects that they could access
+        // This populates the projects show all tab and shows users all the projects that they could access
         public function getProjectsUserHasAccessTo($userId, string $status = 'all', string $clientId = ''): false|array
         {
 
@@ -634,12 +634,12 @@ namespace Leantime\Domain\Projects\Repositories {
             $projectId = $this->db->database->lastInsertId();
             $stmn->closeCursor();
 
-            //Add author to project
+            // Add author to project
             if (session()->exists('userdata.id')) {
                 $this->addProjectRelation(session('userdata.id'), $projectId, '');
             }
 
-            //Add users to relation
+            // Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
                 foreach ($values['assignedUsers'] as $user) {
                     if (is_array($user) && isset($user['id']) && isset($user['projectRole'])) {
@@ -719,7 +719,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $this->deleteAllUserRelations($projectId);
 
-            //Add users to relation
+            // Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {
                 foreach ($values['assignedUsers'] as $userId) {
                     $projectRole = null;
@@ -830,7 +830,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 return false;
             }
 
-            //admins owners and managers can access everything
+            // admins owners and managers can access everything
             if (in_array(Roles::getRoleString($user['role']), [Roles::$admin, Roles::$owner, Roles::$manager])) {
                 return true;
             }
@@ -841,19 +841,19 @@ namespace Leantime\Domain\Projects\Repositories {
                 return false;
             }
 
-            //Everyone in org is allowed to see the project
+            // Everyone in org is allowed to see the project
             if ($project['psettings'] == 'all') {
                 return true;
             }
 
-            //Everyone in client is allowed to see project
+            // Everyone in client is allowed to see project
             if ($project['psettings'] == 'client') {
                 if ($user['clientId'] == $project['clientId']) {
                     return true;
                 }
             }
 
-            //Select users are allowed to see project
+            // Select users are allowed to see project
             $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
@@ -893,7 +893,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 return false;
             }
 
-            //admins owners and managers can access everything
+            // admins owners and managers can access everything
 
             $project = $this->getProject($projectId);
 
@@ -901,7 +901,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 return false;
             }
 
-            //Select users are allowed to see project
+            // Select users are allowed to see project
             $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
@@ -1133,12 +1133,14 @@ namespace Leantime\Domain\Projects\Repositories {
             $this->avatarcreator->setFilePrefix('project');
             $this->avatarcreator->setBackground('#555555');
 
-            //If can't find user, return ghost
+            // If can't find user, return ghost
             if (empty($value)) {
-                return $this->avatarcreator->getAvatar('🦄');
+                $avatar = $this->avatarcreator->getAvatar('🦄');
+
+                return ['filename' => $avatar, 'type' => 'generated'];
             }
 
-            //If user uploaded return uploaded file
+            // If user uploaded return uploaded file
             if (! empty($value['avatar'])) {
 
                 $files = app()->make(Files::class);

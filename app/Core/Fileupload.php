@@ -80,11 +80,16 @@ class Fileupload
             $s3Config = [
                 'version' => 'latest',
                 'region' => $this->config->s3Region,
-                'credentials' => [
+
+            ];
+
+            // AWS SDK allows you to connect to aws resource using the role attached to an instance
+            if (! empty($this->config->s3Key) && ! empty($this->config->s3Secret)) {
+                $s3Config['credentials'] = [
                     'key' => $this->config->s3Key,
                     'secret' => $this->config->s3Secret,
-                ],
-            ];
+                ];
+            }
 
             if (
                 ! empty($this->config->s3EndPoint)
@@ -94,7 +99,10 @@ class Fileupload
                 $s3Config['endpoint'] = $this->config->s3EndPoint;
             }
 
-            if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === 'true') {
+            if (($this->config->s3UsePathStyleEndpoint === true
+                || $this->config->s3UsePathStyleEndpoint === 'true')
+            && ($this->config->s3UsePathStyleEndpoint !== 'false')
+            ) {
                 $s3Config['use_path_style_endpoint'] = true;
             }
 
@@ -229,12 +237,12 @@ class Fileupload
      */
     public function upload(): bool
     {
-        //S3 upload
+        // S3 upload
         if ($this->config->useS3) {
             return $this->uploadToS3();
         }
 
-        //Local upload
+        // Local upload
         return $this->uploadLocal();
     }
 
@@ -407,15 +415,15 @@ class Fileupload
 
         $oStreamResponse = new BinaryFileResponse($fullPath);
         $oStreamResponse->headers->set('Content-Type', $mimes[$ext]);
-        //$oStreamResponse->headers->set("Content-Length", $sFileSize);
-        //$oStreamResponse->headers->set("ETag", $sEtag);
+        // $oStreamResponse->headers->set("Content-Length", $sFileSize);
+        // $oStreamResponse->headers->set("ETag", $sEtag);
 
         if (app()->make(Environment::class)->debug == false) {
             $oStreamResponse->headers->set('Pragma', 'public');
             $oStreamResponse->headers->set('Cache-Control', 'max-age=86400');
             $oStreamResponse->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', $sLastModified).' GMT');
         }
-        //$oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
+        // $oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
 
         return $oStreamResponse;
     }

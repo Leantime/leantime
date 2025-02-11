@@ -22,7 +22,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
         <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
            class="btn btn-link" data-tippy-content="<?= $tpl->__('popover.filter') ?>">
             <i class="fas fa-filter"></i> Filter<?= $tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>".$tpl->get('numOfFilters').'</span> ' : '' ?>
-            <?php /*Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance */ ?>
+            <?php /* Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance */ ?>
         </a><?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != 'tickets.showProjectCalendar') {
             ?><div class="btn-group viewDropDown">
 <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?= $tpl->__('popover.group_by') ?>">

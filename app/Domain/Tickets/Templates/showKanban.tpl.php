@@ -140,7 +140,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                         <?php if ($row['status'] == $key) {?>
                                         <div class="ticketBox moveable container priority-border-<?= $row['priority']?>" id="ticket_<?php echo $row['id']; ?>">
 
-                                            <div class="row">
+                                            <div class="row" >
 
                                                 <div class="col-md-12">
 
@@ -157,7 +157,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                     <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $tpl->__('label.'.strtolower($row['type'])); ?></small>
                                                     <small>#<?php echo $row['id']; ?></small>
                                                     <div class="kanbanCardContent">
-                                                        <h4><a href="#/tickets/showTicket/<?php echo $row['id']; ?>"><?php $tpl->e($row['headline']); ?></a></h4>
+                                                        <h4><a href="#/tickets/showTicket/<?php echo $row['id']; ?>" preload="mouseover"><?php $tpl->e($row['headline']); ?></a></h4>
 
                                                         <div class="kanbanContent" style="margin-bottom: 20px">
                                                             <?php echo $tpl->escapeMinimal($row['description']); ?>

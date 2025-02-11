@@ -86,7 +86,7 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
 
-        //Since we assume "Create Timesheet was created we just add values to day 3 and 4.
+        // Since we assume "Create Timesheet was created we just add values to day 3 and 4.
 
         // Set hours.
         $I->fillField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 1);

@@ -301,7 +301,7 @@ abstract class Repository
      */
     protected function getFieldAttribute(object|string $class, string $property, bool $includeId = false): array|false
     {
-        //Don't create or update id attributes
+        // Don't create or update id attributes
         if ($includeId === false && $property == 'id') {
             return false;
         }

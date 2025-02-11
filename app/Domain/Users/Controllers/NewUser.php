@@ -52,7 +52,7 @@ namespace Leantime\Domain\Users\Controllers {
 
             ];
 
-            //only Admins
+            // only Admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 $projectrelation = [];
 
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Users\Controllers {
                             if ($this->userRepo->usernameExist($values['user']) === false) {
                                 $userId = $this->userService->createUserInvite($values);
 
-                                //Update Project Relationships
+                                // Update Project Relationships
                                 if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
                                     if ($_POST['projects'][0] !== '0') {
                                         $this->projectsRepo->editUserProjectRelations($userId, $_POST['projects']);

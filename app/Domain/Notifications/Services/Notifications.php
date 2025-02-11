@@ -88,7 +88,7 @@ namespace Leantime\Domain\Notifications\Services {
 
             $dom = new DOMDocument;
 
-            //Content may not be well formatted. Suppress warnings.
+            // Content may not be well formatted. Suppress warnings.
             @$dom->loadHTML($content);
             $links = $dom->getElementsByTagName('a');
 
@@ -99,7 +99,7 @@ namespace Leantime\Domain\Notifications\Services {
                 $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');
 
                 if ($taggedUser !== '' && is_numeric($taggedUser)) {
-                    //Check if user was mentioned before
+                    // Check if user was mentioned before
                     $userMentions = $this->getAllNotifications(
                         $taggedUser,
                         false,
@@ -123,7 +123,7 @@ namespace Leantime\Domain\Notifications\Services {
 
                         $this->addNotifications([$notification]);
 
-                        //send email
+                        // send email
                         $mailer = app()->make(MailerCore::class);
                         $mailer->setContext('notify_project_users');
 

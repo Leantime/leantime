@@ -47,7 +47,7 @@ class UpdateLeantime extends Command
         $currentVersion = $appSettings->appVersion;
         $io->text('Starting the updater');
 
-        //Check Versions  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Check Versions  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Version Check');
         $io->text('Your current version is: v'.$currentVersion);
         $url = 'https://github.com/leantime/leantime/releases/latest';
@@ -78,7 +78,7 @@ class UpdateLeantime extends Command
             return self::SUCCESS;
         }
 
-        //Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Database Backup');
         $skipBackup = $input->getOption('skipDbBackup');
 
@@ -91,7 +91,7 @@ class UpdateLeantime extends Command
             $this->getApplication()->doRun($backUp, $output);
         }
 
-        //Download and extract + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Download and extract + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Download & Extract');
 
         $io->text('Downloading latest version...');
@@ -116,9 +116,9 @@ class UpdateLeantime extends Command
             return self::FAILURE;
         }
 
-        //Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        //If we got here everything is ready to go and we just need to move the files.
-        //Let's disable plugins
+        // Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // If we got here everything is ready to go and we just need to move the files.
+        // Let's disable plugins
         $io->section('Disabling Plugins');
 
         /** @var Plugins $plugins */
@@ -133,7 +133,7 @@ class UpdateLeantime extends Command
 
         $io->success('Plugins disabled successfully');
 
-        //Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Applying Update');
         exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/', $cp_output, $cp_retval);
         echo "Returned with status $cp_retval and output:\n";
@@ -145,7 +145,7 @@ class UpdateLeantime extends Command
             return Self::FAILURE;
         }
 
-        //Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Clearing Cache');
 
         exec('rm -rf "'.APP_ROOT.'/bootstrap/cache/*.php"');
@@ -158,7 +158,7 @@ class UpdateLeantime extends Command
 
         $io->success('Clearing Cache Complete');
 
-        //Enable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Enable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Re-enabling Plugins');
         foreach ($enabledPlugins as $plugin) {
             if ($plugin->type != 'system' && isset($plugin->id)) {

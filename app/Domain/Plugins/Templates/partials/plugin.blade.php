@@ -22,7 +22,7 @@
         @if (! empty($plugin->name))
             <div class="row">
                 <div class="col-md-12">
-                    <h5 class="subtitle">{{ $plugin->name }} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
+                    <h5 class="subtitle">{!! $plugin->name !!} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
                 </div>
             </div>
         @endif

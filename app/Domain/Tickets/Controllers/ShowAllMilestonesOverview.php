@@ -65,9 +65,9 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
-            //Default to not_done tickets to reduce load and make the table easier to read.
-            //User can recover by choosing status in the filter box
-            //We only want this on the table view
+            // Default to not_done tickets to reduce load and make the table easier to read.
+            // User can recover by choosing status in the filter box
+            // We only want this on the table view
             if ($searchCriteria['status'] == '') {
                 $searchCriteria['status'] = 'not_done';
             }

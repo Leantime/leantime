@@ -130,20 +130,20 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $statusList = $this->statusListSeed;
 
-            //Override the state values that are in the db
+            // Override the state values that are in the db
             if ($values !== false) {
 
                 $statusList = [];
 
-                //Archive is required and protected.
-                //Adding the original version back in case folks removed it
+                // Archive is required and protected.
+                // Adding the original version back in case folks removed it
                 $statusList[-1] = $this->statusListSeed[-1];
 
                 foreach (unserialize($values['value']) as $key => $status) {
                     if (is_int($key)) {
-                        //Backwards Compatibility with existing labels in db
-                        //Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>
-                        //Afterwards labelString was replaced with an array to include all different status attributes needed for custom status types
+                        // Backwards Compatibility with existing labels in db
+                        // Prior to 2.1.9 labels were stored as <<statuskey>>:<<labelString>>
+                        // Afterwards labelString was replaced with an array to include all different status attributes needed for custom status types
                         if (! is_array($status)) {
                             $statusList[$key] = $this->statusListSeed[$key];
 
@@ -156,13 +156,13 @@ namespace Leantime\Domain\Tickets\Repositories {
                     }
                 }
             } else {
-                //If the values are not coming from the db, we need to translate the label strings
+                // If the values are not coming from the db, we need to translate the label strings
                 foreach ($statusList as &$status) {
                     $status['name'] = $this->language->__($status['name']);
                 }
             }
 
-            //Sort by order number
+            // Sort by order number
             uasort($statusList, function ($a, $b) {
                 return $a['sortKey'] <=> $b['sortKey'];
             });
@@ -183,7 +183,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function getStatusListGroupedByType($projectId): array
         {
 
-            //Ignoring status type NONE by design
+            // Ignoring status type NONE by design
             $statusByType = [
                 'DONE' => [],
                 'INPROGRESS' => [],
@@ -391,7 +391,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= ' AND zp_tickets.type <> :excludeType';
             }
 
-            //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
+            // Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
             if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
                 $query .= ' AND zp_tickets.projectId = :projectId';
             }
@@ -412,7 +412,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $statusArray = explode(',', $searchCriteria['status']);
 
                 if (array_search('not_done', $statusArray) !== false) {
-                    //Project Id needs to be set to search for not_done due to custom done states across projects
+                    // Project Id needs to be set to search for not_done due to custom done states across projects
                     if ($searchCriteria['currentProject'] != '') {
                         $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
 
@@ -488,7 +488,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
             }
 
-            //Current client is only used for authorization as it represents the current client Id assigned to a user.
+            // Current client is only used for authorization as it represents the current client Id assigned to a user.
             // Do not attempt to filter tickets using this value.
             if (isset($searchCriteria['currentClient'])) {
                 $stmn->bindValue(':clientId', $searchCriteria['currentClient'], PDO::PARAM_INT);
@@ -602,7 +602,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     )
             SQL;
 
-            //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
+            // Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
             if (isset($projectId) && $projectId != '') {
                 $query .= ' AND zp_tickets.projectId = :projectId';
             }
@@ -626,7 +626,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
             }
 
-            //Current client is only used for authorization as it represents the current client Id assigned to a user.
+            // Current client is only used for authorization as it represents the current client Id assigned to a user.
             // Do not attempt to filter tickets using this value.
             if (session()->exists('userdata')) {
                 $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
@@ -1012,9 +1012,14 @@ namespace Leantime\Domain\Tickets\Repositories {
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_tickets.id AND progressTickets.type <> 'milestone'
-						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
-						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)";
+					    LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)
+						AND (
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (requestor.role >= 40)
+                    )
+                    ";
 
             if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
                 $query .= ' AND zp_tickets.projectId = :projectId';
@@ -1041,7 +1046,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $statusArray = explode(',', $searchCriteria['status']);
 
                 if (array_search('not_done', $statusArray) !== false) {
-                    //Project Id needs to be set to search for not_done due to custom done states across projects
+                    // Project Id needs to be set to search for not_done due to custom done states across projects
                     if ($searchCriteria['currentProject'] != '') {
                         $statusLabels = $this->getStateLabels($searchCriteria['currentProject']);
 
@@ -1089,10 +1094,10 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $query .= '	GROUP BY
-						zp_tickets.id, progressTickets.milestoneid';
+						zp_tickets.id';
 
             if ($sort == 'standard') {
-                $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC';
+                $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.editFrom ASC, zp_tickets.id DESC';
             } elseif ($sort == 'kanbansort') {
                 $query .= ' ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC';
             } elseif ($sort == 'duedate') {
@@ -1102,6 +1107,15 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $stmn = $this->db->database->prepare($query);
+
+            // NOTE: This should not be removed as it is used for authorization
+            if (isset($searchCriteria['currentUser'])) {
+                $stmn->bindValue(':userId', $searchCriteria['currentUser'], PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
+            }
+
+            $stmn->bindValue(':requestorId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
 
             if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
                 $stmn->bindValue(':projectId', $searchCriteria['currentProject'], PDO::PARAM_INT);
@@ -1499,7 +1513,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             foreach ($params as $key => $value) {
                 $sql .= ''.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
-                //send status update event
+                // send status update event
                 if ($key == 'status') {
                     static::dispatch_event('ticketStatusUpdate', ['ticketId' => $id, 'status' => $value, 'action' => 'ticketStatusUpdate']);
                 }

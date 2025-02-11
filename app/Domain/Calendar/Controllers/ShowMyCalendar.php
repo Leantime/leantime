@@ -37,16 +37,16 @@ class ShowMyCalendar extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
         $this->tpl->assign('calendar', $this->calendarRepo->getCalendar(session('userdata.id')));
-        //$this->tpl->assign('gCalLink', $this->calendarRepo->getMyGoogleCalendars());
+        // $this->tpl->assign('gCalLink', $this->calendarRepo->getMyGoogleCalendars());
 
         session(['lastPage' => BASE_URL.'/calendar/showMyCalendar/']);
 
         $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars(session('userdata.id')));
 
         // @TODO: This should come from the ticket repo...
-        //$this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());
-        //$this->tpl->assign('ticketWishDates', $this->calendarRepo->getTicketWishDates());
-        //$this->tpl->assign('dates', $this->calendarRepo->getAllDates($dateFrom, $dateTo));
+        // $this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());
+        // $this->tpl->assign('ticketWishDates', $this->calendarRepo->getTicketWishDates());
+        // $this->tpl->assign('dates', $this->calendarRepo->getAllDates($dateFrom, $dateTo));
 
         return $this->tpl->display('calendar.showMyCalendar');
     }

@@ -31,7 +31,7 @@ class FormatTest extends TestCase
         app()->instance(\Leantime\Core\Support\CarbonMacros::class, $this->carbonMacrosMock);
         app()->instance(\Leantime\Core\Language::class, $this->languageMock);
 
-        //America Los_Angeles is UTC - 8 so all db times need to come back from UTC - 8 hours
+        // America Los_Angeles is UTC - 8 so all db times need to come back from UTC - 8 hours
         CarbonImmutable::mixin(new CarbonMacros(
             'America/Los_Angeles',
             'en-US',
@@ -69,5 +69,5 @@ class FormatTest extends TestCase
 
     }
 
-    //Similarly you can add tests for other 'Format' class methods.
+    // Similarly you can add tests for other 'Format' class methods.
 }

@@ -77,6 +77,7 @@ body div.tagsinput:focus,
 body input[type=text].main-title-input.main-title-input:hover,
 body input[type=text].main-title-input.main-title-input:focus{
     border: 1px solid var(--main-border-color-hover);
+    border-radius:var(--box-radius);
 }
 
 body div.tagsinput.readonly {
@@ -779,8 +780,10 @@ input[type=color] {
 
 body input[type=text].main-title-input.main-title-input {
     border: 1px solid transparent;
+    border-bottom:1px solid var(--main-border-color);
+    border-radius:0px;
     box-shadow:none;
-    font-size:var(--font-size-xxl);
+    font-size:var(--font-size-xxxl);
     margin-bottom:5px;
 }
 
@@ -1765,7 +1768,7 @@ label .fa-solid {
     outline:0;
     border:none;
     position:absolute;
-    top:2px;
+    top:-1px;
     right:5px;
     color:var(--primary-font-color);
     cursor:pointer;

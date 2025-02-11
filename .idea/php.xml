@@ -278,6 +278,35 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />
       <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
       <path value="$PROJECT_DIR$/vendor/codeat3/blade-google-material-design-icons" />
+      <path value="$PROJECT_DIR$/vendor/predis/predis" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
+      <path value="$PROJECT_DIR$/vendor/laravel/socialite" />
+      <path value="$PROJECT_DIR$/vendor/laravel/sanctum" />
+      <path value="$PROJECT_DIR$/vendor/litesaml/lightsaml" />
+      <path value="$PROJECT_DIR$/vendor/league/oauth1-client" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/gitlab" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/microsoft" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/google" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/saml2" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/authentik" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/manager" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/microsoft-azure" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/github" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/gitea" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/laravelpassport" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/okta" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/auth0" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/keycloak" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/appnet" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/propelauth" />
+      <path value="$PROJECT_DIR$/vendor/socialiteproviders/eduid" />
+      <path value="$PROJECT_DIR$/vendor/stripe/stripe-php" />
+      <path value="$PROJECT_DIR$/vendor/crispchat/php-crisp-api" />
+      <path value="$PROJECT_DIR$/vendor/robrichards/xmlseclibs" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

@@ -28,13 +28,13 @@ namespace Leantime\Domain\Users\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            //Only Admins
+            // Only Admins
             if (isset($_GET['id']) === true) {
                 $id = (int) ($_GET['id']);
 
                 $user = $this->userService->getUser($id);
 
-                //Delete User
+                // Delete User
                 if (isset($_POST['del']) === true) {
                     if (isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
                         $this->userService->deleteUser($id);
@@ -47,12 +47,12 @@ namespace Leantime\Domain\Users\Controllers {
                     }
                 }
 
-                //Sensitive Form, generate form tokens
+                // Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
                 session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
                 session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);
 
-                //Assign variables
+                // Assign variables
                 $this->tpl->assign('user', $user);
 
                 return $this->tpl->display('users.delUser');

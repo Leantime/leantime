@@ -103,7 +103,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
                 $this->tpl->assign('twoFAEnabled', false);
             }
 
-            //Sensitive Form, generate form tokens
+            // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
             session(['formTokenName' => substr(str_shuffle($permitted_chars), 0, 32)]);
             session(['formTokenValue' => substr(str_shuffle($permitted_chars), 0, 32)]);

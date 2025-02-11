@@ -50,9 +50,9 @@ class Widgets
             'name' => 'widgets.title.welcome',
             'description' => 'widgets.descriptions.welcome',
             'widgetUrl' => BASE_URL.'/widgets/welcome/get',
-            'gridHeight' => 11,
+            'gridHeight' => 6,
             'gridWidth' => 12,
-            'gridMinHeight' => 8,
+            'gridMinHeight' => 6,
             'gridMinWidth' => 6,
             'gridX' => 0,
             'gridY' => 0,
@@ -60,7 +60,7 @@ class Widgets
             'widgetTrigger' => 'load, every 5m',
             'alwaysVisible' => true,
             'noTitle' => true,
-
+            'fixed' => true,
         ]);
 
         $this->availableWidgets['todos'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
@@ -76,6 +76,7 @@ class Widgets
             'gridY' => 12,
             'alwaysVisible' => false,
             'noTitle' => false,
+            'fixed' => false,
 
         ]);
 
@@ -92,6 +93,7 @@ class Widgets
             'alwaysVisible' => false,
             'noTitle' => false,
             'widgetUrl' => BASE_URL.'/widgets/calendar/get',
+            'fixed' => false,
         ]);
 
         $this->availableWidgets['myprojects'] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
@@ -107,6 +109,7 @@ class Widgets
             'alwaysVisible' => false,
             'noTitle' => false,
             'widgetUrl' => BASE_URL.'/widgets/myProjects/get',
+            'fixed' => false,
         ]);
 
         $this->defaultWidgets = [
@@ -181,6 +184,7 @@ class Widgets
 
             $widgets = [];
             foreach ($unserializedData as $key => $widget) {
+
                 // Check if this widget exists in available widgets but not in user's stored widgets
                 if (isset($this->availableWidgets[$widget['id']]) && ! isset($widgetHistory[$widget['id']])) {
                     $widget['isNew'] = true;
@@ -195,12 +199,13 @@ class Widgets
                     $widget['gridMinWidth'] = $this->availableWidgets[$widget['id']]->gridMinWidth;
                     $widget['gridMinHeight'] = $this->availableWidgets[$widget['id']]->gridMinHeight;
                     $widget['noTitle'] = $this->availableWidgets[$widget['id']]->noTitle;
+                    $widget['fixed'] = $this->availableWidgets[$widget['id']]->fixed;
                     $widgets[$widget['id']] = app()->make(Widget::class, $widget);
                 }
             }
         }
 
-        //Sort Widgets
+        // Sort Widgets
         $widgets = array_sort($widgets, [['gridY', 'asc'], ['gridX', 'asc']]);
 
         Cache::set($activeWidgetKey, $widgets, CarbonImmutable::now()->addDays(30));

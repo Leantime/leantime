@@ -10,7 +10,7 @@ use Leantime\Core\Language;
 
 class Registration
 {
-    //Plugin Id: folder name of the plugin
+    // Plugin Id: folder name of the plugin
     private string $pluginId;
 
     public function __construct(string $pluginId)
@@ -21,7 +21,13 @@ class Registration
     public function registerMiddleware(array $middleware)
     {
 
-        EventDispatcher::add_filter_listener('leantime.core.middleware.loadplugins.handle.pluginMiddlware',
+        EventDispatcher::add_filter_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents',
+            function (array $existing) use ($middleware) {
+                return array_merge($existing, $middleware);
+            }
+        );
+
+        EventDispatcher::add_filter_listener('leantime.core.http.httpkernel.*.plugins_middleware',
             function (array $existing) use ($middleware) {
                 return array_merge($existing, $middleware);
             }
@@ -29,10 +35,13 @@ class Registration
 
     }
 
-    public function registerLanguageFiles(array $languages)
+    public function registerLanguageFiles(array $languages = [])
     {
-
         $pluginId = $this->pluginId;
+
+        if (empty($languages)) {
+            $languages = $this->findLanguageFiles();
+        }
 
         EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () use ($languages) {
 
@@ -40,21 +49,56 @@ class Registration
             $config = app()->make(Environment::class);
             $currentUserLanguage = session('usersettings.language');
 
-            //At this point in the stack localization has already determined user language and set up the core language
-            //array in the language of the users choice. First we register english if it is in the array and then we
-            //override with the user language
+            // At this point in the stack localization has already determined user language and set up the core language
+            // array in the language of the users choice. First we register english if it is in the array and then we
+            // override with the user language
             if (in_array('en-US', $languages)) {
                 $pluginLangArray = $this->loadPluginLanguage('en-US');
                 $language->mergeLanguageArray($pluginLangArray);
             }
 
-            //Now check the user language and override if needed
+            // Now check the user language and override if needed
             if (in_array($currentUserLanguage, $languages)) {
                 $pluginLangArray = $this->loadPluginLanguage($currentUserLanguage);
                 $language->mergeLanguageArray($pluginLangArray);
             }
 
         }, 5);
+
+    }
+
+    private function findLanguageFiles(): array
+    {
+        $pluginPath = APP_ROOT.'/app/Plugins/';
+        $languageDir = '/Language/';
+
+        // Check both possible locations for language files
+        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar".$languageDir;
+        $regularPath = "{$pluginPath}{$this->pluginId}".$languageDir;
+
+        $languageFiles = [];
+
+        // Check regular directory first
+        if (is_dir($regularPath)) {
+            $files = scandir($regularPath);
+            foreach ($files as $file) {
+                if (substr($file, -4) === '.ini') {
+                    $languageFiles[] = substr($file, 0, -4);
+                }
+            }
+        }
+
+        // Check phar if no files found in regular directory
+        if (empty($languageFiles) && file_exists($pharPath)) {
+            $files = scandir($pharPath);
+            foreach ($files as $file) {
+                if (substr($file, -4) === '.ini') {
+                    $languageFiles[] = substr($file, 0, -4);
+                }
+            }
+        }
+
+        return ! empty($languageFiles) ? $languageFiles : [];
 
     }
 
@@ -72,13 +116,13 @@ class Registration
 
         $languagePath = "/Language/{$language}.ini";
 
-        //Check phar first
+        // Check phar first
         if (file_exists($pharPath.$languagePath)) {
             $completeLanguagePath = $pharPath.$languagePath;
         } elseif (file_exists($regularPath.$languagePath)) {
             $completeLanguagePath = $regularPath.$languagePath;
         } else {
-            //Language file doesn't exist
+            // Language file doesn't exist
             Cache::store('installation')->set($this->pluginId.'.language.'.$language, false, Carbon::now()->addDays(7));
 
             return false;
@@ -86,8 +130,8 @@ class Registration
 
         $languageArray = parse_ini_file($completeLanguagePath, true);
 
-        //We're caching the results no matter what, language file is not going to magically appear.
-        //So even a false is valid as parse_ini_is too expensive to run every time
+        // We're caching the results no matter what, language file is not going to magically appear.
+        // So even a false is valid as parse_ini_is too expensive to run every time
         Cache::store('installation')->set($this->pluginId.'.language.'.$language, $languageArray, Carbon::now()->addDays(7));
 
         return $languageArray;
@@ -102,7 +146,7 @@ class Registration
         EventDispatcher::add_filter_listener('leantime.domain.menu.repositories.menu.getMenuStructure.menuStructures.'.$section,
             function ($menu) use ($item, $location, $pluginId) {
 
-                //Prepare
+                // Prepare
                 $item['title'] = "<span class='".$item['icon']."'></span> ".__($item['title']);
                 $item['tooltip'] = __($item['tooltip']);
                 $item['type'] = 'item';

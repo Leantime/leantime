@@ -113,13 +113,13 @@ namespace Leantime\Domain\Setting\Controllers {
          */
         public function post($params)
         {
-            //Look & feel updates
+            // Look & feel updates
             if (isset($params['primarycolor']) && $params['primarycolor'] != '') {
                 $this->settingsRepo->saveSetting('companysettings.primarycolor', htmlentities(addslashes($params['primarycolor'])));
                 $this->settingsRepo->saveSetting('companysettings.secondarycolor', htmlentities(addslashes($params['secondarycolor'])));
 
-                //Check if main color is still in the system
-                //if so remove. This call should be removed in a few versions.
+                // Check if main color is still in the system
+                // if so remove. This call should be removed in a few versions.
                 $mainColor = $this->settingsRepo->getSetting('companysettings.mainColor');
                 if ($mainColor !== false) {
                     $this->settingsRepo->deleteSetting('companysettings.mainColor');
@@ -131,7 +131,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $this->tpl->setNotification($this->language->__('notifications.company_settings_edited_successfully'), 'success');
             }
 
-            //Main Details
+            // Main Details
             if (isset($params['name']) && $params['name'] != '' && isset($params['language']) && $params['language'] != '') {
                 $this->settingsRepo->saveSetting('companysettings.sitename', htmlspecialchars(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting('companysettings.language', htmlentities(addslashes($params['language'])));
@@ -143,7 +143,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 if (isset($_POST['telemetryActive'])) {
                     $this->settingsRepo->saveSetting('companysettings.telemetry.active', 'true');
                 } else {
-                    //Set remote telemetry to false:
+                    // Set remote telemetry to false:
                     app()->make(ReportService::class)->optOutTelemetry();
                 }
 

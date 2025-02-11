@@ -5,7 +5,6 @@ namespace Leantime\Domain\Projects\Controllers {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
@@ -60,11 +59,11 @@ namespace Leantime\Domain\Projects\Controllers {
         public function post($params): Response
         {
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 $id = (int) ($_GET['id']);
                 $projectName = $params['projectName'];
-                $startDate = format(value: $_POST['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+                $startDate = $_POST['startDate'] ?? '';
                 $clientId = (int) $params['clientId'];
                 $assignSameUsers = false;
 
