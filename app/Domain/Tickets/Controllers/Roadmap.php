@@ -55,7 +55,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria'], 'standard');
             $allProjectMilestones = $this->ticketService->getBulkMilestoneProgress($allProjectMilestones);
 
             $this->tpl->assign('timelineTasks', $allProjectMilestones);

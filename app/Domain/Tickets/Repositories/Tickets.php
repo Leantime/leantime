@@ -1012,9 +1012,14 @@ namespace Leantime\Domain\Tickets\Repositories {
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_tickets.id AND progressTickets.type <> 'milestone'
-						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
-						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)";
+					    LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)
+						AND (
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        OR zp_projects.psettings = 'all'
+                        OR (requestor.role >= 40)
+                    )
+                    ";
 
             if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
                 $query .= ' AND zp_tickets.projectId = :projectId';
@@ -1089,10 +1094,10 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $query .= '	GROUP BY
-						zp_tickets.id, progressTickets.milestoneid';
+						zp_tickets.id';
 
             if ($sort == 'standard') {
-                $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC';
+                $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.editFrom ASC, zp_tickets.id DESC';
             } elseif ($sort == 'kanbansort') {
                 $query .= ' ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC';
             } elseif ($sort == 'duedate') {
@@ -1102,6 +1107,15 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $stmn = $this->db->database->prepare($query);
+
+            // NOTE: This should not be removed as it is used for authorization
+            if (isset($searchCriteria['currentUser'])) {
+                $stmn->bindValue(':userId', $searchCriteria['currentUser'], PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
+            }
+
+            $stmn->bindValue(':requestorId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
 
             if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] != '') {
                 $stmn->bindValue(':projectId', $searchCriteria['currentProject'], PDO::PARAM_INT);

@@ -5,7 +5,6 @@ namespace Leantime\Domain\Projects\Controllers {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;

@@ -113,15 +113,6 @@ class Projects extends Controller
      */
     public function patch(array $params): Response
     {
-        if (
-            ! in_array(array_keys($params), ['id', 'patchModalSettings', 'patchViewSettings', 'patchMenuStateSettings', 'patchProjectProgress'])
-            || (! empty($params['patchModalSettings']) && empty($params['settings']))
-            || (! empty($params['patchViewSettings']) && empty($params['value']))
-            || (! empty($params['patchMenuStateSettings']) && empty($params['value']))
-            || (! empty($params['patchProjectProgress']) && (empty($params['values']) || ! session()->has('currentProject')))
-        ) {
-            return $this->tpl->displayJson(['status' => 'failure', 'error' => 'Required params not included in request'], 400);
-        }
 
         foreach (
             [

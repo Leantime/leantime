@@ -80,8 +80,8 @@ leantime.ticketsController = (function () {
                             view_modes: ['Day', 'Week', 'Month'],
                             bar_height: 40,
                             static_progress_indicator: true,
-                            bar_corner_radius: 5,
-                            arrow_curve: 5,
+                            bar_corner_radius: 10,
+                            arrow_curve: 10,
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
@@ -122,8 +122,7 @@ leantime.ticketsController = (function () {
                             },
                             on_date_change: function (task, start, end) {
 
-
-                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
+                                leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index+1);
 
                             },
                             on_sort_change: function (tasks) {
@@ -134,7 +133,8 @@ leantime.ticketsController = (function () {
                                 };
 
                                 for (var i = 0; i < tasks.length; i++) {
-                                        statusPostData.payload[tasks[i].id] = tasks[i]._index;
+                                        //start sorting counter at 1 instead of 0 since 0 will cause date comparison
+                                        statusPostData.payload[tasks[i].id] = tasks[i]._index+1;
                                 }
 
                                 // POST to server using $.post or $.ajax
