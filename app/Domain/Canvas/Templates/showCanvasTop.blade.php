@@ -105,82 +105,85 @@ $tpl->assign('canvasTitle', $canvasTitle);
     </div>
 </div><!--pageheader-->
 
-
-@displayNotification()
-
-@if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
-    <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}" class="btn btn-primary"
-        id="{{ $elementName }}">
-        {!! __('links.add_new_canvas_item' . $canvasName) !!}
-    </a>
-@endif
-
-</div>
-
-<div class="col-md-6 center">
-
-    <div class="col-md-3">
-        <div class="pull-right">
-            <div class="btn-group viewDropDown">
-
-                @if (count($allCanvas) > 0 && !empty($statusLabels))
-                    <x-global::actions.dropdown
-                        label-text="<i class='fas fa-{{ $filter['status'] == 'all' ? 'filter' : $statusLabels[$filter['status']]['icon'] }}'></i> {{ $filter['status'] == 'all' ? __('status.all') : $statusLabels[$filter['status']]['title'] }} {!! __('links.view') !!}"
-                        contentRole="ghost" position="bottom" align="start">
-
-                        <x-slot:menu>
-                            <!-- Menu Item for "All Status" -->
-                            <x-global::actions.dropdown.item variant="link"
-                                href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all"
-                                :class="$filter['status'] == 'all' ? 'active' : ''">
-                                <i class="fas fa-globe"></i> {{ __('status.all') }}
-                            </x-global::actions.dropdown.item>
-
-                            <!-- Dynamic Status Menu Items -->
-                            @foreach ($statusLabels as $key => $data)
-                                <x-global::actions.dropdown.item variant="link"
-                                    href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}"
-                                    :class="$filter['status'] == $key ? 'active' : ''">
-                                    <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                </x-global::actions.dropdown.item>
-                            @endforeach
-                        </x-slot:menu>
-                    </x-global::actions.dropdown>
+<div class="maincontent">
+    <div class="maincontentinner">
+        @displayNotification()
+        <div class="row">
+            <div class="col-md-3">
+                @if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0)
+                    <a href="#/{{ $canvasName }}canvas/editCanvasItem?type={{ $elementName }}"
+                        class="btn btn-primary" id="{{ $elementName }}">
+                        {!! __('links.add_new_canvas_item' . $canvasName) !!}
+                    </a>
                 @endif
 
             </div>
 
-            <div class="btn-group viewDropDown">
-                @if (count($allCanvas) > 0 && !empty($relatesLabels))
-                    <x-global::actions.dropdown
-                        label-text="<i class='fas fa-fw {{ $filter['relates'] == 'all' ? 'fa-globe' : $relatesLabels[$filter['relates']]['icon'] }}'></i> {{ $filter['relates'] == 'all' ? __('relates.all') : $relatesLabels[$filter['relates']]['title'] }} {{ __('links.view') }}"
-                        contentRole="link" position="bottom" align="start">
+            <div class="col-md-6 center">
 
-                        <x-slot:menu>
-                            <!-- Menu Item for "All Relates" -->
-                            <x-global::actions.dropdown.item variant="link"
-                                href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all"
-                                :class="$filter['relates'] == 'all' ? 'active' : ''">
-                                <i class="fas fa-globe"></i> {{ __('relates.all') }}
-                            </x-global::actions.dropdown.item>
+            </div>
+            <div class="col-md-3">
+                <div class="pull-right">
+                    <div class="btn-group viewDropDown">
 
-                            <!-- Dynamic Relates Menu Items -->
-                            @foreach ($relatesLabels as $key => $data)
-                                <x-global::actions.dropdown.item variant="link"
-                                    href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}"
-                                    :class="$filter['relates'] == $key ? 'active' : ''">
-                                    <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
-                                </x-global::actions.dropdown.item>
-                            @endforeach
-                        </x-slot:menu>
-                    </x-global::actions.dropdown>
-                @endif
+                        @if (count($allCanvas) > 0 && !empty($statusLabels))
+                            <x-global::actions.dropdown
+                                label-text="<i class='fas fa-{{ $filter['status'] == 'all' ? 'filter' : $statusLabels[$filter['status']]['icon'] }}'></i> {{ $filter['status'] == 'all' ? __('status.all') : $statusLabels[$filter['status']]['title'] }} {!! __('links.view') !!}"
+                                contentRole="ghost" position="bottom" align="start">
 
+                                <x-slot:menu>
+                                    <!-- Menu Item for "All Status" -->
+                                    <x-global::actions.dropdown.item variant="link"
+                                        href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status=all"
+                                        :class="$filter['status'] == 'all' ? 'active' : ''">
+                                        <i class="fas fa-globe"></i> {{ __('status.all') }}
+                                    </x-global::actions.dropdown.item>
+
+                                    <!-- Dynamic Status Menu Items -->
+                                    @foreach ($statusLabels as $key => $data)
+                                        <x-global::actions.dropdown.item variant="link"
+                                            href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_status={{ $key }}"
+                                            :class="$filter['status'] == $key ? 'active' : ''">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
+                                        </x-global::actions.dropdown.item>
+                                    @endforeach
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                        @endif
+
+                    </div>
+
+                    <div class="btn-group viewDropDown">
+                        @if (count($allCanvas) > 0 && !empty($relatesLabels))
+                            <x-global::actions.dropdown
+                                label-text="<i class='fas fa-fw {{ $filter['relates'] == 'all' ? 'fa-globe' : $relatesLabels[$filter['relates']]['icon'] }}'></i> {{ $filter['relates'] == 'all' ? __('relates.all') : $relatesLabels[$filter['relates']]['title'] }} {{ __('links.view') }}"
+                                contentRole="link" position="bottom" align="start">
+
+                                <x-slot:menu>
+                                    <!-- Menu Item for "All Relates" -->
+                                    <x-global::actions.dropdown.item variant="link"
+                                        href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates=all"
+                                        :class="$filter['relates'] == 'all' ? 'active' : ''">
+                                        <i class="fas fa-globe"></i> {{ __('relates.all') }}
+                                    </x-global::actions.dropdown.item>
+
+                                    <!-- Dynamic Relates Menu Items -->
+                                    @foreach ($relatesLabels as $key => $data)
+                                        <x-global::actions.dropdown.item variant="link"
+                                            href="{{ BASE_URL }}/{{ $canvasName }}canvas/showCanvas?filter_relates={{ $key }}"
+                                            :class="$filter['relates'] == $key ? 'active' : ''">
+                                            <i class="fas fa-fw {{ $data['icon'] }}"></i> {{ $data['title'] }}
+                                        </x-global::actions.dropdown.item>
+                                    @endforeach
+                                </x-slot:menu>
+                            </x-global::actions.dropdown>
+                        @endif
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
-    </div>
 
-</div>
-
-<div class="clearfix"></div>
+        <div class="clearfix"></div>
