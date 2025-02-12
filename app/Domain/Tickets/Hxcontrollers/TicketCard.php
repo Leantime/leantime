@@ -6,6 +6,7 @@ use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 use Illuminate\Support\Facades\Cache;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 class TicketCard extends HtmxController
 {
@@ -13,12 +14,13 @@ class TicketCard extends HtmxController
 
     private Tickets $ticketService;
     private Timesheets $timesheetService;
+    private ProjectService $projectService;
 
-
-    public function init(Tickets $ticketService, Timesheets $timesheetService): void
+    public function init(Tickets $ticketService, Timesheets $timesheetService, ProjectService $projectService): void
     {
         $this->ticketService = $ticketService;
         $this->timesheetService = $timesheetService;
+        $this->projectService = $projectService;
     }
 
     public function save(): void
@@ -60,11 +62,14 @@ class TicketCard extends HtmxController
             'currentProject' => session('currentProject'),
         ]));
 
+        $users = Cache::remember('users', 3600, fn() => $this->projectService->getUsersAssignedToProject(session('currentProject')));
+
         $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('efforts', $efforts);
         $this->tpl->assign('priorities', $priorities);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('milestones', $milestones);
+        $this->tpl->assign('users', $users);
     }
 }
