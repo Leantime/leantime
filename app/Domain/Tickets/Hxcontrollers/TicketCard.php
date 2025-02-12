@@ -5,6 +5,8 @@ namespace Leantime\Domain\Tickets\Hxcontrollers;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Timesheets\Services\Timesheets;
+use Illuminate\Support\Facades\Cache;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 class TicketCard extends HtmxController
 {
@@ -12,12 +14,13 @@ class TicketCard extends HtmxController
 
     private Tickets $ticketService;
     private Timesheets $timesheetService;
+    private ProjectService $projectService;
 
-
-    public function init(Tickets $ticketService, Timesheets $timesheetService): void
+    public function init(Tickets $ticketService, Timesheets $timesheetService, ProjectService $projectService): void
     {
         $this->ticketService = $ticketService;
         $this->timesheetService = $timesheetService;
+        $this->projectService = $projectService;
     }
 
     public function save(): void
@@ -42,17 +45,24 @@ class TicketCard extends HtmxController
             'currentProject' => session('currentProject'),
         ]);
         $this->tpl->assign('milestones', $allProjectMilestones);
-
     }
 
     public function get($params): void
     {
         $ticketId = (int) ($params['id']);
         $ticket = (array) $this->ticketService->getTicket($ticketId);
-        $efforts = $this->ticketService->getEffortLabels();
-        $priorities = $this->ticketService->getPriorityLabels();
-        $statusLabels = $this->ticketService->getStatusLabels();
-        $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
+
+
+        $efforts = Cache::remember('efforts', 3600, fn() => $this->ticketService->getEffortLabels());
+        $priorities = Cache::remember('priorities', 3600, fn() => $this->ticketService->getPriorityLabels());
+        $statusLabels = Cache::remember('statusLabels', 3600, fn() => $this->ticketService->getStatusLabels());
+        $milestones = Cache::remember('milestones', 3600, fn() => $this->ticketService->getAllMilestones([
+            'sprint' => '',
+            'type' => 'milestone',
+            'currentProject' => session('currentProject'),
+        ]));
+
+        $users = Cache::remember('users', 3600, fn() => $this->projectService->getUsersAssignedToProject(session('currentProject')));
 
         $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
         $this->tpl->assign('ticket', $ticket);
@@ -60,5 +70,6 @@ class TicketCard extends HtmxController
         $this->tpl->assign('priorities', $priorities);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('milestones', $milestones);
+        $this->tpl->assign('users', $users);
     }
 }

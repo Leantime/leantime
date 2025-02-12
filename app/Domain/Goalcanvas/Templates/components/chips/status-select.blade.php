@@ -8,8 +8,14 @@
     'goal' => null,
 ])
 
-<x-global::forms.select name='status' search="false" :dropdown-position="$dropdownPosition" :label-position="$labelPosition" :variant="$variant"
-    :content-role="$contentRole" hx-post="{{ BASE_URL }}/hx/goalCanvas/editCanvasItem/patch/{{ $goal->id }}"
+<x-global::forms.select
+    name='status'
+    search="false"
+    :dropdown-position="$dropdownPosition"
+    :label-position="$labelPosition"
+    :variant="$variant"
+    :content-role="$contentRole"
+    hx-post="{{ BASE_URL }}/hx/goalCanvas/editCanvasItem/patch/{{ $goal->id }}"
     hx-trigger="change" hx-swap="none">
 
     @if ($showLabel)
