@@ -8,6 +8,7 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Core\Support\FromFormat;
+use Illuminate\Support\Facades\Cache;
 
 
 
@@ -40,12 +41,13 @@ class ShowKanban extends HtmxController
 
         $allTickets = $this->ticketService->getAllGrouped($searchCriteria);
 
+
         $ticketTypeIcons = $this->ticketService->getTypeIcons();
-        $priorities = $this->ticketService->getPriorityLabels();
-        $efforts = $this->ticketService->getEffortLabels();
-        $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
-        $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
-        $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
+        $priorities = Cache::remember('priorities', 3600, fn() => $this->ticketService->getPriorityLabels());
+        $efforts = Cache::remember('efforts', 3600, fn() => $this->ticketService->getEffortLabels());
+        $milestones = Cache::remember('milestones', 3600, fn() => $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]));
+        $users = Cache::remember('users', 3600, fn() => $this->projectService->getUsersAssignedToProject(session('currentProject')));
+        $onTheClock = Cache::remember('onTheClock', 3600, fn() => $this->timesheetService->isClocked(session('userdata.id')));
 
         $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
         $this->tpl->assign('onTheClock', $onTheClock);

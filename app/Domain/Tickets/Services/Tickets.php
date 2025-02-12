@@ -27,6 +27,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Illuminate\Support\Facades\Cache;
 
     /**
      * @api
@@ -2017,35 +2018,37 @@ namespace Leantime\Domain\Tickets\Services {
             $currentSprint = $this->sprintService->getCurrentSprintId(session('currentProject'));
 
             $searchCriteria = $this->prepareTicketSearchArray($params);
-            // $searchCriteria['orderBy'] = 'kanbansort';
 
-            // $allTickets = $this->getAllGrouped($searchCriteria);
-            // dd($allTickets);
             $allTicketStates = $this->getStatusLabels();
-
+            Cache::put('statuslabels', $allTicketStates, 3600);
             $efforts = $this->getEffortLabels();
+            Cache::put('efforts', $efforts, 3600);
             $priorities = $this->getPriorityLabels();
+            Cache::put('priorities', $priorities, 3600);
             $types = $this->getTicketTypes();
 
             //Types are being used for filters. Add milestone as a type
             $types[] = 'milestone';
 
-            $ticketTypeIcons = $this->getTypeIcons();
+            $ticketTypeIcons =
 
-            $numOfFilters = $this->countSetFilters($searchCriteria);
+                $numOfFilters = $this->countSetFilters($searchCriteria);
 
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
+            Cache::put('onTheClock', $onTheClock, 3600);
 
             $sprints = $this->sprintService->getAllSprints(session('currentProject'));
             $futureSprints = $this->sprintService->getAllFutureSprints(session('currentProject'));
 
             $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
+            Cache::put('users', $users, 3600);
 
             $milestones = $this->getAllMilestones([
                 'sprint' => '',
                 'type' => 'milestone',
                 'currentProject' => session('currentProject'),
             ]);
+            Cache::put('milestones', $milestones, 3600);
 
             $groupByOptions = $this->getGroupByFieldOptions();
             $newField = $this->getNewFieldOptions();
