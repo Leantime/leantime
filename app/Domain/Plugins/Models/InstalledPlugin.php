@@ -18,6 +18,12 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public string $imageUrl = '';
 
+    public string $vendorDisplayName;
+
+    public int $vendorId;
+
+    public string $vendorEmail;
+
     public string $installdate;
 
     public string $foldername;
@@ -52,6 +58,17 @@ class InstalledPlugin implements PluginDisplayStrategy
     public function getMetadataLinks(): array
     {
         $links = [];
+
+        if (! empty($this->vendorDisplayName) && (! empty($this->vendorId) || ! empty($this->vendorEmail))) {
+            $vendor = [
+                'prefix' => __('text.by'),
+                'display' => $this->vendorDisplayName,
+            ];
+
+            $vendor['link'] = ! empty($this->vendorId) ? '/plugins/marketplace?'.http_build_query(['vendor_id' => $this->vendorId]) : "mailto:{$this->vendorEmail}";
+
+            $links[] = $vendor;
+        }
 
         if (! empty($this->authors) && (is_array($this->authors) || is_object($this->authors))) {
             $author = is_array($this->authors) ? $this->authors[0] : $this->authors;

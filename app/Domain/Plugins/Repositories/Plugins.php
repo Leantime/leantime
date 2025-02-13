@@ -18,6 +18,9 @@ namespace Leantime\Domain\Plugins\Repositories {
             $this->db = $db;
         }
 
+        /**
+         * @return array<InstalledPlugin>|false
+         */
         public function getAllPlugins(bool $enabledOnly = true): false|array
         {
             $query = 'SELECT

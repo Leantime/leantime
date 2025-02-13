@@ -37,6 +37,12 @@ class Details extends Controller
             return $this->tpl->display('errors.error404', 'blank');
         }
 
+        $isBundle = false;
+        if (collect($plugin->categories)->where('slug', '=', 'bundles')->count() > 0) {
+            $isBundle = true;
+        }
+
+        $this->tpl->assign('isBundle', $isBundle);
         $this->tpl->assign('plugin', $plugin);
 
         return $this->tpl->display('plugins.plugindetails', 'blank');
