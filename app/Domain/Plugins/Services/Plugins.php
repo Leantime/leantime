@@ -430,16 +430,15 @@ namespace Leantime\Domain\Plugins\Services {
             if (isset($pluginArray['data'])) {
                 foreach ($pluginArray['data'] as $plugin) {
 
-                    if(! empty($plugin['sub_interval']) && $plugin['sub_interval'] == 'year'){
+                    if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] == 'year') {
                         $price = $plugin['price'] ?? 0;
                         $months = 12;
-                        $lowestUserTier=10;
+                        $lowestUserTier = 10;
                         $perUserMonth = round(($price / $months / $lowestUserTier), 2);
-                        $priceString = '$'.$perUserMonth .' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
-                    }else{
+                        $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                    } else {
                         $priceString = '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : '');
                     }
-
 
                     $plugins[Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
                         ->set('identifier', $plugin['identifier'] ?? '')

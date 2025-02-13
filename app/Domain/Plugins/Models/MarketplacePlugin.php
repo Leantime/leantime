@@ -72,12 +72,13 @@ class MarketplacePlugin implements PluginDisplayStrategy
         return $links;
     }
 
-    public function getPrice(): string {
+    public function getPrice(): string
+    {
         if (! empty($this->startingPrice)) {
-            return __('text.starting_at'). " ".$this->startingPrice;
+            return __('text.starting_at').' '.$this->startingPrice;
         }
 
-        return "";
+        return '';
     }
 
     public function getControlsView(): string
