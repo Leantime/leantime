@@ -12,7 +12,6 @@ return [
              * Application Service Providers...
              */
             \Leantime\Core\Providers\AppServiceProvider::class,
-            \Leantime\Core\Providers\RequestTypes::class,
 
             \Leantime\Core\Providers\LoadMacros::class,
 

@@ -14,7 +14,10 @@ class RequestTypeDetector
 
     public function __construct()
     {
-        $this->requestTypes = collect([]);
+        $this->requestTypes = collect([
+            new ApiRequestType,
+            new HtmxRequestType,
+        ]);
     }
 
     /**
