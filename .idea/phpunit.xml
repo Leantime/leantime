@@ -4,7 +4,6 @@
     <option name="directories">
       <list>
         <option value="$PROJECT_DIR$/app/Plugins/Billing/tests" />
-        <option value="$PROJECT_DIR$/tests" />
       </list>
     </option>
   </component>

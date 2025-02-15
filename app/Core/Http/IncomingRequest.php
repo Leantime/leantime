@@ -22,6 +22,12 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     protected $currentRoute;
 
+    protected $basePath;
+
+    private $basePathCalculated = false;
+
+    private $pathInfoCalculated = false;
+
     public $headers = [];
 
     protected $requestUri;
@@ -55,9 +61,8 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         parent::enableHttpMethodParameterOverride();
 
-        $detector = app()->make(RequestTypeDetector::class);
         $request = parent::createFromGlobals();
-        $requestClass = $detector->detect($request);
+        $requestClass = RequestTypeDetector::detect($request);
 
         return $requestClass::createFromBase($request);
     }
@@ -67,7 +72,53 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getFullUrl(): string
     {
-        return parent::getSchemeAndHttpHost().parent::getBaseUrl().parent::getPathInfo();
+        return parent::getSchemeAndHttpHost().$this->getBasePath().$this->getPathInfo();
+    }
+
+    public function getBasePath(): string
+    {
+
+        // Early in the stack we may not have BASE_URL yet.
+        // Let's have symfony deal with it
+        if (! defined('BASE_URL')) {
+            return parent::prepareBasePath();
+        }
+
+        // Will always only return the domain portion
+        if (! $this->basePathCalculated) {
+            $schemeHost = parent::getSchemeAndHttpHost();
+            $baseUrl = rtrim(BASE_URL, '/');
+
+            // Extract potential subfolder from BASE_URL
+            if ($baseUrl !== $schemeHost) {
+                $this->basePath = substr($baseUrl, strlen($schemeHost));
+            } else {
+                $this->basePath = parent::prepareBasePath();
+            }
+
+            $this->basePathCalculated = true;
+        }
+
+        return $this->basePath;
+    }
+
+    public function getPathInfo(): string
+    {
+        if (! $this->pathInfoCalculated) {
+            $pathInfo = $this->preparePathInfo();
+            $basePath = $this->getBasePath();
+
+            // Only strip basePath if it exists at the start of pathInfo
+            if ($basePath && strpos($pathInfo, $basePath) === 0) {
+                $this->pathInfo = substr($pathInfo, strlen($basePath));
+            } else {
+                $this->pathInfo = $pathInfo;
+            }
+
+            $this->pathInfoCalculated = true;
+        }
+
+        return $this->pathInfo;
     }
 
     /**
@@ -76,28 +127,29 @@ class IncomingRequest extends \Illuminate\Http\Request
      *
      * @throws BindingResolutionException
      */
-    public function getRequestUri($appUrl = ''): string
+    public function getRequestUri(): string
     {
-        $requestUri = parent::getRequestUri();
 
-        if (empty($appUrl)) {
-            return $requestUri;
+        if ($this->requestUri === null) {
+            $requestUri = parent::getRequestUri();
+            $basePath = $this->getBasePath();
+
+            // If we have a basePath (subfolder installation)
+            // and it exists at the start of the requestUri,
+            // strip it out to get the correct relative path
+            if ($basePath && str_starts_with($requestUri, $basePath)) {
+                $requestUri = substr($requestUri, strlen($basePath));
+            }
+
+            // Ensure requestUri starts with a forward slash
+            if (! str_starts_with($requestUri, '/')) {
+                $requestUri = '/'.$requestUri;
+            }
+
+            $this->requestUri = $requestUri;
         }
 
-        $baseUrlParts = explode('/', rtrim($appUrl, '/'));
-
-        if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
-            return $requestUri;
-        }
-
-        $subfolderName = $baseUrlParts[3];
-        $requestUri = preg_replace('/^\/'.$subfolderName.'/', '', $requestUri);
-
-        $this->requestUri = $requestUri;
-
-        $subfolderFixApplied = true;
-
-        return $requestUri;
+        return $this->requestUri;
     }
 
     /**
@@ -191,16 +243,45 @@ class IncomingRequest extends \Illuminate\Http\Request
     public function getCurrentRoute()
     {
         if ($this->currentRoute == null) {
-            $route = '';
-            $segments = parent::segments();
-            if (count($segments) > 0) {
-                $route = implode('.', $segments);
+            $path = $this->getPathInfo();
+            $path = trim($path, '/');
+
+            if (empty($path)) {
+                return '';
             }
+
+            $route = str_replace('/', '.', $path);
 
             $this->currentRoute = $route;
         }
 
         return $this->currentRoute;
+    }
+
+    public function segments()
+    {
+        $segments = explode('/', $this->decodedPath());
+
+        return array_values(array_filter($segments, function ($value) {
+            return $value !== '';
+        }));
+    }
+
+    public function decodedPath()
+    {
+        return rawurldecode($this->path());
+    }
+
+    public function path()
+    {
+        $pattern = trim($this->getPathInfo(), '/');
+
+        return $pattern === '' ? '/' : $pattern;
+    }
+
+    private function getBaseUrlReal(): string
+    {
+        return $this->baseUrl ??= $this->prepareBaseUrl();
     }
 
     public function setCurrentRoute($route)

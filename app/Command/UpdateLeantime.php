@@ -74,6 +74,7 @@ class UpdateLeantime extends Command
         // Build download URL
         if (version_compare($currentVersion, ltrim($latestVersion, 'v'), '>=')) {
             $io->success('You are on the most up to date version');
+
             return self::SUCCESS;
         }
 
@@ -146,6 +147,7 @@ class UpdateLeantime extends Command
             $io->success('Files were updated');
         } else {
             $io->error('Could not apply update.  Please check the output above for more information.');
+
             return self::FAILURE;
         }
 
