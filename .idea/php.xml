@@ -6,10 +6,18 @@
   <component name="LaravelPint">
     <laravel_pint_settings>
       <LaravelPintConfiguration tool_path="$PROJECT_DIR$/vendor/bin/pint" />
+      <laravel_pint_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/pint">
+        <option name="timeout" value="30000" />
+      </laravel_pint_by_interpreter>
     </laravel_pint_settings>
   </component>
   <component name="LaravelPintOptionsConfiguration">
     <option name="pintJsonPath" value="$PROJECT_DIR$/.pint/pint.json" />
+  </component>
+  <component name="MessDetector">
+    <phpmd_settings>
+      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="30000" />
+    </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
     <option name="transferred" value="true" />
@@ -26,11 +34,13 @@
   <component name="PhpCSFixer">
     <phpcsfixer_settings>
       <PhpCSFixerConfiguration standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="10000" />
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="/Volumes/Source/leantime-oss/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="30000" />
     </phpcsfixer_settings>
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="/Volumes/Source/leantime-oss/vendor/bin/phpcs" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpExternalFormatter">
@@ -324,6 +334,7 @@
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/phpstan" timeout="60000" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
@@ -331,6 +342,11 @@
     <option name="config" value="$PROJECT_DIR$/.phpstan/phpstan.neon" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
+  </component>
+  <component name="Psalm">
+    <Psalm_settings>
+      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="60000" />
+    </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />

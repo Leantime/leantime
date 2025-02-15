@@ -31,7 +31,7 @@ class Callback extends Controller
         } catch (\Exception $e) {
             $this->tpl->setNotification($e->getMessage(), 'danger', 'oidc_error');
 
-            return Frontcontroller::redirect(BASE_URL.'/oidc/login');
+            return Frontcontroller::redirect(BASE_URL.'/auth/login');
         }
     }
 }
