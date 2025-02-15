@@ -64,8 +64,14 @@ class RequestRateLimiter
 
         // Configurable rate limits
         $rateLimitGeneral = $this->config->ratelimitGeneral ?? 10000;
-        $rateLimitApi = $this->config->ratelimitApi ?? 10;
+        $rateLimitApi = $this->config->ratelimitApi ?? 100;
         $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
+
+        if (config('app.debug')) {
+            $rateLimitGeneral = 999999999;
+            $rateLimitApi = 999999999;
+            $rateLimitAuth = 999999999;
+        }
 
         // Key
         // Key lives in domain namespace already

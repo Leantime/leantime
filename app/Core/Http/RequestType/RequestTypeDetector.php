@@ -2,44 +2,37 @@
 
 namespace Leantime\Core\Http\RequestType;
 
-use Illuminate\Support\Collection;
 use Leantime\Core\Http\IncomingRequest;
 
 class RequestTypeDetector
 {
-    /**
-     * @var Collection<RequestTypeInterface>
-     */
-    protected Collection $requestTypes;
-
-    public function __construct()
-    {
-        $this->requestTypes = collect([
-            new ApiRequestType,
-            new HtmxRequestType,
-        ]);
-    }
+    protected static array $requestTypes = [
+        ApiRequestType::class,
+        HtmxRequestType::class,
+    ];
 
     /**
      * Register a new request type detector
      */
-    public function register(RequestTypeInterface $type): void
+    public static function register(string $typeClass): void
     {
-        $this->requestTypes->push($type);
+        if (! in_array($typeClass, self::$requestTypes)) {
+            self::$requestTypes[] = $typeClass;
+        }
     }
 
     /**
      * Detect the request type from the incoming request
      */
-    public function detect(IncomingRequest $request): string
+    public static function detect(IncomingRequest $request): string
     {
+        foreach (self::$requestTypes as $typeClass) {
+            $type = new $typeClass;
+            if ($type->matches($request)) {
+                return $type->getRequestClass();
+            }
+        }
 
-        $matchedType = $this->requestTypes
-            ->sort(fn (RequestTypeInterface $a, RequestTypeInterface $b) => $b->getPriority() <=> $a->getPriority())
-            ->first(fn (RequestTypeInterface $type) => $type->matches($request));
-
-        $requestClass = $matchedType ? $matchedType->getRequestClass() : IncomingRequest::class;
-
-        return $requestClass;
+        return IncomingRequest::class;
     }
 }

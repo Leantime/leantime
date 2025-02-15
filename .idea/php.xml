@@ -319,16 +319,7 @@
       <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
     </include_path>
   </component>
-  <component name="PhpProjectServersManager">
-    <servers>
-      <server host="leantime.localhost" id="822abf0f-3bb4-4146-b5e4-26439962d6a2" name="Mamp Localhost" port="443">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$" remote-root="/var/www/html" />
-        </path_mappings>
-      </server>
-    </servers>
-  </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStan">
@@ -342,6 +333,11 @@
     <option name="config" value="$PROJECT_DIR$/.phpstan/phpstan.neon" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
+    </phpunit_settings>
   </component>
   <component name="Psalm">
     <Psalm_settings>
