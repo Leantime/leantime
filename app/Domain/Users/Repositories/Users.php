@@ -40,11 +40,7 @@ namespace Leantime\Domain\Users\Repositories {
             protected DbCore $db,
             protected Avatarcreator $avatarcreator,
             protected Files $files
-        ) {
-
-            $this->db = $db;
-            $this->config = $config;
-        }
+        ) {}
 
         /**
          * getUser - get on user from db
@@ -95,17 +91,11 @@ namespace Leantime\Domain\Users\Repositories {
 
             $sql = 'SELECT  lastlogin FROM `zp_user` Order by lastlogin DESC LIMIT 1';
 
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->execute();
+            $stmn = $this->db->database->query($sql);
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (isset($values['lastlogin'])) {
-                return $values['lastlogin'];
-            }
-
-            return null;
+            return $values['lastlogin'] ?? null;
         }
 
         /**
@@ -115,11 +105,11 @@ namespace Leantime\Domain\Users\Repositories {
         {
             $sql = 'SELECT * FROM `zp_user` WHERE username = :email ';
 
-            if ($status == 'a') {
+            if ($status === 'a') {
                 $sql .= " and LOWER(status) = 'a'";
             }
 
-            if ($status == 'i') {
+            if ($status === 'i') {
                 $sql .= " and LOWER(status) = 'i'";
             }
 
@@ -153,9 +143,7 @@ namespace Leantime\Domain\Users\Repositories {
                 $sql .= " $condition";
             }
 
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->execute();
+            $stmn = $this->db->database->query($sql);
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
@@ -179,9 +167,7 @@ namespace Leantime\Domain\Users\Repositories {
          FROM zp_user
             ORDER BY lastname';
 
-            $stmn = $this->db->database->prepare($sql);
-
-            $stmn->execute();
+            $stmn = $this->db->database->query($sql);
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
@@ -221,9 +207,7 @@ namespace Leantime\Domain\Users\Repositories {
 
             $query .= ' ORDER BY lastname';
 
-            $stmn = $this->db->database->prepare($query);
-
-            $stmn->execute();
+            $stmn = $this->db->database->query($query);
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
@@ -388,7 +372,7 @@ namespace Leantime\Domain\Users\Repositories {
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':username', $username, PDO::PARAM_STR);
 
-            if ($userId != '') {
+            if ($userId !== '') {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
@@ -397,11 +381,7 @@ namespace Leantime\Domain\Users\Repositories {
             $result = $stmn->fetch();
             $stmn->closeCursor();
 
-            if ($result['numUser'] == 1) {
-                return true;
-            } else {
-                return false;
-            }
+            return (int) $result['numUser'] === 1;
         }
 
         /**
@@ -410,7 +390,7 @@ namespace Leantime\Domain\Users\Repositories {
         public function editOwn($values, $id): void
         {
 
-            if (isset($values['password']) && $values['password'] != '') {
+            if (isset($values['password']) && $values['password'] !== '') {
                 $chgPW = ' password = :password, ';
             } else {
                 $chgPW = '';
@@ -561,7 +541,7 @@ namespace Leantime\Domain\Users\Repositories {
                 }
             }
 
-            $lastId = $this->files->upload($_FILE, 'user', $id, true, 200, 200);
+            $lastId = $this->files->upload($_FILE, 'user', $id);
 
             if (isset($lastId['fileId'])) {
                 $sql = 'UPDATE
@@ -637,15 +617,13 @@ namespace Leantime\Domain\Users\Repositories {
         public function patchUser($id, $params): bool
         {
 
-            $sql = 'UPDATE zp_user SET ';
+            $sql = 'UPDATE zp_user SET';
 
             foreach ($params as $key => $value) {
                 $sql .= DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
             }
 
-            $sql .= ' modified =:modified ';
-
-            $sql .= ' WHERE id=:id LIMIT 1';
+            $sql .= ' modified =:modified WHERE id=:id LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
@@ -654,7 +632,7 @@ namespace Leantime\Domain\Users\Repositories {
             foreach ($params as $key => $value) {
                 $cleanKey = DbCore::sanitizeToColumnString($key);
                 $val = $value;
-                if ($cleanKey == 'password') {
+                if ($cleanKey === 'password') {
                     $val = password_hash($value, PASSWORD_DEFAULT);
                 }
                 $stmn->bindValue(':'.$cleanKey, $val, PDO::PARAM_STR);

@@ -48,10 +48,10 @@ namespace Leantime\Domain\Files\Repositories {
 				)';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':encName', $values['encName'], PDO::PARAM_STR);
-            $stmn->bindValue(':realName', $values['realName'], PDO::PARAM_STR);
-            $stmn->bindValue(':extension', $values['extension'], PDO::PARAM_STR);
-            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            $stmn->bindValue(':encName', $values['encName']);
+            $stmn->bindValue(':realName', $values['realName']);
+            $stmn->bindValue(':extension', $values['extension']);
+            $stmn->bindValue(':module', $module);
             $stmn->bindValue(':moduleId', $values['moduleId'], PDO::PARAM_INT);
             $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_INT);
 
@@ -228,10 +228,10 @@ namespace Leantime\Domain\Files\Repositories {
         {
 
             // Clean module mess
-            if ($module == 'projects') {
+            if ($module === 'projects') {
                 $module = 'project';
             }
-            if ($module == 'tickets') {
+            if ($module === 'tickets') {
                 $module = 'ticket';
             }
 
