@@ -129,7 +129,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $this->tpl->setNotification($this->language->__('notifications.comment_added_successfully'), 'success');
 
                         $subject = $this->language->__('email_notifications.new_comment_milestone_subject');
-                        $actual_link = BASE_URL.'/tickets/editMilestone/'.(int) $_GET['id'];
+                        $actual_link = BASE_URL.'#/tickets/editMilestone/'.(int) $_GET['id'];
                         $message = sprintf($this->language->__('email_notifications.new_comment_milestone_message'), session('userdata.name'));
 
                         $notification = app()->make(NotificationModel::class);
@@ -157,7 +157,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.milestone_edited_successfully'), 'success');
 
                         $subject = $this->language->__('email_notifications.milestone_update_subject');
-                        $actual_link = BASE_URL.'/tickets/editMilestone/'.(int) $_GET['id'];
+                        $actual_link = BASE_URL.'#/tickets/editMilestone/'.(int) $_GET['id'];
                         $message = sprintf($this->language->__('email_notifications.milestone_update_message'), session('userdata.name'));
 
                         $notification = app()->make(NotificationModel::class);
@@ -190,7 +190,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__('notification.milestone_created_successfully'), 'success');
 
                     $subject = $this->language->__('email_notifications.milestone_created_subject');
-                    $actual_link = BASE_URL.'/tickets/editMilestone/'.$result;
+                    $actual_link = BASE_URL.'#/tickets/editMilestone/'.$result;
                     $message = sprintf($this->language->__('email_notifications.milestone_created_message'), session('userdata.name'));
 
                     $notification = app()->make(NotificationModel::class);

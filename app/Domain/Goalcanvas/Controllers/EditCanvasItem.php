@@ -143,7 +143,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     $values['id'] = $commentId;
 
                     $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                    $actual_link = BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $_GET['id'];
+                    $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item__comment_created_message'),
                         session('userdata.name')
@@ -223,7 +223,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success', 'goal_created');
 
                         $subject = $this->language->__('email_notifications.canvas_board_edited');
-                        $actual_link = BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
+                        $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_update_message'),
                             session('userdata.name'),
@@ -276,7 +276,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($canvasTypes[$params['box']]['title'].' successfully created', 'success', 'goal_item_created');
 
                         $subject = $this->language->__('email_notifications.canvas_board_item_created');
-                        $actual_link = BASE_URL.'/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
+                        $actual_link = BASE_URL.'#/goalcanvas/editCanvasItem/'.(int) $params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_created_message'),
                             session('userdata.name'),

@@ -113,7 +113,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
 
                     $subject = $this->language->__('email_notifications.new_comment_idea_subject');
-                    $actual_link = BASE_URL.'/ideas/ideaDialog/'.(int) $_GET['id'];
+                    $actual_link = BASE_URL.'#/ideas/ideaDialog/'.(int) $_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.new_comment_idea_message'),
                         session('userdata.name')
@@ -186,7 +186,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.idea_edited'), 'success');
 
                         $subject = $this->language->__('email_notifications.idea_edited_subject');
-                        $actual_link = BASE_URL.'/ideas/ideaDialog/'.(int) $params['itemId'];
+                        $actual_link = BASE_URL.'#/ideas/ideaDialog/'.(int) $params['itemId'];
                         $message = sprintf(
                             $this->language->__('notification.idea_edited'),
                             session('userdata.name'),
@@ -231,7 +231,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $canvasItem['id'] = $id;
 
                         $subject = $this->language->__('email_notifications.idea_created_subject');
-                        $actual_link = BASE_URL.'/ideas/ideaDialog/'.$id;
+                        $actual_link = BASE_URL.'#/ideas/ideaDialog/'.$id;
                         $message = sprintf($this->language->__('email_notifications.idea_created_message'), session('userdata.name'), $params['description']);
 
                         $notification = app()->make(NotificationModel::class);

@@ -45,8 +45,9 @@
         "ext-openssl": "*",
         "ext-gd": "*",
         "ext-fileinfo": "*",
+        "ext-dom": "*",
         "laravel/framework": "^10.48",
-        "filp/whoops": "^2.14",
+
         "guzzlehttp/guzzle": "^7.9",
         "aws/aws-sdk-php": "^3.314",
         "phpmailer/phpmailer": "^6.6",
@@ -76,7 +77,6 @@
         "symfony/process": "^6.2",
         "symfony/routing": "^6.2",
         "symfony/uid": "^6.2",
-        "symfony/var-dumper": "^6.2",
         "nikic/php-parser": "^4.17",
         "nesbot/carbon": "^2.72",
         "symfony/http-client": "^6.2.4",
@@ -109,6 +109,9 @@
         "socialiteproviders/saml2": "^4.7"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "symfony/var-dumper": "^6.2",
+        "filp/whoops": "^2.14",
         "squizlabs/php_codesniffer": "^3.8",
         "codeception/codeception": "^5.1",
         "codeception/module-phpbrowser": "*",
@@ -123,7 +126,6 @@
         "laravel/pint": "^1.17",
         "phpstan/phpstan": "^1.10",
         "leantime/leantime-documentor": "dev-main"
-
     },
     "provide": {
         "psr/container-implementation": "1.1|2.0",

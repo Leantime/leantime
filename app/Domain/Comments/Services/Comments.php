@@ -84,8 +84,10 @@ namespace Leantime\Domain\Comments\Services {
                     }
 
                     $notification = app()->make(Notification::class);
+
+                    $urlQueryParameter = str_contains($currentUrl, '?') ? '&' : '?';
                     $notification->url = [
-                        'url' => $currentUrl.'&projectId='.session('currentProject'),
+                        'url' => $currentUrl.$urlQueryParameter.'projectId='.session('currentProject'),
                         'text' => $linkLabel,
                     ];
 
