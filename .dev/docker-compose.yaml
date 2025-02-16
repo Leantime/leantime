@@ -9,7 +9,7 @@ services:
       - "5443:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      - "authentik.docker.local:172.28.0.2"
+#      - "authentik.docker.local:172.28.0.2"
     volumes:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
@@ -26,16 +26,16 @@ services:
         condition: service_healthy
     networks:
       - leantime_internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.priority=2"
-      - "traefik.docker.network=traefik"
-
-      # HTTP Router
-      - "traefik.http.routers.leantime.rule=Host(`leantime.docker.local`)"
-      - "traefik.http.services.leantime.loadbalancer.server.port=8080"
-      - "traefik.http.routers.leantime.tls=true"
+#      - traefik
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.priority=2"
+#      - "traefik.docker.network=traefik"
+#
+#      # HTTP Router
+#      - "traefik.http.routers.leantime.rule=Host(`leantime.docker.local`)"
+#      - "traefik.http.services.leantime.loadbalancer.server.port=8080"
+#      - "traefik.http.routers.leantime.tls=true"
 
 
   leantime-redis:
@@ -98,9 +98,9 @@ networks:
   leantime_internal:
     driver: bridge
     name: leantime_internal
-  traefik:
-    external: true
-    name: traefik
+#  traefik:
+#    external: true
+#    name: traefik
 
 volumes:
   leantime-mysql:
