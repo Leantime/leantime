@@ -38,7 +38,8 @@ namespace Leantime\Domain\Users\Repositories {
         public function __construct(
             protected Environment $config,
             protected DbCore $db,
-            protected Avatarcreator $avatarcreator
+            protected Avatarcreator $avatarcreator,
+            protected Files $files
         ) {
 
             $this->db = $db;
@@ -551,16 +552,16 @@ namespace Leantime\Domain\Users\Repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            $files = app()->make(files::class);
-
             if (isset($values['profileId']) && $values['profileId'] > 0) {
-                $file = $files->getFile($values['profileId']);
-                $img = 'userdata/'.$file['encName'].$file['extension'];
 
-                $files->deleteFile($values['profileId']);
+                $file = $this->files->getFile($values['profileId']);
+                if (is_array($file)) {
+                    $img = 'userdata/'.$file['encName'].$file['extension'];
+                    $this->files->deleteFile($values['profileId']);
+                }
             }
 
-            $lastId = $files->upload($_FILE, 'user', $id, true, 200, 200);
+            $lastId = $this->files->upload($_FILE, 'user', $id, true, 200, 200);
 
             if (isset($lastId['fileId'])) {
                 $sql = 'UPDATE
@@ -580,11 +581,6 @@ namespace Leantime\Domain\Users\Repositories {
             }
         }
 
-        /**
-         * @return string[]|SVG
-         *
-         * @throws BindingResolutionException
-         */
         /**
          * @return string[]|SVG
          *
@@ -614,8 +610,7 @@ namespace Leantime\Domain\Users\Repositories {
             // If user uploaded return uploaded file
             if (! empty($value['profileId'])) {
 
-                $files = app()->make(Files::class);
-                $file = $files->getFile($value['profileId']);
+                $file = $this->files->getFile($value['profileId']);
 
                 if ($file) {
                     $filePath = $file['encName'].'.'.$file['extension'];

@@ -61,7 +61,7 @@ namespace Leantime\Domain\Files\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function getFile($id): mixed
+        public function getFile($id): array|false
         {
 
             $sql = 'SELECT

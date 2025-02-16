@@ -79,9 +79,9 @@ namespace Leantime\Domain\Setting\Services {
          *
          * @api
          */
-        public function getSetting($key): mixed
+        public function getSetting($key, $default = false): mixed
         {
-            return $this->settingsRepo->getSetting($key);
+            return $this->settingsRepo->getSetting($key, $default);
         }
 
         /**

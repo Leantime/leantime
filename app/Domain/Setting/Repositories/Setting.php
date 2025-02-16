@@ -29,7 +29,7 @@ namespace Leantime\Domain\Setting\Repositories {
         /**
          * @return false|mixed
          */
-        public function getSetting($type): mixed
+        public function getSetting($type, $default = false): mixed
         {
             if ($this->checkIfInstalled() === false) {
                 return false;
@@ -70,7 +70,7 @@ namespace Leantime\Domain\Setting\Repositories {
             $this->cache->set($type, false);
 
             // TODO: This needs to return null or throw an exception if the setting doesn't exist.
-            return false;
+            return $default;
         }
 
         public function saveSetting($type, $value): bool
