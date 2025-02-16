@@ -7,6 +7,8 @@ namespace Leantime\Domain\Oidc\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Language;
@@ -29,45 +31,45 @@ class Oidc
 
     private bool $configLoaded = false;
 
-    private string $providerUrl = '';
+    private string $providerUrl;
 
-    private string $autoDiscoverUrl = '';
+    private string $autoDiscoverUrl;
 
-    private string $clientId = '';
+    private string $clientId;
 
-    private string $clientSecret = '';
+    private string $clientSecret;
 
-    private string $authUrl = '';
+    private string $authUrl;
 
-    private string $tokenUrl = '';
+    private string $tokenUrl;
 
-    private string $jwksUrl = '';
+    private string $jwksUrl;
 
-    private string $userInfoUrl = '';
+    private string $userInfoUrl;
 
-    private string $certificateString = '';
+    private string $certificateString;
 
-    private string $certificateFile = '';
+    private string $certificateFile;
 
-    private string $scopes = '';
+    private string $scopes;
 
-    private bool $createUser = false;
+    private bool $createUser;
 
-    private int $defaultRole = 20; // 20 == editor
+    private int $defaultRole; // 20 == editor
 
-    private string $fieldEmail = '';
+    private string $fieldEmail;
 
-    private string $fieldFirstName = '';
+    private string $fieldFirstName;
 
-    private string $fieldLastName = '';
+    private string $fieldLastName;
 
-    private string $fieldPhone = '';
+    private string $fieldPhone;
 
-    private string $fieldJobtitle = '';
+    private string $fieldJobtitle;
 
-    private string $fieldJoblevel = '';
+    private string $fieldJoblevel;
 
-    private string $fieldDepartment = '';
+    private string $fieldDepartment;
 
     private Language $language;
 
@@ -110,7 +112,7 @@ class Oidc
     private function trimTrailingSlash(string $str): string
     {
         $almost = strlen($str) - 1;
-        if ($str[$almost] == '/') {
+        if ($str[$almost] === '/') {
             return substr($str, 0, $almost);
         }
 
@@ -119,16 +121,23 @@ class Oidc
 
     /**
      * @throws GuzzleException
+     * @throws \Exception
      */
     public function buildLoginUrl(): string
     {
-        return $this->getAuthUrl().'?'.http_build_query([
-            'client_id' => $this->clientId,
-            'redirect_uri' => $this->buildRedirectUrl(),
-            'response_type' => 'code',
-            'scope' => $this->scopes,
-            'state' => $this->generateState(),
-        ]);
+
+        if ($this->getAuthUrl()) {
+
+            return $this->getAuthUrl().'?'.http_build_query([
+                'client_id' => $this->clientId,
+                'redirect_uri' => $this->buildRedirectUrl(),
+                'response_type' => 'code',
+                'scope' => $this->scopes,
+                'state' => $this->generateState(),
+            ]);
+        }
+
+        return false;
     }
 
     /**
@@ -136,9 +145,11 @@ class Oidc
      */
     private function getAuthUrl(): string
     {
-        $this->loadEndpoints();
+        if (! empty($this->authUrl || $this->loadEndpoints())) {
+            return $this->authUrl;
+        }
 
-        return $this->authUrl;
+        return false;
     }
 
     /**
@@ -153,6 +164,10 @@ class Oidc
         }
 
         $tokens = $this->requestTokens($code);
+
+        if (! is_array($tokens)) {
+            $this->displayError($tokens);
+        }
 
         $userInfo = null;
         // echo '<pre>' . print_r($tokens, true) . '</pre>';
@@ -254,18 +269,24 @@ class Oidc
     /**
      * @throws GuzzleException
      */
-    private function requestTokens(string $code): array
+    private function requestTokens(string $code): array|string
     {
-        $httpClient = new Client;
-        $response = $httpClient->post($this->getTokenUrl(), [
-            'form_params' => [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => $this->buildRedirectUrl(),
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-            ],
+        $httpClient = Http::withoutVerifying();
+
+        // Add proper client authentication headers
+        $response = $httpClient->asForm()->post($this->getTokenUrl(), [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $this->buildRedirectUrl(),
         ]);
+
+        if ($response->failed()) {
+            Log::error('OIDC Token Request Failed: '.$response->body());
+            throw new \RuntimeException('Failed to retrieve tokens: '.$response->body());
+        }
+
         $headerArray = [];
         foreach ($response->getHeaders() as $header => $values) {
             $headerArray[strtolower($header)] = $values;
@@ -313,6 +334,10 @@ class Oidc
 
         $headerData = json_decode($this->decodeBase64Url($header), true);
 
+        if (! isset($headerData['kid'])) {
+            throw new \RuntimeException('JWT token could not be decoded');
+        }
+
         $key = $this->getPublicKey($headerData['kid']);
 
         if ($key === false) {
@@ -355,7 +380,7 @@ class Oidc
             return openssl_pkey_get_public(file_get_contents($this->certificateFile));
         }
 
-        $httpClient = new Client;
+        $httpClient = Http::withoutVerifying();
         // AUTH HEADER?
         $response = $httpClient->get($this->getJwksUrl()); // https://cloud.lukas-sieper.de/apps/oidc/jwks
         $keys = json_decode($response->getBody()->getContents(), true);
@@ -432,9 +457,11 @@ class Oidc
      */
     private function getTokenUrl(): string
     {
-        $this->loadEndpoints();
+        if (! empty($this->tokenUrl || $this->loadEndpoints())) {
+            return $this->tokenUrl;
+        }
 
-        return $this->tokenUrl;
+        return false;
     }
 
     /**
@@ -452,32 +479,34 @@ class Oidc
             return true;
         }
 
-        $httpClient = new Client;
+        $httpClient = Http::withoutVerifying();
         try {
             // $uri = strlen() ? $this->autoDiscoverUrl : $this->providerUrl;
             $uri = empty($this->autoDiscoverUrl) ? $this->providerUrl : $this->autoDiscoverUrl;
             $response = $httpClient->get($uri.'/.well-known/openid-configuration');
-            $endpoints = json_decode($response->getBody()->getContents(), true);
+            $endpoints = $response->collect()->toArray();
         } catch (\Exception $e) {
-            report($e);
+
+            Log::error('OIDC: '.$e->getMessage());
+            Log::error($e);
 
             return false;
         }
         // load all not yet defined endpoints from well-known configuration
 
-        if (! $this->authUrl || $this->authUrl == '') {
+        if (! $this->authUrl || $this->authUrl === '') {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (! $this->tokenUrl || $this->tokenUrl == '') {
+        if (! $this->tokenUrl || $this->tokenUrl === '') {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (! $this->jwksUrl || $this->jwksUrl == '') {
+        if (! $this->jwksUrl || $this->jwksUrl === '') {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (! $this->userInfoUrl || $this->userInfoUrl == '') {
+        if (! $this->userInfoUrl || $this->userInfoUrl === '') {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
 
@@ -504,7 +533,7 @@ class Oidc
 
         foreach ($urlList as $url) {
             $response = $httpClient->get($url, $options);
-            $urlData = json_decode($response->getBody()->getContents(), true);
+            $urlData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
             if (is_array($urlData)) {
                 $combinedArray = array_merge_recursive($combinedArray, $urlData);
             }
@@ -516,6 +545,7 @@ class Oidc
     private function buildRedirectUrl(): string
     {
         return $this->trimTrailingSlash(BASE_URL).'/oidc/callback';
+
     }
 
     /**
@@ -548,6 +578,6 @@ class Oidc
     private function displayError(string $translationKey, string ...$values): void
     {
 
-        throw new \Exception(sprintf($this->language->__($translationKey), ...$values));
+        throw new \RuntimeException(sprintf($this->language->__($translationKey), ...$values));
     }
 }

@@ -22,7 +22,7 @@
         @if (! empty($plugin->name))
             <div class="row">
                 <div class="col-md-12">
-                    <h5 class="subtitle">{{ $plugin->name }} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
+                    <h5 class="subtitle">{!! $plugin->name !!} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
                 </div>
             </div>
         @endif
@@ -30,9 +30,11 @@
             <div class="col tw-flex tw-flex-col tw-gap-base">
                 <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
                 @if (! empty($desc = $plugin->getCardDesc()))
-                    <p>{{ $desc }}</p>
+                    <p>{!! $desc !!}</p>
                 @endif
-
+                <div class="plugin-price" style="font-style: italic;">
+                    {!! $plugin->getPrice() !!}
+                </div>
             </div>
         </div>
         <div class="row tw-border-t tw-border-[var(--main-border-color)] tw-px-base">

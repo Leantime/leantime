@@ -1,5 +1,5 @@
 @if($plugin->type !== "system")
-    <div class="col-md-8" style="padding-top:10px;">
+    <div class="col-md-8" style="padding-top:10px; padding-left:0px;">
         @if (!$plugin->enabled)
             <a href="{{ BASE_URL }}/plugins/myapps?enable={{ $plugin->id }}" class=""><i class="fa-solid fa-plug-circle-check"></i> {{ __('buttons.enable') }}</a> |
             <a href="{{ BASE_URL }}/plugins/myapps?remove={{ $plugin->id }}" class="delete"><i class="fa fa-trash"></i> {{ __('buttons.remove')  }}</a>

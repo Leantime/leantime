@@ -6,10 +6,18 @@
   <component name="LaravelPint">
     <laravel_pint_settings>
       <LaravelPintConfiguration tool_path="$PROJECT_DIR$/vendor/bin/pint" />
+      <laravel_pint_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/pint">
+        <option name="timeout" value="30000" />
+      </laravel_pint_by_interpreter>
     </laravel_pint_settings>
   </component>
   <component name="LaravelPintOptionsConfiguration">
     <option name="pintJsonPath" value="$PROJECT_DIR$/.pint/pint.json" />
+  </component>
+  <component name="MessDetector">
+    <phpmd_settings>
+      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="30000" />
+    </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
     <option name="transferred" value="true" />
@@ -26,11 +34,13 @@
   <component name="PhpCSFixer">
     <phpcsfixer_settings>
       <PhpCSFixerConfiguration standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="10000" />
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="/Volumes/Source/leantime-oss/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="30000" />
     </phpcsfixer_settings>
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="/Volumes/Source/leantime-oss/vendor/bin/phpcs" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpExternalFormatter">
@@ -211,75 +221,12 @@
       <path value="$PROJECT_DIR$/vendor/spatie/icalendar-generator" />
       <path value="$PROJECT_DIR$/vendor/spatie/enum" />
       <path value="$PROJECT_DIR$/vendor/symfony/dotenv" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection" />
-      <path value="$PROJECT_DIR$/vendor/phpcsstandards/phpcsextra" />
-      <path value="$PROJECT_DIR$/vendor/phpcsstandards/phpcsutils" />
-      <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
-      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
       <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-laravel" />
-      <path value="$PROJECT_DIR$/vendor/codeception/lib-asserts" />
-      <path value="$PROJECT_DIR$/vendor/codeception/lib-web" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
-      <path value="$PROJECT_DIR$/vendor/codeception/lib-innerbrowser" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
-      <path value="$PROJECT_DIR$/vendor/codeception/stub" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-rest" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-phpbrowser" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-webdriver" />
-      <path value="$PROJECT_DIR$/vendor/codeception/codeception" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-asserts" />
-      <path value="$PROJECT_DIR$/vendor/codeception/module-db" />
-      <path value="$PROJECT_DIR$/vendor/codeception/lib-xml" />
-      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
-      <path value="$PROJECT_DIR$/vendor/dealerdirect/phpcodesniffer-composer-installer" />
-      <path value="$PROJECT_DIR$/vendor/softcreatr/jsonpath" />
-      <path value="$PROJECT_DIR$/vendor/php-webdriver/webdriver" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
-      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
-      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
-      <path value="$PROJECT_DIR$/vendor/leantime/leantime-documentor" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
-      <path value="$PROJECT_DIR$/vendor/symfony/browser-kit" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
-      <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
-      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
-      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
-      <path value="$PROJECT_DIR$/vendor/laravel/pint" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
-      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
-      <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
-      <path value="$PROJECT_DIR$/vendor/zebra-north/phpcs-short-types" />
-      <path value="$PROJECT_DIR$/vendor/behat/gherkin" />
-      <path value="$PROJECT_DIR$/vendor/justinrainbow/json-schema" />
-      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
-      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
-      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/vendor/maximebf/debugbar" />
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-debugbar" />
       <path value="$PROJECT_DIR$/vendor/blade-ui-kit/blade-icons" />
       <path value="$PROJECT_DIR$/vendor/codeat3/blade-google-material-design-icons" />
       <path value="$PROJECT_DIR$/vendor/predis/predis" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
       <path value="$PROJECT_DIR$/vendor/laravel/socialite" />
       <path value="$PROJECT_DIR$/vendor/laravel/sanctum" />
       <path value="$PROJECT_DIR$/vendor/litesaml/lightsaml" />
@@ -307,54 +254,15 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
       <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
       <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/simple-cache" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/clock" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/voku/portable-ascii" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/http-factory" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/container" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/psr/http-message" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/jean85/pretty-package-versions" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/sentry/sentry" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/sentry/sentry-laravel" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/carbonphp/carbon-doctrine-types" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/nesbot/carbon" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/doctrine/inflector" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/support" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/contracts" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/collections" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/macroable" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/illuminate/conditionable" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/ralouphie/getallheaders" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-mbstring" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/deprecation-contracts" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/translation-contracts" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/options-resolver" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php83" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/translation" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/http-foundation" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/polyfill-php80" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/symfony/psr-http-message-bridge" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/nyholm/psr7" />
-      <path value="$PROJECT_DIR$/app/Plugins/Sentry/vendor/composer" />
     </include_path>
   </component>
-  <component name="PhpProjectServersManager">
-    <servers>
-      <server host="leantime.localhost" id="822abf0f-3bb4-4146-b5e4-26439962d6a2" name="Mamp Localhost" port="443">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$" remote-root="/var/www/html" />
-        </path_mappings>
-      </server>
-    </servers>
-  </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/phpstan" timeout="60000" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
@@ -362,6 +270,16 @@
     <option name="config" value="$PROJECT_DIR$/.phpstan/phpstan.neon" />
     <option name="level" value="1" />
     <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+  <component name="Psalm">
+    <Psalm_settings>
+      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="60000" />
+    </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />

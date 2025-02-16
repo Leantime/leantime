@@ -88,10 +88,24 @@ namespace Leantime\Domain\Plugins\Services {
 
             // Build array with pluginId as $key
             foreach ($installedPlugins as &$plugin) {
+
+                /** @var array<MarketplacePlugin> */
+                $marketplacePluginCache = Cache::store('installation')->get('plugins.marketplacePlugins', false);
+
                 $plugin->type = $plugin->format === $this->pluginFormat['phar']
                     ? $plugin->type = $this->pluginTypes['marketplace']
                     : $plugin->type = $this->pluginTypes['custom'];
 
+                // Make installed plugins pretty
+                $pluginIdentifier = Str::replace('/', '_', Str::lower($plugin->name));
+                if ($marketplacePluginCache && isset($marketplacePluginCache[$pluginIdentifier])) {
+                    $plugin->name = $marketplacePluginCache[$pluginIdentifier]->name;
+                    $plugin->imageUrl = $marketplacePluginCache[$pluginIdentifier]->imageUrl;
+                    $plugin->description = $marketplacePluginCache[$pluginIdentifier]->excerpt;
+                    $plugin->vendorDisplayName = $marketplacePluginCache[$pluginIdentifier]->vendorDisplayName;
+                    $plugin->vendorId = $marketplacePluginCache[$pluginIdentifier]->vendorId;
+                    $plugin->vendorEmail = $marketplacePluginCache[$pluginIdentifier]->vendorEmail;
+                }
                 $installedPluginsById[$plugin->foldername] = $plugin;
 
             }
@@ -415,7 +429,18 @@ namespace Leantime\Domain\Plugins\Services {
 
             if (isset($pluginArray['data'])) {
                 foreach ($pluginArray['data'] as $plugin) {
-                    $plugins[] = build(new MarketplacePlugin)
+
+                    if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] == 'year') {
+                        $price = $plugin['price'] ?? 0;
+                        $months = 12;
+                        $lowestUserTier = 10;
+                        $perUserMonth = round(($price / $months / $lowestUserTier), 2);
+                        $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                    } else {
+                        $priceString = '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : '');
+                    }
+
+                    $plugins[Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
                         ->set('identifier', $plugin['identifier'] ?? '')
                         ->set('name', $plugin['post_title'] ?? '')
                         ->set('excerpt', $plugin['excerpt'] ?? '')
@@ -423,12 +448,14 @@ namespace Leantime\Domain\Plugins\Services {
                         ->set('vendorDisplayName', $plugin['vendor'] ?? '')
                         ->set('vendorId', $plugin['vendor_id'] ?? '')
                         ->set('vendorEmail', $plugin['vendor_email'] ?? '')
-                        ->set('startingPrice', '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : ''))
+                        ->set('startingPrice', $priceString)
                         ->set('rating', $plugin['rating'] ?? '')
                         ->set('version', $plugin['version'] ?? '')
                         ->get();
                 }
             }
+
+            Cache::store('installation')->set('plugins.marketplacePlugins', $plugins);
 
             return $plugins;
         }

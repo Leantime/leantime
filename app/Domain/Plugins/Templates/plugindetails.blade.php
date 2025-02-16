@@ -6,7 +6,7 @@
             <img src="{{ $plugin->icon }}" width="175" height="175" class="tw-rounded">
             <div class="tw-flex tw-flex-col tw-gap-base">
                 <h2 class="tw-text-2xl tw-flex tw-flex-col tw-gap-base">
-                    <span>{{ $plugin->name }}</span>
+                    <span>{!! $plugin->name !!}</span>
                     @if (!empty($plugin->vendorDisplayName) && !empty($plugin->vendorId))
                         <small>{{ __('text.by') }} <a href="/plugins/marketplace?vendor_id={{ $plugin->vendorId }}">{{ $plugin->vendorDisplayName }}</a></small>
                     @endif
@@ -22,7 +22,7 @@
 
                     @if (! empty($plugin->categories))
                         <strong>Categories:</strong> @foreach ($plugin->categories as $category)
-                            <x-global::badge :asLink="true" :url="'/plugins/marketplace?category=' . $category['slug']">{{ $category['name'] }}</x-global::badge>
+                            <x-global::badge :asLink="false">{{ $category['name'] }}</x-global::badge>
                         @endforeach<br>
                     @endif
 
@@ -52,7 +52,9 @@
 
             <x-slot:contents>
                 @if (! empty($plugin->description))
-                    <x-global::tabs.content name="overview"><div class="tw-max-w-prose">{!! $plugin->description !!}</div></x-global::tabs.content>
+                    <x-global::tabs.content name="overview">
+                        <div class="tw-max-w-prose mce-content-body">{!! $plugin->description !!}</div>
+                    </x-global::tabs.content>
                 @endif
 
                 @if ($plugin->reviewCount > 0)
@@ -110,7 +112,9 @@
                             @if (! empty($formError))
                                 <div class="tw-text-red-500">{!! $formError !!}</div>
                             @endif
-                            <form
+
+                            @if($isBundle === false)
+                                <form
                                 class="tw-flex tw-gap-2 tw-items-center"
                                 hx-post="{{ BASE_URL }}/hx/plugins/details/install"
                                 hx-swap="outerHTML"
@@ -139,6 +143,9 @@
                                     <x-global::loader id="loadingthis" size="25px" />
                                 </div>
                             </form>
+                            @endif
+
+
                         </div>
                     @endif
                 @else
