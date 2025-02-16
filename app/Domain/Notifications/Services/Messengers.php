@@ -289,7 +289,7 @@ class Messengers
 
         $message = [
             [
-                'color' => '#1b75bb',
+                'color' => '#006d9f',
                 'fallback' => $notification->message,
                 'pretext' => $notification->message,
                 'title' => $headline,

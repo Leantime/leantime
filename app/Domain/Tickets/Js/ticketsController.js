@@ -745,7 +745,7 @@ leantime.ticketsController = (function () {
                 '#4B7811',
                 '#fdab3d',
                 '#1bbbb1',
-                '#1B75BB',
+                '#006d9f',
                 '#124F7D',
                 '#082236',
                 '#5F0F40',
