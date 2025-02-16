@@ -19,6 +19,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\RedirectResponse;
     use Symfony\Component\HttpFoundation\Response;
+    use Illuminate\Support\Facades\Cache;
 
     class Show extends Controller
     {
@@ -57,7 +58,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reactionsService = $reactionsService;
             $this->settingsSvc = $settingsSvc;
 
-            session(['lastPage' => BASE_URL.'/dashboard/show']);
+            session(['lastPage' => BASE_URL . '/dashboard/show']);
         }
 
         /**
@@ -67,17 +68,17 @@ namespace Leantime\Domain\Dashboard\Controllers {
         {
             $currentProjectId = $this->projectService->getCurrentProjectId();
             if ($currentProjectId === 0) {
-                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
+                return FrontcontrollerCore::redirect(BASE_URL . '/dashboard/home');
             }
 
             $project = $this->projectService->getProject($currentProjectId);
             if (isset($project['id']) === false) {
-                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
+                return FrontcontrollerCore::redirect(BASE_URL . '/dashboard/home');
             }
 
             $projectRedirectFilter = self::dispatchFilter('dashboardRedirect', '/dashboard/show', ['type' => $project['type']]);
             if ($projectRedirectFilter != '/dashboard/show') {
-                return FrontcontrollerCore::redirect(BASE_URL.$projectRedirectFilter);
+                return FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
             }
 
             [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($currentProjectId);
@@ -104,6 +105,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
             //Milestones
 
             $allProjectMilestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => session('currentProject')]);
+            Cache::put('milestones', $allProjectMilestones, 3600);
+
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(CommentRepository::class);
@@ -125,7 +128,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             }, $comments->getComments('project', $currentProjectId, 0));
 
             $url = parse_url(CURRENT_URL);
-            $this->tpl->assign('delUrlBase', $url['scheme'].'://'.$url['host'].$url['path'].'?delComment='); // for delete comment
+            $this->tpl->assign('delUrlBase', $url['scheme'] . '://' . $url['host'] . $url['path'] . '?delComment='); // for delete comment
 
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $currentProjectId));
@@ -140,10 +143,10 @@ namespace Leantime\Domain\Dashboard\Controllers {
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($currentProjectId));
             $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session('userdata.id')));
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
+            $this->tpl->assign('efforts', Cache::put('efforts', $this->ticketService->getEffortLabels(), 3600));
+            $this->tpl->assign('priorities', Cache::put('priorities', $this->ticketService->getPriorityLabels(), 3600));
             $this->tpl->assign('types', $this->ticketService->getTicketTypes());
-            $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
+            $this->tpl->assign('statusLabels', Cache::put('statusLabels', $this->ticketService->getStatusLabels(), 3600));
 
             return $this->tpl->display('dashboard.show');
         }
@@ -164,7 +167,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success', 'quickticket_created');
                     }
 
-                    return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
+                    return Frontcontroller::redirect(BASE_URL . '/dashboard/show');
                 }
             }
 
@@ -180,7 +183,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 }
             }
 
-            return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
+            return Frontcontroller::redirect(BASE_URL . '/dashboard/show');
         }
     }
 }

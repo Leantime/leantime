@@ -9,7 +9,7 @@
 ])
 
 <x-global::forms.select
-    name='status'
+    name='milestoneid'
     search="false"
     :dropdown-position="$dropdownPosition"
     :label-position="$labelPosition"
@@ -43,7 +43,7 @@
         <x-global::forms.select.option
 
             :value="strtolower($milestone->id)"
-            :selected="strtolower($milestone->id) == strtolower( $ticket->milestoneId ?? '') ? 'true' : 'false'">
+            :selected="strtolower($milestone->id) == strtolower( $ticket->milestoneid ?? '')">
 
             @if($variant == 'chip')
 
