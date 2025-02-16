@@ -1601,7 +1601,7 @@ namespace Leantime\Domain\Tickets\Services {
                 ];
                 $notification->entity = $ticket;
                 $notification->module = 'tickets';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
                 $notification->authorId = session('userdata.id');
                 $notification->message = $message;

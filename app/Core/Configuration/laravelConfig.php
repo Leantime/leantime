@@ -17,7 +17,7 @@ return [
 
             \Leantime\Core\Providers\Cache::class, // \Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Core\Providers\Redis::class,
-            \Laravel\Socialite\SocialiteServiceProvider::class,
+            \SocialiteProviders\Manager\ServiceProvider::class,
 
             \Leantime\Core\Providers\ConsoleSupport::class,
             \Illuminate\Cookie\CookieServiceProvider::class,

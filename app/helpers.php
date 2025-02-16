@@ -137,10 +137,9 @@ if (! function_exists('dtHelper')) {
     /**
      * Get a singleton instance of the DateTimeHelper class.
      *
-     *
      * @throws BindingResolutionException
      */
-    function dtHelper(): ?DateTimeHelper
+    function dtHelper(): DateTimeHelper
     {
         if (! app()->bound(DateTimeHelper::class)) {
             app()->singleton(DateTimeHelper::class);

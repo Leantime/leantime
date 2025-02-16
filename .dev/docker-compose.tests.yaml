@@ -10,17 +10,18 @@ services:
       - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
       - "./test.env:/var/www/html/config/.env"
     ports:
-        - "8002:8080" #Using different ports for testing, so we don't have to worry about collision
-        - "44302:443" #Using different ports for testing, so we don't have to worry about collision (available range is 44300–44399)
+      - "8002:8080"
+      - "44302:443"
     environment:
-      LEAN_DB_HOST: 'db'
-      LEAN_DB_USER: 'root'
-      LEAN_DB_PASSWORD: 'leantime'
+      LEAN_ENV: 'testing'
+      LEAN_DB_HOST: 'leantime-db'
       LEAN_DB_DATABASE: 'leantime_test'
-      LEAN_DB_PORT: '3306'
+    env_file:
+      - test.env
     depends_on:
-      db:
+      leantime-db:
         condition: service_healthy
-  db:
+
+  leantime-db:
     environment:
       MYSQL_DATABASE: leantime_test

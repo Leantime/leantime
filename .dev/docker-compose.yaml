@@ -1,8 +1,8 @@
 
 
 services:
-  leantime:
-    container_name: leantime
+  leantime-dev:
+    container_name: leantime-dev
     build: .
     ports:
       - "5080:8080" #Using ports that are hopefully available. format is: 80XX
@@ -15,17 +15,17 @@ services:
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
     environment:
-      LEAN_DB_HOST: 'leantime_db'
+      LEAN_DB_HOST: 'leantime-db'
       LEAN_DB_USER: 'leantime'
       LEAN_DB_PASSWORD: 'leantime'
       LEAN_DB_DATABASE: 'leantime'
       LEAN_DB_PORT: '3306'
 
     depends_on:
-      leantime_db:
+      leantime-db:
         condition: service_healthy
     networks:
-      - leantime
+      - leantime_internal
       - traefik
     labels:
       - "traefik.enable=true"
@@ -38,15 +38,14 @@ services:
       - "traefik.http.routers.leantime.tls=true"
 
 
-  leantime_redis:
-    container_name: leantime_redis
+  leantime-redis:
+    container_name: leantime-redis
     image: redis:4.0
     ports:
       - "6379"
     networks:
-      - leantime
-  leantime_db:
-    container_name: leantime_db
+      - leantime_internal
+  leantime-db:
     image: mysql:8.0
     ports:
       - "3306"
@@ -56,53 +55,53 @@ services:
       MYSQL_PASSWORD: 'leantime'
       MYSQL_DATABASE: 'leantime'
     networks:
-      - leantime
+      - leantime_internal
     volumes:
-      - leantime_mysql:/var/lib/mysql:rw
+      - leantime-mysql:/var/lib/mysql:rw
     healthcheck:
       test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
       interval: 5s
       timeout: 5s
       retries: 20
 
-#  selenium:
-#    image: selenium/standalone-chromium
-#    shm_size: 2gb
-#    environment:
-#      - SCREEN_WIDTH=2560
-#      - SCREEN_HEIGHT=1440
-#    ports:
-#      - "4444"
-#      - "7900"
-#    networks:
-#      - leantime
-#  maildev:
-#    image: maildev/maildev
-#    environment:
-#      - MAILDEV_SMTP_PORT=465
-#      - MAILDEV_WEB_PORT=8081
-#    ports:
-#      - "8081"
-#    networks:
-#      - leantime
-#  s3ninja:
-#    image: scireum/s3-ninja
-#    ports:
-#      - "8083"
-#    networks:
-#      - leantime
-#    volumes:
-#      - s3ninja-data:/home/sirius/data
+  selenium:
+    image: selenium/standalone-chromium
+    shm_size: 2gb
+    environment:
+      - SCREEN_WIDTH=2560
+      - SCREEN_HEIGHT=1440
+    ports:
+      - "4444"
+      - "7900"
+    networks:
+      - leantime_internal
+  maildev:
+    image: maildev/maildev
+    environment:
+      - MAILDEV_SMTP_PORT=465
+      - MAILDEV_WEB_PORT=8081
+    ports:
+      - "8081"
+    networks:
+      - leantime_internal
+  s3ninja:
+    image: scireum/s3-ninja
+    ports:
+      - "8083"
+    networks:
+      - leantime_internal
+    volumes:
+      - s3ninja-data:/home/sirius/data
 
 
 networks:
-  leantime:
+  leantime_internal:
     driver: bridge
-    name: leantime
+    name: leantime_internal
   traefik:
     external: true
     name: traefik
 
 volumes:
-  leantime_mysql:
+  leantime-mysql:
   s3ninja-data:

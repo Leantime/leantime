@@ -40,6 +40,8 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public ?bool $installed;
 
+    public ?string $startingPrice;
+
     public function getCardDesc(): string
     {
         return $this->description ??= '';
@@ -121,5 +123,14 @@ class InstalledPlugin implements PluginDisplayStrategy
         $imageData = base64_encode(file_get_contents($image));
 
         return 'data: '.mime_content_type($image).';base64,'.$imageData;
+    }
+
+    public function getPrice(): string
+    {
+        if (! empty($this->startingPrice)) {
+            return __('text.starting_at').' '.$this->startingPrice;
+        }
+
+        return '';
     }
 }

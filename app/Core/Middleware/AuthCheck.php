@@ -191,7 +191,7 @@ class AuthCheck
             return false;
         }
 
-        if (count($currentPath) == 1) {
+        if (count($currentPath) === 1) {
             if (in_array($currentPath[0], $this->publicActions)) {
                 return true;
             }

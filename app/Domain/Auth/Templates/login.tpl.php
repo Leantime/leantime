@@ -54,7 +54,9 @@ $redirectUrl = $tpl->get('redirectUrl');
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
 
         <div class="">
-            <center class="tw-uppercase"><?php echo $tpl->language->__('label.or'); ?></center><br />
+            <div style="margin-top:20px; border-bottom:1px solid #ccc; with:100%; height:10px; overflow:show; text-align:center; margin-bottom:40px;">
+                <p style="text-align:center; display:inline-block; background:var(--secondary-background); padding:0px 5px;"><?php echo $tpl->language->__('label.or_login_with'); ?></p>
+            </div>
             <a href="<?= BASE_URL ?>/oidc/login" style="width:100%;" class="btn btn-primary">
             <?php echo $tpl->language->__('buttons.oidclogin'); ?>
             </a>

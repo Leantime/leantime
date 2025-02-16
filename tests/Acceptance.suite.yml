@@ -23,7 +23,7 @@ modules:
           goog:chromeOptions:
             args: [ "--headless" ]
     - Db:
-        dsn: "mysql:host=db;port=3306;dbname=leantime_test"
+        dsn: "mysql:host=leantime-db;port=3306;dbname=leantime_test"
         user: root
         password: leantime
         populate: true
