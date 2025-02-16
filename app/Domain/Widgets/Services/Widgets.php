@@ -192,6 +192,7 @@ class Widgets
 
                 if (isset($this->availableWidgets[$widget['id']])) {
                     $widget['name'] = $this->availableWidgets[$widget['id']]->name;
+                    $widget['widgetUrl'] = $this->availableWidgets[$widget['id']]->widgetUrl;
                     $widget['widgetBackground'] = $this->availableWidgets[$widget['id']]->widgetBackground;
                     $widget['description'] = $this->availableWidgets[$widget['id']]->description;
                     $widget['widgetTrigger'] = $this->availableWidgets[$widget['id']]->widgetTrigger;
