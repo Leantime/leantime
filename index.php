@@ -1,11 +1,11 @@
 <?php
 
 // Define the public path
-define('PUBLIC_PATH', __DIR__ . '/public');
+define('PUBLIC_PATH', __DIR__.'/public');
 
 // Check if the requested file exists in public directory
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$publicFile = PUBLIC_PATH . $requestUri;
+$publicFile = PUBLIC_PATH.$requestUri;
 
 if (file_exists($publicFile) && is_file($publicFile)) {
     // If it's a static file in public, serve it directly
@@ -21,7 +21,7 @@ if (file_exists($publicFile) && is_file($publicFile)) {
     ];
 
     if (isset($mimeTypes[$extension])) {
-        header('Content-Type: ' . $mimeTypes[$extension]);
+        header('Content-Type: '.$mimeTypes[$extension]);
     }
 
     readfile($publicFile);
@@ -29,4 +29,4 @@ if (file_exists($publicFile) && is_file($publicFile)) {
 }
 
 // Otherwise, include the main application entry point
-require PUBLIC_PATH . '/index.php';
+require PUBLIC_PATH.'/index.php';

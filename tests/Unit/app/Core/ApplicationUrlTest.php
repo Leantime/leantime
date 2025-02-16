@@ -35,9 +35,9 @@ class ApplicationUrlTest extends \Unit\TestCase
 
     public function test_base_url_is_set_correctly_from_config(): void
     {
-        // Test default behavior (no LEAN_APP_URL set)
-        $this->assertEquals('http://localhost', BASE_URL);
-        $this->assertEquals('http://localhost', $this->config->get('app.url'));
+        // Test default behavior
+        $this->assertEquals('https://leantime-dev', BASE_URL);
+        $this->assertEquals('https://leantime-dev', $this->config->get('app.url'));
 
         // Test with LEAN_APP_URL set
         putenv('LEAN_APP_URL=https://example.com');

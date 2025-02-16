@@ -6,7 +6,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 // Don't run the script unless using the 'run' command
-if (!isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
+if (! isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
     return;
 }
 
@@ -88,7 +88,7 @@ $bootstrapper = get_class(new class
             "--user=$user",
             "--password=$pass",
             '-e',
-            "CREATE DATABASE IF NOT EXISTS leantime_test;",
+            'CREATE DATABASE IF NOT EXISTS leantime_test;',
         ], ['cwd' => DEV_ROOT]);
     }
 

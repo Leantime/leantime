@@ -94,8 +94,10 @@ class AuthCheck
         return $this->authenticateWeb($request, $guards, $loginRedirect, $next);
     }
 
-    protected function authenticateWeb($request, array $guards, $loginRedirect, $next)
+    protected function authenticateWeb(IncomingRequest $request, array $guards, string $loginRedirect, Closure $next): bool|Response
     {
+        $authenticated = false;
+        $response = null;
 
         if (empty($guards)) {
             $guards = [null];
@@ -105,22 +107,26 @@ class AuthCheck
             if ($this->auth->guard($guard)->check()) {
                 $this->auth->shouldUse($guard);
 
-                // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
-                if (session('userdata.twoFAEnabled')
-                    && ! session('userdata.twoFAVerified')) {
-                    return $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
+                // Check two-factor authentication
+                if (session('userdata.twoFAEnabled') && ! session('userdata.twoFAVerified')) {
+                    $response = $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '', $request) ?: $next($request);
+                } else {
+                    $authenticated = true;
                 }
 
-                return true;
+                break;
             }
         }
 
-        if ($request instanceof APIRequest) {
-            return new Response(json_encode(['error' => 'Invalid API Key']), 401);
+        if (! $authenticated && ! $response) {
+            if ($request instanceof APIRequest) {
+                $response = new Response(json_encode(['error' => 'Invalid API Key']), 401);
+            } else {
+                $response = $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
+            }
         }
 
-        return $this->redirectWithOrigin($loginRedirect, $request->getRequestUri(), $request) ?: $next($request);
-
+        return $authenticated ? true : $response;
     }
 
     protected function authenticateApi($request, array $guards)
@@ -152,14 +158,14 @@ class AuthCheck
         $originClean = Str::replaceStart('/', '', $origin);
         $queryParams = ! empty($origin) && $origin !== '/' ? '?'.http_build_query(['redirect' => $originClean]) : '';
 
-        if ($request->getCurrentRoute() == $route) {
+        if ($request->getCurrentRoute() === $route) {
             return false;
         }
 
         return new RedirectResponse($destination.$queryParams);
     }
 
-    public function setCookie($response)
+    public function setCookie($response): void
     {
 
         // Set cookie to increase session timeout
@@ -179,32 +185,24 @@ class AuthCheck
         ));
     }
 
-    public function isPublicController($currentPath)
+    public function isPublicController($currentPath): bool
     {
 
         // path comes in with dots as separator.
         // We only need to compare the first 2 segments
-        $currentPath = explode('.', $currentPath);
-
-        // Todo: We may want to take out hx if we have public htmx paths
-        if (! is_array($currentPath)) {
+        if (empty($currentPath)) {
             return false;
         }
 
-        if (count($currentPath) === 1) {
-            if (in_array($currentPath[0], $this->publicActions)) {
-                return true;
-            }
+        $pathSegments = explode('.', $currentPath);
 
-            return false;
-        }
+        $routeToCheck = match (count($pathSegments)) {
+            0 => null,
+            1 => $pathSegments[0],
+            default => $pathSegments[0].'.'.$pathSegments[1],
+        };
 
-        $controllerPath = $currentPath[0].'.'.$currentPath[1];
-        if (in_array($controllerPath, $this->publicActions)) {
-            return true;
-        }
-
-        return false;
+        return $routeToCheck !== null && in_array($routeToCheck, $this->publicActions, true);
 
     }
 }

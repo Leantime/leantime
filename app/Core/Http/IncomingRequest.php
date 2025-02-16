@@ -57,11 +57,11 @@ class IncomingRequest extends \Illuminate\Http\Request
         return parent::createFromBase(parent::createFromGlobals());
     }
 
-    public static function capture()
+    public static function capture(): IncomingRequest
     {
         parent::enableHttpMethodParameterOverride();
 
-        $request = parent::createFromGlobals();
+        $request = self::createFromGlobals();
         $requestClass = RequestTypeDetector::detect($request);
 
         return $requestClass::createFromBase($request);
@@ -72,7 +72,7 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getFullUrl(): string
     {
-        return parent::getSchemeAndHttpHost().$this->getBasePath().$this->getPathInfo();
+        return $this->getSchemeAndHttpHost().$this->getBasePath().$this->getPathInfo();
     }
 
     public function getBasePath(): string
@@ -81,19 +81,19 @@ class IncomingRequest extends \Illuminate\Http\Request
         // Early in the stack we may not have BASE_URL yet.
         // Let's have symfony deal with it
         if (! defined('BASE_URL')) {
-            return parent::prepareBasePath();
+            return $this->prepareBasePath();
         }
 
         // Will always only return the domain portion
         if (! $this->basePathCalculated) {
-            $schemeHost = parent::getSchemeAndHttpHost();
+            $schemeHost = $this->getSchemeAndHttpHost();
             $baseUrl = rtrim(BASE_URL, '/');
 
             // Extract potential subfolder from BASE_URL
             if ($baseUrl !== $schemeHost) {
                 $this->basePath = substr($baseUrl, strlen($schemeHost));
             } else {
-                $this->basePath = parent::prepareBasePath();
+                $this->basePath = $this->prepareBasePath();
             }
 
             $this->basePathCalculated = true;
@@ -124,8 +124,6 @@ class IncomingRequest extends \Illuminate\Http\Request
     /**
      * Gets the request URI (path behind domain name)
      * Will adjust for subfolder installations
-     *
-     * @throws BindingResolutionException
      */
     public function getRequestUri(): string
     {
@@ -157,12 +155,12 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function getRequestParams(?string $method = null): array
     {
-        $method ??= parent::method();
+        $method ??= $this->method();
         $method = strtoupper($method);
         $patch_vars = [];
 
-        if ($method == 'PATCH') {
-            parse_str(parent::getContent(), $patch_vars);
+        if ($method === 'PATCH') {
+            parse_str($this->getContent(), $patch_vars);
         }
 
         $params = $this->query->all();
@@ -183,7 +181,7 @@ class IncomingRequest extends \Illuminate\Http\Request
      *
      * @Override
      */
-    public function fullUrl()
+    public function fullUrl(): string
     {
         return $this->getFullUrl();
     }
@@ -207,7 +205,7 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function isHtmxRequest(): bool
     {
-        return ! empty($this->headers->get('Hx-Request')) ? true : false;
+        return ! empty($this->headers->get('Hx-Request'));
     }
 
     /**
@@ -217,12 +215,8 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function isBoostedHtmxRequest(): bool
     {
-        if ($this->isHtmxRequest() &&
-            $this->headers->get('Hx-Boost') == 'true') {
-            return true;
-        }
-
-        return false;
+        return $this->isHtmxRequest() &&
+            $this->headers->get('Hx-Boost') === 'true';
     }
 
     /**
@@ -232,17 +226,13 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function isUnboostedHtmxRequest(): bool
     {
-        if ($this->isHtmxRequest() &&
-            empty($this->headers->get('Hx-Boost'))) {
-            return true;
-        }
-
-        return false;
+        return $this->isHtmxRequest() &&
+            empty($this->headers->get('Hx-Boost'));
     }
 
     public function getCurrentRoute()
     {
-        if ($this->currentRoute == null) {
+        if ($this->currentRoute === null) {
             $path = $this->getPathInfo();
             $path = trim($path, '/');
 
@@ -258,21 +248,21 @@ class IncomingRequest extends \Illuminate\Http\Request
         return $this->currentRoute;
     }
 
-    public function segments()
+    public function segments(): array
     {
         $segments = explode('/', $this->decodedPath());
 
-        return array_values(array_filter($segments, function ($value) {
+        return array_values(array_filter($segments, static function ($value) {
             return $value !== '';
         }));
     }
 
-    public function decodedPath()
+    public function decodedPath(): string
     {
         return rawurldecode($this->path());
     }
 
-    public function path()
+    public function path(): string
     {
         $pattern = trim($this->getPathInfo(), '/');
 
@@ -284,7 +274,7 @@ class IncomingRequest extends \Illuminate\Http\Request
         return $this->baseUrl ??= $this->prepareBaseUrl();
     }
 
-    public function setCurrentRoute($route)
+    public function setCurrentRoute($route): void
     {
         $this->currentRoute = $route;
     }
@@ -320,15 +310,18 @@ class IncomingRequest extends \Illuminate\Http\Request
     {
         $completeName ??= $this->getCurrentRoute();
         $actionParts = explode('.', empty($completeName) ? $this->currentRoute : $completeName);
+        $actionName = '';
 
         // If no action name was given, call index controller
-        if (is_array($actionParts) && count($actionParts) == 1) {
-            return 'index';
-        } elseif (is_array($actionParts) && count($actionParts) == 2) {
-            return $actionParts[1];
+        if (is_array($actionParts) && count($actionParts) === 1) {
+            $actionName = 'index';
         }
 
-        return '';
+        if (is_array($actionParts) && count($actionParts) === 2) {
+            $actionName = $actionParts[1];
+        }
+
+        return $actionName;
     }
 
     /**
@@ -341,10 +334,5 @@ class IncomingRequest extends \Illuminate\Http\Request
         $requestUri = $this->getRequestUri();
 
         return str_starts_with(strtolower($requestUri), '/api/jsonrpc');
-    }
-
-    public function user($guard = null)
-    {
-        return parent::user($guard);
     }
 }

@@ -36,9 +36,9 @@ class HttpKernel extends Kernel
         // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         // \Illuminate\Auth\Middleware\Authenticate::class,
         // \Illuminate\Session\Middleware\AuthenticateSession::class,
-        //\Illuminate\Routing\Middleware\SubstituteBindings::class,
+        // \Illuminate\Routing\Middleware\SubstituteBindings::class,
         // \Illuminate\Auth\Middleware\Authorize::class,
-        //\App\Http\Middleware\TrustHosts::class,
+        // \App\Http\Middleware\TrustHosts::class,
 
         // \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         // \Illuminate\Cookie\Middleware\EncryptCookies::class,
@@ -48,14 +48,12 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\Installed::class,
         \Leantime\Core\Middleware\Updated::class,
 
-        //All enabled plugins will be available from here on out
+        // All enabled plugins will be available from here on out
         \Leantime\Core\Middleware\LoadPlugins::class,
 
         \Leantime\Core\Middleware\TrustProxies::class,
         \Leantime\Core\Middleware\InitialHeaders::class,
         // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-
-
 
         \Leantime\Core\Middleware\AuthCheck::class,
         \Leantime\Core\Middleware\AuthenticateSession::class,

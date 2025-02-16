@@ -3,7 +3,6 @@
 namespace Leantime\Core\Events {
 
     use Exception;
-    use Illuminate\Contracts\Container\BindingResolutionException;
 
     trait DispatchesEvents
     {
@@ -11,9 +10,6 @@ namespace Leantime\Core\Events {
 
         /**
          * dispatches an event with context
-         *
-         *
-         * @throws BindingResolutionException
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int|null $function = null): void
         {
@@ -29,9 +25,6 @@ namespace Leantime\Core\Events {
 
         /**
          * dispatches a filter with context
-         *
-         *
-         * @throws BindingResolutionException
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int|null $function = null): mixed
         {
@@ -78,7 +71,7 @@ namespace Leantime\Core\Events {
          */
         private static function set_class_context(): string
         {
-            return str_replace('\\', '.', strtolower(get_called_class()));
+            return str_replace('\\', '.', strtolower(static::class));
         }
 
         /**
@@ -98,9 +91,7 @@ namespace Leantime\Core\Events {
 
             // Position 0 would be the line
             // that called this function
-            $function = $trace[$tracePointer]['function'];
-
-            return $function;
+            return $trace[$tracePointer]['function'];
         }
     }
 }
