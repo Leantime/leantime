@@ -99,6 +99,10 @@
 }
 
 
+.leftmenu .menu li.active {
+    background: var(--main-menu-link-hover-bg);
+    border-radius: 1.5rem
+}
 /*
 .bigProjectSelector {
     display:block;
