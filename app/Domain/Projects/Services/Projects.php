@@ -1211,7 +1211,7 @@ class Projects
                 foreach ($canvasItems as $newItem) {
                     $newCanvasItemValues = [
                         'relates' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['relates']] ?? '') : '',
-                        'parent' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['parent']] ?? '') : ''
+                        'parent' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['parent']] ?? '') : '',
 
                     ];
 
