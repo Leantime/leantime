@@ -341,3 +341,106 @@ Start by identifying all the frontend requests that directly interact with the `
    - Provide guidelines on how to add new features using this refactored approach.
 
 By following these steps, you can effectively refactor frontend requests to either use htmx or a JSON-RPC API, reducing code duplication and centralizing backend logic.
+
+
+# Fix for Issue
+To address the GitHub issue of refactoring frontend requests to use either HTMX calls or a JSON-RPC API for reducing code duplication in the `api/` module, we need to consider the following steps:
+
+### Steps for Refactoring:
+
+1. **Identify Current Request Patterns:**
+   - Audit the current frontend code to identify all API requests and determine if they are directly accessing different endpoints or if there is any logic that can be centralized through HTMX or JSON-RPC.
+
+2. **Choose Between HTMX and JSON-RPC:**
+   - **HTMX** is suitable for making asynchronous requests using HTML attributes, allowing more straightforward integration with existing HTML without full JavaScript applications.
+   - **JSON-RPC** provides a structured, remote procedure call approach where you can define methods and structures for server interaction, offering more control and uniformity.
+
+3. **Define JSON-RPC Methods (if using JSON-RPC):**
+   - If opting for JSON-RPC, define methods that map to the existing functionalities in the backend. You can create a service that manages these requests.
+
+4. **Implement HTMX for Non-Uniform Requests:**
+   - For requests that are more about simple data fetching or updating elements without complex logic, HTMX can be directly integrated into the frontend.
+
+5. **Refactor the API Module:**
+   - Create a centralized module or service in the frontend that handles all requests. This module will interface with either HTMX or JSON-RPC depending on what you decide to use primarily.
+
+6. **Update Frontend Code:**
+   - Replace all existing direct fetch/AJAX calls in the frontend with calls to the new centralized module.
+   - This involves removing duplicates and ensuring consistency across different components/pages.
+
+7. **Testing:**
+   - Thoroughly test all refactored interactions to ensure they behave as expected. Integration tests will be particularly useful here.
+
+### Example Code Fix:
+
+Assuming the original frontend code made direct fetch calls like so:
+
+```javascript
+// Original direct call
+function fetchUserData(userId) {
+    fetch(`/api/user/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Handle data
+        }).catch(error => {
+            console.error('Error fetching user data:', error);
+        });
+}
+```
+
+### Refactored using JSON-RPC:
+
+1. **Backend JSON-RPC Method Definition:**
+   ```python
+   # Assuming a framework like FastAPI with Starlette
+   from fastapi import APIRouter, Depends
+   router = APIRouter()
+
+   @router.post("/rpc")
+   async def json_rpc(request: Request):
+       payload = await request.json()
+       method = payload.get("method")
+       if method == "getUserData":
+           user_id = payload.get("params", {}).get("userId")
+           if user_id:
+               user_data = await get_user_data(user_id)  # Function that fetches user data
+               return {"result": user_data}
+       return {"error": "Method not found"}, 404
+   ```
+
+2. **Frontend JSON-RPC Integration:**
+   ```javascript
+   function rpcCall(method, params) {
+       return fetch('/rpc', {
+           method: 'POST',
+           headers: {'Content-Type': 'application/json'},
+           body: JSON.stringify({ method, params })
+       }).then(response => response.json());
+   }
+
+   function fetchUserData(userId) {
+       return rpcCall('getUserData', { userId }).then(data => {
+           // Handle data
+       }).catch(error => {
+           console.error('Error fetching user data:', error);
+       });
+   }
+   ```
+
+3. **Using HTMX (if applicable):**
+
+   Ensure your HTML elements are set up to handle HTMX requests, for example:
+
+   ```html
+   <button id="load-user" hx-get="/rpc" hx-method="POST" hx-trigger="click"
+           hx-data='{"method": "getUserData", "params": {"userId": "123"}}' 
+           hx-target="#user-details" hx-swap="outerHTML">
+       Load User Data
+   </button>
+   
+   <div id="user-details"></div>
+   ```
+
+### Conclusion:
+
+The refactored solution aims to streamline how frontend requests are made either through HTMX or JSON-RPC, centralizing logic and reducing code duplication. By these changes, the codebase becomes more maintainable, scalable, and consistent with contemporary practices. Be sure to document these changes properly for future reference and collaboration.
