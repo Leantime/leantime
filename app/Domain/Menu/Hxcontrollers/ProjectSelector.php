@@ -53,7 +53,7 @@ class ProjectSelector extends HtmxController
 
         $projectSelectFilter = [
             'groupBy' => $_POST['groupBy'] ?? 'none',
-            'client' => (int) $_POST['client'] ?? null,
+            'client' => (int) ($_POST['client'] ?? null),
         ];
 
         session(['usersettings.projectSelectFilter' => $projectSelectFilter]);

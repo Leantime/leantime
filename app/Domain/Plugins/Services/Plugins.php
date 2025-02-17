@@ -430,7 +430,7 @@ namespace Leantime\Domain\Plugins\Services {
             if (isset($pluginArray['data'])) {
                 foreach ($pluginArray['data'] as $plugin) {
 
-                    $priceString = "";
+                    $priceString = '';
                     if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] === 'year') {
                         $price = $plugin['price'] ?? 0;
                         $months = 12;

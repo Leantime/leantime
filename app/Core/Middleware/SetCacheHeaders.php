@@ -56,16 +56,8 @@ class SetCacheHeaders
     {
         $response = $next($request);
 
-        // For authenticated routes, set strict no-cache headers
-        if ($this->authService->loggedIn()) {
-            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-            $response->headers->set('Pragma', 'no-cache');
-            $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
-
-            return $response;
-        }
-
-        if (! $request->isMethodCacheable() || (! $response->getContent() && ! $response instanceof BinaryFileResponse && ! $response instanceof StreamedResponse)) {
+        if (! $request->isMethodCacheable()
+            || (! $response->getContent() && ! $response instanceof BinaryFileResponse && ! $response instanceof StreamedResponse)) {
             return $response;
         }
 
@@ -73,6 +65,7 @@ class SetCacheHeaders
             $options = $this->parseOptions($options);
         }
 
+        // Controllers can set the cache headers in here.
         if (! $response->isSuccessful()) {
             return $response;
         }

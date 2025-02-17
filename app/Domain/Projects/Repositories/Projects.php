@@ -791,6 +791,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name,
+				zp_projects.modified,
 				zp_relationuserproject.projectRole
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
@@ -857,7 +858,8 @@ namespace Leantime\Domain\Projects\Repositories {
             $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
-				zp_projects.name
+				zp_projects.name,
+                zp_projects.modified
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';
