@@ -1196,7 +1196,7 @@ leantime.ticketsController = (function () {
                     }
 
                 },
-                "dom": '<"top">rt<"bottom"><"clear">',
+                "dom": '<"top">rt<"bottom">p<"clear">',
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,

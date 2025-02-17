@@ -55,11 +55,11 @@
 
 .dataTables_wrapper {
     position: relative;
-    padding-bottom: 150px;
+    padding-bottom: 20px;
 }
 
 .simpleAccordionContainer .dataTables_wrapper{
-    padding-bottom:0px
+    padding-bottom:20px
 }
 
 .dataTables_length, .dataTables_info {
@@ -110,8 +110,10 @@
     border-left: 0px solid var(--neutral);
 }
 
-.dataTables_paginate .paginate_active {
-    background: var(--primary-color);
+.dataTables_paginate .paginate_active,
+.paginate_button.current {
+    background-color: var(--col-title-bg);
+    font-weight:bold;
 }
 
 .dataTables_paginate .paginate_button:hover {
@@ -338,18 +340,14 @@
 .maincontentinner .dataTables_wrapper .dataTables_paginate{
     position:absolute;
     right:0px;
-    top:10px;
+    bottom:10px;
     border:0px;
-    padding:10px;
+    padding:10px 10px;
     font-size:12px;
 }
 
 .maincontentinner .table tr.dt-rowReorder-moving {
     outline:2px solid var(--neutral);
-}
-
-.paginate_button.current {
-    color:#fff;
 }
 
 .maincontentinner .dt-buttons .dt-button-collection {

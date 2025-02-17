@@ -79,14 +79,12 @@ a,a:hover,a:link,a:active,a:focus,
 .leftpanel .leftmenu .nav-tabs ul.projectselector  li.intro a,
 .maincontentinner .ticketDropdown.noBg >a,
 .maincontentinner .ticketDropdown.noBg >a:link,
-.viewDropDown .dropdown-menu li a.active,
-.paginate_button.current:hover
+.viewDropDown .dropdown-menu li a.active
 { color: var(--primary-color); }
 
 
 input[type='submit'],
-button,
-.paginate_button.current
+button
 { background-color:  var(--main-action-bg);  }
 
 input[type='submit']:hover,
