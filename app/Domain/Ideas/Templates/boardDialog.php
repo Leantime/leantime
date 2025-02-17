@@ -17,7 +17,7 @@ $canvasName = $tpl->get('canvasName');
     </div>
     <div class="modal-body">
       <label><?= $tpl->__('label.title_new') ?></label><br />
-      <input type="text" name="canvastitle" value="<?= $canvasTitle?>" placeholder="<?= $tpl->__('input.placeholders.enter_title_for_board') ?>"
+      <input type="text" name="canvastitle" value="<?= $tpl->escape($canvasTitle) ?>" placeholder="<?= $tpl->__('input.placeholders.enter_title_for_board') ?>"
              style="width: 100%"/>
 
     </div>
