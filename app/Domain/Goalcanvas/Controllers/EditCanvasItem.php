@@ -227,7 +227,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_update_message'),
                             session('userdata.name'),
-                            $canvasItem['description']
+                            strip_tags($canvasItem['description'])
                         );
 
                         $notification = app()->make(NotificationModel::class);
@@ -280,7 +280,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_created_message'),
                             session('userdata.name'),
-                            $canvasItem['description']
+                            strip_tags($canvasItem['description'])
                         );
 
                         $notification = app()->make(NotificationModel::class);

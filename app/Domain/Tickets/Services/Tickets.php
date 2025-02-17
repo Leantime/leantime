@@ -1300,7 +1300,7 @@ namespace Leantime\Domain\Tickets\Services {
             if ($result > 0) {
                 $values['id'] = $result;
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$result;
-                $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $params['headline']);
+                $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($params['headline']));
                 $subject = $this->language->__('email_notifications.new_todo_subject');
 
                 $notification = app()->make(NotificationModel::class);
@@ -1445,9 +1445,9 @@ namespace Leantime\Domain\Tickets\Services {
 
                 if ($addTicketResponse !== false) {
                     $values['id'] = $addTicketResponse;
-                    $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, $values['headline']);
+                    $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, strip_tags($values['headline']));
                     $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$addTicketResponse;
-                    $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $values['headline']);
+                    $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($values['headline']));
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
@@ -1545,7 +1545,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             // Update Ticket
             if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
-                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], $values['headline']);
+                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $values['headline']);
 
@@ -1590,9 +1590,9 @@ namespace Leantime\Domain\Tickets\Services {
             // Todo: create events and move notification logic to notification module
             if (isset($params['status']) && $return) {
                 $ticket = $this->getTicket($id);
-                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
+                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
+                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
@@ -1797,9 +1797,9 @@ namespace Leantime\Domain\Tickets\Services {
                 $ticket = $this->getTicket($id);
 
                 if ($ticket) {
-                    $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
+                    $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                     $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                    $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
+                    $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [

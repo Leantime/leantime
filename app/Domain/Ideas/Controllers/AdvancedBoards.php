@@ -73,7 +73,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $users = $this->projectService->getUsersToNotify(session('currentProject'));
 
                     $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
-                    $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), session('userdata.name'), "<a href='".CURRENT_URL."'>".$values['title'].'</a>.<br />');
+                    $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), session('userdata.name'), "<a href='".CURRENT_URL."'>".strip_tags($values['title']).'</a>.<br />');
 
                     $mailer->setHtml($message);
                     // $mailer->sendMail($users, session("userdata.name"));

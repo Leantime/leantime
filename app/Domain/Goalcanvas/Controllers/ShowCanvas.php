@@ -116,7 +116,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_created_message'),
                             session('userdata.name'),
-                            "<a href='".$actual_link."'>".$values['title'].'</a>'
+                            "<a href='".$actual_link."'>".strip_tags($values['title']).'</a>'
                         );
                         $mailer->setHtml($message);
 
@@ -232,7 +232,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             $message = sprintf(
                                 $this->language->__('email_notifications.canvas_imported_message'),
                                 session('userdata.name'),
-                                "<a href='".$actual_link."'>".$canvas[0]['title'].'</a>'
+                                "<a href='".$actual_link."'>".strip_tags($canvas[0]['title']).'</a>'
                             );
                             $mailer->setHtml($message);
 

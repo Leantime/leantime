@@ -249,7 +249,7 @@ namespace Leantime\Domain\Projects\Controllers {
                             $message = sprintf(
                                 $this->language->__('email_notifications.project_update_message'),
                                 session('userdata.name'),
-                                $values['name']
+                                strip_tags($values['name'])
                             );
 
                             $linkLabel = $this->language->__('email_notifications.project_update_cta');

@@ -190,7 +190,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $message = sprintf(
                             $this->language->__('notification.idea_edited'),
                             session('userdata.name'),
-                            $params['description']
+                            strip_tags($params['description'])
                         );
 
                         $notification = app()->make(NotificationModel::class);
@@ -232,7 +232,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $subject = $this->language->__('email_notifications.idea_created_subject');
                         $actual_link = BASE_URL.'#/ideas/ideaDialog/'.$id;
-                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), session('userdata.name'), $params['description']);
+                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), session('userdata.name'), strip_tags($params['description']));
 
                         $notification = app()->make(NotificationModel::class);
                         $notification->url = [
