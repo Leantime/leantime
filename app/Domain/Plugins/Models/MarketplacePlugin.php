@@ -26,6 +26,8 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
     public ?string $startingPrice;
 
+    public ?string $calculatedMonthlyPrice;
+
     public ?array $pricingTiers;
 
     public ?string $license;
@@ -76,6 +78,15 @@ class MarketplacePlugin implements PluginDisplayStrategy
     {
         if (! empty($this->startingPrice)) {
             return __('text.starting_at').' '.$this->startingPrice;
+        }
+
+        return '';
+    }
+
+    public function getCalulatedMonthlyPrice(): string
+    {
+        if (! empty($this->calculatedMonthlyPrice)) {
+            return $this->calculatedMonthlyPrice;
         }
 
         return '';
