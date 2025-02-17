@@ -66,14 +66,14 @@ namespace Leantime\Domain\Comments\Services {
 
                     switch ($module) {
                         case 'ticket':
-                            $subject = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_subject'), $this->language->__('label.'.strtolower($entity->type)), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_message'), session('userdata.name'), $this->language->__('label.'.strtolower($entity->type)), $entity->headline, $values['text']);
+                            $subject = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_subject'), $this->language->__('label.'.strtolower($entity->type)), $entity->id, strip_tags($entity->headline));
+                            $message = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_message'), session('userdata.name'), $this->language->__('label.'.strtolower($entity->type)), strip_tags($entity->headline), strip_tags($values['text']));
                             $linkLabel = $this->language->__('email_notifications.new_comment_todo_cta');
                             $currentUrl = BASE_URL.'#/tickets/showTicket/'.$entity->id;
                             break;
                         case 'project':
-                            $subject = sprintf($this->language->__('email_notifications.new_comment_project_subject'), $entityId, $entity['name']);
-                            $message = sprintf($this->language->__('email_notifications.new_comment_project_message'), session('userdata.name'), $entity['name']);
+                            $subject = sprintf($this->language->__('email_notifications.new_comment_project_subject'), $entityId, strip_tags($entity['name']));
+                            $message = sprintf($this->language->__('email_notifications.new_comment_project_message'), session('userdata.name'), strip_tags($entity['name']));
                             $linkLabel = $this->language->__('email_notifications.new_comment_project_cta');
                             break;
                         default:
