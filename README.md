@@ -236,3 +236,108 @@ This file forms part of the Leantime Software for which the following exception 
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=856e290f-a6e9-4fbd-9b95-a835e39a0492" />
 
+
+
+# Fix for Issue
+To address this GitHub issue, we need to refactor the frontend requests to either use htmx or a JSON-RPC API. This approach will help consolidate backend logic and reduce code duplication in the `api/` module. Here's a step-by-step guide to implementing this refactor:
+
+### Step 1: Identify Current Frontend Requests
+
+Start by identifying all the frontend requests that directly interact with the `api/` module. Look for direct AJAX calls or any other HTTP request methods that bypass a centralized API layer.
+
+### Step 2: Set Up JSON-RPC API
+
+1. **Create JSON-RPC Endpoints:**
+   - Define JSON-RPC endpoints in your backend that correspond to the existing API functions.
+   - Ensure these endpoints handle the same logic previously handled by direct API calls.
+
+2. **Example JSON-RPC Endpoint:**
+
+   ```python
+   from jsonrpc import JSONRPCResponseManager, dispatcher
+
+   @dispatcher.add_method
+   def example_function(param1, param2):
+       # Logic previously in the direct API call
+       return {"result": "success"}
+
+   def handle_request(request):
+       response = JSONRPCResponseManager.handle(
+           request.data, dispatcher
+       )
+       return response
+   ```
+
+3. **Register Endpoints:**
+   - Update your URL routing to include these JSON-RPC endpoints.
+
+### Step 3: Refactor Frontend to Use JSON-RPC
+
+1. **Modify Frontend Requests:**
+   - Replace direct API calls with JSON-RPC requests.
+   - Use a library like `axios` or `fetch` to make these requests.
+
+2. **Example Frontend Code:**
+
+   ```javascript
+   function callExampleFunction(param1, param2) {
+       return fetch('/api/jsonrpc', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               jsonrpc: "2.0",
+               method: "example_function",
+               params: [param1, param2],
+               id: 1,
+           }),
+       })
+       .then(response => response.json())
+       .then(data => {
+           console.log(data.result);
+       })
+       .catch(error => {
+           console.error('Error:', error);
+       });
+   }
+   ```
+
+### Step 4: Implement HTMX Calls
+
+1. **Identify Suitable Requests:**
+   - Determine which frontend interactions can be handled directly by HTMX without the need for a JSON-RPC call.
+
+2. **Convert to HTMX:**
+   - Replace JavaScript-based DOM manipulations with HTMX attributes.
+
+3. **Example HTMX Usage:**
+
+   ```html
+   <button hx-get="/api/some-endpoint" hx-target="#result" hx-swap="outerHTML">
+       Click Me
+   </button>
+
+   <div id="result"></div>
+   ```
+
+### Step 5: Test and Validate
+
+1. **Unit Tests:**
+   - Write or update unit tests for the new JSON-RPC endpoints.
+
+2. **Integration Tests:**
+   - Ensure frontend requests are correctly interacting with the backend.
+
+3. **Manual Testing:**
+   - Test the user interface to ensure all interactions work as expected.
+
+### Step 6: Documentation
+
+1. **Update Documentation:**
+   - Document the new JSON-RPC endpoints and HTMX usage for future reference.
+
+2. **Guide for Developers:**
+   - Provide guidelines on how to add new features using this refactored approach.
+
+By following these steps, you can effectively refactor frontend requests to either use htmx or a JSON-RPC API, reducing code duplication and centralizing backend logic.
