@@ -1087,7 +1087,7 @@ class Projects
             $newTicketId = $ticketIdList[$ticket->id] ?? null;
 
             if ($newTicketId && ! empty($values)) {
-                $this->ticketRepository->patchTicket($ticket, $values);
+                $this->ticketRepository->patchTicket($ticket->id, $values);
             }
         }
 
@@ -1210,8 +1210,9 @@ class Projects
                 $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
                 foreach ($canvasItems as $newItem) {
                     $newCanvasItemValues = [
-                        'relates' => $idMap[$newItem['relates']] ?? '',
-                        'parent' => $idMap[$newItem['parent']] ?? '',
+                        'relates' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['relates']] ?? '') : '',
+                        'parent' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['parent']] ?? '') : ''
+
                     ];
 
                     $canvasRepo->patchCanvasItem($newItem['id'], $newCanvasItemValues);
