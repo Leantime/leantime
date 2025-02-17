@@ -28,7 +28,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
-        $clockedIn = $tpl->get('onTheClock');
+        $onTheClock = $tpl->get('onTheClock');
         ?>
         <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
 
@@ -40,36 +40,42 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
-                <li id="timerContainer-<?php echo $ticket->id; ?>" class="timerContainer">
-                    <a
-                        class="punchIn"
-                        href="javascript:void(0);"
-                        data-value="<?php echo $ticket->id; ?>"
-                        <?php if ($clockedIn !== false) {
-                            echo "style='display:none;'";
-                        }?>
-                    ><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('links.start_work'); ?></a>
-                    <a
-                        class="punchOut"
-                        href="javascript:void(0);"
-                        data-value="<?php echo $ticket->id; ?>"
-                        <?php if ($clockedIn === false || $clockedIn['id'] != $ticket->id) {
-                            echo "style='display:none;'";
-                        }?>
-                    >
-                        <span class="fa fa-stop"></span>
-                        <?php if (is_array($clockedIn)) {
-                            echo sprintf($tpl->__('links.stop_work_started_at'), date($tpl->__('language.timeformat'), $clockedIn['since']));
-                        } else {
-                            echo sprintf($tpl->__('links.stop_work_started_at'), date($tpl->__('language.timeformat'), time()));
-                        }?>
-                    </a>
-                    <span
-                        class='working'
-                        <?php if ($clockedIn === false || $clockedIn['id'] === $ticket->id) {
-                            echo "style='display:none;'";
-                        }?>
-                    ><?php echo $tpl->__('text.timer_set_other_todo'); ?></span>
+                <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
+                    hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
+                    hx-trigger="timerUpdate from:body"
+                    hx-swap="outerHTML"
+                    class="timerContainer">
+
+                    @if ($onTheClock === false)
+                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
+                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
+                           hx-target="#timerHeadMenu"
+                           hx-swap="outerHTML"
+                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"start"}'>
+                            <span class="fa-regular fa-clock"></span> {{ __("links.start_work") }}
+                        </a>
+                    @endif
+
+                    @if ($onTheClock !== false && $onTheClock["id"] == $ticket->id)
+                        <a href="javascript:void(0);" data-value="{{ $ticket->id }}"
+                           hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
+                           hx-target="#timerHeadMenu"
+                           hx-vals='{"ticketId": "{{ $ticket->id }}", "action":"stop"}'
+                           hx-swap="outerHTML">
+                            <span class="fa fa-stop"></span>
+
+                            @if (is_array($onTheClock) == true)
+                                {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
+                            @else
+                                {!! sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time())) !!}
+                            @endif
+                        </a>
+                    @endif
+                    @if ($onTheClock !== false && $onTheClock["id"] != $ticket->id)
+                        <span class='working'>
+            {{ __("text.timer_set_other_todo") }}
+        </span>
+                    @endif
                 </li>
             </ul>
         </div>
