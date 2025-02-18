@@ -14,7 +14,7 @@ Built with ADHD, dyslexia and autism in mind. 🧠<br />
 🔄 A perfect alternative to ClickUp, Monday, or Asana<br />
 🌐 [https://leantime.io](https://leantime.io)<br />
 
-<a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="A screenshot of Leantime's my work dashboard showing a few boxes with large metrics represnting todos complete, goals contributing to, scheduled todos. Also shows a day calendar with one task on it and a list of tasks grouped by Overdue, Due this week and Due Later" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
@@ -43,10 +43,23 @@ Built with ADHD, dyslexia and autism in mind. 🧠<br />
 <br /><br />
 ### 📸 Screenshots ###
 
-| ![alt text](public/assets/images/Screenshots/dark.png "My Work")        |  ![alt text](public/assets/images/Screenshots/projectDashboard.png "Project Dashboard")     |      ![alt text](public/assets/images/Screenshots/table.png "Grouped To-Dos")      |
-|-------------------------------------------------------------------------|:------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
-| ![alt text](public/assets/images/Screenshots/kanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/timeline.png "Tasks on timeline") |   ![alt text](public/assets/images/Screenshots/calendar.png "Project Calendar")    |
-| ![alt text](public/assets/images/Screenshots/goals.png "Goals")         |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timesheets")       |
+<table width="100%">
+    <tr>
+        <td width="33%"><img alt="Screenshot of Leantime's my work dashboard but with a dark color scheme. All colors are darkened or reverted" src="public/assets/images/Screenshots/dark.png" title="My Work" /></td>
+        <td width="33%"><img alt="Screenshot of Leantime's project dashboard showing a project checklist that has the first box checked, the latest tasks (1 right now), a progress donut chart at 0%" src="public/assets/images/Screenshots/projectDashboard.png" title="Project Dashboard" /></td>
+        <td width="33%"><img alt="Screenshot of Leantime's todo screen in table format. Tasks are grouped by status where each Status has a different color" src="public/assets/images/Screenshots/table.png" title="Grouped To-Dos" /></td>
+    </tr>
+    <tr>
+        <td><img alt="alt text" src="public/assets/images/Screenshots/kanban.png" title="Kanban Board"/></td>
+        <td><img alt="Screenshot of Leantime's timeline or gantt feature showing a timeline with various milestone boxes different in length representing how long these take. Each milestone has a different color and they are connected with an arrow" src="public/assets/images/Screenshots/timeline.png" title="Tasks on timeline" /></td>
+        <td><img alt="Screenshot of Leantime's personal calendar screen showing a month overview with a few tasks" src="public/assets/images/Screenshots/calendar.png" title="Project Calendar" /></td>
+    </tr>
+    <tr>
+        <td><img alt="alt text" src="public/assets/images/Screenshots/goals.png" title="Goals" /></td>
+        <td><img alt="Screenshot of Leantime's wiki page showing one template article of a product requirements document formatted with lists and tables" src="public/assets/images/Screenshots/docs.png" title="Documents &amp; Wikis" /></td>
+        <td><img alt="Screenshot of Leantime's timesheet feature with a table a one week overview and input boxes for each day. Tasks are organized in rows" src="public/assets/images/Screenshots/timesheet.png" title="Timesheets" /></td>
+    </tr>
+</table>
 
 <br /><br />
 ### ❗System Requirements ###
