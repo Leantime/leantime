@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Events\EventDispatcher as EventDispatcher;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;

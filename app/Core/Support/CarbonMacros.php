@@ -53,7 +53,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): String {
+        return function () use ($mixin): string {
             return self::this()
                 ->locale($mixin->userLanguage)
                 ->setTimezone($mixin->userTimezone)
@@ -72,7 +72,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): String {
+        return function () use ($mixin): string {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
@@ -91,7 +91,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): String {
+        return function () use ($mixin): string {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
@@ -110,7 +110,7 @@ class CarbonMacros
     {
         $mixin = $this;
 
-        return function () use ($mixin): String {
+        return function () use ($mixin): string {
             return self::this()
                 ->setTimezone($mixin->dbTimezone)
                 ->locale($mixin->userLanguage)

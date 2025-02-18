@@ -21,7 +21,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Tickets\Repositories\TicketHistory as TicketHistory;
+    use Leantime\Domain\Tickets\Repositories\TicketHistory;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;

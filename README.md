@@ -2,9 +2,17 @@
 <div align="center">
 <a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
-### Leantime&reg; ###
+# Leantime&reg; 
 
-Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use. Building with ADHD, dyslexia and autism in mind. <br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature-rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+⭐ If you find Leantime useful, please star us on GitHub! ⭐
+
+Leantime is an open source project management system for non-project managers.<br />
+We combine strategy, planning and execution while making it easy for everyone on the team to use.<br />
+Built with ADHD, dyslexia and autism in mind. 🧠<br />
+
+💪 As simple as Trello but as feature-rich as Jira<br />
+🔄 A perfect alternative to ClickUp, Monday, or Asana<br />
+🌐 [https://leantime.io](https://leantime.io)<br />
 
 <a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -38,16 +46,27 @@ Leantime is an open source project management system for non-project manager.<br
 | ![alt text](public/assets/images/Screenshots/dark.png "My Work")        |  ![alt text](public/assets/images/Screenshots/projectDashboard.png "Project Dashboard")     |      ![alt text](public/assets/images/Screenshots/table.png "Grouped To-Dos")      |
 |-------------------------------------------------------------------------|:------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
 | ![alt text](public/assets/images/Screenshots/kanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/timeline.png "Tasks on timeline") |   ![alt text](public/assets/images/Screenshots/calendar.png "Project Calendar")    |
-| ![alt text](public/assets/images/Screenshots/goals.png "Goals")         |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timsheets")       |
+| ![alt text](public/assets/images/Screenshots/goals.png "Goals")         |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timesheets")       |
 
 <br /><br />
 ### ❗System Requirements ###
 
-* PHP 8.1+
-* MySQL 8.0+
+* PHP 8.2+
+* MySQL 8.0+ or MariaDB 10.6+
 * Apache or Nginx (IIS works with some modifications)
 * PHP Extensions: 
-* * mysql, pdo_mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap, zip, openssl, phar
+* mysql
+* pdo_mysql
+* mbstring
+* GD
+* exif
+* pcntl
+* bcmath
+* opcache
+* ldap
+* zip
+* openssl
+* phar
 <br /><br />
 ### ️⚡️ Installation (Production) ###
 
@@ -74,7 +93,7 @@ Whilst the steps above are applicable to Internet Information Services (IIS), th
 * Double click on the PHP handler mapping that is used by the site
 * Click `Request Restrictions…`
 * Click the `Verbs` tab
-* In the `One of the following verbs` text box, add `,PATCH` - for example: `GET,HEAD,POST,PATCH`
+* In the `One of the following verbs` text box, add `PATCH` - for example: `GET,HEAD,POST,PATCH`
 * Click `OK`
 * In the `Executable (optional)` text box, put a double quote character (`“`) at the start and at the end of the path to the `php-cgi.exe` file (_this isn't needed if the path doesn't have a space in it_)
 * Click `OK`
@@ -178,7 +197,7 @@ For timesheets: <br />
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
 #### CLI
-* Run `bin/leantime system:update` 
+* Run `php bin/leantime system:update` 
 
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
@@ -204,12 +223,12 @@ We only offer support for the most recent version.
 
 We do not offer support for Cloudron, Elestio, Turnkey, or other external distribution platforms sharing unofficial versions of Leantime. 
 
-## Contributing
+## 🫴 Contributing
 
 We're excited you are interested in contributing to Leantime. We want to make sure you have a great experience contributing to Leantime and that the new features you build will make it into core. 
 <br />
 
-### Bugs
+### 🪲 Bugs
 
 Find an issue on Github (or create a new one) add your name to it or comment that you will be working on it. Once fixed, create a  Pull Request.
 
@@ -217,19 +236,18 @@ Find an issue on Github (or create a new one) add your name to it or comment tha
 
 If you have an idea about new features please reach out to us on Discord. This is where we coordinate feature development and discuss whether core is the right place to add your new features (Plugins is the alternative). 
 
-### Translations
+### 🌏 Translations
 
 We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
 
-
-### Community Support ##
+### 👥 Community Support
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)
 <br /><br />
-## ⚖️ LICENSE Exceptions ##
+## ⚖️ LICENSE Exceptions
 
 Leantime is licensed under AGPLv3.
 This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/Plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
