@@ -28,3 +28,7 @@ When deploying Leantime:
 3. Enable two-factor authentication
 4. Use strong passwords
 5. Regular backups
+
+## Please refrain from asking for rewards
+
+We thank all of you for your dedication to the craft. At this point we cannot offer any monetary rewards for disclosed vulnerabilities.
