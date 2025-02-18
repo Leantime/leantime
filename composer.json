@@ -1,32 +1,37 @@
 {
     "name": "leantime/leantime",
-    "description": "Open source project management system",
-    "version": "3.4.0",
+    "description": "Open source project management system for non-project managers. Simple like Trello, powerful like Jira. Built with neurodiversity in mind.",
     "type": "project",
-    "license": "AGPL-3.0",
-    "config": {
-        "platform-check": false,
-        "platform": {
-            "php": "8.2.0"
-        },
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "metasyntactical/composer-plugin-license-check": true,
-            "php-http/discovery": true,
-            "phpstan/extension-installer": true,
-            "wikimedia/composer-merge-plugin": true
-        }
-    },
+    "keywords": [
+        "project-management", "task-management", "kanban", "gantt", "php", "mysql",
+        "jira-alternative", "clickup-alternative", "asana-alternative", "agile",
+        "scrum", "lean", "innovation-management", "neurodiversity-friendly"
+    ],
+    "homepage": "http://leantime.io",
+    "readme": "README.md",
+    "license": "AGPL-3.0-only",
     "authors": [
         {
             "name": "Marcel Folaron",
-            "email": "marcel@leantime.io"
+            "email": "marcel@leantime.io",
+            "homepage": "http://leantime.io"
         }
     ],
-    "repositories": [
+    "support": {
+        "email": "support@leantime.io",
+        "issues": "https://github.com/Leantime/leantime/issues",
+        "docs": "https://docs.leantime.io",
+        "chat": "https://discord.com/invite/YJeNS7VkQh",
+        "security": "https://leantime.io/responsible-disclosure-policy/"
+    },
+    "funding": [
         {
-            "type": "vcs",
-            "url": "https://github.com/leantime/leantime-documentor.git"
+            "type": "Github Sponsor",
+            "url": "https://github.com/sponsors/Leantime"
+        },
+        {
+            "type": "Support Leantime",
+            "url": "https://marketplace.leantime.io/product/support-leantime"
         }
     ],
     "require": {
@@ -85,8 +90,8 @@
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "phpseclib/phpseclib": "~3.0",
         "spatie/icalendar-generator": "^2.6",
-        "sentry/sentry-laravel": "4.8.0",
-        "stripe/stripe-php": "v7.128.0",
+        "sentry/sentry-laravel": "~4.8.0",
+        "stripe/stripe-php": "~7.128.0",
         "crispchat/php-crisp-api": "^1.7",
         "php-http/httplug": "^2.4",
         "laravel/sanctum": "^3.3",
@@ -135,8 +140,7 @@
         "psr-4": {
             "Leantime\\": [
                 "app/"
-            ],
-            "": "app/"
+            ]
         },
         "files": [
             "app/helpers.php"
@@ -149,12 +153,30 @@
             ],
             "Unit\\": [
                 "tests/Unit/"
-            ],
-            "": "app/"
+            ]
         },
         "files": [
             "app/helpers.php"
         ]
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/leantime/leantime-documentor.git"
+        }
+    ],
+    "config": {
+        "platform-check": false,
+        "platform": {
+            "php": "8.2.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "metasyntactical/composer-plugin-license-check": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "extra": {
         "installer-paths": {
@@ -168,6 +190,7 @@
             ]
         },
         "merge-plugin": {
+            "ignore-duplicates": true,
             "include": [
                 "app/Plugins/*/composer.json"
             ]
