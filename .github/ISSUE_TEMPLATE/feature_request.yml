@@ -1,6 +1,6 @@
 name: Feature request
 description: Suggest an idea for this project.
-title: ""
+title: "Enter title of your feature suggestion"
 type: "Feature"
 assignees: 
   - marcelfolaron
