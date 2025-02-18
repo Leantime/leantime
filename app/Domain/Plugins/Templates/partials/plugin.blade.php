@@ -34,9 +34,6 @@
                 <div class="tw-flex tw-flex-row tw-gap-base">
                     <div class="plugin-price tw-flex-1 tw-content-center" >
                         <strong>{!! $plugin->getPrice() !!}</strong><br />
-                        @if($plugin->getCalulatedMonthlyPrice() !== '')
-                         <small style="font-style: italic;">{!! $plugin->getCalulatedMonthlyPrice() !!}</small>
-                        @endif
                     </div>
                     <div class="tw-border-t tw-border-[var(--main-border-color)] tw-px-base tw-text-right tw-flex-1 tw-justify-items-end">
                         @include($plugin->getControlsView(), ["plugin" => $plugin])
