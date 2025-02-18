@@ -1,25 +1,25 @@
 :root {
 
     --accent1: hsla(199, 100%, 31%, 1);
-    --accent1-hover: #555;
+    --accent1-hover: #333;
     --accent1-color:#fff;
 
     --accent2: hsla(168, 100%, 33%, 1);
-    --accent2-hover: #555;
+    --accent2-hover: #333;
     --accent2-color:#fff;
 
-    --nav-link-color: #555;
+    --nav-link-color: #222;
     --header-nav-link-color: #fff;
 
     --tab-background: transparent;
     --tab-color: var(--accent1);
 
     --tab-active-background:  rgba(230, 230, 230, 1);
-    --tab-active-color: #555;
+    --tab-active-color: #333;
 
     --primary-content-bg-opacity: 0.3;
 
-    --main-titles-color: #555;
+    --main-titles-color: #333;
 
     --primary-background: rgba(255, 255, 255, 1);
     --secondary-background: #fff;
@@ -27,7 +27,7 @@
     --layered-background: rgba(240, 240, 240, 0.6);
     --light-layered-background: #ccc;
 
-    --primary-font-color: #555;
+    --primary-font-color: #333;
     --secondary-font-color: #000;
 
     --neutral:#f5f6f7;
@@ -103,9 +103,9 @@
 
     --main-border-color:rgba(240,240,240, 0.9);
     --main-border-color-hover:rgba(200,200,200, 0.9);
-    --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 1px 1px 1px rgba(0 0 0 / 5%);
-    --regular-shadow: 0px 0px 3px 0px rgba(0 0 0 / 20%), 0px 2px 2px 1px rgba(0 0 0 / 10%);
-    --large-shadow: 00px 0px 15px 0px rgba(220,220,220, 0.9), 0px 2px 2px 1px rgba(220,220,220, 0.9);
+    --min-shadow: 0px 1px 2px rgba(0 0 0 / 5%), 0px 1px 1px 1px rgba(0 0 0 / 2%);
+    --regular-shadow: 0px 0px 2px 0px rgba(0 0 0 / 20%), 0px 1px 1px 1px rgba(0 0 0 / 5%);
+    --large-shadow: 0px 0px 10px 0px rgba(220,220,220, 0.5), 0px 2px 2px 1px rgba(220,220,220, 0.5);
     --box-radius-large:20px;
     --box-radius: 10px;
     --box-radius-small:5px;
@@ -182,8 +182,28 @@
     --zlayer-9: 40; /* modal modals*/
 
     --transparencyLayer: transparent;
+}
+
+/* Main default overrides */
+
+.mainwrapper .header {
+    background:var(--header-bg-color);
 
 }
+
+.mainwrapper .rightpanel:before {
+    opacity: .25;
+}
+
+.leftmenu .nav-tabs.nav-stacked .dropdown ul li a,
+.pagetitle {
+    text-shadow:1px 1px 3px rgba(255,255,255,0.9);
+}
+
+.pagetitle {
+    text-shadow: 1px 1px 3px #fff;
+}
+
 
 .ss-option:hover {
     color: white;

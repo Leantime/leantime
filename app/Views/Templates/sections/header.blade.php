@@ -79,6 +79,7 @@
 
 
     <style id="backgroundImageSetter">
+        wtf: {{ $themeBg }}
         @if(!empty($themeBg))
             .rightpanel {
                 background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});

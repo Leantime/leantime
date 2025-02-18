@@ -4,9 +4,7 @@ namespace Leantime\Domain\Users\Controllers {
 
     use Leantime\Core\Controller\Controller;
     use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\UI\Theme as ThemeCore;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
@@ -14,13 +12,9 @@ namespace Leantime\Domain\Users\Controllers {
 
     class EditOwn extends Controller
     {
-        protected LanguageCore $language;
-
         private ThemeCore $themeCore;
 
         private UserRepository $userRepo;
-
-        private SettingRepository $settingsRepo;
 
         private SettingService $settingsService;
 
@@ -32,17 +26,13 @@ namespace Leantime\Domain\Users\Controllers {
          * init - initialize private variables
          */
         public function init(
-            LanguageCore $language,
             ThemeCore $themeCore,
             UserRepository $userRepo,
-            SettingRepository $settingsRepo,
             SettingService $settingsService,
             UserService $userService
-        ) {
-            $this->language = $language;
+        ): void {
             $this->themeCore = $themeCore;
             $this->userRepo = $userRepo;
-            $this->settingsRepo = $settingsRepo;
             $this->settingsService = $settingsService;
             $this->userService = $userService;
 
@@ -64,14 +54,19 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             $userTheme = $this->settingsService->getSetting('usersettings.'.$this->userId.'.theme');
+            if (! $userTheme) {
+                $userTheme = 'default';
+            }
+
             $userColorMode = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorMode');
             if (! $userColorMode) {
                 $userColorMode = 'light';
             }
 
+            $availableColorSchemes = $this->themeCore->getAvailableColorSchemes();
             $userColorScheme = $this->settingsService->getSetting('usersettings.'.$this->userId.'.colorScheme');
             if (! $userColorScheme) {
-                $userColorScheme = 'companyColors';
+                $userColorScheme = isset($availableColorSchemes['companyColors']) ? 'companyColors' : 'themeDefault';
             }
 
             $themeFont = $this->settingsService->getSetting('usersettings.'.$this->userId.'.themeFont');
@@ -89,8 +84,6 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             $timezonesAvailable = timezone_identifiers_list();
-
-            $availableColorSchemes = $this->themeCore->getAvailableColorSchemes();
 
             // Build values array
             $values = [
@@ -147,7 +140,7 @@ namespace Leantime\Domain\Users\Controllers {
             // Save Profile Info
             $tab = '';
 
-            if (session()->exists('formTokenName') && isset($_POST[session('formTokenName')]) && $_POST[session('formTokenName')] == session('formTokenValue')) {
+            if (isset($_POST[session('formTokenName')]) && session()->exists('formTokenName') && $_POST[session('formTokenName')] === session('formTokenValue')) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 // profile Info
@@ -164,14 +157,14 @@ namespace Leantime\Domain\Users\Controllers {
                     ];
 
                     $changedEmail = 0;
-                    if ($row['username'] != $values['user']) {
+                    if ($row['username'] !== $values['user']) {
                         $changedEmail = 1;
                     }
 
                     // Validation
                     if ($values['user'] !== '') {
                         if (filter_var($values['user'], FILTER_VALIDATE_EMAIL)) {
-                            if ($changedEmail == 1) {
+                            if ($changedEmail === 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
                                     $this->userService->editOwn($values, $this->userId);
                                     $this->tpl->setNotification($this->language->__('notifications.profile_edited'), 'success', 'profile_edited');
@@ -206,7 +199,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
 
-                        if ($_POST['newPassword'] == $_POST['confirmPassword']) {
+                        if ($_POST['newPassword'] === $_POST['confirmPassword']) {
                             if ($this->userService->checkPasswordStrength($_POST['newPassword'])) {
                                 $values['password'] = $_POST['newPassword'];
                                 $this->userRepo->editOwn($values, $this->userId);
@@ -238,8 +231,8 @@ namespace Leantime\Domain\Users\Controllers {
                 if (isset($_POST['saveTheme'])) {
                     $tab = '#theme';
 
-                    $postTheme = htmlentities($_POST['theme']);
-                    $postColorMode = htmlentities($_POST['colormode']);
+                    $postTheme = htmlentities($_POST['theme'] ?? 'default');
+                    $postColorMode = htmlentities($_POST['colormode'] ?? 'light');
                     $postColorScheme = htmlentities($_POST['colorscheme'] ?? 'themeDefault');
                     $themeFont = htmlentities($_POST['themeFont']);
 
@@ -247,13 +240,12 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->settingsService->saveSetting('usersettings.'.$this->userId.'.colorMode', $postColorMode);
                     $this->settingsService->saveSetting('usersettings.'.$this->userId.'.colorScheme', $postColorScheme);
                     $this->settingsService->saveSetting('usersettings.'.$this->userId.'.themeFont', $themeFont);
-                    $this->themeCore->clearCache();
+                    $this->themeCore::clearCache();
                     $this->themeCore->setActive($postTheme);
-                    $this->themeCore->clearCache();
                     $this->themeCore->setColorMode($postColorMode);
-                    $this->themeCore->clearCache();
                     $this->themeCore->setColorScheme($postColorScheme);
                     $this->themeCore->setFont($themeFont);
+                    $this->themeCore::clearCache();
 
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'themsettings_updated');
                 }
@@ -311,7 +303,7 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->userRepo->editOwn($values, $this->userId);
 
                     // Storing option messagefrequency
-                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) $_POST['messagesfrequency'] ?? 3600);
+                    $this->settingsService->saveSetting('usersettings.'.$this->userId.'.messageFrequency', (int) ($_POST['messagesfrequency'] ?? 3600));
 
                     $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'profilesettings_updated');
                 }

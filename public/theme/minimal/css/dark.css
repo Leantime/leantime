@@ -1,43 +1,43 @@
 :root {
 
-    --accent1: hsla(199, 100%, 20%, 1);
-    --accent1-hover: #555;
+    --accent1: hsla(199, 100%, 31%, 1);
+    --accent1-hover: #404040;
     --accent1-color: #fff;
 
     --accent2: hsla(168, 100%, 33%, 1);
-    --accent2-hover: #555;
+    --accent2-hover: #404040;
     --accent2-color: #fff;
 
-    --nav-link-color: #bbbbbb;
+    --nav-link-color: #fff;
     --header-nav-link-color: #fff;
 
     --tab-background: transparent;
     --tab-color: var(--accent1);
 
-    --tab-active-background: rgba(25, 25, 25, 1);
-    --tab-active-color: #555;
+    --tab-active-background: #404040;
+    --tab-active-color: #fff;
 
     --primary-content-bg-opacity: 0.4;
 
-    --main-titles-color: #eee;
+    --main-titles-color: #fff;
 
-    --primary-background: rgba(0, 0, 0, 0.9);
-    --secondary-background: rgba(30, 30, 30, 1);
+    --primary-background: #404040;
+    --secondary-background: #292929;
 
-    --layered-background: rgba(25, 25, 25, 1);
-    --light-layered-background: rgba(25, 25, 25, 0.8);
+    --layered-background: #1f1f1f;
+    --light-layered-background:#404040;
 
-    --primary-font-color: #bbbbbb;
-    --secondary-font-color: #eee;
+    --primary-font-color: #fff;
+    --secondary-font-color: #fff;
 
-    --neutral: rgba(0, 0, 0, 0.2);
-    --solid-neutral:rgba(40, 40, 40, 1);
-    --neutral-background: rgba(40, 40, 40, 0.7);
+    --neutral: #141414;
+    --solid-neutral:#292929;
+    --neutral-background: #727272;
 
-    --col-title-bg: rgb(48, 51, 53);
-    --col-content-bg: rgb(48, 51, 53);
-    --col-hover-bg: rgb(34, 34, 34);
-    --col-row-striped:rgba(1,1,1,0.7);
+    --col-title-bg: #141414;
+    --col-content-bg: #1f1f1f;
+    --col-hover-bg: #404040;
+    --col-row-striped:#404040;
 
     --primary-color: var(--accent1);
     --secondary-color: var(--accent2);
@@ -47,8 +47,8 @@
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
-    --glass-background:rgba(30, 30, 30, 1);
-    --glass-border: 1px solid rgba(0,0,0,1);
+    --glass-background:var(--secondary-background);
+    --glass-border: 1px solid rgba(0,0,0,0.3);
 
     --main-action-bg: var(--accent1);
     --main-action-color: var(--accent1-color);
@@ -63,7 +63,7 @@
     --main-menu-link-bg: var(--secondary-background);
     --main-menu-link-color: var(--primary-font-color);
 
-    --main-menu-link-hover-bg: rgba(1, 1, 1, 0.8);
+    --main-menu-link-hover-bg: #1f1f1f;
     --main-menu-link-hover-color: var(--accent1);
 
     --main-menu-overlayed-link-hover-bg: rgba(1, 1, 1, 0.4);
@@ -83,11 +83,11 @@
     --dropdown-link-hover-bg: var(--tab-active-background);
     --dropdown-link-hover-color: var(--primary-font-color);
 
-    --input-background: #000;
+    --input-background: var(--secondary-background);
 
     --header-action-hover-color: var(--neutral);
     --header-bg-color: var(--primary-color);
-    --header-gradient: #000;
+    --header-gradient: #111111;
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
@@ -101,7 +101,7 @@
     --font-size-xxl: 22px;
     --font-size-xxxl: 26px;
 
-    --main-border-color: rgba(40,40,40, 0.9);
+    --main-border-color: #585858;
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
     --regular-shadow: 0px 2px 6px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 20%);
     --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 30%);
@@ -182,27 +182,22 @@
 
 }
 
-.rightpanel:before {
-    opacity:0.1;
+body .mainwrapper .rightpanel:before {
+    opacity:0.2 !important;
 }
 
-.overlay:after {
-    content:"";
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0, 0.7);
+.mainwrapper .header {
+    background-color:var(--header-bg-color);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
 }
 
-.overlay,
-.row .regLeft:before {
-    background: rgba(0,0,0, 0.7);
+.header .headmenu > li > a {
+    text-shadow:none;
 }
 
-.mainwrapper.menuopen .header {
-    background: rgba(0,0,0, 0.7);
+.mainwrapper  .rightpanel {
+    backdrop-filter: opacity(0.3) !important;
+    mix-blend-mode: darken !important;
 }
 
 
@@ -469,3 +464,5 @@ body .ticketDropdown ul::after {
 .row .regLeft {
     background:var(--accent1);
 }
+
+

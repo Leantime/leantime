@@ -113,6 +113,16 @@ class Theme
     private array|false $iniData;
 
     private array $colorSchemes = [
+        'grayscale1' => [
+            'name' => 'Grayscale',
+            'primaryColor' => '#000000',
+            'secondaryColor' => '#757575',
+        ],
+        'grayscale2' => [
+            'name' => 'Grayscale Reverse',
+            'primaryColor' => '#d1d1d1',
+            'secondaryColor' => '#000000',
+        ],
         'themeDefault' => 'themeDefault',
         'companyColors' => 'companyColors',
     ];
