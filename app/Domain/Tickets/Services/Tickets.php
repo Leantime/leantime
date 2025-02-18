@@ -916,6 +916,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($elements as $element) {
 
+                $elementParentId = null;
                 if ($element->type === 'milestone') {
                     $elementParentId = $element->milestoneid;
                 } elseif ($element->dependingTicketId > 0) {
@@ -924,7 +925,7 @@ namespace Leantime\Domain\Tickets\Services {
                     $elementParentId = $element->milestoneid;
                 }
 
-                if ($elementParentId == $parentId) {
+                if ($elementParentId === $parentId) {
                     $children = $this->buildTicketTree($elements, $element->id);
                     if ($children) {
                         usort($children, function ($a, $b) {
