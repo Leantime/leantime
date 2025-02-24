@@ -662,6 +662,18 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
+         * @api
+         */
+        public function getLastTickets($projectId, int $limit = 5): bool|array
+        {
+
+            $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => '', 'status' => 'not_done', 'sprint' => '', 'limit' => $limit]);
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, 'date', $limit);
+
+            return $allTickets;
+        }
+
+        /**
          * @param  false  $includeDoneTickets
          *
          * @throws \Exception
@@ -752,18 +764,6 @@ namespace Leantime\Domain\Tickets\Services {
             // $ticketsSorted = array_sort($tickets, 'order');
 
             return $tickets;
-        }
-
-        /**
-         * @api
-         */
-        public function getLastTickets($projectId, int $limit = 5): bool|array
-        {
-
-            $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => '', 'status' => 'not_done', 'sprint' => '', 'limit' => $limit]);
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, 'date', $limit);
-
-            return $allTickets;
         }
 
         /**
@@ -923,6 +923,10 @@ namespace Leantime\Domain\Tickets\Services {
                     $elementParentId = $element->dependingTicketId;
                 } elseif ($element->milestoneid > 0) {
                     $elementParentId = $element->milestoneid;
+                }
+
+                if (is_null($elementParentId)) {
+                    $elementParentId = 0;
                 }
 
                 if ($elementParentId === $parentId) {
@@ -1538,6 +1542,10 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $values['milestoneid'] ?? '',
             ];
 
+            if($values['projectId'] === null || $values['projectId'] === "" || $values['projectId'] === false) {
+                return ['msg' => 'project id is not set', 'type' => 'error'];
+            }
+
             if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
                 return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
             }
@@ -1581,6 +1589,12 @@ namespace Leantime\Domain\Tickets\Services {
             // $params is an array of field names. Exclude id
             unset($params['id']);
             unset($params['act']);
+
+            $ticket = $this->getTicket($id);
+
+            if(! $ticket) {
+                return false;
+            }
 
             $params = $this->prepareTicketDates($params);
 
@@ -2154,6 +2168,8 @@ namespace Leantime\Domain\Tickets\Services {
             if ($numOfFilters > 0 || $searchCriteria['groupBy'] != '') {
                 $searchUrlString = '?'.http_build_query($this->getSetFilters($searchCriteria, true));
             }
+
+            $allTickets = self::dispatchFilter('filterTickets', $allTickets);
 
             return [
                 'currentSprint' => session('currentSprint'),
