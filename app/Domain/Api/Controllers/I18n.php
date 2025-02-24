@@ -24,7 +24,7 @@ class I18n extends Controller
     public function get(array $params): Response
     {
 
-        $languageIni = $this->language->readIni();
+        $languageIni = $this->language->ini_array;
 
         $dateTimeIniSettings = [
             'language.dateformat',
