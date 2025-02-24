@@ -489,6 +489,7 @@ body {
     overflow: hidden;
     clear: both;
     margin: 10px 15px;
+    margin-bottom:40px;
 }
 
 .footer .footer-left {
@@ -506,7 +507,8 @@ body {
     text-align:center;
     line-height:40px;
     color:var(--main-action-color);
-    position: relative;
+    position: fixed;
+    bottom:0px;
     z-index: 100;
 }
 
