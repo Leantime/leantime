@@ -11,6 +11,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\MissingParameterException;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,10 +27,7 @@ class Jsonrpc extends Controller
      */
     public function init(): void
     {
-        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
-            $bodyContent = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
-            $this->json_data = $bodyContent ?? [];
-        }
+
     }
 
     /**
@@ -48,8 +46,19 @@ class Jsonrpc extends Controller
             unset($params['act']);
         }
 
+        //If params is empty, maybe it was in the body, get body
         if (empty($params)) {
-            $params = $this->json_data;
+
+            try{
+                $params = $this->getJsonFromBody();
+            }catch(MissingParameterException $e){
+                Log::error($e);
+                return $this->returnMethodNotFound("Could not get any parameters from body");
+            }catch (\JsonException $e) {
+                Log::error($e);
+                return $this->returnParseError("Could not parse JSON. Error ". $e->getMessage());
+            }
+
         }
 
         // params['params'] could be array (single value) or json object
@@ -102,6 +111,25 @@ class Jsonrpc extends Controller
         }
 
         return $this->executeApiRequest($params);
+    }
+
+    private function getJsonFromBody(): array {
+
+        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST'
+            && empty($_POST)
+            && $this->incomingRequest->getContent() !== null
+            && $this->incomingRequest->getContent() !== false
+            && $this->incomingRequest->getContent() !== "") {
+
+                $bodyContent = json_decode(
+                    json: $this->incomingRequest->getContent(),
+                    associative: JSON_OBJECT_AS_ARRAY,
+                    flags: JSON_THROW_ON_ERROR
+                );
+                return $bodyContent;
+        }
+
+        throw new MissingParameterException("Could not get JSON from body or form fields");
     }
 
     /**
@@ -396,6 +424,7 @@ class Jsonrpc extends Controller
     {
         return $this->returnError('Invalid Request', -32600, $additional_info, $id);
     }
+
 
     /**
      * Returns a method not found error
