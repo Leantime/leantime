@@ -527,6 +527,7 @@ jQuery(function($, undefined) {
                     var leftValue = "auto";
                     var rightValue = 0;
                 }else{
+
                     var topValue = ((this.getInternal().fullSize.viewH - this.sizes.h - this.sizes.hMargin)/2) - 50;
                     if(topValue <=10) {
                         topValue = 50;
@@ -1386,14 +1387,53 @@ jQuery(function($, undefined) {
 
                 var element = $('<img />').attr({
                     'src': url,
-                    'width':"400px"
+                }).css({
+                    "height":"80vh",
+                    "maxWidth":"none",
+                    "maxHeight":"none"
                 });
-                console.log(element[0]);
+
+
+                nm.store.image = element;
+
+
+
                 nm._setCont(element[0]);
+
 
             },
             size: function(nm) {
+                nm._unreposition();
 
+                var maxHeight = nm.getInternal().fullSize.viewH - nm.sizes.hMargin,
+                    maxWidth = nm.getInternal().fullSize.viewW - nm.sizes.wMargin;
+                console.log(nm.store.image[0].height);
+
+                if (nm.store.image[0].height) {
+
+                    console.log(maxWidth);
+
+                    // if(nm.store.image[0].width < maxWidth) {
+                    //     nm.sizes.w = nm.store.image[0].width;
+                    // }
+
+                    if(nm.store.image[0].height < maxWidth) {
+                        nm.sizes.w = nm.store.image[0].width
+                    }else{
+                        nm.sizes.w = nm.store.image[0].width = maxWidth;
+                    }
+
+
+                    if(nm.store.image[0].height < maxHeight) {
+                        nm.sizes.h = nm.store.image[0].height
+                    }else{
+                        nm.sizes.h = nm.store.image[0].height = maxHeight;
+                    }
+
+
+                }
+
+                nm._reposition();
             },
             close: function(nm) {
                 if (nm.elts.cont) {
@@ -1524,8 +1564,7 @@ jQuery(function($, undefined) {
                     nm.store.formFileIframe = undefined;
                     delete(nm.store.formFileIframe);
                 }
-                console.log("here");
-                console.log(nm.store);
+
                 nm.store.formFileIframe = $('<iframe name="nyroModalFormFile" src="javascript:\'\';" id="nyromodal-iframe-'+(new Date().getTime())+'"></iframe>')
                     .on( "load", function() {
                         if (nm.store.formFileLoading) {

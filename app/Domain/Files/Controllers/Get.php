@@ -196,6 +196,9 @@ class Get extends Controller
 
             $response->headers->set('Content-Disposition', 'inline; filename="'.$realName.'.'.$ext.'"');
 
+            $response->headers->set('Pragma', 'public');
+            $response->headers->set('Cache-Control', 'max-age=86400');
+
             return $response;
 
         } catch (\Exception $e) {
