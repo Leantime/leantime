@@ -1,3 +1,26 @@
+# Version: 3.4.1
+
+* [66271fa](https://github.com/Leantime/leantime/commit/66271faa0b9fb6a15614951b4b0dc43100c2e019): task: add manifest and package-lock
+* [9434188](https://github.com/Leantime/leantime/commit/943418870c9387a59b5e07aeca3de20786185d86): feat: Update Release Version to 3.4.1
+* [db913f8](https://github.com/Leantime/leantime/commit/db913f8f815e134139c5292d110e43f56e81359e): Update release.yml
+* [606be4d](https://github.com/Leantime/leantime/commit/606be4d25702318bcbfc4206daa2cb209331e2aa): fix: various dark theme bugs and saving theme settings issues
+* [43635f9](https://github.com/Leantime/leantime/commit/43635f913d06fea150b983599242eda6d1dc1386): fix: Show tasks on milestone page without task parents shows 500
+
+Fixes #2944
+* [3f3a389](https://github.com/Leantime/leantime/commit/3f3a3899744d70b470cd2800c718b8a21c48de0f): Update SECURITY.md
+* [435e3f7](https://github.com/Leantime/leantime/commit/435e3f744d808d1d38497b9f1dcad2b8d5a1c14b): Update SECURITY.md
+* [f566455](https://github.com/Leantime/leantime/commit/f5664556a3595225d84a23686f21b0d9dc3d482b): Update SECURITY.md
+* [e9924fb](https://github.com/Leantime/leantime/commit/e9924fbe07e6defebc8242fe613152ba68cc930d): Readme updates
+* [0f9a831](https://github.com/Leantime/leantime/commit/0f9a8310e7d8005b31c53ee2622625cfb9dfdb1d): Additional Readme Updates
+* [85cc204](https://github.com/Leantime/leantime/commit/85cc204e658c24f1fd1b1bc0b0aa78faab0bf900): Readme updates and new screenshots
+* [a7ca7eb](https://github.com/Leantime/leantime/commit/a7ca7ebafd4f88014d138649809c6a00ad7cd38c): Update bug_report.yml
+* [bc28a1b](https://github.com/Leantime/leantime/commit/bc28a1bea2c0c7f3522b6982e7f18c6e61936337): Update feature_request.yml
+* [bf1b1f0](https://github.com/Leantime/leantime/commit/bf1b1f07125cc35d182a16111ea67b3bfb4fd439): Update feature_request.yml
+* [76c3df1](https://github.com/Leantime/leantime/commit/76c3df1469ccebc9f6d43681de34707253b6545f): Update feature_request.yml
+* [a3261e9](https://github.com/Leantime/leantime/commit/a3261e9fab2146f51e1167779d255f007137f648): Update bug_report.yml
+* [02d0ac7](https://github.com/Leantime/leantime/commit/02d0ac72b62d5a97ef9977be4b9331638ee3f0cd): Update bug_report.yml
+
+
 # Version: 3.4.0
 
 * [31f2ce7](https://github.com/Leantime/leantime/commit/31f2ce78a023bbcae9a8213c78c57487ea0b4332): fix user issue
