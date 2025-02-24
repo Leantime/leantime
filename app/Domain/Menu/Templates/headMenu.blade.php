@@ -9,7 +9,7 @@
            ])
     @if ($login::userIsAtLeast("admin"))
         <li class="appsLink">
-            <a href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
+            <a href="{{ BASE_URL }}/plugins/marketplace" preload="mouseover" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
         </li>
     @endif
 {{--    <li class="notificationDropdown">--}}
@@ -40,6 +40,7 @@
             hx-target="#newsDropdown"
             hx-indicator=".htmx-indicator"
             hx-trigger="click"
+            preload="mouseover"
             data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
