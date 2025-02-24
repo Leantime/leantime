@@ -1542,7 +1542,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $values['milestoneid'] ?? '',
             ];
 
-            if($values['projectId'] === null || $values['projectId'] === "" || $values['projectId'] === false) {
+            if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {
                 return ['msg' => 'project id is not set', 'type' => 'error'];
             }
 
@@ -1592,7 +1592,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $ticket = $this->getTicket($id);
 
-            if(! $ticket) {
+            if (! $ticket) {
                 return false;
             }
 

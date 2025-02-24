@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Validation\Validator;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
