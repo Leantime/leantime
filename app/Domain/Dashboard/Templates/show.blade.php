@@ -374,7 +374,7 @@
                                                         </a>
 
                                                         <ul class="dropdown-menu">
-                                                            @if ($row['userId'] == session("userdata.id"));
+                                                            @if ($row['userId'] == session("userdata.id"))
                                                                 <li>
                                                                     <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
                                                                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
@@ -393,7 +393,6 @@
                                                         </ul>
                                                     </div>
                                                 @endif
-
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                                         </div>
@@ -424,7 +423,7 @@
                                                     <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
                                                 @endforeach
                                             @endif
-                                            <x-comments::input :commentId="$row['id']" :user="session("userdata")" />
+                                            <x-comments::input :commentId="$row['id']" :user="session('userdata')" />
                                         </div>
                                     </div>
                                 </div>

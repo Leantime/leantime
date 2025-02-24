@@ -28,7 +28,7 @@
                    onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}
                 </a>
-                @if($comment['userId'] == session("userdata.id"));
+                @if($comment['userId'] == session("userdata.id"))
                     <a href="{{ CURRENT_URL }}?delComment={{ $comment['id'] }}"
                        class="deleteComment">
                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
