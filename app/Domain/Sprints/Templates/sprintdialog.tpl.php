@@ -41,10 +41,10 @@ $currentProject = session('currentProject');
     <br /><br />
     <p><?= $tpl->__('label.sprint_dates') ?></p><br/>
     <label><?= $tpl->__('label.first_day') ?></label>
-    <input type="text" name="startDate" autocomplete="off" value="<?php echo $currentSprint->startDate?>" placeholder="<?= $tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
+    <input type="text" name="startDate" autocomplete="off" value="<?= format($currentSprint->startDate)->date() ?>" placeholder="<?= $tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
 
     <label><?= $tpl->__('label.last_day') ?></label>
-    <input type="text" name="endDate" autocomplete="off" value="<?php echo $currentSprint->endDate?>"  placeholder="<?= $tpl->__('language.dateformat') ?>" id="sprintEnd"  />
+    <input type="text" name="endDate" autocomplete="off" value="<?= format($currentSprint->endDate)->date()?> "  placeholder="<?= $tpl->__('language.dateformat') ?>" id="sprintEnd"  />
 
     <br />
 

@@ -14,6 +14,8 @@ namespace Leantime\Domain\Sprints\Models {
 
         public $projectId;
 
+        public $modified;
+
         public function __construct() {}
     }
 

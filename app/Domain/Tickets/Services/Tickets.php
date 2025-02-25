@@ -872,7 +872,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($allTickets as $row) {
                 $sprint = $row['sprint'] ?? 'backlog';
-                $sprintName = empty($row['sprintName']) ? $this->language->__('label.not_assigned_to_list') : $row['sprintName'];
+                $sprintName = empty($row['sprintName']) ? $this->language->__('label.not_assigned_to_sprint') : $row['sprintName'];
 
                 // Only include todos that are not done
                 if (
@@ -2128,7 +2128,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getTicketTemplateAssignments($params): array
         {
 
-            $currentSprint = $this->sprintService->getCurrentSprintId(session('currentProject'));
+            $currentSprint = $this->sprintService->getCurrentSprintId((int) session('currentProject'));
 
             $searchCriteria = $this->prepareTicketSearchArray($params);
             $searchCriteria['orderBy'] = 'kanbansort';
@@ -2150,7 +2150,7 @@ namespace Leantime\Domain\Tickets\Services {
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
 
             $sprints = $this->sprintService->getAllSprints(session('currentProject'));
-            $futureSprints = $this->sprintService->getAllFutureSprints(session('currentProject'));
+            $futureSprints = $this->sprintService->getAllFutureSprints((int) session('currentProject'));
 
             $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
 
