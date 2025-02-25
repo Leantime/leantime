@@ -216,10 +216,12 @@ namespace Leantime\Domain\Connector\Services {
             if ($matchingDateField) {
                 foreach ($values as &$row) {
 
-                    try {
-                        dtHelper()->parseUserDateTime($row[$matchingDateField])->formatDateTimeForDb();
-                    } catch (\Exception $e) {
-                        $flags[] = $row[$matchingDateField].' '.'is not a valid date. Please use the date format defined in your profile or iso8601';
+                    if ($row[$matchingDateField] !== '') {
+                        try {
+                            dtHelper()->parseUserDateTime($row[$matchingDateField]);
+                        } catch (\Exception $e) {
+                            $flags[] = $matchingDateField.': '.$row[$matchingDateField].' '.'is not a valid date. Please use the date format defined in your profile or iso8601';
+                        }
                     }
 
                 }
@@ -621,25 +623,25 @@ namespace Leantime\Domain\Connector\Services {
                 $ticket['type'] = $row['type'] ?? 'task';
 
                 try {
-                    $ticket['date'] = dtHelper()->parseUserDateTime($row['date']);
+                    $ticket['date'] = dtHelper()->parseUserDateTime(trim($ticket['date']))->formatDateForUser();
                 } catch (\Exception $e) {
-                    $ticket['date'] = '';
+                    $ticket['date'] = dtHelper()->userNow()->formatDateForUser();
                 }
 
                 try {
-                    $ticket['dateToFinish'] = dtHelper()->parseUserDateTime($row['dateToFinish']);
+                    $ticket['dateToFinish'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
                 } catch (\Exception $e) {
                     $ticket['dateToFinish'] = '';
                 }
 
                 try {
-                    $ticket['editFrom'] = dtHelper()->parseUserDateTime($row['editFrom']);
+                    $ticket['editFrom'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
                 } catch (\Exception $e) {
                     $ticket['editFrom'] = '';
                 }
 
                 try {
-                    $ticket['editTo'] = dtHelper()->parseUserDateTime($row['editTo']);
+                    $ticket['editTo'] = dtHelper()->parseUserDateTime(trim($ticket['dateToFinish']))->formatDateForUser();
                 } catch (\Exception $e) {
                     $ticket['editTo'] = '';
                 }
@@ -657,6 +659,8 @@ namespace Leantime\Domain\Connector\Services {
 
                 }
             }
+
+            return true;
 
         }
 

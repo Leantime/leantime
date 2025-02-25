@@ -428,6 +428,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 'plugins.marketplace' => 'company',
                 'plugins.myapps' => 'company',
                 'connector.show' => 'company',
+                'connector.integration' => 'company',
                 'billing.subscriptions' => 'company',
                 'llamadorian.statusCollector' => 'personal',
             ];
