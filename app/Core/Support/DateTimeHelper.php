@@ -87,29 +87,29 @@ class DateTimeHelper extends CarbonImmutable
         // Check if provided date is iso8601 (from API)
         try {
             $this->datetime = CarbonImmutable::createFromFormat(DateTime::ISO8601, $userDate);
+
             return $this->datetime;
         } catch (\Exception $e) {
             // Do nothing
         }
 
-        //Also try
+        // Also try
         try {
             $this->datetime = CarbonImmutable::createFromFormat(DateTime::ISO8601_EXPANDED, $userDate);
+
             return $this->datetime;
         } catch (\Exception $e) {
             // Do nothing
         }
 
-        //Lastly try w3c
+        // Lastly try w3c
         try {
             $this->datetime = CarbonImmutable::createFromFormat(DateTime::W3C, $userDate);
+
             return $this->datetime;
         } catch (\Exception $e) {
             // Do nothing
         }
-
-
-
 
         if ($userTime == 'start') {
             $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, substr($this->userLanguage, 0, 2), trim($userDate), $this->userTimezone)
