@@ -211,8 +211,19 @@ namespace Leantime\Domain\Sprints\Services {
                 $plannedEffortStart = 0;
             }
 
-            $dateStart = dtHelper()->parseDbDateTime($sprint->startDate)->startOfDay();
-            $dateEnd = dtHelper()->parseDbDateTime($sprint->endDate)->endOfDay();
+            if (dtHelper()->isValidDateString($sprint->startDate)) {
+                $dateStart = dtHelper()->parseDbDateTime($sprint->startDate)->startOfDay();
+            } elseif (dtHelper()->isValidDateString($sprint->modifiedDate)) {
+                $dateStart = dtHelper()->parseDbDateTime($sprint->modifiedDate)->startOfDay();
+            } else {
+                $dateStart = dtHelper()->userNow()->startOfDay();
+            }
+
+            if (dtHelper()->isValidDateString($sprint->endDate)) {
+                $dateEnd = dtHelper()->parseDbDateTime($sprint->endDate)->endOfDay();
+            } else {
+                $dateEnd = dtHelper()->dbNow()->addDays(7)->endOfDay();
+            }
 
             $sprintLength = $dateStart->diffInDays($dateEnd);
 

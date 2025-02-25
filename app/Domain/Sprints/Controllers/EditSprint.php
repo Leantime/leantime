@@ -60,9 +60,12 @@ namespace Leantime\Domain\Sprints\Controllers {
         {
             // If ID is set its an update
 
-            if ($params['startDate'] == '' || $params['endDate'] == '') {
-                $this->tpl->setNotification('First day and last day are required', 'error');
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
+            if ($params['startDate'] == '' || $params['endDate'] == '') {
+
+                $this->tpl->setNotification('First day and last day are required', 'error');
                 $this->tpl->assign('sprint', (object) $params);
 
                 return $this->tpl->displayPartial('sprints.sprintdialog');
@@ -83,10 +86,6 @@ namespace Leantime\Domain\Sprints\Controllers {
                     $this->tpl->setNotification('There was a problem saving the sprint', 'error');
                 }
             }
-
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'), 'open');
-
-            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('sprint', (object) $params);
 
