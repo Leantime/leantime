@@ -251,7 +251,7 @@ If you have an idea about new features please reach out to us on Discord. This i
 
 ### 🌏 Translations
 
-We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
+We use [Crowdin](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
 
 ### 👥 Community Support
 
