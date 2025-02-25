@@ -1,3 +1,27 @@
+# Version: 3.4.2
+
+* [14e71ad](https://github.com/Leantime/leantime/commit/14e71adada985e1c1f759cebde46d68da4301eb7): fix: typo in provider name
+* [268ae34](https://github.com/Leantime/leantime/commit/268ae349570bd87fe6d823382633a503a6dc273a): Update DateTimeHelper.php
+* [e9d59a0](https://github.com/Leantime/leantime/commit/e9d59a05dc96556b963f48d8edf84a2438265d33): fix: update and expand standard iso8601 dateformat management
+* [c7964a1](https://github.com/Leantime/leantime/commit/c7964a17feec73f782d8046a965918fa4514bba1): fix: datetime issues in calendar and sprints
+* [a9ec032](https://github.com/Leantime/leantime/commit/a9ec03242489c597e3bc8f448709f938d38ba24b): fix: dashboard delete status and allow replies
+* [be8ee46](https://github.com/Leantime/leantime/commit/be8ee466b42f1bf9c41f0b0f85f7c25c6f3e44bf): task: fix code style and update version number
+* [9ed32f9](https://github.com/Leantime/leantime/commit/9ed32f9d140da2a68170c59dfb9059bfc8196bcc): Update Plugins
+* [ca1a2f6](https://github.com/Leantime/leantime/commit/ca1a2f6a37307297f033e5c559a7e2acce1b80e7): fix: Ensure milestone hierarchy is loaded and displayed correctly
+* [abd7343](https://github.com/Leantime/leantime/commit/abd734333fd3655ed95374465c1036b3268a9676): feat: various small design improvements
+* [fd4a040](https://github.com/Leantime/leantime/commit/fd4a040b1bbdfa285222f6ef2438a31a6708adcf): fix: theme image could not be loaded due to test chars in header
+* [241303b](https://github.com/Leantime/leantime/commit/241303b31652f36c6b51f57efaf740ea3b42f608): feat: add new template event for ticket due date
+* [8451caf](https://github.com/Leantime/leantime/commit/8451caf3d903421ff49797ebf130c0bd35e43cf7): fix: formatting for status field in subtasks
+* [04169c5](https://github.com/Leantime/leantime/commit/04169c50c6deb005e96e3307e39b81a161022350): fix: import project via csv import failed due to missing state
+* [3e35f56](https://github.com/Leantime/leantime/commit/3e35f568939d1f320f59a2f2e7e9280e34788d12): feat: preload important urls on mouseover
+* [af056a9](https://github.com/Leantime/leantime/commit/af056a9598feb58ec6172860fb1f1438f93540f4): fix: name in testemail command
+* [c1bd5c4](https://github.com/Leantime/leantime/commit/c1bd5c467d7f5fae46fd10ec71870ea4a31760a7): feat: Ensure images and other static files are cached by browsers
+* [65fe92e](https://github.com/Leantime/leantime/commit/65fe92e6323139c76930c3473bb43149fe47355a): feat: Improved error reporting for json parse errors on api requests
+* [8d33277](https://github.com/Leantime/leantime/commit/8d332775e3935b1db7116c904936521adcbaac3f): fix: Allow usernames with spaces (ldap issue)
+* [9ebf1ea](https://github.com/Leantime/leantime/commit/9ebf1ea68b2fe16c5459ee1d72028e53ef092e0f): fix: i18n file for js was not loaded correctly with plugin language files
+* [15de91e](https://github.com/Leantime/leantime/commit/15de91e474679613f45db34caff44939e2781cde): feat: new command to clear language cache files
+
+
 # Version: 3.4.1
 
 * [66271fa](https://github.com/Leantime/leantime/commit/66271faa0b9fb6a15614951b4b0dc43100c2e019): task: add manifest and package-lock
