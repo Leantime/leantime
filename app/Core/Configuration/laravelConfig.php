@@ -848,4 +848,7 @@ return [
         ],
 
     ],
+    'hashing' => [
+        'rehash_on_login' => false,
+    ],
 ];

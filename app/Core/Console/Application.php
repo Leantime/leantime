@@ -36,7 +36,7 @@ class Application extends \Illuminate\Console\Application
      *
      * @return int 0 if everything went fine, or an error code
      */
-    public function doRun(InputInterface $input, OutputInterface $output)
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         // $this->setDomain($input);
 

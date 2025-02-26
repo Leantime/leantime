@@ -46,7 +46,7 @@ class Cache extends CacheServiceProvider
 
                 $app['config']->set('cache.stores.'.$domainCacheName.'.driver', 'redis');
                 $app['config']->set('cache.stores.'.$domainCacheName.'.connection', 'cache');
-                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', ''.$domainCacheName.'');
+                $app['config']->set('cache.stores.'.$domainCacheName.'.prefix', ''.$domainCacheName.':');
 
             }
 
