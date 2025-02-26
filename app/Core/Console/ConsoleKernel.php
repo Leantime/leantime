@@ -5,6 +5,8 @@ namespace Leantime\Core\Console;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -32,6 +34,15 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
+
+    public function __construct(Application $app, Dispatcher $events)
+    {
+        if (! defined('ARTISAN_BINARY')) {
+            define('ARTISAN_BINARY', 'bin/leantime');
+        }
+
+        parent::__construct($app, $events);
+    }
 
     /**
      * Handle an incoming console command.
