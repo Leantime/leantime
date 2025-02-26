@@ -1450,16 +1450,16 @@ namespace Leantime\Domain\Tickets\Services {
                     $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$addTicketResponse;
                     $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($values['headline']));
 
-                    $notification = app()->make(NotificationModel::class);
+                    $notification = new NotificationModel;
                     $notification->url = [
                         'url' => $actual_link,
                         'text' => $this->language->__('email_notifications.new_todo_cta'),
                     ];
                     $notification->entity = $values;
                     $notification->module = 'tickets';
-                    $notification->projectId = $values['projectId'] ?? session('currentProject');
+                    $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                     $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
+                    $notification->authorId = session('userdata.id') ?? -1;
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -1554,16 +1554,16 @@ namespace Leantime\Domain\Tickets\Services {
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $values['headline']);
 
-                $notification = app()->make(NotificationModel::class);
+                $notification = new NotificationModel;
                 $notification->url = [
                     'url' => $actual_link,
                     'text' => $this->language->__('email_notifications.todo_update_cta'),
                 ];
                 $notification->entity = $values;
                 $notification->module = 'tickets';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
+                $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
@@ -1819,9 +1819,9 @@ namespace Leantime\Domain\Tickets\Services {
                     ];
                     $notification->entity = $ticket;
                     $notification->module = 'tickets';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
                     $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
+                    $notification->authorId = session('userdata.id') ?? -1;
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -1915,15 +1915,15 @@ namespace Leantime\Domain\Tickets\Services {
             $url = BASE_URL.'/tickets/showKanban';
 
             if (session()->exists('lastTicketView') && session('lastTicketView') != '') {
-                if (session('lastTicketView') == 'kanban' && session()->exists('lastFilterdTicketKanbanView') && session('lastFilterdTicketKanbanView') != '') {
+                if (session('lastTicketView') === 'kanban' && session()->exists('lastFilterdTicketKanbanView') && session('lastFilterdTicketKanbanView') != '') {
                     return session('lastFilterdTicketKanbanView');
                 }
 
-                if (session('lastTicketView') == 'table' && session()->exists('lastFilterdTicketTableView') && session('lastFilterdTicketTableView') != '') {
+                if (session('lastTicketView') === 'table' && session()->exists('lastFilterdTicketTableView') && session('lastFilterdTicketTableView') != '') {
                     return session('lastFilterdTicketTableView');
                 }
 
-                if (session('lastTicketView') == 'list' && session()->exists('lastFilterdTicketListView') && session('lastFilterdTicketListView') != '') {
+                if (session('lastTicketView') === 'list' && session()->exists('lastFilterdTicketListView') && session('lastFilterdTicketListView') != '') {
                     return session('lastFilterdTicketListView');
                 }
 
@@ -1939,15 +1939,15 @@ namespace Leantime\Domain\Tickets\Services {
             $url = BASE_URL.'/tickets/roadmap';
 
             if (session()->exists('lastMilestoneView') && session('lastMilestoneView') != '') {
-                if (session('lastMilestoneView') == 'table' && session()->exists('lastFilterdMilestoneTableView') && session('lastFilterdMilestoneTableView') != '') {
+                if (session('lastMilestoneView') === 'table' && session()->exists('lastFilterdMilestoneTableView') && session('lastFilterdMilestoneTableView') != '') {
                     return session('lastFilterdMilestoneTableView');
                 }
 
-                if (session('lastMilestoneView') == 'roadmap' && session()->exists('lastFilterdTicketRoadmapView') && session('lastFilterdTicketRoadmapView') != '') {
+                if (session('lastMilestoneView') === 'roadmap' && session()->exists('lastFilterdTicketRoadmapView') && session('lastFilterdTicketRoadmapView') != '') {
                     return session('lastFilterdTicketRoadmapView');
                 }
 
-                if (session('lastMilestoneView') == 'calendar' && session()->exists('lastFilterdTicketCalendarView') && session('lastFilterdTicketCalendarView') != '') {
+                if (session('lastMilestoneView') === 'calendar' && session()->exists('lastFilterdTicketCalendarView') && session('lastFilterdTicketCalendarView') != '') {
                     return session('lastFilterdTicketCalendarView');
                 }
 
@@ -2216,7 +2216,7 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if (isset($params['projectFilter'])) {
-                $projectFilter = $params['projectFilter'] != 'all' ? $params['projectFilter'] : '';
+                $projectFilter = $params['projectFilter'] !== 'all' ? $params['projectFilter'] : '';
                 session(['userHomeProjectFilter' => $projectFilter]);
             }
 
@@ -2234,13 +2234,13 @@ namespace Leantime\Domain\Tickets\Services {
                 $groupBy = 'time';
             }
 
-            if ($groupBy == 'time') {
+            if ($groupBy === 'time') {
                 $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'project') {
+            } elseif ($groupBy === 'project') {
                 $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'priority') {
+            } elseif ($groupBy === 'priority') {
                 $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'sprint') {
+            } elseif ($groupBy === 'sprint') {
                 $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
             }
 
