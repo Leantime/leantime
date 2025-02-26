@@ -427,7 +427,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
         {
 
-            $tickets = $this->ticketRepository->simpleTicketQuery($userId ?? session('userdata.id'), $project);
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
 
             $ticketArray = [];
 

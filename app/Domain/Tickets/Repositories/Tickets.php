@@ -596,7 +596,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
                       WHERE (
-                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
+                        zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
                         OR zp_projects.psettings = 'all'
                         OR (requestor.role >= 40)
                     )
@@ -619,11 +619,8 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
-            // NOTE: This should not be removed as it is used for authorization
             if (isset($userId) && $userId != '') {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-            } else {
-                $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
             }
 
             // Current client is only used for authorization as it represents the current client Id assigned to a user.
