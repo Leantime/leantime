@@ -1256,9 +1256,7 @@ namespace Leantime\Domain\Tickets\Services {
         {
 
             // TODO: Refactor to be recursive
-            $values = $this->ticketRepository->getAllSubtasks($ticketId);
-
-            return $values;
+            return $this->ticketRepository->getAllSubtasks($ticketId);
         }
 
         /**
@@ -1291,9 +1289,7 @@ namespace Leantime\Domain\Tickets\Services {
             ];
 
             if ($values['headline'] == '') {
-                $error = ['status' => 'error', 'message' => 'Headline Missing'];
-
-                return $error;
+                return ['status' => 'error', 'message' => 'Headline Missing'];
             }
 
             $values = $this->prepareTicketDates($values);
@@ -1308,24 +1304,24 @@ namespace Leantime\Domain\Tickets\Services {
                 $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($params['headline']));
                 $subject = $this->language->__('email_notifications.new_todo_subject');
 
-                $notification = app()->make(NotificationModel::class);
+                $notification = new NotificationModel;
                 $notification->url = [
                     'url' => $actual_link,
                     'text' => $this->language->__('email_notifications.new_todo_cta'),
                 ];
                 $notification->entity = $values;
                 $notification->module = 'tickets';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
+                $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
 
                 return $result;
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         /**
