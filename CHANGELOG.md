@@ -1,3 +1,17 @@
+# Version: 3.4.3
+
+* [af62ea4](https://github.com/Leantime/leantime/commit/af62ea4e6e467240a180a0fa073c127ef6c212b4): task: clean up ticket service
+* [deffc4e](https://github.com/Leantime/leantime/commit/deffc4e855682ba28eeaa846d92d7d84708a6c2e): fix: not sending notifications when project id is not set correctly
+* [e5384f2](https://github.com/Leantime/leantime/commit/e5384f22a9dd0b3ccc3a05f233d754b25fcd7a2e): fix: console kernel to point to the correct binary
+* [12ad2e5](https://github.com/Leantime/leantime/commit/12ad2e501945ecc27a96cab5d1df31dd511fcc9b): fix api endpoint to get open user tickets
+* [7b3539d](https://github.com/Leantime/leantime/commit/7b3539d94071df590cf20e5724a81d2f2aa06ee3): task: update version
+* [2759494](https://github.com/Leantime/leantime/commit/2759494d2cd55a4c727abb8718ee866ceffb8637): task: Improve dailyIngestion report management
+* [8a3ee6a](https://github.com/Leantime/leantime/commit/8a3ee6a1cfd918f49c5ed396584043f5a4c46ce0): fix: add missing field
+* [1d0b242](https://github.com/Leantime/leantime/commit/1d0b242917b9dcd0ee92cc0bdc2ccc2fef5fcaa4): fix: broken datetime management on sprints creating various bugs throughout the system
+* [86b40bd](https://github.com/Leantime/leantime/commit/86b40bdbbf87c814204c24dd974b77d1767e2ef1): task: Cleanup and improve datetime helper class
+* [3dd728b](https://github.com/Leantime/leantime/commit/3dd728b5770dad0bdf5e97e3fec92efd671d5bed): Fix link
+
+
 # Version: 3.4.2
 
 * [14e71ad](https://github.com/Leantime/leantime/commit/14e71adada985e1c1f759cebde46d68da4301eb7): fix: typo in provider name
