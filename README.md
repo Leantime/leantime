@@ -120,7 +120,7 @@ We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Doc
 To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
-docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
+docker run -d --restart unless-stopped -p 8080:8080 --network leantime-net \
 -e LEAN_DB_HOST=mysql_leantime \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \
