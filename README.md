@@ -67,20 +67,52 @@ Built with ADHD, dyslexia and autism in mind. 🧠<br />
 * PHP 8.2+
 * MySQL 8.0+ or MariaDB 10.6+
 * Apache or Nginx (IIS works with some modifications)
-* PHP Extensions: 
-* mysql
-* pdo_mysql
-* mbstring
+* PHP Extensions:
+* BC Math (bcmath)
+* Ctype
+* cURL
+* DOM
+* Exif
+* Fileinfo
+* Filter
 * GD
-* exif
-* pcntl
-* bcmath
-* opcache
-* ldap
-* zip
-* openssl
-* phar
+* Hash
+* LDAP
+* Multibyte String (mbstring)
+* MySQL
+* OPcache
+* OpenSSL
+* PCNTL
+* PCRE
+* PDO
+* Phar
+* Session
+* Tokenizer
+* Zip
+* SimpleXML
 <br /><br />
+
+
+Ctype PHP Extension
+cURL PHP Extension
+DOM PHP Extension
+Fileinfo PHP Extension
+Filter PHP Extension
+Hash PHP Extension
+Mbstring PHP Extension
+OpenSSL PHP Extension
+PCRE PHP Extension
+PDO PHP Extension
+Session PHP Extension
+Tokenizer PHP Extension
+XML PHP Extension
+
+
+
+
+
+
+
 ### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the officially supported Docker image.
