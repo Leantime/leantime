@@ -90,9 +90,13 @@ class DateTimeHelper extends CarbonImmutable
         $standardFormats = [
             DateTime::ATOM,
             DateTime::ISO8601,
-            DateTime::ISO8601_EXPANDED,
             DateTime::W3C,
         ];
+
+        //Added in PHP 8.2
+        if(defined('DateTime::ISO8601_EXPANDED')) {
+            $standardFormats[] = DateTime::ISO8601_EXPANDED;
+        }
 
         // Try standard formats first
         foreach ($standardFormats as $format) {
@@ -130,6 +134,8 @@ class DateTimeHelper extends CarbonImmutable
      *
      * @param  string  $dbDate  The date string in the database format to parse.
      * @return CarbonImmutable The parsed CarbonImmutable instance in db timezone (UTC)
+     *
+     * @throws InvalidDateException
      */
     public function parseDbDateTime(string $dbDate): CarbonImmutable
     {

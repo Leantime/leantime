@@ -7,6 +7,7 @@ namespace Leantime\Domain\Tickets\Services {
     use DateTime;
     use Illuminate\Container\EntryNotFoundException;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
@@ -720,7 +721,14 @@ namespace Leantime\Domain\Tickets\Services {
                         }
                     } else {
                         $today = dtHelper()->userNow()->setToDbTimezone();
-                        $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
+
+                        try {
+                            $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
+                        }catch(\Exception $e){
+                            Log::warning('Error in DB Due date parsing: '.$e->getMessage());
+                            $dbDueDate = dtHelper()->userNow()->addYears();
+                        }
+
                         $nextFriday = dtHelper()->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
 
                         if ($dbDueDate <= $nextFriday && $dbDueDate >= $today) {
@@ -2290,57 +2298,78 @@ namespace Leantime\Domain\Tickets\Services {
             // Prepare dates for db
             if (! empty($values['dateToFinish'])) {
 
-                if ($values['dateToFinish'] instanceof CarbonImmutable) {
-                    $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
-                        unset($values['timeToFinish']);
+                try {
+                    if ($values['dateToFinish'] instanceof CarbonImmutable) {
+                        $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                     } else {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], 'end')->formatDateTimeForDb();
+                        if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
+                            $values['dateToFinish'] = dtHelper()->parseUserDateTime(
+                                $values['dateToFinish'],
+                                $values['timeToFinish']
+                            )->formatDateTimeForDb();
+                            unset($values['timeToFinish']);
+                        } else {
+                            $values['dateToFinish'] = dtHelper()->parseUserDateTime(
+                                $values['dateToFinish'],
+                                'end'
+                            )->formatDateTimeForDb();
+                        }
                     }
+                } catch (\Exception $e) {
+                    $values['dateToFinish'] = '';
                 }
             }
 
             if (! empty($values['editFrom'])) {
 
-                if ($values['editFrom'] instanceof CarbonImmutable) {
-                    $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            $values['timeFrom'],
-                            FromFormat::UserDateTime
-                        )->formatDateTimeForDb();
-                        unset($values['timeFrom']);
+                try {
+                    if ($values['editFrom'] instanceof CarbonImmutable) {
+                        $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
                     } else {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            'start'
-                        )->formatDateTimeForDb();
+                        if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                            $values['editFrom'] = dtHelper()->parseUserDateTime(
+                                $values['editFrom'],
+                                $values['timeFrom'],
+                                FromFormat::UserDateTime
+                            )->formatDateTimeForDb();
+                            unset($values['timeFrom']);
+                        } else {
+                            $values['editFrom'] = dtHelper()->parseUserDateTime(
+                                $values['editFrom'],
+                                'start'
+                            )->formatDateTimeForDb();
+                        }
                     }
+                } catch (\Exception $e) {
+                    $values['editFrom'] = '';
                 }
             }
 
             if (! empty($values['editTo'])) {
 
-                if ($values['editTo'] instanceof CarbonImmutable) {
-                    $values['editTo'] = $values['editTo']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            $values['timeTo']
-                        )->formatDateTimeForDb();
-                        unset($values['timeTo']);
+                try {
+
+                    if ($values['editTo'] instanceof CarbonImmutable) {
+                        $values['editTo'] = $values['editTo']->formatDateTimeForDb();
                     } else {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            'end'
-                        )->formatDateTimeForDb();
+                        if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                            $values['editTo'] = dtHelper()->parseUserDateTime(
+                                $values['editTo'],
+                                $values['timeTo']
+                            )->formatDateTimeForDb();
+                            unset($values['timeTo']);
+                        } else {
+                            $values['editTo'] = dtHelper()->parseUserDateTime(
+                                $values['editTo'],
+                                'end'
+                            )->formatDateTimeForDb();
+                        }
                     }
+
+                } catch (\Exception $e) {
+                    $values['editTo'] = '';
                 }
+
             }
 
             return $values;
