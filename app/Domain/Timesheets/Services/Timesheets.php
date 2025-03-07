@@ -305,7 +305,7 @@ class Timesheets
             }
             // Detect timezone offset
 
-            $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
+            $workdateOffsetStart = (int) ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
 
             // Various Entries can be in different timezones and thus would not be caught by upsert or grouping by
             // default Creating new rows for each timezone adjustment
