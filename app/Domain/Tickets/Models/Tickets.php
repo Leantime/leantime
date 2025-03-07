@@ -90,6 +90,8 @@ namespace Leantime\Domain\Tickets\Models {
 
         public mixed $bookedHours = null;
 
+        public ?array $children = null;
+
         /**
          * @param  false  $values
          */

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Timesheets\Services;
 
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -294,8 +295,14 @@ class Timesheets
         // Timesheets are grouped by ticketId + type
         $timesheetGroups = [];
         foreach ($allTimesheets as $timesheet) {
-            $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
 
+            try {
+                $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
+            } catch (\Exception $e) {
+                Log::warning($e);
+
+                continue;
+            }
             // Detect timezone offset
 
             $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);

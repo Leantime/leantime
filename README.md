@@ -67,20 +67,52 @@ Built with ADHD, dyslexia and autism in mind. 🧠<br />
 * PHP 8.2+
 * MySQL 8.0+ or MariaDB 10.6+
 * Apache or Nginx (IIS works with some modifications)
-* PHP Extensions: 
-* mysql
-* pdo_mysql
-* mbstring
+* PHP Extensions:
+* BC Math (bcmath)
+* Ctype
+* cURL
+* DOM
+* Exif
+* Fileinfo
+* Filter
 * GD
-* exif
-* pcntl
-* bcmath
-* opcache
-* ldap
-* zip
-* openssl
-* phar
+* Hash
+* LDAP
+* Multibyte String (mbstring)
+* MySQL
+* OPcache
+* OpenSSL
+* PCNTL
+* PCRE
+* PDO
+* Phar
+* Session
+* Tokenizer
+* Zip
+* SimpleXML
 <br /><br />
+
+
+Ctype PHP Extension
+cURL PHP Extension
+DOM PHP Extension
+Fileinfo PHP Extension
+Filter PHP Extension
+Hash PHP Extension
+Mbstring PHP Extension
+OpenSSL PHP Extension
+PCRE PHP Extension
+PDO PHP Extension
+Session PHP Extension
+Tokenizer PHP Extension
+XML PHP Extension
+
+
+
+
+
+
+
 ### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the officially supported Docker image.
@@ -120,7 +152,7 @@ We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Doc
 To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
-docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
+docker run -d --restart unless-stopped -p 8080:8080 --network leantime-net \
 -e LEAN_DB_HOST=mysql_leantime \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \

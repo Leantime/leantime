@@ -214,13 +214,14 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             // Log time
             if (isset($params['saveTimes']) === true) {
-                $result = $this->timesheetService->logTime($id, $params);
 
-                if ($result === true) {
+                try {
+                    $result = $this->timesheetService->logTime($id, $params);
                     $this->tpl->setNotification($this->language->__('notifications.time_logged_success'), 'success');
-                } else {
-                    $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+                } catch (\Exception $e) {
+                    $this->tpl->setNotification($e->getMessage(), 'error');
                 }
+
             }
 
             // Save Ticket
