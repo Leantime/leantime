@@ -137,12 +137,15 @@ namespace Leantime\Domain\Ideas\Controllers {
                 }
             }
 
+            $id = $_GET['id'] ?? null;
+
             // changeItem is set for new or edited item changes.
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) === true) {
                         $currentCanvasId = (int) session('currentIdeaCanvas');
 
+                        $id = $params['itemId'];
                         $canvasItem = [
                             'box' => $params['box'],
                             'author' => session('userdata.id'),
@@ -255,10 +258,15 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
                 }
+
+
             }
 
+            $canvasItem = $this->ideaRepo->getSingleCanvasItem($id);
+
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
-            $this->tpl->assign('canvasItem', $this->ideaRepo->getSingleCanvasItem($_GET['id']));
+            $this->tpl->assign('canvasItem', $canvasItem);
+
 
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }
