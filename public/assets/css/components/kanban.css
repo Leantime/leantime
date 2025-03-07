@@ -181,7 +181,7 @@
     border:none;
     border-left:3px solid transparent;
     border-right: 3px solid transparent;
-    padding:10px 12px; /* account for 3px border */
+    padding:10px; /* account for 3px border */
     padding-bottom:10px;
     margin-bottom:10px;
     cursor:move;

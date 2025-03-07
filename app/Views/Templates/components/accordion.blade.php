@@ -6,7 +6,7 @@
 <div {{ $attributes->merge([ 'class' => 'accordionWrapper' ]) }}>
 
     @if(isset($actionlink) && $actionlink != '')
-        <div class="pull-right tw-pt-xs">
+        <div class="pull-right tw-pt-xs tw-pr-xs">
             {!! $actionlink !!}
         </div>
     @endif

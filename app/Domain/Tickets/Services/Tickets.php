@@ -680,7 +680,7 @@ namespace Leantime\Domain\Tickets\Services {
          *
          * @api
          */
-        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false): array
+        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false): array
         {
 
             if ($includeDoneTickets === true) {
@@ -689,6 +689,9 @@ namespace Leantime\Domain\Tickets\Services {
                 $searchStatus = 'not_done';
             }
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'currentUser' => $userId, 'users' => $userId, 'status' => $searchStatus, 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -769,10 +772,13 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getOpenUserTicketsByProject($userId, $projectId): array
+        public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -807,15 +813,18 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getOpenUserTicketsByPriority($userId, $projectId): array
+        public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'priority',
                 includeCounts: false);
-
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
             $tickets = [];
@@ -851,16 +860,22 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
+            // Sort by group keys which are priority integers
+            ksort($tickets);
+
             return $tickets;
         }
 
         /**
          * @api
          */
-        public function getOpenUserTicketsBySprint($userId, $projectId): array
+        public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -2235,13 +2250,13 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if ($groupBy === 'time') {
-                $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
             } elseif ($groupBy === 'project') {
-                $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
+                $tickets = $this->getOpenUserTicketsByProject(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
             } elseif ($groupBy === 'priority') {
-                $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
+                $tickets = $this->getOpenUserTicketsByPriority(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
             } elseif ($groupBy === 'sprint') {
-                $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
+                $tickets = $this->getOpenUserTicketsBySprint(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
             }
 
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
@@ -2275,6 +2290,221 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectFilter' => $projectFilter,
                 'groupBy' => $groupBy,
             ];
+        }
+
+        /**
+         * Retrieves the hierarchical assignments for the ToDoWidget.
+         *
+         * @param  array  $params  The parameters for filtering the assignments.
+         * @return array An array containing the hierarchical assignments for the ToDoWidget.
+         */
+        public function getToDoWidgetHierarchicalAssignments($params)
+        {
+            $projectFilter = '';
+            if (session()->exists('userHomeProjectFilter')) {
+                $projectFilter = session('userHomeProjectFilter');
+            }
+
+            if (isset($params['projectFilter'])) {
+                $projectFilter = $params['projectFilter'] !== 'all' ? $params['projectFilter'] : '';
+                session(['userHomeProjectFilter' => $projectFilter]);
+            }
+
+            $groupBy = '';
+            if (session()->exists('userHomeGroupBy')) {
+                $groupBy = session('userHomeGroupBy');
+            }
+
+            if (isset($params['groupBy'])) {
+                $groupBy = $params['groupBy'];
+                session(['userHomeGroupBy' => $groupBy]);
+            }
+
+            if ($groupBy == '') {
+                $groupBy = 'time';
+            }
+
+            $userId = session('userdata.id');
+            $sortingKey = "user.{$userId}.myTodosSorting";
+            $userSorting = $this->settingsRepo->getSetting($sortingKey);
+
+            // Get tickets based on grouping
+            if ($groupBy === 'time') {
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'project') {
+                $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'priority') {
+                $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'sprint') {
+                $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
+            }
+
+            if ($userSorting) {
+                $sortingArray = json_decode($userSorting, true);
+            }
+
+            // Get all milestones that have tasks assigned to the user
+            $allMilestones = [];
+            $milestoneIds = [];
+            $milestoneCache = [];
+
+            // First collect all milestone IDs from the user's tasks
+            foreach ($tickets as $groupKey => &$ticketGroup) {
+                if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
+                    foreach ($ticketGroup['tickets'] as $ticket) {
+                        if (! empty($ticket['milestoneid']) && ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
+
+                            $milestoneId = $ticket['milestoneid'];
+
+                            if(!isset($milestoneCache[$milestoneId])) {
+                                $milestoneCache[$milestoneId] = (array)$this->getTicket($milestoneId);
+                            }
+                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId] ;
+                            $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+                        }
+                    }
+                }
+            }
+
+            // Fetch the milestone data for all collected milestone IDs
+//            if (! empty($milestoneIds)) {
+//                foreach ($milestoneIds as $milestoneId) {
+//                    $milestone = $this->getTicket($milestoneId);
+//                    if ($milestone) {
+//
+//                        // Add milestone to the appropriate group
+//                        foreach ($tickets as $groupKey => &$ticketGroup) {
+//                            // Add the milestone to each group that contains tasks belonging to this milestone
+//                            foreach ($ticketGroup['tickets'] as $key => $ticket) {
+//                                if (! empty($ticket['milestoneid']) && $ticket['milestoneid'] == $milestoneId) {
+//                                    // Create milestone entry if it doesn't exist in this group yet
+//                                    $milestoneEntry = (array) $milestone;
+//                                    $milestoneEntry['percentDone'] = $progress;
+//
+//                                    // Add to the beginning of the group
+//                                    array_unshift($ticketGroup['tickets'], $milestoneEntry);
+//                                    break; // Only add once per group
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+
+
+            // Process tickets to build hierarchical structure
+            foreach ($tickets as $groupKey => &$ticketGroup) {
+                if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
+                    $ticketGroup['tickets'] = $this->buildTicketHierarchy($ticketGroup['tickets'], $sortingArray);
+                }
+            }
+
+
+
+            $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
+            $effortLabels = $this->getEffortLabels();
+            $priorityLabels = $this->getPriorityLabels();
+            $ticketTypes = $this->getTicketTypes();
+            $statusLabels = $this->getAllStatusLabelsByUserId(session('userdata.id'));
+
+            $milestoneArray = [];
+            foreach ($tickets as &$ticketGroup) {
+                foreach ($ticketGroup['tickets'] as $ticket) {
+                    if (isset($milestoneArray[$ticket['projectId']])) {
+                        continue;
+                    } else {
+                        $milestoneArray[$ticket['projectId']] = $this->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $ticket['projectId']]);
+                    }
+                }
+            }
+
+            $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
+
+            return [
+                'tickets' => $tickets,
+                'onTheClock' => $onTheClock,
+                'efforts' => $effortLabels,
+                'priorities' => $priorityLabels,
+                'ticketTypes' => $ticketTypes,
+                'statusLabels' => $statusLabels,
+                'milestones' => $milestoneArray,
+                'allAssignedprojects' => $this->projectService->getProjectsAssignedToUser(
+                    session('userdata.id'),
+                    'open'
+                ),
+                'projectFilter' => $projectFilter,
+                'groupBy' => $groupBy,
+            ];
+        }
+
+        /**
+         * Build a hierarchical structure of tickets based on dependencies and milestones
+         *
+         * @param  array  $tickets  Flat array of tickets
+         * @param  array  $sortingArray  array of ticket ids and custom sorting index
+         * @return array Hierarchical array of tickets
+         */
+        private function buildTicketHierarchy($tickets, array|bool $sortingArray = false)
+        {
+            $ticketMap = [];
+            $rootTickets = [];
+
+            // First pass: create a map of all tickets by ID
+            foreach ($tickets as $ticket) {
+                $ticket['children'] = [];
+
+                if ($sortingArray) {
+                    $sortIndex = collect($sortingArray)->firstWhere('id', $ticket['id']);
+                    $ticket['sortIndex'] = $sortIndex['order'] ?? 10;
+                }
+
+                $ticketMap[$ticket['id']] = $ticket;
+            }
+
+            // Second pass: build the hierarchy
+            foreach ($tickets as $ticket) {
+
+                // If this ticket has a parent (depending ticket)
+                if (! empty($ticket['dependingTicketId']) && isset($ticketMap[$ticket['dependingTicketId']])) {
+                    // Add this ticket as a child of its parent
+                    $ticketMap[$ticket['dependingTicketId']]['children'][] = &$ticketMap[$ticket['id']];
+                } // If this ticket belongs to a milestone
+                else {
+                    if (! empty($ticket['milestoneid']) && isset($ticketMap[$ticket['milestoneid']])) {
+                        // Add this ticket as a child of its milestone
+                        $ticketMap[$ticket['milestoneid']]['children'][] = &$ticketMap[$ticket['id']];
+                    } // Otherwise, it's a root ticket
+                    else {
+                        $rootTickets[] = &$ticketMap[$ticket['id']];
+                    }
+                }
+
+            }
+
+            // Sort the tickets at each level
+            $this->sortTicketsRecursively($rootTickets);
+
+            return $rootTickets;
+        }
+
+        /**
+         * Sort tickets recursively at each level of the hierarchy
+         *
+         * @param  array  &$tickets  Array of tickets to sort
+         */
+        private function sortTicketsRecursively(&$tickets)
+        {
+            // Sort the current level by sortIndex
+            usort($tickets, function ($a, $b) {
+                return ($a['sortIndex'] ?? 0) - ($b['sortIndex'] ?? 0);
+            });
+
+            // Recursively sort children
+            foreach ($tickets as &$ticket) {
+                if (! empty($ticket['children'])) {
+                    $this->sortTicketsRecursively($ticket['children']);
+                }
+            }
         }
 
         /**
