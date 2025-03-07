@@ -16,7 +16,6 @@ class Sanctum extends ServiceProvider
 
     public function boot(): void
     {
-        SanctumBase::ignoreMigrations();
 
         // Use our custom token model
         SanctumBase::usePersonalAccessTokenModel(AccessToken::class);

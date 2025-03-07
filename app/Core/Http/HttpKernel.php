@@ -103,6 +103,25 @@ class HttpKernel extends Kernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 
+    public function handle($request)
+    {
+        $this->requestStartedAt = Carbon::now();
+
+        try {
+            $response = $this->sendRequestThroughRouter($request);
+        } catch (\Throwable $e) {
+            $this->reportException($e);
+
+            $response = $this->renderException($request, $e);
+        }
+
+        $this->app['events']->dispatch(new RequestHandled($request, $response));
+
+        $response = self::dispatch_filter('beforeSendResponse', $response);
+
+        return $response;
+    }
+
     protected function sendRequestThroughRouter($request)
     {
         $this->app->instance('request', $request);
@@ -142,25 +161,6 @@ class HttpKernel extends Kernel
                 ))
                 ->then(fn () => Frontcontroller::dispatch_request($request))
             );
-
-        return $response;
-    }
-
-    public function handle($request)
-    {
-        $this->requestStartedAt = Carbon::now();
-
-        try {
-            $response = $this->sendRequestThroughRouter($request);
-        } catch (\Throwable $e) {
-            $this->reportException($e);
-
-            $response = $this->renderException($request, $e);
-        }
-
-        $this->app['events']->dispatch(new RequestHandled($request, $response));
-
-        $response = self::dispatch_filter('beforeSendResponse', $response);
 
         return $response;
     }

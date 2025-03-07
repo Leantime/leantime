@@ -59,7 +59,7 @@ class AuthUser implements UserProvider
         );
     }
 
-    public function rehashPasswordIfRequired() {}
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false) {}
 
     public function getOrCreateUser($user, $source)
     {

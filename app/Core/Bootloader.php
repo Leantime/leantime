@@ -53,10 +53,6 @@ class Bootloader
      */
     public function boot(Application $app)
     {
-        if (! defined('LEANTIME_START')) {
-            define('LEANTIME_START', microtime(true));
-        }
-
         // Start Application
         // Load the bindings and service providers
         $this->app = $app;
