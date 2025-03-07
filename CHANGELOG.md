@@ -1,3 +1,19 @@
+# Version: 3.4.4
+
+* [32bcfb1](https://github.com/Leantime/leantime/commit/32bcfb1f5eaf7762ecdc0a4b86ff6d167abd2da9): task: version bump
+* [029315d](https://github.com/Leantime/leantime/commit/029315dc430fc7ed2be9192100333162c1e8f1b2): fix: data types matter folks...
+
+This fixes an issue where we compare floats to 0 (int) but technically floats need to be compared to 0.0. In this case we don't particularly care the about the float itself we just need to figure out if there is an offset worth dealing with. casting to int is just fine.
+* [698820b](https://github.com/Leantime/leantime/commit/698820b1b4641c5334da50b96b8cc05dd6b6479b): Update composer.lock
+* [e78c6f0](https://github.com/Leantime/leantime/commit/e78c6f0b5d77256015a89ffa28a9d20282b9d509): task: fix code styles
+* [6d8e915](https://github.com/Leantime/leantime/commit/6d8e91594a2c3ab3b598896a9904129c1e92ca4a): fix: harden date time handling and check for constant #2975
+* [af3eba4](https://github.com/Leantime/leantime/commit/af3eba459aace1b008acaa5f278c06a9f1c19775): fix: Idea dialog throwing 500 when missing title or description
+* [5f01410](https://github.com/Leantime/leantime/commit/5f01410766218631ccb47e3697bc58dbdbe3dd0b): task: complete list of php extensions
+* [268de1b](https://github.com/Leantime/leantime/commit/268de1b524ea5a22265c72dbe912930a58e57e94): Delete .github/ISSUE_TEMPLATE/bug_report.md
+* [25fe9bf](https://github.com/Leantime/leantime/commit/25fe9bfb6ff7a6a758df906763e1af812c0655da): Update issue templates
+* [92425a2](https://github.com/Leantime/leantime/commit/92425a24988d0aa78687f5a13bd39a72b6b295e3): Update README.md
+
+
 # Version: 3.4.3
 
 * [af62ea4](https://github.com/Leantime/leantime/commit/af62ea4e6e467240a180a0fa073c127ef6c212b4): task: clean up ticket service
