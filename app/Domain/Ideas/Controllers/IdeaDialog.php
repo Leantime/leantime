@@ -259,14 +259,12 @@ namespace Leantime\Domain\Ideas\Controllers {
                     }
                 }
 
-
             }
 
             $canvasItem = $this->ideaRepo->getSingleCanvasItem($id);
 
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
-
 
             return $this->tpl->displayPartial('ideas.ideaDialog');
         }

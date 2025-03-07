@@ -218,7 +218,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 try {
                     $result = $this->timesheetService->logTime($id, $params);
                     $this->tpl->setNotification($this->language->__('notifications.time_logged_success'), 'success');
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $this->tpl->setNotification($e->getMessage(), 'error');
                 }
 

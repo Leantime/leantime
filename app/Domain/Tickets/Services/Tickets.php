@@ -724,7 +724,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                         try {
                             $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
-                        }catch(\Exception $e){
+                        } catch (\Exception $e) {
                             Log::warning('Error in DB Due date parsing: '.$e->getMessage());
                             $dbDueDate = dtHelper()->userNow()->addYears();
                         }

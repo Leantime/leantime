@@ -93,8 +93,8 @@ class DateTimeHelper extends CarbonImmutable
             DateTime::W3C,
         ];
 
-        //Added in PHP 8.2
-        if(defined('DateTime::ISO8601_EXPANDED')) {
+        // Added in PHP 8.2
+        if (defined('DateTime::ISO8601_EXPANDED')) {
             $standardFormats[] = DateTime::ISO8601_EXPANDED;
         }
 
