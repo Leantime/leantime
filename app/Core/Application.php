@@ -43,7 +43,7 @@ class Application extends \Illuminate\Foundation\Application
         }
 
         // Our folder structure is different and we shall not bow to the bourgeoisie
-        $this->useAppPath($this->basePath.'/app/Core');
+        $this->useAppPath($this->basePath.'/app');
         $this->useConfigPath($this->basePath.'/config');
         $this->useEnvironmentPath($this->basePath.'/config');
         $this->useBootstrapPath($this->basePath.'/bootstrap');

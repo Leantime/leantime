@@ -575,6 +575,8 @@ return [
             // Ignore Laravel's default health URL
             '/up',
             '/cron/run',
+            '/notifications/news-badge/get',
+            'notifications/news/get',
         ],
 
         // Breadcrumb specific configuration

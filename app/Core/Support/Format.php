@@ -265,7 +265,7 @@ class Format
             return '';
         }
 
-        return $this->language->__('language.currency').''.$this->value;
+        return $this->language->__('language.currency').''.number_format($this->value, 2);
     }
 
     /**
