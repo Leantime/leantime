@@ -83,12 +83,11 @@ class StartSession
     protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
     {
 
-        // Locking session for 2 seconds
-        // How long the lock should be held once acquired
-        $holdLockFor = 3; // Hold lock for x seconds after acquiring
+        // Dynamic lock period for different request types
+        $holdLockFor = $this->calculateLockDuration($request); // Hold lock for x seconds after acquiring
 
         // Maximum time to wait for acquiring the lock if already held
-        $maxWaitForLock = 10; // Wait for up to y seconds to acquire the lock
+        $maxWaitForLock = 5; // Wait for up to y seconds to acquire the lock
 
         $lock = $this->cache('sessions')
             ->lock('session_lock_'.$session->getId(), $holdLockFor)
@@ -102,13 +101,55 @@ class StartSession
 
         } catch (LockTimeoutException $e) {
 
-            Log::error($e);
+            Log::warning("Session lock timeout for session {$session->getId()}: {$e->getMessage()}");
 
-            return $this->handleStatefulRequest($request, $session, $next);
+            // Implement exponential backoff retry
+            return $this->retryWithBackoff($request, $session, $next);
 
         } finally {
             $lock?->release();
         }
+    }
+
+    /**
+     * Calculate appropriate lock duration based on request type. This is v0. We'll need to make this smarter
+     */
+    protected function calculateLockDuration(IncomingRequest $request): int
+    {
+        if ($request->isMethod('GET')) {
+            return 1; // Shorter duration for GET requests
+        }
+
+        if ($request->ajax()) {
+            return 2; // Medium duration for AJAX requests
+        }
+
+        return 3; // Default duration for other requests
+    }
+
+    /**
+     * Implement exponential backoff retry strategy
+     */
+    protected function retryWithBackoff(IncomingRequest $request, $session, Closure $next, $attempts = 3)
+    {
+        for ($i = 0; $i < $attempts; $i++) {
+            try {
+                $waitTime = min(100 * pow(2, $i), 1000); // Exponential backoff with max 1 second
+                $jitter = random_int(-100, 100); // Add jitter to prevent thundering herd
+                usleep(($waitTime + $jitter) * 1000); // Convert to microseconds
+
+                return $this->handleStatefulRequest($request, $session, $next);
+            } catch (\Exception $e) {
+                Log::warning("Retry attempt {$i} failed for session {$session->getId()}: {$e->getMessage()}");
+
+                continue;
+            }
+        }
+
+        // If all retries fail, proceed without lock
+        Log::error("All retry attempts failed for session {$session->getId()}, proceeding without lock");
+
+        return $this->handleStatefulRequest($request, $session, $next);
     }
 
     /**
@@ -119,9 +160,7 @@ class StartSession
      */
     protected function handleStatefulRequest(IncomingRequest $request, $session, Closure $next)
     {
-        // If a session driver has been configured, we will need to start the session here
-        // so that the data is ready for an application. Note that the Laravel sessions
-        // do not make use of PHP "native" sessions in any way since they are crappy.
+        $startTime = microtime(true);
         $request->setLaravelSession(
             $this->startSession($request, $session)
         );
@@ -135,6 +174,11 @@ class StartSession
 
         // Done processing the request, closing out the session
         $this->storeCurrentUrl($request, $session);
+
+        $duration = microtime(true) - $startTime;
+        if ($duration > 3.0) {
+            Log::warning("Long session operation detected: {$duration}s for session {$session->getId()}");
+        }
 
         $this->addCookieToResponse($response, $session);
 
