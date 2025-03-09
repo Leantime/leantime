@@ -81,7 +81,7 @@ namespace Leantime\Domain\Reports\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
             if ($sprintId !== '') {
                 $stmn->bindValue(':sprint', $sprintId, PDO::PARAM_STR);

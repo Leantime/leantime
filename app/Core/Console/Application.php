@@ -16,8 +16,11 @@ class Application extends \Illuminate\Console\Application
 {
     use DispatchesEvents;
 
+    protected $commandsLoaded = false;
+
     public function __construct(Container $laravel, Dispatcher $events, $version)
     {
+
         $parent = get_parent_class(\Illuminate\Console\Application::class);
         $parent::__construct('Leantime CLI (extends Laravel)', $version);
 
@@ -53,10 +56,12 @@ class Application extends \Illuminate\Console\Application
         $definition->addOption(new InputOption('--domain', null, InputOption::VALUE_OPTIONAL, 'Set domain for config'));
 
         return $definition;
+
     }
 
     protected function bootstrap()
     {
+
         foreach (static::$bootstrappers as $bootstrapper) {
             $bootstrapper($this);
         }
