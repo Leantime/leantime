@@ -1,3 +1,12 @@
+# Version: 3.4.5
+
+* [fa1d889](https://github.com/Leantime/leantime/commit/fa1d8890d1e3b907dc4bb7daac70f76f39448a33): task: version bump
+* [d017787](https://github.com/Leantime/leantime/commit/d017787754e8354be5220433d1d1f6fb8ee85755): feat: improve session lockout management
+* [83907b8](https://github.com/Leantime/leantime/commit/83907b8452df74334321a17aa362f0238c395d5f): fix: better handling of news update failure
+* [5d7dd67](https://github.com/Leantime/leantime/commit/5d7dd67e5ac62a5ea6b3161a3947e0677bd137c7): task: variable and application hardening
+* [87da869](https://github.com/Leantime/leantime/commit/87da869f6c5c522779f23adb427be0abe7868143): fix: broken console script after laravel 11 update
+
+
 # Version: 3.4.4
 
 * [32bcfb1](https://github.com/Leantime/leantime/commit/32bcfb1f5eaf7762ecdc0a4b86ff6d167abd2da9): task: version bump
