@@ -92,12 +92,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
 
         }
 
-        /* YAML */
-        $this->yaml = null;
-        if (file_exists(APP_ROOT.'/config/config.yaml')) {
-            $this->yaml = Yaml::parseFile(APP_ROOT.'/config/config.yaml');
-        }
-
         $defaultConfigurationProperties = get_class_vars($defaultConfiguration::class);
 
         foreach (array_keys($defaultConfigurationProperties) as $propertyName) {
@@ -142,7 +136,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
          */
         $found = $default;
         $found = $this->tryGetFromPhp($envVar, $found) ?? $found;
-        $found = $this->tryGetFromYaml($envVar, $found) ?? $found;
         $found = $this->tryGetFromEnvironment($envVar, $found) ?? $found;
 
         // we need to check to see if we need to convert the found data
@@ -171,23 +164,7 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
     {
-
-        return $_ENV[$envVar] ?? $currentValue;
-    }
-
-    /**
-     * tryGetFromYaml - try to get a value from the yaml file
-     */
-    private function tryGetFromYaml(string $envVar, mixed $currentValue): mixed
-    {
-
-        if ($this->yaml) {
-            $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
-
-            return $this->yaml[$key] ?? $currentValue;
-        }
-
-        return null;
+        return $_ENV[$envVar] ?? env($envVar) ?? $currentValue;
     }
 
     /**

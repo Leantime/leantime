@@ -16,12 +16,11 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <h5 class="subtitle">
+                    <h5 class="subtitle" style="margin-bottom:15px;">
                         {{ __("text.installed_plugins") }}
                     </h5>
                     <div class="row sortableTicketList">
                         @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
-
 
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
                                 <span class="block px-4 mb-4">{{ __("text.no_plugins_activated") }}</span>
@@ -29,10 +28,10 @@
                     </div>
                 </div>
             </div>
-
+            <br />
             <div class="row">
                 <div class="col-lg-12">
-                    <h5 class="subtitle">
+                    <h5 class="subtitle tw-mb-m" style="margin-bottom:15px;">
                         {{ __("text.new_plugins") }}
                     </h5>
                     <ul class="sortableTicketList" >

@@ -72,13 +72,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
                     $progressValue = 0;
                     $goal['goalProgress'] = 0;
                     $total = $goal['endValue'] - $goal['startValue'];
-                    //Skip if total value is 0.
+                    // Skip if total value is 0.
                     if ($total <= 0) {
                         continue;
                     }
 
                     if ($goal['setting'] == 'linkAndReport') {
-                        //GetAll Child elements
+                        // GetAll Child elements
                         $currentValueSum = $this->getChildGoalsForReporting($goal['id']);
 
                         $goal['currentValue'] = $currentValueSum;
@@ -107,11 +107,11 @@ namespace Leantime\Domain\Goalcanvas\Services {
         public function getChildGoalsForReporting($parentId): mixed
         {
 
-            //Goals come back as rows for levl1 and lvl2 being columns, so
-            //goal A | goalChildA
-            //goal A | goalChildB
-            //goal B
-            //Checks if first level is also link+report or just link
+            // Goals come back as rows for levl1 and lvl2 being columns, so
+            // goal A | goalChildA
+            // goal A | goalChildB
+            // goal B
+            // Checks if first level is also link+report or just link
             $goals = $this->goalRepository->getCanvasItemsByKPI($parentId);
             $currentValueSum = 0;
             foreach ($goals as $child) {
@@ -132,15 +132,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
         {
 
             $goals = [];
-            //Goals come back as rows for levl1 and lvl2 being columns, so
-            //goal A | goalChildA
-            //goal A | goalChildB
-            //goal B
-            //Checks if first level is also link+report or just link
+            // Goals come back as rows for levl1 and lvl2 being columns, so
+            // goal A | goalChildA
+            // goal A | goalChildB
+            // goal B
+            // Checks if first level is also link+report or just link
             $children = $this->goalRepository->getCanvasItemsByKPI($parentId);
 
             foreach ($children as $child) {
-                //Added Child already? Look for child of child
+                // Added Child already? Look for child of child
                 if (! isset($goals[$child['id']])) {
                     $goals[$child['id']] = [
                         'id' => $child['id'],
@@ -185,7 +185,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
 
             $goals = [];
 
-            //Checks if first level is also link+report or just link
+            // Checks if first level is also link+report or just link
             foreach ($kpis as $kpi) {
                 $goals[$kpi['id']] = [
                     'id' => $kpi['id'],

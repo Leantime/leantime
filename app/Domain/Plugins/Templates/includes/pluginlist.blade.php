@@ -2,7 +2,7 @@
     'plugins'
 ])
 
-<div id="pluginList" class="w-full row">
+<div class="tw-w-full row">
     <div class="col-lg-12">
         <div class="row sortableTicketList">
             @if (count($plugins) == 0)
@@ -16,8 +16,4 @@
             @endif
         </div>
     </div>
-</div>
-
-<div class="htmx-indicator ml-m mr-m pt-l">
-    <x-global::elements.loadingText type="plugincard" count="5" includeHeadline="false"/>
 </div>

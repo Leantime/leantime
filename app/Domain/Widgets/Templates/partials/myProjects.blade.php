@@ -8,7 +8,7 @@
      hx-get="{{BASE_URL}}/hx/widgets/myProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsWidget"
-     hx-swap="outerHTML transition:true">
+     hx-swap="outerHTML">
     @if (count($allProjects) == 0)
             <br /><br />
             <div class='center'>

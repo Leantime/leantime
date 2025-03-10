@@ -26,7 +26,7 @@ class Events extends ServiceProvider
         });
         $this->booting(function () {
 
-            //Core\Events\EventDispatcher::discover_listeners();
+            // Core\Events\EventDispatcher::discover_listeners();
 
             /*
 

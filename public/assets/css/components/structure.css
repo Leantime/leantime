@@ -322,14 +322,16 @@
 
 }
 
-.mainwrapper:before {
-    position: fixed;
-    height: 100%;
+.rightpanel:before {
+
+    position: absolute;
+    height: calc(100% + 50px);
     width: 100%;
     left: 0;
-    top: 0px;
+    top: -50px;
     content: " ";
-    opacity: .2;
+    opacity: .5;
+    mix-blend-mode: multiply;
     background-size:cover;
     background-image:url(/dist/images/backgrounds/bg5.png);
     background-repeat:no-repeat;
@@ -380,15 +382,20 @@
 
 .header {
     clear: both;
-    position: sticky;
+    height: 50px;
+    position: fixed;
     top:0px;
     z-index: 15;
     width: 100%;
+    box-shadow: var(--large-shadow);
+    backdrop-filter: blur(15px);
+    /*background:var(--header-bg-color);*/
 }
 
 
 
 .rightpanel {
+    padding-top:50px;
 }
 
 .rightpanel:after {
@@ -437,6 +444,7 @@
     clear: both;
     margin: 10px 15px;
     width: 98.2%;
+    margin-bottom:40px;
 }
 
 .footer-content {
@@ -463,7 +471,8 @@
     text-align:center;
     line-height:40px;
     color:var(--main-action-color);
-    position: relative;
+    position: fixed;
+    bottom:0px;
     z-index: 100;
 }
 

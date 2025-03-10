@@ -60,7 +60,7 @@ class ThemeTest extends \Unit\TestCase
         $this->theme = null;
     }
 
-    //Write tests below
+    // Write tests below
 
     /**
      * Test GetMenuTypes method
@@ -68,7 +68,7 @@ class ThemeTest extends \Unit\TestCase
     public function test_get_default_color_scheme_with_color_env_set()
     {
 
-        //Load class to be tested
+        // Load class to be tested
         $this->theme = new Theme(
             settingsRepo: $this->settingsRepoMock,
             language: $this->languageMock,

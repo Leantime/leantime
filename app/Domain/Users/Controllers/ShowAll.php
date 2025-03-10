@@ -28,7 +28,7 @@ namespace Leantime\Domain\Users\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            //Only Admins
+            // Only Admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
                 if (Auth::userIsAtLeast(Roles::$admin)) {
                     $this->tpl->assign('allUsers', $this->userRepo->getAll());

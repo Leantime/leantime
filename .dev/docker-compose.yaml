@@ -1,40 +1,51 @@
-networks:
-  leantime:
-      external: false
-      driver: bridge
-volumes:
-  mysql:
-  s3ninja-data:
+
+
 services:
   leantime-dev:
+    container_name: leantime-dev
     build: .
     ports:
-      - "8001:8080" #Using ports that are hopefully available. format is: 80XX
-      - "44301:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
+      - "5080:8080" #Using ports that are hopefully available. format is: 80XX
+      - "5443:443" #Using ports that are hopefully available. format is: 443XX (available range is 44300–44399)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+#      - "authentik.docker.local:172.28.0.2"
     volumes:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
      - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
     environment:
-      LEAN_DB_HOST: 'db'
+      LEAN_DB_HOST: 'leantime-db'
       LEAN_DB_USER: 'leantime'
       LEAN_DB_PASSWORD: 'leantime'
       LEAN_DB_DATABASE: 'leantime'
       LEAN_DB_PORT: '3306'
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+
     depends_on:
-      db:
+      leantime-db:
         condition: service_healthy
     networks:
-      - leantime
-  redis:
+      - leantime_internal
+#      - traefik
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.priority=2"
+#      - "traefik.docker.network=traefik"
+#
+#      # HTTP Router
+#      - "traefik.http.routers.leantime.rule=Host(`leantime.docker.local`)"
+#      - "traefik.http.services.leantime.loadbalancer.server.port=8080"
+#      - "traefik.http.routers.leantime.tls=true"
+
+
+  leantime-redis:
+    container_name: leantime-redis
     image: redis:4.0
     ports:
       - "6379"
     networks:
-      - leantime
-  db:
+      - leantime_internal
+  leantime-db:
     image: mysql:8.0
     ports:
       - "3306"
@@ -44,9 +55,9 @@ services:
       MYSQL_PASSWORD: 'leantime'
       MYSQL_DATABASE: 'leantime'
     networks:
-      - leantime
+      - leantime_internal
     volumes:
-      - mysql:/var/lib/mysql:rw
+      - leantime-mysql:/var/lib/mysql:rw
     healthcheck:
       test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
       interval: 5s
@@ -63,7 +74,7 @@ services:
       - "4444"
       - "7900"
     networks:
-      - leantime
+      - leantime_internal
   maildev:
     image: maildev/maildev
     environment:
@@ -72,21 +83,25 @@ services:
     ports:
       - "8081"
     networks:
-      - leantime
-  phpmyadmin:
-    image: phpmyadmin
-    ports:
-      - "8082"
-    environment:
-      - PMA_HOST=db
-      - PMA_PORT=3306
-    networks:
-      - leantime
+      - leantime_internal
   s3ninja:
     image: scireum/s3-ninja
     ports:
       - "8083"
     networks:
-      - leantime
+      - leantime_internal
     volumes:
       - s3ninja-data:/home/sirius/data
+
+
+networks:
+  leantime_internal:
+    driver: bridge
+    name: leantime_internal
+#  traefik:
+#    external: true
+#    name: traefik
+
+volumes:
+  leantime-mysql:
+  s3ninja-data:

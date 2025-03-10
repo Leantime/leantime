@@ -3,10 +3,12 @@
 namespace Leantime\Domain\Api\Services;
 
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RangeException;
 
@@ -30,6 +32,8 @@ class Api
     }
 
     /**
+     * @throws BindingResolutionException
+     *
      * @api
      */
     public function getAPIKeyUser(string $apiKey): bool|array
@@ -58,11 +62,49 @@ class Api
 
         if ($apiUser) {
             if (password_verify($key, $apiUser['password'])) {
+
+                $this->setApiUserSession($apiUser, true);
+
                 return $apiUser;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @return void
+     *
+     * @throws BindingResolutionException
+     *
+     * Note: This is deliberately a duplicate of the authService setSession method to not have to load the authService
+     * which will run db connections when we are not ready yet.
+     * TODO: Move session management into a dedicated service
+     */
+    public function setApiUserSession(array $user, bool $isExternalAuth = false)
+    {
+
+        $currentUser = [
+            'id' => (int) $user['id'],
+            'name' => strip_tags($user['firstname']),
+            'profileId' => $user['profileId'],
+            'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
+            'clientId' => $user['clientId'],
+            'role' => Roles::getRoleString($user['role']),
+            'settings' => $user['settings'] ? unserialize($user['settings']) : [],
+            'twoFAEnabled' => $user['twoFAEnabled'] ?? false,
+            'twoFAVerified' => false,
+            'twoFASecret' => $user['twoFASecret'] ?? '',
+            'isExternalAuth' => $isExternalAuth,
+            'createdOn' => ! empty($user['createdOn']) ? dtHelper()->parseDbDateTime($user['createdOn']) : dtHelper()->userNow(),
+            'modified' => ! empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow(),
+        ];
+
+        $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
+
+        // Session handler for api is array
+        session(['userdata' => $currentUser]);
+
     }
 
     /**
@@ -175,8 +217,6 @@ class Api
     /**
      * Check the manifest for the asset and serve if found.
      *
-     *
-     *
      * @api
      */
     public function getCaseCorrectPathFromManifest(string $filepath): string|false
@@ -197,6 +237,9 @@ class Api
         return $basePath.array_search($referenceValue, $correctManifest);
     }
 
+    /**
+     * @return true
+     */
     public function healthCheck()
     {
         return true;

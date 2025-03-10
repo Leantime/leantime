@@ -33,7 +33,7 @@ class TicketCard extends HtmxController
 
         $values = $ticket;
 
-        //Until we have everything as objects we'll need to use arrays
+        // Until we have everything as objects we'll need to use arrays
         $this->tpl->assign('row', (array) $ticket);
         $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
         $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());

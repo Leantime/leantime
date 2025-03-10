@@ -1,3 +1,178 @@
+# Version: 3.4.4
+
+* [32bcfb1](https://github.com/Leantime/leantime/commit/32bcfb1f5eaf7762ecdc0a4b86ff6d167abd2da9): task: version bump
+* [029315d](https://github.com/Leantime/leantime/commit/029315dc430fc7ed2be9192100333162c1e8f1b2): fix: data types matter folks...
+
+This fixes an issue where we compare floats to 0 (int) but technically floats need to be compared to 0.0. In this case we don't particularly care the about the float itself we just need to figure out if there is an offset worth dealing with. casting to int is just fine.
+* [698820b](https://github.com/Leantime/leantime/commit/698820b1b4641c5334da50b96b8cc05dd6b6479b): Update composer.lock
+* [e78c6f0](https://github.com/Leantime/leantime/commit/e78c6f0b5d77256015a89ffa28a9d20282b9d509): task: fix code styles
+* [6d8e915](https://github.com/Leantime/leantime/commit/6d8e91594a2c3ab3b598896a9904129c1e92ca4a): fix: harden date time handling and check for constant #2975
+* [af3eba4](https://github.com/Leantime/leantime/commit/af3eba459aace1b008acaa5f278c06a9f1c19775): fix: Idea dialog throwing 500 when missing title or description
+* [5f01410](https://github.com/Leantime/leantime/commit/5f01410766218631ccb47e3697bc58dbdbe3dd0b): task: complete list of php extensions
+* [268de1b](https://github.com/Leantime/leantime/commit/268de1b524ea5a22265c72dbe912930a58e57e94): Delete .github/ISSUE_TEMPLATE/bug_report.md
+* [25fe9bf](https://github.com/Leantime/leantime/commit/25fe9bfb6ff7a6a758df906763e1af812c0655da): Update issue templates
+* [92425a2](https://github.com/Leantime/leantime/commit/92425a24988d0aa78687f5a13bd39a72b6b295e3): Update README.md
+
+
+# Version: 3.4.3
+
+* [af62ea4](https://github.com/Leantime/leantime/commit/af62ea4e6e467240a180a0fa073c127ef6c212b4): task: clean up ticket service
+* [deffc4e](https://github.com/Leantime/leantime/commit/deffc4e855682ba28eeaa846d92d7d84708a6c2e): fix: not sending notifications when project id is not set correctly
+* [e5384f2](https://github.com/Leantime/leantime/commit/e5384f22a9dd0b3ccc3a05f233d754b25fcd7a2e): fix: console kernel to point to the correct binary
+* [12ad2e5](https://github.com/Leantime/leantime/commit/12ad2e501945ecc27a96cab5d1df31dd511fcc9b): fix api endpoint to get open user tickets
+* [7b3539d](https://github.com/Leantime/leantime/commit/7b3539d94071df590cf20e5724a81d2f2aa06ee3): task: update version
+* [2759494](https://github.com/Leantime/leantime/commit/2759494d2cd55a4c727abb8718ee866ceffb8637): task: Improve dailyIngestion report management
+* [8a3ee6a](https://github.com/Leantime/leantime/commit/8a3ee6a1cfd918f49c5ed396584043f5a4c46ce0): fix: add missing field
+* [1d0b242](https://github.com/Leantime/leantime/commit/1d0b242917b9dcd0ee92cc0bdc2ccc2fef5fcaa4): fix: broken datetime management on sprints creating various bugs throughout the system
+* [86b40bd](https://github.com/Leantime/leantime/commit/86b40bdbbf87c814204c24dd974b77d1767e2ef1): task: Cleanup and improve datetime helper class
+* [3dd728b](https://github.com/Leantime/leantime/commit/3dd728b5770dad0bdf5e97e3fec92efd671d5bed): Fix link
+
+
+# Version: 3.4.2
+
+* [14e71ad](https://github.com/Leantime/leantime/commit/14e71adada985e1c1f759cebde46d68da4301eb7): fix: typo in provider name
+* [268ae34](https://github.com/Leantime/leantime/commit/268ae349570bd87fe6d823382633a503a6dc273a): Update DateTimeHelper.php
+* [e9d59a0](https://github.com/Leantime/leantime/commit/e9d59a05dc96556b963f48d8edf84a2438265d33): fix: update and expand standard iso8601 dateformat management
+* [c7964a1](https://github.com/Leantime/leantime/commit/c7964a17feec73f782d8046a965918fa4514bba1): fix: datetime issues in calendar and sprints
+* [a9ec032](https://github.com/Leantime/leantime/commit/a9ec03242489c597e3bc8f448709f938d38ba24b): fix: dashboard delete status and allow replies
+* [be8ee46](https://github.com/Leantime/leantime/commit/be8ee466b42f1bf9c41f0b0f85f7c25c6f3e44bf): task: fix code style and update version number
+* [9ed32f9](https://github.com/Leantime/leantime/commit/9ed32f9d140da2a68170c59dfb9059bfc8196bcc): Update Plugins
+* [ca1a2f6](https://github.com/Leantime/leantime/commit/ca1a2f6a37307297f033e5c559a7e2acce1b80e7): fix: Ensure milestone hierarchy is loaded and displayed correctly
+* [abd7343](https://github.com/Leantime/leantime/commit/abd734333fd3655ed95374465c1036b3268a9676): feat: various small design improvements
+* [fd4a040](https://github.com/Leantime/leantime/commit/fd4a040b1bbdfa285222f6ef2438a31a6708adcf): fix: theme image could not be loaded due to test chars in header
+* [241303b](https://github.com/Leantime/leantime/commit/241303b31652f36c6b51f57efaf740ea3b42f608): feat: add new template event for ticket due date
+* [8451caf](https://github.com/Leantime/leantime/commit/8451caf3d903421ff49797ebf130c0bd35e43cf7): fix: formatting for status field in subtasks
+* [04169c5](https://github.com/Leantime/leantime/commit/04169c50c6deb005e96e3307e39b81a161022350): fix: import project via csv import failed due to missing state
+* [3e35f56](https://github.com/Leantime/leantime/commit/3e35f568939d1f320f59a2f2e7e9280e34788d12): feat: preload important urls on mouseover
+* [af056a9](https://github.com/Leantime/leantime/commit/af056a9598feb58ec6172860fb1f1438f93540f4): fix: name in testemail command
+* [c1bd5c4](https://github.com/Leantime/leantime/commit/c1bd5c467d7f5fae46fd10ec71870ea4a31760a7): feat: Ensure images and other static files are cached by browsers
+* [65fe92e](https://github.com/Leantime/leantime/commit/65fe92e6323139c76930c3473bb43149fe47355a): feat: Improved error reporting for json parse errors on api requests
+* [8d33277](https://github.com/Leantime/leantime/commit/8d332775e3935b1db7116c904936521adcbaac3f): fix: Allow usernames with spaces (ldap issue)
+* [9ebf1ea](https://github.com/Leantime/leantime/commit/9ebf1ea68b2fe16c5459ee1d72028e53ef092e0f): fix: i18n file for js was not loaded correctly with plugin language files
+* [15de91e](https://github.com/Leantime/leantime/commit/15de91e474679613f45db34caff44939e2781cde): feat: new command to clear language cache files
+
+
+# Version: 3.4.1
+
+* [66271fa](https://github.com/Leantime/leantime/commit/66271faa0b9fb6a15614951b4b0dc43100c2e019): task: add manifest and package-lock
+* [9434188](https://github.com/Leantime/leantime/commit/943418870c9387a59b5e07aeca3de20786185d86): feat: Update Release Version to 3.4.1
+* [db913f8](https://github.com/Leantime/leantime/commit/db913f8f815e134139c5292d110e43f56e81359e): Update release.yml
+* [606be4d](https://github.com/Leantime/leantime/commit/606be4d25702318bcbfc4206daa2cb209331e2aa): fix: various dark theme bugs and saving theme settings issues
+* [43635f9](https://github.com/Leantime/leantime/commit/43635f913d06fea150b983599242eda6d1dc1386): fix: Show tasks on milestone page without task parents shows 500
+
+Fixes #2944
+* [3f3a389](https://github.com/Leantime/leantime/commit/3f3a3899744d70b470cd2800c718b8a21c48de0f): Update SECURITY.md
+* [435e3f7](https://github.com/Leantime/leantime/commit/435e3f744d808d1d38497b9f1dcad2b8d5a1c14b): Update SECURITY.md
+* [f566455](https://github.com/Leantime/leantime/commit/f5664556a3595225d84a23686f21b0d9dc3d482b): Update SECURITY.md
+* [e9924fb](https://github.com/Leantime/leantime/commit/e9924fbe07e6defebc8242fe613152ba68cc930d): Readme updates
+* [0f9a831](https://github.com/Leantime/leantime/commit/0f9a8310e7d8005b31c53ee2622625cfb9dfdb1d): Additional Readme Updates
+* [85cc204](https://github.com/Leantime/leantime/commit/85cc204e658c24f1fd1b1bc0b0aa78faab0bf900): Readme updates and new screenshots
+* [a7ca7eb](https://github.com/Leantime/leantime/commit/a7ca7ebafd4f88014d138649809c6a00ad7cd38c): Update bug_report.yml
+* [bc28a1b](https://github.com/Leantime/leantime/commit/bc28a1bea2c0c7f3522b6982e7f18c6e61936337): Update feature_request.yml
+* [bf1b1f0](https://github.com/Leantime/leantime/commit/bf1b1f07125cc35d182a16111ea67b3bfb4fd439): Update feature_request.yml
+* [76c3df1](https://github.com/Leantime/leantime/commit/76c3df1469ccebc9f6d43681de34707253b6545f): Update feature_request.yml
+* [a3261e9](https://github.com/Leantime/leantime/commit/a3261e9fab2146f51e1167779d255f007137f648): Update bug_report.yml
+* [02d0ac7](https://github.com/Leantime/leantime/commit/02d0ac72b62d5a97ef9977be4b9331638ee3f0cd): Update bug_report.yml
+
+
+# Version: 3.4.0
+
+* [31f2ce7](https://github.com/Leantime/leantime/commit/31f2ce78a023bbcae9a8213c78c57487ea0b4332): fix user issue
+* [7931979](https://github.com/Leantime/leantime/commit/7931979511693f4fda83906344c1d1430b025b3e): bugfix for project duplication
+* [20c4ba6](https://github.com/Leantime/leantime/commit/20c4ba64cb8568d726c6a16494a020decf94a46f): Escaping content for email messages
+* [5fdb464](https://github.com/Leantime/leantime/commit/5fdb46467ecbb3c8a9f78f86cc56a9feaf2a116c): fixes unescaped string
+* [2a5045f](https://github.com/Leantime/leantime/commit/2a5045f6182abdce02f798e47d88904d24716b5b): Improved cache control
+* [759e1e3](https://github.com/Leantime/leantime/commit/759e1e39b8a0ac6bcb675c52b3d3d8a1656d90dd): Plugin page improvements
+* [14df6b2](https://github.com/Leantime/leantime/commit/14df6b25764203ca107c5acf4726ede98e08fa5f): Update source file en-US.ini
+* [d056731](https://github.com/Leantime/leantime/commit/d0567316d1987079dbb13587515e2de66a867dec): endpoint to get current leantime version #1152
+* [d9e9a17](https://github.com/Leantime/leantime/commit/d9e9a174361587d4c01d7d3c1566d2d2e4b154ed): Fix broken timer on ticketmodal #2849
+* [9fa14c2](https://github.com/Leantime/leantime/commit/9fa14c28f5a62b3ee2d31ea61670016d1e213f6b): Fix broken timer on ticketmodal #2845
+* [a805662](https://github.com/Leantime/leantime/commit/a805662639e04b12f934a2c41b1182f69e4c8417): ticket table pager issue
+* [005f212](https://github.com/Leantime/leantime/commit/005f2125a17fa356e504d6e41fabd457832dae13): New translations en-us.ini (German (Informal))
+* [353402c](https://github.com/Leantime/leantime/commit/353402c54c99bc09110278323c88076b30bbe28d): New translations en-us.ini (Karakalpak)
+* [f8f005c](https://github.com/Leantime/leantime/commit/f8f005c7d0b58e8654fd87888f8a659d90a1581c): New translations en-us.ini (Spanish, Latin America)
+* [7a32b83](https://github.com/Leantime/leantime/commit/7a32b83e8695817df9aed7b5a77c0b37b9bcbb2e): New translations en-us.ini (English (upside down))
+* [ded1e0b](https://github.com/Leantime/leantime/commit/ded1e0b153b7f6e72b83185b82827d1140ae873e): New translations en-us.ini (Kashmiri)
+* [fdb75b8](https://github.com/Leantime/leantime/commit/fdb75b879fd731b8d4e39a1a741ae02dc64f6bbd): New translations en-us.ini (Pirate English)
+* [aa2b181](https://github.com/Leantime/leantime/commit/aa2b1814ee21ea6be619cf073da7cf14da10d101): New translations en-us.ini (English, United Kingdom)
+* [b69b659](https://github.com/Leantime/leantime/commit/b69b659580805d388b9bcc2a0304b527438f04a4): New translations en-us.ini (Latvian)
+* [a783650](https://github.com/Leantime/leantime/commit/a7836502a79a486da9940c7fdfda676787cec9b1): New translations en-us.ini (Estonian)
+* [721499f](https://github.com/Leantime/leantime/commit/721499f165083d5d22bf2f1040ebdce615bc4c44): New translations en-us.ini (Croatian)
+* [f991c9f](https://github.com/Leantime/leantime/commit/f991c9fd4c5aca56609c593900caace80e513697): New translations en-us.ini (Spanish, Mexico)
+* [020c07e](https://github.com/Leantime/leantime/commit/020c07ece6f34f102b43c66d134f2ddb6693f58b): New translations en-us.ini (Khmer)
+* [2bff696](https://github.com/Leantime/leantime/commit/2bff696a1516615d7ac989e7144a16e62fa5d50e): New translations en-us.ini (Persian)
+* [ca0ca66](https://github.com/Leantime/leantime/commit/ca0ca66b3916c724555af224071b77344e216322): New translations en-us.ini (Portuguese, Brazilian)
+* [c4de043](https://github.com/Leantime/leantime/commit/c4de04330fb0798cf53a50ef4b4073aa6abe9ef1): New translations en-us.ini (Icelandic)
+* [3039919](https://github.com/Leantime/leantime/commit/3039919a1c6ce9b795f7b92f54a4b8c3d5a054f2): New translations en-us.ini (Vietnamese)
+* [282ca58](https://github.com/Leantime/leantime/commit/282ca58a01226ef1efb5c4141f461d22e5412274): New translations en-us.ini (Chinese Traditional)
+* [38a7b7b](https://github.com/Leantime/leantime/commit/38a7b7b6d03347ade388857b02d1201960891078): New translations en-us.ini (Chinese Simplified)
+* [0fe787e](https://github.com/Leantime/leantime/commit/0fe787e0cb1bb644ef3af11392b7bf00b174c326): New translations en-us.ini (Turkish)
+* [b6b09e1](https://github.com/Leantime/leantime/commit/b6b09e1c9797caa1c72c6e955eece27e807b4250): New translations en-us.ini (Swedish)
+* [7083838](https://github.com/Leantime/leantime/commit/7083838f7a1543eb99fef39eaf3fdb2bb29f412a): New translations en-us.ini (Serbian (Cyrillic))
+* [232476f](https://github.com/Leantime/leantime/commit/232476f53f3873480da39c9ce40a2d8c76a1a43f): New translations en-us.ini (Slovenian)
+* [d966a94](https://github.com/Leantime/leantime/commit/d966a94a5a06c9899ec81e3007165ebd0b0a9565): New translations en-us.ini (Slovak)
+* [85cbc33](https://github.com/Leantime/leantime/commit/85cbc33d8fad85cbf0a2153fe0d69a83db471d6e): New translations en-us.ini (Russian)
+* [da4e443](https://github.com/Leantime/leantime/commit/da4e443eae5d609676a80144fa18d80734052830): New translations en-us.ini (Portuguese)
+* [79ac565](https://github.com/Leantime/leantime/commit/79ac565e98ab32cf423bf52b1471368847cf5d8a): New translations en-us.ini (Polish)
+* [5d73df7](https://github.com/Leantime/leantime/commit/5d73df7b01e0750c4cd5d8743d73b068d75f18a9): New translations en-us.ini (Norwegian)
+* [dfa1687](https://github.com/Leantime/leantime/commit/dfa16877795ea70d346a5e979efc9c1514ad9f90): New translations en-us.ini (Dutch)
+* [863dbe8](https://github.com/Leantime/leantime/commit/863dbe8c4c3a11b7e40623b30c50eb885df2c913): New translations en-us.ini (Korean)
+* [a6c2e61](https://github.com/Leantime/leantime/commit/a6c2e61984e7910c7ce75bc820ec69920f16fcba): New translations en-us.ini (Japanese)
+* [f068df7](https://github.com/Leantime/leantime/commit/f068df7d157be7cfdcd0b5983367de969791cb5d): New translations en-us.ini (Italian)
+* [6ed37e1](https://github.com/Leantime/leantime/commit/6ed37e10d84c868dfe848efda536cd81d4394eb1): New translations en-us.ini (Hungarian)
+* [52ce8d6](https://github.com/Leantime/leantime/commit/52ce8d636b919b98a07873b9c960b9e425d01568): New translations en-us.ini (Hebrew)
+* [22f46d1](https://github.com/Leantime/leantime/commit/22f46d10c4f92ca450c6d8f90f239e7a9f67b4e2): New translations en-us.ini (Greek)
+* [b93f661](https://github.com/Leantime/leantime/commit/b93f6619469cf037189d83a7204fea14b8d88602): New translations en-us.ini (German)
+* [b4b2a99](https://github.com/Leantime/leantime/commit/b4b2a99711a3155c877cc58af4f0a9ae808f7e5f): New translations en-us.ini (Danish)
+* [f76136e](https://github.com/Leantime/leantime/commit/f76136e7e35ca8c07d71b69a23b0b8e6fa4e4a70): New translations en-us.ini (Czech)
+* [eae445f](https://github.com/Leantime/leantime/commit/eae445f1d8a24d3509c113da4f57068bf06d6b88): New translations en-us.ini (Arabic)
+* [71dabab](https://github.com/Leantime/leantime/commit/71dababc8d5e11aad5013e98cd0805039146ecdb): New translations en-us.ini (Spanish)
+* [056e8cb](https://github.com/Leantime/leantime/commit/056e8cb8a537b9cbd82afb150d74db5d9f12e309): New translations en-us.ini (French)
+* [96b9d0e](https://github.com/Leantime/leantime/commit/96b9d0e08e8b6053a48d916b5afcd1b0a954166d): New translations en-us.ini (Romanian)
+* [440c4a4](https://github.com/Leantime/leantime/commit/440c4a4e97d6c489256a860668bec226afd79ab4): update leantime color
+* [ca1488e](https://github.com/Leantime/leantime/commit/ca1488e6657b8cead3506d655a8d6812950f571f): Ensure that url changes will be reflected in widget dashbaords
+* [759a3c1](https://github.com/Leantime/leantime/commit/759a3c18abfc5f37de6876d7e0c1ff704c9cf702): Ensure notification links go to places #2929
+* [1649f52](https://github.com/Leantime/leantime/commit/1649f52f7bc1635d49d8704f2fcb6f67d0b3fdb6): clean up user class
+* [b5228d3](https://github.com/Leantime/leantime/commit/b5228d306f2230557105b17fc64cdbbf05b723e1): Fix upload image issue #2919
+* [58beaab](https://github.com/Leantime/leantime/commit/58beaab73652351e4bbb996bc337c4c30c57e568): Comment out traefik labels
+* [d523531](https://github.com/Leantime/leantime/commit/d523531959d16c6f88820194e34eb184c3eef37b): code cleanup, testing improvement
+* [ee9475f](https://github.com/Leantime/leantime/commit/ee9475fe5aea13076ac1114386fc882baff7f20b): New translations en-us.ini (German (Informal))
+* [1c372c7](https://github.com/Leantime/leantime/commit/1c372c7793dc57c22f0ce655fbee65d706bd5b53): New translations en-us.ini (Karakalpak)
+* [33064c8](https://github.com/Leantime/leantime/commit/33064c84a2f500f37b59fa18a51aa370a341d767): New translations en-us.ini (Spanish, Latin America)
+* [e96cdd3](https://github.com/Leantime/leantime/commit/e96cdd3219449edbe31df9a8c25695c06a1369da): New translations en-us.ini (English (upside down))
+* [7205b81](https://github.com/Leantime/leantime/commit/7205b81ca3adfea57c40bcde053f7eee67bae2c1): New translations en-us.ini (Kashmiri)
+* [d5629f8](https://github.com/Leantime/leantime/commit/d5629f829794e7288313a8dca49bbe4cb0d3f0cd): New translations en-us.ini (Pirate English)
+* [af967e4](https://github.com/Leantime/leantime/commit/af967e4d67dad326b0f483bdd0b29215982b73c2): New translations en-us.ini (English, United Kingdom)
+* [675ef9f](https://github.com/Leantime/leantime/commit/675ef9ff7f56099b888a08408d9d149bb2af5c2f): New translations en-us.ini (Latvian)
+* [792ebb5](https://github.com/Leantime/leantime/commit/792ebb5166fae768960875b9fc1946ef4dfb6ff5): New translations en-us.ini (Estonian)
+* [5270b07](https://github.com/Leantime/leantime/commit/5270b07034695582c77fd9dbcd80f02d0d0200c5): New translations en-us.ini (Croatian)
+* [790acf4](https://github.com/Leantime/leantime/commit/790acf4a61ef5b3ca0a7eeb38d8402b8fd24ac4e): New translations en-us.ini (Spanish, Mexico)
+* [18667a8](https://github.com/Leantime/leantime/commit/18667a81fd18c9ca483ebd18cd949e0df31e59ac): New translations en-us.ini (Khmer)
+* [6846602](https://github.com/Leantime/leantime/commit/6846602bd3d1c7e943088fc38e174238935515b0): New translations en-us.ini (Persian)
+* [10aeb57](https://github.com/Leantime/leantime/commit/10aeb579cfaf23ef7da4a7afdd9f3eeb8cbd9b94): New translations en-us.ini (Portuguese, Brazilian)
+* [be4b2e5](https://github.com/Leantime/leantime/commit/be4b2e5b47a1962a3eb9b21f0423b022a408a09f): New translations en-us.ini (Icelandic)
+* [60830cf](https://github.com/Leantime/leantime/commit/60830cfe0e1852ec3284f0e37a476f8b8b94fe02): New translations en-us.ini (Vietnamese)
+* [2e4d319](https://github.com/Leantime/leantime/commit/2e4d3191219f87186a9be874105da22691d477f5): New translations en-us.ini (Chinese Traditional)
+* [40d32d1](https://github.com/Leantime/leantime/commit/40d32d1be1521a0c61313439b0ca2ca60f1c0105): New translations en-us.ini (Chinese Simplified)
+* [bdf1752](https://github.com/Leantime/leantime/commit/bdf17525c0317cbe6798945cac0910e16fd70195): New translations en-us.ini (Turkish)
+* [218754d](https://github.com/Leantime/leantime/commit/218754d3a9a2f6a04984ff36139ec4cca47df68d): New translations en-us.ini (Swedish)
+* [2cec784](https://github.com/Leantime/leantime/commit/2cec784d0d2831447f1eb33f8476ca88f58b6096): New translations en-us.ini (Serbian (Cyrillic))
+* [39451fb](https://github.com/Leantime/leantime/commit/39451fb4c812fab1e2cfb9176e471fbe755b7cd7): New translations en-us.ini (Slovenian)
+* [5fd36aa](https://github.com/Leantime/leantime/commit/5fd36aa70ee7269038cc80341bd86e09d5f8ae5f): New translations en-us.ini (Slovak)
+* [e66658e](https://github.com/Leantime/leantime/commit/e66658ec1e2a5ad690173e323472f803cb577ee8): New translations en-us.ini (Russian)
+* [c081555](https://github.com/Leantime/leantime/commit/c08155501ee1227b3ca1513ef696d068a397a19c): New translations en-us.ini (Portuguese)
+* [585ce5d](https://github.com/Leantime/leantime/commit/585ce5d0e27d873eccb4d1a86acdd938d64f4047): New translations en-us.ini (Polish)
+* [8047bea](https://github.com/Leantime/leantime/commit/8047beaf50d691f15678e582d93ec7f1b7147ea3): New translations en-us.ini (Norwegian)
+* [a039ec2](https://github.com/Leantime/leantime/commit/a039ec28a9ea43797c89cf29ed87770fac3de734): New translations en-us.ini (Dutch)
+* [7232fc0](https://github.com/Leantime/leantime/commit/7232fc07db68fefbf339ba6f3b169c1752f64550): New translations en-us.ini (Korean)
+* [d240c87](https://github.com/Leantime/leantime/commit/d240c87803651d4b9adfd4f1b02dd80d2ca2fc09): New translations en-us.ini (Japanese)
+* [c2eaa8a](https://github.com/Leantime/leantime/commit/c2eaa8a5328e5e400d880c4c380a64ec8b75cb83): New translations en-us.ini (Italian)
+* [950d523](https://github.com/Leantime/leantime/commit/950d52328f1231f8b050da7daa313385d0b16750): New translations en-us.ini (Hungarian)
+* [5b1b7d0](https://github.com/Leantime/leantime/commit/5b1b7d054c21e5f680c71ed872bc8fd31df7f2d3): New translations en-us.ini (Hebrew)
+* [8ec21cd](https://github.com/Leantime/leantime/commit/8ec21cd553e6a07fca8bb28cdcfc5bbdaefe6b23): New translations en-us.ini (Greek)
+* [ee5b127](https://github.com/Leantime/leantime/commit/ee5b127ab1c06adbe33e3758f79879bcaa8df454): New translations en-us.ini (German)
+
+
 # Version: 3.3.3
 
 * [752bfec](https://github.com/Leantime/leantime/commit/752bfec2650b4da9cd5c2310b8ae4ea3901a27b8): Version Bump

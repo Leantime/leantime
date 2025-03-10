@@ -43,15 +43,16 @@ namespace Leantime\Domain\Files\Services {
          *
          * @api
          */
-        public function uploadFile($file, $module, $entityId, $entity): bool
+        public function uploadFile($file, $module, $entityId, $entity = null): array|bool
         {
 
             if (isset($file['file'])) {
-                if ($this->fileRepository->upload($file, $module, $entityId)) {
+                if ($return = $this->fileRepository->upload($file, $module, $entityId)) {
+
                     switch ($module) {
                         case 'ticket':
-                            $subject = sprintf($this->language->__('email_notifications.new_file_todo_subject'), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__('email_notifications.new_file_todo_subject'), session('userdata.name'), $entity->headline);
+                            $subject = sprintf($this->language->__('email_notifications.new_file_todo_subject'), $entity->id, strip_tags($entity->headline));
+                            $message = sprintf($this->language->__('email_notifications.new_file_todo_subject'), session('userdata.name'), strip_tags($entity->headline));
                             $linkLabel = $this->language->__('email_notifications.new_file_todo_cta');
                             break;
                         default:
@@ -61,22 +62,25 @@ namespace Leantime\Domain\Files\Services {
                             break;
                     }
 
-                    $notification = app()->make(Notification::class);
-                    $notification->url = [
-                        'url' => CURRENT_URL,
-                        'text' => $linkLabel,
-                    ];
+                    if ($module !== 'user') {
+                        $notification = app()->make(Notification::class);
+                        $notification->url = [
+                            'url' => CURRENT_URL,
+                            'text' => $linkLabel,
+                        ];
 
-                    $notification->entity = $file;
-                    $notification->module = $module;
-                    $notification->projectId = session('currentProject');
-                    $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
-                    $notification->message = $message;
+                        $notification->entity = $file;
+                        $notification->module = $module;
+                        $notification->projectId = session('currentProject');
+                        $notification->subject = $subject;
+                        $notification->authorId = session('userdata.id');
+                        $notification->message = $message;
 
-                    $this->projectService->notifyProjectUsers($notification);
+                        $this->projectService->notifyProjectUsers($notification);
+                    }
 
-                    return true;
+                    return $return;
+
                 } else {
                     return false;
                 }

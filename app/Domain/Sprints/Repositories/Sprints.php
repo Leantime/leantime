@@ -30,7 +30,8 @@ namespace Leantime\Domain\Sprints\Repositories {
 					sprint.name,
 					sprint.projectId,
 					sprint.startDate,
-					sprint.endDate
+					sprint.endDate,
+					sprint.modified
 				FROM zp_sprints as sprint
 				WHERE sprint.id = :id
 				LIMIT 1';
@@ -57,7 +58,8 @@ namespace Leantime\Domain\Sprints\Repositories {
 					zp_sprints.name,
 					zp_sprints.projectId,
 					zp_sprints.startDate,
-					zp_sprints.endDate
+					zp_sprints.endDate,
+					zp_sprints.modified
 				FROM zp_sprints';
 
             if ($projectId != null) {
@@ -91,7 +93,8 @@ namespace Leantime\Domain\Sprints\Repositories {
 					zp_sprints.name,
 					zp_sprints.projectId,
 					zp_sprints.startDate,
-					zp_sprints.endDate
+					zp_sprints.endDate,
+					zp_sprints.modified
 				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW()
 				ORDER BY zp_sprints.startDate DESC';
@@ -118,7 +121,8 @@ namespace Leantime\Domain\Sprints\Repositories {
 					zp_sprints.name,
 					zp_sprints.projectId,
 					zp_sprints.startDate,
-					zp_sprints.endDate
+					zp_sprints.endDate,
+					zp_sprints.modified
 				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate < NOW() AND zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1';
@@ -146,7 +150,8 @@ namespace Leantime\Domain\Sprints\Repositories {
 					zp_sprints.name,
 					zp_sprints.projectId,
 					zp_sprints.startDate,
-					zp_sprints.endDate
+					zp_sprints.endDate,
+					zp_sprints.modified
 				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate > NOW() ORDER BY zp_sprints.startDate ASC LIMIT 1';
@@ -163,10 +168,10 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $value;
         }
 
-        public function addSprint($sprint): bool
+        public function addSprint($sprint): bool|int
         {
 
-            $query = 'INSERT INTO zp_sprints (name, projectId, startDate, endDate) VALUES (:name, :projectId, :startDate, :endDate)';
+            $query = 'INSERT INTO zp_sprints (name, projectId, startDate, endDate, modified) VALUES (:name, :projectId, :startDate, :endDate, NOW())';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':name', $sprint->name, PDO::PARAM_STR);
@@ -175,10 +180,10 @@ namespace Leantime\Domain\Sprints\Repositories {
             $stmn->bindValue(':endDate', $sprint->endDate, PDO::PARAM_STR);
 
             $execution = $stmn->execute();
-
+            $id = $this->db->database->lastInsertId();
             $stmn->closeCursor();
 
-            return $execution;
+            return $execution ? $id : false;
         }
 
         public function editSprint($sprint): bool
@@ -189,7 +194,8 @@ namespace Leantime\Domain\Sprints\Repositories {
                         name = :name,
                         projectId = :projectId,
                         startDate = :startDate,
-                        endDate = :endDate
+                        endDate = :endDate,
+                        modified = NOW()
                         WHERE id = :id';
 
             $stmn = $this->db->database->prepare($query);

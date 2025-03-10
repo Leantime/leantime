@@ -1,5 +1,6 @@
 <title>@dispatchFilter('page_title', $sitename)</title>
 
+<meta name="requestId" content="{{ \Illuminate\Support\Str::random(4) }}">
 <meta name="description" content="{{ $sitename }}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -57,9 +58,32 @@
     @endforeach
 </style>
 
-<style id="fontStyleSetter">:root {
+<style id="fontStyleSetter">
+    :root {
         --primary-font-family: '{{{ $themeFont }}}', 'Helvetica Neue', Helvetica, sans-serif;
-    }</style>
+    }
+</style>
+
+
+    <style id="backgroundImageSetter">
+        @if(!empty($themeBg))
+            .rightpanel {
+                background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
+                opacity: {{ $themeOpacity }};
+                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+                background-size: var(--background-size, cover);
+                background-position: center;
+                background-attachment: fixed;
+            }
+
+            @if($themeType === 'image')
+                .rightpanel:before {
+                    background:none;
+                }
+            @endif
+        @endif
+    </style>
+
 
 @dispatchEvent('afterThemeColors')
 

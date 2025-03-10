@@ -563,23 +563,23 @@ export default (function () {
             const handle_width = 8;
 
             createSVG('rect', {
-                x: bar.getX() + bar.getWidth() - 9,
-                y: bar.getY() + 1,
+                x: bar.getX() + bar.getWidth() - 10,
+                y: bar.getY() + this.corner_radius/2,
                 width: handle_width,
-                height: this.height - 2,
-                rx: this.corner_radius,
-                ry: this.corner_radius,
+                height: this.height - this.corner_radius,
+                rx: this.corner_radius > handle_width ? handle_width/2 : this.corner_radius,
+                ry: this.corner_radius > handle_width ? handle_width/2 : this.corner_radius,
                 class: 'handle right',
                 append_to: this.handle_group,
             });
 
             createSVG('rect', {
-                x: bar.getX() + 1,
-                y: bar.getY() + 1,
+                x: bar.getX(),
+                y: bar.getY() + this.corner_radius/2,
                 width: handle_width,
-                height: this.height - 2,
-                rx: this.corner_radius,
-                ry: this.corner_radius,
+                height: this.height - this.corner_radius,
+                rx: this.corner_radius > handle_width ? handle_width/2 : this.corner_radius,
+                ry: this.corner_radius > handle_width ? handle_width/2 : this.corner_radius,
                 class: 'handle left',
                 append_to: this.handle_group,
             });
@@ -922,16 +922,16 @@ export default (function () {
             const bar = this.$bar;
             this.handle_group
                 .querySelector('.handle.left')
-                .setAttribute('x', bar.getX() + 1);
+                .setAttribute('x', bar.getX());
             this.handle_group
                 .querySelector('.handle.left')
-                .setAttribute('y', bar.getY() + 1);
+                .setAttribute('y', bar.getY() + this.corner_radius/2);
             this.handle_group
                 .querySelector('.handle.right')
-                .setAttribute('x', bar.getEndX() - 9);
+                .setAttribute('x', bar.getEndX() - 10);
             this.handle_group
                 .querySelector('.handle.right')
-                .setAttribute('y', bar.getY() + 1);
+                .setAttribute('y', bar.getY() + this.corner_radius/2);
             const handle = this.group.querySelector('.handle.progress');
             handle &&
             handle.setAttribute('points', this.get_progress_polygon_points());
@@ -959,15 +959,15 @@ export default (function () {
 
         calculate_path() {
             let start_x =
-                this.from_task.$bar.getX() + this.from_task.$bar.getWidth() / 2;
+                this.from_task.$bar.getX() + this.from_task.$bar.getWidth() - this.gantt.options.arrow_curve;
 
-            const condition = () =>
-                this.to_task.$bar.getX() < start_x + this.gantt.options.padding &&
-                start_x > this.from_task.$bar.getX() + this.gantt.options.padding;
-
-            while (condition()) {
-                start_x -= 10;
-            }
+            // const condition = () =>
+            //     this.to_task.$bar.getX() < start_x + this.gantt.options.padding &&
+            //     start_x > this.from_task.$bar.getX() + this.gantt.options.padding;
+            //
+            // while (condition()) {
+            //     start_x -= 10;
+            // }
 
             const start_y =
                 this.from_task.$bar.getY() + this.gantt.options.bar_height;
@@ -985,6 +985,7 @@ export default (function () {
                 ? end_y + this.gantt.options.arrow_curve
                 : end_y - this.gantt.options.arrow_curve;
 
+
             this.path = `
             M ${start_x} ${start_y}
             V ${offset}
@@ -996,7 +997,7 @@ export default (function () {
 
             if (
                 this.to_task.$bar.getX() <
-                this.from_task.$bar.getX() + this.gantt.options.padding
+                (start_x + 15)
             ) {
                 const down_1 = this.gantt.options.padding / 2 - curve;
                 const down_2 =
@@ -1376,9 +1377,10 @@ export default (function () {
 
             } else if (this.view_is(VIEW_MODE.MONTH)) {
 
-                let tempDate = date_utils.add(this.gantt_start, -3, 'month');
+                //Need to have 12 months before so the year shows up in the right place.
+                let tempDate = date_utils.add(this.gantt_start, -13, 'month');
                 this.gantt_start = date_utils.start_of(tempDate, "month");
-                this.gantt_start = date_utils.start_of(tempDate, "month");
+
 
                 this.gantt_end = date_utils.add(this.gantt_end, 2, 'year');
             } else if (this.view_is(VIEW_MODE.YEAR)) {

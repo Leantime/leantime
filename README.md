@@ -2,11 +2,19 @@
 <div align="center">
 <a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
-### Leantime&reg; ###
+# Leantime&reg; 
 
-Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use. Building with ADHD, dyslexia and autism in mind. <br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature-rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+⭐ If you find Leantime useful, please star us on GitHub! ⭐
 
-<a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+Leantime is an open source project management system for non-project managers.<br />
+We combine strategy, planning and execution while making it easy for everyone on the team to use.<br />
+Built with ADHD, dyslexia and autism in mind. 🧠<br />
+
+💪 As simple as Trello but as feature-rich as Jira<br />
+🔄 A perfect alternative to ClickUp, Monday, or Asana<br />
+🌐 [https://leantime.io](https://leantime.io)<br />
+
+<a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="A screenshot of Leantime's my work dashboard showing a few boxes with large metrics represnting todos complete, goals contributing to, scheduled todos. Also shows a day calendar with one task on it and a list of tasks grouped by Overdue, Due this week and Due Later" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
@@ -35,20 +43,76 @@ Leantime is an open source project management system for non-project manager.<br
 <br /><br />
 ### 📸 Screenshots ###
 
-| ![alt text](public/assets/images/Screenshots/dark.png "My Work")        |  ![alt text](public/assets/images/Screenshots/projectDashboard.png "Project Dashboard")     |      ![alt text](public/assets/images/Screenshots/table.png "Grouped To-Dos")      |
-|-------------------------------------------------------------------------|:------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
-| ![alt text](public/assets/images/Screenshots/kanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/timeline.png "Tasks on timeline") |   ![alt text](public/assets/images/Screenshots/calendar.png "Project Calendar")    |
-| ![alt text](public/assets/images/Screenshots/goals.png "Goals")         |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timsheets")       |
+<table width="100%">
+    <tr>
+        <td width="33%"><img alt="Screenshot of Leantime's my work dashboard but with a dark color scheme. All colors are darkened or reverted" src="public/assets/images/Screenshots/dark.png" title="My Work" /></td>
+        <td width="33%"><img alt="Screenshot of Leantime's project dashboard showing a project checklist that has the first box checked, the latest tasks (1 right now), a progress donut chart at 0%" src="public/assets/images/Screenshots/projectDashboard.png" title="Project Dashboard" /></td>
+        <td width="33%"><img alt="Screenshot of Leantime's todo screen in table format. Tasks are grouped by status where each Status has a different color" src="public/assets/images/Screenshots/table.png" title="Grouped To-Dos" /></td>
+    </tr>
+    <tr>
+        <td><img alt="alt text" src="public/assets/images/Screenshots/kanban.png" title="Kanban Board"/></td>
+        <td><img alt="Screenshot of Leantime's timeline or gantt feature showing a timeline with various milestone boxes different in length representing how long these take. Each milestone has a different color and they are connected with an arrow" src="public/assets/images/Screenshots/timeline.png" title="Tasks on timeline" /></td>
+        <td><img alt="Screenshot of Leantime's personal calendar screen showing a month overview with a few tasks" src="public/assets/images/Screenshots/calendar.png" title="Project Calendar" /></td>
+    </tr>
+    <tr>
+        <td><img alt="alt text" src="public/assets/images/Screenshots/goals.png" title="Goals" /></td>
+        <td><img alt="Screenshot of Leantime's wiki page showing one template article of a product requirements document formatted with lists and tables" src="public/assets/images/Screenshots/docs.png" title="Documents &amp; Wikis" /></td>
+        <td><img alt="Screenshot of Leantime's timesheet feature with a table a one week overview and input boxes for each day. Tasks are organized in rows" src="public/assets/images/Screenshots/timesheet.png" title="Timesheets" /></td>
+    </tr>
+</table>
 
 <br /><br />
 ### ❗System Requirements ###
 
-* PHP 8.1+
-* MySQL 8.0+
+* PHP 8.2+
+* MySQL 8.0+ or MariaDB 10.6+
 * Apache or Nginx (IIS works with some modifications)
-* PHP Extensions: 
-* * mysql, pdo_mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap, zip, openssl, phar
+* PHP Extensions:
+* BC Math (bcmath)
+* Ctype
+* cURL
+* DOM
+* Exif
+* Fileinfo
+* Filter
+* GD
+* Hash
+* LDAP
+* Multibyte String (mbstring)
+* MySQL
+* OPcache
+* OpenSSL
+* PCNTL
+* PCRE
+* PDO
+* Phar
+* Session
+* Tokenizer
+* Zip
+* SimpleXML
 <br /><br />
+
+
+Ctype PHP Extension
+cURL PHP Extension
+DOM PHP Extension
+Fileinfo PHP Extension
+Filter PHP Extension
+Hash PHP Extension
+Mbstring PHP Extension
+OpenSSL PHP Extension
+PCRE PHP Extension
+PDO PHP Extension
+Session PHP Extension
+Tokenizer PHP Extension
+XML PHP Extension
+
+
+
+
+
+
+
 ### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the officially supported Docker image.
@@ -74,7 +138,7 @@ Whilst the steps above are applicable to Internet Information Services (IIS), th
 * Double click on the PHP handler mapping that is used by the site
 * Click `Request Restrictions…`
 * Click the `Verbs` tab
-* In the `One of the following verbs` text box, add `,PATCH` - for example: `GET,HEAD,POST,PATCH`
+* In the `One of the following verbs` text box, add `PATCH` - for example: `GET,HEAD,POST,PATCH`
 * Click `OK`
 * In the `Executable (optional)` text box, put a double quote character (`“`) at the start and at the end of the path to the `php-cgi.exe` file (_this isn't needed if the path doesn't have a space in it_)
 * Click `OK`
@@ -88,7 +152,7 @@ We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Doc
 To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
 
 ```
-docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
+docker run -d --restart unless-stopped -p 8080:8080 --network leantime-net \
 -e LEAN_DB_HOST=mysql_leantime \
 -e LEAN_DB_USER=admin \
 -e LEAN_DB_PASSWORD=321.qwerty \
@@ -178,7 +242,7 @@ For timesheets: <br />
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
 #### CLI
-* Run `bin/leantime system:update` 
+* Run `php bin/leantime system:update` 
 
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
@@ -204,12 +268,12 @@ We only offer support for the most recent version.
 
 We do not offer support for Cloudron, Elestio, Turnkey, or other external distribution platforms sharing unofficial versions of Leantime. 
 
-## Contributing
+## 🫴 Contributing
 
 We're excited you are interested in contributing to Leantime. We want to make sure you have a great experience contributing to Leantime and that the new features you build will make it into core. 
 <br />
 
-### Bugs
+### 🪲 Bugs
 
 Find an issue on Github (or create a new one) add your name to it or comment that you will be working on it. Once fixed, create a  Pull Request.
 
@@ -217,19 +281,18 @@ Find an issue on Github (or create a new one) add your name to it or comment tha
 
 If you have an idea about new features please reach out to us on Discord. This is where we coordinate feature development and discuss whether core is the right place to add your new features (Plugins is the alternative). 
 
-### Translations
+### 🌏 Translations
 
-We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
+We use [Crowdin](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
 
-
-### Community Support ##
+### 👥 Community Support
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)
 <br /><br />
-## ⚖️ LICENSE Exceptions ##
+## ⚖️ LICENSE Exceptions
 
 Leantime is licensed under AGPLv3.
 This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/Plugins` directory which may contain plugins licensed under other licenses including our enterprise license.

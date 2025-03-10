@@ -43,7 +43,7 @@ body .gantt #details .details-container {
 
 .gantt-container .popup-wrapper {
     background-color:var(--secondary-background);
-    padding:10px;
+    padding:15px;
     box-shadow:var(--regular-shadow);
     margin-left: -5px;
     opacity:0;

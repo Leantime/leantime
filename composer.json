@@ -1,32 +1,38 @@
 {
     "name": "leantime/leantime",
-    "description": "Open source project management system",
+    "description": "Open source project management system for non-project managers. Simple like Trello, powerful like Jira. Built with neurodiversity in mind.",
     "version": "4.0.0",
     "type": "project",
-    "license": "AGPL-3.0",
-    "config": {
-        "platform-check": false,
-        "platform": {
-            "php": "8.2.0"
-        },
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "metasyntactical/composer-plugin-license-check": true,
-            "php-http/discovery": true,
-            "phpstan/extension-installer": true,
-            "wikimedia/composer-merge-plugin": true
-        }
-    },
+    "keywords": [
+        "project-management", "task-management", "kanban", "gantt", "php", "mysql",
+        "jira-alternative", "clickup-alternative", "asana-alternative", "agile",
+        "scrum", "lean", "innovation-management", "neurodiversity-friendly"
+    ],
+    "homepage": "http://leantime.io",
+    "readme": "README.md",
+    "license": "AGPL-3.0-only",
     "authors": [
         {
             "name": "Marcel Folaron",
-            "email": "marcel@leantime.io"
+            "email": "marcel@leantime.io",
+            "homepage": "http://leantime.io"
         }
     ],
-    "repositories": [
+    "support": {
+        "email": "support@leantime.io",
+        "issues": "https://github.com/Leantime/leantime/issues",
+        "docs": "https://docs.leantime.io",
+        "chat": "https://discord.com/invite/YJeNS7VkQh",
+        "security": "https://leantime.io/responsible-disclosure-policy/"
+    },
+    "funding": [
         {
-            "type": "vcs",
-            "url": "https://github.com/leantime/leantime-documentor.git"
+            "type": "Github Sponsor",
+            "url": "https://github.com/sponsors/Leantime"
+        },
+        {
+            "type": "Support Leantime",
+            "url": "https://marketplace.leantime.io/product/support-leantime"
         }
     ],
     "require": {
@@ -35,7 +41,6 @@
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
         "ext-zip": "*",
-        "ext-pdo_mysql": "*",
         "ext-mbstring": "*",
         "ext-pcntl": "*",
         "ext-posix": "*",
@@ -45,8 +50,8 @@
         "ext-openssl": "*",
         "ext-gd": "*",
         "ext-fileinfo": "*",
-        "laravel/framework": "^10.48",
-        "filp/whoops": "^2.14",
+        "ext-dom": "*",
+        "laravel/framework": "^v11.44",
         "guzzlehttp/guzzle": "^7.9",
         "aws/aws-sdk-php": "^3.314",
         "phpmailer/phpmailer": "^6.6",
@@ -57,37 +62,43 @@
         "htmlawed/htmlawed": "^1.2",
         "symfony/dotenv": "^7.1.6",
         "lasserafn/php-initial-avatar-generator": "^4.2",
-        "guzzlehttp/oauth-subscriber": "^0.6.0",
+        "guzzlehttp/oauth-subscriber": "^0.8.1",
         "kamermans/guzzle-oauth2-subscriber": "^1.0",
         "league/csv": "^9.8",
-        "dragonmantank/cron-expression": "^3.3",
         "vedmant/laravel-feed-reader": "^1.6",
-        "psr/container": "^1.1.1|^2.0.1",
-        "psr/log": "^1.0|^2.0|^3.0",
-        "psr/simple-cache": "^1.0|^2.0|^3.0",
-        "symfony/cache": "^6.2",
-        "symfony/console": "^6.2",
-        "symfony/error-handler": "^6.2",
-        "symfony/finder": "^6.2",
-        "symfony/http-foundation": "^6.4",
-        "symfony/http-kernel": "^6.2",
-        "symfony/mailer": "^6.2",
-        "symfony/mime": "^6.2",
-        "symfony/process": "^6.2",
-        "symfony/routing": "^6.2",
-        "symfony/uid": "^6.2",
-        "symfony/var-dumper": "^6.2",
-        "nikic/php-parser": "^4.17",
-        "nesbot/carbon": "^2.72",
-        "symfony/http-client": "^6.2.4",
-        "symfony/psr-http-message-bridge": "^2.0",
         "carbon-cli/carbon-cli": "^1.2",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "phpseclib/phpseclib": "~3.0",
         "spatie/icalendar-generator": "^2.6",
-        "sentry/sentry-laravel": "4.10.1"
+        "sentry/sentry-laravel": "~4.8.0",
+        "stripe/stripe-php": "~7.128.0",
+        "crispchat/php-crisp-api": "^1.7",
+        "php-http/httplug": "^2.4",
+        "laravel/sanctum": "^4.0",
+        "doctrine/dbal": "^3.5.1",
+        "laravel/socialite": "^5.16",
+        "socialiteproviders/authentik": "^5.2",
+        "socialiteproviders/auth0": "^4.2",
+        "socialiteproviders/gitea": "^4.1",
+        "socialiteproviders/github": "^4.1",
+        "socialiteproviders/gitlab": "^4.1",
+        "socialiteproviders/google": "^4.1",
+        "socialiteproviders/keycloak": "^5.3",
+        "socialiteproviders/laravelpassport": "^4.3",
+        "socialiteproviders/microsoft": "^4.6",
+        "socialiteproviders/microsoft-azure": "^5.2",
+        "socialiteproviders/okta": "^4.4",
+        "socialiteproviders/propelauth": "^4.0",
+        "socialiteproviders/eduid": "^4.0",
+        "socialiteproviders/appnet": "^4.1",
+        "socialiteproviders/saml2": "^4.7",
+        "php-http/guzzle7-adapter": "^1.1",
+        "symfony/cache": "^7.2"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "symfony/var-dumper": "^7.2",
+        "filp/whoops": "^2.14",
         "squizlabs/php_codesniffer": "^3.8",
         "codeception/codeception": "^5.1",
         "codeception/module-phpbrowser": "*",
@@ -102,7 +113,6 @@
         "laravel/pint": "^1.17",
         "phpstan/phpstan": "^1.10",
         "leantime/leantime-documentor": "dev-main"
-
     },
     "provide": {
         "psr/container-implementation": "1.1|2.0",
@@ -112,8 +122,7 @@
         "psr-4": {
             "Leantime\\": [
                 "app/"
-            ],
-            "": "app/"
+            ]
         },
         "files": [
             "app/helpers.php"
@@ -126,12 +135,30 @@
             ],
             "Unit\\": [
                 "tests/Unit/"
-            ],
-            "": "app/"
+            ]
         },
         "files": [
             "app/helpers.php"
         ]
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/leantime/leantime-documentor.git"
+        }
+    ],
+    "config": {
+        "platform-check": false,
+        "platform": {
+            "php": "8.2.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "metasyntactical/composer-plugin-license-check": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "extra": {
         "installer-paths": {
@@ -145,6 +172,7 @@
             ]
         },
         "merge-plugin": {
+            "ignore-duplicates": true,
             "include": [
                 "app/Plugins/*/composer.json"
             ]

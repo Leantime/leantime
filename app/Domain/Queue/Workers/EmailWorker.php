@@ -27,7 +27,7 @@ class EmailWorker
             $n++;
             $currentUserId = $message['userId'];
 
-            //Don't send messages older than 2 weeks.
+            // Don't send messages older than 2 weeks.
             $fromTz = new \DateTimeZone('UTC');
             $messageDate = \DateTime::createFromFormat('Y-m-d H:i:s', $message['thedate'], $fromTz);
 
@@ -45,7 +45,7 @@ class EmailWorker
             }
             // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
             // and here we need to group the messages in an array to know which messages are grouped to group-delete them
-            //Discard all messages
+            // Discard all messages
             $allMessagesToDelete[$currentUserId][] = $message['msghash'];
         }
 
@@ -63,13 +63,13 @@ class EmailWorker
             $nowDate = time();
 
             // echo for DEBUG PURPOSE
-            //debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
+            // debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
             $timeSince = abs($nowDate - $lastMessageDate);
 
-            //Get company message frequency default
+            // Get company message frequency default
             $messageFrequency = $this->settingsRepo->getSetting('companysettings.messageFrequency');
 
-            //Check if user has frequency set
+            // Check if user has frequency set
             if (empty($messageFrequency)) {
                 $messageFrequency = $this->settingsRepo->getSetting('usersettings.'.$theuser['id'].'.messageFrequency');
             }
@@ -79,11 +79,11 @@ class EmailWorker
                 $messageFrequency = 900;
             }
             // echo for DEBUG PURPOSE
-            //debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
+            // debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
 
             if ($timeSince < $messageFrequency) {
                 // echo for DEBUG PURPOSE
-                //debug_print("Elapsed time not enough for " . $recipient . " : skipping till " . date("Y-m-d H:i:s", $lastMessageDate + $messageFrequency));
+                // debug_print("Elapsed time not enough for " . $recipient . " : skipping till " . date("Y-m-d H:i:s", $lastMessageDate + $messageFrequency));
                 continue;
             }
 
@@ -108,7 +108,7 @@ class EmailWorker
             // Delete the corresponding messages from the queue when the mail is sent
             // TODO here : only delete these if the send was successful
             // echo for DEBUG PURPOSE
-            //debug_print("Messages send (about to delete) :");
+            // debug_print("Messages send (about to delete) :");
 
             $this->queue->deleteMessageInQueue($allMessagesToDelete[$currentUserId]);
 

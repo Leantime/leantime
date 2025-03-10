@@ -44,7 +44,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
-            //Create default canvas.
+            // Create default canvas.
             if (! $allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__('label.board'),
@@ -57,7 +57,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             if (session()->exists('current'.strtoupper(static::CANVAS_NAME).'Canvas')) {
                 $currentCanvasId = session('current'.strtoupper(static::CANVAS_NAME).'Canvas');
-                //Ensure canvas id is in the list of currentCanvases (could be old value after project select
+                // Ensure canvas id is in the list of currentCanvases (could be old value after project select
 
                 $found = false;
                 foreach ($allCanvas as $row) {
@@ -115,7 +115,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_created_message'),
                             session('userdata.name'),
-                            "<a href='".$actual_link."'>".$values['title'].'</a>'
+                            "<a href='".$actual_link."'>".strip_tags($values['title']).'</a>'
                         );
                         $mailer->setHtml($message);
 
@@ -232,7 +232,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                             $message = sprintf(
                                 $this->language->__('email_notifications.canvas_imported_message'),
                                 session('userdata.name'),
-                                "<a href='".$actual_link."'>".$canvas[0]['title'].'</a>'
+                                "<a href='".$actual_link."'>".strip_tags($canvas[0]['title']).'</a>'
                             );
                             $mailer->setHtml($message);
 

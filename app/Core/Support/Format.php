@@ -85,10 +85,10 @@ class Format
                     break;
             }
         } catch (\Throwable $e) {
-            //Several things can throw exceptions in the date parsing scripts.
-            //Most common is an invalid date format. This could also be an empty string or a 0000-00... date.
-            //Since this format class is purely for user facing purposes we will not show an error message
-            //but return an empty string.
+            // Several things can throw exceptions in the date parsing scripts.
+            // Most common is an invalid date format. This could also be an empty string or a 0000-00... date.
+            // Since this format class is purely for user facing purposes we will not show an error message
+            // but return an empty string.
             $this->value = $value;
 
             return;
@@ -173,10 +173,10 @@ class Format
             return '';
         }
 
-        //This method should not be used anymore however we have plugins that are still using it and they will not have
-        //the new enum values. So they are still calling format($var)->isoDate() without a enum modifier that would
-        //indicate that this is a user date (which it was historically).
-        //So now we have to shuffle things around and since the format was probably not correct anyways, let's reparse
+        // This method should not be used anymore however we have plugins that are still using it and they will not have
+        // the new enum values. So they are still calling format($var)->isoDate() without a enum modifier that would
+        // indicate that this is a user date (which it was historically).
+        // So now we have to shuffle things around and since the format was probably not correct anyways, let's reparse
 
         if (! $this->value instanceof CarbonImmutable) {
 
@@ -190,12 +190,12 @@ class Format
 
         } else {
 
-            //If for some reason Carbon was able to parse the date we'll need to make sure the timezone is set to the
-            //users timezone.
+            // If for some reason Carbon was able to parse the date we'll need to make sure the timezone is set to the
+            // users timezone.
 
-            //Date was falsly parsed as UTC but is actually user date. Shift timezone.
+            // Date was falsly parsed as UTC but is actually user date. Shift timezone.
             $userTimezone = session('usersettings.timezone');
-            //Carbon shift timezone will change timezone without actually changing the numbers
+            // Carbon shift timezone will change timezone without actually changing the numbers
             $this->value->shiftTimezone($userTimezone);
         }
 
@@ -266,7 +266,7 @@ class Format
             return '';
         }
 
-        return $this->language->__('language.currency').''.$this->value;
+        return $this->language->__('language.currency').''.number_format($this->value, 2);
     }
 
     /**
@@ -278,17 +278,17 @@ class Format
      */
     public function percent(): string
     {
-        //First value empty, just return empty string
+        // First value empty, just return empty string
         if ($this->value == null) {
             return '';
         }
 
-        //Second value empty return first value with % sign
+        // Second value empty return first value with % sign
         if (empty($this->value2)) {
             return number_format($this->value, 2).'%';
         }
 
-        //Both values set. Return percent calculation
+        // Both values set. Return percent calculation
         $percent = ($this->value / $this->value2) * 100;
 
         return number_format($percent, 2).'%';

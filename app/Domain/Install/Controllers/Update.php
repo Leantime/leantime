@@ -54,12 +54,13 @@ namespace Leantime\Domain\Install\Controllers {
         public function post($params): Response
         {
             if (isset($_POST['updateDB'])) {
+                session()->forget('db-version');
                 $success = $this->installRepo->updateDB();
 
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
                         $this->tpl->setNotification('There was a problem. Please reach out to support@leantime.io for assistance.', 'error');
-                        //report($errorMessage);
+                        // report($errorMessage);
                     }
                     $this->tpl->setNotification('There was a problem updating your database. Please check your error logs to verify your database is up to date.', 'error');
 

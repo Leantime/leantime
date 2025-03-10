@@ -9,9 +9,10 @@
            ]) --}}
     @if ($login::userIsAtLeast("admin"))
         <li class="appsLink">
-            <a class="btn-circle" href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
+            <a class="btn-circle" href="{{ BASE_URL }}/plugins/marketplace" preload="mouseover" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
         </li>
     @endif
+
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler btn btn-circle"
@@ -19,6 +20,7 @@
             hx-target="#newsDropdown"
             hx-indicator=".htmx-indicator"
             hx-trigger="click"
+            preload="mouseover"
             data-toggle='dropdown'
             data-tippy-content='{{ __('popover.latest_updates') }}'
         >
@@ -228,7 +230,7 @@
                     jQuery('.dropdown-menu.show').not(jQuery(this).next('.dropdown-menu')).removeClass('show');
                     jQuery(this).next('.dropdown-menu').toggleClass('show');
                 });
-    
+
                 // Close dropdown when clicking outside
                 jQuery(document).on('click', function(e) {
                     if (!jQuery(e.target).closest('.dropdown-toggle').length) {

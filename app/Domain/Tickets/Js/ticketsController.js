@@ -71,27 +71,28 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    jQuery(document).ready(
-        function () {
-            if (readonly === false) {
-                var gantt_chart = new Gantt(
-                    "#gantt",
-                    tasks,
-                    {
-                        header_height: 55,
-                        column_width: 20,
-                        step: 24,
-                        view_modes: ['Day', 'Week', 'Month'],
-                        bar_height: 40,
-                        static_progress_indicator: true,
-                        bar_corner_radius: 5,
-                        arrow_curve: 5,
-                        padding:20,
-                        view_mode: 'Month',
-                        date_format: window.leantime.i18n.__("language.momentJSDate"),
-                        language: window.leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
-                        additional_rows: 5,
-                        custom_popup_html: function (task) {
+        jQuery(document).ready(
+            function () {
+
+                if (readonly === false) {
+                    var gantt_chart = new Gantt(
+                        "#gantt",
+                        tasks,
+                        {
+                            header_height: 55,
+                            column_width: 20,
+                            step: 24,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            bar_height: 40,
+                            static_progress_indicator: true,
+                            bar_corner_radius: 10,
+                            arrow_curve: 10,
+                            padding:20,
+                            view_mode: 'Month',
+                            date_format: leantime.i18n.__("language.momentJSDate"),
+                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
+                            additional_rows: 5,
+                            custom_popup_html: function (task) {
 
                             // the task object will contain the updated
                             // dates and progress value
@@ -123,20 +124,23 @@ export const initGanttChart = function (tasks, viewMode, readonly) {
                         },
                         on_click: function (task) {
 
-                        },
-                        on_date_change: function (task, start, end) {
-                            updateMilestoneDates(task.id, start, end, task._index);
-                        },
-                        on_sort_change: function (tasks) {
+                            },
+                            on_date_change: function (task, start, end) {
+
+                                updateMilestoneDates(task.id, start, end, task._index+1);
+
+                            },
+                            on_sort_change: function (tasks) {
 
                             var statusPostData = {
                                 action: "ganttSort",
                                 payload: {}
                             };
 
-                            for (var i = 0; i < tasks.length; i++) {
-                                    statusPostData.payload[tasks[i].id] = tasks[i]._index;
-                            }
+                                for (var i = 0; i < tasks.length; i++) {
+                                        //start sorting counter at 1 instead of 0 since 0 will cause date comparison
+                                        statusPostData.payload[tasks[i].id] = tasks[i]._index+1;
+                                }
 
                             // POST to server using $.post or $.ajax
                             jQuery.ajax({
@@ -735,30 +739,30 @@ export const initSprintDropdown = function () {
 
 export const initSimpleColorPicker = function () {
 
-    var colors = ['#821219',
-        '#BB1B25',
-        '#75BB1B',
-        '#4B7811',
-        '#fdab3d',
-        '#1bbbb1',
-        '#1B75BB',
-        '#124F7D',
-        '#082236',
-        '#5F0F40',
-        '#bb1b75',
-        '#F26CA7',
-        '#BB611B',
-        '#aaaaaa',
-        '#4c4c4c',
-    ];
-    jQuery('input.simpleColorPicker').simpleColorPicker(
-        { colors: colors,
-            onChangeColor: function (color) {
-                jQuery(this).css('background', color);
-                jQuery(this).css('color', "#fff");
-            }
-        }
-    );
+            var colors = ['#821219',
+                '#BB1B25',
+                '#75BB1B',
+                '#4B7811',
+                '#fdab3d',
+                '#1bbbb1',
+                '#006d9f',
+                '#124F7D',
+                '#082236',
+                '#5F0F40',
+                '#bb1b75',
+                '#F26CA7',
+                '#BB611B',
+                '#aaaaaa',
+                '#4c4c4c',
+            ];
+            jQuery('input.simpleColorPicker').simpleColorPicker(
+                { colors: colors,
+                    onChangeColor: function (color) {
+                        jQuery(this).css('background', color);
+                        jQuery(this).css('color', "#fff");
+                    }
+                }
+            );
 
     var currentColor = jQuery('input.simpleColorPicker').val();
 
@@ -1180,22 +1184,20 @@ export const initTicketsTable = function (groupBy) {
                     csv: window.leantime.i18n.__("datatables.buttons.download")
                 }
 
-            },
-            "dom": '<"top"f>rt<"bottom"lip><"clear">',
-            "pagingType": "full_numbers",
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            "searching": true,
-            "stateSave": false,
-            "displayLength":100,
-            "order": defaultOrder,
-            "columnDefs": [
-                    { "visible": false, "targets": 10, "searchable": false },
-                    { "visible": false, "targets": 11, "searchable": false },
-                    { "target": "no-sort", "orderable": false},
-            ],
-            "footerCallback": function ( row, data, start, end, display ) {
-                var api = this.api(), data;
+                },
+                "dom": '<"top"f>rt<"bottom"lip><"clear">',
+                "pagingType": "full_numbers",
+                "searching": false,
+                "stateSave": true,
+                "displayLength":100,
+                "order": defaultOrder,
+                "columnDefs": [
+                        { "visible": false, "targets": 10, "searchable": false },
+                        { "visible": false, "targets": 11, "searchable": false },
+                        { "target": "no-sort", "orderable": false},
+                    ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
 
                 // converting to interger to find total
                 var intVal = function ( i ) {

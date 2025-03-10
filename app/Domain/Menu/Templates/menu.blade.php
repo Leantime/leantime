@@ -27,18 +27,8 @@
 
                 @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal' && $menuType != 'projecthub')
                     <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
-                        <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ session("currentProject") }}">
+                        <a  href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ session("currentProject") }}">
                             {!! $settingsLink['label']  !!}
-                        </a>
-                    </li>
-                @endif
-                @if ($menuType == 'personal')
-                    <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
-                        <a href="@if(isset($settingsLink['url'])) {{ $settingsLink['url']  }} @else {{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }} @endif">
-                            {!! __($settingsLink['label'])  !!}
-                            @if($showSettingsIndicator)
-                                <span class='label label-primary feature-label'>New</span>
-                            @endif
                         </a>
                     </li>
                 @endif

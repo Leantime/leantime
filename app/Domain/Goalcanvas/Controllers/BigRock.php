@@ -55,7 +55,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             if (isset($_GET['id'])) {
                 $id = (int) $_GET['id'];
-                //Update
+                // Update
                 $bigrock['id'] = $id;
                 $bigrock['title'] = $params['title'];
                 $this->goalService->updateGoalboard($bigrock);
@@ -63,7 +63,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                 return Frontcontroller::redirect(BASE_URL.'/goalcanvas/bigRock/'.$id);
             } else {
-                //New
+                // New
                 $bigrock['title'] = $params['title'];
                 $bigrock['projectId'] = session('currentProject');
                 $bigrock['author'] = session('userdata.id');

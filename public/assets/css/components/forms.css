@@ -253,6 +253,8 @@ input[type=color] {
 
 body input[type=text].main-title-input.main-title-input {
     border: 1px solid transparent;
+    border-bottom:1px solid var(--main-border-color);
+    border-radius:0px;
     box-shadow:none;
     font-size:var(--font-size-xxxl);
     margin-bottom:5px;
@@ -1152,7 +1154,7 @@ label .fa-solid {
     outline:0;
     border:none;
     position:absolute;
-    top:2px;
+    top:-1px;
     right:5px;
     color:var(--primary-font-color);
     cursor:pointer;
@@ -1161,6 +1163,88 @@ label .fa-solid {
 
 .date-picker-form-control:hover .reset-button {
     display:block;
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input.hide-controls::-webkit-outer-spin-button,
+input.hide-controls::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number].hide-controls {
+    -moz-appearance: textfield;
+}
+
+
+.weekday-selector {
+    margin: 10px 0;
+}
+
+.weekday-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align:center;
+    padding: 4px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.weekday-label:hover {
+    background: #e9ecef;
+}
+
+.weekday-checkbox {
+    margin-right: 4px !important;
+    margin-top:0px !important;
+}
+
+.weekday-text {
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.weekday-label input[type="checkbox"]:checked + .weekday-text {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.dropdown-form {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-width: 300px;
+    position: absolute;
+    z-index: 1000;
+}
+
+.dropdown-header {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-title {
+    margin: 0;
+    font-size: 16px;
+}
+
+.dropdown-content {
+    padding: 15px;
+}
+
+.recurring-form-content {
+    max-height: 480px;
+    overflow-y: auto;
 }
 
 

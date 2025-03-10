@@ -65,11 +65,11 @@ class Mailer
 
         $this->emailDomain = self::dispatchFilter('fromEmail', $this->emailDomain, $this);
 
-        //PHPMailer
+        // PHPMailer
         $this->mailAgent = new PHPMailer(false);
 
         $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
-        //Use SMTP or php mail().
+        // Use SMTP or php mail().
         if ($config->useSMTP === true || $config->useSMTP == 'true') {
             if ($config->debug) {
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
@@ -97,7 +97,7 @@ class Mailer
             $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
             $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
             $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-            if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
+            if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     // If enabled, don't verify certifcates: accept self-signed or expired certs.
                 $this->mailAgent->SMTPOptions = [
                     'ssl' => [
                         'verify_peer' => false,
@@ -226,11 +226,11 @@ class Mailer
         $logoParts = parse_url($this->logo);
 
         if (isset($logoParts['scheme'])) {
-            //Logo is URL
+            // Logo is URL
             $inlineLogoContent = $this->logo;
         } else {
             if (file_exists(ROOT.''.$this->logo) && $this->logo != '' && is_file(ROOT.''.$this->logo)) {
-                //Logo comes from local file system
+                // Logo comes from local file system
                 $this->mailAgent->addEmbeddedImage(ROOT.''.$this->logo, 'companylogo');
             } else {
                 $this->mailAgent->addEmbeddedImage(ROOT.'/dist/images/logo_blue.png', 'companylogo');

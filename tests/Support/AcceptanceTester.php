@@ -27,7 +27,7 @@ class AcceptanceTester extends \Codeception\Actor
 {
     use _generated\AcceptanceTesterActions;
 
-    /**
+    /*
      * Click on an element with retries and waits
      */
     public function clickWithRetry($selector, $timeout = 10)

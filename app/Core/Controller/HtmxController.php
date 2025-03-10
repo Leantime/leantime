@@ -85,6 +85,9 @@ abstract class HtmxController
                 foreach ($this->headers as $key => $value) {
                     $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
                 }
+                foreach ($this->tpl->getHeaders() as $key => $value) {
+                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                }
             },
         );
 

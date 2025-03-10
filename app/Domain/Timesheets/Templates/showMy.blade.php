@@ -207,7 +207,7 @@ jQuery(document).ready(function(){
                     <x-slot:label-text>
                         {!! __('links.week_view') !!} {!! __('links.view') !!}
                     </x-slot:label-text>
-                
+
                     <x-slot:menu>
                         <x-global::actions.dropdown.item tag="a" href="{{ BASE_URL }}/timesheets/showMy" class="active">
                             {!! __('links.week_view') !!}
@@ -217,7 +217,7 @@ jQuery(document).ready(function(){
                         </x-global::actions.dropdown.item>
                     </x-slot:menu>
                 </x-global::actions.dropdown>
-                
+
             </div>
             <div class="pull-left mb-2" style="padding-left:5px; margin-top:-3px;">
 
@@ -297,10 +297,10 @@ jQuery(document).ready(function(){
                                     <a href="#/tickets/showTicket/<?php echo $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
                                 </td>
                                 <td width="10%">
-                                <?php echo $tpl->__($tpl->get('kind')[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
+                                <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind'] ?? 'GENERAL_BILLABLE'] ?? $tpl->get('kind')['GENERAL_BILLABLE']); ?>
                                 <?php if ($timeRow['hasTimesheetOffset']) { ?>
                                         <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
-                                        data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
+                                           data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                         </i>
                                 <?php } ?>
                                 </td>
@@ -346,14 +346,14 @@ jQuery(document).ready(function(){
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div id="projectSelect">
-                                    <x-global::forms.select 
-                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_project') }}" 
+                                    <x-global::forms.select
+                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_project') }}"
                                         {{-- class="project-select" --}}
                                     >
                                         <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
-                                        
+
                                         @foreach ($tpl->get('allProjects') as $projectRow)
-                                            <x-global::forms.select.select-option 
+                                            <x-global::forms.select.select-option
                                                 value="{{ $projectRow['id'] }}"
                                             >
                                                 {{ $tpl->escape($projectRow['clientName']) }} / {{ $tpl->escape($projectRow['name']) }}
@@ -361,23 +361,23 @@ jQuery(document).ready(function(){
                                         @endforeach
                                     </x-global::forms.select>
 
-                                    
+
                                 </div>
                             </td>
                             <td width="14%">
                                 <div id="ticketSelect">
-                                    <x-global::forms.select 
-                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_todo') }}" 
+                                    <x-global::forms.select
+                                        data-placeholder="{{ $tpl->__('input.placeholders.choose_todo') }}"
                                         {{-- class="ticket-select"  --}}
                                         name="ticketId"
                                     >
                                         <x-global::forms.select.select-option value=""></x-global::forms.select.select-option>
-                                        
+
                                         @foreach ($allTickets as $ticketRow)
                                             @if (!in_array($ticketRow['id'], $tpl->get('existingTicketIds')))
-                                                <x-global::forms.select.select-option 
-                                                    value="{{ $ticketRow['id'] }}" 
-                                                    data-value="{{ $ticketRow['projectId'] }}" 
+                                                <x-global::forms.select.select-option
+                                                    value="{{ $ticketRow['id'] }}"
+                                                    data-value="{{ $ticketRow['projectId'] }}"
                                                     class="project_{{ $ticketRow['projectId'] }}"
                                                 >
                                                     {{ $ticketRow['id'] }} / {{ $tpl->escape($ticketRow['headline']) }}
@@ -385,12 +385,12 @@ jQuery(document).ready(function(){
                                             @endif
                                         @endforeach
                                     </x-global::forms.select>
-                                
-                                    
+
+
                                 </div>
                             </td>
                             <td width="14%">
-                                    <x-global::forms.select 
+                                    <x-global::forms.select
                                         data-placeholder="Choose type"
                                         name="kindId"
                                     >
@@ -410,10 +410,10 @@ jQuery(document).ready(function(){
                                 <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                                     echo " active";
                                                             } ?>">
-                                    <x-global::forms.text-input 
-                                        class="hourCell" 
-                                        name="new|GENERAL_BILLABLE|{{ $dateFrom->addDays($i)->formatDateForUser() }}|{{ $dateFrom->addDays($i)->getTimestamp() }}" 
-                                        value="0" 
+                                    <x-global::forms.text-input
+                                        class="hourCell"
+                                        name="new|GENERAL_BILLABLE|{{ $dateFrom->addDays($i)->formatDateForUser() }}|{{ $dateFrom->addDays($i)->getTimestamp() }}"
+                                        value="0"
 
                                     />
                             </td>

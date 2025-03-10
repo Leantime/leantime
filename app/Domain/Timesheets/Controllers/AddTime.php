@@ -45,7 +45,7 @@ class AddTime extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
         $info = '';
-        //Only admins and employees
+        // Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
             $values = [
                 'userId' => session('userdata.id'),

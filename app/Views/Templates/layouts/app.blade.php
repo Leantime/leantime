@@ -6,7 +6,7 @@
     @stack('styles')
 </head>
 
-<body data-theme="leantime">
+<body data-theme="leantime" hx-ext="preload">
 
     @include('global::sections.appAnnouncement')
 
@@ -36,7 +36,7 @@
 
         </div><!-- header -->
 
-        <div class="relative mt-lg">
+        <div class="overlay relative mt-lg">
             <div class="leftpanel">
                 <div class="leftmenu">
                     @include('menu::menu')

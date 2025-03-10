@@ -57,11 +57,17 @@ class RequestRateLimiter
 
         //Configurable rate limits
         $rateLimitGeneral = $this->config->ratelimitGeneral ?? 10000;
-        $rateLimitApi = $this->config->ratelimitApi ?? 10;
+        $rateLimitApi = $this->config->ratelimitApi ?? 100;
         $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
 
-        //Key
-        //Key lives in domain namespace already
+        if (config('app.debug')) {
+            $rateLimitGeneral = 999999999;
+            $rateLimitApi = 999999999;
+            $rateLimitAuth = 999999999;
+        }
+
+        // Key
+        // Key lives in domain namespace already
         $keyModifier = '0';
         if (session()->exists('userdata')) {
             $keyModifier = session('userdata.id');
@@ -69,13 +75,13 @@ class RequestRateLimiter
 
         $key = 'ratelimit-'.md5($request->getClientIp()).'-'.$keyModifier;
 
-        //General Limit per minute
+        // General Limit per minute
         $limit = $rateLimitGeneral;
 
-        //API Routes Limit
+        // API Routes Limit
         if ($request instanceof ApiRequest) {
             $apiKey = '';
-            $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
+            // $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
             $limit = $rateLimitApi;
         }
 

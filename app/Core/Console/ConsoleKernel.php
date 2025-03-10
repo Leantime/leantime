@@ -5,10 +5,10 @@ namespace Leantime\Core\Console;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -33,6 +33,35 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ];
 
+    public function __construct(Application $app, Dispatcher $events)
+    {
+        if (! defined('ARTISAN_BINARY')) {
+            define('ARTISAN_BINARY', 'bin/leantime');
+        }
+
+        parent::__construct($app, $events);
+    }
+
+    public function bootstrap()
+    {
+
+        if (! $this->app->hasBeenBootstrapped()) {
+            $this->app->bootstrapWith($this->bootstrappers());
+        }
+
+        $this->app->loadDeferredProviders();
+
+        if (! $this->commandsLoaded) {
+            $this->commands();
+
+            if ($this->shouldDiscoverCommands()) {
+                $this->discoverCommands();
+            }
+
+            $this->commandsLoaded = true;
+        }
+    }
+
     /**
      * Handle an incoming console command.
      *
@@ -40,20 +69,22 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      */
     public function handle($input, $output = null)
     {
-
         $this->commandStartedAt = Carbon::now();
 
         try {
-
             if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
                 $this->bootstrapWithoutBootingProviders();
             }
 
-            $this->bootstrap();
-            $cli = $this->getArtisan();
-            $output = $cli->run($input, $output);
+            if ($domain = $input->getParameterOption('--domain')) {
+                $this->setDomain($domain);
+            }
 
-            return $output;
+            $this->bootstrap();
+
+            self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $input]);
+
+            return $this->getArtisan()->run($input, $output);
 
         } catch (\Throwable $e) {
 
@@ -65,56 +96,56 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         }
     }
 
-    /**
-     * Load and register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
+    // We need to overwrite this because for some reason Laravel decided to only do command discovery if being called
+    // from the original kernel
+    protected function shouldDiscoverCommands()
     {
-        static $commandsLoaded;
-        $commandsLoaded ??= false;
+        return get_class($this) === __CLASS__;
+    }
 
-        if ($commandsLoaded) {
-            return;
+    protected function discoverCommands()
+    {
+
+        // Update standard commandPath
+        $this->commandPaths = [
+            APP_ROOT.'/app/Command/',
+        ];
+
+        foreach ($this->commandPaths as $path) {
+            $this->load($path);
         }
 
-        //$customCommands = $customPluginCommands = null;
-
+        // Load Dynamic command paths for leantime
         $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
         $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
-        /*$commands = collect(Arr::flatten($ltCommands))
-            ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
-        */
-
-        $this->load(APP_ROOT.'/app/Command/');
-        $this->load(APP_ROOT.'/app/Domain/**/Command/');
 
         foreach ($ltPluginCommands as $pluginPath) {
             $this->load($pluginPath);
         }
 
-        $commandsLoaded = true;
+        foreach ($this->commandRoutePaths as $path) {
+            if (file_exists($path)) {
+                require $path;
+            }
+        }
     }
 
-    public function bootstrap()
+    public function call($command, array $parameters = [], $outputBuffer = null)
     {
 
-        if (! $this->app->hasBeenBootstrapped()) {
-
-            $this->app->bootstrapWith($this->bootstrappers());
+        if (array_key_exists('--domain', $parameters)) {
+            $this->setDomain($parameters['--domain']);
         }
 
-        $this->app->loadDeferredProviders();
-
-        if (! $this->commandsLoaded) {
-            $this->commands();
-
-            $this->commandsLoaded = true;
+        if (in_array($command, ['env:encrypt', 'env:decrypt'], true)) {
+            $this->bootstrapWithoutBootingProviders();
         }
 
-        //$this->bindSchedule();
+        $this->bootstrap();
 
+        self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $command]);
+
+        return $this->getArtisan()->call($command, $parameters, $outputBuffer);
     }
 
     public function getArtisan()
@@ -134,22 +165,31 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return $this->artisan;
     }
 
-    /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return $this->bootstrappers;
-    }
-
     protected function schedule(Schedule $schedule)
     {
         // Set default timezone
-        config(['app.timezone' => config('defaultTimezone')]);
+        // config(['app.timezone' => config('defaultTimezone')]);
+
+        config(['schedule_timezone' => 'UTC']);
 
         self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
+
+    }
+
+    public function setDomain(string $domain)
+    {
+
+        if ($domain) {
+            putenv('LEAN_APP_URL='.$domain);
+            putenv('APP_URL='.$domain);
+
+            // When calling commands inside the app we can switch domains
+            if (isset($this->app['config'])) {
+                config(['app.url' => $domain]);
+                config(['appUrl' => $domain]);
+            }
+
+        }
 
     }
 }

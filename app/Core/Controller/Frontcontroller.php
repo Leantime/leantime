@@ -72,14 +72,14 @@ class Frontcontroller
 
         $routeParts = $this->getValidControllerCall($moduleName, $controllerName, $method, $controllerType);
 
-        //Setting default response code to 200, can be changed in controller
+        // Setting default response code to 200, can be changed in controller
         $this->setResponseCode(200);
 
         $this->lastAction = $moduleName.'.'.$controllerName.'.'.$method;
 
         $this->dispatchEvent('execute_action_end', ['action' => $controllerName, 'module' => $moduleName]);
 
-        //execute action
+        // execute action
         return $this->executeAction($routeParts['class'], $routeParts['method']);
 
     }
@@ -109,41 +109,41 @@ class Frontcontroller
             $segments = explode('.', $this->defaultRoute);
         }
 
-        //First part is hx tells us this is a htmx controller request
+        // First part is hx tells us this is a htmx controller request
         $controllerType = 'Controllers';
         if ($segments[0] == 'hx') {
             array_shift($segments);
             $controllerType = 'Hxcontrollers';
         }
 
-        //If only one segment part was given the url is mean to be an index placeholder
+        // If only one segment part was given the url is mean to be an index placeholder
         if (count($segments) == 1) {
             $segments[] = 'index';
         }
 
-        //First segment is always module
+        // First segment is always module
         $moduleName = $segments[0] ?? '';
 
-        //Second is action
+        // Second is action
         $controllerName = $segments[1] ?? '';
 
-        //third is either id or method
-        //we can say that a numeric value always represents an id
+        // third is either id or method
+        // we can say that a numeric value always represents an id
         if (isset($segments[2]) &&
             (is_numeric($segments[2]) || Str::isUuid($segments[2]))
         ) {
             $id = $segments[2];
         }
 
-        //If not numeric, it's quite likely this is a method name
-        //But it needs to be double checked.
+        // If not numeric, it's quite likely this is a method name
+        // But it needs to be double checked.
         if (isset($segments[2]) &&
             ! (is_numeric($segments[2]) || Str::isUuid($segments[2]))
         ) {
             $method = $segments[2];
         }
 
-        //If a third segment is set it is the id
+        // If a third segment is set it is the id
         if (isset($segments[3])) {
             $id = $segments[3];
             $method = $segments[2];
@@ -158,8 +158,8 @@ class Frontcontroller
             $this->incomingRequest->query->set('id', $id);
         }
 
-        //need to update all controllers to stop using global get and post methods.
-        //In the meantime we are setting it again.
+        // need to update all controllers to stop using global get and post methods.
+        // In the meantime we are setting it again.
         $this->incomingRequest->overrideGlobals();
 
         return [$moduleName, $controllerType, $controllerName, $method];
@@ -185,7 +185,7 @@ class Frontcontroller
 
         $response = $controllerClass->callAction($method, $parameters);
 
-        //Expecting a response object but can accept a string to a fragment.
+        // Expecting a response object but can accept a string to a fragment.
         return $response instanceof Response ? $response : $controllerClass->getResponse($response);
     }
 
@@ -256,7 +256,7 @@ class Frontcontroller
             return $classname;
         }
 
-        //Check if hxcontroller exists
+        // Check if hxcontroller exists
         $classname = 'Leantime\\Domain\\'.$moduleName.'\\Hxcontrollers\\'.$actionName;
 
         if (class_exists($classname)) {
@@ -314,19 +314,19 @@ class Frontcontroller
             $method = 'get';
         }
 
-        //First check if the given method exists.
+        // First check if the given method exists.
         if (method_exists($controllerClass, $methodFormatted)) {
 
             return $methodFormatted;
-            //Then check if the http method exists as verb
+            // Then check if the http method exists as verb
         } elseif (method_exists($controllerClass, $httpMethod)) {
 
-            //If this was the case our first assumption around $method was wrong and $method is actually a
-            //id/slug. Let's set id to that slug.
+            // If this was the case our first assumption around $method was wrong and $method is actually a
+            // id/slug. Let's set id to that slug.
             $this->incomingRequest->query->set('id', $method);
 
             return $httpMethod;
-            //Just for backwards compatibility, let's also check if run exists.
+            // Just for backwards compatibility, let's also check if run exists.
         } elseif (method_exists($controllerClass, 'run')) {
             return 'run';
         }
@@ -344,7 +344,7 @@ class Frontcontroller
         $completeName ??= currentRoute();
         $actionParts = explode('.', empty($completeName) ? currentRoute() : $completeName);
 
-        //If not action name was given, call index controller
+        // If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
             return 'index';
         } elseif (is_array($actionParts) && count($actionParts) >= 2) {
@@ -368,7 +368,7 @@ class Frontcontroller
         $completeName ??= currentRoute();
         $actionParts = explode('.', empty($completeName) ? currentRoute() : $completeName);
 
-        //If not action name was given, call index controller
+        // If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 2) {
             return strtolower(app('request')->getMethod());
         } elseif (is_array($actionParts) && count($actionParts) == 3) {
@@ -420,7 +420,7 @@ class Frontcontroller
      */
     public static function redirectHtmx(string $url, $headers = []): Response
     {
-        //modal redirect
+        // modal redirect
         if (Str::start($url, '#')) {
             $hxCurrentUrl = app('request')->headers->get('hx-current-url');
             $mainPageUrl = Str::before($hxCurrentUrl, '#');
@@ -429,15 +429,15 @@ class Frontcontroller
 
         $headers['HX-Redirect'] = $url;
 
-        //$headers["hx-push-url"] = $url;
-        //$headers["hx-replace-url"] = $url;
-        //$headers["HX-Refresh"] = true;
+        // $headers["hx-push-url"] = $url;
+        // $headers["hx-replace-url"] = $url;
+        // $headers["HX-Refresh"] = true;
 
-        //this redirect is actually handled on the client side.
-        //We'll just return an empty response with a few headers
+        // this redirect is actually handled on the client side.
+        // We'll just return an empty response with a few headers
         return new Response(
             'redirecting...',
-            200, //Anything else than 200 will fail.
+            200, // Anything else than 200 will fail.
         );
     }
 

@@ -90,7 +90,7 @@
                                 hx-target="#yourToDoContainer"
                                 hx-swap="outerHTML"
                                 hx-indicator="#todos .htmx-indicator"
-                                hx-vals='{"projectFilter": "", "groupBy": "{{ $groupBy }}" }'
+                                hx-vals='{"projectFilter": "all", "groupBy": "{{ $groupBy }}" }'
 
                                 >{{ __('labels.all_projects') }}
 

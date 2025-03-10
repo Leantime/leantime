@@ -38,11 +38,11 @@ class CsvImport extends Provider implements ProviderIntegration
         $this->id = 'csv_importer';
         $this->name = 'CSV Import';
         $this->image = '/dist/images/svg/csv-icon.svg';
-        $this->description = "Impport data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/en/article/importing-data-via-csv-1v941gy' target='_blank'>documentation</a>";
+        $this->description = "Import data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/en/article/importing-data-via-csv-1v941gy' target='_blank'>documentation</a>";
 
         $this->methods[] = 'import, update';
 
-        //CSVs can be anyting but are always one file.
+        // CSVs can be anyting but are always one file.
         $this->entities = [
             'default' => [
                 'name' => 'Sheet',
@@ -53,17 +53,17 @@ class CsvImport extends Provider implements ProviderIntegration
         $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
     }
 
-    //Logic to connect to provider goes here.
-    //Needs to manage new connection as well as existing connections.
-    //Should return bool so we can drive logic in the frontend.
+    // Logic to connect to provider goes here.
+    // Needs to manage new connection as well as existing connections.
+    // Should return bool so we can drive logic in the frontend.
     public function connect(): Response
     {
-        //Connection done. Send to next step.
-        //May just want to add a nextStep() method to provider model or so.
+        // Connection done. Send to next step.
+        // May just want to add a nextStep() method to provider model or so.
         return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload');
     }
 
-    //Sync the entities from the db
+    // Sync the entities from the db
 
     /**
      * @return true
@@ -74,7 +74,7 @@ class CsvImport extends Provider implements ProviderIntegration
         return true;
     }
 
-    //Get available fields
+    // Get available fields
 
     /**
      * @return array|mixed
@@ -86,7 +86,7 @@ class CsvImport extends Provider implements ProviderIntegration
 
     public function setFields(array $fields): void {}
 
-    //Get available entities
+    // Get available entities
     public function getEntities(): array
     {
         return $this->entities;

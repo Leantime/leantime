@@ -46,7 +46,7 @@ class EditEvent extends Controller
     {
         $params['id'] = $_GET['id'] ?? null;
 
-        //Time comes in as 24:00 time from html5 element. Make it user date format
+        // Time comes in as 24:00 time from html5 element. Make it user date format
         $params['timeFrom'] = format(value: $params['timeFrom'], fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
         $params['timeTo'] = format(value: $params['timeTo'], fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
 

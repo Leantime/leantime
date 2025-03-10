@@ -53,18 +53,14 @@ class Bootloader
      */
     public function boot(Application $app)
     {
-        if (! defined('LEANTIME_START')) {
-            define('LEANTIME_START', microtime(true));
-        }
-
-        //Start Application
-        //Load the bindings and service providers
+        // Start Application
+        // Load the bindings and service providers
         $this->app = $app;
 
-        //Capture the request and instantiate the correct type
+        // Capture the request and instantiate the correct type
         $request = IncomingRequest::capture();
 
-        //Use the right kernel for the job and handle the request.
+        // Use the right kernel for the job and handle the request.
         $this->handleRequest($request);
 
         self::dispatchEvent('end', ['bootloader' => $this]);

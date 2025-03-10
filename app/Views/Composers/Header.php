@@ -51,6 +51,11 @@ class Header extends Composer
             }
         }
 
+        $backgroundOpacity = 0.1;
+        if ($this->themeCore->getBackgroundType() == 'image') {
+            $backgroundOpacity = 1;
+        }
+
         return [
             'sitename' => session('companysettings.sitename') ?? '',
             'primaryColor' => $this->themeCore->getPrimaryColor(),
@@ -76,6 +81,9 @@ class Header extends Composer
                 $this->themeCore->getPrimaryColor(),
                 $this->themeCore->getSecondaryColor(),
             ],
+            'themeBg' => $this->themeCore->getBackgroundImage(),
+            'themeOpacity' => $backgroundOpacity,
+            'themeType' => $this->themeCore->getBackgroundType(),
         ];
     }
 }

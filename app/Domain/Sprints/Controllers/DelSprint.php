@@ -27,7 +27,7 @@ namespace Leantime\Domain\Sprints\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            //Only admins
+            // Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
 
                 if (isset($params['id'])) {

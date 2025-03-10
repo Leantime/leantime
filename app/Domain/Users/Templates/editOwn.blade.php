@@ -13,7 +13,7 @@
     @displayNotification()
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="maincontentinner">
                 <x-global::content.tabs>
                     <x-slot:headings>
@@ -22,6 +22,7 @@
                         <x-global::content.tabs.heading name="settings">{!! __('tabs.settings') !!}</x-global::content.tabs.heading>
                         <x-global::content.tabs.heading name="theme">{!! __('tabs.theme') !!}</x-global::content.tabs.heading>
                         <x-global::content.tabs.heading name="notifications">{!! __('tabs.notifications') !!}</x-global::content.tabs.heading>
+                        @dispatchEvent('tabs')
                     </x-slot:headings>
 
                     <x-slot:contents>
@@ -285,14 +286,14 @@
                                             <label>Font</label>
                                             <div class="mt-4">
                                                 @foreach($availableFonts as $key => $font)
-    
-                                                    <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" name="themeFont" :value="$font" :label="$font" >
+
+                                                    <x-global::forms.select-button  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" name="themeFont" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                                                         <label for="selectable-{{ $key }}" class="font w-[200px]"
                                                                style="font-family:'{{ $font }}'; font-size:14px;">
                                                             The quick brown fox jumps over the lazy dog
                                                         </label>
                                                     </x-global::forms.select-button>
-    
+
                                                 @endforeach
                                             </div>
 
@@ -323,6 +324,8 @@
                                     {{ __('buttons.save') }}
                                 </x-global::forms.button>
                             </form>
+
+                            @dispatchEvent('themecontent')
                         </x-global::content.tabs.content>
 
                         <x-global::content.tabs.content name="notifications">
@@ -406,6 +409,8 @@
                                 </x-global::forms.button>
                              </form>
                         </x-global::content.tabs.content>
+
+                        @dispatchEvent('tabsContent')
                     </x-slot:contents>
                 </x-global::content.tabs>
             </div>
@@ -428,7 +433,7 @@
                             {{-- <div class="uneditable-input span3">
                                 <i class="fa-file fileupload-exists"></i>
                                 <span class="fileupload-preview"></span>
-                            </div> --}}    
+                            </div> --}}
 
                             <x-global::forms.button tag="button" id="file-input" content-role="secondary" class="btn-file" scale="md" >
                                 {{ __('buttons.select_file') }}

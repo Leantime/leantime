@@ -126,12 +126,12 @@ namespace Leantime\Domain\Wiki\Services {
         public function setCurrentWiki($id)
         {
 
-            //Clear cache
+            // Clear cache
             $this->clearWikiCache();
             $wiki = $this->getWiki($id);
 
             if ($wiki) {
-                //Set the session
+                // Set the session
                 session(['currentWiki' => $id]);
 
                 return true;

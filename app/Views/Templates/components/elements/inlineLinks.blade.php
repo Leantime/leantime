@@ -5,7 +5,7 @@
         @endif
 
         <span>
-            {{ $link['prefix'] ?? '' }} @if (! empty($link['link'])) <a href="{!! $link['link'] !!}">{{ $link['display'] }}</a> @else {{ $link['display'] }} @endif
+            {{ $link['prefix'] ?? '' }} @if (! empty($link['link'])) <a href="{!! $link['link'] !!}">{!! $link['display'] !!}</a> @else {!! $link['display'] !!} @endif
         </span>
     @endforeach
 </div>

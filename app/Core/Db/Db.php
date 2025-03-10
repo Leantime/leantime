@@ -4,7 +4,6 @@ namespace Leantime\Core\Db;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Facades\DB as dbFacade;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
@@ -56,12 +55,12 @@ class Db extends DatabaseManager
      *
      * @return void
      */
-    public function __construct($connection = 'mysql')
+    public function __construct($app, $connection = 'mysql')
     {
 
 
         // Get Laravel's database connection
-        $this->connection = dbFacade::connection($connection);
+        $this->connection = $app['db']->connection($connection);
 
         // Get the PDO connection from Laravel's connection
         try {

@@ -23,7 +23,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
     class ShowProject extends Controller
     {
-        //services
+        // services
         private ProjectService $projectService;
 
         private CommentService $commentService;
@@ -66,7 +66,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
-            //services
+            // services
             $this->projectService = $projectService;
             $this->commentService = $commentService;
             $this->fileService = $fileService;
@@ -107,21 +107,21 @@ namespace Leantime\Domain\Projects\Controllers {
                     $this->projectService->changeCurrentSessionProject($project['id']);
                 }
 
-                //Mattermost integration
+                // Mattermost integration
                 if (isset($_POST['mattermostSave'])) {
                     $webhook = strip_tags($_POST['mattermostWebhookURL']);
                     $this->settingsRepo->saveSetting('projectsettings.'.$id.'.mattermostWebhookURL', $webhook);
                     $this->tpl->setNotification($this->language->__('notification.saved_mattermost_webhook'), 'success');
                 }
 
-                //Slack integration
+                // Slack integration
                 if (isset($_POST['slackSave'])) {
                     $webhook = strip_tags($_POST['slackWebhookURL']);
                     $this->settingsRepo->saveSetting('projectsettings.'.$id.'.slackWebhookURL', $webhook);
                     $this->tpl->setNotification($this->language->__('notification.saved_slack_webhook'), 'success');
                 }
 
-                //Zulip
+                // Zulip
                 $zulipWebhook = $this->settingsRepo->getSetting('projectsettings.'.$id.'.zulipHook');
 
                 if ($zulipWebhook == '') {
@@ -162,7 +162,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     $this->tpl->assign('zulipHook', $zulipHook);
                 }
 
-                //Discord integration; provide three possible webhooks per project
+                // Discord integration; provide three possible webhooks per project
                 if (isset($_POST['discordSave'])) {
                     for ($i = 1; $i <= 3; $i++) {
                         $webhook = trim(strip_tags($_POST['discordWebhookURL'.$i]));
@@ -217,9 +217,9 @@ namespace Leantime\Domain\Projects\Controllers {
                     $this->tpl->setNotification($this->language->__('notifications.user_was_added_to_project'), 'success');
                 }
 
-                //save changed project data
+                // save changed project data
                 if (isset($_POST['save']) === true) {
-                    //bind Post Data into one array
+                    // bind Post Data into one array
                     $values = [
                         'name' => $_POST['name'],
                         'details' => $_POST['details'],
@@ -249,7 +249,7 @@ namespace Leantime\Domain\Projects\Controllers {
                             $message = sprintf(
                                 $this->language->__('email_notifications.project_update_message'),
                                 session('userdata.name'),
-                                $values['name']
+                                strip_tags($values['name'])
                             );
 
                             $linkLabel = $this->language->__('email_notifications.project_update_cta');
@@ -270,7 +270,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                             $this->projectService->notifyProjectUsers($notification);
 
-                            //Get updated project
+                            // Get updated project
                             return Frontcontroller::redirect(BASE_URL.'/projects/showProject/'.$id);
                         }
                     } else {
@@ -280,7 +280,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $employees = $this->userRepo->getEmployees();
 
-                //Assign vars
+                // Assign vars
                 $this->tpl->assign('availableUsers', $this->userRepo->getAll());
                 $this->tpl->assign('clients', $this->clientService->getAll());
 

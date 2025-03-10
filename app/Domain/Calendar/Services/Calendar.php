@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
@@ -115,13 +114,25 @@ class Calendar
 
         $dateFrom = null;
         if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-            $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTimeUTC();
+
+            try {
+                $dateFrom = dtHelper()->parseUserDateTime($values['dateFrom'], $values['timeFrom'])->formatDateTimeForDb();
+            } catch (\Exception $e) {
+                // silence
+            }
+
         }
         $values['dateFrom'] = $dateFrom;
 
         $dateTo = null;
         if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-            $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTimeUTC();
+
+            try {
+                $dateTo = dtHelper()->parseUserDateTime($values['dateTo'], $values['timeTo'])->formatDateTimeForDb();
+            } catch (\Exception $e) {
+                // silence
+            }
+
         }
         $values['dateTo'] = $dateTo;
 
@@ -174,13 +185,24 @@ class Calendar
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTimeUTC();
+
+                try {
+                    $dateFrom = dtHelper()->parseUserDateTime($values['dateFrom'], $values['timeFrom'])->formatDateTimeForDb();
+                } catch (\Exception $e) {
+                    // silence
+                }
             }
+
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTimeUTC();
+
+                try {
+                    $dateTo = dtHelper()->parseUserDateTime($values['dateTo'], $values['timeTo'])->formatDateTimeForDb();
+                } catch (\Exception $e) {
+                    // silence
+                }
             }
             $values['dateTo'] = $dateTo;
 
@@ -251,7 +273,7 @@ class Calendar
         }
 
         $eventObjects = [];
-        //Create array of event objects for ical generator
+        // Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
             try {
                 $description = str_replace("\r\n", '\\n', strip_tags($event['description']));
@@ -279,7 +301,7 @@ class Calendar
 
                 $eventObjects[] = $currentEvent;
             } catch (\Exception $e) {
-                //Do not include event in ical
+                // Do not include event in ical
                 Log::error($e);
             }
         }

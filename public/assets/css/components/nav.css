@@ -830,7 +830,7 @@
 
 
 .mainwrapper.menuclosed .primaryContent {
-    padding-left:50px;
+    padding-left:10px;
 }
 
 .mainwrapper.menuclosed .headmenu {
@@ -1132,4 +1132,18 @@
     border-radius: 0;
 }
 
+
+.new-indicator {
+    position: absolute;
+    top: 7px;
+    right: 2px;
+    box-shadow: var(--min-shadow);
+    height: 10px;
+    width: 10px;
+    background: var(--blue);
+    border-radius: 10px;
+    line-height: 10px;
+    text-align: center;
+    font-size: var(--font-size-xs);
+}
 

@@ -19,6 +19,12 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public string $imageUrl = '';
 
+    public string $vendorDisplayName;
+
+    public int $vendorId;
+
+    public string $vendorEmail;
+
     public string $installdate;
 
     public string $foldername;
@@ -34,6 +40,10 @@ class InstalledPlugin implements PluginDisplayStrategy
     public ?string $type;
 
     public ?bool $installed;
+
+    public ?string $startingPrice;
+
+    public ?string $calculatedMonthlyPrice;
 
     public function getCardDesc(): string
     {
@@ -53,6 +63,17 @@ class InstalledPlugin implements PluginDisplayStrategy
     public function getMetadataLinks(): array
     {
         $links = [];
+
+        if (! empty($this->vendorDisplayName) && (! empty($this->vendorId) || ! empty($this->vendorEmail))) {
+            $vendor = [
+                'prefix' => __('text.by'),
+                'display' => $this->vendorDisplayName,
+            ];
+
+            $vendor['link'] = ! empty($this->vendorId) ? '/plugins/marketplace?'.http_build_query(['vendor_id' => $this->vendorId]) : "mailto:{$this->vendorEmail}";
+
+            $links[] = $vendor;
+        }
 
         if (! empty($this->authors) && (is_array($this->authors) || is_object($this->authors))) {
 
@@ -110,5 +131,23 @@ class InstalledPlugin implements PluginDisplayStrategy
         $imageData = base64_encode(file_get_contents($image));
 
         return 'data: '.mime_content_type($image).';base64,'.$imageData;
+    }
+
+    public function getPrice(): string
+    {
+        if (! empty($this->startingPrice)) {
+            return __('text.starting_at').' '.$this->startingPrice;
+        }
+
+        return '';
+    }
+
+    public function getCalulatedMonthlyPrice(): string
+    {
+        if (! empty($this->calculatedMonthlyPrice)) {
+            return $this->calculatedMonthlyPrice;
+        }
+
+        return '';
     }
 }

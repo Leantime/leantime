@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Middleware\AuthenticateSession;
 
 class HttpKernel extends Kernel
 {
@@ -30,13 +31,32 @@ class HttpKernel extends Kernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
+
+        // \Illuminate\Session\Middleware\StartSession::class,
+        // \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        // \Illuminate\Auth\Middleware\Authenticate::class,
+        // \Illuminate\Session\Middleware\AuthenticateSession::class,
+        // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        // \Illuminate\Auth\Middleware\Authorize::class,
         // \App\Http\Middleware\TrustHosts::class,
-        \Leantime\Core\Middleware\TrustProxies::class,
-        \Leantime\Core\Middleware\InitialHeaders::class,
+
+        // \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        // \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
         \Leantime\Core\Middleware\Updated::class,
+
+        // All enabled plugins will be available from here on out
+        \Leantime\Core\Middleware\LoadPlugins::class,
+
+        \Leantime\Core\Middleware\TrustProxies::class,
+        \Leantime\Core\Middleware\InitialHeaders::class,
+        // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+
         \Leantime\Core\Middleware\AuthCheck::class,
+        \Leantime\Core\Middleware\AuthenticateSession::class,
 
         \Leantime\Core\Middleware\RequestRateLimiter::class,
         \Illuminate\Http\Middleware\HandleCors::class,
@@ -45,7 +65,7 @@ class HttpKernel extends Kernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\Localization::class,
-        \Leantime\Core\Middleware\LoadPlugins::class,
+
     ];
 
     /**
@@ -55,15 +75,10 @@ class HttpKernel extends Kernel
      */
     protected $middlewareGroups = [
         'web' => [
-
-            \Leantime\Core\Middleware\CurrentProject::class,
         ],
         'api' => [
-            \Leantime\Core\Middleware\AuthCheck::class,
         ],
         'hx' => [
-            \Leantime\Core\Middleware\AuthCheck::class,
-            \Leantime\Core\Middleware\CurrentProject::class,
         ],
     ];
 
@@ -77,7 +92,7 @@ class HttpKernel extends Kernel
     protected $middlewareAliases = [
         'auth' => \Leantime\Core\Middleware\AuthCheck::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+        'auth.session' => AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
@@ -88,56 +103,11 @@ class HttpKernel extends Kernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 
-    protected function sendRequestThroughRouter($request)
-    {
-        $this->app->instance('request', $request);
-
-        Facade::clearResolvedInstance('request');
-
-        $this->bootstrap();
-
-        //Events are discovered and available as part of bootstrapping the providers.
-        //Can savely assume events are available here.
-        self::dispatch_event('request_started', ['request' => $request]);
-
-        if ($request instanceof ApiRequest) {
-
-            array_splice($this->middleware, 6, 0, $this->middlewareGroups['api']);
-
-        } else {
-            array_splice($this->middleware, 6, 0, $this->middlewareGroups['web']);
-        }
-
-        //This filter only works for system plugins
-        //Regular plugins are not available until after install verification
-        $this->middleware = self::dispatch_filter('middleware', $this->middleware, ['request' => $request]);
-
-        //Main Pipeline
-        $response = (new \Illuminate\Routing\Pipeline($this->app))
-            ->send($request)
-            ->through($this->middleware)
-            ->then(fn ($request) =>
-                //Then run through plugin pipeline
-            (new \Illuminate\Routing\Pipeline($this->app))
-                ->send($request)
-                ->through(self::dispatch_filter(
-                    hook: 'plugins_middleware',
-                    payload: [],
-                    function: 'handle',
-                ))
-                ->then($this->dispatchToRouter())
-            );
-
-        return $response;
-    }
-
     public function handle($request)
     {
         $this->requestStartedAt = Carbon::now();
 
         try {
-            $request->enableHttpMethodParameterOverride();
-
             $response = $this->sendRequestThroughRouter($request);
         } catch (\Throwable $e) {
             $this->reportException($e);
@@ -148,6 +118,49 @@ class HttpKernel extends Kernel
         $this->app['events']->dispatch(new RequestHandled($request, $response));
 
         $response = self::dispatch_filter('beforeSendResponse', $response);
+
+        return $response;
+    }
+
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        // Events are discovered and available as part of bootstrapping the providers.
+        // Can savely assume events are available here.
+        self::dispatch_event('request_started', ['request' => $request]);
+
+        //        if ($request instanceof ApiRequest) {
+        //
+        //            array_splice($this->middleware, 6, 0, $this->middlewareGroups['api']);
+        //
+        //        } else {
+        //            array_splice($this->middleware, 6, 0, $this->middlewareGroups['web']);
+        //        }
+
+        // This filter only works for system plugins
+        // Regular plugins are not available until after install verification
+        $this->middleware = self::dispatch_filter('middleware', $this->middleware, ['request' => $request]);
+
+        // Main Pipeline
+        $response = (new \Illuminate\Routing\Pipeline($this->app))
+            ->send($request)
+            ->through($this->middleware)
+            ->then(fn ($request) =>
+                // Then run through plugin pipeline
+            (new \Illuminate\Routing\Pipeline($this->app))
+                ->send($request)
+                ->through(self::dispatch_filter(
+                    hook: 'plugins_middleware',
+                    payload: [],
+                    function: 'handle',
+                ))
+                ->then($this->dispatchToRouter())
+            );
 
         return $response;
     }

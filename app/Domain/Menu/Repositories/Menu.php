@@ -51,7 +51,7 @@ namespace Leantime\Domain\Menu\Repositories {
                     ],
                 ],
             ],
-            //Display all menu items
+            // Display all menu items
             'full_menu' => [
                 10 => [
                     'type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
@@ -256,7 +256,7 @@ namespace Leantime\Domain\Menu\Repositories {
                     ['menuType' => $menuType]
                 );
 
-            //If menu structure cannot be found, don't return anything
+            // If menu structure cannot be found, don't return anything
             if (! isset($this->menuStructures[$menuType])) {
                 return [];
             }
@@ -289,7 +289,7 @@ namespace Leantime\Domain\Menu\Repositories {
                         break;
 
                     case 'item':
-                        //TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
+                        // TO DO: Check if menu is enabled, e.g. `$moduleManagerRepo->isModuleEnabled($element['module'])`
                         $this->processMenuItem($element, $menuStructure[$key]);
                         break;
 
@@ -334,7 +334,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 }
             }
 
-            //TODO: Add menu filter here!
+            // TODO: Add menu filter here!
 
             return $menuStructure;
         }
@@ -342,7 +342,7 @@ namespace Leantime\Domain\Menu\Repositories {
         public function processMenuItem($element, &$structure): void
         {
 
-            //ModuleManager Check
+            // ModuleManager Check
             if (false) {
                 $structure['type'] = 'disabled';
 
@@ -374,7 +374,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $ticketService = $this->ticketsService;
 
-            //Removing base URL from here since it is being added in the menu for loop in the template
+            // Removing base URL from here since it is being added in the menu for loop in the template
             $base_url = ! empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
 
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
@@ -385,7 +385,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $ticketService = $this->ticketsService;
 
-            //Removing base URL from here since it is being added in the menu for loop in the template
+            // Removing base URL from here since it is being added in the menu for loop in the template
             $base_url = ! empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
 
             return str_replace($base_url, '', $ticketService->getLastTimelineViewUrl());
@@ -428,6 +428,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 'plugins.marketplace' => 'company',
                 'plugins.myapps' => 'company',
                 'connector.show' => 'company',
+                'connector.integration' => 'company',
                 'billing.subscriptions' => 'company',
                 'llamadorian.statusCollector' => 'personal',
             ];

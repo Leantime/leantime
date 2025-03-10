@@ -204,7 +204,7 @@ class UserInvite extends Controller
             return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
         }
 
-        //Step 1
+        // Step 1
         if (isset($_POST['saveAccount']) && isset($_POST['step'])) {
 
             if (! $this->userService->checkPasswordStrength($_POST['password'] ?? '')) {

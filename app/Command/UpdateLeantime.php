@@ -48,7 +48,7 @@ class UpdateLeantime extends Command
         $io->text('Starting the updater');
         $io->text('Your current version is: v'.$currentVersion);
 
-        //Check Versions  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Check Versions  + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Version Check');
         $io->text('Your current version is: v'.$currentVersion);
         $url = 'https://github.com/leantime/leantime/releases/latest';
@@ -79,7 +79,7 @@ class UpdateLeantime extends Command
             return self::SUCCESS;
         }
 
-        //Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Backup DB + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Database Backup');
         $skipBackup = $input->getOption('skipDbBackup');
 
@@ -92,7 +92,7 @@ class UpdateLeantime extends Command
             $this->getApplication()->doRun($backUp, $output);
         }
 
-        //Download and extract + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Download and extract + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Download & Extract');
 
         $io->text('Downloading latest version...');
@@ -102,14 +102,26 @@ class UpdateLeantime extends Command
 
         $io->text('Extracting Archive...');
 
-        $zip = new \ZipArchive;
-        $zip->open($zipFile);
-        $zip->extractTo(storage_path('/framework/cache/leantime'));
-        $zip->close();
+        try {
+            $zip = new \ZipArchive;
+        } catch (\Exception $e) {
+            $io->text('ZipArchive not found.  Cannot auto-update until the php zip extension is installed. On linux, \'sudo apt install php-zip\'');
 
-        //Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-        //If we got here everything is ready to go and we just need to move the files.
-        //Let's disable plugins
+            return self::FAILURE;
+        }
+        if ($zip->open($zipFile) === true) {
+            $zip->extractTo(storage_path('/framework/cache/leantime'));
+            $zip->close();
+            $io->success('New update zip file successfully extracted to '.storage_path('/framework/cache/leantime'));
+        } else {
+            $io->text('Error opening downloaded zip file!');
+
+            return self::FAILURE;
+        }
+
+        // Disable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // If we got here everything is ready to go and we just need to move the files.
+        // Let's disable plugins
         $io->section('Disabling Plugins');
 
         /** @var Plugins $plugins */
@@ -124,25 +136,44 @@ class UpdateLeantime extends Command
 
         $io->success('Plugins disabled successfully');
 
-        //Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Applying Update');
-        exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/');
-        $io->success('Files were updated');
+        $cp_retval = 0;
+        $cp_output = [];
+        exec('cp -r '.storage_path('/framework/cache/leantime').'/* '.APP_ROOT.'/', $cp_output, $cp_retval);
+        $io->text('Returned with status '.$cp_retval.' and output:');
+        $io->text($cp_output);
 
-        //Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        if ($cp_retval == 0) {
+            $io->success('Files were updated');
+        } else {
+            $io->error('Could not apply update.  Please check the output above for more information.');
+
+            return self::FAILURE;
+        }
+
+        // Clear Cache + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Clearing Cache');
 
         exec('rm -rf "'.APP_ROOT.'/bootstrap/cache/*.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/leantime"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/latest.zip"');
         exec('rm -rf "'.APP_ROOT.'/storage/framework/composerPaths.php"');
         exec('rm -rf "'.APP_ROOT.'/storage/framework/viewPaths.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/*.php"');
-        exec('rm -rf "'.APP_ROOT.'/storage/framework/views/*.php"');
+
+        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/leantime"');
+        exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/latest.zip"');
+
+        exec('find "'.APP_ROOT.'/storage/framework/cache" -type f ! -name ".gitignore" -delete');
+        exec('find "'.APP_ROOT.'/storage/framework/cache" -type d -empty -delete');
+
+        exec('find "'.APP_ROOT.'/storage/framework/sessions" -type f ! -name ".gitignore" -delete');
+        exec('find "'.APP_ROOT.'/storage/framework/sessions" -type d -empty -delete');
+
+        exec('find "'.APP_ROOT.'/storage/framework/views" -type f ! -name ".gitignore" -delete');
+        exec('find "'.APP_ROOT.'/storage/framework/views" -type d -empty -delete');
 
         $io->success('Clearing Cache Complete');
 
-        //Enable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Enable Plugins + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Re-enabling Plugins');
         foreach ($enabledPlugins as $plugin) {
             if ($plugin->type != 'system' && isset($plugin->id)) {

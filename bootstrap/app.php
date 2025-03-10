@@ -5,20 +5,6 @@
 
 /*
 |--------------------------------------------------------------------------
-| Check If The Application Is Under Maintenance
-|--------------------------------------------------------------------------
-|
-| If the application is in maintenance / demo mode via the "down" command
-| we will load this file so that any pre-rendered content can be shown
-| instead of starting the framework, which could cause an exception.
-|
-*/
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
-}
-
-/*
-|--------------------------------------------------------------------------
 | Create The Application
 |--------------------------------------------------------------------------
 |
@@ -73,3 +59,16 @@ $app->singleton(
 */
 
 return $app;
+
+// return Application::configure(basePath: dirname(__DIR__))
+//    ->withRouting(
+//        web: __DIR__.'/../routes/web.php',
+//        commands: __DIR__.'/../routes/console.php',
+//        health: '/up',
+//    )
+//    ->withMiddleware(function (Middleware $middleware) {
+//        //
+//    })
+//    ->withExceptions(function (Exceptions $exceptions) {
+//        //
+//    })->create();;

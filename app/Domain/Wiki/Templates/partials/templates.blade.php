@@ -8,8 +8,8 @@ foreach ($__data as $var => $val) {
 $today = date($tpl->__('language.dateformat'));
 $author = session("userdata.name") . ' (' . session("userdata.mail") . ')';
 
-    //Templates for tinymce templates
-    //All Templates require title, description, content
+// Templates for tinymce templates
+// All Templates require title, description, content
 
     $templates = array();
 
@@ -156,7 +156,7 @@ $author = session("userdata.name") . ' (' . session("userdata.mail") . ')';
 ';
 $templates[] = $prdTpl;
 
-//Project Outline
+// Project Outline
 $projectOutline = app()->make(Template::class);
 $projectOutline->title = "Project Outline";
 $projectOutline->category = $tpl->__("templates.documents");
@@ -257,8 +257,7 @@ Status: <span class="label label-default">Draft</span><br />
 </table>';
 $templates[] = $projectOutline;
 
-
-//User Story
+// User Story
 $userStoryTpl = app()->make(Template::class);
 $userStoryTpl->title = "User Story";
 $userStoryTpl->category = $tpl->__("templates.todos");
@@ -299,15 +298,15 @@ $bugTpl->description = "A template for a bug report";
 $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
  <tbody>
  <tr data-mce-active="1">
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
  <td style="width: 82.7562%;" data-mce-active="1">summarize the issue your are experiencing</td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Environment</strong></span></td>
  <td style="width: 82.7562%;">describe the environment under which the problem occured (hosted, production, staging etc)</td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Reproduction Steps</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Reproduction Steps</strong></span></td>
  <td style="width: 82.7562%;">Describe the steps to reproduce the problem<br />
  <ol>
  <li>Step 1</li>
@@ -316,19 +315,19 @@ $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" b
  </td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Expected Outcome</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Expected Outcome</strong></span></td>
  <td style="width: 82.7562%;">describe what you expected would happen</td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Actual Outcome</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Actual Outcome</strong></span></td>
  <td style="width: 82.7562%;">describe what actually happened</td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Impact</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Impact</strong></span></td>
  <td style="width: 82.7562%;">describe how impactful this issue is to your workflow (eg can not work at all; delays my work; large inconvenience etc)</td>
  </tr>
  <tr>
- <td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+ <td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
  <td style="width: 82.7562%;">Anything else you would like to mention</td>
  </tr>
  </tbody>
@@ -344,19 +343,19 @@ $featureTpl->description = "A template for a feature request";
 $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
 <tbody>
 <tr>
-<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
+<td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Summary</strong></span></td>
 <td style="width: 82.7562%;">summarize the feature you would like</td>
 </tr>
 <tr>
-<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Target User</strong></span></td>
+<td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Target User</strong></span></td>
 <td style="width: 82.7562%;">describe who benefits most from this feature</td>
 </tr>
 <tr>
-<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Desired Timeline</strong></span></td>
+<td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Desired Timeline</strong></span></td>
 <td style="width: 82.7562%;">when would you like to see it implemented</td>
 </tr>
 <tr>
-<td style="width: 17.2438%; background-color: #1b75bb;"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
+<td style="width: 17.2438%; background-color: var(--accent1);"><span style="color: #ffffff;"><strong>Additional Details</strong></span></td>
 <td style="width: 82.7562%;">any additional details</td>
 </tr>
 </tbody>

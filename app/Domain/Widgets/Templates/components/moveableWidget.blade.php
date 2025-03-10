@@ -1,10 +1,10 @@
 <div class="grid-stack-item" {{ $attributes }}>
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} p-none">
         <div class="{{ ($background == "default") ? "pb-l" : "" }}">
-
+            @if(empty($fixed))
             <div class="stickyHeader w-full relative h-8 mb-md">
 
-                <div class="grid-handler-top text-lg cursor-move float-left pr-sm">
+                <div class="grid-handler-top text-lg cursor-grab float-left pr-sm">
                     <i class="fa-solid fa-grip-vertical"></i>
                 </div>
 
@@ -37,6 +37,7 @@
                 </x-global::actions.dropdown>
                 <span class="clearall"></span>
             </div>
+            @endif
             <span class="clearall"></span>
             <div class="widgetContent {{ ($background == "default") ? 'px-m' : '' }}">
                 {{ $slot }}

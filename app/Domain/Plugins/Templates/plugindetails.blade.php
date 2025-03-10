@@ -24,7 +24,7 @@
                     @if (!empty($plugin->categories))
                         <strong>Categories:</strong>
                         @foreach ($plugin->categories as $category)
-                            <x-global::elements.badge :asLink="true"
+                            <x-global::elements.badge :asLink="false"
                                 :url="'/plugins/marketplace?category=' . $category['slug']">{{ $category['name'] }}</x-global::elements.badge>
                         @endforeach
                         <br>
@@ -60,7 +60,7 @@
             <x-slot:contents>
                 @if (!empty($plugin->description))
                     <x-global::content.tabs.content name="overview">
-                        <div class="max-w-prose">{!! $plugin->description !!}</div>
+                        <div class="max-w-prose mce-content-body">{!! $plugin->description !!}</div>
                     </x-global::content.tabs.content>
                 @endif
 
@@ -115,34 +115,40 @@
                             @if (!empty($formError))
                                 <div class="text-red-500">{!! $formError !!}</div>
                             @endif
-                            <form class="flex gap-2 items-center" hx-post="{{ BASE_URL }}/hx/plugins/details/install"
-                                hx-swap="outerHTML"
-                                  hx-indicator=".htmx-indicator-small, .htmx-loaded-content"
-                                hx-target="#installForm{{ $plugin->marketplaceId }}">
-                                @php
-                                    if (isset($plugin->version)) {
-                                        unset($plugin->version);
-                                    }
-                                @endphp
-                                @foreach ((array) $plugin as $prop => $value)
-                                    <input type="hidden" name="plugin[{{ $prop }}]"
-                                        value="{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}" />
-                                @endforeach
-                                <x-global::forms.select class="!mb-none !p-[4px]" name="plugin[version]">
-                                    @foreach ($plugin->compatibility as $compatibility)
-                                        <x-global::forms.select.select-option :value="$compatibility['version_number']">
-                                            {{ $compatibility['version_number'] }}
-                                        </x-global::forms.select.select-option>
-                                    @endforeach
-                                </x-global::forms.select>
 
-                                <input class="!mb-none !p-[4px]" type="text" name="plugin[license]"
-                                    placeholder="License Key" />
-                                <x-global::forms.button :tag="'button'" :type="'secondary'">Install</x-global::forms.button>
-                                <div class="htmx-indicator-small">
-                                    <x-global::loader id="loadingthis" size="25px" />
-                                </div>
-                            </form>
+                            @if($isBundle === false)
+                                <form
+                                    class="flex gap-2 items-center" hx-post="{{ BASE_URL }}/hx/plugins/details/install"
+                                    hx-swap="outerHTML"
+                                    hx-indicator=".htmx-indicator-small, .htmx-loaded-content"
+                                    hx-target="#installForm{{ $plugin->marketplaceId }}">
+                                    @php
+                                        if (isset($plugin->version)) {
+                                            unset($plugin->version);
+                                        }
+                                    @endphp
+                                    @foreach ((array) $plugin as $prop => $value)
+                                        <input type="hidden" name="plugin[{{ $prop }}]"
+                                            value="{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}" />
+                                    @endforeach
+                                    <x-global::forms.select class="!mb-none !p-[4px]" name="plugin[version]">
+                                        @foreach ($plugin->compatibility as $compatibility)
+                                            <x-global::forms.select.select-option :value="$compatibility['version_number']">
+                                                {{ $compatibility['version_number'] }}
+                                            </x-global::forms.select.select-option>
+                                        @endforeach
+                                    </x-global::forms.select>
+
+                                    <input class="!mb-none !p-[4px]" type="text" name="plugin[license]"
+                                        placeholder="License Key" />
+                                    <x-global::forms.button :tag="'button'" :type="'secondary'">Install</x-global::forms.button>
+                                    <div class="htmx-indicator-small">
+                                        <x-global::loader id="loadingthis" size="25px" />
+                                    </div>
+                                </form>
+                            @endif
+
+
                         </div>
                     @endif
                 @else

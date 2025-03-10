@@ -48,14 +48,14 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $this->tpl->setNotification('notification.wiki_updated_successfully', 'success', 'wiki_updated');
 
             } else {
-                //New
+                // New
                 $wiki->title = $params['title'];
                 $wiki->projectId = session('currentProject');
                 $wiki->author = session('userdata.id');
 
                 $id = $this->wikiService->createWiki($wiki);
 
-                //session(["currentWiki" => $id]);
+                // session(["currentWiki" => $id]);
 
                 if ($id) {
                     $this->tpl->setNotification('notification.wiki_created_successfully', 'success', 'wiki_created');

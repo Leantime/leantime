@@ -2,7 +2,7 @@
      hx-get="{{BASE_URL}}/hx/projects/projectHubProjects/get"
      hx-trigger="HTMX.updateProjectList from:body"
      hx-target="#myProjectsHub"
-     hx-swap="outerHTML transition:true">
+     hx-swap="outerHTML">
 
     @if (count($clients) > 0)
         <div class="dropdown dropdownWrapper pull-right">

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
@@ -52,7 +53,7 @@ class Projects
 
         $filtered = static::dispatch_filter('filterProjectType', $types);
 
-        //Strategy & Program are protected types
+        // Strategy & Program are protected types
         if (isset($filtered['strategy'])) {
             unset($filtered['strategy']);
         }
@@ -77,7 +78,7 @@ class Projects
         return $this->projectRepository->getProject($id);
     }
 
-    //Gets project progress
+    // Gets project progress
 
     /**
      * Gets the progress of a project.
@@ -95,7 +96,7 @@ class Projects
 
         $averageStorySize = $this->ticketRepository->getAverageTodoSize($projectId);
 
-        //We'll use this as the start date of the project
+        // We'll use this as the start date of the project
         $firstTicket = $this->ticketRepository->getFirstTicket($projectId);
 
         if (is_object($firstTicket) === false) {
@@ -106,7 +107,7 @@ class Projects
         $today = new DateTime;
         $totalprojectDays = $today->diff($dateOfFirstTicket)->format('%a');
 
-        //Calculate percent
+        // Calculate percent
 
         $numberOfClosedTickets = $this->ticketRepository->getNumberOfClosedTickets($projectId);
 
@@ -122,7 +123,7 @@ class Projects
         $effortOfTotalTickets = $this->ticketRepository->getEffortOfAllTickets($projectId, $averageStorySize);
 
         if ($effortOfTotalTickets == 0) {
-            $percentEffort = $percentNum; //This needs to be set to percentNum in case users choose to not use efforts
+            $percentEffort = $percentNum; // This needs to be set to percentNum in case users choose to not use efforts
         } else {
             $percentEffort = ($effortOfClosedTickets / $effortOfTotalTickets) * 100;
         }
@@ -145,7 +146,7 @@ class Projects
 
         $today->add(new DateInterval('P'.$estDaysLeftInProject.'D'));
 
-        //Fix this
+        // Fix this
         $currentDate = new DateTime;
         $inFiveYears = intval($currentDate->format('Y')) + 5;
 
@@ -180,7 +181,7 @@ class Projects
 
         $to = [];
 
-        //Only users that actually want to be notified and are active
+        // Only users that actually want to be notified and are active
         foreach ($users as $user) {
             if ($user['notifications'] != 0 && strtolower($user['status']) == 'a') {
                 $to[] = $user['id'];
@@ -205,7 +206,7 @@ class Projects
 
         $to = [];
 
-        //Only users that actually want to be notified
+        // Only users that actually want to be notified
         foreach ($users as $user) {
             if ($user['notifications'] != 0 && ($user['username'] != session('userdata.mail'))) {
                 $to[] = $user;
@@ -215,7 +216,7 @@ class Projects
         return $to;
     }
 
-    //TODO Split and move to notifications
+    // TODO Split and move to notifications
 
     /**
      * Notifies the users associated with a project about a notification.
@@ -230,7 +231,7 @@ class Projects
         //Filter notifications
         $notification = self::dispatchFilter('notificationFilter', $notification);
 
-        //Email
+        // Email
         $users = $this->getUsersToNotify($notification->projectId);
         $projectName = $this->getProjectName($notification->projectId);
 
@@ -247,11 +248,11 @@ class Projects
         $queue = app()->make(QueueRepository::class);
         $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
 
-        //Send to messengers
+        // Send to messengers
         $this->messengerService->sendNotificationToMessengers($notification, $projectName);
 
-        //Notify users about mentions
-        //Fields that should be parsed for mentions
+        // Notify users about mentions
+        // Fields that should be parsed for mentions
         $mentionFields = [
             'comments' => ['text'],
             'projects' => ['details'],
@@ -260,8 +261,8 @@ class Projects
         ];
 
         $contentToCheck = '';
-        //Find entity ID & content
-        //Todo once all entities are models this if statement can be reduced
+        // Find entity ID & content
+        // Todo once all entities are models this if statement can be reduced
         if (isset($notification->entity) && is_array($notification->entity) && isset($notification->entity['id'])) {
             $entityId = $notification->entity['id'];
 
@@ -287,7 +288,7 @@ class Projects
                 }
             }
         } else {
-            //Entity id not set use project id
+            // Entity id not set use project id
             $entityId = $notification->projectId;
         }
 
@@ -451,7 +452,7 @@ class Projects
     public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
 
-        //Load all projects user is assigned to
+        // Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
             userId: $userId,
             projectStatus: $projectStatus,
@@ -460,12 +461,12 @@ class Projects
         );
         $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
-        //Build project hierarchy
+        // Build project hierarchy
         $projectsClean = $this->cleanParentRelationship($projects);
         $projectHierarchy = $this->findMyChildren(0, $projectsClean);
         $projectHierarchy = self::dispatchFilter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
 
-        //Get favorite projects
+        // Get favorite projects
         $favorites = [];
         foreach ($projects as $project) {
             if (isset($project['isFavorite']) && $project['isFavorite'] == 1) {
@@ -497,7 +498,7 @@ class Projects
     public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = 'open', $clientId = null): array
     {
 
-        //Load all projects user is assigned to
+        // Load all projects user is assigned to
         $projects = $this->projectRepository->getProjectsUserHasAccessTo(
             userId: $userId,
             status: $projectStatus,
@@ -505,7 +506,7 @@ class Projects
         );
         $projects = self::dispatchFilter('afterLoadingProjects', $projects);
 
-        //Build project hierarchy
+        // Build project hierarchy
         $projectsClean = $this->cleanParentRelationship($projects);
         $projectHierarchy = $this->findMyChildren(0, $projectsClean);
         $projectHierarchy = self::dispatchFilter('afterPopulatingProjectHierarchy', $projectHierarchy, ['projects' => $projects]);
@@ -531,7 +532,7 @@ class Projects
     public function getAllClientsAvailableToUser($userId, string $projectStatus = 'open'): array
     {
 
-        //Load all projects user is assigned to
+        // Load all projects user is assigned to
         $projects = $this->projectRepository->getUserProjects(
             userId: $userId,
             projectStatus: $projectStatus,
@@ -637,7 +638,7 @@ class Projects
 
         session(['currentProject' => 0]);
 
-        //If last project setting is set use that
+        // If last project setting is set use that
         $lastProject = $this->settingsRepo->getSetting('usersettings.'.session('userdata.id').'.lastProject');
         if (
             ! empty($lastProject)
@@ -697,7 +698,7 @@ class Projects
         session(['currentProjectName' => '']);
 
         if ($this->isUserAssignedToProject(session('userdata.id'), $projectId) === true) {
-            //Get user project role
+            // Get user project role
 
             $project = $this->getProject($projectId);
 
@@ -928,13 +929,21 @@ class Projects
     public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
     {
 
-        $startDate = datetime::createFromFormat($this->language->__('language.dateformat'), $userStartDate);
+        if (! empty($userStartDate)) {
 
-        //Ignoring
-        //Comments, files, timesheets, personalCalendar EventDispatcher
+            try {
+                $startDate = dtHelper()->parseUserDateTime($userStartDate)->startOfDay();
+            } catch (\Exception $e) {
+                $startDate = dtHelper()->userNow()->startOfDay();
+            }
+
+        }
+
+        // Ignoring
+        // Comments, files, timesheets, personalCalendar EventDispatcher
         $oldProjectId = $projectId;
 
-        //Copy project Entry
+        // Copy project Entry
         $projectValues = $this->getProject($projectId);
 
         $copyProject = [
@@ -960,7 +969,7 @@ class Projects
         $projectSettingsKeys = ['retrolabels', 'ticketlabels', 'idealabels'];
         $newProjectId = $this->projectRepository->addProject($copyProject);
 
-        //ProjectSettings
+        // ProjectSettings
         foreach ($projectSettingsKeys as $key) {
             $setting = $this->settingsRepo->getSetting('projectsettings.'.$projectId.'.'.$key);
 
@@ -969,140 +978,119 @@ class Projects
             }
         }
 
-        //Duplicate all todos without dependent Ticket set
+        // Duplicate all todos without dependent Ticket set
         $allTickets = $this->ticketRepository->getAllByProjectId($projectId);
 
-        //Checks the oldest editFrom date and makes this the start date
-        $oldestTicket = new DateTime;
+        // Checks the oldest editFrom date and makes this the start date
+        $oldestTicket = dtHelper()->now();
 
         foreach ($allTickets as $ticket) {
-            if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->editFrom);
+
+            if (dtHelper()->isValidDateString($ticket->editFrom)) {
+                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->editFrom);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
 
-            if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
+            if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
                 $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->dateToFinish);
+                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->editFrom);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
             }
         }
 
-        $projectStart = new DateTime($startDate);
+        try {
+            $projectStart = $startDate;
+        } catch (\Exception $e) {
+            $projectStart = dtHelper()->now()->startOfDay();
+        }
+
+        // Get interval from oldest ticket to project start date
         $interval = $oldestTicket->diff($projectStart);
 
-        //oldId = > newId
+        // oldId = > newId
         $ticketIdList = [];
 
-        //Iterate through root tickets first
+        // Create all tickets first
         foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid == 0 || $ticket->milestoneid == '' || $ticket->milestoneid == null) {
-                $dateToFinishValue = '';
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
-                    $dateToFinish = new DateTime($ticket->dateToFinish);
-                    $dateToFinish->add($interval);
-                    $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
+            $dateToFinishValue = '';
+            if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
+                $dateToFinish = dtHelper()->parseDbDateTime($ticket->dateToFinish);
+                $dateToFinishValue = $dateToFinish->add($interval)->formatDateTimeForDb();
+            }
+
+            $editFromValue = '';
+            if (dtHelper()->isValidDateString($ticket->editFrom)) {
+                $editFrom = dtHelper()->parseDbDateTime($ticket->editFrom);
+                $editFromValue = $editFrom->add($interval)->formatDateTimeForDb();
+            }
+
+            $editToValue = '';
+            if (dtHelper()->isValidDateString($ticket->editTo)) {
+                $editTo = dtHelper()->parseDbDateTime($ticket->editTo);
+                $editToValue = $editTo->add($interval)->formatDateTimeForDb();
+            }
+
+            $ticketValues = [
+                'headline' => $ticket->headline,
+                'type' => $ticket->type,
+                'description' => $ticket->description,
+                'projectId' => $newProjectId,
+                'editorId' => $ticket->editorId,
+                'userId' => session('userdata.id'),
+                'date' => date('Y-m-d H:i:s'),
+                'dateToFinish' => $dateToFinishValue,
+                'status' => $ticket->status,
+                'storypoints' => $ticket->storypoints,
+                'hourRemaining' => $ticket->hourRemaining,
+                'planHours' => $ticket->planHours,
+                'priority' => $ticket->priority,
+                'sprint' => '',
+                'acceptanceCriteria' => $ticket->acceptanceCriteria,
+                'tags' => $ticket->tags,
+                'editFrom' => $editFromValue,
+                'editTo' => $editToValue,
+                'dependingTicketId' => '',
+                'milestoneid' => '',
+            ];
+
+            $newTicketId = $this->ticketRepository->addTicket($ticketValues);
+
+            $ticketIdList[$ticket->id] = $newTicketId;
+        }
+
+        // Iterate through all and update relationships
+        foreach ($allTickets as $ticket) {
+
+            $values = [];
+
+            if (! empty($ticket->milestoneid)) {
+                $values['milestoneId'] = $ticketIdList[$ticket->milestoneid] ?? null;
+
+                if ($values['milestoneId'] === null) {
+                    Log::warning('Issue copying project. New Milestone was not found.');
                 }
+            }
 
-                $editFromValue = '';
-                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                    $editFrom = new DateTime($ticket->editFrom);
-                    $editFrom->add($interval);
-                    $editFromValue = $editFrom->format('Y-m-d H:i:s');
+            if (! empty($ticket->dependingTicketId)) {
+                $values['dependingTicketId'] = $ticketIdList[$ticket->dependingTicketId] ?? null;
+
+                if ($values['dependingTicketId'] === null) {
+                    Log::warning('Issue copying project. New ticket dependency was not found.');
                 }
+            }
 
-                $editToValue = '';
-                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
-                    $editTo = new DateTime($ticket->editTo);
-                    $editTo->add($interval);
-                    $editToValue = $editTo->format('Y-m-d H:i:s');
-                }
+            $newTicketId = $ticketIdList[$ticket->id] ?? null;
 
-                $ticketValues = [
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session('userdata.id'),
-                    'date' => date('Y-m-d H:i:s'),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => '',
-                    'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'dependingTicketId' => '',
-                    'milestoneid' => '',
-                ];
-
-                $newTicketId = $this->ticketRepository->addTicket($ticketValues);
-
-                $ticketIdList[$ticket->id] = $newTicketId;
+            if ($newTicketId && ! empty($values)) {
+                $this->ticketRepository->patchTicket($ticket->id, $values);
             }
         }
 
-        //Iterate through childObjects
-        foreach ($allTickets as $ticket) {
-            if ($ticket->milestoneid != '' && $ticket->milestoneid > 0) {
-                $dateToFinishValue = '';
-                if ($ticket->dateToFinish != null && $ticket->dateToFinish != '' && $ticket->dateToFinish != '0000-00-00 00:00:00' && $ticket->dateToFinish != '1969-12-31 00:00:00') {
-                    $dateToFinish = new DateTime($ticket->dateToFinish);
-                    $dateToFinish->add($interval);
-                    $dateToFinishValue = $dateToFinish->format('Y-m-d H:i:s');
-                }
-
-                $editFromValue = '';
-                if ($ticket->editFrom != null && $ticket->editFrom != '' && $ticket->editFrom != '0000-00-00 00:00:00' && $ticket->editFrom != '1969-12-31 00:00:00') {
-                    $editFrom = new DateTime($ticket->editFrom);
-                    $editFrom->add($interval);
-                    $editFromValue = $editFrom->format('Y-m-d H:i:s');
-                }
-
-                $editToValue = '';
-                if ($ticket->editTo != null && $ticket->editTo != '' && $ticket->editTo != '0000-00-00 00:00:00' && $ticket->editTo != '1969-12-31 00:00:00') {
-                    $editTo = new DateTime($ticket->editTo);
-                    $editTo->add($interval);
-                    $editToValue = $editTo->format('Y-m-d H:i:s');
-                }
-
-                $ticketValues = [
-                    'headline' => $ticket->headline,
-                    'type' => $ticket->type,
-                    'description' => $ticket->description,
-                    'projectId' => $newProjectId,
-                    'editorId' => $ticket->editorId,
-                    'userId' => session('userdata.id'),
-                    'date' => date('Y-m-d H:i:s'),
-                    'dateToFinish' => $dateToFinishValue,
-                    'status' => $ticket->status,
-                    'storypoints' => $ticket->storypoints,
-                    'hourRemaining' => $ticket->hourRemaining,
-                    'planHours' => $ticket->planHours,
-                    'priority' => $ticket->priority,
-                    'sprint' => '',
-                    'acceptanceCriteria' => $ticket->acceptanceCriteria,
-                    'tags' => $ticket->tags,
-                    'editFrom' => $editFromValue,
-                    'editTo' => $editToValue,
-                    'milestoneid' => $ticketIdList[$ticket->milestoneid],
-                ];
-
-                $newTicketId = $this->ticketRepository->addTicket($ticketValues);
-
-                $ticketIdList[$ticket->id] = $newTicketId;
-            }
-        }
-
-        //Ideas
+        // Ideas
         $this->duplicateCanvas(
             repository: IdeaRepository::class,
             originalProjectId: $projectId,
@@ -1127,6 +1115,8 @@ class Projects
             originalProjectId: $projectId,
             newProjectId: $newProjectId
         );
+
+        self::dispatchEvent('projectDuplicated', ['projectId' => $projectId, 'newProjectId' => $newProjectId, 'startDate' => $projectStart, 'interval' => $interval]);
 
         return $newProjectId;
     }
@@ -1163,8 +1153,8 @@ class Projects
             $canvasItems = $canvasRepo->getCanvasItemsById($canvas['id']);
 
             if ($canvasItems && count($canvasItems) > 0) {
-                //Build parent Array
-                //oldId => newId
+                // Build parent Array
+                // oldId => newId
                 $idMap = [];
 
                 foreach ($canvasItems as $item) {
@@ -1215,12 +1205,13 @@ class Projects
                     $idMap[$item['id']] = $newId;
                 }
 
-                //Now fix relates to and parent relationships
+                // Now fix relates to and parent relationships
                 $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
                 foreach ($canvasItems as $newItem) {
                     $newCanvasItemValues = [
-                        'relates' => $idMap[$newItem['relates']] ?? '',
-                        'parent' => $idMap[$newItem['parent']] ?? '',
+                        'relates' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['relates']] ?? '') : '',
+                        'parent' => ($newItem['relates'] ?? false) ? ($idMap[$newItem['parent']] ?? '') : '',
+
                     ];
 
                     $canvasRepo->patchCanvasItem($newItem['id'], $newCanvasItemValues);
@@ -1380,9 +1371,9 @@ class Projects
             ],
         ];
 
-        //Todo determine tasks that are done.
+        // Todo determine tasks that are done.
         $project = $this->getProject($projectId);
-        //Project Description
+        // Project Description
         if ($project['details'] != '') {
             $progressSteps['define']['tasks']['description']['status'] = 'done';
         }
@@ -1421,7 +1412,7 @@ class Projects
             $progressSteps['implementation']['tasks']['finish80percent']['status'] = 'done';
         }
 
-        //Add overrides
+        // Add overrides
         if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
             $stepsCompleted = [];
         } else {
@@ -1562,7 +1553,7 @@ class Projects
      */
     public function updateProjectSorting($params): bool
     {
-        //ticketId: sortIndex
+        // ticketId: sortIndex
         foreach ($params as $id => $sortKey) {
             if ($this->projectRepository->patch($id, ['sortIndex' => $sortKey * 100]) === false) {
                 return false;
@@ -1597,10 +1588,10 @@ class Projects
     public function updateProjectStatusAndSorting($params, $handler = null): bool
     {
 
-        //Jquery sortable serializes the array for kanban in format
-        //statusKey: item[]=X&item[]=X2...,
-        //statusKey2: item[]=X&item[]=X2...,
-        //This represents status & kanban sorting
+        // Jquery sortable serializes the array for kanban in format
+        // statusKey: item[]=X&item[]=X2...,
+        // statusKey2: item[]=X&item[]=X2...,
+        // This represents status & kanban sorting
         foreach ($params as $status => $projectList) {
             if (is_numeric($status) && ! empty($projectList)) {
                 $projects = explode('&', $projectList);

@@ -139,7 +139,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     }
                 }
 
-                //Delete File
+                // Delete File
                 if (isset($_GET['delFile']) === true) {
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
@@ -152,7 +152,7 @@ namespace Leantime\Domain\Clients\Controllers {
                     }
                 }
 
-                //Add comment
+                // Add comment
                 if (isset($_POST['comment']) === true) {
                     if ($this->commentService->addComment($_POST, 'client', $id)) {
                         $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');

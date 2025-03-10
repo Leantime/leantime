@@ -48,10 +48,10 @@ namespace Leantime\Domain\Files\Repositories {
 				)';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':encName', $values['encName'], PDO::PARAM_STR);
-            $stmn->bindValue(':realName', $values['realName'], PDO::PARAM_STR);
-            $stmn->bindValue(':extension', $values['extension'], PDO::PARAM_STR);
-            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            $stmn->bindValue(':encName', $values['encName']);
+            $stmn->bindValue(':realName', $values['realName']);
+            $stmn->bindValue(':extension', $values['extension']);
+            $stmn->bindValue(':module', $module);
             $stmn->bindValue(':moduleId', $values['moduleId'], PDO::PARAM_INT);
             $stmn->bindValue(':userId', $values['userId'], PDO::PARAM_INT);
 
@@ -61,7 +61,7 @@ namespace Leantime\Domain\Files\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function getFile($id): mixed
+        public function getFile($id): array|false
         {
 
             $sql = 'SELECT
@@ -227,11 +227,11 @@ namespace Leantime\Domain\Files\Repositories {
         public function upload($file, $module, $moduleId): false|string|array
         {
 
-            //Clean module mess
-            if ($module == 'projects') {
+            // Clean module mess
+            if ($module === 'projects') {
                 $module = 'project';
             }
-            if ($module == 'tickets') {
+            if ($module === 'tickets') {
                 $module = 'ticket';
             }
 
@@ -245,7 +245,7 @@ namespace Leantime\Domain\Files\Repositories {
             $return = false;
 
             if ($upload->error == '') {
-                //Just something unique to avoid collision in s3 (each customer has their own folder)
+                // Just something unique to avoid collision in s3 (each customer has their own folder)
                 $newname = md5(session('userdata.id').time());
 
                 $upload->renameFile($newname);
@@ -270,7 +270,7 @@ namespace Leantime\Domain\Files\Repositories {
                         $return = false;
                     }
                 } else {
-                    //report($upload->error);
+                    // report($upload->error);
                     return $upload->error;
                 }
             }
@@ -281,7 +281,7 @@ namespace Leantime\Domain\Files\Repositories {
         public function uploadCloud($name, $url, $module, $moduleId): void
         {
 
-            //Add cloud stuff ehre.
+            // Add cloud stuff ehre.
         }
     }
 

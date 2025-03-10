@@ -47,7 +47,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $params['excludeType'] = '';
             }
 
-            //Sets the filter module to show a quick toggle for task types
+            // Sets the filter module to show a quick toggle for task types
             $this->tpl->assign('enableTaskTypeToggle', true);
             $this->tpl->assign('showTasks', $params['showTasks'] ?? 'false');
 
@@ -55,7 +55,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria'], 'standard');
             $allProjectMilestones = $this->ticketService->getBulkMilestoneProgress($allProjectMilestones);
 
             $this->tpl->assign('timelineTasks', $allProjectMilestones);

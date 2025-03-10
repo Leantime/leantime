@@ -25,12 +25,12 @@ class Roles
     public static string $owner = 'owner';
 
     private static array $roleKeys = [
-        5 => 'readonly',      //prev: none
-        10 => 'commenter',    //prev: client
-        20 => 'editor',       //prev: developer
-        30 => 'manager',      //prev: clientmanager
-        40 => 'admin',        //prev: manager
-        50 => 'owner',        //prev: admin
+        5 => 'readonly',      // prev: none
+        10 => 'commenter',    // prev: client
+        20 => 'editor',       // prev: developer
+        30 => 'manager',      // prev: clientmanager
+        40 => 'admin',        // prev: manager
+        50 => 'owner',        // prev: admin
     ];
 
     /**

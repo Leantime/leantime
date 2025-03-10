@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * This class represents a command that sends an email to test the system configuration.
  */
 #[AsCommand(
-    name: 'email:test',
+    name: 'email:testemail',
     description: 'Sends an email to test system configuration',
 )]
 class TestEmailCommand extends Command

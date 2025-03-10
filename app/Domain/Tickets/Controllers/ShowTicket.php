@@ -70,14 +70,14 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->displayModal('errors.error500', responseCode: 500);
             }
 
-            //Ensure this ticket belongs to the current project
+            // Ensure this ticket belongs to the current project
             if (session('currentProject') != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
 
                 return Frontcontroller::redirect(BASE_URL . '/tickets/showTicket/' . $id);
             }
 
-            //Delete file
+            // Delete file
             if (isset($params['delFile']) === true) {
                 if ($result = $this->fileService->deleteFile($params['delFile'])) {
                     $this->tpl->setNotification($this->language->__('notifications.file_deleted'), 'success');
@@ -130,7 +130,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 'description' => '',
             ]);
 
-            //TODO: Refactor thumbnail generation in file manager
+            // TODO: Refactor thumbnail generation in file manager
             $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
 
             $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session('userdata.id'), 'open');
@@ -160,7 +160,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->display('errors.error500', responseCode: 500);
             }
 
-            //Upload File
+            // Upload File
             if (isset($params['upload'])) {
                 if ($this->fileService->uploadFile($_FILES, 'ticket', $id, $ticket)) {
                     $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success');
@@ -173,21 +173,22 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             //Log time
             if (isset($params['saveTimes']) === true) {
-                $result = $this->timesheetService->logTime($id, $params);
 
-                if ($result === true) {
+                try {
+                    $result = $this->timesheetService->logTime($id, $params);
                     $this->tpl->setNotification($this->language->__('notifications.time_logged_success'), 'success');
-                } else {
-                    $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+                } catch (\Exception $e) {
+                    $this->tpl->setNotification($e->getMessage(), 'error');
                 }
+
             }
 
-            //Save Ticket
+            // Save Ticket
             if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
                 $params['projectId'] = $ticket->projectId;
                 $params['id'] = $id;
 
-                //Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
+                // Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
                 $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
                 $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
                 $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();

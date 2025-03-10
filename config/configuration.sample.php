@@ -15,104 +15,104 @@ class Config
 {
     /* General */
 
-    public $sitename = 'Leantime';                        //Name of your site, can be changed later
+    public $sitename = 'Leantime';                        // Name of your site, can be changed later
 
-    public $language = 'en-US';                           //Default language
+    public $language = 'en-US';                           // Default language
 
-    public $logoPath = '/dist/images/logo.svg';           //Default logo path, can be changed later
+    public $logoPath = '/dist/images/logo.svg';           // Default logo path, can be changed later
 
-    public $printLogoURL = '/dist/images/logo.png';       //Default logo URL use for printing (must be jpg or png format)
+    public $printLogoURL = '/dist/images/logo.png';       // Default logo URL use for printing (must be jpg or png format)
 
-    public $appUrl = '';                                  //Base URL, trailing slash not needed
+    public $appUrl = '';                                  // Base URL, trailing slash not needed
 
-    public $appDir = '';                                  //Base of application without trailing slash (used for cookies), e.g, /leantime
+    public $appDir = '';                                  // Base of application without trailing slash (used for cookies), e.g, /leantime
 
-    public $defaultTheme = 'default';                     //Default theme
+    public $defaultTheme = 'default';                     // Default theme
 
-    public $primarycolor = '#006d9f';                     //Primary Theme color
+    public $primarycolor = '#006d9f';                     // Primary Theme color
 
-    public $secondarycolor = '#00a886';                   //Secondary Theme Color
+    public $secondarycolor = '#00a886';                   // Secondary Theme Color
 
-    public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
+    public $defaultTimezone = 'America/Los_Angeles';      // Set default timezone
 
-    public $enableMenuType = false;                       //Enable to specify menu on a project-by-project basis
+    public $enableMenuType = false;                       // Enable to specify menu on a project-by-project basis
 
-    public $debug = 0;                                    //Debug flag
+    public $debug = 0;                                    // Debug flag
 
-    public $disableLoginForm = false;                     //If true then don't show the login form (useful only if additional auth method[s] are available)
+    public $disableLoginForm = false;                     // If true then don't show the login form (useful only if additional auth method[s] are available)
 
     /* Database */
-    public $dbHost = 'localhost';                         //Database host
+    public $dbHost = 'localhost';                         // Database host
 
-    public $dbUser = '';                                  //Database username
+    public $dbUser = '';                                  // Database username
 
-    public $dbPassword = '';                              //Database password
+    public $dbPassword = '';                              // Database password
 
-    public $dbDatabase = '';                              //Database name
+    public $dbDatabase = '';                              // Database name
 
-    public $dbPort = '3306';                              //Database port
+    public $dbPort = '3306';                              // Database port
 
     /* Fileupload */
-    public $userFilePath = 'userfiles/';                  //Local relative path to store uploaded files (if not using S3)
+    public $userFilePath = 'userfiles/';                  // Local relative path to store uploaded files (if not using S3)
 
-    public $dbBackupPath = 'backupdb/';                   //Local relative path to store backup files, need permission to write
+    public $dbBackupPath = 'backupdb/';                   // Local relative path to store backup files, need permission to write
 
     /* S3 configuration */
-    public $useS3 = false;                                //Set to true if you want to use S3 instead of local files
+    public $useS3 = false;                                // Set to true if you want to use S3 instead of local files
 
-    public $s3Key = '';                                   //S3 Key
+    public $s3Key = '';                                   // S3 Key
 
-    public $s3Secret = '';                                //S3 Secret
+    public $s3Secret = '';                                // S3 Secret
 
-    public $s3Bucket = '';                                //Your S3 bucket
+    public $s3Bucket = '';                                // Your S3 bucket
 
     public $s3UsePathStyleEndpoint = false;               // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
 
-    public $s3Region = '';                                //S3 region
+    public $s3Region = '';                                // S3 region
 
-    public $s3FolderName = '';                            //Foldername within S3 (can be emtpy)
+    public $s3FolderName = '';                            // Foldername within S3 (can be emtpy)
 
-    public $s3EndPoint = null;                            //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+    public $s3EndPoint = null;                            // S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
-    public $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
+    public $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  // Salting sessions. Replace with a strong password
 
-    public $sessionExpiration = 28800;                    //How many seconds after inactivity should we logout?  28800seconds = 8hours
+    public $sessionExpiration = 28800;                    // How many seconds after inactivity should we logout?  28800seconds = 8hours
 
     /* Email */
-    public $email = '';                                   //Return email address
+    public $email = '';                                   // Return email address
 
-    public $useSMTP = false;                              //Use SMTP? If set to false, the default php mail() function will be used
+    public $useSMTP = false;                              // Use SMTP? If set to false, the default php mail() function will be used
 
-    public $smtpHosts = '';                               //SMTP host
+    public $smtpHosts = '';                               // SMTP host
 
-    public $smtpAuth = true;                              //SMTP use user/password authentication
+    public $smtpAuth = true;                              // SMTP use user/password authentication
 
-    public $smtpUsername = '';                            //SMTP username
+    public $smtpUsername = '';                            // SMTP username
 
-    public $smtpPassword = '';                            //SMTP password
+    public $smtpPassword = '';                            // SMTP password
 
-    public $smtpAutoTLS = true;                           //SMTP Enable TLS encryption automatically if a server supports it
+    public $smtpAutoTLS = true;                           // SMTP Enable TLS encryption automatically if a server supports it
 
-    public $smtpSecure = '';                              //SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
+    public $smtpSecure = '';                              // SMTP Security protocol (usually one of: TLS, SSL, STARTTLS)
 
-    public $smtpSSLNoverify = false;                      //SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
+    public $smtpSSLNoverify = false;                      // SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
 
-    public $smtpPort = '';                                //Port (usually one of 25, 465, 587, 2526)
+    public $smtpPort = '';                                // Port (usually one of 25, 465, 587, 2526)
 
     /* LDAP default settings (can be changed in company settings) */
-    public $useLdap = false;                              //Set to true if you want to use LDAP
+    public $useLdap = false;                              // Set to true if you want to use LDAP
 
-    public $ldapType = 'OL';                              //Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
+    public $ldapType = 'OL';                              // Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
 
-    public $ldapHost = '';                                //FQDN
+    public $ldapHost = '';                                // FQDN
 
-    public $ldapPort = 389;                               //Default Port
+    public $ldapPort = 389;                               // Default Port
 
-    public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
+    public $ldapDn = '';                                  // Location of users, example: CN=users,DC=example,DC=com
 
-    //Default LDAP keys in your directory.
-    //Works for OL
+    // Default LDAP keys in your directory.
+    // Works for OL
     public $ldapKeys = '{
         "username":"uid",
         "groups":"memberof",
@@ -124,7 +124,7 @@ class Config
         "jobLevel":"level",
         "department":"department"
         }';
-    //For AD use
+    // For AD use
     /*
       public $ldapKeys = '{
       "username":"cn",
@@ -139,7 +139,7 @@ class Config
       }';
      */
 
-    //Default role assignments upon first login. (Optional) Can be updated in user settings for each user
+    // Default role assignments upon first login. (Optional) Can be updated in user settings for each user
     public $ldapLtGroupAssignments = '{
           "5": {
             "ltRole":"readonly",
@@ -167,5 +167,5 @@ class Config
           }
         }';
 
-    public $ldapDefaultRoleKey = 20;                      //Default Leantime Role on creation. (set to editor)
+    public $ldapDefaultRoleKey = 20;                      // Default Leantime Role on creation. (set to editor)
 }

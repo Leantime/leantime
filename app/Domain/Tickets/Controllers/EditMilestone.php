@@ -54,7 +54,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap/');
                 }
 
-                //Ensure this ticket belongs to the current project
+                // Ensure this ticket belongs to the current project
                 if (session('currentProject') != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
 
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $today = new DateTime;
                 $milestone->editFrom = $today->format('Y-m-d');
 
-                //Add 1 week
+                // Add 1 week
                 $interval = new DateInterval('P1W');
                 $next_week = $today->add($interval);
 
@@ -94,7 +94,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params)
         {
-            //If ID is set its an update
+            // If ID is set its an update
             if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
                 $params['id'] = (int) $_GET['id'];
                 $milestone = $this->ticketRepo->getTicket($params['id']);
@@ -104,7 +104,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.milestone_edited_successfully'), 'success');
 
                         $subject = $this->language->__('email_notifications.milestone_update_subject');
-                        $actual_link = BASE_URL.'/tickets/editMilestone/'.(int) $_GET['id'];
+                        $actual_link = BASE_URL.'#/tickets/editMilestone/'.(int) $_GET['id'];
                         $message = sprintf($this->language->__('email_notifications.milestone_update_message'), session('userdata.name'));
 
                         $notification = app()->make(NotificationModel::class);
@@ -142,7 +142,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__('notification.milestone_created_successfully'), 'success');
 
                     $subject = $this->language->__('email_notifications.milestone_created_subject');
-                    $actual_link = BASE_URL.'/tickets/editMilestone/'.$result;
+                    $actual_link = BASE_URL.'#/tickets/editMilestone/'.$result;
                     $message = sprintf($this->language->__('email_notifications.milestone_created_message'), session('userdata.name'));
 
                     $notification = app()->make(NotificationModel::class);

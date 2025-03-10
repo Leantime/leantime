@@ -25,13 +25,16 @@ EventDispatcher::addEventListener('leantime.core.console.consolekernel.schedule.
         }
 
         try {
+
             $response = $telemetry->wait();
 
         } catch (\Throwable $e) {
             Log::error($e);
         }
 
-    })->everyMinute();
+    })->name('reports:telemetry')->everyMinute();
 
-    $scheduler->call(fn () => $reportService->dailyIngestion())->everyMinute();
+    $scheduler->call(function () use ($reportService) {
+        $reportService->cronDailyIngestion();
+    })->name('reports:dailyIngestion')->everyMinute();
 });

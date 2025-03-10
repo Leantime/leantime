@@ -8,6 +8,8 @@ namespace Leantime\Domain\Reports\Services {
     use GuzzleHttp\Client;
     use GuzzleHttp\Promise\PromiseInterface;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Cache;
+    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
@@ -90,45 +92,52 @@ namespace Leantime\Domain\Reports\Services {
          */
         public function dailyIngestion(): void
         {
+            $this->runIngestionForProject(session('currentProject'));
+        }
 
-            if (
-                session()->exists('currentProject')
-                &&
-                (
-                    ! session()->exists('reportCompleted.'.session('currentProject'))
-                    || session('reportCompleted.'.session('currentProject')) != 1
-                )
-            ) {
-                //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
-                //Get current Sprint Id, if no sprint available, dont run the sprint burndown
+        protected function runIngestionForProject(int $projectId): void
+        {
 
-                $lastEntries = $this->reportRepository->checkLastReportEntries(session('currentProject'));
+            if (Cache::has('dailyReports-'.$projectId) === false || Cache::get('dailyReports-'.$projectId) < dtHelper()->dbNow()->endOfDay()) {
 
-                //If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
+                // Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
+                // Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
+                $lastEntries = $this->reportRepository->checkLastReportEntries($projectId);
+
+                // If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
                 if (count($lastEntries) == 0) {
-                    $currentSprint = $this->sprintRepository->getCurrentSprint(session('currentProject'));
+                    $currentSprint = $this->sprintRepository->getCurrentSprint($projectId);
 
                     if ($currentSprint !== false) {
-                        $sprintReport = $this->reportRepository->runTicketReport(session('currentProject'), $currentSprint->id);
+                        $sprintReport = $this->reportRepository->runTicketReport($projectId, $currentSprint->id);
                         if ($sprintReport !== false) {
                             $this->reportRepository->addReport($sprintReport);
                         }
                     }
 
-                    $backlogReport = $this->reportRepository->runTicketReport(session('currentProject'), '');
+                    $backlogReport = $this->reportRepository->runTicketReport($projectId, '');
 
                     if ($backlogReport !== false) {
+
                         $this->reportRepository->addReport($backlogReport);
 
-                        if (! session()->exists('reportCompleted') || is_array(session('reportCompleted')) === false) {
-                            session(['reportCompleted' => []]);
-                        }
+                        Cache::put('dailyReports-'.$projectId, dtHelper()->dbNow()->endOfDay(), 14400); // 4hours
 
-                        session(['reportCompleted.'.session('currentProject') => 1]);
                     }
                 }
+
             }
+        }
+
+        public function cronDailyIngestion(): void
+        {
+            $projects = $this->projectRepository->getAll();
+
+            foreach ($projects as $project) {
+                $this->runIngestionForProject($project['id']);
+            }
+
         }
 
         /**
@@ -172,7 +181,7 @@ namespace Leantime\Domain\Reports\Services {
             WikiRepository $wikiRepo
         ): array {
 
-            //Get anonymous company guid
+            // Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
             self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
@@ -261,7 +270,7 @@ namespace Leantime\Domain\Reports\Services {
 
                 'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
                 'phpUname' => php_uname(),
-                'isDocker' => is_file('/.dockerenv'),
+                'isDocker' => $this->isRunningInDocker(),
                 'phpSapiName' => php_sapi_name(),
                 'phpOs' => PHP_OS ?? 'unknown',
 
@@ -280,7 +289,7 @@ namespace Leantime\Domain\Reports\Services {
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
-            //Only send once a day
+            // Only send once a day
 
             $allowTelemetry = app('config')->allowTelemetry ?? true;
 
@@ -293,7 +302,7 @@ namespace Leantime\Domain\Reports\Services {
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
-                    //Do the curl
+                    // Do the curl
                     $httpClient = new Client;
 
                     try {
@@ -312,7 +321,7 @@ namespace Leantime\Domain\Reports\Services {
                         return $promise;
 
                     } catch (\Exception $e) {
-                        report($e);
+                        Log::error($e);
 
                         return false;
                     }
@@ -389,7 +398,7 @@ namespace Leantime\Domain\Reports\Services {
 
             $telemetry['date'] = $today;
 
-            //Do the curl
+            // Do the curl
             $httpClient = new Client;
 
             try {
@@ -472,6 +481,34 @@ namespace Leantime\Domain\Reports\Services {
             }
 
             return $reactions;
+        }
+
+        /**
+         * Checks if Leantime is running in a Docker environment
+         * Uses multiple detection methods and handles errors gracefully
+         */
+        private function isRunningInDocker(): bool
+        {
+            // Method 1: Check for /.dockerenv file
+            try {
+                if (is_file('/.dockerenv')) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // Silently fail if file access is restricted
+            }
+
+            // Method 2: Check for Docker-specific environment variables
+            if (getenv('DOCKER_CONTAINER') !== false || getenv('IS_DOCKER') !== false) {
+                return true;
+            }
+
+            // Method 3: Check cgroup info (works on Linux hosts)
+            try {
+                return strpos(file_get_contents('/proc/1/cgroup'), 'docker') !== false;
+            } catch (\Exception $e) {
+                return false; // Return false if all detection methods fail
+            }
         }
     }
 

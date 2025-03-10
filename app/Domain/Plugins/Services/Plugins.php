@@ -9,6 +9,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Str;
+    use Leantime\Core\Configuration\AppSettings;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
@@ -60,8 +61,8 @@ namespace Leantime\Domain\Plugins\Services {
             private PluginRepository $pluginRepository,
             private SettingsService $settingsService,
             private UsersService $usersService,
-            private EnvironmentCore $config,
-            private ConsoleKernel $leantimeCli
+            private ConsoleKernel $leantimeCli,
+            private AppSettings $appSettings,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }
@@ -84,12 +85,26 @@ namespace Leantime\Domain\Plugins\Services {
                 $installedPlugins = [];
             }
 
-            //Build array with pluginId as $key
+            // Build array with pluginId as $key
             foreach ($installedPlugins as &$plugin) {
+
+                /** @var array<MarketplacePlugin> */
+                $marketplacePluginCache = Cache::store('installation')->get('plugins.marketplacePlugins', false);
+
                 $plugin->type = $plugin->format === $this->pluginFormat['phar']
                     ? $plugin->type = $this->pluginTypes['marketplace']
                     : $plugin->type = $this->pluginTypes['custom'];
 
+                // Make installed plugins pretty
+                $pluginIdentifier = Str::replace('/', '_', Str::lower($plugin->name));
+                if ($marketplacePluginCache && isset($marketplacePluginCache[$pluginIdentifier])) {
+                    $plugin->name = $marketplacePluginCache[$pluginIdentifier]->name;
+                    $plugin->imageUrl = $marketplacePluginCache[$pluginIdentifier]->imageUrl;
+                    $plugin->description = $marketplacePluginCache[$pluginIdentifier]->excerpt;
+                    $plugin->vendorDisplayName = $marketplacePluginCache[$pluginIdentifier]->vendorDisplayName;
+                    $plugin->vendorId = $marketplacePluginCache[$pluginIdentifier]->vendorId;
+                    $plugin->vendorEmail = $marketplacePluginCache[$pluginIdentifier]->vendorEmail;
+                }
                 $installedPluginsById[$plugin->foldername] = $plugin;
 
             }
@@ -359,7 +374,7 @@ namespace Leantime\Domain\Plugins\Services {
             }
 
             try {
-                //Any installation calls should happen right here.
+                // Any installation calls should happen right here.
                 $pluginClassName = $this->getPluginClassName($plugin);
                 $newPluginSvc = app()->make($pluginClassName);
 
@@ -373,7 +388,7 @@ namespace Leantime\Domain\Plugins\Services {
                     }
                 }
             } catch (\Exception $e) {
-                //Silence is golden
+                // Silence is golden
             }
 
             return $this->pluginRepository->removePlugin($id);
@@ -404,7 +419,7 @@ namespace Leantime\Domain\Plugins\Services {
             $plugins = Http::withoutVerifying()->get(
                 "{$this->marketplaceUrl}/ltmp-api"
                 .(! empty($query) ? "/search/$query" : '/index')
-                ."/$page"
+                ."/$page".'?lt-v='.$this->appSettings->appVersion
             );
 
             $pluginArray = $plugins->collect()->toArray();
@@ -413,7 +428,17 @@ namespace Leantime\Domain\Plugins\Services {
 
             if (isset($pluginArray['data'])) {
                 foreach ($pluginArray['data'] as $plugin) {
-                    $plugins[] = build(new MarketplacePlugin)
+
+                    $priceString = '';
+                    if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] === 'year') {
+                        $price = $plugin['price'] ?? 0;
+                        $months = 12;
+                        $lowestUserTier = 10;
+                        $perUserMonth = round(($price / $months / $lowestUserTier), 2);
+                        $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                    }
+
+                    $plugins[Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
                         ->set('identifier', $plugin['identifier'] ?? '')
                         ->set('name', $plugin['post_title'] ?? '')
                         ->set('excerpt', $plugin['excerpt'] ?? '')
@@ -422,11 +447,14 @@ namespace Leantime\Domain\Plugins\Services {
                         ->set('vendorId', $plugin['vendor_id'] ?? '')
                         ->set('vendorEmail', $plugin['vendor_email'] ?? '')
                         ->set('startingPrice', '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : ''))
+                        ->set('calculatedMonthlyPrice', $priceString)
                         ->set('rating', $plugin['rating'] ?? '')
                         ->set('version', $plugin['version'] ?? '')
                         ->get();
                 }
             }
+
+            Cache::store('installation')->set('plugins.marketplacePlugins', $plugins);
 
             return $plugins;
         }
@@ -438,7 +466,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getMarketplacePlugin(string $identifier): MarketplacePlugin|false
         {
-            $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier");
+            $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier?lt-v=".$this->appSettings->appVersion);
 
             if (! $response->ok()) {
                 return false;
@@ -479,8 +507,7 @@ namespace Leantime\Domain\Plugins\Services {
                 'X-License-Key' => $plugin->license,
                 'X-Instance-Id' => $this->settingsService->getCompanyId(),
                 'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-            ])
-                ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
+            ])->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
 
             if (! $response->ok()) {
                 throw new RequestException($response);

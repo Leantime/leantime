@@ -10,11 +10,13 @@ if (! isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
     return;
 }
 
-if (! file_exists($composer = __DIR__.'/../../vendor/autoload.php')) {
-    throw new RuntimeException('Please run "make build-dev" to run tests.');
-}
+require __DIR__.'/../../vendor/autoload.php';
 
-require $composer;
+// Load test environment
+$testEnv = __DIR__.'/../../.dev/test.env';
+if (file_exists($testEnv)) {
+    \Dotenv\Dotenv::createImmutable(dirname($testEnv), basename($testEnv))->load();
+}
 
 define('PROJECT_ROOT', realpath(__DIR__.'/../../').'/');
 define('DEV_ROOT', PROJECT_ROOT.'.dev/');
@@ -64,38 +66,37 @@ $bootstrapper = get_class(new class
      */
     protected function createDatabase(): void
     {
+        $host = getenv('LEAN_DB_HOST');
+        $user = getenv('LEAN_DB_USER');
+        $pass = getenv('LEAN_DB_PASSWORD');
+        $db = getenv('LEAN_DB_DATABASE');
+
         $this->createStep('Dropping Test Database');
-        $this->executeCommand(
-            [
-                'mysql',
-                '--host=db',
-                '--user=root',
-                '--password=leantime',
-                '-e',
-                'DROP DATABASE IF EXISTS leantime_test;',
-            ],
-            ['cwd' => DEV_ROOT]
-        );
+        $result = $this->executeCommand([
+            'mysql',
+            "--host=$host",
+            "--user=$user",
+            "--password=$pass",
+            '-e',
+            "DROP DATABASE IF EXISTS $db;",
+        ], ['cwd' => DEV_ROOT]);
 
         $this->createStep('Creating Test Database');
-        $this->executeCommand(
-            [
-                'mysql',
-                '--host=db',
-                '--user=root',
-                '--password=leantime',
-                '-e',
-                'CREATE DATABASE IF NOT EXISTS leantime_test; GRANT ALL PRIVILEGES ON leantime_test.* TO \'leantime\'@\'%\'; FLUSH PRIVILEGES;',
-            ],
-            ['cwd' => DEV_ROOT]
-        );
+        $this->executeCommand([
+            'mysql',
+            "--host=$host",
+            "--user=$user",
+            "--password=$pass",
+            '-e',
+            'CREATE DATABASE IF NOT EXISTS leantime_test;',
+        ], ['cwd' => DEV_ROOT]);
     }
 
     protected function setFolderPermissions(): void
     {
         $this->createStep('Setting folder permissions on cache folder');
 
-        //Set file permissions
+        // Set file permissions
         $this->executeCommand(
             array_filter(
                 [

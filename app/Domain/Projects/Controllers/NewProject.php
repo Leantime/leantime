@@ -123,7 +123,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     $mailer->setContext('project_created');
                     $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL . '/projects/showProject/' . $id . '';
-                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, session('userdata.name'));
+                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, strip_tags($projectName), session('userdata.name'));
                     $mailer->setHtml($message);
 
                     $to = [];
@@ -134,12 +134,12 @@ namespace Leantime\Domain\Projects\Controllers {
                         }
                     }
 
-                    //$mailer->sendMail($to, session("userdata.name"));
+                    // $mailer->sendMail($to, session("userdata.name"));
                     // NEW Queuing messaging system
                     $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 
-                    //Take the old value to avoid nl character
-                    $values['details'] = $_POST['details'] ?? $_POST;
+                    // Take the old value to avoid nl character
+                    $values['details'] = $_POST['details'];
 
                     $this->tpl->sendConfetti();
                     $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', 'project_created');

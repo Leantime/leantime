@@ -258,25 +258,25 @@ export const initGanttChart = function (projects, viewMode, readonly) {
     jQuery(document).ready(
         function () {
 
-            if (readonly === false) {
-                var gantt_chart = new Gantt(
-                    "#gantt",
-                    projects,
-                    {
-                        header_height: 55,
-                        column_width: 20,
-                        step: 24,
-                        view_modes: ['Day', 'Week', 'Month'],
-                        bar_height: 40,
-                        static_progress_indicator: true,
-                        bar_corner_radius: 5,
-                        arrow_curve: 5,
-                        padding:20,
-                        view_mode: 'Month',
-                        date_format: i18n.__("language.momentJSDate"),
-                        language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
-                        additional_rows: 5,
-                        custom_popup_html: function (project) {
+                if (readonly === false) {
+                    var gantt_chart = new Gantt(
+                        "#gantt",
+                        projects,
+                        {
+                            header_height: 55,
+                            column_width: 20,
+                            step: 24,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            bar_height: 40,
+                            static_progress_indicator: true,
+                            bar_corner_radius: 10,
+                            arrow_curve: 10,
+                            padding:20,
+                            view_mode: 'Month',
+                            date_format: i18n.__("language.momentJSDate"),
+                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            additional_rows: 5,
+                            custom_popup_html: function (project) {
 
                             // the task object will contain the updated
                             // dates and progress value
@@ -317,24 +317,24 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                             }
 
 
-                            if (entityType == "ticket") {
-                                updateMilestoneDates(entityId, start, end, project._index);
-                            } else {
-                                jQuery.ajax(
-                                    {
-                                        type: 'PATCH',
-                                        url: appUrl + '/api/projects',
-                                        data:
-                                            {
-                                                id : entityId,
-                                                start:start,
-                                                end:end,
-                                                sortIndex: project._index
+                                if (entityType == "ticket") {
+                                    updateMilestoneDates(entityId, start, end, project._index+1);
+                                } else {
+                                    jQuery.ajax(
+                                        {
+                                            type: 'PATCH',
+                                            url: appUrl + '/api/projects',
+                                            data:
+                                                {
+                                                    id : entityId,
+                                                    start:start,
+                                                    end:end,
+                                                    sortIndex: project._index+1,
+                                            }
                                         }
-                                    }
-                                ).done(
-                                    function () {
-                                        //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+                                    ).done(
+                                        function () {
+                                            //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
 
                                     }
                                 );
@@ -348,9 +348,9 @@ export const initGanttChart = function (projects, viewMode, readonly) {
                                 payload: {}
                             };
 
-                            for (var i = 0; i < projects.length; i++) {
-                                statusPostData.payload[projects[i].id] = projects[i]._index;
-                            }
+                                for (var i = 0; i < projects.length; i++) {
+                                    statusPostData.payload[projects[i].id] = projects[i]._index+1;
+                                }
 
                             // POST to server using $.post or $.ajax
                             jQuery.ajax({

@@ -11,6 +11,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Exceptions\MissingParameterException;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,13 +25,7 @@ class Jsonrpc extends Controller
     /**
      * init - initialize private variables or events to happen before route execution
      */
-    public function init(): void
-    {
-        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST' && empty($_POST)) {
-            $bodyContent = json_decode($this->incomingRequest->getContent(), JSON_OBJECT_AS_ARRAY);
-            $this->json_data = $bodyContent ?? '';
-        }
-    }
+    public function init(): void {}
 
     /**
      * Handles post requests
@@ -42,8 +37,27 @@ class Jsonrpc extends Controller
      */
     public function post(array $params): Response
     {
-        if (empty($params) || isset($params['act'])) {
-            $params = $this->json_data;
+
+        // Remove act from params array
+        if (isset($params['act'])) {
+            unset($params['act']);
+        }
+
+        // If params is empty, maybe it was in the body, get body
+        if (empty($params)) {
+
+            try {
+                $params = $this->getJsonFromBody();
+            } catch (MissingParameterException $e) {
+                Log::error($e);
+
+                return $this->returnMethodNotFound('Could not get any parameters from body');
+            } catch (\JsonException $e) {
+                Log::error($e);
+
+                return $this->returnParseError('Could not parse JSON. Error '.$e->getMessage());
+            }
+
         }
 
         // params['params'] could be array (single value) or json object
@@ -96,6 +110,27 @@ class Jsonrpc extends Controller
         }
 
         return $this->executeApiRequest($params);
+    }
+
+    private function getJsonFromBody(): array
+    {
+
+        if ($this->incomingRequest->server('REQUEST_METHOD') === 'POST'
+            && empty($_POST)
+            && $this->incomingRequest->getContent() !== null
+            && $this->incomingRequest->getContent() !== false
+            && $this->incomingRequest->getContent() !== '') {
+
+            $bodyContent = json_decode(
+                json: $this->incomingRequest->getContent(),
+                associative: JSON_OBJECT_AS_ARRAY,
+                flags: JSON_THROW_ON_ERROR
+            );
+
+            return $bodyContent;
+        }
+
+        throw new MissingParameterException('Could not get JSON from body or form fields');
     }
 
     /**
@@ -171,8 +206,8 @@ class Jsonrpc extends Controller
             return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
-        //Check method attributes
-        //TODO: Check if method is available for api
+        // Check method attributes
+        // TODO: Check if method is available for api
 
         if ($jsonRpcVer == null) {
             return $this->returnInvalidRequest('You must include a "jsonrpc" parameter with a value of "2.0"', $id);
@@ -227,9 +262,9 @@ class Jsonrpc extends Controller
             throw new Exception("Method string doesn't start with \"leantime.rpc.\"");
         }
 
-        //method parameter breakdown
-        //00000000.111.22222222.3333333333333.444444444444
-        //leantime.rpc.{module}.{servicename}.{methodname}
+        // method parameter breakdown
+        // 00000000.111.22222222.3333333333333.444444444444
+        // leantime.rpc.{module}.{servicename}.{methodname}
         $methodStringPieces = explode('.', $methodstring);
 
         if (count($methodStringPieces) !== 4 && count($methodStringPieces) !== 5) {
@@ -359,7 +394,7 @@ class Jsonrpc extends Controller
     private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
 
-        //TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
+        // TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
             'error' => [

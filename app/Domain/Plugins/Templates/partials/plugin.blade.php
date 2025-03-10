@@ -3,7 +3,7 @@
 ])
 
 <div class="col-md-4">
-    <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden;">
+    <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden; margin-bottom: 25px;">
         <div class="row">
             <div class="col-md-12 p-none overflow-hidden mb-m max-h-[150px]">
                 <img src="{{ $plugin->getPluginImageData() }}" width="100" height="100" class="rounded ml-base mt-base"/>
@@ -17,12 +17,11 @@
                         Certified
                     </div>
                 @endif
-            </div>
-        </div>
-        @if (! empty($plugin->name))
-            <div class="row">
-                <div class="col-md-12">
-                    <h5 class="subtitle">{{ $plugin->name }} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
+                <div class="" style="margin-top:40px;">
+                    @if (! empty($plugin->name))
+                        <h5 class="subtitle">{!! $plugin->name !!} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
+                        <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
+                    @endif
                 </div>
             </div>
         @endif
@@ -30,13 +29,13 @@
             <div class="col flex flex-col gap-base">
                 <x-global::elements.inlineLinks :links="$plugin->getMetadataLinks()" />
                 @if (! empty($desc = $plugin->getCardDesc()))
-                    <p>{{ $desc }}</p>
+                    <p>{!! $desc !!}</p>
                 @endif
-
             </div>
         </div>
         <div class="row border-t border-[var(--main-border-color)] px-base">
             @include($plugin->getControlsView(), ["plugin" => $plugin])
         </div>
+
     </div>
 </div>

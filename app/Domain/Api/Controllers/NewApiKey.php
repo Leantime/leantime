@@ -25,9 +25,6 @@ class NewApiKey extends Controller
     /**
      * init - initialize private variables
      *
-     *
-     *
-     *
      * @throws BindingResolutionException
      */
     public function init(
@@ -66,7 +63,7 @@ class NewApiKey extends Controller
             'source' => 'api',
         ];
 
-        //only Admins
+        // only Admins
         if (Auth::userIsAtLeast(Roles::$admin)) {
             $projectRelation = [];
 
@@ -89,7 +86,7 @@ class NewApiKey extends Controller
 
                 $apiKeyValues = $this->APIService->createAPIKey($values);
 
-                //Update Project Relationships
+                // Update Project Relationships
                 if (isset($_POST['projects']) && count($_POST['projects']) > 0) {
                     if ($_POST['projects'][0] !== '0') {
                         $this->projectsRepo->editUserProjectRelations($apiKeyValues['id'], $_POST['projects']);
@@ -98,7 +95,7 @@ class NewApiKey extends Controller
                     }
                 }
 
-                $this->tpl->setNotification('notification.api_key_created', 'success', 'apikey_created');
+                $this->tpl->setNotification('notifications.key_created', 'success', 'apikey_created');
 
                 $this->tpl->assign('apiKeyValues', $apiKeyValues);
             }

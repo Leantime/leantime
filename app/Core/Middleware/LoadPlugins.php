@@ -23,9 +23,10 @@ class LoadPlugins
     public function handle($request, Closure $next): Response
     {
 
+        // Event Registrar hooks into this and calls enabled plugin register files
         self::dispatchEvent('pluginsStart', ['request' => $request]);
 
-        //Good event to use for all kinds of plugin events that should run early on like adding language files
+        // Good event to use for all kinds of plugin events that should run early on like adding language files
         self::dispatchEvent('pluginsEvents', ['request' => $request], 'leantime.core.middleware.loadplugins.handle');
 
         $response = $next($request);
