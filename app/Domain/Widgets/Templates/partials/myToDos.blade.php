@@ -33,19 +33,22 @@
             <button class="btn btn-link dropdown-toggle f-left" type="button"
                     data-toggle="dropdown">{!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}</button>
             <ul class="dropdown-menu">
-                <li><span class="radio">
-                                <input type="radio" name="groupBy"
-                                       @if($groupBy == "time") checked='checked' @endif
-                                       value="time" id="groupByDate"
-                                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                       hx-trigger="click"
-                                       hx-target="#yourToDoContainer"
-                                       hx-swap="outerHTML"
-                                       hx-indicator="#todos .htmx-indicator"
-                                       style="margin-top:4px;"
-                                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
-                                />
-                                <label for="groupByDate">{!! __("label.dates") !!}</label></span></li>
+                <li>
+                    <span class="radio">
+                        <input type="radio" name="groupBy"
+                               @if($groupBy == "time") checked='checked' @endif
+                               value="time" id="groupByDate"
+                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                               hx-trigger="click"
+                               hx-target="#yourToDoContainer"
+                               hx-swap="outerHTML"
+                               hx-indicator="#todos .htmx-indicator"
+                               style="margin-top:4px;"
+                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "time" }'
+                        />
+                        <label for="groupByDate">{!! __("label.dates") !!}</label>
+                    </span>
+                </li>
                 <li>
                             <span class="radio">
                                 <input type="radio"
@@ -64,22 +67,21 @@
                             </span>
                 </li>
                 <li>
-                            <span class="radio">
-                                <input type="radio"
-                                       name="groupBy"
-                                       @if($groupBy == "priority") checked='checked' @endif
-                                       value="priority" id="groupByPriority"
-                                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                       hx-trigger="click"
-                                       hx-target="#yourToDoContainer"
-                                       hx-swap="outerHTML"
-                                       hx-indicator="#todos .htmx-indicator"
-                                       style="margin-top:4px;"
-                                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
-
-                                />
-                                <label for="groupByPriority">{!! __("label.priority") !!}</label>
-                            </span>
+                    <span class="radio">
+                        <input type="radio"
+                               name="groupBy"
+                               @if($groupBy == "priority") checked='checked' @endif
+                               value="priority" id="groupByPriority"
+                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                               hx-trigger="click"
+                               hx-target="#yourToDoContainer"
+                               hx-swap="outerHTML"
+                               hx-indicator="#todos .htmx-indicator"
+                               style="margin-top:4px;"
+                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "priority" }'
+                        />
+                        <label for="groupByPriority">{!! __("label.priority") !!}</label>
+                    </span>
                 </li>
 
             </ul>
@@ -133,7 +135,6 @@
     </div>
 
     <div class="tw-flex tw-flex-col">
-
 
         <div class="htmx-indicator">
             <x-global::loader id="loadingTodos" size="25px"/>

@@ -733,7 +733,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['thisWeek'] = [
                                     'labelName' => 'subtitles.due_this_week',
                                     'tickets' => [$row],
-                                    'groupValue' => $dbDueDate,
+                                    'groupValue' => $dbDueDate->formatDateTimeForDb(),
                                     'order' => 2,
                                 ];
                             }

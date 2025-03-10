@@ -77,6 +77,7 @@
 
             // Prevent circular references
             if (isCircularReference(currentItem, targetItem)) {
+                dragState.nestingErrorType = 'circular';
                 return false;
             }
 
@@ -90,13 +91,19 @@
                 }
 
                 if(!isProjectAllowed(currentProject, targetProject)){
+                    dragState.nestingErrorType = 'project';
                     return false;
                 }
             }
 
             //const targetProject = dragState.targetContainer.data("project");
 
-            return isHierarchyAllowed(currentItemType, targetContainerType);
+            if(!isHierarchyAllowed(currentItemType, targetContainerType)){
+                dragState.nestingErrorType = 'types';
+                return false;
+            }
+
+            return true;
 
         }
 
@@ -241,9 +248,11 @@
                 bottomIndicatorVisible: false,
                 hasErrors: false,
                 isNewLevel: false,
+                nestingErrorType: ''
             });
 
             jQuery('.highlight-drop').removeClass('highlight-drop');
+            jQuery('.highlight-drop-error').removeClass('highlight-drop-error');
         }
 
         //Initialize drag state with current ui and event object
@@ -281,6 +290,8 @@
             dragState.pomodoroTargeted = false;
 
             dragState.bottomIndicatorVisible = false;
+
+            dragState.nestingErrorType = "";
         }
 
         function isDragOut(currentMouseX, currentMouseY) {
@@ -447,18 +458,23 @@
         }
 
         const debouncedDragMovement = debounce(function(event, ui) {
-
             const now = Date.now();
             // Only process if enough time has passed since last update
             if (now - dragState.lastDragMovementTime > dragState.debounceDelay) {
                 dragState.lastDragMovementTime = now;
+            }
+        }, 50); // 50ms debounce time - adjust as needed
 
-                const intent = determineUserIntent(
-                    dragState.initialMouseX,
-                    dragState.initialMouseY,
-                    event.pageX,
-                    event.pageY
-                );
+        function handleDragMovement(event, ui) {
+                // Use the debounced version instead of direct execution
+
+
+                // const intent = determineUserIntent(
+                //     dragState.initialMouseX,
+                //     dragState.initialMouseY,
+                //     event.pageX,
+                //     event.pageY
+                // );
 
                 //console.log("intent", intent.type);
 
@@ -466,17 +482,17 @@
                     return;
                 }
 
-                updateVisualFeedback(intent, ui);
+                // updateVisualFeedback(intent, ui);
 
                 //Taqrget list is
                 let targetItem = ui.placeholder.parent(".sortable-list");
 
-                if (intent.type === INTENT.NEST) {
-                    targetItem = findPreviousElement(ui.placeholder);
-                    dragState.intent = intent.type;
-                } else {
-                    dragState.intent = null;
-                }
+                // if (intent.type === INTENT.NEST) {
+                //     targetItem = findPreviousElement(ui.placeholder);
+                //     dragState.intent = intent.type;
+                // } else {
+                //     dragState.intent = null;
+                // }
 
                 let targetList = getTargetContainerList(targetItem);
 
@@ -484,6 +500,12 @@
                 let targetCandidateProject = getItemProject(targetList);
 
                 if (isNestingAllowed(ui.item, targetList) == false) {
+
+                    jQuery('.highlight-drop').removeClass('highlight-drop');
+                    jQuery('.highlight-drop-error').removeClass('highlight-drop-error');
+                    jQuery(targetList).addClass('highlight-drop-error');
+                    jQuery(targetList).addClass('highlight-drop-error');
+
                     //console.log("no nesting allowed");
                     dragState.targetContainer = null;
                     return
@@ -493,13 +515,8 @@
                 ui.helper.data('droppingTarget', dragState.targetContainer);
 
                 jQuery('.highlight-drop').removeClass('highlight-drop');
+                jQuery('.highlight-drop-error').removeClass('highlight-drop-error');
                 jQuery(dragState.targetContainer).addClass('highlight-drop');
-            }
-        }, 50); // 50ms debounce time - adjust as needed
-
-        function handleDragMovement(event, ui) {
-            // Use the debounced version instead of direct execution
-            debouncedDragMovement(event, ui);
         }
 
         function createNestedContainerIfNeeded(targetItem) {
@@ -522,17 +539,18 @@
 
             if(jQuery(targetItem).hasClass("sortable-list")) {
                 nestedList = jQuery(targetItem);
-                dragState.isNewLevel = false;
+                //dragState.isNewLevel = false;
             }else{
                 nestedList = jQuery(targetItem).find('> .sortable-list').first();
-
-                if (nestedList.length === 0) {
-                    targetItem.append('<div class="sortable-list"></div>');
-                    nestedList = jQuery(targetItem).find('> .sortable-list').first();
-                    nestedList.data('containerType', targetItemType);
-
-                }
-                dragState.isNewLevel = true;
+                //
+                //
+                // if (nestedList.length === 0) {
+                //     targetItem.append('<div class="sortable-list"></div>');
+                //     nestedList = jQuery(targetItem).find('> .sortable-list').first();
+                //     nestedList.data('containerType', targetItemType);
+                //
+                // }
+                // dragState.isNewLevel = true;
 
             }
 
@@ -672,7 +690,7 @@
 
                                 var ticketId = jQuery(this).parent().data("id");
                                 jQuery(this).parent().find(".accordion-toggle").remove();
-                                jQuery(this).remove();
+                                //jQuery(this).remove();
                             }
                         }
                     });
@@ -696,55 +714,87 @@
 
                 const containerType = getContainerType(currentContainer);
                 let itemType = dragState.itemType;
-
-                //console..log("Before stop - Current container:", currentContainer);
-                //console..log("Container type:", containerType, "Item type:", itemType);
-
-
-
-                // If we have a target container from horizontal movement, move the item there
-                if ((dragState.intent == INTENT.NEST ||
-                    dragState.intent == INTENT.UNNEST) &&
-                    dragState.targetContainer &&
-                    jQuery(dragState.targetContainer).is('.sortable-list')) {
-
-                    // Check if this nesting is allowed
-                    if (!isNestingAllowed(ui.item, dragState.targetContainer)) {
-                        if(ui.item !== ui.item.data('startParent')) {
-                            ui.item.appendTo(ui.item.data('startParent'));
-                        }
-                        dragState.hasErrors = true;
-                        jQuery.growl({message: "Nesting not allowed here", style: "error"});
-                        return;
-                    }
-
-                    //console.log("is new level ", dragState.isNewLevel);
-
-                    if(dragState.isNewLevel) {
-                        if( ui.item !== dragState.targetContainer
-                        && dragState.targetContainer.contains(ui.item[0]) === false) {
-                            ui.item.appendTo(dragState.targetContainer);
-                        }
-                    }
-
-                }
-
-                // If moving to root, check if that's allowed
-                if (dragState.moveToRoot) {
-                    const itemType = dragState.itemType;
-                    dragState.targetContainer = dragState.rootContainer[0];
-                    if (!isNestingAllowed(ui.item, dragState.targetContainer, true)) {
-                        // Cancel the move if not allowed
-                        //console..warn("Root nesting not allowed");
-
-                        if(ui.item !== ui.item.data('startParent')) {
-                            ui.item.appendTo(ui.item.data('startParent'));
-                        }
-                        dragState.hasErrors = true;
-                        jQuery.growl({message: "Nesting not allowed here", style: "error"});
-                        return;
-                    }
-                }
+                //
+                // //console..log("Before stop - Current container:", currentContainer);
+                // //console..log("Container type:", containerType, "Item type:", itemType);
+                //
+                //
+                // // If we have a target container from horizontal movement, move the item there
+                // if ((dragState.intent == INTENT.NEST ||
+                //     dragState.intent == INTENT.UNNEST) &&
+                //     dragState.targetContainer &&
+                //     jQuery(dragState.targetContainer).is('.sortable-list')) {
+                //
+                //     // Check if this nesting is allowed
+                //     if (!isNestingAllowed(ui.item, dragState.targetContainer)) {
+                //         if(ui.item !== ui.item.data('startParent')) {
+                //             ui.item.appendTo(ui.item.data('startParent'));
+                //         }
+                //         dragState.hasErrors = true;
+                //
+                //         console.log(dragState.nestingErrorType);
+                //         let message = "";
+                //        switch(dragState.nestingErrorType) {
+                //            case 'project':
+                //                message = "Can't nest elements from 2 different projects";
+                //                break;
+                //            case 'type':
+                //                message = "Can't nest these elements underneach each other";
+                //                break;
+                //            case 'circular':
+                //                message = "Can't nest element undneath itself";
+                //                break;
+                //            default:
+                //                message = "Nesting not allowed here";
+                //         }
+                //
+                //         jQuery.growl({message: message, style: "error"});
+                //         return;
+                //     }
+                //
+                //     //console.log("is new level ", dragState.isNewLevel);
+                //
+                //     // if(dragState.isNewLevel) {
+                //     //     if( ui.item !== dragState.targetContainer
+                //     //     && dragState.targetContainer.contains(ui.item[0]) === false) {
+                //     //         ui.item.appendTo(dragState.targetContainer);
+                //     //     }
+                //     // }
+                //
+                // }
+                //
+                // // If moving to root, check if that's allowed
+                // if (dragState.moveToRoot) {
+                //     const itemType = dragState.itemType;
+                //     dragState.targetContainer = dragState.rootContainer[0];
+                //     if (!isNestingAllowed(ui.item, dragState.targetContainer, true)) {
+                //         // Cancel the move if not allowed
+                //         //console..warn("Root nesting not allowed");
+                //
+                //         if(ui.item !== ui.item.data('startParent')) {
+                //             ui.item.appendTo(ui.item.data('startParent'));
+                //         }
+                //         dragState.hasErrors = true;
+                //         console.log(dragState.nestingErrorType);
+                //         let message = "";
+                //         switch(dragState.nestingErrorType) {
+                //             case 'project':
+                //                 message = "Can't nest elements from 2 different projects";
+                //                 break;
+                //             case 'types':
+                //                 message = "Can't nest these elements underneach each other";
+                //                 break;
+                //             case 'circular':
+                //                 message = "Can't nest element undneath itself";
+                //                 break;
+                //             default:
+                //                 message = "Nesting not allowed here";
+                //         }
+                //
+                //         jQuery.growl({message: message, style: "error"});
+                //         return;
+                //     }
+                // }
 
                 if (!isNestingAllowed(ui.item, dragState.targetContainer, true)) {
                     // Cancel the move if not allowed
@@ -753,7 +803,24 @@
                         ui.item.appendTo(ui.item.data('startParent'));
                     }
                     dragState.hasErrors = true;
-                    jQuery.growl({message: "Nesting not allowed here", style: "error"});
+                    console.log(dragState.nestingErrorType);
+                    let message = "";
+                    switch(dragState.nestingErrorType) {
+                        case 'project':
+                            message = "Can't nest elements from 2 different projects";
+                            break;
+                        case 'type':
+                            message = "Can't nest these elements underneach each other";
+                            break;
+                        case 'circular':
+                            message = "Can't nest element undneath itself";
+                            break;
+                        default:
+                            message = "Nesting not allowed here";
+                    }
+
+                    jQuery.growl({message: message, style: "error"});
+
                     return;
                 }
 

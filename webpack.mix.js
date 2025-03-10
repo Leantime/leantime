@@ -72,7 +72,6 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/jquery-ui-dist/jquery-ui.js",
         "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
         "./node_modules/chosen-js/chosen.jquery.js",
-        "./node_modules/sortablejs/Sortable.js",
         "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/jquery.form.js",
         "./public/assets/js/libs/jquery.tagsinput.min.js",

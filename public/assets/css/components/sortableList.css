@@ -3,25 +3,88 @@
     border: 0px solid transparent;
     background: transparent;
     overflow: visible;
-    min-height: 10px;
-    padding: 0px 0px 0px 0px;
+    min-height: 0px;
 }
 
-.sortable-list .sortable-list {
+.sortable-item {
+    cursor: grab;
+    position: relative;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.sortable-item .sortable-list {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sortable-list .sortable-item:last-child {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.sortable-list .sortable-item .sortable-list {
     margin-left: 40px;
     position: relative;
 }
 
-.sortable-list:empty {
-    border-radius: 4px;
-    min-height: 5px;
-    padding: 5px;
-    margin: 5px 0;
-    border: 1px dashed rgba(var(--neutral), 0.2);
-    background: rgba(var(--neutral), 0.05);
-    transition: all 0.2s ease;
-    margin-left: 40px;
+.sortable-list .sortable-item .sortable-list:has(.sortable-list) {
+    padding-bottom:0px;
 }
+
+.sortable-list .sortable-item .sortable-list .sortable-item:first-child {
+    padding-top:5px;
+}
+
+.sortable-item .ticketBox {
+    margin-bottom:0px;
+}
+
+/* Connection lines for hierarchy */
+.sortable-list .sortable-list::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 0px;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--interactive-icon-color);
+    height: calc(100% - 50px);
+}
+
+.sortable-list .sortable-list .sortable-list::before {
+    height: calc(100% - 55px);
+}
+
+/* Horizontal connector line from vertical line to each item */
+.sortable-list .sortable-list > .sortable-item::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 30px;
+    width: 10px;
+    height: 2px;
+    background-color: var(--interactive-icon-color);
+}
+
+/* Rounded corner for the connection */
+.sortable-list .sortable-list > .sortable-item::after {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 32px;
+    width: 10px;
+    height: 10px;
+    border-bottom-left-radius: 10px;
+    border: 0 solid transparent;
+    border-bottom: 2px solid var(--interactive-icon-color);
+    border-left: 2px solid var(--interactive-icon-color);
+    background-color: transparent;
+    transform: translate(0, -10px);
+}
+
 
 /* Highlight styles for drop targets */
 .highlight-drop {
@@ -29,12 +92,29 @@
     &::after {
         content: '';
         position: absolute;
-        top: 0;
+        top: 5px;
         left: 0;
         right: 0;
         bottom: 0;
         background: hsla(var(--accent2-hsl), 0.1);
         border: 2px dashed hsla(var(--accent2-hsl), 0.3);
+        pointer-events: none;
+        border-radius: 4px;
+    }
+    min-height: 62px !important;
+}
+
+.highlight-drop-error {
+    position: relative;
+    &::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: hsla(0, 100%, 50%, 0.1);
+        border: 2px dashed hsla(0, 100%, 50%, 0.3);
         pointer-events: none;
         border-radius: 4px;
     }
@@ -51,15 +131,6 @@
     min-height: 0px;
 }
 
-.sortable-item {
-    cursor: grab;
-    position: relative;
-    margin-bottom: 5px;
-}
-
-.sortable-item .sortable-list {
-    margin-top: 5px;
-}
 
 
 .sortable-item.sortable-chosen {
@@ -81,59 +152,9 @@
     position: relative;
 }
 
-/* Connection lines for hierarchy */
-.sortable-list .sortable-list::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: -10px;
-    bottom: 0;
-    width: 2px;
-    background-color: var(--interactive-icon-color);
-    height: calc(100% - 30px);
-}
 
-/* Horizontal connector line from vertical line to each item */
-.sortable-list .sortable-list > .sortable-item::before {
-    content: '';
-    position: absolute;
-    left: -10px;
-    top: 30px;
-    width: 10px;
-    height: 2px;
-    background-color: var(--interactive-icon-color);
-
-}
-
-/* Rounded corner for the connection */
-.sortable-list .sortable-list > .sortable-item::after {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 32px;
-    width: 10px;
-    height: 10px;
-    border-bottom-left-radius: 10px;
-    border: 0 solid transparent;
-    border-bottom: 2px solid var(--interactive-icon-color);
-    border-left: 2px solid var(--interactive-icon-color);
-    background-color: transparent;
-    transform: translate(0, -10px);
-}
 
 /* Task collapse toggle styles */
-.task-collapse-toggle {
-    position: absolute;
-    left: -25px;
-    top: 20px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    z-index: 10;
-    text-align: center;
-    border-radius: 50%;
-    transition: background-color 0.2s ease;
-}
 
 .task-collapse-toggle {
     position: absolute;

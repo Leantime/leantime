@@ -207,8 +207,6 @@
 
     </div>
 
-
-    @if($hasChildren)
         <div id="accordion_content-{{ $accordionId }}"
              style="{{ $accordionState =='closed' ? 'display:none;' : '' }}"
              class="sortable-list task-children {{ $tpl->getToggleState("user.".session('userdata.id').".taskCollapsed.".$ticket['id'], 'open') }}"
@@ -217,6 +215,5 @@
                 @include('widgets::partials.todoItem', ['ticket' => $childTicket, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => $level + 1])
             @endforeach
         </div>
-    @endif
 
 </div>
