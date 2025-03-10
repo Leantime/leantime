@@ -329,6 +329,7 @@
       <server host="leantime-oss.test" id="6bd72bf6-65a5-45a3-82e5-503a761f6f12" name="leantime-oss.test" port="443">
         <path_mappings>
           <mapping local-root="$PROJECT_DIR$" remote-root="/Volumes/Source/leantime-oss" />
+          <mapping local-root="$PROJECT_DIR$" remote-root="/Volumes/Source/leantime-oss" />
         </path_mappings>
       </server>
     </servers>
