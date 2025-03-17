@@ -680,13 +680,13 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue('name', $values['name'], PDO::PARAM_STR);
-            $stmn->bindValue('details', $values['details'], PDO::PARAM_STR);
-            $stmn->bindValue('clientId', $values['clientId'], PDO::PARAM_STR);
-            $stmn->bindValue('state', $values['state'], PDO::PARAM_STR);
-            $stmn->bindValue('hourBudget', $values['hourBudget'], PDO::PARAM_STR);
-            $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
-            $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
-            $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('details', $values['details'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('clientId', $values['clientId'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('state', $values['state'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('hourBudget', $values['hourBudget'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('dollarBudget', $values['dollarBudget'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('psettings', $values['psettings'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue('menuType', $values['menuType'] ?? 'default', PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
@@ -791,6 +791,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
 				zp_projects.name,
+				zp_projects.modified,
 				zp_relationuserproject.projectRole
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
@@ -857,7 +858,8 @@ namespace Leantime\Domain\Projects\Repositories {
             $query = 'SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
-				zp_projects.name
+				zp_projects.name,
+                zp_projects.modified
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1';

@@ -346,7 +346,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:var(--primary-font-color);
 }
 
-.maincontent .ticketDropdown ul li {
+.maincontent .ticketDropdown ul li,
+.nyroModalCont .ticketDropdown ul li {
     margin-bottom:1px;
     padding:0px 10px;
 }
@@ -461,6 +462,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu.pull-right::after {
     right: 10px;
     left:auto;
+}
+
+.tabbedwidget .dropdown-menu.pull-left,
+.mainwrapper .dropdown-menu.pull-left {
+    left: 10px;
+    right:auto;
 }
 
 .viewDropDown .dropdown-menu {

@@ -52,7 +52,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initial-avatar-generator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-string-script-language" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/lasserafn/php-initials" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/oauth-subscriber" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/csv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/kamermans/guzzle-oauth2-subscriber" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />
@@ -114,8 +113,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/message" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/promise" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sentry/sentry" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/http-client" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/http-client-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/css-selector" />
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Billing/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />

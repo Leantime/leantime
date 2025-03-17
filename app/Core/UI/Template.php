@@ -325,6 +325,25 @@ class Template
     }
 
     /**
+     * Display JSON content with an optional response code.
+     *
+     * @param  array|object|string  $jsonContent  The JSON content to be displayed.
+     * @param  int  $statusCode  The HTTP response code to be returned (default: 200).
+     * @return Response The response object after displaying the JSON content.
+     *
+     * @deprecated
+     */
+    public function displayRaw(string $content, int $statusCode = 200): Response
+    {
+        $response = new Response($content, 200);
+        $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
+
+        $response = $response->setStatusCode($statusCode);
+
+        return $response;
+    }
+
+    /**
      * Display a partial template with an optional response code.
      *
      * @param  string  $template  The path to the partial template file.

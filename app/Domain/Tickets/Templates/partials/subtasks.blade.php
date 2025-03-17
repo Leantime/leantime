@@ -124,7 +124,7 @@
                             <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $subticket['id'] }}">
                                 <li class="nav-header border">{{ __('dropdown.choose_status') }}</li>
 
-                                    @foreach ($statusLabels as $key => $label) {
+                                    @foreach ($statusLabels as $key => $label)
                                         <li class='dropdown-item'>
                                             <a href='javascript:void(0);' class='{{ $label["class"] }}' data-label='{{ $label["name"] }}' data-value='{{ $subticket['id'] }}_{{ $key }}_{{ $label["class"] }}' id='ticketStatusChange{{ $subticket['id'] . $key }}' >{{ $label["name"] }}</a>
                                         </li>

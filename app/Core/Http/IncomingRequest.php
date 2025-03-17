@@ -22,19 +22,9 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     protected $currentRoute;
 
-    protected $basePath;
-
     private $basePathCalculated = false;
 
     private $pathInfoCalculated = false;
-
-    public $headers = [];
-
-    protected $requestUri;
-
-    public $query;
-
-    public $request;
 
     public const HEADER_FORWARDED = parent::HEADER_FORWARDED; // When using RFC 7239
 

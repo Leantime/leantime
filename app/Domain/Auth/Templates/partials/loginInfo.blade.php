@@ -3,13 +3,13 @@
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
     @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
-        <a href='{{ BASE_URL }}/users/editOwn/' class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
+        <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
             <img src="{{ session("companysettings.logoPath") }}" class="logo"/>
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
     @else
-        <a href='{{ BASE_URL }}/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
+        <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler" data-toggle="dropdown">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
@@ -17,19 +17,19 @@
     <ul class="dropdown-menu">
         @dispatchEvent('afterUserinfoDropdownMenuOpen')
         <li>
-            <a href='{{ BASE_URL }}/users/editOwn/'>
+            <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover">
                 {!! __("menu.my_profile") !!}
             </a>
         </li>
         @dispatchEvent('afterMyProfile')
         <li>
-            <a href='{{ BASE_URL }}/users/editOwn#theme'>
+            <a href='{{ BASE_URL }}/users/editOwn#theme' preload="mouseover">
                 {!! __("menu.theme") !!}
             </a>
         </li>
         @dispatchEvent('afterTheme')
         <li>
-            <a href='{{ BASE_URL }}/users/editOwn#settings'>
+            <a href='{{ BASE_URL }}/users/editOwn#settings' preload="mouseover">
                 {!! __("menu.settings") !!}
             </a>
         </li>

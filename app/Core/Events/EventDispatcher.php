@@ -336,7 +336,7 @@ class EventDispatcher implements Dispatcher
 
             }
         } catch (\TypeError $e) {
-            error_log('TypeError in event handler: '.$e->getMessage());
+
             if (! isset($filteredPayload) && $index === 0) {
                 $filteredPayload = $payload;
             }
@@ -779,7 +779,7 @@ class EventDispatcher implements Dispatcher
      */
     public function hasListeners($eventName)
     {
-        return array_key_exists($eventName, $this->eventRegistry);
+        return array_key_exists($eventName, self::$eventRegistry);
 
     }
 

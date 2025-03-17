@@ -51,8 +51,8 @@ namespace Leantime\Domain\Files\Services {
 
                     switch ($module) {
                         case 'ticket':
-                            $subject = sprintf($this->language->__('email_notifications.new_file_todo_subject'), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__('email_notifications.new_file_todo_subject'), session('userdata.name'), $entity->headline);
+                            $subject = sprintf($this->language->__('email_notifications.new_file_todo_subject'), $entity->id, strip_tags($entity->headline));
+                            $message = sprintf($this->language->__('email_notifications.new_file_todo_subject'), session('userdata.name'), strip_tags($entity->headline));
                             $linkLabel = $this->language->__('email_notifications.new_file_todo_cta');
                             break;
                         default:

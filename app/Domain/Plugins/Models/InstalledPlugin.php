@@ -42,6 +42,8 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public ?string $startingPrice;
 
+    public ?string $calculatedMonthlyPrice;
+
     public function getCardDesc(): string
     {
         return $this->description ??= '';
@@ -129,6 +131,15 @@ class InstalledPlugin implements PluginDisplayStrategy
     {
         if (! empty($this->startingPrice)) {
             return __('text.starting_at').' '.$this->startingPrice;
+        }
+
+        return '';
+    }
+
+    public function getCalulatedMonthlyPrice(): string
+    {
+        if (! empty($this->calculatedMonthlyPrice)) {
+            return $this->calculatedMonthlyPrice;
         }
 
         return '';

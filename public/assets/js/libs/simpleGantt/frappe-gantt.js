@@ -1377,9 +1377,10 @@ var Gantt = (function () {
 
             } else if (this.view_is(VIEW_MODE.MONTH)) {
 
-                let tempDate = date_utils.add(this.gantt_start, -3, 'month');
+                //Need to have 12 months before so the year shows up in the right place.
+                let tempDate = date_utils.add(this.gantt_start, -13, 'month');
                 this.gantt_start = date_utils.start_of(tempDate, "month");
-                this.gantt_start = date_utils.start_of(tempDate, "month");
+
 
                 this.gantt_end = date_utils.add(this.gantt_end, 2, 'year');
             } else if (this.view_is(VIEW_MODE.YEAR)) {

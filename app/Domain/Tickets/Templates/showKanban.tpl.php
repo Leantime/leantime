@@ -133,7 +133,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 
                         <div class="row-fluid">
 
-                        <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
+                            <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                             <div class="column">
                                 <div class="contentInner <?php echo 'status_'.$key; ?>" >
                                     <?php foreach ($allTickets as $row) { ?>
@@ -164,12 +164,17 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                         </div>
 
                                                     </div>
-                                                    <?php if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00') {
-
-                                                        echo $tpl->__('label.due_icon'); ?>
-                                                        <input type="text" title="<?php echo $tpl->__('label.due'); ?>" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id']; ?>" name="date" />
-
+                                                    <div class="tw-flex">
+                                                    <?php if ($row['dateToFinish'] != '0000-00-00 00:00:00' && $row['dateToFinish'] != '1969-12-31 00:00:00') { ?>
+                                                        <div>
+                                                            <?php echo $tpl->__('label.due_icon'); ?>
+                                                            <input type="text" title="<?php echo $tpl->__('label.due'); ?>" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id']; ?>" name="date" />
+                                                        </div>
+                                                        <div>
+                                                            <?php $tpl->dispatchTplEvent('afterDates', ['ticket' => $row]); ?>
+                                                        </div>
                                                     <?php } ?>
+                                                    </div>
                                                 </div>
                                             </div>
 

@@ -30,6 +30,8 @@ class Milestones extends HtmxController
         $milestone = $this->ticketService->getTicket($getParams['milestoneId']);
         $percentDone = $this->ticketService->getMilestoneProgress($getParams['milestoneId']);
 
+        $this->tpl->assign('progressColor', $getParams['progressColor'] ?? 'default');
+        $this->tpl->assign('noText', $getParams['noText'] ?? false);
         $this->tpl->assign('milestone', $milestone);
         $this->tpl->assign('percentDone', $percentDone);
 

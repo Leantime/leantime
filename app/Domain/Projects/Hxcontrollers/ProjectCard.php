@@ -104,7 +104,7 @@ class ProjectCard extends HtmxController
             );
         }
 
-        $this->setHTMXEvent('HTMX.updateProjectList');
+        $this->tpl->setHTMXEvent('HTMX.updateProjectList');
 
         $project = $this->projectsService->getProject($projectId);
         $this->tpl->assign('project', $project);

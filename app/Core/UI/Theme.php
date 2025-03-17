@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Events\EventDispatcher as EventDispatcher;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -113,6 +113,16 @@ class Theme
     private array|false $iniData;
 
     private array $colorSchemes = [
+        'grayscale1' => [
+            'name' => 'Grayscale',
+            'primaryColor' => '#000000',
+            'secondaryColor' => '#757575',
+        ],
+        'grayscale2' => [
+            'name' => 'Grayscale Reverse',
+            'primaryColor' => '#d1d1d1',
+            'secondaryColor' => '#000000',
+        ],
         'themeDefault' => 'themeDefault',
         'companyColors' => 'companyColors',
     ];

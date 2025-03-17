@@ -35,7 +35,6 @@ class Subtasks extends HtmxController
             $this->tpl->setNotification($this->language->__('notifications.subtask_save_error'), 'error');
         }
 
-        $this->setHTMXEvent('HTMX.ShowNotification');
         $ticketSubtasks = $this->ticketService->getAllSubtasks($ticket->id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
@@ -65,6 +64,7 @@ class Subtasks extends HtmxController
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);
         $this->tpl->assign('efforts', $efforts);
+
     }
 
     public function delete()
@@ -85,7 +85,6 @@ class Subtasks extends HtmxController
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
 
-        $this->setHTMXEvent('HTMX.ShowNotification');
         $this->tpl->assign('ticket', $ticket);
         $this->tpl->assign('ticketSubtasks', $ticketSubtasks);
         $this->tpl->assign('statusLabels', $statusLabels);

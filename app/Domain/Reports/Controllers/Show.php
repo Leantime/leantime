@@ -84,14 +84,18 @@ namespace Leantime\Domain\Reports\Controllers {
             if ($allSprints !== false && count($allSprints) > 0) {
                 if (isset($_GET['sprint'])) {
                     $sprintObject = $this->sprintService->getSprint((int) $_GET['sprint']);
-                    $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                    if ($sprintObject) {
+                        $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                    }
                     $this->tpl->assign('currentSprint', (int) $_GET['sprint']);
                 } else {
-                    $currentSprint = $this->sprintService->getCurrentSprintId(session('currentProject'));
+                    $currentSprint = $this->sprintService->getCurrentSprintId((int) session('currentProject'));
 
-                    if ($currentSprint !== false && $currentSprint != 'all') {
-                        $sprintObject = $this->sprintService->getSprint($currentSprint);
-                        $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                    if ($currentSprint !== false && $currentSprint !== 'all') {
+                        $sprintObject = $this->sprintService->getSprint((int) $currentSprint);
+                        if ($sprintObject) {
+                            $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
+                        }
                         $this->tpl->assign('currentSprint', $sprintObject->id);
                     } else {
                         $sprintChart = $this->sprintService->getSprintBurndown($allSprints[0]);

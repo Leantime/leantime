@@ -620,7 +620,7 @@ namespace Leantime\Domain\Users\Repositories {
             $sql = 'UPDATE zp_user SET';
 
             foreach ($params as $key => $value) {
-                $sql .= DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
+                $sql .= ' '.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
             }
 
             $sql .= ' modified =:modified WHERE id=:id LIMIT 1';

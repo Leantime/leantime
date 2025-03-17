@@ -27,7 +27,6 @@ class AuthCheck
         'auth.login',
         'auth.resetPw',
         'auth.userInvite',
-        'auth.getToken',
         'install',
         'install.index',
         'install.update',

@@ -7,6 +7,7 @@ namespace Leantime\Domain\Tickets\Services {
     use DateTime;
     use Illuminate\Container\EntryNotFoundException;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Events\DispatchesEvents;
@@ -21,7 +22,7 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Tickets\Repositories\TicketHistory as TicketHistory;
+    use Leantime\Domain\Tickets\Repositories\TicketHistory;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -427,7 +428,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
         {
 
-            $tickets = $this->ticketRepository->simpleTicketQuery($userId ?? session('userdata.id'), $project);
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
 
             $ticketArray = [];
 
@@ -662,13 +663,25 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
+         * @api
+         */
+        public function getLastTickets($projectId, int $limit = 5): bool|array
+        {
+
+            $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => '', 'status' => 'not_done', 'sprint' => '', 'limit' => $limit]);
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, 'date', $limit);
+
+            return $allTickets;
+        }
+
+        /**
          * @param  false  $includeDoneTickets
          *
          * @throws \Exception
          *
          * @api
          */
-        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false): array
+        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false): array
         {
 
             if ($includeDoneTickets === true) {
@@ -677,6 +690,9 @@ namespace Leantime\Domain\Tickets\Services {
                 $searchStatus = 'not_done';
             }
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'currentUser' => $userId, 'users' => $userId, 'status' => $searchStatus, 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -708,7 +724,14 @@ namespace Leantime\Domain\Tickets\Services {
                         }
                     } else {
                         $today = dtHelper()->userNow()->setToDbTimezone();
-                        $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
+
+                        try {
+                            $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
+                        } catch (\Exception $e) {
+                            Log::warning('Error in DB Due date parsing: '.$e->getMessage());
+                            $dbDueDate = dtHelper()->userNow()->addYears();
+                        }
+
                         $nextFriday = dtHelper()->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
 
                         if ($dbDueDate <= $nextFriday && $dbDueDate >= $today) {
@@ -718,7 +741,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['thisWeek'] = [
                                     'labelName' => 'subtitles.due_this_week',
                                     'tickets' => [$row],
-                                    'groupValue' => $dbDueDate,
+                                    'groupValue' => $dbDueDate->formatDateTimeForDb(),
                                     'order' => 2,
                                 ];
                             }
@@ -757,22 +780,13 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getLastTickets($projectId, int $limit = 5): bool|array
-        {
-
-            $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => '', 'status' => 'not_done', 'sprint' => '', 'limit' => $limit]);
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, 'date', $limit);
-
-            return $allTickets;
-        }
-
-        /**
-         * @api
-         */
-        public function getOpenUserTicketsByProject($userId, $projectId): array
+        public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -807,15 +821,18 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @api
          */
-        public function getOpenUserTicketsByPriority($userId, $projectId): array
+        public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'priority',
                 includeCounts: false);
-
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
             $tickets = [];
@@ -851,16 +868,22 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
+            // Sort by group keys which are priority integers
+            ksort($tickets);
+
             return $tickets;
         }
 
         /**
          * @api
          */
-        public function getOpenUserTicketsBySprint($userId, $projectId): array
+        public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+            if ($includeMilestones) {
+                $searchCriteria['excludeType'] = '';
+            }
             $allTickets = $this->ticketRepository->getAllBySearchCriteria(
                 searchCriteria: $searchCriteria,
                 sort: 'duedate',
@@ -872,7 +895,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($allTickets as $row) {
                 $sprint = $row['sprint'] ?? 'backlog';
-                $sprintName = empty($row['sprintName']) ? $this->language->__('label.not_assigned_to_list') : $row['sprintName'];
+                $sprintName = empty($row['sprintName']) ? $this->language->__('label.not_assigned_to_sprint') : $row['sprintName'];
 
                 // Only include todos that are not done
                 if (
@@ -916,6 +939,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             foreach ($elements as $element) {
 
+                $elementParentId = null;
                 if ($element->type === 'milestone') {
                     $elementParentId = $element->milestoneid;
                 } elseif ($element->dependingTicketId > 0) {
@@ -924,7 +948,11 @@ namespace Leantime\Domain\Tickets\Services {
                     $elementParentId = $element->milestoneid;
                 }
 
-                if ($elementParentId == $parentId) {
+                if (is_null($elementParentId)) {
+                    $elementParentId = 0;
+                }
+
+                if ($elementParentId === $parentId) {
                     $children = $this->buildTicketTree($elements, $element->id);
                     if ($children) {
                         usort($children, function ($a, $b) {
@@ -1251,9 +1279,7 @@ namespace Leantime\Domain\Tickets\Services {
         {
 
             // TODO: Refactor to be recursive
-            $values = $this->ticketRepository->getAllSubtasks($ticketId);
-
-            return $values;
+            return $this->ticketRepository->getAllSubtasks($ticketId);
         }
 
         /**
@@ -1286,9 +1312,7 @@ namespace Leantime\Domain\Tickets\Services {
             ];
 
             if ($values['headline'] == '') {
-                $error = ['status' => 'error', 'message' => 'Headline Missing'];
-
-                return $error;
+                return ['status' => 'error', 'message' => 'Headline Missing'];
             }
 
             $values = $this->prepareTicketDates($values);
@@ -1300,27 +1324,27 @@ namespace Leantime\Domain\Tickets\Services {
             if ($result > 0) {
                 $values['id'] = $result;
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$result;
-                $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $params['headline']);
+                $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($params['headline']));
                 $subject = $this->language->__('email_notifications.new_todo_subject');
 
-                $notification = app()->make(NotificationModel::class);
+                $notification = new NotificationModel;
                 $notification->url = [
                     'url' => $actual_link,
                     'text' => $this->language->__('email_notifications.new_todo_cta'),
                 ];
                 $notification->entity = $values;
                 $notification->module = 'tickets';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
+                $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
 
                 return $result;
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         /**
@@ -1445,20 +1469,20 @@ namespace Leantime\Domain\Tickets\Services {
 
                 if ($addTicketResponse !== false) {
                     $values['id'] = $addTicketResponse;
-                    $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, $values['headline']);
+                    $subject = sprintf($this->language->__('email_notifications.new_todo_subject'), $addTicketResponse, strip_tags($values['headline']));
                     $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$addTicketResponse;
-                    $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), $values['headline']);
+                    $message = sprintf($this->language->__('email_notifications.new_todo_message'), session('userdata.name'), strip_tags($values['headline']));
 
-                    $notification = app()->make(NotificationModel::class);
+                    $notification = new NotificationModel;
                     $notification->url = [
                         'url' => $actual_link,
                         'text' => $this->language->__('email_notifications.new_todo_cta'),
                     ];
                     $notification->entity = $values;
                     $notification->module = 'tickets';
-                    $notification->projectId = $values['projectId'] ?? session('currentProject');
+                    $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                     $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
+                    $notification->authorId = session('userdata.id') ?? -1;
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -1537,6 +1561,10 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $values['milestoneid'] ?? '',
             ];
 
+            if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {
+                return ['msg' => 'project id is not set', 'type' => 'error'];
+            }
+
             if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
                 return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
             }
@@ -1545,20 +1573,20 @@ namespace Leantime\Domain\Tickets\Services {
 
             // Update Ticket
             if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
-                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], $values['headline']);
+                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $values['id'], strip_tags($values['headline']));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$values['id'];
                 $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $values['headline']);
 
-                $notification = app()->make(NotificationModel::class);
+                $notification = new NotificationModel;
                 $notification->url = [
                     'url' => $actual_link,
                     'text' => $this->language->__('email_notifications.todo_update_cta'),
                 ];
                 $notification->entity = $values;
                 $notification->module = 'tickets';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
+                $notification->authorId = session('userdata.id') ?? -1;
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
@@ -1581,6 +1609,12 @@ namespace Leantime\Domain\Tickets\Services {
             unset($params['id']);
             unset($params['act']);
 
+            $ticket = $this->getTicket($id);
+
+            if (! $ticket) {
+                return false;
+            }
+
             $params = $this->prepareTicketDates($params);
 
             $return = $this->ticketRepository->patchTicket($id, $params);
@@ -1590,9 +1624,9 @@ namespace Leantime\Domain\Tickets\Services {
             // Todo: create events and move notification logic to notification module
             if (isset($params['status']) && $return) {
                 $ticket = $this->getTicket($id);
-                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
+                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
+                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
@@ -1797,9 +1831,9 @@ namespace Leantime\Domain\Tickets\Services {
                 $ticket = $this->getTicket($id);
 
                 if ($ticket) {
-                    $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, $ticket->headline);
+                    $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                     $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                    $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), $ticket->headline);
+                    $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = [
@@ -1808,9 +1842,9 @@ namespace Leantime\Domain\Tickets\Services {
                     ];
                     $notification->entity = $ticket;
                     $notification->module = 'tickets';
-                    $notification->projectId = session('currentProject');
+                    $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
                     $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
+                    $notification->authorId = session('userdata.id') ?? -1;
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -1904,15 +1938,15 @@ namespace Leantime\Domain\Tickets\Services {
             $url = BASE_URL.'/tickets/showKanban';
 
             if (session()->exists('lastTicketView') && session('lastTicketView') != '') {
-                if (session('lastTicketView') == 'kanban' && session()->exists('lastFilterdTicketKanbanView') && session('lastFilterdTicketKanbanView') != '') {
+                if (session('lastTicketView') === 'kanban' && session()->exists('lastFilterdTicketKanbanView') && session('lastFilterdTicketKanbanView') != '') {
                     return session('lastFilterdTicketKanbanView');
                 }
 
-                if (session('lastTicketView') == 'table' && session()->exists('lastFilterdTicketTableView') && session('lastFilterdTicketTableView') != '') {
+                if (session('lastTicketView') === 'table' && session()->exists('lastFilterdTicketTableView') && session('lastFilterdTicketTableView') != '') {
                     return session('lastFilterdTicketTableView');
                 }
 
-                if (session('lastTicketView') == 'list' && session()->exists('lastFilterdTicketListView') && session('lastFilterdTicketListView') != '') {
+                if (session('lastTicketView') === 'list' && session()->exists('lastFilterdTicketListView') && session('lastFilterdTicketListView') != '') {
                     return session('lastFilterdTicketListView');
                 }
 
@@ -1928,15 +1962,15 @@ namespace Leantime\Domain\Tickets\Services {
             $url = BASE_URL.'/tickets/roadmap';
 
             if (session()->exists('lastMilestoneView') && session('lastMilestoneView') != '') {
-                if (session('lastMilestoneView') == 'table' && session()->exists('lastFilterdMilestoneTableView') && session('lastFilterdMilestoneTableView') != '') {
+                if (session('lastMilestoneView') === 'table' && session()->exists('lastFilterdMilestoneTableView') && session('lastFilterdMilestoneTableView') != '') {
                     return session('lastFilterdMilestoneTableView');
                 }
 
-                if (session('lastMilestoneView') == 'roadmap' && session()->exists('lastFilterdTicketRoadmapView') && session('lastFilterdTicketRoadmapView') != '') {
+                if (session('lastMilestoneView') === 'roadmap' && session()->exists('lastFilterdTicketRoadmapView') && session('lastFilterdTicketRoadmapView') != '') {
                     return session('lastFilterdTicketRoadmapView');
                 }
 
-                if (session('lastMilestoneView') == 'calendar' && session()->exists('lastFilterdTicketCalendarView') && session('lastFilterdTicketCalendarView') != '') {
+                if (session('lastMilestoneView') === 'calendar' && session()->exists('lastFilterdTicketCalendarView') && session('lastFilterdTicketCalendarView') != '') {
                     return session('lastFilterdTicketCalendarView');
                 }
 
@@ -2113,7 +2147,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getTicketTemplateAssignments($params): array
         {
 
-            $currentSprint = $this->sprintService->getCurrentSprintId(session('currentProject'));
+            $currentSprint = $this->sprintService->getCurrentSprintId((int) session('currentProject'));
 
             $searchCriteria = $this->prepareTicketSearchArray($params);
             $searchCriteria['orderBy'] = 'kanbansort';
@@ -2135,7 +2169,7 @@ namespace Leantime\Domain\Tickets\Services {
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
 
             $sprints = $this->sprintService->getAllSprints(session('currentProject'));
-            $futureSprints = $this->sprintService->getAllFutureSprints(session('currentProject'));
+            $futureSprints = $this->sprintService->getAllFutureSprints((int) session('currentProject'));
 
             $users = $this->projectService->getUsersAssignedToProject(session('currentProject'));
 
@@ -2153,6 +2187,8 @@ namespace Leantime\Domain\Tickets\Services {
             if ($numOfFilters > 0 || $searchCriteria['groupBy'] != '') {
                 $searchUrlString = '?'.http_build_query($this->getSetFilters($searchCriteria, true));
             }
+
+            $allTickets = self::dispatchFilter('filterTickets', $allTickets);
 
             return [
                 'currentSprint' => session('currentSprint'),
@@ -2203,7 +2239,7 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             if (isset($params['projectFilter'])) {
-                $projectFilter = $params['projectFilter'] != 'all' ? $params['projectFilter'] : '';
+                $projectFilter = $params['projectFilter'] !== 'all' ? $params['projectFilter'] : '';
                 session(['userHomeProjectFilter' => $projectFilter]);
             }
 
@@ -2221,14 +2257,14 @@ namespace Leantime\Domain\Tickets\Services {
                 $groupBy = 'time';
             }
 
-            if ($groupBy == 'time') {
-                $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'project') {
-                $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'priority') {
-                $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
-            } elseif ($groupBy == 'sprint') {
-                $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
+            if ($groupBy === 'time') {
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            } elseif ($groupBy === 'project') {
+                $tickets = $this->getOpenUserTicketsByProject(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            } elseif ($groupBy === 'priority') {
+                $tickets = $this->getOpenUserTicketsByPriority(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
+            } elseif ($groupBy === 'sprint') {
+                $tickets = $this->getOpenUserTicketsBySprint(userId: session('userdata.id'), projectId: $projectFilter, includeMilestones: true);
             }
 
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
@@ -2265,6 +2301,218 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
+         * Retrieves the hierarchical assignments for the ToDoWidget.
+         *
+         * @param  array  $params  The parameters for filtering the assignments.
+         * @return array An array containing the hierarchical assignments for the ToDoWidget.
+         */
+        public function getToDoWidgetHierarchicalAssignments($params)
+        {
+            $projectFilter = '';
+            if (session()->exists('userHomeProjectFilter')) {
+                $projectFilter = session('userHomeProjectFilter');
+            }
+
+            if (isset($params['projectFilter'])) {
+                $projectFilter = $params['projectFilter'] !== 'all' ? $params['projectFilter'] : '';
+                session(['userHomeProjectFilter' => $projectFilter]);
+            }
+
+            $groupBy = '';
+            if (session()->exists('userHomeGroupBy')) {
+                $groupBy = session('userHomeGroupBy');
+            }
+
+            if (isset($params['groupBy'])) {
+                $groupBy = $params['groupBy'];
+                session(['userHomeGroupBy' => $groupBy]);
+            }
+
+            if ($groupBy == '') {
+                $groupBy = 'time';
+            }
+
+            $userId = session('userdata.id');
+            $sortingKey = "user.{$userId}.myTodosSorting";
+            $userSorting = $this->settingsRepo->getSetting($sortingKey);
+
+            // Get tickets based on grouping
+            if ($groupBy === 'time') {
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'project') {
+                $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'priority') {
+                $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
+            } elseif ($groupBy === 'sprint') {
+                $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
+            }
+
+            if ($userSorting) {
+                $sortingArray = json_decode($userSorting, true);
+            }
+
+            // Get all milestones that have tasks assigned to the user
+            $allMilestones = [];
+            $milestoneIds = [];
+            $milestoneCache = [];
+
+            // First collect all milestone IDs from the user's tasks
+            foreach ($tickets as $groupKey => &$ticketGroup) {
+                if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
+                    foreach ($ticketGroup['tickets'] as $ticket) {
+                        if (! empty($ticket['milestoneid']) && ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
+
+                            $milestoneId = $ticket['milestoneid'];
+
+                            if (! isset($milestoneCache[$milestoneId])) {
+                                $milestoneCache[$milestoneId] = (array) $this->getTicket($milestoneId);
+                            }
+                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
+                            $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
+                        }
+                    }
+                }
+            }
+
+            // Fetch the milestone data for all collected milestone IDs
+            //            if (! empty($milestoneIds)) {
+            //                foreach ($milestoneIds as $milestoneId) {
+            //                    $milestone = $this->getTicket($milestoneId);
+            //                    if ($milestone) {
+            //
+            //                        // Add milestone to the appropriate group
+            //                        foreach ($tickets as $groupKey => &$ticketGroup) {
+            //                            // Add the milestone to each group that contains tasks belonging to this milestone
+            //                            foreach ($ticketGroup['tickets'] as $key => $ticket) {
+            //                                if (! empty($ticket['milestoneid']) && $ticket['milestoneid'] == $milestoneId) {
+            //                                    // Create milestone entry if it doesn't exist in this group yet
+            //                                    $milestoneEntry = (array) $milestone;
+            //                                    $milestoneEntry['percentDone'] = $progress;
+            //
+            //                                    // Add to the beginning of the group
+            //                                    array_unshift($ticketGroup['tickets'], $milestoneEntry);
+            //                                    break; // Only add once per group
+            //                                }
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+
+            // Process tickets to build hierarchical structure
+            foreach ($tickets as $groupKey => &$ticketGroup) {
+                if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
+                    $ticketGroup['tickets'] = $this->buildTicketHierarchy($ticketGroup['tickets'], $sortingArray);
+                }
+            }
+
+            $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
+            $effortLabels = $this->getEffortLabels();
+            $priorityLabels = $this->getPriorityLabels();
+            $ticketTypes = $this->getTicketTypes();
+            $statusLabels = $this->getAllStatusLabelsByUserId(session('userdata.id'));
+
+            $milestoneArray = [];
+            foreach ($tickets as &$ticketGroup) {
+                foreach ($ticketGroup['tickets'] as $ticket) {
+                    if (isset($milestoneArray[$ticket['projectId']])) {
+                        continue;
+                    } else {
+                        $milestoneArray[$ticket['projectId']] = $this->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $ticket['projectId']]);
+                    }
+                }
+            }
+
+            $tickets = self::dispatch_filter('myTodoWidgetTasks', $tickets);
+
+            return [
+                'tickets' => $tickets,
+                'onTheClock' => $onTheClock,
+                'efforts' => $effortLabels,
+                'priorities' => $priorityLabels,
+                'ticketTypes' => $ticketTypes,
+                'statusLabels' => $statusLabels,
+                'milestones' => $milestoneArray,
+                'allAssignedprojects' => $this->projectService->getProjectsAssignedToUser(
+                    session('userdata.id'),
+                    'open'
+                ),
+                'projectFilter' => $projectFilter,
+                'groupBy' => $groupBy,
+            ];
+        }
+
+        /**
+         * Build a hierarchical structure of tickets based on dependencies and milestones
+         *
+         * @param  array  $tickets  Flat array of tickets
+         * @param  array  $sortingArray  array of ticket ids and custom sorting index
+         * @return array Hierarchical array of tickets
+         */
+        private function buildTicketHierarchy($tickets, array|bool $sortingArray = false)
+        {
+            $ticketMap = [];
+            $rootTickets = [];
+
+            // First pass: create a map of all tickets by ID
+            foreach ($tickets as $ticket) {
+                $ticket['children'] = [];
+
+                if ($sortingArray) {
+                    $sortIndex = collect($sortingArray)->firstWhere('id', $ticket['id']);
+                    $ticket['sortIndex'] = $sortIndex['order'] ?? 10;
+                }
+
+                $ticketMap[$ticket['id']] = $ticket;
+            }
+
+            // Second pass: build the hierarchy
+            foreach ($tickets as $ticket) {
+
+                // If this ticket has a parent (depending ticket)
+                if (! empty($ticket['dependingTicketId']) && isset($ticketMap[$ticket['dependingTicketId']])) {
+                    // Add this ticket as a child of its parent
+                    $ticketMap[$ticket['dependingTicketId']]['children'][] = &$ticketMap[$ticket['id']];
+                } // If this ticket belongs to a milestone
+                else {
+                    if (! empty($ticket['milestoneid']) && isset($ticketMap[$ticket['milestoneid']])) {
+                        // Add this ticket as a child of its milestone
+                        $ticketMap[$ticket['milestoneid']]['children'][] = &$ticketMap[$ticket['id']];
+                    } // Otherwise, it's a root ticket
+                    else {
+                        $rootTickets[] = &$ticketMap[$ticket['id']];
+                    }
+                }
+
+            }
+
+            // Sort the tickets at each level
+            $this->sortTicketsRecursively($rootTickets);
+
+            return $rootTickets;
+        }
+
+        /**
+         * Sort tickets recursively at each level of the hierarchy
+         *
+         * @param  array  &$tickets  Array of tickets to sort
+         */
+        private function sortTicketsRecursively(&$tickets)
+        {
+            // Sort the current level by sortIndex
+            usort($tickets, function ($a, $b) {
+                return ($a['sortIndex'] ?? 0) - ($b['sortIndex'] ?? 0);
+            });
+
+            // Recursively sort children
+            foreach ($tickets as &$ticket) {
+                if (! empty($ticket['children'])) {
+                    $this->sortTicketsRecursively($ticket['children']);
+                }
+            }
+        }
+
+        /**
          * Prepare ticket dates for database.
          *
          * @param  array  $values  The values of the ticket fields.
@@ -2277,57 +2525,78 @@ namespace Leantime\Domain\Tickets\Services {
             // Prepare dates for db
             if (! empty($values['dateToFinish'])) {
 
-                if ($values['dateToFinish'] instanceof CarbonImmutable) {
-                    $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
-                        unset($values['timeToFinish']);
+                try {
+                    if ($values['dateToFinish'] instanceof CarbonImmutable) {
+                        $values['dateToFinish'] = $values['dateToFinish']->formatDateTimeForDb();
                     } else {
-                        $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], 'end')->formatDateTimeForDb();
+                        if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
+                            $values['dateToFinish'] = dtHelper()->parseUserDateTime(
+                                $values['dateToFinish'],
+                                $values['timeToFinish']
+                            )->formatDateTimeForDb();
+                            unset($values['timeToFinish']);
+                        } else {
+                            $values['dateToFinish'] = dtHelper()->parseUserDateTime(
+                                $values['dateToFinish'],
+                                'end'
+                            )->formatDateTimeForDb();
+                        }
                     }
+                } catch (\Exception $e) {
+                    $values['dateToFinish'] = '';
                 }
             }
 
             if (! empty($values['editFrom'])) {
 
-                if ($values['editFrom'] instanceof CarbonImmutable) {
-                    $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            $values['timeFrom'],
-                            FromFormat::UserDateTime
-                        )->formatDateTimeForDb();
-                        unset($values['timeFrom']);
+                try {
+                    if ($values['editFrom'] instanceof CarbonImmutable) {
+                        $values['editFrom'] = $values['editFrom']->formatDateTimeForDb();
                     } else {
-                        $values['editFrom'] = dtHelper()->parseUserDateTime(
-                            $values['editFrom'],
-                            'start'
-                        )->formatDateTimeForDb();
+                        if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                            $values['editFrom'] = dtHelper()->parseUserDateTime(
+                                $values['editFrom'],
+                                $values['timeFrom'],
+                                FromFormat::UserDateTime
+                            )->formatDateTimeForDb();
+                            unset($values['timeFrom']);
+                        } else {
+                            $values['editFrom'] = dtHelper()->parseUserDateTime(
+                                $values['editFrom'],
+                                'start'
+                            )->formatDateTimeForDb();
+                        }
                     }
+                } catch (\Exception $e) {
+                    $values['editFrom'] = '';
                 }
             }
 
             if (! empty($values['editTo'])) {
 
-                if ($values['editTo'] instanceof CarbonImmutable) {
-                    $values['editTo'] = $values['editTo']->formatDateTimeForDb();
-                } else {
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            $values['timeTo']
-                        )->formatDateTimeForDb();
-                        unset($values['timeTo']);
+                try {
+
+                    if ($values['editTo'] instanceof CarbonImmutable) {
+                        $values['editTo'] = $values['editTo']->formatDateTimeForDb();
                     } else {
-                        $values['editTo'] = dtHelper()->parseUserDateTime(
-                            $values['editTo'],
-                            'end'
-                        )->formatDateTimeForDb();
+                        if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                            $values['editTo'] = dtHelper()->parseUserDateTime(
+                                $values['editTo'],
+                                $values['timeTo']
+                            )->formatDateTimeForDb();
+                            unset($values['timeTo']);
+                        } else {
+                            $values['editTo'] = dtHelper()->parseUserDateTime(
+                                $values['editTo'],
+                                'end'
+                            )->formatDateTimeForDb();
+                        }
                     }
+
+                } catch (\Exception $e) {
+                    $values['editTo'] = '';
                 }
+
             }
 
             return $values;

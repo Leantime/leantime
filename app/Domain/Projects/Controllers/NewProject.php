@@ -123,7 +123,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     $mailer->setContext('project_created');
                     $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL.'/projects/showProject/'.$id.'';
-                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, session('userdata.name'));
+                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, strip_tags($projectName), session('userdata.name'));
                     $mailer->setHtml($message);
 
                     $to = [];

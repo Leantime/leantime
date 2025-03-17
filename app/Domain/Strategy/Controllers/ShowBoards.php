@@ -123,7 +123,7 @@ namespace Leantime\Domain\Strategy\Controllers {
                 'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
             ];
 
-            $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas(session('currentProject'), $boards);
+            $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas(session('currentProject') ?? '', $boards);
 
             $recentProgressCanvas = [];
 

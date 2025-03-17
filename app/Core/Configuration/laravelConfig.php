@@ -575,6 +575,8 @@ return [
             // Ignore Laravel's default health URL
             '/up',
             '/cron/run',
+            '/notifications/news-badge/get',
+            'notifications/news/get',
         ],
 
         // Breadcrumb specific configuration
@@ -847,5 +849,8 @@ return [
             'table' => 'failed_jobs',
         ],
 
+    ],
+    'hashing' => [
+        'rehash_on_login' => false,
     ],
 ];

@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "3.4.0",
+  "version": "3.4.5",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
@@ -8,6 +8,8 @@
     "@fullcalendar/google-calendar": "^6.1.13",
     "@fullcalendar/icalendar": "^6.1.13",
     "@fullcalendar/luxon3": "^6.1.11",
+    "@lottiefiles/dotlottie-wc": "^0.4.6",
+    "@lottiefiles/dotlottie-web": "^0.41.0",
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.119.1",

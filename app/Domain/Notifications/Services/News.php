@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Notifications\Services {
 
+    use Illuminate\Support\Facades\Log;
     use Leantime\Core\Db\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
@@ -46,9 +47,16 @@ namespace Leantime\Domain\Notifications\Services {
         public function getLatest(int $userId): false|\SimpleXMLElement
         {
 
-            $rss = $this->getFeed();
+            try {
+                $rss = $this->getFeed();
+            } catch (\Exception $e) {
+                Log::warning('Could not connect to news server.');
+                Log::warning($e);
 
-            $latestGuid = strval($rss?->channel?->item[0]?->guid);
+                return false;
+            }
+
+            $latestGuid = (string) $rss?->channel?->item[0]?->guid;
             $this->settingService->saveSetting('usersettings.'.$userId.'.lastNewsGuid', strval($latestGuid));
 
             // Todo: check last article the user read
@@ -60,13 +68,20 @@ namespace Leantime\Domain\Notifications\Services {
         public function hasNews(int $userId): bool
         {
 
-            $rss = $this->getFeed();
+            try {
+                $rss = $this->getFeed();
+            } catch (\Exception $e) {
+                Log::warning('Could not connect to news server.');
+                Log::warning($e);
 
-            $latestGuid = strval($rss?->channel?->item[0]?->guid);
+                return false;
+            }
+
+            $latestGuid = (string) $rss?->channel?->item[0]?->guid;
 
             $lastNewsGuid = $this->settingService->getSetting('usersettings.'.$userId.'.lastNewsGuid');
 
-            if ($lastNewsGuid == false) {
+            if ($lastNewsGuid === false) {
                 return true;
             }
 
