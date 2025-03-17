@@ -902,8 +902,8 @@ class Projects
             'dollarBudget' => $values['dollarBudget'] ?? 0,
             'psettings' => $values['psettings'] ?? 'restricted',
             'type' => 'project',
-            'start' => $values['start'],
-            'end' => $values['end'],
+            'start' => $values['start'] ?? null,
+            'end' => $values['end'] ?? null,
         ];
         if ($values['start'] != null) {
             $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();

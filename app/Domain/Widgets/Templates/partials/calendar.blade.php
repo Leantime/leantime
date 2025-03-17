@@ -44,7 +44,8 @@
         <div class="clear"></div>
     </div>
     <div class="clear"></div>
-    <div class="minCalendarWrapper minCalendar tw-h-full" style="height:calc(100% - 55px)"></div>
+    <div class="minCalendarWrapper">
+    </div>
 </div>
 
 <script>
@@ -106,3 +107,10 @@
     @dispatchEvent('scripts.beforeClose')
 
 </script>
+
+<style type="text/css">
+    .minCalendar {
+        height: calc(100% - 55px);
+    }
+
+</style>

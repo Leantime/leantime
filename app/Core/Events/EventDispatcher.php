@@ -336,7 +336,7 @@ class EventDispatcher implements Dispatcher
 
             }
         } catch (\TypeError $e) {
-            error_log('TypeError in event handler: '.$e->getMessage());
+
             if (! isset($filteredPayload) && $index === 0) {
                 $filteredPayload = $payload;
             }

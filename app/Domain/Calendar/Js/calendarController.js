@@ -193,23 +193,22 @@ leantime.calendarController = (function () {
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
-            height:'auto',
+            height: 'auto',
             initialView: initialView,
+            eventStartEditable: true,
             dayHeaderFormat: userDateFormat,
             eventTimeFormat: userTimeFormat,
             slotLabelFormat: userTimeFormat,
             views: {
                 multiMonthOneMonth: {
                     type: 'multiMonth',
-                    duration: { months: 1 },
-                    multiMonthTitleFormat: { month: 'long', year: 'numeric' },
-                    dayHeaderFormat: { weekday: 'short' },
+                    duration: {months: 1},
+                    multiMonthTitleFormat: {month: 'long', year: 'numeric'},
+                    dayHeaderFormat: {weekday: 'short'},
                 },
-                timeGridWeek: {
-
-                },
+                timeGridWeek: {},
                 listWeek: {
-                    listDayFormat: { weekday: 'long' },
+                    listDayFormat: {weekday: 'long'},
                     listDaySideFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
                 }
             },
@@ -227,12 +226,12 @@ leantime.calendarController = (function () {
                 nextYear: 'fa-angle-double-right'
             },
             eventDrop: function (event) {
-
+                console.log("Calendar: Event dropped", event);
                 if (event.event.extendedProps.enitityType == "ticket") {
                     jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data: {
                             id: event.event.extendedProps.enitityId,
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
@@ -242,9 +241,9 @@ leantime.calendarController = (function () {
                     });
                 } else if (event.event.extendedProps.enitityType == "event") {
                     jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/calendar',
-                        data : {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/calendar',
+                        data: {
                             id: event.event.extendedProps.enitityId,
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
@@ -253,12 +252,12 @@ leantime.calendarController = (function () {
                 }
             },
             eventResize: function (event) {
-
+                console.log("Calendar: Event resized", event);
                 if (event.event.extendedProps.enitityType == "ticket") {
                     jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/tickets',
-                        data : {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/tickets',
+                        data: {
                             id: event.event.extendedProps.enitityId,
                             editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                             timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
@@ -268,9 +267,9 @@ leantime.calendarController = (function () {
                     })
                 } else if (event.event.extendedProps.enitityType == "event") {
                     jQuery.ajax({
-                        type : 'PATCH',
-                        url  : leantime.appUrl + '/api/calendar',
-                        data : {
+                        type: 'PATCH',
+                        url: leantime.appUrl + '/api/calendar',
+                        data: {
                             id: event.event.extendedProps.enitityId,
                             dateFrom: event.event.startStr,
                             dateTo: event.event.endStr
@@ -279,18 +278,13 @@ leantime.calendarController = (function () {
                 }
 
             },
-            eventMouseEnter: function () {
-            },
-            dateClick: function (info) {
-                if (info.view.type == "timeGridDay") {
-                }
-            },
             eventReceive: function (event) {
-
+                console.log("Calendar: Event received", event);
+                console.log("element", this);
                 jQuery.ajax({
-                    type : 'PATCH',
-                    url  : leantime.appUrl + '/api/tickets',
-                    data : {
+                    type: 'PATCH',
+                    url: leantime.appUrl + '/api/tickets',
+                    data: {
                         id: event.event.id,
                         editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
                         timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
@@ -302,7 +296,7 @@ leantime.calendarController = (function () {
 
             },
             eventDragStart: function (event) {
-
+                console.log("Calendar: Event drag started", event);
             },
             eventDidMount: function (info) {
 
@@ -324,142 +318,121 @@ leantime.calendarController = (function () {
         jQuery(document).ready(function () {
             //let tickets = jQuery("#yourToDoContainer")[0];
 
-            jQuery("#yourToDoContainer").find(".ticketBox").each(function () {
+            // Set up draggable for each ticket box
+            // setupDraggableTickets();
+            //
+            // Initialize the ThirdPartyDraggable for the todo container
+            initializeThirdPartyDraggable(jQuery("#yourToDoContainer")[0]);
+            initButtons();
 
-                var currentTicket = jQuery(this);
-                jQuery(this).data('event', {
-                    id: currentTicket.attr("data-val"),
-                    title: currentTicket.find(".titleContainer strong").text(),
-                    color: 'var(--accent2)',
-                    enitityType: "ticket",
-                    url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
-                });
+            calendar.scrollToTime(Date.now());
+        });
 
-                jQuery(this).draggable({
-                    zIndex: 999999,
-                    revert: true,      // will cause the event to go back to its
-                    revertDuration: 0,  //  original position after the drag
-                    helper: "clone",
-                    appendTo: '.maincontent',
-                    cursor: "grab",
-                    cursorAt: { bottom: 5, right: 5},
-                });
+        // function setupDraggableTickets() {
+        //     jQuery("#yourToDoContainer").find(".ticketBox").each(function () {
+        //         setupTicketDraggable(jQuery(this));
+        //     });
+        // }
+        //
+        // function setupTicketDraggable(ticketElement) {
+        //     var currentTicket = ticketElement;
+        //     currentTicket.data('event', {
+        //         id: currentTicket.attr("data-val"),
+        //         title: currentTicket.find(".titleContainer strong").text(),
+        //         color: 'var(--accent2)',
+        //         enitityType: "ticket",
+        //         url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
+        //     });
+        //
+        //     currentTicket.draggable({
+        //
+        //         zIndex: 999999,
+        //         revert: true,      // will cause the event to go back to its
+        //         revertDuration: 0,  //  original position after the drag
+        //         helper: "clone",
+        //         appendTo: '.maincontent',
+        //         cursor: "grab",
+        //         cursorAt: {bottom: 5, right: 5},
+        //         distance: 10,       // Minimum distance before drag starts
+        //         delay: 150,         // Small delay to allow for sortable to initialize first
+        //     });
+        // }
 
-
-            });
-
-            var tickets =  jQuery("#yourToDoContainer")[0];
+        function initializeThirdPartyDraggable(element) {
+            var tickets = element;
             if (tickets) {
                 new FullCalendar.ThirdPartyDraggable(tickets, {
-                    itemSelector: '.ticketBox',
+                    itemSelector: '.draggable-todo',
+                    mirrorClass: 'dragging-mirror',
                     eventDragMinDistance: 10,
+                    mirrorSelector: function (el) {
+                        return el.closest('.ticketBox');
+                    },
                     eventData: function (eventEl) {
+
+                        let ticketEventData = jQuery(eventEl).data("event");
+
                         return {
-                            id: jQuery(eventEl).attr("data-val"),
-                            title: jQuery(eventEl).find(".titleContainer strong").text(),
-                            borderColor: 'var(--accent2)',
+                            id: ticketEventData.id,
+                            title:  ticketEventData.title,
+                            color: ticketEventData.color,
                             enitityType: "ticket",
-                            dateContext: "edit",
                             duration: '01:00',
-                            url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
+                            url: ticketEventData.url,
                         };
+
                     }
                 });
             }
 
             calendar.scrollToTime(Date.now());
-        });
+        };
 
+        function initButtons() {
 
-        htmx.onLoad(function (content) {
+            calendar.setOption('locale', leantime.i18n.__("language.code"));
+            calendar.render();
 
-            // look up all elements with the tomselect class on it within the element
-            var allSelects = htmx.findAll(content, "#yourToDoContainer")
-            let select;
-            for (var i = 0; i < allSelects.length; i++) {
-                const tickets = allSelects[i];
+            calendar.scrollToTime(Date.now());
 
-                /* store data so the calendar knows to render an event upon drop
-                jQuery(this).data('event', {
-                    title: $.trim($(this).text()), // use the element's text as the event title
-                    stick: true // maintain when user navigates (see docs on the renderEvent method)
-                });*/
+            jQuery('.minCalendar .fc-prev-button').click(function () {
+                calendar.prev();
+                calendar.getCurrentData()
+            });
+            jQuery('.minCalendar .fc-next-button').click(function () {
+                calendar.next();
+            });
+            jQuery('.minCalendar .fc-today-button').click(function () {
+                calendar.today();
+            });
+            jQuery(".minCalendar .calendarViewSelect").on("change", function (e) {
 
-                // make the event draggable using jQuery UI
-                jQuery(tickets).find(".ticketBox").each(function () {
+                calendar.changeView(jQuery(".minCalendar .calendarViewSelect option:selected").val());
 
-                    var currentTicket = jQuery(this);
-                    jQuery(this).data('event', {
-                        id: currentTicket.attr("data-val"),
-                        title: currentTicket.find(".titleContainer strong").text(),
-                        borderColor: 'var(--accent2)',
-                        enitityType: "ticket",
-                        url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
-                    });
-
-                    jQuery(this).draggable({
-                        zIndex: 999999,
-                        revert: true,      // will cause the event to go back to its
-                        revertDuration: 0,  //  original position after the drag
-                        helper: "clone",
-                        appendTo: '.maincontent',
-                        cursor: "grab",
-                        cursorAt: { bottom: 5, right: 5},
-                    });
-                });
-
-
-                new FullCalendar.ThirdPartyDraggable(tickets, {
-                    eventDragMinDistance: 10,
-                    itemSelector: '.ticketBox',
-                    eventData: function (eventEl) {
-                        return {
-                            id: jQuery(eventEl).attr("data-val"),
-                            title: jQuery(eventEl).find(".titleContainer strong").text(),
-                            color: 'var(--accent2)',
-                            enitityType: "ticket",
-                            duration: '01:00',
-                            url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
-                        };
+                jQuery.ajax({
+                    type: 'PATCH',
+                    url: leantime.appUrl + '/api/submenu',
+                    data: {
+                        submenu: "dashboardCalendarView",
+                        state: jQuery(".minCalendar .calendarViewSelect option:selected").val()
                     }
                 });
 
-                calendar.scrollToTime(Date.now());
-            }
-
-        });
-
-        calendar.setOption('locale', leantime.i18n.__("language.code"));
-        calendar.render();
-
-        jQuery('.minCalendar .fc-prev-button').click(function () {
-            calendar.prev();
-            calendar.getCurrentData()
-        });
-        jQuery('.minCalendar .fc-next-button').click(function () {
-            calendar.next();
-        });
-        jQuery('.minCalendar .fc-today-button').click(function () {
-            calendar.today();
-        });
-        jQuery(".minCalendar .calendarViewSelect").on("change", function (e) {
-
-            calendar.changeView(jQuery(".minCalendar .calendarViewSelect option:selected").val());
-
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/submenu',
-                data : {
-                    submenu : "dashboardCalendarView",
-                    state   : jQuery(".minCalendar .calendarViewSelect option:selected").val()
-                }
             });
+        }
 
+        htmx.onLoad(function (content) {
+
+            // Find any todo containers that were loaded via HTMX
+            var todoContainers = htmx.findAll(content, "#yourToDoContainer");
+
+            initializeThirdPartyDraggable(todoContainers[0]);
+            initButtons();
+
+
+            return calendarEl;
         });
-
-        return calendarEl;
-    }
-
+    };
 
     // Make public what you want to have public, everything else is private
     return {
