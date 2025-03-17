@@ -2,7 +2,10 @@
 <?php
 
 use Leantime\Core\Console\ConsoleKernel;
+use Symfony\Component\Console\Input\ArgvInput;
+
 define('LEAN_CLI', true);
+define('ARTISAN_BINARY', 'bin/leantime');
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -10,13 +13,7 @@ require __DIR__.'/../vendor/autoload.php';
 //Loads everything up once and then let's the bootloader manage it
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$kernel = $app->make(ConsoleKernel::class);
-
-$status = $kernel->handle(
-        $input = new \Symfony\Component\Console\Input\ArgvInput,
-        new \Symfony\Component\Console\Output\ConsoleOutput
-);
-
-$kernel->terminate($input, $status);
+$status = $app->handleCommand(new ArgvInput);
 
 exit($status);
+

@@ -1,3 +1,42 @@
+# Version: 3.4.5
+
+* [fa1d889](https://github.com/Leantime/leantime/commit/fa1d8890d1e3b907dc4bb7daac70f76f39448a33): task: version bump
+* [d017787](https://github.com/Leantime/leantime/commit/d017787754e8354be5220433d1d1f6fb8ee85755): feat: improve session lockout management
+* [83907b8](https://github.com/Leantime/leantime/commit/83907b8452df74334321a17aa362f0238c395d5f): fix: better handling of news update failure
+* [5d7dd67](https://github.com/Leantime/leantime/commit/5d7dd67e5ac62a5ea6b3161a3947e0677bd137c7): task: variable and application hardening
+* [87da869](https://github.com/Leantime/leantime/commit/87da869f6c5c522779f23adb427be0abe7868143): fix: broken console script after laravel 11 update
+
+
+# Version: 3.4.4
+
+* [32bcfb1](https://github.com/Leantime/leantime/commit/32bcfb1f5eaf7762ecdc0a4b86ff6d167abd2da9): task: version bump
+* [029315d](https://github.com/Leantime/leantime/commit/029315dc430fc7ed2be9192100333162c1e8f1b2): fix: data types matter folks...
+
+This fixes an issue where we compare floats to 0 (int) but technically floats need to be compared to 0.0. In this case we don't particularly care the about the float itself we just need to figure out if there is an offset worth dealing with. casting to int is just fine.
+* [698820b](https://github.com/Leantime/leantime/commit/698820b1b4641c5334da50b96b8cc05dd6b6479b): Update composer.lock
+* [e78c6f0](https://github.com/Leantime/leantime/commit/e78c6f0b5d77256015a89ffa28a9d20282b9d509): task: fix code styles
+* [6d8e915](https://github.com/Leantime/leantime/commit/6d8e91594a2c3ab3b598896a9904129c1e92ca4a): fix: harden date time handling and check for constant #2975
+* [af3eba4](https://github.com/Leantime/leantime/commit/af3eba459aace1b008acaa5f278c06a9f1c19775): fix: Idea dialog throwing 500 when missing title or description
+* [5f01410](https://github.com/Leantime/leantime/commit/5f01410766218631ccb47e3697bc58dbdbe3dd0b): task: complete list of php extensions
+* [268de1b](https://github.com/Leantime/leantime/commit/268de1b524ea5a22265c72dbe912930a58e57e94): Delete .github/ISSUE_TEMPLATE/bug_report.md
+* [25fe9bf](https://github.com/Leantime/leantime/commit/25fe9bfb6ff7a6a758df906763e1af812c0655da): Update issue templates
+* [92425a2](https://github.com/Leantime/leantime/commit/92425a24988d0aa78687f5a13bd39a72b6b295e3): Update README.md
+
+
+# Version: 3.4.3
+
+* [af62ea4](https://github.com/Leantime/leantime/commit/af62ea4e6e467240a180a0fa073c127ef6c212b4): task: clean up ticket service
+* [deffc4e](https://github.com/Leantime/leantime/commit/deffc4e855682ba28eeaa846d92d7d84708a6c2e): fix: not sending notifications when project id is not set correctly
+* [e5384f2](https://github.com/Leantime/leantime/commit/e5384f22a9dd0b3ccc3a05f233d754b25fcd7a2e): fix: console kernel to point to the correct binary
+* [12ad2e5](https://github.com/Leantime/leantime/commit/12ad2e501945ecc27a96cab5d1df31dd511fcc9b): fix api endpoint to get open user tickets
+* [7b3539d](https://github.com/Leantime/leantime/commit/7b3539d94071df590cf20e5724a81d2f2aa06ee3): task: update version
+* [2759494](https://github.com/Leantime/leantime/commit/2759494d2cd55a4c727abb8718ee866ceffb8637): task: Improve dailyIngestion report management
+* [8a3ee6a](https://github.com/Leantime/leantime/commit/8a3ee6a1cfd918f49c5ed396584043f5a4c46ce0): fix: add missing field
+* [1d0b242](https://github.com/Leantime/leantime/commit/1d0b242917b9dcd0ee92cc0bdc2ccc2fef5fcaa4): fix: broken datetime management on sprints creating various bugs throughout the system
+* [86b40bd](https://github.com/Leantime/leantime/commit/86b40bdbbf87c814204c24dd974b77d1767e2ef1): task: Cleanup and improve datetime helper class
+* [3dd728b](https://github.com/Leantime/leantime/commit/3dd728b5770dad0bdf5e97e3fec92efd671d5bed): Fix link
+
+
 # Version: 3.4.2
 
 * [14e71ad](https://github.com/Leantime/leantime/commit/14e71adada985e1c1f759cebde46d68da4301eb7): fix: typo in provider name

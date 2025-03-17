@@ -8,9 +8,7 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
@@ -44,6 +42,26 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         parent::__construct($app, $events);
     }
 
+    public function bootstrap()
+    {
+
+        if (! $this->app->hasBeenBootstrapped()) {
+            $this->app->bootstrapWith($this->bootstrappers());
+        }
+
+        $this->app->loadDeferredProviders();
+
+        if (! $this->commandsLoaded) {
+            $this->commands();
+
+            if ($this->shouldDiscoverCommands()) {
+                $this->discoverCommands();
+            }
+
+            $this->commandsLoaded = true;
+        }
+    }
+
     /**
      * Handle an incoming console command.
      *
@@ -51,35 +69,22 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
      */
     public function handle($input, $output = null)
     {
-
         $this->commandStartedAt = Carbon::now();
 
-        //        // Process global subdomain option if present
-        //        if ($input->hasParameterOption('--subdomain')) {
-        //            $subdomain = $input->getParameterOption('--subdomain');
-        //            if ($subdomain) {
-        //                session(['subdomain' => $subdomain]);
-        //                session(['configSubdomain' => $subdomain]);
-        //            }
-        //        }
-
         try {
-
-            $domain = $input->getParameterOption('--domain');
-            $this->setDomain($domain);
-
             if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
                 $this->bootstrapWithoutBootingProviders();
+            }
+
+            if ($domain = $input->getParameterOption('--domain')) {
+                $this->setDomain($domain);
             }
 
             $this->bootstrap();
 
             self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $input]);
 
-            $cli = $this->getArtisan();
-            $output = $cli->run($input, $output);
-
-            return $output;
+            return $this->getArtisan()->run($input, $output);
 
         } catch (\Throwable $e) {
 
@@ -88,6 +93,40 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
             $this->renderException($output, $e);
 
             return 1;
+        }
+    }
+
+    // We need to overwrite this because for some reason Laravel decided to only do command discovery if being called
+    // from the original kernel
+    protected function shouldDiscoverCommands()
+    {
+        return get_class($this) === __CLASS__;
+    }
+
+    protected function discoverCommands()
+    {
+
+        // Update standard commandPath
+        $this->commandPaths = [
+            APP_ROOT.'/app/Command/',
+        ];
+
+        foreach ($this->commandPaths as $path) {
+            $this->load($path);
+        }
+
+        // Load Dynamic command paths for leantime
+        $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
+        $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
+
+        foreach ($ltPluginCommands as $pluginPath) {
+            $this->load($pluginPath);
+        }
+
+        foreach ($this->commandRoutePaths as $path) {
+            if (file_exists($path)) {
+                require $path;
+            }
         }
     }
 
@@ -104,65 +143,9 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         $this->bootstrap();
 
-        //        if(isset($parameters['subdomain'])) {
-        //            session(["subdomain" => $parameters['subdomain']]);
-        //            unset($parameters['subdomain']);
-        //        }
-
         self::dispatch_event('console.bootstrapped', ['kernel' => $this, 'command' => $command]);
 
         return $this->getArtisan()->call($command, $parameters, $outputBuffer);
-    }
-
-    /**
-     * Load and register the commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        static $commandsLoaded;
-        $commandsLoaded ??= false;
-
-        if ($commandsLoaded) {
-            return;
-        }
-
-        // $customCommands = $customPluginCommands = null;
-
-        $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
-        $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
-        /*$commands = collect(Arr::flatten($ltCommands))
-            ->map(fn ($path) => $this->getApplication()->getNamespace().Str::of($path)->remove([APP_ROOT.'/app/', APP_ROOT.'/Custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
-        */
-
-        $this->load(APP_ROOT.'/app/Command/');
-        $this->load(APP_ROOT.'/app/Domain/**/Command/');
-
-        foreach ($ltPluginCommands as $pluginPath) {
-            $this->load($pluginPath);
-        }
-
-        $commandsLoaded = true;
-    }
-
-    public function bootstrap()
-    {
-        if (! $this->app->hasBeenBootstrapped()) {
-
-            $this->app->bootstrapWith($this->bootstrappers());
-        }
-
-        $this->app->loadDeferredProviders();
-
-        if (! $this->commandsLoaded) {
-            $this->commands();
-
-            $this->commandsLoaded = true;
-        }
-
-        // $this->bindSchedule();
-
     }
 
     public function getArtisan()
@@ -182,20 +165,12 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
         return $this->artisan;
     }
 
-    /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return $this->bootstrappers;
-    }
-
     protected function schedule(Schedule $schedule)
     {
         // Set default timezone
-        config(['app.timezone' => config('defaultTimezone')]);
+        // config(['app.timezone' => config('defaultTimezone')]);
+
+        config(['schedule_timezone' => 'UTC']);
 
         self::dispatch_event('cron', ['schedule' => $schedule], 'schedule');
 

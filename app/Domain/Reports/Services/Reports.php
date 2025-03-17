@@ -106,7 +106,6 @@ namespace Leantime\Domain\Reports\Services {
                 $lastEntries = $this->reportRepository->checkLastReportEntries($projectId);
 
                 // If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
-
                 if (count($lastEntries) == 0) {
                     $currentSprint = $this->sprintRepository->getCurrentSprint($projectId);
 
