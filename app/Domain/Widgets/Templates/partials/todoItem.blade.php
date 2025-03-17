@@ -12,7 +12,7 @@
         'title' =>  $ticket['headline'],
         'color' =>   'var(--accent2)',
         'enitityType' =>  'ticket',
-        'url' =>  '#/tickets/showTicket/'.$ticket['id'],
+        'url' =>  BASE_URL.'#/tickets/showTicket/'.$ticket['id'],
     ]);
 
     $hasChildren = !empty($ticket['children']);
@@ -23,7 +23,8 @@
     data-item-type="{{ $ticket['type'] == 'milestone' ? 'milestone' : ($ticket['type'] == 'subtask' ? 'subtask' : 'task') }}"
     data-id="{{ $ticket['id'] }}"
     data-project="{{ $ticket['projectId'] }}"
-    data-sort-index="{{ $ticket['sortIndex'] }}"
+    data-draggable="true"
+    data-sort-index="{{ $ticket['sortIndex'] ?? 10 }}"
     data-event='{!! $ticketDataJson !!}' >
 
     @php
@@ -31,12 +32,16 @@
         $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) == 'closed' ? 'closed' : 'open');
     @endphp
 
-    <div class="ticketBox {{ $ticket['type'] == 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority'] }} {{ $hasChildren ? 'has-children' : '' }}"
+    <div class="tw-relative ticketBox {{ $ticket['type'] == 'milestone' ? 'milestone-box priority-border- ' : 'priority-border-'.$ticket['priority'] }} {{ $hasChildren ? 'has-children' : '' }}"
          data-val="{{ $ticket['id'] }}"
+         data-event='{!! $ticketDataJson !!}'
          @if($ticket['type'] == 'milestone')
              style="background: var(--secondary-background) linear-gradient(135deg, {{ $ticket['tags'] }} 0%, var(--accent1) 100%); background-repeat: no-repeat; background-size: 100% 5px; background-position: bottom;"
              @endif
     >
+        <div class="tw-absolute full-width-loader htmx-indicator-ticket-{{$ticket['id']}}">
+            <div class="indeterminate"></div>
+        </div>
 
         @if($hasChildren)
             <div id="accordion_toggle_{{$accordionId }}"
@@ -51,7 +56,7 @@
             <div class="tw-flex tw-flex-row tw-items-center tw-gap-4">
                 <div class="tw-flex-grow">
                     <small style="display:inline-block; ">{{ $ticket['projectName'] }}</small>
-                    <h4><a href="#/tickets/showTicket/{{ $ticket['id'] }}" style="font-size:var(--font-size-l);">{{ $ticket['headline'] }}</a></h4>
+                    <h4><a href="#/tickets/editMilestone/{{ $ticket['id'] }}" style="font-size:var(--font-size-l);">{{ $ticket['headline'] }}</a></h4>
 
                 </div>
                 <div class="tw-flex-grow">
@@ -101,23 +106,13 @@
                         </form>
                     </div>
                 </div>
-                <div class="tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center">
 
-                    <div class="tw-content-center">
-                        @if($hasChildren)
-                            @php
-                                $childrenCollection = collect($ticket['children']);
-                                $doneTickets = $childrenCollection->where(function($ticket) {
-                                    return isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] === "DONE";
-                                })->count();
-                            @endphp
-
-                            {{ $childrenCollection->count() }} open tasks
-                        @endif
-                    </div>
+                @dispatchEvent('beforePlaceholder')
+                <div class="placeholder-container tw-flex-1 tw-flex tw-flex-row tw-content-center">
                 </div>
 
-                <div class="tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center due-date-wrapper">
+                @dispatchEvent('beforeDueDate')
+                <div class="due-date-container tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center due-date-wrapper">
                     <div class="tw-content-center">
                         <div class="date-picker-form-control">
                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content="{{ __("label.due") }}"></i>
@@ -150,7 +145,9 @@
                         @dispatchEvent('afterDueDate', ['ticket' => (object)$ticket])
                     </div>
                 </div>
-                <div class="tw-flex-1 tw-justify-items-end tw-flex tw-flex-row tw-justify-end tw-gap-2 tw-content-center">
+
+                @dispatchEvent('beforeStatusUpdate')
+                <div class="status-container tw-flex-1 tw-justify-items-end tw-flex tw-flex-row tw-justify-end tw-gap-2 tw-content-center">
                     <div class="tw-content-center tw-mr-[10px] dropdown ticketDropdown statusDropdown colorized show">
                         <a class="dropdown-toggle f-left status {{ $statusLabels[$ticket['projectId']][$ticket['status']]["class"] ?? 'label-default' }}"
                            href="javascript:void(0);"
@@ -197,7 +194,7 @@
                         </div>
                     </div>
                     <div class="tw-content-center">
-                        @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock])
+                        @include("tickets::partials.ticketsubmenu", ["ticket" => $ticket, "onTheClock" => $onTheClock, "allowSubtaskCreation" => true])
                     </div>
 
                 </div>
@@ -207,13 +204,44 @@
 
     </div>
 
-        <div id="accordion_content-{{ $accordionId }}"
-             style="{{ $accordionState =='closed' ? 'display:none;' : '' }}"
-             class="sortable-list task-children {{ $tpl->getToggleState("user.".session('userdata.id').".taskCollapsed.".$ticket['id'], 'open') }}"
-             data-container-type="{{ $ticket['type'] == 'milestone' ? 'milestone' : ($ticket['type'] == 'subtask' ? 'subtask' : 'task') }}">
-            @foreach($ticket['children'] as $childTicket)
-                @include('widgets::partials.todoItem', ['ticket' => $childTicket, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => $level + 1])
-            @endforeach
-        </div>
+    <!-- Subtask Form -->
+    <div id="subtask-form-{{$ticket['id']}}" class="subtask-form ticketBox" style="display:none; margin:10px; margin-left:40px;">
+        <form class="form-group"
+              hx-post="{{ BASE_URL }}/widgets/myToDos/addSubtask?ticketId={{$ticket['id']}}"
+              hx-target="#yourToDoContainer"
+              hx-swap="outerHTML"
+              hx-indicator=".htmx-indicator">
+            <input type="hidden" value="new" name="subtaskId" />
+            <input type="hidden" value="1" name="subtaskSave" />
+            <input type="hidden" value="{{ format($ticket['dateToFinish'])->date() }}" name="dateToFinish" />
+            <div class="tw-flex tw-flex-row tw-gap-2">
+                <div class="tw-flex-grow">
+                    <input name="headline" type="text" class="main-title-input"
+                           style="font-size:var(--base-font-size)"
+                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
+                </div>
+                <div>
+                    <input type="hidden" name="status" value="3" />
+                    <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
+                    <a href="javascript:void(0);"
+                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').slideToggle();"
+                       class="btn">{{ __('buttons.cancel') }}</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- End Subtask Form -->
+
+
+    <div id="accordion_content-{{ $accordionId }}"
+         style="{{ $accordionState =='closed' ? 'display:none;' : '' }}"
+         class="sortable-list task-children {{ $tpl->getToggleState("user.".session('userdata.id').".taskCollapsed.".$ticket['id'], 'open') }}"
+         data-container-type="{{ $ticket['type'] == 'milestone' ? 'milestone' : ($ticket['type'] == 'subtask' ? 'subtask' : 'task') }}">
+        @foreach(($ticket['children'] ?? []) as $childTicket)
+            @include('widgets::partials.todoItem', ['ticket' => $childTicket, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => $level + 1])
+        @endforeach
+    </div>
+
+
 
 </div>

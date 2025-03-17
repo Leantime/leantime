@@ -35,7 +35,7 @@
 }
 
 .sortable-list .sortable-item .sortable-list .sortable-item:first-child {
-    padding-top:5px;
+    margin-top:5px;
 }
 
 .sortable-item .ticketBox {
@@ -51,11 +51,15 @@
     bottom: 0;
     width: 2px;
     background-color: var(--interactive-icon-color);
-    height: calc(100% - 50px);
+    height: calc(100% - 45px);
+}
+
+.sortable-item:has(.accordion-toggle .fa-angle-right) {
+    margin-bottom:10px;
 }
 
 .sortable-list .sortable-list .sortable-list::before {
-    height: calc(100% - 55px);
+    height: calc(100% - 50px);
 }
 
 /* Horizontal connector line from vertical line to each item */
@@ -168,6 +172,10 @@
     border-radius: 50%;
     transition: background-color 0.2s ease;
     background: var(--secondary-background);
+}
+
+.milestone-box .task-collapse-toggle {
+    top:25px;
 }
 
 .sortable-list .sortable-list .task-collapse-toggle {

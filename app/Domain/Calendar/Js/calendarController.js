@@ -280,7 +280,7 @@ leantime.calendarController = (function () {
             },
             eventReceive: function (event) {
                 console.log("Calendar: Event received", event);
-
+                console.log("element", this);
                 jQuery.ajax({
                     type: 'PATCH',
                     url: leantime.appUrl + '/api/tickets',
@@ -322,7 +322,8 @@ leantime.calendarController = (function () {
             // setupDraggableTickets();
             //
             // Initialize the ThirdPartyDraggable for the todo container
-            initializeThirdPartyDraggable();
+            initializeThirdPartyDraggable(jQuery("#yourToDoContainer")[0]);
+            initButtons();
 
             calendar.scrollToTime(Date.now());
         });
@@ -357,17 +358,29 @@ leantime.calendarController = (function () {
         //     });
         // }
 
-        function initializeThirdPartyDraggable() {
-            var tickets = jQuery("#yourToDoContainer")[0];
+        function initializeThirdPartyDraggable(element) {
+            var tickets = element;
             if (tickets) {
                 new FullCalendar.ThirdPartyDraggable(tickets, {
                     itemSelector: '.draggable-todo',
+                    mirrorClass: 'dragging-mirror',
                     eventDragMinDistance: 10,
                     mirrorSelector: function (el) {
                         return el.closest('.ticketBox');
                     },
                     eventData: function (eventEl) {
-                        return jQuery(eventEl).data('event');
+
+                        let ticketEventData = jQuery(eventEl).data("event");
+
+                        return {
+                            id: ticketEventData.id,
+                            title:  ticketEventData.title,
+                            color: ticketEventData.color,
+                            enitityType: "ticket",
+                            duration: '01:00',
+                            url: ticketEventData.url,
+                        };
+
                     }
                 });
             }
@@ -375,31 +388,12 @@ leantime.calendarController = (function () {
             calendar.scrollToTime(Date.now());
         };
 
-        htmx.onLoad(function (content) {
-
-            // Find any todo containers that were loaded via HTMX
-            var todoContainers = htmx.findAll(content, "#yourToDoContainer");
-
-            // Initialize ThirdPartyDraggable with improved configuration
-            new FullCalendar.ThirdPartyDraggable(todoContainers[0], {
-                itemSelector: '.draggable-todo',
-                eventDragMinDistance: 10,
-                eventDragMinDistance: 10,
-                itemSelector: '.draggable-todo',
-                eventData: function (eventEl) {
-                    return {
-                        id: jQuery(eventEl).attr("data-val"),
-                        title: jQuery(eventEl).find(".titleContainer strong").text(),
-                        color: 'var(--accent2)',
-                        enitityType: "ticket",
-                        duration: '01:00',
-                        url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
-                    };
-                }
-            });
+        function initButtons() {
 
             calendar.setOption('locale', leantime.i18n.__("language.code"));
             calendar.render();
+
+            calendar.scrollToTime(Date.now());
 
             jQuery('.minCalendar .fc-prev-button').click(function () {
                 calendar.prev();
@@ -425,6 +419,16 @@ leantime.calendarController = (function () {
                 });
 
             });
+        }
+
+        htmx.onLoad(function (content) {
+
+            // Find any todo containers that were loaded via HTMX
+            var todoContainers = htmx.findAll(content, "#yourToDoContainer");
+
+            initializeThirdPartyDraggable(todoContainers[0]);
+            initButtons();
+
 
             return calendarEl;
         });

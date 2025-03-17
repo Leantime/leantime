@@ -47,6 +47,7 @@
             startParent: null, // Original parent of the dragged item
             validDropTarget: true, // Flag to track if current drop target is valid
             hasErrors: false,
+            externalDropInProgress: false,
             isNewLevel: false,
             lastDragMovementTime: 0, // Track last time drag movement was processed
             debounceDelay: 50, // Delay in milliseconds for debouncing
@@ -247,12 +248,14 @@
                 item: null,
                 bottomIndicatorVisible: false,
                 hasErrors: false,
+                externalDropInProgress: false,
                 isNewLevel: false,
                 nestingErrorType: ''
             });
 
             jQuery('.highlight-drop').removeClass('highlight-drop');
             jQuery('.highlight-drop-error').removeClass('highlight-drop-error');
+            jQuery('.pomodoroDrop').removeClass('pomodoro-drop-target');
         }
 
         //Initialize drag state with current ui and event object
@@ -288,6 +291,7 @@
 
             dragState.calendarDrag = false;
             dragState.pomodoroTargeted = false;
+            dragState.externalDropInProgress = false;
 
             dragState.bottomIndicatorVisible = false;
 
@@ -312,15 +316,26 @@
 
             // Check if we're dragging towards the pomodoro timer
             const pomodoroEl = jQuery('.pomodoroDrop');
+
+
+
+
+
             if (pomodoroEl.length) {
                 const pomodoroRect = pomodoroEl[0].getBoundingClientRect();
-                // If we're moving towards the pomodoro timer, flag it
-                if (currentMouseX > pomodoroRect.left && currentMouseY > pomodoroRect.top &&
-                    currentMouseX < pomodoroRect.right && currentMouseY < pomodoroRect.bottom) {
+
+
+                // If we're moving towards the pomodoro timer, flag it - use more generous boundaries
+                if (currentMouseX > pomodoroRect.left +10 && currentMouseY > pomodoroRect.top + 10 &&
+                    currentMouseX < pomodoroRect.right - 10 && currentMouseY < pomodoroRect.bottom -10) {
                     dragState.pomodoroTargeted = true;
+                    dragState.externalDropInProgress = true;
+
+                    jQuery(pomodoroEl).addClass('pomodoro-drop-target');
 
                     return true; // Exit early to let pomodoro handle the drag
                 }
+                jQuery(pomodoroEl).removeClass('pomodoro-drop-target');
             }
 
             return false;
@@ -478,7 +493,7 @@
 
                 //console.log("intent", intent.type);
 
-                if (isDragOut(event.pageX, event.pageY) === true) {
+                if (isDragOut(event.clientX, event.clientY) === true) {
                     return;
                 }
 
@@ -637,7 +652,10 @@
             distance: 10, // Minimum distance before drag starts
             scrollSensitivity: 40,
             scrollSpeed: 20,
-            helper: 'clone',
+            scroll: false,
+            helper: "clone",
+            appendTo: "body", // This ensures the helper
+
 
             start: function (event, ui) {
                 // Store initial state
@@ -714,87 +732,7 @@
 
                 const containerType = getContainerType(currentContainer);
                 let itemType = dragState.itemType;
-                //
-                // //console..log("Before stop - Current container:", currentContainer);
-                // //console..log("Container type:", containerType, "Item type:", itemType);
-                //
-                //
-                // // If we have a target container from horizontal movement, move the item there
-                // if ((dragState.intent == INTENT.NEST ||
-                //     dragState.intent == INTENT.UNNEST) &&
-                //     dragState.targetContainer &&
-                //     jQuery(dragState.targetContainer).is('.sortable-list')) {
-                //
-                //     // Check if this nesting is allowed
-                //     if (!isNestingAllowed(ui.item, dragState.targetContainer)) {
-                //         if(ui.item !== ui.item.data('startParent')) {
-                //             ui.item.appendTo(ui.item.data('startParent'));
-                //         }
-                //         dragState.hasErrors = true;
-                //
-                //         console.log(dragState.nestingErrorType);
-                //         let message = "";
-                //        switch(dragState.nestingErrorType) {
-                //            case 'project':
-                //                message = "Can't nest elements from 2 different projects";
-                //                break;
-                //            case 'type':
-                //                message = "Can't nest these elements underneach each other";
-                //                break;
-                //            case 'circular':
-                //                message = "Can't nest element undneath itself";
-                //                break;
-                //            default:
-                //                message = "Nesting not allowed here";
-                //         }
-                //
-                //         jQuery.growl({message: message, style: "error"});
-                //         return;
-                //     }
-                //
-                //     //console.log("is new level ", dragState.isNewLevel);
-                //
-                //     // if(dragState.isNewLevel) {
-                //     //     if( ui.item !== dragState.targetContainer
-                //     //     && dragState.targetContainer.contains(ui.item[0]) === false) {
-                //     //         ui.item.appendTo(dragState.targetContainer);
-                //     //     }
-                //     // }
-                //
-                // }
-                //
-                // // If moving to root, check if that's allowed
-                // if (dragState.moveToRoot) {
-                //     const itemType = dragState.itemType;
-                //     dragState.targetContainer = dragState.rootContainer[0];
-                //     if (!isNestingAllowed(ui.item, dragState.targetContainer, true)) {
-                //         // Cancel the move if not allowed
-                //         //console..warn("Root nesting not allowed");
-                //
-                //         if(ui.item !== ui.item.data('startParent')) {
-                //             ui.item.appendTo(ui.item.data('startParent'));
-                //         }
-                //         dragState.hasErrors = true;
-                //         console.log(dragState.nestingErrorType);
-                //         let message = "";
-                //         switch(dragState.nestingErrorType) {
-                //             case 'project':
-                //                 message = "Can't nest elements from 2 different projects";
-                //                 break;
-                //             case 'types':
-                //                 message = "Can't nest these elements underneach each other";
-                //                 break;
-                //             case 'circular':
-                //                 message = "Can't nest element undneath itself";
-                //                 break;
-                //             default:
-                //                 message = "Nesting not allowed here";
-                //         }
-                //
-                //         jQuery.growl({message: message, style: "error"});
-                //         return;
-                //     }
-                // }
+
 
                 if (!isNestingAllowed(ui.item, dragState.targetContainer, true)) {
                     // Cancel the move if not allowed
@@ -803,13 +741,13 @@
                         ui.item.appendTo(ui.item.data('startParent'));
                     }
                     dragState.hasErrors = true;
-                    console.log(dragState.nestingErrorType);
+
                     let message = "";
                     switch(dragState.nestingErrorType) {
                         case 'project':
                             message = "Can't nest elements from 2 different projects";
                             break;
-                        case 'type':
+                        case 'types':
                             message = "Can't nest these elements underneach each other";
                             break;
                         case 'circular':

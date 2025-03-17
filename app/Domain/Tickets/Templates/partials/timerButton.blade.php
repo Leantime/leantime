@@ -23,6 +23,10 @@
 
                     <span class="fa-regular fa-circle-play" style="font-size:18px; padding-top:3px;"></span>
 
+            @if($style=="full")
+                {{ __("links.start_work") }}
+            @endif
+
         </a>
     @endif
 

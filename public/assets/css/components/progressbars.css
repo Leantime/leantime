@@ -659,4 +659,14 @@
     animation: particleAnimation8 0.8s ease-out;
 }
 
+@keyframes rotate {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 

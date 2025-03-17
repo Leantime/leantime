@@ -25,9 +25,14 @@
     }
 @endphp
 
-<div id="yourToDoContainer" class="clear" hx-ext="json-enc">
+<div id="yourToDoContainer"
+     hx-get="{{BASE_URL}}/widgets/myToDos/get"
+     hx-trigger="ticket_update from:body"
+     class="clear" hx-ext="json-enc">
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
+
+        @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
         <div class="btn-group left">
             <button class="btn btn-link dropdown-toggle f-left" type="button"
@@ -50,21 +55,21 @@
                     </span>
                 </li>
                 <li>
-                            <span class="radio">
-                                <input type="radio"
-                                       name="groupBy"
-                                       @if($groupBy == "project") checked='checked' @endif
-                                       value="project" id="groupByProject"
-                                       hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                       hx-trigger="click"
-                                       hx-target="#yourToDoContainer"
-                                       hx-swap="outerHTML"
-                                       hx-indicator="#todos .htmx-indicator"
-                                       style="margin-top:4px;"
-                                       hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
-                                />
-                                <label for="groupByProject">{!! __("label.project") !!}</label>
-                            </span>
+                    <span class="radio">
+                        <input type="radio"
+                               name="groupBy"
+                               @if($groupBy == "project") checked='checked' @endif
+                               value="project" id="groupByProject"
+                               hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                               hx-trigger="click"
+                               hx-target="#yourToDoContainer"
+                               hx-swap="outerHTML"
+                               hx-indicator="#todos .htmx-indicator"
+                               style="margin-top:4px;"
+                               hx-vals='{"projectFilter": "{{ $projectFilter }}", "groupBy": "project" }'
+                        />
+                        <label for="groupByProject">{!! __("label.project") !!}</label>
+                    </span>
                 </li>
                 <li>
                     <span class="radio">
@@ -83,7 +88,6 @@
                         <label for="groupByPriority">{!! __("label.priority") !!}</label>
                     </span>
                 </li>
-
             </ul>
         </div>
         <div class="btn-group left ">
@@ -168,7 +172,7 @@
 
                 <x-global::accordion id="ticketBox1-{{ $loop->index }}">
                     <x-slot name="title">
-                        {{ __($ticketGroup["labelName"]) }} ({{ count($ticketGroup["tickets"]) }})
+                        {!!  __($ticketGroup["labelName"]) !!} ({{ count($ticketGroup["tickets"]) }})
                     </x-slot>
                     <x-slot name="actionlink">
                         <a href="javascript:void(0);" class="add-task-button btn btn-link" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
@@ -177,7 +181,7 @@
                     <x-slot name="content">
                         <!-- Quick Add Form for this group -->
                         <div class="quickAddForm" id="quickAddForm-{{ $groupKey }}"
-                             style="display:none; margin-bottom:15px; padding-bottom:5px;">
+                             style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
                             <form method="post"
                                   hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                                   hx-target="#yourToDoContainer"
@@ -220,7 +224,7 @@
                             </form>
                         </div>
 
-                        <div class="sortable-list" data-container-type="section">
+                        <div class="sortable-list" data-container-type="section" style="padding-left:5px;">
                             @foreach ($ticketGroup['tickets'] as $row)
                                 @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0])
                             @endforeach
@@ -233,6 +237,8 @@
 
         </div>
     </div>
+
+    @dispatchEvent('afterTodoListWidgetBox')
 
 
     <script type="text/javascript">

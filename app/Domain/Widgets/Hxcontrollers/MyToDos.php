@@ -8,6 +8,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Tickets\Hxcontrollers\Subtasks as SubtasksController;
 
 /**
  * Class MyToDos
@@ -19,22 +20,14 @@ class MyToDos extends HtmxController
     protected static string $view = 'widgets::partials.myToDos';
 
     private TicketService $ticketsService;
-
     private Setting $settingsService;
 
-    /**
-     * Controller constructor
-     *
-     * @param  \Leantime\Domain\Projects\Services\Projects  $projectService  The projects domain service.
-     * @return void
-     */
+
     public function init(
         TicketService $ticketsService,
         Setting $settingsService,
-        Language $language
     ) {
         $this->ticketsService = $ticketsService;
-        $this->language = $language;
         $this->settingsService = $settingsService;
         session(['lastPage' => BASE_URL.'/dashboard/home']);
     }
@@ -46,7 +39,6 @@ class MyToDos extends HtmxController
      */
     public function get()
     {
-
         $params = $this->incomingRequest->query->all();
 
         // Get hierarchical tasks
@@ -78,7 +70,6 @@ class MyToDos extends HtmxController
         unset($params['act']);
 
         if (is_array($params)) {
-
             $taskList = array_map(function ($item) {
                 $task = json_decode($item, true);
                 if (is_array($task) && isset($task['id'])) {
@@ -87,7 +78,6 @@ class MyToDos extends HtmxController
 
                     return $task;
                 }
-
             }, $params);
 
             $sortingKey = "user.{$userId}.myTodosSorting";
@@ -135,7 +125,6 @@ class MyToDos extends HtmxController
             if (isset($item['id']) && isset($item['parentId']) && $item['parentId'] !== null) {
                 $parentMap[$item['id']]['parentId'] = $item['parentId'];
                 $parentMap[$item['id']]['parentType'] = $item['parentType'];
-
             } elseif (isset($item['id'])) {
                 // If no parent, ensure we clear any existing dependency
                 $parentMap[$item['id']]['parentId'] = 0;
@@ -226,7 +215,6 @@ class MyToDos extends HtmxController
             $result = $this->ticketsService->patch($ticketId, ['dateToFinish' => $date]);
 
             if ($result) {
-
                 $this->tpl->setNotification($this->language->__('notifications.date_updated'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.date_update_error'), 'error');
@@ -239,7 +227,6 @@ class MyToDos extends HtmxController
      */
     public function updateTitle($params)
     {
-
         if (isset($params['id']) && isset($params['headline'])) {
             $ticketId = $params['id'];
             $headline = $params['headline'];
@@ -254,8 +241,28 @@ class MyToDos extends HtmxController
 
             return $this->tpl->displayRaw("{$headline}");
         }
+    }
 
+    /**
+     * Handle subtask creation
+     */
+    public function addSubtask()
+    {
+        $params = $_POST;
+        $getParams = $_GET;
 
+        // Use the existing subtasks controller to handle the creation
+        $ticket = $this->ticketsService->getTicket($getParams['ticketId']);
+
+        if ($this->ticketsService->upsertSubtask($params, $ticket)) {
+            $this->tpl->setNotification($this->language->__('notifications.subtask_saved'), 'success');
+        } else {
+            $this->tpl->setNotification($this->language->__('notifications.subtask_save_error'), 'error');
+        }
+
+        // Refresh the todo widget
+        $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
+        array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
     }
 
     public function addTodo()
@@ -287,7 +294,7 @@ class MyToDos extends HtmxController
                     $this->tpl->setNotification($this->language->__('notifications.ticket_saved'), 'success');
                 }
 
-                $this->setHTMXEvent('HTMX.ShowNotification');
+                $this->tpl->setHTMXEvent('HTMX.ShowNotification');
             }
         }
 

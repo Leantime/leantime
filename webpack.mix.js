@@ -53,7 +53,8 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
     .js('./public/assets/js/app/htmx-extensions.js', `public/dist/js/compiled-htmx-extensions.${version}.min.js`)
-    .combine([
+        .js("./node_modules/@lottiefiles/lottie-player/dist/lottie-player.js", `public/dist/js/compiled-lottieplayer.${version}.min.js`)
+        .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/editors.js",
         "./public/assets/js/app/core/snippets.js",
@@ -78,6 +79,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/bootstrap-fileupload.min.js",
         "./node_modules/jquery-is-in-viewport/dist/isInViewport.jquery.js",
         "./public/assets/js/app/core/nestedSortable.js",
+
     ], `public/dist/js/compiled-framework-plugins.${version}.min.js`)
     .combine([
         "./node_modules/luxon/build/global/luxon.js",
