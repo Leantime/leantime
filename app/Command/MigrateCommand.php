@@ -28,8 +28,7 @@ class MigrateCommand extends Command
 
         $this->setAliases(['db:install', 'db:update']);
 
-        $this->addOption('silent', null, InputOption::VALUE_OPTIONAL, 'Silently Handle Migrations. DOES NOT CREATE ADMIN ACCOUNT IF NEEDED', 'false')
-            ->addOption('email', null, InputOption::VALUE_OPTIONAL, "User's Email", null)
+        $this->addOption('email', null, InputOption::VALUE_OPTIONAL, "User's Email", null)
             ->addOption('password', null, InputOption::VALUE_OPTIONAL, "User's Password", null)
             ->addOption('company-name', null, InputOption::VALUE_OPTIONAL, 'Company Name', null)
             ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", null)
