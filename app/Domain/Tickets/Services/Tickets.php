@@ -2356,10 +2356,10 @@ namespace Leantime\Domain\Tickets\Services {
 
                             $milestoneId = $ticket['milestoneid'];
 
-                            if(!isset($milestoneCache[$milestoneId])) {
-                                $milestoneCache[$milestoneId] = (array)$this->getTicket($milestoneId);
+                            if (! isset($milestoneCache[$milestoneId])) {
+                                $milestoneCache[$milestoneId] = (array) $this->getTicket($milestoneId);
                             }
-                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId] ;
+                            $ticketGroup['tickets'][] = $milestoneCache[$milestoneId];
                             $milestoneIds[$ticketGroup['groupValue']][] = $milestoneId;
                         }
                     }
@@ -2367,30 +2367,29 @@ namespace Leantime\Domain\Tickets\Services {
             }
 
             // Fetch the milestone data for all collected milestone IDs
-//            if (! empty($milestoneIds)) {
-//                foreach ($milestoneIds as $milestoneId) {
-//                    $milestone = $this->getTicket($milestoneId);
-//                    if ($milestone) {
-//
-//                        // Add milestone to the appropriate group
-//                        foreach ($tickets as $groupKey => &$ticketGroup) {
-//                            // Add the milestone to each group that contains tasks belonging to this milestone
-//                            foreach ($ticketGroup['tickets'] as $key => $ticket) {
-//                                if (! empty($ticket['milestoneid']) && $ticket['milestoneid'] == $milestoneId) {
-//                                    // Create milestone entry if it doesn't exist in this group yet
-//                                    $milestoneEntry = (array) $milestone;
-//                                    $milestoneEntry['percentDone'] = $progress;
-//
-//                                    // Add to the beginning of the group
-//                                    array_unshift($ticketGroup['tickets'], $milestoneEntry);
-//                                    break; // Only add once per group
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-
+            //            if (! empty($milestoneIds)) {
+            //                foreach ($milestoneIds as $milestoneId) {
+            //                    $milestone = $this->getTicket($milestoneId);
+            //                    if ($milestone) {
+            //
+            //                        // Add milestone to the appropriate group
+            //                        foreach ($tickets as $groupKey => &$ticketGroup) {
+            //                            // Add the milestone to each group that contains tasks belonging to this milestone
+            //                            foreach ($ticketGroup['tickets'] as $key => $ticket) {
+            //                                if (! empty($ticket['milestoneid']) && $ticket['milestoneid'] == $milestoneId) {
+            //                                    // Create milestone entry if it doesn't exist in this group yet
+            //                                    $milestoneEntry = (array) $milestone;
+            //                                    $milestoneEntry['percentDone'] = $progress;
+            //
+            //                                    // Add to the beginning of the group
+            //                                    array_unshift($ticketGroup['tickets'], $milestoneEntry);
+            //                                    break; // Only add once per group
+            //                                }
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
 
             // Process tickets to build hierarchical structure
             foreach ($tickets as $groupKey => &$ticketGroup) {
@@ -2398,8 +2397,6 @@ namespace Leantime\Domain\Tickets\Services {
                     $ticketGroup['tickets'] = $this->buildTicketHierarchy($ticketGroup['tickets'], $sortingArray);
                 }
             }
-
-
 
             $onTheClock = $this->timesheetService->isClocked(session('userdata.id'));
             $effortLabels = $this->getEffortLabels();

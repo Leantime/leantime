@@ -3,12 +3,10 @@
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
 use Leantime\Core\Controller\HtmxController;
-use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Tickets\Hxcontrollers\Subtasks as SubtasksController;
 
 /**
  * Class MyToDos
@@ -20,8 +18,8 @@ class MyToDos extends HtmxController
     protected static string $view = 'widgets::partials.myToDos';
 
     private TicketService $ticketsService;
-    private Setting $settingsService;
 
+    private Setting $settingsService;
 
     public function init(
         TicketService $ticketsService,
