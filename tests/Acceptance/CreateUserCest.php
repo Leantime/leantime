@@ -48,6 +48,7 @@ class CreateUserCest
         // Set CSRF token before making the request
         $I->setCSRFToken();
         $I->amOnPage('/users/editUser/1/');
+        $I->waitForElement('.pagetitle', 120);
         $I->see('Edit User');
         $I->fillField(['name' => 'jobTitle'], 'Testing');
         $I->clickWithRetry('#save');
