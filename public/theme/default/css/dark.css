@@ -173,11 +173,11 @@
 
 }
 
-.rightpanel:before {
+.rightpanel::before {
     opacity:0.9;
 }
 
-.overlay:after {
+.overlay::after {
     content:"";
     position: fixed;
     top: 0px;

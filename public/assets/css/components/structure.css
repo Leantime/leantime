@@ -369,6 +369,7 @@ body {
     background-repeat:no-repeat;
     background-position:center;
     background-attachment: fixed;
+    pointer-events: none !important;
 }
 
 .rightpanel.personal:before {
@@ -381,6 +382,21 @@ body {
 
 .rightpanel.company:before {
 
+}
+
+.rightpanel {
+    padding-top:50px;
+}
+
+.rightpanel::after {
+    clear: both;
+    content: '';
+    display: block;
+    pointer-events: none !important;
+}
+
+.overlay::after {
+    pointer-events: none !important;
 }
 
 
@@ -429,15 +445,7 @@ body {
     text-shadow: 0px 1px 3px var(--primary-font-color);
 }
 
-.rightpanel {
-    padding-top:50px;
-}
 
-.rightpanel:after {
-    clear: both;
-    content: '';
-    display: block;
-}
 
 .pageheader {
     padding: 0px 15px;
