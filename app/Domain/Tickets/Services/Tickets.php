@@ -2347,6 +2347,7 @@ namespace Leantime\Domain\Tickets\Services {
                 $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
             }
 
+            $sortingArray = false;
             if ($userSorting) {
                 $sortingArray = json_decode($userSorting, true);
             }
