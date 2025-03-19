@@ -1,5 +1,21 @@
 # Version: 3.4.6
 
+* [1e3d368](https://github.com/Leantime/leantime/commit/1e3d368a4f77f4626114b5520f016fc2c946b26a): task: update code style
+* [a96da72](https://github.com/Leantime/leantime/commit/a96da7242b976da9e3104bb746c659f7010e2b5a): fix: allow adding tasks on empty task list
+* [58bcdf0](https://github.com/Leantime/leantime/commit/58bcdf09f0f738caf6c32e7ae855dc7aa06fa6da): fix: set various default milestone card properties
+* [2e1eaa3](https://github.com/Leantime/leantime/commit/2e1eaa387c30cfb011a007dde142ffac0d55e458): fix: Allow adding tasks when no tasks assigned
+* [3f4f03a](https://github.com/Leantime/leantime/commit/3f4f03aac946a34965fb8ca36275db7563471ce6): fix: Ensure due date label for groups come in as string
+* [774be6a](https://github.com/Leantime/leantime/commit/774be6a2644ea6c33307e73b0dec807e0c9d2f7f): fix: headmenu notification should not trigger other htmx-indicators
+* [5b8117b](https://github.com/Leantime/leantime/commit/5b8117b57b6d839c457c7204618ef29d909566e7): Fixed helm chart services and deployment
+
+Changed service target port and container port to 8080 to match leantime
+image config.
+Made the storageClass optionnal, Empty will use system default
+Added a configuration for the LEAN_SESSION_SECURE with true as default
+
+
+# Version: 3.4.6
+
 * [e895f58](https://github.com/Leantime/leantime/commit/e895f58975dcc83ea7a65778111f7a4f641d2716): task: remove console logs
 * [9aff76d](https://github.com/Leantime/leantime/commit/9aff76d4705474ade262edee444cd9b7cc119fb8): fix: set var
 * [acbff01](https://github.com/Leantime/leantime/commit/acbff01d9dfb7c0dbc0c932c86f3df8d719a59d2): task: bump version
