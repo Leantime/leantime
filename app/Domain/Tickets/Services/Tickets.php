@@ -752,7 +752,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['overdue'] = [
                                     'labelName' => 'subtitles.overdue',
                                     'tickets' => [$row],
-                                    'groupValue' => $dbDueDate,
+                                    'groupValue' => $dbDueDate->formatDateTimeForDb(),
                                     'order' => 1,
                                 ];
                             }
@@ -2361,7 +2361,9 @@ namespace Leantime\Domain\Tickets\Services {
             foreach ($tickets as $groupKey => &$ticketGroup) {
                 if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
                     foreach ($ticketGroup['tickets'] as $ticket) {
-                        if (! empty($ticket['milestoneid']) && ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
+                        if (! empty($ticket['milestoneid']) &&
+                            is_string($ticketGroup['groupValue']) &&
+                            ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
 
                             $milestoneId = $ticket['milestoneid'];
 
