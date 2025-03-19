@@ -1,3 +1,10 @@
+@props([
+    'milestone' => null,
+    'noText' => false,
+    'percentDone' => 0,
+    'progressColor' => 'default'
+ ])
+
 <div class="ticketBox fixed">
     <div class="row">
         <div class="col-md-8" style="margin-bottom:5px;">
