@@ -38,7 +38,7 @@
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/notifications/news/get"
             hx-target="#newsDropdown"
-            hx-indicator=".htmx-indicator"
+            hx-indicator=".htmx-news-indicator"
             hx-trigger="click"
             preload="mouseover"
             data-toggle='dropdown'
@@ -50,7 +50,7 @@
         </a>
 
         <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='newsDropdown'>
-            <div class="htmx-indicator">
+            <div class="htmx-indicator htmx-news-indicator">
                 <x-global::loadingText type="text" count="3" includeHeadline="true" />
             </div>
         </div>
