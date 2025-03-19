@@ -27,6 +27,17 @@ class Session extends ServiceProvider
 
             } else {
 
+                // Ensure session base path exists:
+                if (! is_dir(storage_path('framework/sessions')) && ! mkdir(
+                    $concurrentDirectory = storage_path('framework/sessions'),
+                    0755,
+                    true
+                ) && ! is_dir(
+                    $concurrentDirectory
+                )) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+                }
+
                 $sessionDir = storage_path('framework/sessions/'.get_domain_key());
 
                 // domain key was created as file. Let's remove that
