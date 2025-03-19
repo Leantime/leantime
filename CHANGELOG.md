@@ -1,5 +1,10 @@
 # Version: 3.4.7
 
+* [1086132](https://github.com/Leantime/leantime/commit/10861320592d89967e0541de47181768c402dcb1): Update README.md
+
+
+# Version: 3.4.7
+
 * [cbd3b82](https://github.com/Leantime/leantime/commit/cbd3b827f74bf42fdffbad16a3358ac1ea0b5784): task: version bump
 * [1e3d368](https://github.com/Leantime/leantime/commit/1e3d368a4f77f4626114b5520f016fc2c946b26a): task: update code style
 * [a96da72](https://github.com/Leantime/leantime/commit/a96da7242b976da9e3104bb746c659f7010e2b5a): fix: allow adding tasks on empty task list
