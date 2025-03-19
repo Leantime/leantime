@@ -275,7 +275,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?= $row['id']?>">
                                         <li class="nav-header border"><?= $tpl->__('dropdown.choose_user')?></li>
                                         <li class='dropdown-item'>
-                                            <a href='javascript:void(0);' data-label='<?php echo $tpl->__('label.not_assigned_to_user'); ?>' data-value='<?=$row['id'].'_0_0' ?>' id='userStatusChange<?=$row['id']?>0' ><?php echo $tpl->__('label.not_assigned_to_user'); ?></a>
+                                            <a href='javascript:void(0);' data-label='<?php echo $tpl->__('label.not_assigned_to_user'); ?>' data-value='<?= $row['id'].'_0_0' ?>' id='userStatusChange<?= $row['id']?>0' ><?php echo $tpl->__('label.not_assigned_to_user'); ?></a>
                                         </li>
                                         <?php foreach ($tpl->get('users') as $user) {
                                             echo "<li class='dropdown-item'>";
