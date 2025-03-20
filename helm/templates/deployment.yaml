@@ -41,6 +41,8 @@ spec:
           env:
           - name: LEAN_DB_HOST
             value: {{ .Release.Name }}-mariadb
+          - name: LEAN_SESSION_SECURE
+            value: "{{ .Values.app.leanSessionSecure }}"
           - name: LEAN_DB_USER
             value: {{ .Values.mariadb.auth.username }}
           - name: LEAN_DB_PASSWORD
@@ -117,7 +119,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:

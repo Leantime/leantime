@@ -151,7 +151,54 @@
                         {!! file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg") !!}
                     </div>
                     <br/>
-                    <h4>  {{ __("text.no_tasks_assigned") }}</h4>
+                    <h4>{{ __("text.no_tasks_assigned") }}</h4>
+                    <a href="javascript:void(0);" class="add-task-button btn btn-link" style="margin-left:0px;" data-group="emptyGroup"><i class="fa-solid fa-circle-plus"></i> {{ __('links.add_task') }}</a>
+
+                    <div class="quickAddForm" id="quickAddForm-emptyGroup"
+                         style="display:none; margin-bottom:15px; padding-bottom:5px; padding-left:5px;">
+                        <form method="post"
+                              hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
+                              hx-target="#yourToDoContainer"
+                              hx-swap="outerHTML"
+                              hx-indicator=".htmx-indicator">
+                            <div class="tw-flex tw-flex-row tw-gap-2">
+                                <div class="tw-flex-grow">
+                                    <input type="text" name="headline" class="main-title-input"
+                                           style="font-size:var(--base-font-size)"
+                                           placeholder="{{ __('input.placeholders.what_are_you_working_on') }}"/>
+                                    <input type="hidden" name="quickadd" value="true"/>
+                                </div>
+                                <div>
+                                    <select name="projectId">
+                                        @foreach($allAssignedprojects as $project)
+                                            <option value="{{ $project['id']  }}"
+
+                                                {{ (session('currentProject') == $project['id'] ) ? 'selected' : '' }}
+                                            >{{ $project["name"]  }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <input type="hidden" name="milestone" value=""/>
+                                    <input type="hidden" name="status" value="3"/>
+                                    <input type="hidden" name="priority"
+                                           value=""/>
+                                    <input type="hidden" name="dateToFinish"
+                                           value="{{ date('Y-m-d', strtotime('next friday'))}}"/>
+                                    <textarea name="description" class="description-input" style="display:none;"
+                                              placeholder="{{ __('input.placeholders.description') }}"></textarea>
+                                </div>
+                                <div>
+                                    <input type="submit" value="{{ __('buttons.save') }}" name="create"
+                                           class="btn btn-primary"/>
+                                    <a href="javascript:void(0);" class="btn cancel-add-task"
+                                       data-group="emptyGroup">{{ __('buttons.cancel') }}</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
                 </div>
 
             @endif

@@ -26,12 +26,15 @@ persistence:
   # -- Sets the size of the PVs for Leantime's public and private userfiles
   size: 5Gi
   # -- Sets the storage class for Leantime's volumes
-  storageClass: "standard"
+  # -- empty will use system default
+  storageClass: ""
 
 # Application-specific environment variables
 app:
   # -- Sets the name for the instance
   sitename: "Leantime"
+  # -- Sets the cookie flag to only allow HTTPS transfer.
+  leanSessionSecure: "true"
   # -- Sets application language
   language: "en-US"
   # -- Sets the default Timezone

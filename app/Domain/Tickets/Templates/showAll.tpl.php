@@ -274,7 +274,9 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?= $row['id']?>">
                                         <li class="nav-header border"><?= $tpl->__('dropdown.choose_user')?></li>
-
+                                        <li class='dropdown-item'>
+                                            <a href='javascript:void(0);' data-label='<?php echo $tpl->__('label.not_assigned_to_user'); ?>' data-value='<?= $row['id'].'_0_0' ?>' id='userStatusChange<?= $row['id']?>0' ><?php echo $tpl->__('label.not_assigned_to_user'); ?></a>
+                                        </li>
                                         <?php foreach ($tpl->get('users') as $user) {
                                             echo "<li class='dropdown-item'>";
                                             echo "<a href='javascript:void(0);' data-label='".sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname']))."' data-value='".$row['id'].'_'.$user['id'].'_'.$user['profileId']."' id='userStatusChange".$row['id'].$user['id']."' ><img src='".BASE_URL.'/api/users?profileImage='.$user['id']."' width='25' style='vertical-align: middle; margin-right:5px;'/>".sprintf($tpl->__('text.full_name'), $tpl->escape($user['firstname']), $tpl->escape($user['lastname'])).'</a>';

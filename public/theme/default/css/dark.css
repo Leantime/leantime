@@ -49,7 +49,7 @@
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
-    --glass-background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%,  rgba(0,0,0,0.8) 50%,  rgba(0,0,0,0.7) 70%,  rgba(0,0,0,0.6) 100%);
+    --glass-background: rgba(0,0,0,0.8);
     --glass-border: 1px solid rgba(0,0,0,1);
 
     --main-action-bg: var(--accent1);
@@ -173,11 +173,11 @@
 
 }
 
-.rightpanel:before {
+.rightpanel::before {
     opacity:0.9;
 }
 
-.overlay:after {
+.overlay::after {
     content:"";
     position: fixed;
     top: 0px;

@@ -166,6 +166,11 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
+
+                Cache::forget('isInstalled');
+
+                Log::error($e);
+
                 return false;
             }
         }
@@ -183,6 +188,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 return true;
             } catch (PDOException $e) {
+
                 Log::error($e);
 
                 return false;
@@ -924,6 +930,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -952,6 +960,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1002,6 +1012,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1027,6 +1039,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1052,6 +1066,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1080,6 +1096,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1104,6 +1122,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1128,6 +1148,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1152,6 +1174,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1178,6 +1202,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1214,6 +1240,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1256,6 +1284,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1284,11 +1314,11 @@ namespace Leantime\Domain\Install\Repositories {
                 "UPDATE zp_projects SET menuType = '".MenuRepository::DEFAULT_MENU."'",
                 'ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null',
                 'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                    "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+                "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
                 'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                    "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+                "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
                 'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                    "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+                "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
             ];
 
@@ -1297,6 +1327,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1358,6 +1390,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1390,6 +1424,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1420,6 +1456,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1459,6 +1497,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1498,6 +1538,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1533,6 +1575,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1566,6 +1610,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1619,6 +1665,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1645,6 +1693,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1676,6 +1726,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1703,6 +1755,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1728,6 +1782,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, "$statement Failed: {$e->getMessage()}");
                 }
             }
@@ -1756,6 +1812,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1789,6 +1847,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1829,6 +1889,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
@@ -1855,8 +1917,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    // Just swallow your pride
-                    // One day we'll get ALTER IF EXISTS
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                 }
             }
 
@@ -1882,8 +1944,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    // Just swallow your pride
-                    // One day we'll get ALTER IF EXISTS
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                 }
             }
 
@@ -1946,8 +2008,8 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                    // Just swallow your pride
-                    // One day we'll get ALTER IF EXISTS
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
                 }
             }
 

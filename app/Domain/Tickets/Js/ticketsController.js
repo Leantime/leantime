@@ -407,8 +407,6 @@ leantime.ticketsController = (function () {
 
                         var dateTo = jQuery(".toDateTicket-" + id).val();
 
-                        console.log(date);
-                        console.log(dateTo);
                         leantime.ticketsRepository.updateEditFromDates(id, date, function() {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
@@ -450,8 +448,6 @@ leantime.ticketsController = (function () {
 
                         var dateFrom = jQuery(".fromDateTicket-" + id).val();
 
-                        console.log(dateFrom);
-                        console.log(date);
                         leantime.ticketsRepository.updateEditToDates(id, date, function() {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });

@@ -170,8 +170,6 @@
         str=str.replace("12","mm");
         str=str.replace("2010","yyyy");
 
-        console.log(str);
-
     })
 
     function showTimeForm($id) {
@@ -186,10 +184,8 @@
 
         jQuery('.dayOfWeekInputs').find('.applyBox').html("");
         jQuery('.dayOfWeekInputs.tw-flex').each(function(index){
-            console.log(index);
 
             if(index == 0) {
-                console.log( jQuery(this).find('.applyBox'));
                 jQuery(this).find('.applyBox').html("<a href='javascript:void(0);'>Apply to all")
             }else{
                 jQuery(this).find('.applyBox').html();

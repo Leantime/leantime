@@ -249,6 +249,12 @@ For timesheets: <br />
 * Delete/Stop existing container
 * Pull the latest docker image and rebuild using your compose file 
 
+
+### Common Issues
+
+Please refer to our [documentation](https://docs.leantime.io/installation/common-issues) about common issues found when installing or updating Leantime 
+
+
 ## 🛟 Let us install it for you. ##
 
 Hassle free installation service in your environments. We can do full installations, updates, configurations or plugin installations. See our [Marketplace](https://marketplace.leantime.io/product-category/services/technical/) for details.<br/><br/>
@@ -283,7 +289,7 @@ If you have an idea about new features please reach out to us on Discord. This i
 
 ### 🌏 Translations
 
-We use [Crowdin](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
+Language files and translations are stored in `app/Language/* `. Once updates please create a Pull Request. 
 
 ### 👥 Community Support
 
