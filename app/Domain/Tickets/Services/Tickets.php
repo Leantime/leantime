@@ -2192,7 +2192,7 @@ namespace Leantime\Domain\Tickets\Services {
                 $searchUrlString = '?' . http_build_query($this->getSetFilters($searchCriteria, true));
             }
 
-            $allTickets = self::dispatchFilter('filterTickets', $allTickets);
+            //$allTickets = self::dispatchFilter('filterTickets', $allTickets);
 
             return [
                 'currentSprint' => session('currentSprint'),
