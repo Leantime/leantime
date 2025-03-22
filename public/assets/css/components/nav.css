@@ -1195,6 +1195,7 @@ a.barmenu:hover {
 }
 .mainwrapper.menuopen .leftpanel {
     width:215px;
+    margin-left:10px;
 }
 
 .mainwrapper.menuopen .leftpanel .submenu.closed {

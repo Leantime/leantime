@@ -19,6 +19,7 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
          **/
         $pluginsService = app()->make(Services\Plugins::class);
 
+
         collect($pluginsService->getAllPlugins(true))
             ->filter(fn ($plugin) => $plugin->type === 'marketplace')
             ->filter(fn ($plugin) => $plugin->enabled)
@@ -27,11 +28,11 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
                 $instanceId ??= app()->make(SettingsService::class)->getCompanyId();
                 $numberOfUsers ??= app()->make(UsersService::class)->getNumberOfUsers(activeOnly: true, includeApi: false);
 
-                if ($pluginsService->canActivate($plugin)) {
+                if ($pluginsService->validLicense($plugin) === true) {
                     return;
                 }
 
-                $pluginsService->disablePlugin($plugin->id);
+                $pluginsService->disablePluginNotifyOwner($plugin->id);
             });
-    })->daily();
+    })->name('plugins:checkLicense')->everyMinute();
 });

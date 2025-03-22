@@ -34,4 +34,6 @@ class Marketplaceplugins extends HtmxController
     }
 
     public function search(): void {}
+
+
 }

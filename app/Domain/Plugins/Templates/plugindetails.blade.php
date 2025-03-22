@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-    <div class="tw-max-h-[80vh] tw-flex tw-flex-col tw-gap-base">
+    <div class="tw-max-h-[90vh] tw-w-[40vw] tw-flex tw-flex-col tw-gap-base">
         <div class="tw-flex tw-gap-base tw-items-center">
             <img src="{{ $plugin->icon }}" width="175" height="175" class="tw-rounded">
             <div class="tw-flex tw-flex-col tw-gap-base">
@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <x-global::tabs class="tw-overflow-y-scroll tw-max-h-[500px] tw-border-b !tw-border-b-gray-500">
+        <x-global::tabs class="tw-overflow-y-scroll tw-max-h-[600px] tw-border-b !tw-border-b-gray-500">
             <x-slot:headings class="tw-sticky tw-top-0 !tw-bg-[--secondary-background]">
                 @if (! empty($plugin->description))
                     <x-global::tabs.heading name="overview">Overview</x-global::tabs.heading>
@@ -53,7 +53,7 @@
             <x-slot:contents>
                 @if (! empty($plugin->description))
                     <x-global::tabs.content name="overview">
-                        <div class="tw-max-w-prose mce-content-body">{!! $plugin->description !!}</div>
+                        <div class="tw-pr-xs mce-content-body">{!! $plugin->description !!}</div>
                     </x-global::tabs.content>
                 @endif
 

@@ -5,8 +5,8 @@
 <div class="col-md-4">
     <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden; margin-bottom: 25px;">
         <div class="row">
-            <div class="col-md-12 tw-p-none tw-overflow-hidden tw-mb-m tw-max-h-[150px]">
-                <img src="{{ $plugin->getPluginImageData() }}" width="100" height="100" class="tw-rounded tw-mx-base tw-mt-base tw-float-left"/>
+            <div class="col-md-12 tw-overflow-hidden tw-mb-m">
+                <img src="{{ $plugin->getPluginImageData() }}" width="75" height="75" class="tw-rounded tw-mt-base"/>
 
                 @if($plugin instanceof \Leantime\Domain\Plugins\Models\MarketplacePlugin)
                     <div
@@ -17,9 +17,10 @@
                         Certified
                     </div>
                 @endif
-                <div class="" style="margin-top:40px;">
+                <div class="clearall"></div>
+                <div style="margin-top:10px;">
                     @if (! empty($plugin->name))
-                        <h5 class="subtitle">{!! $plugin->name !!} {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br /></h5>
+                        <strong style="font-size:var(--font-size-l);">{!! $plugin->name !!}</strong> {{ $plugin->version ? "(v".$plugin->version.")" : "" }}<br />
                         <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
                     @endif
                 </div>

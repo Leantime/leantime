@@ -28,7 +28,7 @@ namespace Leantime\Domain\Users\Repositories {
 
         public int $id;
 
-        public array $adminRoles = [2, 4];
+        public array $adminRoles = [40, 50];
 
         public array $status = ['active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited'];
 
