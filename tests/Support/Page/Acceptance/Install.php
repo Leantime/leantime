@@ -43,18 +43,22 @@ class Install
         $this->I->fillField(['name' => 'password'], $password);
 
         $this->I->click('Next');
+        $this->I->waitForElement('h2');
 
         $this->I->see('Determining A Visual Experience');
 
         $this->I->click('Next');
+        $this->I->waitForElement('h2');
 
         $this->I->see('Creating A Comfortable View');
 
         $this->I->click('Next');
+        $this->I->waitForElement('h2');
 
         $this->I->see('Shaping A Daily Flow');
 
         $this->I->click('Next');
+        $this->I->waitForElement('h2');
 
         $this->I->see('Your Leantime journey is about to begin');
 
