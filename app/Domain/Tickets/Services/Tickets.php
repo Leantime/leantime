@@ -1371,7 +1371,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'dependingTicketId' => '',
                 'milestoneid' => $params['dependentMilestone'] ?? '',
                 'acceptanceCriteria' => '',
-                'tags' => $params['tags'],
+                'tags' => $params['tags'] ?? '',
                 'editFrom' => $params['editFrom'] ?? '',
                 'editTo' => $params['editTo'] ?? '',
             ];

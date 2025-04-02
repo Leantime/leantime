@@ -171,7 +171,7 @@ class Widgets
 
         $activeWidgetKey = sprintf(self::ACTIVE_WIDGETS_KEY, $userId);
 
-        if (Cache::has($activeWidgetKey)) {
+        if (Cache::has($activeWidgetKey) && is_array(Cache::get($activeWidgetKey)) && count(Cache::get($activeWidgetKey)) > 0) {
             return Cache::get($activeWidgetKey);
         }
 

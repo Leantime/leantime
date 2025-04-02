@@ -48,7 +48,6 @@ namespace Leantime\Domain\Install\Controllers {
             if (isset($_POST['install'])) {
                 $values = [
                     'email' => ($params['email']),
-                    'password' => $params['password'],
                     'firstname' => ($params['firstname']),
                     'lastname' => ($params['lastname']),
                     'company' => ($params['company']),
@@ -58,11 +57,6 @@ namespace Leantime\Domain\Install\Controllers {
 
                 if (empty($params['email'])) {
                     $this->tpl->setNotification('notification.enter_email', 'error');
-                    $notificationSet = true;
-                }
-
-                if (empty($params['password']) && ! $notificationSet) {
-                    $this->tpl->setNotification('notification.enter_password', 'error');
                     $notificationSet = true;
                 }
 
@@ -84,7 +78,13 @@ namespace Leantime\Domain\Install\Controllers {
                 if (! $notificationSet) {
                     // No notifications were set, all fields are valid
                     if ($this->installRepo->setupDB($values)) {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success'), BASE_URL), 'success');
+
+                        $this->tpl->setNotification(sprintf($this->language->__('notifications.installation_success_setup_account'), BASE_URL), 'success');
+
+                        if (session()->has('pwReset')) {
+                            return FrontcontrollerCore::redirect(BASE_URL.'/auth/userInvite/'.session('pwReset'));
+                        }
+
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.error_installing'), 'error');
                     }

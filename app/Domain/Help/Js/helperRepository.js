@@ -4,7 +4,7 @@ leantime.helperRepository = (function () {
 
     //Functions
 
-    var updateUserModalSettings = function (module) {
+    var updateUserModalSettings = function (module, permanent = false) {
 
         jQuery.ajax(
             {
@@ -12,7 +12,8 @@ leantime.helperRepository = (function () {
                 url: leantime.appUrl + '/api/users',
                 data:
                 {
-                    settings : module,
+                    settings: module,
+                    permanent: permanent ? 1 : 0,
                     patchModalSettings: 1
                 }
             }

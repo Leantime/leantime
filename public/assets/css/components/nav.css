@@ -479,6 +479,11 @@ a.barmenu:hover {
     content: '';
 }
 
+.headmenu .dropdown-menu.pull-right::after {
+    left: auto;
+    right:15px;
+}
+
 .headmenu > li {
     display: inline-block;
     float: left;
@@ -857,7 +862,6 @@ a.barmenu:hover {
     border-radius: 50%;
     border: 1px solid white;
     margin-top:10px;
-    margin-right: 5px;
 }
 
 .header .userloggedinfo img.logo {
@@ -906,7 +910,7 @@ a.barmenu:hover {
 
 .userloggedinfo .dropdown-menu
 {
-    right:14px;
+    right:7px;
     left:auto;
 }
 
@@ -1418,3 +1422,21 @@ a.barmenu:hover {
     font-size: var(--font-size-xs);
 }
 
+.onboarding-checklist {
+    position: fixed;
+    bottom:0px;
+    left:0px;
+    padding:0px 0px 20px 20px;
+    width:195px;
+}
+
+.onboarding-checklist h3 {
+    font-size: var(--font-size-l);
+    font-weight:normal;
+    margin-bottom:10px;
+}
+
+.onboarding-checklist ul li {
+    list-style: none;
+    margin-bottom:5px;
+}

@@ -89,14 +89,22 @@ class MigrateCommand extends Command
 
                 if ($installStatus !== true) {
                     $io->text($installStatus);
-
                     return Command::FAILURE;
                 }
+
+                //Latest install via UI sends user to account set up flow.
+                //Turning this off for console installs
+                $usersRepo = app()->make(Users::class);
+                $userId = array_values($usersRepo->getUserByEmail($adminEmail))[0];
+                $usersRepo->editUser($userId, ['password' => $adminPassword, 'status' => 'a']);
+
                 if ($silent) {
                     $usersRepo = app()->make(Users::class);
                     $userId = array_values($usersRepo->getUserByEmail($adminEmail))[0];
                     $usersRepo->deleteUser($userId);
                 }
+
+
                 $io->text('Successfully Installed DB');
             }
             $success = $install->updateDB();

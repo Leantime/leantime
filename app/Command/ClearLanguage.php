@@ -53,7 +53,6 @@ class ClearLanguage extends Command
 
         if ($langList) {
             foreach ($langList as $key => $lang) {
-                Cache::store('installation')->
                 $result = Cache::store('installation')->forget('languages.lang_'.$key);
                 if ($result) {
                     $this->components->info('Cleared: '.$key);

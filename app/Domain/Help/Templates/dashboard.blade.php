@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="row onboarding">
-        <div class="col-md-12">
+        <div class="col-md-12" style="font-size:var(--font-size-l);">
             <br />
             Leantime is built to empower your super powers and help you see your progress towards your goals.<br />
             <br />

@@ -32,7 +32,8 @@ namespace Leantime\Domain\Help\Controllers {
 
             if (isset($_GET['step']) && $_GET['step'] == 'end') {
                 $content = '  <script>
-                    jQuery.nmTop().close();
+                    confetti();
+                    jQuery.nmTop().close(2000);
                 </script>';
 
                 return new \Illuminate\Http\Response($content);

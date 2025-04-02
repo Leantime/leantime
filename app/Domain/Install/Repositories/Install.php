@@ -5,6 +5,7 @@ namespace Leantime\Domain\Install\Repositories {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\Log;
+    use Illuminate\Support\Str;
     use Leantime\Core\Configuration\AppSettings as AppSettingCore;
     use Leantime\Core\Configuration\Environment;
     use Leantime\Core\Events\DispatchesEvents;
@@ -90,6 +91,7 @@ namespace Leantime\Domain\Install\Repositories {
             30002,
             30003,
             30400,
+            30408,
         ];
 
         /**
@@ -214,12 +216,16 @@ namespace Leantime\Domain\Install\Repositories {
                 }
 
                 $stmn = $this->database->prepare($sql);
+                $pwReset = Str::random(32);
+
                 $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
-                $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
                 $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
                 $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
                 $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
                 $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
+                $stmn->bindValue(':pwReset',$pwReset, PDO::PARAM_STR);
+
+                session()->put('pwReset', $pwReset);
 
                 $stmn->execute();
 
@@ -335,30 +341,6 @@ namespace Leantime\Domain\Install\Repositories {
         private function sqlPrep(): string
         {
 
-            $gettingStartedDescription = '<h2>Essentials</h2>
-                             <ul class="tox-checklist" style="list-style-type: none;">
-                             <li>Explore your <a href="dashboard/home" target="_blank" rel="noopener">personal dashboard&nbsp;</a></li>
-                             <li>Create your first To-do under "My Todos"</li>
-                             <li>Drag and Drop your To-Do to the Calendar</li>
-                             </ul>
-                             <p>&nbsp;</p>
-                             <h2>Your first Project</h2>
-                             <ul class="tox-checklist" style="list-style-type: none;">
-                             <li>Go to your "<a href="projects/showMy" target="_blank" rel="noopener">Project Hub</a>" and open a project</li>
-                             <li>Check the Project Checklist and learn what is needed to run a project</li>
-                             <li>Head to "<a href="strategy/showBoards" target="_blank" rel="noopener">Blueprints</a>" and create a project value canvas</li>
-                             <li>Next create a <a href="goalcanvas/dashboard" target="_blank" rel="noopener">Goal</a> for your project</li>
-                             <li>Now create a&nbsp;<a href="tickets/roadmap" target="_blank" rel="noopener"> milestone </a>&nbsp;representing a large part of your project</li>
-                             <li>Create <a href="tickets/showKanban" target="_blank" rel="noopener">to-dos</a> and assign them to milestones</li>
-                             </ul>
-                             <p>&nbsp;</p>
-                             <h2>Working with your Team</h2>
-                             <ul class="tox-checklist" style="list-style-type: none;">
-                             <li>Go to your <a href="dashboard/show" target="_blank" rel="noopener">project dashboard</a> and invite a team member</li>
-                             <li>Open a To-Do, create a new comment and mention a team member using the "@" sign</li>
-                             </ul>
-                             ';
-
             $sql = "
                 CREATE TABLE `zp_calendar` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -383,8 +365,6 @@ namespace Leantime\Domain\Install\Repositories {
                     PRIMARY KEY (`id`),
                     KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                INSERT INTO `zp_canvas`(`id`,`title`,`author`,`created`, `projectId`, `type`) VALUES (1,'Lean Canvas',1,'2015-11-13 13:03:46', 3, 'leancanvas');
 
                 CREATE TABLE `zp_canvas_items` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -522,8 +502,6 @@ namespace Leantime\Domain\Install\Repositories {
                     PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                INSERT INTO `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) VALUES (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '".MenuRepository::DEFAULT_MENU."',NULL);
-
                 CREATE TABLE `zp_punch_clock` (
                     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                     `userId` int(11) NOT NULL,
@@ -551,8 +529,6 @@ namespace Leantime\Domain\Install\Repositories {
                     KEY zp_relationuserproject_projectId_index (`projectId`),
                     KEY zp_relationuserproject_userId_index  (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                INSERT INTO `zp_relationuserproject`(`id`,`userId`,`projectId`,`wage`) VALUES (9,20,3,NULL),(8,18,3,NULL),(7,19,3,NULL),(6,1,3,NULL);
 
                 CREATE TABLE `zp_tickethistory` (
                     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -606,9 +582,6 @@ namespace Leantime\Domain\Install\Repositories {
                     KEY `StatusSprint` (`status`,`sprint`),
                     KEY `Sorting` (`sortindex`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-                INSERT INTO `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) VALUES
-                (9,3,'Getting Started with Leantime', '".$gettingStartedDescription."','','".date('Y-m-d')."','".date('Y-m-d')."',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
                     `id` int(255) NOT NULL AUTO_INCREMENT,
@@ -667,8 +640,8 @@ namespace Leantime\Domain\Install\Repositories {
                     UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                INSERT INTO `zp_user`(`id`,`username`,`password`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`)
-                VALUES (1,:email,:password,:firstname,:lastname,'','',NULL,0,'a',NULL,'50','','',0,0,NULL,0,1, NOW());
+                INSERT INTO `zp_user`(`id`,`username`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`, `pwReset`)
+                VALUES (1,:email,:firstname,:lastname,'','',NULL,0,'i',NULL,'50','','',0,0,NULL,0,1, NOW(), :pwReset);
 
                 CREATE TABLE `zp_sprints` (
                     `id` INT NOT NULL AUTO_INCREMENT,
@@ -2001,6 +1974,33 @@ namespace Leantime\Domain\Install\Repositories {
                     PRIMARY KEY (`id`),
                     INDEX `entityId` (`entityId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    Log::error($statement.' Failed:'.$e->getMessage());
+                    Log::error($e);
+                }
+            }
+
+            return true;
+        }
+
+        public function update_sql_30408(): bool|array
+        {
+
+            $errors = [];
+
+            $sql = [
+                'INSERT INTO zp_settings (`key`, `value`)
+                    SELECT
+                        CONCAT("user.", `id`, ".firstLoginComplete") AS `key`,
+                        1 AS `value`
+                    FROM zp_user;',
+
             ];
 
             foreach ($sql as $statement) {

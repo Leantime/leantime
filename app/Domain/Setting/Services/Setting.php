@@ -120,10 +120,13 @@ namespace Leantime\Domain\Setting\Services {
         {
 
             $completedOnboarding = $this->settingsRepo->getSetting('companysettings.completedOnboarding');
+            $isFirstLogin = $this->settingsRepo->getSetting('user.'.session('userdata.id').'.firstLoginCompleted');
 
-            $handler = self::dispatchFilter('completeOnboardingHandler', $completedOnboarding);
+            if ($isFirstLogin && $completedOnboarding) {
+                $isFirstLogin = false;
+            }
 
-            return $handler;
+            return self::dispatchFilter('completeOnboardingHandler', $isFirstLogin);
 
         }
     }

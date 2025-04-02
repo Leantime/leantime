@@ -893,6 +893,7 @@ class Projects
      */
     public function addProject(array $values): int|false
     {
+
         $values = [
             'name' => $values['name'],
             'details' => $values['details'] ?? '',

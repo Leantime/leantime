@@ -665,6 +665,67 @@ namespace Leantime\Domain\Users\Repositories {
 
             return $result['profileId'] ?? false;
         }
+
+        /**
+         * Get user settings - retrieves and deserializes user settings
+         *
+         * @param int $userId The user ID to get settings for
+         * @param string|null $settingPath Optional dot notation path to retrieve specific setting (e.g. 'onboarding.firstLoginCompleted')
+         * @return mixed The requested settings or specific setting value, empty array if no settings exist
+         */
+        public function getUserSettings(int $userId, ?string $settingPath = null): mixed
+        {
+            $sql = 'SELECT settings FROM `zp_user` WHERE id = :id LIMIT 1';
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $result = $stmn->fetch();
+            $stmn->closeCursor();
+
+            // If no settings exist yet, return empty array
+            if (!$result || empty($result['settings'])) {
+                return [];
+            }
+
+            // Try to unserialize the settings
+            try {
+                $settings = unserialize($result['settings']);
+
+                // If we have a specific path to retrieve
+                if ($settingPath !== null) {
+                    return $this->getNestedSetting($settings, $settingPath);
+                }
+
+                return $settings;
+            } catch (\Exception $e) {
+                // If there's an error unserializing, return empty array
+                return [];
+            }
+        }
+
+        /**
+         * Helper method to get a nested setting using dot notation
+         *
+         * @param array $settings The settings array
+         * @param string $path Dot notation path (e.g. 'onboarding.firstLoginCompleted')
+         * @return mixed The setting value or null if not found
+         */
+        private function getNestedSetting(array $settings, string $path)
+        {
+            $keys = explode('.', $path);
+            $current = $settings;
+
+            foreach ($keys as $key) {
+                if (!is_array($current) || !isset($current[$key])) {
+                    return null;
+                }
+                $current = $current[$key];
+            }
+
+            return $current;
+        }
     }
 
 }
