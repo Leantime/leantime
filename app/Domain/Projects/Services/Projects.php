@@ -996,8 +996,7 @@ class Projects
             }
 
             if (dtHelper()->isValidDateString($ticket->dateToFinish)) {
-                $ticketDateTimeObject = datetime::createFromFormat('Y-m-d H:i:s', $ticket->dateToFinish);
-                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->editFrom);
+                $ticketDateTimeObject = dtHelper()->parseDbDateTime($ticket->dateToFinish);
                 if ($oldestTicket > $ticketDateTimeObject) {
                     $oldestTicket = $ticketDateTimeObject;
                 }
