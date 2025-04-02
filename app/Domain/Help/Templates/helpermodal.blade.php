@@ -11,8 +11,8 @@
 
                 // Show the appropriate helper modal for the current page
                 @if(is_array($currentModal) && isset($currentModal['autoLoad']) && ($currentModal['autoLoad'] === true || $currentModal['autoLoad'] === "true"))
-                    leantime.helperController.showHelperModal('{{ is_array($currentModal) ? $currentModal['template'] : $currentModal }}', 500, 700);
-                @elseif(!is_array($currentModal))
+                    leantime.helperController.showHelperModal('{{ $currentModal['template'] }}', 500, 700);
+                @elseif(is_string($currentModal))
                     leantime.helperController.showHelperModal('{{ $currentModal}}', 500, 700);
                 @endif
             @endif

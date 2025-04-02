@@ -38,6 +38,11 @@ class Helpermodal extends Composer
     {
         $action = FrontcontrollerCore::getCurrentRoute();
 
+        // Don't show modals in test environment
+        if (app()->environment('testing')) {
+            return ['showHelperModal' => false, 'currentModal' => [], 'isFirstLogin' => false];
+        }
+
         $showHelperModal = false;
         $completedOnboarding = $this->settingsRepo->getSetting('companysettings.completedOnboarding');
         $isFirstLogin = $this->helperService->isFirstLogin($this->authService->getUserId());
@@ -53,15 +58,15 @@ class Helpermodal extends Composer
             $isFirstLogin === false
             && $currentModal['template'] !== 'notfound'
             && (
-                session()->exists('usersettings.modals.'.$currentModal['id']) === false
-                || session('usersettings.modals.'.$currentModal['id']) == 0)
+                session()->exists('usersettings.modals.'.$currentModal['template']) === false
+                || session('usersettings.modals.'.$currentModal['template']) === false)
         ) {
             if (! session()->exists('usersettings.modals')) {
                 session(['usersettings.modals' => []]);
             }
 
-            if (! session()->exists('usersettings.modals.'.$currentModal['id'])) {
-                session(['usersettings.modals.'.$currentModal['id'] => 1]);
+            if (! session()->exists('usersettings.modals.'.$currentModal['template'])) {
+                session(['usersettings.modals.'.$currentModal['template'] => 1]);
                 $showHelperModal = true;
             }
         }

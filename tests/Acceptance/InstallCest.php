@@ -15,7 +15,7 @@ class InstallCest
     public function installPageWorks(AcceptanceTester $I): void
     {
         $I->amOnPage('/install');
-        $I->waitForElementVisible('.registrationForm', 120);
+        $I->waitForElementVisible('.registrationForm', 10);
 
         $I->see('Install');
     }
@@ -26,7 +26,7 @@ class InstallCest
     {
         $installPage->install(
             'test@leantime.io',
-            'test',
+            'Test123456!',
             'John',
             'Smith',
             'Smith & Co'

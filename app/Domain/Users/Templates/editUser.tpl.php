@@ -67,7 +67,7 @@ $projects = $tpl->get('relations');
                         </option>
 
                         <option value="0"
-                            <?php if (strtolower($values['status']) === '' || $values['status'] === 0 ||  $values['status'] === "0") {
+                            <?php if (strtolower($values['status']) === '' || $values['status'] === 0 || $values['status'] === '0') {
                                 ?> selected="selected" <?php
                             } ?>>
                             <?= $tpl->__('label.deactivated') ?>

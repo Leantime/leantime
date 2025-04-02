@@ -11,7 +11,7 @@ class TicketsCest
 {
     public function _before(AcceptanceTester $I, Login $loginPage)
     {
-        $loginPage->login('test@leantime.io', 'test');
+        $loginPage->login('test@leantime.io', 'Test123456!');
     }
 
     #[Group('timesheet', 'ticket')]

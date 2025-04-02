@@ -28,7 +28,7 @@ class Login
         if (! Fixtures::exists('installed')) {
             $this->installPage->install(
                 'test@leantime.io',
-                'test',
+                'Test123456!',
                 'John',
                 'Smith',
                 'Smith & Co'
