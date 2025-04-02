@@ -36,7 +36,7 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
     public ?int $reviewCount;
 
-    public string $type = "marketplace";
+    public string $type = 'marketplace';
 
     public array $reviews;
 
@@ -111,7 +111,7 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
     public function getType(): string
     {
-        return $this->type = "marketplace";
+        return $this->type = 'marketplace';
 
     }
 }

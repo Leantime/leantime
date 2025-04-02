@@ -59,7 +59,7 @@ class FirstTaskStep implements OnboardingSteps
     {
 
         if (isset($params['headline'])) {
-            $this->ticketService->quickAddTicket(["headline" => $params['headline']], session('currentProject'));
+            $this->ticketService->quickAddTicket(['headline' => $params['headline']], session('currentProject'));
         }
 
         $this->settingsRepo->saveSetting('user.'.session()?->get('userdata.id', -1).'.firstLoginCompleted', true);

@@ -9,6 +9,7 @@ use Leantime\Domain\Users\Repositories\Users;
 class PatchUserSettings extends Controller
 {
     private Auth $authService;
+
     private Users $userRepository;
 
     public function init(
@@ -25,7 +26,7 @@ class PatchUserSettings extends Controller
     public function patch($params)
     {
         // Check if user is logged in
-        if (!$this->authService->isLoggedIn()) {
+        if (! $this->authService->isLoggedIn()) {
             return $this->tpl->displayJson(['status' => 'error', 'message' => 'Not authorized'], 401);
         }
 
@@ -38,7 +39,7 @@ class PatchUserSettings extends Controller
                 $permanent = isset($params['permanent']) && $params['permanent'] == 1;
 
                 // Store in session
-                if (!session()->exists('usersettings.modals')) {
+                if (! session()->exists('usersettings.modals')) {
                     session(['usersettings.modals' => []]);
                 }
 

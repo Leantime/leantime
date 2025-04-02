@@ -68,7 +68,7 @@ namespace Leantime\Domain\Plugins\Services {
             private AppSettings $appSettings,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
-            //$this->marketplaceUrl = 'https://marketplace.leantime.test';
+            // $this->marketplaceUrl = 'https://marketplace.leantime.test';
         }
 
         /**
@@ -383,8 +383,8 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * Fetches marketplace plugins from a specified URL and organizes them by category.
          *
-         * @param int $page The page number to fetch.
-         * @param string $query Optional search query to filter plugins by name or identifier.
+         * @param  int  $page  The page number to fetch.
+         * @param  string  $query  Optional search query to filter plugins by name or identifier.
          * @return array An associative array containing plugin categories, each with associated plugins.
          *               The categories include metadata such as name, description, and plugins categorized under them.
          */
@@ -452,8 +452,9 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * Retrieves a marketplace plugin's details by its identifier.
          *
-         * @param string $identifier The unique identifier of the marketplace plugin.
+         * @param  string  $identifier  The unique identifier of the marketplace plugin.
          * @return MarketplacePlugin|false Returns a MarketplacePlugin instance if found, or false if the plugin could not be retrieved.
+         *
          * @api
          */
         public function getMarketplacePlugin(string $identifier): MarketplacePlugin|false
@@ -488,10 +489,8 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * Installs a marketplace plugin by downloading, extracting, and registering it in the plugin repository.
          *
-         * @param MarketplacePlugin $plugin The marketplace plugin to be installed, including its identifier and license key.
-         * @param string $version The version of the plugin to be installed.
-         *
-         * @return void
+         * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
+         * @param  string  $version  The version of the plugin to be installed.
          *
          * @throws RequestException If the HTTP request to download the plugin fails or returns an unexpected response type.
          * @throws \Exception If the plugin cannot be downloaded, removed, or added to the system.

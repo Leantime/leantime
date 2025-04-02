@@ -2,19 +2,19 @@
 
 use Leantime\Core\Events\EventDispatcher;
 
-EventDispatcher::addEventListener("leantime.domain.auth.*.userSignUpSuccess", function($params) {
+EventDispatcher::addEventListener('leantime.domain.auth.*.userSignUpSuccess', function ($params) {
 
-    $userId = session("userdata.id");
+    $userId = session('userdata.id');
 
-    //Create Project
+    // Create Project
     $projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
 
     $values = [
-        'name' => "My Project",
+        'name' => 'My Project',
         'details' => 'Welcome to your first project in Leantime!<br />This is your space to organize tasks, track goals, and plan your work. Feel free to modify anything here or create additional projects as you grow. This project is just for you to get started',
         'clientId' => 0,
         'hourBudget' => $values['hourBudget'] ?? 0,
-        'assignedUsers' => ['id' => session("userdata.id"), 'projectRole' => ''],
+        'assignedUsers' => ['id' => session('userdata.id'), 'projectRole' => ''],
         'dollarBudget' => 0,
         'psettings' => 'restricted',
         'type' => 'project',
@@ -24,23 +24,23 @@ EventDispatcher::addEventListener("leantime.domain.auth.*.userSignUpSuccess", fu
 
     $projectId = $projectService->addProject($values);
 
-    //Create Milestone
+    // Create Milestone
     $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
     $values = [
-        'headline' => "🚀 Getting Started",
+        'headline' => '🚀 Getting Started',
         'projectId' => $projectId,
         'editorId' => $userId,
         'userId' => $userId,
         'date' => dtHelper()->userNow()->formatDateTimeForDb(),
         'editFrom' => dtHelper()->userNow()->formatDateTimeForDb(),
         'editTo' => dtHelper()->userNow()->addDays(14)->formatDateTimeForDb(),
-        'tags' => "#124F7D"
+        'tags' => '#124F7D',
     ];
     $milestoneId = $ticketService->quickAddMilestone($values);
 
-    //Create Tasks
+    // Create Tasks
     $values = [
-        'headline' => "",
+        'headline' => '',
         'description' => '',
         'projectId' => $projectId,
         'editorId' => $userId,
@@ -54,9 +54,9 @@ EventDispatcher::addEventListener("leantime.domain.auth.*.userSignUpSuccess", fu
     $values['dateToFinish'] = dtHelper()->userNow()->addDays(1)->formatDateForUser();
     $ticketService->quickAddTicket($values);
 
-    if(session("userdata.role") == "admin"
-        || session("userdata.role") == "owner"
-        || session("userdata.role") == "manager") {
+    if (session('userdata.role') == 'admin'
+        || session('userdata.role') == 'owner'
+        || session('userdata.role') == 'manager') {
 
         $values['headline'] = '👥 Invite your team mates';
         $values['description'] = 'Whether you are working with someone or just need an accountability buddy. Using Leantime as a group helps to stay on track and motivated <a href="'.BASE_URL.'/users/showAll">User Management</a>';
@@ -95,26 +95,26 @@ EventDispatcher::addEventListener("leantime.domain.auth.*.userSignUpSuccess", fu
     $values['status'] = 0;
     $ticketService->quickAddTicket($values);
 
-    //Create Goal
+    // Create Goal
     $goalService = app()->make(\Leantime\Domain\Goalcanvas\Services\Goalcanvas::class);
     $values = [
-        'title' => "My Goals",
+        'title' => 'My Goals',
         'author' => session('userdata.id'),
         'projectId' => $projectId,
     ];
     $currentCanvasId = $goalService->createGoalboard($values);
 
     $values = [
-        'description' => 'Tasks completed on time', //Metric
-        'title' => 'Build My Productivity System', //Objective
+        'description' => 'Tasks completed on time', // Metric
+        'title' => 'Build My Productivity System', // Objective
         'box' => 'goal',
-        'author' => session("userdata.id"),
+        'author' => session('userdata.id'),
         'canvasId' => $currentCanvasId,
         'milestoneId' => $milestoneId,
         'startDate' => dtHelper()->userNow()->formatDateForUser(),
         'endDate' => dtHelper()->userNow()->addMonths(2)->formatDateForUser(),
         'metricType' => 'percent',
-        'assignedTo' => session("userdata.id"),
+        'assignedTo' => session('userdata.id'),
         'startValue' => '0',
         'currentValue' => '0',
         'endValue' => '80',

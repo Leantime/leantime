@@ -14,6 +14,7 @@ class Helpermodal extends Composer
     private Setting $settingsRepo;
 
     private Helper $helperService;
+
     private Auth $authService;
 
     public static array $views = [
@@ -41,8 +42,8 @@ class Helpermodal extends Composer
         $completedOnboarding = $this->settingsRepo->getSetting('companysettings.completedOnboarding');
         $isFirstLogin = $this->helperService->isFirstLogin($this->authService->getUserId());
 
-        //Backwards compatibilty
-        if($isFirstLogin && $completedOnboarding) {
+        // Backwards compatibilty
+        if ($isFirstLogin && $completedOnboarding) {
             $isFirstLogin = false;
         }
 

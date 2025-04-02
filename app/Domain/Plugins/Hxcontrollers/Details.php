@@ -45,11 +45,9 @@ class Details extends HtmxController
 
         $this->tpl->assign('plugin', $pluginModel);
 
-
         /**
          * @var \Leantime\Domain\Plugins\Models\MarketplacePlugin|false $plugin
          */
-
         $isBundle = false;
         if (collect($pluginModel->categories)->where('slug', '=', 'bundles')->count() > 0) {
             $isBundle = true;

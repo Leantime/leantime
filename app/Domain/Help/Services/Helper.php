@@ -89,25 +89,23 @@ class Helper
             'autoLoad' => false,
         ],
         'clients.showAll' => [
-            'id' => 'clients.showAll' ,
+            'id' => 'clients.showAll',
             'template' => 'showClients',
             'tour' => '',
             'autoLoad' => false,
         ],
         'strategy.showBoards' => [
-            'id' => 'strategy.showBoards' ,
+            'id' => 'strategy.showBoards',
             'template' => 'blueprints',
             'tour' => '',
             'autoLoad' => false,
         ],
         'wiki.show' => [
-            'id' => 'wiki.show' ,
+            'id' => 'wiki.show',
             'template' => 'wiki',
             'tour' => '',
             'autoLoad' => false,
         ],
-
-
 
     ];
 
@@ -142,7 +140,7 @@ class Helper
      */
     public function getHelperModalByRoute(string $route): array
     {
-        return $this->availableModals[$route] ?? ["template" => 'notfound'];
+        return $this->availableModals[$route] ?? ['template' => 'notfound'];
     }
 
     /**
@@ -204,49 +202,50 @@ class Helper
         return $this->userRepository->updateUserSettings($userId, ['onboarding.firstTask' => $taskText]);
     }
 
-    public function getOnboardingChecklist(int $userId): array|false {
+    public function getOnboardingChecklist(int $userId): array|false
+    {
 
         $checklist = $this->settingsRepo->getSetting('user.'.$userId.'.onboardingChecklist');
         $checklist = json_decode($checklist, true);
 
-//        if(!$checklist) {
-//            return false;
-//        }
+        //        if(!$checklist) {
+        //            return false;
+        //        }
 
-        //Checklist Debug
+        // Checklist Debug
         $checklist = [
-            "step1" => [
-                "completed" => true,
-                "label" => "Create your first task"
+            'step1' => [
+                'completed' => true,
+                'label' => 'Create your first task',
             ],
-            "step2" => [
-                "completed" => false,
-                "label" => "Complete the My Work Dashboard Tour",
+            'step2' => [
+                'completed' => false,
+                'label' => 'Complete the My Work Dashboard Tour',
             ],
-            "step3" => [
-                "completed" => false,
-                "label" => "Review your personal project",
-                "url" => "",
+            'step3' => [
+                'completed' => false,
+                'label' => 'Review your personal project',
+                'url' => '',
             ],
-            "step4" => [
-                "completed" => false,
-                "label" => "Review your project",
-                "url" => "",
+            'step4' => [
+                'completed' => false,
+                'label' => 'Review your project',
+                'url' => '',
             ],
-            "step5" => [
-                "completed" => false,
-                "label" => "Create a milestone",
-                "url" => "",
+            'step5' => [
+                'completed' => false,
+                'label' => 'Create a milestone',
+                'url' => '',
             ],
-            "step6" => [
-                "completed" => false,
-                "label" => "Create a goal",
-                "url" => "",
+            'step6' => [
+                'completed' => false,
+                'label' => 'Create a goal',
+                'url' => '',
             ],
-            "step7" => [
-                "completed" => false,
-                "label" => "Comment on a task",
-                "url" => "",
+            'step7' => [
+                'completed' => false,
+                'label' => 'Comment on a task',
+                'url' => '',
             ],
 
         ];

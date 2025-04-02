@@ -155,7 +155,8 @@ class InstalledPlugin implements PluginDisplayStrategy
         return $this->type;
     }
 
-    public function getIdentifier(): string {
+    public function getIdentifier(): string
+    {
         return Str::replace('/', '_', Str::lower($this->name));
     }
 }

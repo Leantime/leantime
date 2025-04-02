@@ -223,7 +223,7 @@ namespace Leantime\Domain\Install\Repositories {
                 $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
                 $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
                 $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
-                $stmn->bindValue(':pwReset',$pwReset, PDO::PARAM_STR);
+                $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
 
                 session()->put('pwReset', $pwReset);
 

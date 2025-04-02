@@ -19,7 +19,6 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
          **/
         $pluginsService = app()->make(Services\Plugins::class);
 
-
         collect($pluginsService->getAllPlugins(true))
             ->filter(fn ($plugin) => $plugin->type === 'marketplace')
             ->filter(fn ($plugin) => $plugin->enabled)

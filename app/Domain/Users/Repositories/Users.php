@@ -669,8 +669,8 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * Get user settings - retrieves and deserializes user settings
          *
-         * @param int $userId The user ID to get settings for
-         * @param string|null $settingPath Optional dot notation path to retrieve specific setting (e.g. 'onboarding.firstLoginCompleted')
+         * @param  int  $userId  The user ID to get settings for
+         * @param  string|null  $settingPath  Optional dot notation path to retrieve specific setting (e.g. 'onboarding.firstLoginCompleted')
          * @return mixed The requested settings or specific setting value, empty array if no settings exist
          */
         public function getUserSettings(int $userId, ?string $settingPath = null): mixed
@@ -685,7 +685,7 @@ namespace Leantime\Domain\Users\Repositories {
             $stmn->closeCursor();
 
             // If no settings exist yet, return empty array
-            if (!$result || empty($result['settings'])) {
+            if (! $result || empty($result['settings'])) {
                 return [];
             }
 
@@ -708,8 +708,8 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * Helper method to get a nested setting using dot notation
          *
-         * @param array $settings The settings array
-         * @param string $path Dot notation path (e.g. 'onboarding.firstLoginCompleted')
+         * @param  array  $settings  The settings array
+         * @param  string  $path  Dot notation path (e.g. 'onboarding.firstLoginCompleted')
          * @return mixed The setting value or null if not found
          */
         private function getNestedSetting(array $settings, string $path)
@@ -718,7 +718,7 @@ namespace Leantime\Domain\Users\Repositories {
             $current = $settings;
 
             foreach ($keys as $key) {
-                if (!is_array($current) || !isset($current[$key])) {
+                if (! is_array($current) || ! isset($current[$key])) {
                     return null;
                 }
                 $current = $current[$key];
