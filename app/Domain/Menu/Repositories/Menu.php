@@ -424,6 +424,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 'clients.newClient' => 'company',
                 'clients.showClient' => 'company',
                 'users.showAll' => 'company',
+                'users.editUser' => 'company',
                 'plugins.show' => 'company',
                 'plugins.marketplace' => 'company',
                 'plugins.myapps' => 'company',

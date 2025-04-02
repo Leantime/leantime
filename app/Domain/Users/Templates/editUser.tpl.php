@@ -66,8 +66,8 @@ $projects = $tpl->get('relations');
                             <?= $tpl->__('label.invited') ?>
                         </option>
 
-                        <option value=""
-                            <?php if (strtolower($values['status']) == '') {
+                        <option value="0"
+                            <?php if (strtolower($values['status']) === '' || $values['status'] === 0 ||  $values['status'] === "0") {
                                 ?> selected="selected" <?php
                             } ?>>
                             <?= $tpl->__('label.deactivated') ?>
