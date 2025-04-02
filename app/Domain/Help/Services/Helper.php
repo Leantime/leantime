@@ -190,18 +190,6 @@ class Helper
 
     }
 
-    /**
-     * Saves the user's first task
-     *
-     * @param  int  $userId  The user ID
-     * @param  string  $taskText  The task text entered by the user
-     * @return bool Success status
-     */
-    public function saveFirstTask(int $userId, string $taskText): bool
-    {
-        return $this->userRepository->updateUserSettings($userId, ['onboarding.firstTask' => $taskText]);
-    }
-
     public function getOnboardingChecklist(int $userId): array|false
     {
 
