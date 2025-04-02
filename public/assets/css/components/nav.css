@@ -461,12 +461,12 @@ a.barmenu:hover {
     margin-top:0px;
 }
 
-.header .nav-header {
-    text-shadow: none;
-    text-transform: none;
-    font-weight: normal;
-    color:var(--primary-font-color);
-}
+/*.header .nav-header {*/
+/*    text-shadow: none;*/
+/*    text-transform: none;*/
+/*    font-weight: normal;*/
+/*    color:var(--primary-font-color);*/
+/*}*/
 
 .headmenu .dropdown-menu::after {
     position: absolute;

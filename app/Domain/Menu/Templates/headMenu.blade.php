@@ -160,17 +160,29 @@
                 <a href='https://support.leantime.io' target="_blank">
                     {!! __("menu.knowledge_base") !!}
                     </a>
-                </li>
-                <li>
-                    <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
-                        {!! __("menu.community") !!}
-                    </a>
-                </li>
-                <li>
-                    <a href='https://leantime.io/contact-us' target="_blank">
-                        {!! __("menu.contact_us") !!}
-                    </a>
-                </li>
+            </li>
+            <li>
+                <a href='https://github.com/Leantime/leantime/issues' target="_blank">
+                    {!! __("menu.submit_bug") !!}
+                </a>
+            </li>
+            <li class="nav-header border">{!! __("menu.leantime_community") !!}</li>
+            <li>
+                <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
+                    {!! __("menu.community") !!}
+                </a>
+            </li>
+
+            <li>
+                <a href='https://github.com/sponsors/Leantime' target="_blank">
+                    {!! __("menu.support_us") !!}
+                </a>
+            </li>
+            <li>
+                <a href='https://leantime.io/contact-us' target="_blank">
+                    {!! __("menu.contact_us") !!}
+                </a>
+            </li>
         </ul>
     </li>
 
