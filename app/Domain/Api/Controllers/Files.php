@@ -52,15 +52,22 @@ class Files extends Controller
             $_FILES['file']['name'] = 'pastedImage.png';
             $file = $this->fileRepo->upload($_FILES, 'project', session('currentProject'));
 
-            return new Response(BASE_URL.'/files/get?'
-                .http_build_query([
-                    'encName' => $file['encName'],
-                    'ext' => $file['extension'],
-                    'realName' => $file['realName'],
-                ]));
+            if (is_array($file)) {
+
+                return new Response(BASE_URL.'/files/get?'
+                    .http_build_query([
+                        'encName' => $file['encName'],
+                        'ext' => $file['extension'],
+                        'realName' => $file['realName'],
+                    ]));
+            }
+
+            if (is_string($file)) {
+                $this->tpl->displayJson(['status' => $file], 500);
+            }
         }
 
-        return $this->tpl->displayJson(['status' => 'Something unexpected'], 50);
+        return $this->tpl->displayJson(['status' => 'Something unexpected'], 500);
     }
 
     /**
