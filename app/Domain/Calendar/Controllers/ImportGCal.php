@@ -36,11 +36,11 @@ class ImportGCal extends Controller
             'colorClass' => '',
         ];
 
-        if (isset($_POST['name']) === true) {
+        if (isset($_POST['name']) === true || isset($_POST['url']) === true) {
             $values = [
                 'url' => ($_POST['url']),
-                'name' => ($_POST['name']),
-                'colorClass' => ($_POST['colorClass']),
+                'name' => ($_POST['name'] ?? "My Calendar"),
+                'colorClass' => ($_POST['colorClass'] ?? "#082236"),
             ];
 
             $this->calendarRepo->addGUrl($values);
