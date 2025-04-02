@@ -426,9 +426,9 @@ leantime.calendarController = (function () {
             // Find any todo containers that were loaded via HTMX
             var todoContainers = htmx.findAll(content, "#yourToDoContainer");
 
-            initializeThirdPartyDraggable(todoContainers[0]);
-            initButtons();
-
+            if(todoContainers.length > 0) {
+                initializeThirdPartyDraggable(todoContainers[0]);
+            }
 
             return calendarEl;
         });
