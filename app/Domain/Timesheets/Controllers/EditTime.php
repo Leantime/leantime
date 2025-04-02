@@ -158,8 +158,12 @@ class EditTime extends Controller
                             if ($values['kind'] != '') {
                                 if ($values['date'] != '') {
                                     if ($values['hours'] != '' && $values['hours'] > 0) {
-                                        $this->timesheetsRepo->updateTime($values);
-                                        $this->tpl->setNotification('notifications.time_logged_success', 'success');
+                                        try {
+                                            $this->timesheetsRepo->updateTime($values);
+                                            $this->tpl->setNotification('notifications.time_logged_success', 'success');
+                                        } catch (\Exception $e) {
+                                            $this->tpl->setNotification('notifications.could_not_store_time', 'error');
+                                        }
 
                                         $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
 
