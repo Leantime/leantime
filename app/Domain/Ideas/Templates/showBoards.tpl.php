@@ -127,7 +127,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                                 <div class="mainIdeaContent">
                                     <div class="kanbanCardContent">
 
-                                        <div class="kanbanContent" style="margin-bottom: 20px">
+                                        <div class="kanbanContent" style="margin-bottom: 20px; max-height:none;">
                                             <?= $tpl->escapeMinimal($row['data']) ?>
                                         </div>
 

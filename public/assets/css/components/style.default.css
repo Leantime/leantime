@@ -2591,7 +2591,6 @@ h3.todaysDate {
 
 .ticketBox.fc-event-dragging:before,
 .ticketBox.ui-draggable-dragging:before{
-    content: "Drag me to the calendar";
     background: #000;
     color: #fff;
     padding: 5px;
