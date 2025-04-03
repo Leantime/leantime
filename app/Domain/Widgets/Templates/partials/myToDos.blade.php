@@ -25,6 +25,10 @@
     }
 @endphp
 
+<div class="htmx-indicator full-width-loader">
+    <div class="indeterminate"></div>
+</div>
+
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
      hx-trigger="ticket_update from:body"
@@ -140,10 +144,7 @@
 
     <div class="tw-flex tw-flex-col">
 
-        <div class="htmx-indicator">
-            <x-global::loader id="loadingTodos" size="25px"/>
-        </div>
-        <div class="htmx-indicator htmx-loaded-content">
+        <div class="">
             @if($tickets !== null && count($tickets) == 0)
 
                 <div class='center'>

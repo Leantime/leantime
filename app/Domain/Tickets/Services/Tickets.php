@@ -2362,7 +2362,7 @@ namespace Leantime\Domain\Tickets\Services {
                 if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
                     foreach ($ticketGroup['tickets'] as $ticket) {
                         if (! empty($ticket['milestoneid']) &&
-                            is_string($ticketGroup['groupValue']) &&
+                            (is_string($ticketGroup['groupValue']) || is_int($ticketGroup['groupValue'])) &&
                             ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
 
                             $milestoneId = $ticket['milestoneid'];
