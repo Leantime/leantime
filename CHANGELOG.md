@@ -1,5 +1,17 @@
 # Version: 3.4.8
 
+* [a02e068](https://github.com/Leantime/leantime/commit/a02e0683b9aa8fcad2bbbc982892ffe844e62fc3): task: clean up code style
+* [e48608f](https://github.com/Leantime/leantime/commit/e48608f1f4d0f21990c9e01c1772bee6ec2ec361): fix: user settings not stored/retrieved correctly
+* [1d203eb](https://github.com/Leantime/leantime/commit/1d203ebc820c2404ee7b50d9d2331d688d5bde3c): fix: cmd installation failed #3003
+* [a92a2de](https://github.com/Leantime/leantime/commit/a92a2de8d02d5a5735e4171eecee0abb3ae47144): fix: notes form css
+* [12bba8b](https://github.com/Leantime/leantime/commit/12bba8bb3392936e755eec93c157e79adc29c8e2): task: fix code styles
+* [3375c41](https://github.com/Leantime/leantime/commit/3375c412e5157c935af5d5a816faec20e3eb1c07): feat: improved notes style handling
+* [a5100f2](https://github.com/Leantime/leantime/commit/a5100f20d4db526b4a930454f1da7e1d77fc5f51): fix: idea file upload issue
+* [747ff31](https://github.com/Leantime/leantime/commit/747ff31a2ab6d9154bbbad2130da751a2f8e9568): fix: calendar drag and drop issue
+
+
+# Version: 3.4.8
+
 * [8fdb095](https://github.com/Leantime/leantime/commit/8fdb0958fb9c647196d427e2ea37e4075a61dd96): task: add waits to tests
 * [76ab8f4](https://github.com/Leantime/leantime/commit/76ab8f49d10455cf1e65a05e629397cd75fdf442): New translations en-us.ini (German (Informal))
 * [a993d1c](https://github.com/Leantime/leantime/commit/a993d1c3677706f98cf6d074d036a114bc6f66ad): New translations en-us.ini (Karakalpak)
