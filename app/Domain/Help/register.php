@@ -10,6 +10,4 @@ EventDispatcher::addEventListener('leantime.domain.auth.*.userSignUpSuccess', fu
     $helperService = app()->make(\Leantime\Domain\Help\Services\Helper::class);
     $helperService->createDefaultProject($userId, $userRole);
 
-
-
 });

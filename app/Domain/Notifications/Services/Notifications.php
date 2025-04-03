@@ -93,7 +93,7 @@ namespace Leantime\Domain\Notifications\Services {
             $links = $dom->getElementsByTagName('a');
 
             $author = $this->userRepository->getUser($authorId);
-            if($author === false){
+            if ($author === false) {
                 return;
             }
 

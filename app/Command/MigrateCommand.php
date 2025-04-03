@@ -129,5 +129,3 @@ class MigrateCommand extends Command
         return Command::SUCCESS;
     }
 }
-
-
