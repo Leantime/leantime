@@ -13,8 +13,7 @@ $author = session('userdata.name').' ('.session('userdata.mail').')';
 
 $templates = [];
 
-
-$pmeetingNotes= app()->make(Template::class);
+$pmeetingNotes = app()->make(Template::class);
 $pmeetingNotes->title = 'Meeting Notes';
 $pmeetingNotes->category = $tpl->__('templates.documents');
 $pmeetingNotes->description = '';
@@ -42,7 +41,6 @@ $pmeetingNotes->content = '
 ';
 
 $templates[] = $pmeetingNotes;
-
 
 $prdTpl = app()->make(Template::class);
 
