@@ -13,6 +13,37 @@ $author = session('userdata.name').' ('.session('userdata.mail').')';
 
 $templates = [];
 
+
+$pmeetingNotes= app()->make(Template::class);
+$pmeetingNotes->title = 'Meeting Notes';
+$pmeetingNotes->category = $tpl->__('templates.documents');
+$pmeetingNotes->description = '';
+$pmeetingNotes->content = '
+<h1>Meeting Notes</h1>
+<p><strong>Attendees</strong><br>
+<span >Name1, Name2</span></p>
+<p><span><br></span></p>
+<p><span><strong>Agenda</strong><br></span></p>
+<ul>
+<li><span>Item 1</span></li>
+<li><span>Item 2</span></li>
+</ul>
+<p><span><br></span></p>
+<p><span><strong>Notes</strong><br></span></p>
+<ul>
+<li><span>Notes here</span></li></ul>
+<p><span><br></span></p>
+<p><span><strong>Action Items</strong><br></span></p>
+<ul style="list-style-type: none;" class="tox-checklist">
+<li><span >Action Item 1</span></li>
+<li><span >Action Item 1</span><span ><br ></span>
+</li>
+</ul>
+';
+
+$templates[] = $pmeetingNotes;
+
+
 $prdTpl = app()->make(Template::class);
 
 $prdTpl->title = $tpl->__('templates.prd.title');
