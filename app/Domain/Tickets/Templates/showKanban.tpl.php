@@ -26,7 +26,7 @@ $allTicketGroups = $tpl->get('allTickets');
 
     <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
-    <div class="maincontentinner" >
+    <div class="maincontentinner kanban-board-wrapper" >
 
          <div class="row">
             <div class="col-md-4">

@@ -24,7 +24,7 @@ class ApiCest
         // Ensure database is installed before running API tests
         $this->installPage->install(
             'test@leantime.io',
-            'test',
+            'Test123456!',
             'John',
             'Smith',
             'Smith & Co'
@@ -44,7 +44,7 @@ class ApiCest
 
         $I->fillField(['id' => 'firstname'], 'APIUser');
         $I->selectOption(['id' => 'role'], 'Administrator');
-        $I->checkOption('Leantime Onboarding');
+        $I->checkOption('My Project');
         $I->clickWithRetry('#save');
 
         $I->waitForElement('#apiKey');

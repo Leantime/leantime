@@ -11,7 +11,7 @@ class CreateUserCest
 {
     public function _before(AcceptanceTester $I, Login $loginPage): void
     {
-        $loginPage->login('test@leantime.io', 'test');
+        $loginPage->login('test@leantime.io', 'Test123456!');
     }
 
     #[Group('user')]

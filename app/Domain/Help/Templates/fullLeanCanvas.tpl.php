@@ -24,7 +24,7 @@ echo '</div>'; ?>
             <p>
              </p>
             <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('fullLeanCanvas')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
+
         </div>
     </div>
 

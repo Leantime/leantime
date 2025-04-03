@@ -49,6 +49,17 @@ class DateTimeHelper extends CarbonImmutable
     {
         parent::__construct($time, $tz);
 
+        // Check if our custom macros are already registered
+        if (! static::hasMacro('formatDateTimeForDb')) {
+            static::mixin(new CarbonMacros(
+                session('usersettings.timezone') ?? app()->make(Environment::class)->defaultTimezone,
+                str_replace('-', '_', session('usersettings.language') ?? app()->make(Environment::class)->language),
+                session('usersettings.date_format') ?? app()->make(Language::class)->__('language.dateformat'),
+                session('usersettings.time_format') ?? app()->make(Language::class)->__('language.timeformat')
+            ));
+        }
+
+        // Continue with regular initialization
         $language = app()->make(Language::class);
         $config = app()->make(Environment::class);
 

@@ -320,6 +320,7 @@ class Auth implements Authenticatable
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
         session(['userdata' => $currentUser]);
+        session(['usersettings' => $currentUser['settings']]);
 
         $this->updateUserSessionDB($currentUser['id'], session()->getId());
 

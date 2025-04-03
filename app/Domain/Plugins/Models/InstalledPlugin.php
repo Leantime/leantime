@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Plugins\Models;
 
+use Illuminate\Support\Str;
 use Leantime\Domain\Plugins\Contracts\PluginDisplayStrategy;
 
 class InstalledPlugin implements PluginDisplayStrategy
@@ -143,5 +144,19 @@ class InstalledPlugin implements PluginDisplayStrategy
         }
 
         return '';
+    }
+
+    public function getType(): string
+    {
+        $this->type = $this->format === 'phar'
+            ? $this->type = 'marketplace'
+            : $this->type = 'custom';
+
+        return $this->type;
+    }
+
+    public function getIdentifier(): string
+    {
+        return Str::replace('/', '_', Str::lower($this->name));
     }
 }

@@ -21,7 +21,6 @@ echo '</div>'; ?>
     <div class="row">
         <div class="col-md-12 align-center">
             <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('projectSuccess')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

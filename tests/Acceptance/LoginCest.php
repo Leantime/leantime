@@ -36,7 +36,7 @@ class LoginCest
     #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function loginSuccessfully(AcceptanceTester $I, Login $loginPage): void
     {
-        $loginPage->login('test@leantime.io', 'test');
+        $loginPage->login('test@leantime.io', 'Test123456!');
     }
 
     #[Group('login')]

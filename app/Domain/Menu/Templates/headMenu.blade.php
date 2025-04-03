@@ -7,31 +7,16 @@
     @include('timesheets::partials.stopwatch', [
                'progressSteps' => $onTheClock
            ])
+
+
+
     @if ($login::userIsAtLeast("admin"))
         <li class="appsLink">
             <a href="{{ BASE_URL }}/plugins/marketplace" preload="mouseover" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
         </li>
     @endif
-{{--    <li class="notificationDropdown">--}}
-{{--        <a hx-get="{{ BASE_URL }}/crisp/helpWidget"--}}
-{{--        hx-target="#helpDropdown"--}}
-{{--        hx-indicator=".htmx-indicator"--}}
-{{--        hx-trigger="click"--}}
-{{--        data-toggle='dropdown'--}}
-{{--        data-tippy-content='Get help'--}}
-{{--        >--}}
-{{--        <span class="fa-solid fa-question"></span>--}}
-
-{{--        </a>--}}
-
-{{--        <div class='dropdown-menu tw-p-0 tw-overflow-y-auto' id='helpDropdown' style="padding:0px; height:90vh; margin-top:5px;">--}}
-{{--            <div class="htmx-indicator">--}}
-{{--                <x-global::loadingText type="text" count="3" includeHeadline="true" />--}}
-{{--            </div>--}}
-{{--        </div>--}}
 
 
-{{--    </li>--}}
 
     <li class="notificationDropdown">
         <a
@@ -157,6 +142,51 @@
     </li>
 
     <li>
+        <a
+            href='javascript:void(0);'
+            class="dropdown-toggle"
+            data-toggle='dropdown'
+            data-tippy-content='{{ __('popover.help') }}'
+        >
+            <span class="fa-solid fa-question-circle"></span>
+        </a>
+        <ul class="dropdown-menu pull-right">
+            <li>
+                <a href='#/help/showOnboardingDialog?route={{ $request->getCurrentRoute() }}'>
+                {!! __("menu.what_is_this_page") !!}
+                </a>
+            </li>
+            <li>
+                <a href='https://support.leantime.io' target="_blank">
+                    {!! __("menu.knowledge_base") !!}
+                    </a>
+            </li>
+            <li>
+                <a href='https://github.com/Leantime/leantime/issues' target="_blank">
+                    {!! __("menu.submit_bug") !!}
+                </a>
+            </li>
+            <li class="nav-header border">{!! __("menu.leantime_community") !!}</li>
+            <li>
+                <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
+                    {!! __("menu.community") !!}
+                </a>
+            </li>
+
+            <li>
+                <a href='https://github.com/sponsors/Leantime' target="_blank">
+                    {!! __("menu.support_us") !!}
+                </a>
+            </li>
+            <li>
+                <a href='https://leantime.io/contact-us' target="_blank">
+                    {!! __("menu.contact_us") !!}
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li>
         <div class="userloggedinfo">
 
             @include("auth::partials.loginInfo")
@@ -171,7 +201,7 @@
 
 </ul>
 
-<ul class="headmenu">
+<ul class="headmenu work-modes" style="height: 50px; float: left;">
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>

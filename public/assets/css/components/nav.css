@@ -461,12 +461,12 @@ a.barmenu:hover {
     margin-top:0px;
 }
 
-.header .nav-header {
-    text-shadow: none;
-    text-transform: none;
-    font-weight: normal;
-    color:var(--primary-font-color);
-}
+/*.header .nav-header {*/
+/*    text-shadow: none;*/
+/*    text-transform: none;*/
+/*    font-weight: normal;*/
+/*    color:var(--primary-font-color);*/
+/*}*/
 
 .headmenu .dropdown-menu::after {
     position: absolute;
@@ -477,6 +477,11 @@ a.barmenu:hover {
     border-bottom: 6px solid white;
     border-left: 6px solid transparent;
     content: '';
+}
+
+.headmenu .dropdown-menu.pull-right::after {
+    left: auto;
+    right:15px;
 }
 
 .headmenu > li {
@@ -857,7 +862,6 @@ a.barmenu:hover {
     border-radius: 50%;
     border: 1px solid white;
     margin-top:10px;
-    margin-right: 5px;
 }
 
 .header .userloggedinfo img.logo {
@@ -906,7 +910,7 @@ a.barmenu:hover {
 
 .userloggedinfo .dropdown-menu
 {
-    right:14px;
+    right:7px;
     left:auto;
 }
 
@@ -1195,6 +1199,7 @@ a.barmenu:hover {
 }
 .mainwrapper.menuopen .leftpanel {
     width:215px;
+    margin-left:10px;
 }
 
 .mainwrapper.menuopen .leftpanel .submenu.closed {
@@ -1417,3 +1422,21 @@ a.barmenu:hover {
     font-size: var(--font-size-xs);
 }
 
+.onboarding-checklist {
+    position: fixed;
+    bottom:0px;
+    left:0px;
+    padding:0px 0px 20px 20px;
+    width:195px;
+}
+
+.onboarding-checklist h3 {
+    font-size: var(--font-size-l);
+    font-weight:normal;
+    margin-bottom:10px;
+}
+
+.onboarding-checklist ul li {
+    list-style: none;
+    margin-bottom:5px;
+}

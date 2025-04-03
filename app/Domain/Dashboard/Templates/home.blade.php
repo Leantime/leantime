@@ -22,7 +22,9 @@
                 noTitle="{{ $widget->noTitle }}"
                 name="{{ $widget->name }}"
                 :fixed="(empty($widget->fixed) ? false : true )"
-                alwaysVisible="{{ $widget->alwaysVisible }}">
+                alwaysVisible="{{ $widget->alwaysVisible }}"
+                id="widget_wrapper_{{ $widget->id }}"
+            >
                 <div hx-get="{{$widget->widgetUrl }}"
                      hx-trigger="revealed"
                      id="{{ $widget->id }}"
@@ -42,10 +44,6 @@
 jQuery(document).ready(function() {
 
     leantime.widgetController.initGrid();
-
-    @if($completedOnboarding === false)
-        leantime.helperController.firstLoginModal();
-    @endif
 
     @php(session(["usersettings.modals.homeDashboardTour" => 1]));
 

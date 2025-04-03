@@ -1,15 +1,22 @@
 <script>
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
 
-        @if($completedOnboarding === false && $currentModal == "dashboard")
+        // First login flow
+        @if($isFirstLogin === true || $isFirstLogin === "true")
             leantime.helperController.firstLoginModal();
-        @endif
+        @else
 
+            // Returning user flow
+            @if(($isFirstLogin === false || $isFirstLogin === "false") && $showHelperModal === true)
 
-        @if($completedOnboarding == true && $showHelperModal === true)
-            leantime.helperController.showHelperModal('{{ $currentModal }}', 500, 700);
+                // Show the appropriate helper modal for the current page
+                @if(is_array($currentModal) && isset($currentModal['autoLoad']) && ($currentModal['autoLoad'] === true || $currentModal['autoLoad'] === "true"))
+                    leantime.helperController.showHelperModal('{{ $currentModal['template'] }}', 500, 700);
+                @elseif(is_string($currentModal))
+                    leantime.helperController.showHelperModal('{{ $currentModal}}', 500, 700);
+                @endif
+            @endif
         @endif
 
     });
 </script>
-

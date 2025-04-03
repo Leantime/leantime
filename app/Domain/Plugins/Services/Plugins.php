@@ -8,11 +8,13 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\Cache;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Facades\Http;
+    use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
     use Leantime\Core\Configuration\AppSettings;
     use Leantime\Core\Configuration\Environment as EnvironmentCore;
     use Leantime\Core\Console\ConsoleKernel;
     use Leantime\Core\Events\DispatchesEvents;
+    use Leantime\Domain\Notifications\Services\Notifications;
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
@@ -66,6 +68,7 @@ namespace Leantime\Domain\Plugins\Services {
             private AppSettings $appSettings,
         ) {
             $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
+            // $this->marketplaceUrl = 'https://marketplace.leantime.test';
         }
 
         /**
@@ -90,7 +93,7 @@ namespace Leantime\Domain\Plugins\Services {
             foreach ($installedPlugins as &$plugin) {
 
                 /** @var array<MarketplacePlugin> */
-                $marketplacePluginCache = Cache::store('installation')->get('plugins.marketplacePlugins', false);
+                $marketplacePluginCache = Cache::store('installation')->get('plugins.marketplacePluginsFlat', false);
 
                 $plugin->type = $plugin->format === $this->pluginFormat['phar']
                     ? $plugin->type = $this->pluginTypes['marketplace']
@@ -99,6 +102,7 @@ namespace Leantime\Domain\Plugins\Services {
                 // Make installed plugins pretty
                 $pluginIdentifier = Str::replace('/', '_', Str::lower($plugin->name));
                 if ($marketplacePluginCache && isset($marketplacePluginCache[$pluginIdentifier])) {
+                    $plugin->identifier = $marketplacePluginCache[$pluginIdentifier]->identifier;
                     $plugin->name = $marketplacePluginCache[$pluginIdentifier]->name;
                     $plugin->imageUrl = $marketplacePluginCache[$pluginIdentifier]->imageUrl;
                     $plugin->description = $marketplacePluginCache[$pluginIdentifier]->excerpt;
@@ -292,33 +296,16 @@ namespace Leantime\Domain\Plugins\Services {
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
-            if ($pluginModel->format == 'phar') {
-                $phar = new \Phar(
-                    Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
-                    .Str::finish($pluginModel->foldername, DIRECTORY_SEPARATOR)
-                    .Str::finish($pluginModel->foldername, '.phar')
-                );
-
-                $signature = $phar->getSignature();
-
-                $response = Http::withoutVerifying()->get("$this->marketplaceUrl", [
-                    'wp-api' => 'software-api',
-                    'request' => 'activation',
-                    'license_key' => $pluginModel->license,
-                    'product_id' => $pluginModel->id,
-                    'instance' => $this->settingsService->getCompanyId(),
-                    'phar_hash' => $signature,
-                    'user_count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-                ]);
-
-                $content = $response->body();
-
-                if (! $response->ok()) {
-                    return false;
-                }
+            if ($pluginModel->format !== 'phar') {
+                return $this->pluginRepository->enablePlugin($id);
             }
 
-            return $this->pluginRepository->enablePlugin($id);
+            if ($this->validLicense($pluginModel)) {
+                return $this->pluginRepository->enablePlugin($id);
+            }
+
+            return false;
+
         }
 
         /**
@@ -332,27 +319,10 @@ namespace Leantime\Domain\Plugins\Services {
 
             $result = $this->pluginRepository->disablePlugin($id);
 
-            if ($pluginModel->format == 'phar') {
-                $phar = new \Phar(
-                    Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
-                    .Str::finish($pluginModel->foldername, DIRECTORY_SEPARATOR)
-                    .Str::finish($pluginModel->foldername, '.phar')
-                );
+            if ($pluginModel->format === 'phar') {
 
-                $signature = $phar->getSignature();
+                $this->deactivate($pluginModel);
 
-                $response = Http::get("$this->marketplaceUrl", [
-                    'request' => 'deactivation',
-                    'license_key' => $pluginModel->license,
-                    'product_id' => $pluginModel->id,
-                    'instance' => $this->settingsService->getCompanyId(),
-                    'phar_hash' => $signature,
-                    'user_count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
-                ]);
-
-                if (! $response->ok()) {
-                    return false;
-                }
             }
 
             return $result;
@@ -411,57 +381,79 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
-         * @return MarketplacePlugin[]
+         * Fetches marketplace plugins from a specified URL and organizes them by category.
          *
-         * @api
+         * @param  int  $page  The page number to fetch.
+         * @param  string  $query  Optional search query to filter plugins by name or identifier.
+         * @return array An associative array containing plugin categories, each with associated plugins.
+         *               The categories include metadata such as name, description, and plugins categorized under them.
          */
         public function getMarketplacePlugins(int $page, string $query = ''): array
         {
             $plugins = Http::withoutVerifying()->get(
                 "{$this->marketplaceUrl}/ltmp-api"
                 .(! empty($query) ? "/search/$query" : '/index')
-                ."/$page".'?lt-v='.$this->appSettings->appVersion
+                ."/$page".'?lt-v='.$this->appSettings->appVersion.'&groupBy=category'
             );
 
             $pluginArray = $plugins->collect()->toArray();
 
             $plugins = [];
+            $pluginsFlat = [];
 
-            if (isset($pluginArray['data'])) {
-                foreach ($pluginArray['data'] as $plugin) {
+            if (isset($pluginArray['categories'])) {
+                foreach ($pluginArray['categories'] as $category) {
 
-                    $priceString = '';
-                    if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] === 'year') {
-                        $price = $plugin['price'] ?? 0;
-                        $months = 12;
-                        $lowestUserTier = 10;
-                        $perUserMonth = round(($price / $months / $lowestUserTier), 2);
-                        $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                    $plugins[$category['slug']] = [
+                        'name' => $category['name'],
+                        'description' => $category['description'],
+                        'plugins' => [],
+
+                    ];
+
+                    foreach ($category['products'] as $plugin) {
+                        $priceString = '';
+                        if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] === 'year') {
+                            $price = $plugin['price'] ?? 0;
+                            $months = 12;
+                            $lowestUserTier = 10;
+                            $perUserMonth = round(($price / $months / $lowestUserTier), 2);
+                            $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                        }
+
+                        $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
+                            ->set('identifier', $plugin['identifier'] ?? '')
+                            ->set('name', $plugin['post_title'] ?? '')
+                            ->set('excerpt', $plugin['excerpt'] ?? '')
+                            ->set('imageUrl', $plugin['icon'] ?? '')
+                            ->set('vendorDisplayName', $plugin['vendor'] ?? '')
+                            ->set('vendorId', $plugin['vendor_id'] ?? '')
+                            ->set('vendorEmail', $plugin['vendor_email'] ?? '')
+                            ->set(
+                                'startingPrice',
+                                '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : '')
+                            )
+                            ->set('calculatedMonthlyPrice', $priceString)
+                            ->set('rating', $plugin['rating'] ?? '')
+                            ->set('version', $plugin['version'] ?? '')
+                            ->get();
+
+                        $pluginsFlat[Str::lower($plugin['identifier'])] = $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])];
                     }
-
-                    $plugins[Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
-                        ->set('identifier', $plugin['identifier'] ?? '')
-                        ->set('name', $plugin['post_title'] ?? '')
-                        ->set('excerpt', $plugin['excerpt'] ?? '')
-                        ->set('imageUrl', $plugin['icon'] ?? '')
-                        ->set('vendorDisplayName', $plugin['vendor'] ?? '')
-                        ->set('vendorId', $plugin['vendor_id'] ?? '')
-                        ->set('vendorEmail', $plugin['vendor_email'] ?? '')
-                        ->set('startingPrice', '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : ''))
-                        ->set('calculatedMonthlyPrice', $priceString)
-                        ->set('rating', $plugin['rating'] ?? '')
-                        ->set('version', $plugin['version'] ?? '')
-                        ->get();
                 }
             }
 
             Cache::store('installation')->set('plugins.marketplacePlugins', $plugins);
+            Cache::store('installation')->set('plugins.marketplacePluginsFlat', $pluginsFlat);
 
             return $plugins;
         }
 
         /**
-         * @return MarketplacePlugin[]
+         * Retrieves a marketplace plugin's details by its identifier.
+         *
+         * @param  string  $identifier  The unique identifier of the marketplace plugin.
+         * @return MarketplacePlugin|false Returns a MarketplacePlugin instance if found, or false if the plugin could not be retrieved.
          *
          * @api
          */
@@ -481,7 +473,7 @@ namespace Leantime\Domain\Plugins\Services {
                 ->set('icon', $data['icon'] ?? '')
                 ->set('description', nl2br($data['description'] ?? ''))
                 ->set('marketplaceUrl', $data['marketplaceUrl'] ?? '')
-                ->set('vendorId', (int) $data['vendor']['id'] ?? null)
+                ->set('vendorId', (int) ($data['vendor']['id'] ?? null))
                 ->set('vendorDisplayName', $data['vendor']['name'] ?? '')
                 ->set('rating', $data['reviews']['average'] ?? 'N/A')
                 ->set('reviewCount', $data['reviews']['count'] ?? 0)
@@ -495,9 +487,14 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
-         * @throws Illuminate\Http\Client\RequestException|Exception
+         * Installs a marketplace plugin by downloading, extracting, and registering it in the plugin repository.
          *
-         * @api
+         * @param  MarketplacePlugin  $plugin  The marketplace plugin to be installed, including its identifier and license key.
+         * @param  string  $version  The version of the plugin to be installed.
+         *
+         * @throws RequestException If the HTTP request to download the plugin fails or returns an unexpected response type.
+         * @throws \Exception If the plugin cannot be downloaded, removed, or added to the system.
+         * @throws \RuntimeException If the plugin directory cannot be created.
          */
         public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version): void
         {
@@ -508,6 +505,7 @@ namespace Leantime\Domain\Plugins\Services {
                 'X-License-Key' => $plugin->license,
                 'X-Instance-Id' => $this->settingsService->getCompanyId(),
                 'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
+                'X-Leantime-Version' => $this->appSettings->appVersion,
             ])->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
 
             if (! $response->ok()) {
@@ -539,7 +537,9 @@ namespace Leantime\Domain\Plugins\Services {
                 throw new \Exception(__('notification.plugin_cant_remove'));
             }
 
-            mkdir($pluginDir);
+            if (! mkdir($pluginDir) && ! is_dir($pluginDir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $pluginDir));
+            }
 
             $zip = new \ZipArchive;
 
@@ -573,34 +573,164 @@ namespace Leantime\Domain\Plugins\Services {
             }
         }
 
-        public function canActivate(InstalledPlugin $plugin): bool
+        /**
+         * Validates the license of a given plugin.
+         *
+         * @param  InstalledPlugin  $plugin  The plugin object for which the license validity is being checked.
+         * @return bool Returns true if the license is valid or the plugin is not of the marketplace type; returns false otherwise.
+         */
+        public function validLicense(InstalledPlugin $plugin): bool
         {
-            if ($plugin->type !== $this->pluginTypes['marketplace']) {
+
+            if ($plugin->getType() !== $this->pluginTypes['marketplace']) {
                 return true;
             }
 
             $numberOfUsers = $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false);
             $instanceId = $this->settingsService->getCompanyId();
 
-            $response = Http::withoutVerifying()->get($this->marketplaceUrl, [
-                'wp-api' => 'software-api',
-                'request' => 'check',
-                'product_id' => $plugin->id,
-                'license_key' => $plugin->license,
-                'instance' => $instanceId,
-                'user_count' => $numberOfUsers,
-            ]);
+            $phar = new \Phar(
+                Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
+                .Str::finish($plugin->foldername, DIRECTORY_SEPARATOR)
+                .Str::finish($plugin->foldername, '.phar')
+            );
 
-            if (! $response->ok()) {
+            $signature = $phar->getSignature();
+
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'X-License-Key' => $plugin->license,
+                    'X-Instance-Id' => $instanceId,
+                    'X-User-Count' => $numberOfUsers,
+                    'X-Phar-Hash' => $signature,
+                    'X-Leantime-Version' => $this->appSettings->appVersion,
+                ])->get("{$this->marketplaceUrl}/ltmp-api/verify/{$plugin->getIdentifier()}");
+
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
+
+            $jsonResult = [];
+
+            try {
+                $body = $response->getBody()->getContents();
+                $jsonResult = json_decode($body, true);
+            } catch (Exception $e) {
+                Log::error($e);
+            }
+
+            if ($response->ok() && $jsonResult['valid'] === false) {
+
+                // Notify owners of system
+                $this->disablePluginNotifyOwner($plugin->id);
+
                 return false;
             }
 
             return true;
         }
 
+        /**
+         * Disables the specified plugin and notifies the owner or administrators of the action.
+         *
+         * @param  int  $pluginId  The ID of the plugin to disable.
+         * @return void
+         */
+        public function disablePluginNotifyOwner($pluginId)
+        {
+            $this->clearCache();
+            $this->disablePlugin($pluginId);
+
+            // Get all admin users
+            $userService = app()->make(UsersService::class);
+            $notificationService = app()->make(Notifications::class);
+            $plugin = $this->pluginRepository->getPlugin($pluginId);
+
+            // Create notification for all admin users
+            $admins = collect($userService->getAll())->filter(fn ($user) => in_array($user['role'], [40, 50]));
+
+            $notifications = $admins->map(fn ($admin) => [
+                'userId' => $admin['id'],
+                'read' => '0',
+                'type' => 'plugin_license',
+                'module' => 'plugins',
+                'moduleId' => $pluginId,
+                'message' => sprintf("The plugin '%s' has been disabled due to license validation failure. Please check your marketplace subscription.", $plugin->name),
+                'datetime' => date('Y-m-d H:i:s'),
+                'url' => '/plugins/show',
+                'authorId' => 1,
+            ])->toArray();
+
+            $notificationService->addNotifications($notifications);
+        }
+
+        /**
+         * Deactivates the specified plugin by performing necessary operations
+         * such as sending a request to the marketplace and validating the response.
+         *
+         * @param  InstalledPlugin  $plugin  The plugin instance to be deactivated.
+         * @return bool Returns true if the plugin was successfully deactivated
+         *              or does not require deactivation; false otherwise.
+         */
+        public function deactivate(InstalledPlugin $plugin): bool
+        {
+            if ($plugin->getType() !== $this->pluginTypes['marketplace']) {
+                return true;
+            }
+
+            $numberOfUsers = $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false);
+            $instanceId = $this->settingsService->getCompanyId();
+
+            $phar = new \Phar(
+                Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
+                .Str::finish($plugin->foldername, DIRECTORY_SEPARATOR)
+                .Str::finish($plugin->foldername, '.phar')
+            );
+
+            $signature = $phar->getSignature();
+
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'X-License-Key' => $plugin->license,
+                    'X-Instance-Id' => $instanceId,
+                    'X-User-Count' => $numberOfUsers,
+                    'X-Phar-Hash' => $signature,
+                    'X-Leantime-Version' => $this->appSettings->appVersion,
+                ])->get("{$this->marketplaceUrl}/ltmp-api/deactivate/{$plugin->getIdentifier()}");
+
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
+
+            $jsonResult = [];
+
+            try {
+                $body = $response->getBody()->getContents();
+                $jsonResult = json_decode($body, true);
+            } catch (Exception $e) {
+                Log::error($e);
+            }
+
+            if ($response->ok() && $jsonResult['valid'] === false) {
+                Log::warning($jsonResult['error']);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Clears cached data related to installation, sessions, and predefined file paths.
+         *
+         * Removes cached domain events, commands, and enabled plugins from the installation cache store.
+         * Clears specific session variables related to template paths and composers.
+         * Deletes stored cached files for view paths and composer paths in the framework's storage.
+         *
+         * @return void
+         */
         public function clearCache()
         {
-
             Cache::store('installation')->forget('domainEvents');
             Cache::store('installation')->forget('commands');
             Cache::store('installation')->forget('plugins.enabledPlugins');
@@ -614,7 +744,6 @@ namespace Leantime\Domain\Plugins\Services {
 
             $composerPathCachePath = storage_path('framework/composerPaths.php');
             $files->delete($composerPathCachePath);
-
         }
     }
 }

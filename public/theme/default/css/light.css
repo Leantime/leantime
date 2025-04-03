@@ -46,7 +46,7 @@
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 8px );
-    --glass-background: rgba(255,255,255,0.70);
+    --glass-background: rgba(255,255,255,0.85);
     --glass-border: 1px solid rgba(255,255,255,0.9);
 
     --main-action-bg: var(--accent1);

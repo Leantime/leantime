@@ -36,6 +36,8 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
     public ?int $reviewCount;
 
+    public string $type = 'marketplace';
+
     public array $reviews;
 
     public string $marketplaceId;
@@ -105,5 +107,11 @@ class MarketplacePlugin implements PluginDisplayStrategy
             .';base64,'.base64_encode(file_get_contents($imageUrl));
 
         return ! empty($this->imageUrl) ? $this->imageUrl : $defaultImage;
+    }
+
+    public function getType(): string
+    {
+        return $this->type = 'marketplace';
+
     }
 }

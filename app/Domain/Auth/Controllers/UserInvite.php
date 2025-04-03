@@ -330,7 +330,7 @@ class UserInvite extends Controller
             self::dispatch_event('userSignUpSuccess', ['user' => $userInvite]);
 
             if ($loggedIn) {
-                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/show');
+                return FrontcontrollerCore::redirect(BASE_URL.'/dashboard/home');
             } else {
                 return FrontcontrollerCore::redirect(BASE_URL.'/auth/login');
             }

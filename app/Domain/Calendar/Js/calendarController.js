@@ -226,7 +226,6 @@ leantime.calendarController = (function () {
                 nextYear: 'fa-angle-double-right'
             },
             eventDrop: function (event) {
-                console.log("Calendar: Event dropped", event);
                 if (event.event.extendedProps.enitityType == "ticket") {
                     jQuery.ajax({
                         type: 'PATCH',
@@ -252,7 +251,6 @@ leantime.calendarController = (function () {
                 }
             },
             eventResize: function (event) {
-                console.log("Calendar: Event resized", event);
                 if (event.event.extendedProps.enitityType == "ticket") {
                     jQuery.ajax({
                         type: 'PATCH',
@@ -279,8 +277,7 @@ leantime.calendarController = (function () {
 
             },
             eventReceive: function (event) {
-                console.log("Calendar: Event received", event);
-                console.log("element", this);
+
                 jQuery.ajax({
                     type: 'PATCH',
                     url: leantime.appUrl + '/api/tickets',
@@ -296,7 +293,7 @@ leantime.calendarController = (function () {
 
             },
             eventDragStart: function (event) {
-                console.log("Calendar: Event drag started", event);
+
             },
             eventDidMount: function (info) {
 
@@ -322,7 +319,11 @@ leantime.calendarController = (function () {
             // setupDraggableTickets();
             //
             // Initialize the ThirdPartyDraggable for the todo container
-            initializeThirdPartyDraggable(jQuery("#yourToDoContainer")[0]);
+
+            if(jQuery("#yourToDoContainer").length > 0) {
+                initializeThirdPartyDraggable(jQuery("#yourToDoContainer")[0]);
+            }
+
             initButtons();
 
             calendar.scrollToTime(Date.now());
@@ -359,6 +360,7 @@ leantime.calendarController = (function () {
         // }
 
         function initializeThirdPartyDraggable(element) {
+
             var tickets = element;
             if (tickets) {
                 new FullCalendar.ThirdPartyDraggable(tickets, {
@@ -423,12 +425,12 @@ leantime.calendarController = (function () {
 
         htmx.onLoad(function (content) {
 
+
+
             // Find any todo containers that were loaded via HTMX
-            var todoContainers = htmx.findAll(content, "#yourToDoContainer");
-
-            initializeThirdPartyDraggable(todoContainers[0]);
-            initButtons();
-
+            if(content.id == "yourToDoContainer") {
+                initializeThirdPartyDraggable(content);
+            }
 
             return calendarEl;
         });

@@ -102,7 +102,7 @@
 
             </div>
 
-            <div class="maincontentinner tw-z-10">
+            <div class="maincontentinner tw-z-10 latest-todos">
                 <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
@@ -254,7 +254,7 @@
                 </ul>
             </div>
 
-            <div class="maincontentinner">
+            <div class="maincontentinner team-container">
                 @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
@@ -303,7 +303,7 @@
 
         <div class="col-md-4">
 
-            <div class="maincontentinner">
+            <div class="maincontentinner project-updates">
                 <div class="pull-right">
                     @if ($login::userIsAtLeast($roles::$editor))
                         <a
@@ -444,7 +444,7 @@
                 <div class="clearall"></div>
             </div>
 
-            <div class="maincontentinner">
+            <div class="maincontentinner project-progress">
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
                         <h5 class="subtitle">{{ __('subtitles.project_progress') }}</h5>
@@ -577,9 +577,6 @@
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDueDateTimePickers();
 
-        @if($completedOnboarding === false)
-            leantime.helperController.firstLoginModal();
-        @endif
 
         @php(session(["usersettings.modals.projectDashboardTour" => 1]));
     });

@@ -343,6 +343,12 @@ class Views extends ViewServiceProvider
     {
         $pathRepo = app()->make(PathManifestRepository::class);
 
+        // Check if we're in a test environment
+        if (app()->environment('testing')) {
+            // Force regeneration of view paths in test environment
+            return $this->discoverViewPaths();
+        }
+
         if ($viewPaths = $pathRepo->loadManifest('viewPaths')) {
             return $viewPaths;
         }

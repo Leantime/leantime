@@ -1293,8 +1293,8 @@ namespace Leantime\Domain\Tickets\Services {
                 'type' => 'task',
                 'description' => $params['description'] ?? '',
                 'projectId' => $params['projectId'] ?? session('currentProject'),
-                'editorId' => session('userdata.id'),
-                'userId' => session('userdata.id'),
+                'editorId' => $params['editorId'] ?? session('userdata.id'),
+                'userId' => session('userdata.id') ?? $params['userId'] ?? null,
                 'date' => date('Y-m-d H:i:s'),
                 'dateToFinish' => isset($params['dateToFinish']) ? strip_tags($params['dateToFinish']) : '',
                 'status' => isset($params['status']) ? (int) $params['status'] : 3,
@@ -1359,7 +1359,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => '',
                 'projectId' => $params['projectId'] ?? session('currentProject'),
                 'editorId' => $params['editorId'] ?? session('userdata.id'),
-                'userId' => session('userdata.id'),
+                'userId' => session('userdata.id') ?? $params['userId'] ?? null,
                 'date' => dtHelper()->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => '',
                 'status' => 3,
@@ -1371,7 +1371,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'dependingTicketId' => '',
                 'milestoneid' => $params['dependentMilestone'] ?? '',
                 'acceptanceCriteria' => '',
-                'tags' => $params['tags'],
+                'tags' => $params['tags'] ?? '',
                 'editFrom' => $params['editFrom'] ?? '',
                 'editTo' => $params['editTo'] ?? '',
             ];
@@ -2362,7 +2362,7 @@ namespace Leantime\Domain\Tickets\Services {
                 if (isset($ticketGroup['tickets']) && is_array($ticketGroup['tickets'])) {
                     foreach ($ticketGroup['tickets'] as $ticket) {
                         if (! empty($ticket['milestoneid']) &&
-                            is_string($ticketGroup['groupValue']) &&
+                            (is_string($ticketGroup['groupValue']) || is_int($ticketGroup['groupValue'])) &&
                             ! in_array($ticket['milestoneid'], $milestoneIds[$ticketGroup['groupValue']] ?? [])) {
 
                             $milestoneId = $ticket['milestoneid'];

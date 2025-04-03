@@ -66,6 +66,8 @@ class HttpKernel extends Kernel
         \Leantime\Core\Middleware\SetCacheHeaders::class,
         \Leantime\Core\Middleware\Localization::class,
 
+        \Leantime\Core\Middleware\CurrentProject::class,
+
     ];
 
     /**

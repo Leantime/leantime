@@ -258,6 +258,7 @@ jQuery(function($, undefined) {
             },
             // Public function for closing a nyroModal
             close: function() {
+
                 this._close();
                 this._callFilters('beforeClose');
                 var self = this;

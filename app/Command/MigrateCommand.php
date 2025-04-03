@@ -5,6 +5,7 @@ namespace Leantime\Command;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Install\Repositories\Install;
 use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -92,11 +93,25 @@ class MigrateCommand extends Command
 
                     return Command::FAILURE;
                 }
+
+                // Latest install via UI sends user to account set up flow.
+                // Turning this off for console installs
+                $usersRepo = app()->make(Users::class);
+                $getAdminUser = $usersRepo->getUserByEmail($adminEmail, '');
+                if ($getAdminUser !== false && is_array($getAdminUser)) {
+                    $userId = $getAdminUser['id'];
+                    $usersRepo->patchUser($userId, ['password' => $adminPassword, 'status' => 'a']);
+
+                    $helperService = app()->make(Helper::class);
+                    $helperService->createDefaultProject($userId, 'owner');
+                }
+
                 if ($silent) {
                     $usersRepo = app()->make(Users::class);
                     $userId = array_values($usersRepo->getUserByEmail($adminEmail))[0];
                     $usersRepo->deleteUser($userId);
                 }
+
                 $io->text('Successfully Installed DB');
             }
             $success = $install->updateDB();
