@@ -1,3 +1,9 @@
+# Version: 3.4.11
+
+* [ded5173](https://github.com/Leantime/leantime/commit/ded5173cca67327e6e9127dc3947de8f1efd3e6d): task: version bump
+* [807bff8](https://github.com/Leantime/leantime/commit/807bff8b8d8c5ab73735b95e706d482d31900a2d): fix: update mix handling for phar files
+
+
 # Version: 3.4.9
 
 * [8a6dddf](https://github.com/Leantime/leantime/commit/8a6dddfd00b6ba43665d697dfea4f898cd4320a7): task: add timeout to test to ensure request finishes before checking db
