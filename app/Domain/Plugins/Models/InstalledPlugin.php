@@ -45,6 +45,8 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public ?string $calculatedMonthlyPrice;
 
+    public ?string $identifier;
+
     public function getCardDesc(): string
     {
         return $this->description ??= '';
@@ -157,6 +159,17 @@ class InstalledPlugin implements PluginDisplayStrategy
 
     public function getIdentifier(): string
     {
-        return Str::replace('/', '_', Str::lower($this->name));
+        if(isset($this->identifier) && $this->identifier !== null && $this->identifier !== '') {
+            return $this->identifier;
+        }
+
+        // There are circumstances where name needs to be used. The root cause has been fixed and identifier should
+        // be set most of the time however in rare circumstances we need to make sure the name is built correctly
+        $name = Str::replace('/', '_', Str::lower($this->name));
+        if(Str::contains($name, '_') === false) {
+            $name = "leantime_".$name;
+        }
+
+        return $name;
     }
 }
