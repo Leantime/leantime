@@ -52,8 +52,8 @@ class StaticAsset extends Controller
             return new Response('', 404);
         }
 
-        if(Str::contains($fullpath, '.phar') && !Str::startsWith($fullpath, 'phar://')){
-            $fullpath = "phar://".$fullpath;
+        if (Str::contains($fullpath, '.phar') && ! Str::startsWith($fullpath, 'phar://')) {
+            $fullpath = 'phar://'.$fullpath;
         }
 
         /** @var StaticAssetType $type */

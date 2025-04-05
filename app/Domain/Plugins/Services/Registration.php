@@ -142,23 +142,23 @@ class Registration
 
     }
 
-    private function getPluginBasePath() {
+    private function getPluginBasePath()
+    {
 
         $pluginPath = APP_ROOT.'/app/Plugins/';
 
         $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
         $regularPath = "{$pluginPath}{$this->pluginId}";
 
-        if(file_exists($pharPath)) {
+        if (file_exists($pharPath)) {
             return $pharPath;
         }
 
-        if(file_exists($regularPath)) {
+        if (file_exists($regularPath)) {
             return $regularPath;
         }
 
-        return "/";
-
+        return '/';
 
     }
 
@@ -234,17 +234,18 @@ class Registration
 
     }
 
-    protected function registerManifestFolder() {
+    protected function registerManifestFolder()
+    {
 
-        if($this->distFolderRegistered === false) {
+        if ($this->distFolderRegistered === false) {
 
-            $distPath = "";
+            $distPath = '';
             $basePath = $this->getPluginBasePath();
-            if (file_exists($basePath."/dist")) {
-                $distPath = $basePath . "/dist";
+            if (file_exists($basePath.'/dist')) {
+                $distPath = $basePath.'/dist';
             }
 
-            if($distPath !== '') {
+            if ($distPath !== '') {
                 EventDispatcher::add_filter_listener(
                     'leantime.core.support.mix.__construct.mix_manifest_directories',
                     function (array $directories) use ($distPath) {
@@ -258,7 +259,8 @@ class Registration
         }
     }
 
-    public function addFooterJs(array $paths) {
+    public function addFooterJs(array $paths)
+    {
 
         EventDispatcher::add_event_listener('leantime.*.beforeBodyClose', function () use ($paths) {
 
@@ -278,7 +280,8 @@ class Registration
 
     }
 
-    public function addCss(array $paths) {
+    public function addCss(array $paths)
+    {
 
         EventDispatcher::add_event_listener('leantime.*.afterLinkTags', function () use ($paths) {
 
@@ -297,6 +300,4 @@ class Registration
         });
 
     }
-
-
 }
