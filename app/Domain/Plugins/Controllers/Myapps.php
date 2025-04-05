@@ -1,62 +1,61 @@
 <?php
 
-namespace Leantime\Domain\Plugins\Controllers {
+namespace Leantime\Domain\Plugins\Controllers;
 
-    use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Plugins\Services\Plugins as PluginService;
-    use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Plugins\Services\Plugins as PluginService;
+use Symfony\Component\HttpFoundation\Response;
 
-    class Myapps extends Controller
+class Myapps extends Controller
+{
+    private PluginService $pluginService;
+
+    public function init(PluginService $pluginService): void
     {
-        private PluginService $pluginService;
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+        $this->pluginService = $pluginService;
+    }
 
-        public function init(PluginService $pluginService): void
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-            $this->pluginService = $pluginService;
-        }
-
-        /**
-         * @throws BindingResolutionException
-         */
-        public function get(): Response
-        {
-            foreach (['install', 'enable', 'disable', 'remove'] as $varName) {
-                if (empty($_GET[$varName])) {
-                    continue;
-                }
-
-                try {
-                    $notification = $this->pluginService->{"{$varName}Plugin"}($_GET[$varName])
-                        ? ["notification.plugin_{$varName}_success", 'success']
-                        : ["notification.plugin_{$varName}_error", 'error'];
-
-                    $this->tpl->setNotification(...$notification);
-
-                    return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
-                } catch (\Exception $e) {
-                    $this->tpl->setNotification($e->getMessage(), 'error');
-
-                    return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
-                }
+    /**
+     * @throws BindingResolutionException
+     */
+    public function get(): Response
+    {
+        foreach (['install', 'enable', 'disable', 'remove'] as $varName) {
+            if (empty($_GET[$varName])) {
+                continue;
             }
 
-            $newPlugins = $this->pluginService->discoverNewPlugins();
-            $installedPlugins = $this->pluginService->getAllPlugins();
+            try {
+                $notification = $this->pluginService->{"{$varName}Plugin"}($_GET[$varName])
+                    ? ["notification.plugin_{$varName}_success", 'success']
+                    : ["notification.plugin_{$varName}_error", 'error'];
 
-            $this->tpl->assign('newPlugins', $newPlugins);
-            $this->tpl->assign('installedPlugins', $installedPlugins);
+                $this->tpl->setNotification(...$notification);
 
-            return $this->tpl->display('plugins.myapps');
+                return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+            } catch (\Exception $e) {
+                $this->tpl->setNotification($e->getMessage(), 'error');
+
+                return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
+            }
         }
 
-        public function post($params): Response
-        {
-            return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
-        }
+        $newPlugins = $this->pluginService->discoverNewPlugins();
+        $installedPlugins = $this->pluginService->getAllPlugins();
+
+        $this->tpl->assign('newPlugins', $newPlugins);
+        $this->tpl->assign('installedPlugins', $installedPlugins);
+
+        return $this->tpl->display('plugins.myapps');
+    }
+
+    public function post($params): Response
+    {
+        return Frontcontroller::redirect(BASE_URL.'/plugins/myapps');
     }
 }

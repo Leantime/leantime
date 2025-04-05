@@ -1,27 +1,25 @@
 <?php
 
-namespace Leantime\Domain\Connector\Models {
+namespace Leantime\Domain\Connector\Models;
 
-    class Entity
-    {
-        public int $id;
+class Entity
+{
+    public int $id;
 
-        public string $name;
+    public string $name;
 
-        public string $authData;
+    public string $authData;
 
-        public string $notes;
+    public string $notes;
 
-        // Leantime domain object
-        public mixed $leantimeEntity;
+    // Leantime domain object
+    public mixed $leantimeEntity;
 
-        // Array of field objects
-        public array $fieldMappings = [];
+    // Array of field objects
+    public array $fieldMappings = [];
 
-        // External domain object
-        public mixed $providerEntity;
+    // External domain object
+    public mixed $providerEntity;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }
