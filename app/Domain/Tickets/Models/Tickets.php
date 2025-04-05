@@ -130,11 +130,8 @@ class Tickets
         }
     }
 
-
     /**
      * Convert the ticket to a string representation that's useful for AI consumption
-     *
-     * @return string
      */
     public function __toString(): string
     {
@@ -143,19 +140,19 @@ class Tickets
         $output .= "Status: {$this->status}\n";
         $output .= "Priority: {$this->priority}\n";
 
-        if (!empty($this->description)) {
-            $output .= "Description: " . strip_tags($this->description) . "\n";
+        if (! empty($this->description)) {
+            $output .= 'Description: '.strip_tags($this->description)."\n";
         }
 
-        if (!empty($this->dateToFinish)) {
+        if (! empty($this->dateToFinish)) {
             $output .= "Due Date: {$this->dateToFinish}\n";
         }
 
-        if (!empty($this->editorFirstname) || !empty($this->editorLastname)) {
+        if (! empty($this->editorFirstname) || ! empty($this->editorLastname)) {
             $output .= "Assigned To: {$this->editorFirstname} {$this->editorLastname}\n";
         }
 
-        if (!empty($this->storypoints)) {
+        if (! empty($this->storypoints)) {
             $output .= "Story Points: {$this->storypoints}\n";
         }
 
@@ -163,6 +160,4 @@ class Tickets
 
         return $output;
     }
-
-
 }

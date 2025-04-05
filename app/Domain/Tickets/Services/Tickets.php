@@ -1748,35 +1748,34 @@ class Tickets
     /**
      * Updates an existing task with the provided parameters.
      *
-     * @param int $id The unique identifier of the task to be updated.
-     * @param array $params An associative array containing the updated task details.
-     *                       The array should not include:
-     *                       - 'id': The ID of the task (it is excluded automatically).
-     *                       - 'act': Internal action parameter (it is excluded automatically).
-     *                       Additional fields may include:
-     *                          - 'status': The updated status of the task (optional).
-     *                          - 'headline': string|null, The title or headline of the ticket (optional).
-     *                          - 'type': string|null, The type or category of the ticket (optional).
-     *                          - 'description': string|null, The description of the ticket (optional).
-     *                          - 'projectId': int|null, The ID of the project associated with the ticket (optional).
-     *                          - 'editorId': int|null, The user ID of the editor updating the ticket (optional).
-     *                          - 'dateToFinish': string|null, The intended completion date for the ticket (optional).
-     *                          - 'timeToFinish': string|null, The intended completion time for the ticket (optional).
-     *                          - 'status': int|null, The current status of the ticket (optional).
-     *                          - 'planHours': string|null, The planned hours for the ticket (optional).
-     *                          - 'tags': string|null, Tags associated with the ticket (optional).
-     *                          - 'sprint': string|null, The sprint associated with the ticket (optional).
-     *                          - 'storypoints': string|null, The story points for the ticket (optional).
-     *                          - 'hourRemaining': string|null, The remaining hours for the ticket (optional).
-     *                          - 'priority': int|null, The priority level of the ticket (optional).
-     *                          - 'acceptanceCriteria': string|null, Acceptance criteria for completing the ticket (optional).
-     *                          - 'editFrom': string|null, Start date of ticket editing (optional).
-     *                          - 'timeFrom': string|null, Start time of ticket editing (optional).
-     *                          - 'editTo': string|null, End date for ticket editing (optional).
-     *                          - 'timeTo': string|null, End time for ticket editing (optional).
-     *                          - 'dependingTicketId': int|null, A ticket ID this ticket depends on (optional).
-     *                          - 'milestoneid': int|null, The ID of the milestone associated with this ticket (optional).
-     *
+     * @param  int  $id  The unique identifier of the task to be updated.
+     * @param  array  $params  An associative array containing the updated task details.
+     *                         The array should not include:
+     *                         - 'id': The ID of the task (it is excluded automatically).
+     *                         - 'act': Internal action parameter (it is excluded automatically).
+     *                         Additional fields may include:
+     *                         - 'status': The updated status of the task (optional).
+     *                         - 'headline': string|null, The title or headline of the ticket (optional).
+     *                         - 'type': string|null, The type or category of the ticket (optional).
+     *                         - 'description': string|null, The description of the ticket (optional).
+     *                         - 'projectId': int|null, The ID of the project associated with the ticket (optional).
+     *                         - 'editorId': int|null, The user ID of the editor updating the ticket (optional).
+     *                         - 'dateToFinish': string|null, The intended completion date for the ticket (optional).
+     *                         - 'timeToFinish': string|null, The intended completion time for the ticket (optional).
+     *                         - 'status': int|null, The current status of the ticket (optional).
+     *                         - 'planHours': string|null, The planned hours for the ticket (optional).
+     *                         - 'tags': string|null, Tags associated with the ticket (optional).
+     *                         - 'sprint': string|null, The sprint associated with the ticket (optional).
+     *                         - 'storypoints': string|null, The story points for the ticket (optional).
+     *                         - 'hourRemaining': string|null, The remaining hours for the ticket (optional).
+     *                         - 'priority': int|null, The priority level of the ticket (optional).
+     *                         - 'acceptanceCriteria': string|null, Acceptance criteria for completing the ticket (optional).
+     *                         - 'editFrom': string|null, Start date of ticket editing (optional).
+     *                         - 'timeFrom': string|null, Start time of ticket editing (optional).
+     *                         - 'editTo': string|null, End date for ticket editing (optional).
+     *                         - 'timeTo': string|null, End time for ticket editing (optional).
+     *                         - 'dependingTicketId': int|null, A ticket ID this ticket depends on (optional).
+     *                         - 'milestoneid': int|null, The ID of the milestone associated with this ticket (optional).
      * @return bool Returns true if the task is successfully updated, otherwise false.
      *
      * @api
