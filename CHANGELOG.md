@@ -1,3 +1,20 @@
+# Version: 3.4.9
+
+* [8a6dddf](https://github.com/Leantime/leantime/commit/8a6dddfd00b6ba43665d697dfea4f898cd4320a7): task: add timeout to test to ensure request finishes before checking db
+* [7549849](https://github.com/Leantime/leantime/commit/754984992bcbdb52ec4c4188552a95f3147c11f8): task: update readme
+* [c52b930](https://github.com/Leantime/leantime/commit/c52b930b52b225fa891e351aee58226a2ab620a4): task: update screenshot
+* [4b3f74b](https://github.com/Leantime/leantime/commit/4b3f74bf74fc5a8d345401e9604348744ebb35e7): task: update readme screenshot
+* [2e805fa](https://github.com/Leantime/leantime/commit/2e805fa6799b30237f85a969f43f01b8fa085858): task: version bump
+* [a02e068](https://github.com/Leantime/leantime/commit/a02e0683b9aa8fcad2bbbc982892ffe844e62fc3): task: clean up code style
+* [e48608f](https://github.com/Leantime/leantime/commit/e48608f1f4d0f21990c9e01c1772bee6ec2ec361): fix: user settings not stored/retrieved correctly
+* [1d203eb](https://github.com/Leantime/leantime/commit/1d203ebc820c2404ee7b50d9d2331d688d5bde3c): fix: cmd installation failed #3003
+* [a92a2de](https://github.com/Leantime/leantime/commit/a92a2de8d02d5a5735e4171eecee0abb3ae47144): fix: notes form css
+* [12bba8b](https://github.com/Leantime/leantime/commit/12bba8bb3392936e755eec93c157e79adc29c8e2): task: fix code styles
+* [3375c41](https://github.com/Leantime/leantime/commit/3375c412e5157c935af5d5a816faec20e3eb1c07): feat: improved notes style handling
+* [a5100f2](https://github.com/Leantime/leantime/commit/a5100f20d4db526b4a930454f1da7e1d77fc5f51): fix: idea file upload issue
+* [747ff31](https://github.com/Leantime/leantime/commit/747ff31a2ab6d9154bbbad2130da751a2f8e9568): fix: calendar drag and drop issue
+
+
 # Version: 3.4.8
 
 * [8fdb095](https://github.com/Leantime/leantime/commit/8fdb0958fb9c647196d427e2ea37e4075a61dd96): task: add waits to tests
