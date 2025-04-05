@@ -1,22 +1,20 @@
 <?php
 
-namespace Leantime\Domain\Sprints\Models {
+namespace Leantime\Domain\Sprints\Models;
 
-    class Sprints
-    {
-        public $id;
+class Sprints
+{
+    public $id;
 
-        public $name;
+    public $name;
 
-        public $startDate;
+    public $startDate;
 
-        public $endDate;
+    public $endDate;
 
-        public $projectId;
+    public $projectId;
 
-        public $modified;
+    public $modified;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }

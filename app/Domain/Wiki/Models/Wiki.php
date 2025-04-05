@@ -1,22 +1,20 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Models {
+namespace Leantime\Domain\Wiki\Models;
 
-    class Wiki
-    {
-        public $id;
+class Wiki
+{
+    public $id;
 
-        public $title;
+    public $title;
 
-        public $author;
+    public $author;
 
-        public $created;
+    public $created;
 
-        public $projectId;
+    public $projectId;
 
-        public $category;
+    public $category;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }

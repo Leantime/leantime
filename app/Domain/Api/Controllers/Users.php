@@ -58,6 +58,9 @@ class Users extends Controller
         }
 
         if (isset($params['profileImage'])) {
+            if ($params['profileImage'] === 'me') {
+                $params['profileImage'] = session('userdata.id');
+            }
             $svg = $this->userService->getProfilePicture($params['profileImage']);
             if (is_array($svg)) {
                 $file = app()->make(FileuploadCore::class);

@@ -4,10 +4,9 @@
  * Controller / Delete Canvas
  */
 
-namespace Leantime\Domain\Minempathycanvas\Controllers {
+namespace Leantime\Domain\Minempathycanvas\Controllers;
 
-    class DelCanvas extends \Leantime\Domain\Canvas\Controllers\DelCanvas
-    {
-        protected const CANVAS_NAME = 'minempathy';
-    }
+class DelCanvas extends \Leantime\Domain\Canvas\Controllers\DelCanvas
+{
+    protected const CANVAS_NAME = 'minempathy';
 }

@@ -4,11 +4,9 @@
  * Controller / Edit Canvas Item
  */
 
-namespace Leantime\Domain\Valuecanvas\Controllers {
+namespace Leantime\Domain\Valuecanvas\Controllers;
 
-    class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
-    {
-        protected const CANVAS_NAME = 'value';
-    }
-
+class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
+{
+    protected const CANVAS_NAME = 'value';
 }

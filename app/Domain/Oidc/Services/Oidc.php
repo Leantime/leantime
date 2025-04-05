@@ -2,8 +2,6 @@
 
 namespace Leantime\Domain\Oidc\Services;
 
-// This class Handles authentication via OpenID Connect (OIDC)
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Exceptions\HttpResponseException;

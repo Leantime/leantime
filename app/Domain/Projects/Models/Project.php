@@ -1,46 +1,44 @@
 <?php
 
-namespace Leantime\Domain\Projects\Models {
+namespace Leantime\Domain\Projects\Models;
 
-    class Project
-    {
-        public int|string $id;
+class Project
+{
+    public int|string $id;
 
-        public $name;
+    public $name;
 
-        public null|int|string $clientId;
+    public null|int|string $clientId;
 
-        public $start;
+    public $start;
 
-        public $end;
+    public $end;
 
-        public int|string $projectId;
+    public int|string $projectId;
 
-        public $type;
+    public $type;
 
-        public $state;
+    public $state;
 
-        public $menuType;
+    public $menuType;
 
-        public $numberOfTickets;
+    public $numberOfTickets;
 
-        public $sortIndex;
+    public $sortIndex;
 
-        public $progress;
+    public $progress;
 
-        public $milestones;
+    public $milestones;
 
-        public $lastUpdate;
+    public $lastUpdate;
 
-        public $report;
+    public $report;
 
-        public $status;
+    public $status;
 
-        public $clientName;
+    public $clientName;
 
-        public $isFavorite;
+    public $isFavorite;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }

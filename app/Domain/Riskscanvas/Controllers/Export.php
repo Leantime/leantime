@@ -4,10 +4,9 @@
  * XML export
  */
 
-namespace Leantime\Domain\Riskscanvas\Controllers {
+namespace Leantime\Domain\Riskscanvas\Controllers;
 
-    class Export extends \Leantime\Domain\Canvas\Controllers\Export
-    {
-        protected const CANVAS_NAME = 'risks';
-    }
+class Export extends \Leantime\Domain\Canvas\Controllers\Export
+{
+    protected const CANVAS_NAME = 'risks';
 }

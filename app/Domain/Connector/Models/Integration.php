@@ -1,48 +1,46 @@
 <?php
 
-namespace Leantime\Domain\Connector\Models {
+namespace Leantime\Domain\Connector\Models;
 
-    use Leantime\Core\Db\DbColumn;
+use Leantime\Core\Db\DbColumn;
 
-    class Integration
-    {
-        #[DbColumn('id')]
-        public int $id;
+class Integration
+{
+    #[DbColumn('id')]
+    public int $id;
 
-        #[DbColumn('providerId')]
-        public ?string $providerId;
+    #[DbColumn('providerId')]
+    public ?string $providerId;
 
-        #[DbColumn('method')]
-        public ?string $method;
+    #[DbColumn('method')]
+    public ?string $method;
 
-        #[DbColumn('entity')]
-        public ?string $entity;
+    #[DbColumn('entity')]
+    public ?string $entity;
 
-        #[DbColumn('fields')]
-        public ?string $fields;
+    #[DbColumn('fields')]
+    public ?string $fields;
 
-        #[DbColumn('schedule')]
-        public ?string $schedule;
+    #[DbColumn('schedule')]
+    public ?string $schedule;
 
-        #[DbColumn('notes')]
-        public ?string $notes;
+    #[DbColumn('notes')]
+    public ?string $notes;
 
-        #[DbColumn('auth')]
-        public ?string $auth;
+    #[DbColumn('auth')]
+    public ?string $auth;
 
-        #[DbColumn('meta')]
-        public ?string $meta;
+    #[DbColumn('meta')]
+    public ?string $meta;
 
-        #[DbColumn('createdOn')]
-        public ?string $createdOn;
+    #[DbColumn('createdOn')]
+    public ?string $createdOn;
 
-        #[DbColumn('createdBy')]
-        public ?string $createdBy;
+    #[DbColumn('createdBy')]
+    public ?string $createdBy;
 
-        #[DbColumn('lastSync')]
-        public ?string $lastSync;
+    #[DbColumn('lastSync')]
+    public ?string $lastSync;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }

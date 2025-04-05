@@ -1,21 +1,21 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Repositories {
+namespace Leantime\Domain\Wiki\Repositories;
 
-    use Leantime\Domain\Canvas\Repositories\Canvas;
-    use Leantime\Domain\Wiki\Models\Article;
-    use PDO;
+use Leantime\Domain\Canvas\Repositories\Canvas;
+use Leantime\Domain\Wiki\Models\Article;
+use PDO;
 
-    class Wiki extends Canvas
+class Wiki extends Canvas
+{
+    /**
+     * Constant that must be redefined
+     */
+    protected const CANVAS_NAME = 'wiki';
+
+    public function getArticle($id, $projectId): mixed
     {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = 'wiki';
-
-        public function getArticle($id, $projectId): mixed
-        {
-            $query = "SELECT
+        $query = "SELECT
 					zp_canvas_items.id,
                     zp_canvas_items.title,
                     zp_canvas_items.description,
@@ -42,32 +42,32 @@ namespace Leantime\Domain\Wiki\Repositories {
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 
-            if ($id > 0) {
-                $query .= ' AND zp_canvas_items.id = :id';
-            } elseif ($id == -1) {
-                $query .= ' AND featured = 1';
-            }
-
-            $query .= ' LIMIT 1';
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            if ($id > 0) {
-                $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Article");
-            $value = $stmn->fetch();
-
-            $stmn->closeCursor();
-
-            return $value;
+        if ($id > 0) {
+            $query .= ' AND zp_canvas_items.id = :id';
+        } elseif ($id == -1) {
+            $query .= ' AND featured = 1';
         }
 
-        public function getAllProjectWikis($projectId): array|false
-        {
-            $query = "SELECT
+        $query .= ' LIMIT 1';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        if ($id > 0) {
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Article");
+        $value = $stmn->fetch();
+
+        $stmn->closeCursor();
+
+        return $value;
+    }
+
+    public function getAllProjectWikis($projectId): array|false
+    {
+        $query = "SELECT
 
                     zp_canvas.id,
                     zp_canvas.title,
@@ -78,21 +78,21 @@ namespace Leantime\Domain\Wiki\Repositories {
 
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas.type = 'wiki'";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
-            $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Wiki");
-            $values = $stmn->fetchAll();
+        $stmn->execute();
+        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Wiki");
+        $values = $stmn->fetchAll();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getWiki($id): mixed
-        {
-            $query = "SELECT
+    public function getWiki($id): mixed
+    {
+        $query = "SELECT
 
                     zp_canvas.id,
                     zp_canvas.title,
@@ -104,21 +104,21 @@ namespace Leantime\Domain\Wiki\Repositories {
 
 				WHERE zp_canvas.id = :id AND zp_canvas.type = 'wiki'";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Wiki");
-            $values = $stmn->fetch();
+        $stmn->execute();
+        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Wiki");
+        $values = $stmn->fetch();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getAllWikiHeadlines($canvasId, $userId): false|array
-        {
-            $query = "SELECT
+    public function getAllWikiHeadlines($canvasId, $userId): false|array
+    {
+        $query = "SELECT
 
                     id,
                     title,
@@ -133,23 +133,23 @@ namespace Leantime\Domain\Wiki\Repositories {
 				  AND box = 'article' AND (status = 'published' OR (status = 'draft' AND author = :authorId) )
 				ORDER BY parent DESC, sortindex DESC";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_INT);
-            $stmn->bindValue(':authorId', $userId, PDO::PARAM_INT);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_INT);
+        $stmn->bindValue(':authorId', $userId, PDO::PARAM_INT);
 
-            $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Article");
-            $values = $stmn->fetchAll();
+        $stmn->execute();
+        $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Wiki\Models\Article");
+        $values = $stmn->fetchAll();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function createWiki($wiki): false|string
-        {
+    public function createWiki($wiki): false|string
+    {
 
-            $query = "INSERT INTO zp_canvas
+        $query = "INSERT INTO zp_canvas
                     (title,
                      projectId,
                      author,
@@ -161,44 +161,44 @@ namespace Leantime\Domain\Wiki\Repositories {
                       :created,
                       'wiki')";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
-            $stmn->bindValue(':projectId', $wiki->projectId, PDO::PARAM_STR);
-            $stmn->bindValue(':author', $wiki->author, PDO::PARAM_STR);
-            $stmn->bindValue(':created', date('Y-m-d'), PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
+        $stmn->bindValue(':projectId', $wiki->projectId, PDO::PARAM_STR);
+        $stmn->bindValue(':author', $wiki->author, PDO::PARAM_STR);
+        $stmn->bindValue(':created', date('Y-m-d'), PDO::PARAM_STR);
 
-            $execution = $stmn->execute();
+        $execution = $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $this->db->database->lastInsertId();
-        }
+        return $this->db->database->lastInsertId();
+    }
 
-        public function updateWiki($wiki, $wikiId): bool
-        {
+    public function updateWiki($wiki, $wikiId): bool
+    {
 
-            $query = 'UPDATE zp_canvas
+        $query = 'UPDATE zp_canvas
 
                         SET
                      title = :title
 
                         WHERE id = :id LIMIT 1';
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
-            $stmn->bindValue(':id', $wikiId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':title', $wiki->title, PDO::PARAM_STR);
+        $stmn->bindValue(':id', $wikiId, PDO::PARAM_STR);
 
-            $execution = $stmn->execute();
+        $execution = $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $execution;
-        }
+        return $execution;
+    }
 
-        public function createArticle(Article $article): false|string
-        {
+    public function createArticle(Article $article): false|string
+    {
 
-            $query = "INSERT INTO zp_canvas_items
+        $query = "INSERT INTO zp_canvas_items
                     (title,
                      description,
                      data,
@@ -227,30 +227,30 @@ namespace Leantime\Domain\Wiki\Repositories {
                      :sortIndex
                       )";
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':title', $article->title, PDO::PARAM_STR);
-            $stmn->bindValue(':description', $article->description, PDO::PARAM_STR);
-            $stmn->bindValue(':data', $article->data, PDO::PARAM_STR);
-            $stmn->bindValue(':author', $article->author, PDO::PARAM_STR);
-            $stmn->bindValue(':canvasId', $article->canvasId, PDO::PARAM_INT);
-            $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
-            $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
-            $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':created', date('Y-m-d'), PDO::PARAM_STR);
-            $stmn->bindValue(':modified', date('Y-m-d'), PDO::PARAM_STR);
-            $stmn->bindValue(':sortIndex', '10', PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':title', $article->title, PDO::PARAM_STR);
+        $stmn->bindValue(':description', $article->description, PDO::PARAM_STR);
+        $stmn->bindValue(':data', $article->data, PDO::PARAM_STR);
+        $stmn->bindValue(':author', $article->author, PDO::PARAM_STR);
+        $stmn->bindValue(':canvasId', $article->canvasId, PDO::PARAM_INT);
+        $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
+        $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
+        $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
+        $stmn->bindValue(':created', date('Y-m-d'), PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d'), PDO::PARAM_STR);
+        $stmn->bindValue(':sortIndex', '10', PDO::PARAM_STR);
 
-            $execution = $stmn->execute();
+        $execution = $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $this->db->database->lastInsertId();
-        }
+        return $this->db->database->lastInsertId();
+    }
 
-        public function updateArticle(Article $article): bool
-        {
+    public function updateArticle(Article $article): bool
+    {
 
-            $query = 'UPDATE zp_canvas_items
+        $query = 'UPDATE zp_canvas_items
                 SET
                     title = :title,
                     description = :description,
@@ -262,120 +262,119 @@ namespace Leantime\Domain\Wiki\Repositories {
                     milestoneId = :milestoneId
                 WHERE id = :id LIMIT 1';
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':title', $article->title, PDO::PARAM_STR);
-            $stmn->bindValue(':description', $article->description, PDO::PARAM_STR);
-            $stmn->bindValue(':data', $article->data, PDO::PARAM_STR);
-            $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
-            $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
-            $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
-            $stmn->bindValue(':modified', date('Y-m-d'), PDO::PARAM_STR);
-            $stmn->bindValue(':id', $article->id, PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $article->milestoneId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':title', $article->title, PDO::PARAM_STR);
+        $stmn->bindValue(':description', $article->description, PDO::PARAM_STR);
+        $stmn->bindValue(':data', $article->data, PDO::PARAM_STR);
+        $stmn->bindValue(':parent', $article->parent, PDO::PARAM_INT);
+        $stmn->bindValue(':tags', $article->tags, PDO::PARAM_STR);
+        $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d'), PDO::PARAM_STR);
+        $stmn->bindValue(':id', $article->id, PDO::PARAM_STR);
+        $stmn->bindValue(':milestoneId', $article->milestoneId, PDO::PARAM_STR);
 
-            $execution = $stmn->execute();
+        $execution = $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $execution;
-        }
+        return $execution;
+    }
 
-        public function delArticle($id): void
-        {
-            $query = 'DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1';
+    public function delArticle($id): void
+    {
+        $query = 'DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1';
 
-            $stmn = $this->db->database->prepare($query);
+        $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            $stmn->execute();
+        $stmn->execute();
 
-            $stmn->closeCursor();
-        }
+        $stmn->closeCursor();
+    }
 
-        public function delWiki($id): void
-        {
+    public function delWiki($id): void
+    {
 
-            $query = 'DELETE FROM zp_canvas_items WHERE canvasId = :id';
+        $query = 'DELETE FROM zp_canvas_items WHERE canvasId = :id';
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->execute();
 
-            $query = 'DELETE FROM zp_canvas WHERE id = :id LIMIT 1';
+        $query = 'DELETE FROM zp_canvas WHERE id = :id LIMIT 1';
 
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->execute();
 
-            $stmn->closeCursor();
-        }
+        $stmn->closeCursor();
+    }
 
-        /**
-         * @return int|mixed
-         */
-        public function getNumberOfBoards($projectId = null): mixed
-        {
+    /**
+     * @return int|mixed
+     */
+    public function getNumberOfBoards($projectId = null): mixed
+    {
 
-            $sql = "SELECT
+        $sql = "SELECT
                         count(zp_canvas.id) AS boardCount
                 FROM
                     zp_canvas
                 WHERE zp_canvas.type = 'wiki'";
 
-            if (! is_null($projectId)) {
-                $sql .= ' AND zp_canvas.projectId = :projectId ';
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if (! is_null($projectId)) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            if (isset($values['boardCount'])) {
-                return $values['boardCount'];
-            }
-
-            return 0;
+        if (! is_null($projectId)) {
+            $sql .= ' AND zp_canvas.projectId = :projectId ';
         }
 
-        /**
-         * @return int|mixed
-         */
-        public function getNumberOfCanvasItems($projectId = null): mixed
-        {
+        $stmn = $this->db->database->prepare($sql);
 
-            $sql = "SELECT
+        if (! is_null($projectId)) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
+
+        if (isset($values['boardCount'])) {
+            return $values['boardCount'];
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return int|mixed
+     */
+    public function getNumberOfCanvasItems($projectId = null): mixed
+    {
+
+        $sql = "SELECT
                     count(zp_canvas_items.id) AS canvasCount
                 FROM
                 zp_canvas_items
                 LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
                 WHERE canvasBoard.type = 'wiki'  ";
 
-            if (! is_null($projectId)) {
-                $sql .= ' AND canvasBoard.projectId = :projectId';
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if (! is_null($projectId)) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            if (isset($values['canvasCount']) === true) {
-                return $values['canvasCount'];
-            }
-
-            return 0;
+        if (! is_null($projectId)) {
+            $sql .= ' AND canvasBoard.projectId = :projectId';
         }
+
+        $stmn = $this->db->database->prepare($sql);
+
+        if (! is_null($projectId)) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
+
+        if (isset($values['canvasCount']) === true) {
+            return $values['canvasCount'];
+        }
+
+        return 0;
     }
 }

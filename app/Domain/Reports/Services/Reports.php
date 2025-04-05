@@ -1,515 +1,513 @@
 <?php
 
-namespace Leantime\Domain\Reports\Services {
+namespace Leantime\Domain\Reports\Services;
 
-    use DateTime;
-    use DateTimeZone;
-    use Exception;
-    use GuzzleHttp\Client;
-    use GuzzleHttp\Promise\PromiseInterface;
-    use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Cache;
-    use Illuminate\Support\Facades\Log;
-    use Leantime\Core\Configuration\AppSettings as AppSettingCore;
-    use Leantime\Core\Configuration\Environment as EnvironmentCore;
-    use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Core\UI\Template as TemplateCore;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-    use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
-    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-    use Leantime\Domain\Insightscanvas\Repositories\Insightscanvas as InsightscanvaRepository;
-    use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
-    use Leantime\Domain\Minempathycanvas\Repositories\Minempathycanvas as MinempathycanvaRepository;
-    use Leantime\Domain\Obmcanvas\Repositories\Obmcanvas as ObmcanvaRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Reactions\Repositories\Reactions;
-    use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
-    use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
-    use Leantime\Domain\Riskscanvas\Repositories\Riskscanvas as RiskscanvaRepository;
-    use Leantime\Domain\Sbcanvas\Repositories\Sbcanvas as SbcanvaRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Setting\Services\Setting as SettingsService;
-    use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
-    use Leantime\Domain\Swotcanvas\Repositories\Swotcanvas as SwotcanvaRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Valuecanvas\Repositories\Valuecanvas as ValuecanvaRepository;
-    use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+use DateTime;
+use DateTimeZone;
+use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Leantime\Core\Configuration\AppSettings as AppSettingCore;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
+use Leantime\Domain\Eacanvas\Repositories\Eacanvas as EacanvaRepository;
+use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
+use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+use Leantime\Domain\Insightscanvas\Repositories\Insightscanvas as InsightscanvaRepository;
+use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
+use Leantime\Domain\Minempathycanvas\Repositories\Minempathycanvas as MinempathycanvaRepository;
+use Leantime\Domain\Obmcanvas\Repositories\Obmcanvas as ObmcanvaRepository;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Reactions\Repositories\Reactions;
+use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
+use Leantime\Domain\Retroscanvas\Repositories\Retroscanvas as RetroscanvaRepository;
+use Leantime\Domain\Riskscanvas\Repositories\Riskscanvas as RiskscanvaRepository;
+use Leantime\Domain\Sbcanvas\Repositories\Sbcanvas as SbcanvaRepository;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
+use Leantime\Domain\Swotcanvas\Repositories\Swotcanvas as SwotcanvaRepository;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Valuecanvas\Repositories\Valuecanvas as ValuecanvaRepository;
+use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+
+/**
+ * @api
+ */
+class Reports
+{
+    use DispatchesEvents;
+
+    private TemplateCore $tpl;
+
+    private AppSettingCore $appSettings;
+
+    private EnvironmentCore $config;
+
+    private ProjectRepository $projectRepository;
+
+    private SprintRepository $sprintRepository;
+
+    private ReportRepository $reportRepository;
+
+    private SettingsService $settings;
+
+    private TicketRepository $ticketRepository;
+
+    /**
+     * @param  SettingRepository  $settings
+     */
+    public function __construct(
+        TemplateCore $tpl,
+        AppSettingCore $appSettings,
+        EnvironmentCore $config,
+        ProjectRepository $projectRepository,
+        SprintRepository $sprintRepository,
+        ReportRepository $reportRepository,
+        SettingsService $settings,
+        TicketRepository $ticketRepository
+    ) {
+        $this->tpl = $tpl;
+        $this->appSettings = $appSettings;
+        $this->config = $config;
+        $this->projectRepository = $projectRepository;
+        $this->sprintRepository = $sprintRepository;
+        $this->reportRepository = $reportRepository;
+        $this->settings = $settings;
+        $this->ticketRepository = $ticketRepository;
+    }
+
+    /**
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function dailyIngestion(): void
+    {
+        $this->runIngestionForProject(session('currentProject'));
+    }
+
+    protected function runIngestionForProject(int $projectId): void
+    {
+
+        if (Cache::has('dailyReports-'.$projectId) === false || Cache::get('dailyReports-'.$projectId) < dtHelper()->dbNow()->endOfDay()) {
+
+            // Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
+            // Get current Sprint Id, if no sprint available, dont run the sprint burndown
+
+            $lastEntries = $this->reportRepository->checkLastReportEntries($projectId);
+
+            // If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
+            if (count($lastEntries) == 0) {
+                $currentSprint = $this->sprintRepository->getCurrentSprint($projectId);
+
+                if ($currentSprint !== false) {
+                    $sprintReport = $this->reportRepository->runTicketReport($projectId, $currentSprint->id);
+                    if ($sprintReport !== false) {
+                        $this->reportRepository->addReport($sprintReport);
+                    }
+                }
+
+                $backlogReport = $this->reportRepository->runTicketReport($projectId, '');
+
+                if ($backlogReport !== false) {
+
+                    $this->reportRepository->addReport($backlogReport);
+
+                    Cache::put('dailyReports-'.$projectId, dtHelper()->dbNow()->endOfDay(), 14400); // 4hours
+
+                }
+            }
+
+        }
+    }
+
+    public function cronDailyIngestion(): void
+    {
+        $projects = $this->projectRepository->getAll();
+
+        foreach ($projects as $project) {
+            $this->runIngestionForProject($project['id']);
+        }
+
+    }
 
     /**
      * @api
      */
-    class Reports
+    public function getFullReport($projectId): false|array
     {
-        use DispatchesEvents;
+        return $this->reportRepository->getFullReport($projectId);
+    }
 
-        private TemplateCore $tpl;
+    /**
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function getRealtimeReport($projectId, $sprintId): array|bool
+    {
+        return $this->reportRepository->runTicketReport($projectId, $sprintId);
+    }
 
-        private AppSettingCore $appSettings;
+    /**
+     * @api
+     */
+    public function getAnonymousTelemetry(
+        IdeaRepository $ideaRepository,
+        UserRepository $userRepository,
+        ClientRepository $clientRepository,
+        CommentRepository $commentsRepository,
+        TimesheetRepository $timesheetRepo,
+        EacanvaRepository $eaCanvasRepo,
+        InsightscanvaRepository $insightsCanvasRepo,
+        LeancanvaRepository $leanCanvasRepo,
+        ObmcanvaRepository $obmCanvasRepo,
+        RetroscanvaRepository $retrosCanvasRepo,
+        GoalcanvaRepository $goalCanvasRepo,
+        ValuecanvaRepository $valueCanvasRepo,
+        MinempathycanvaRepository $minEmpathyCanvasRepo,
+        RiskscanvaRepository $risksCanvasRepo,
+        SbcanvaRepository $sbCanvasRepo,
+        SwotcanvaRepository $swotCanvasRepo,
+        WikiRepository $wikiRepo
+    ): array {
 
-        private EnvironmentCore $config;
+        // Get anonymous company guid
+        $companyId = $this->settings->getCompanyId();
 
-        private ProjectRepository $projectRepository;
+        self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
 
-        private SprintRepository $sprintRepository;
-
-        private ReportRepository $reportRepository;
-
-        private SettingsService $settings;
-
-        private TicketRepository $ticketRepository;
-
-        /**
-         * @param  SettingRepository  $settings
-         */
-        public function __construct(
-            TemplateCore $tpl,
-            AppSettingCore $appSettings,
-            EnvironmentCore $config,
-            ProjectRepository $projectRepository,
-            SprintRepository $sprintRepository,
-            ReportRepository $reportRepository,
-            SettingsService $settings,
-            TicketRepository $ticketRepository
-        ) {
-            $this->tpl = $tpl;
-            $this->appSettings = $appSettings;
-            $this->config = $config;
-            $this->projectRepository = $projectRepository;
-            $this->sprintRepository = $sprintRepository;
-            $this->reportRepository = $reportRepository;
-            $this->settings = $settings;
-            $this->ticketRepository = $ticketRepository;
+        $companyLang = $this->settings->getSetting('companysettings.language');
+        if ($companyLang != '' && $companyLang !== false) {
+            $currentLanguage = $companyLang;
+        } else {
+            $currentLanguage = $this->config->language;
         }
 
-        /**
-         * @throws BindingResolutionException
-         *
-         * @api
-         */
-        public function dailyIngestion(): void
-        {
-            $this->runIngestionForProject(session('currentProject'));
-        }
+        $projectStatusCount = $this->getProjectStatusReport();
 
-        protected function runIngestionForProject(int $projectId): void
-        {
+        $taskSentiment = $this->generateTicketReactionsReport();
 
-            if (Cache::has('dailyReports-'.$projectId) === false || Cache::get('dailyReports-'.$projectId) < dtHelper()->dbNow()->endOfDay()) {
+        $telemetry = [
+            'date' => '',
+            'companyId' => $companyId,
+            'env' => 'oss',
+            'version' => $this->appSettings->appVersion,
+            'language' => $currentLanguage,
+            'numUsers' => $userRepository->getNumberOfUsers(),
+            'lastUserLogin' => $userRepository->getLastLogin(),
 
-                // Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
-                // Get current Sprint Id, if no sprint available, dont run the sprint burndown
+            'numProjects' => $this->projectRepository->getNumberOfProjects(null, 'project'),
+            'numProjectsGreen' => $projectStatusCount['green'] ?? 0,
+            'numProjectsYellow' => $projectStatusCount['yellow'] ?? 0,
+            'numProjectsRed' => $projectStatusCount['red'] ?? 0,
+            'numProjectsNone' => $projectStatusCount['none'] ?? 0,
 
-                $lastEntries = $this->reportRepository->checkLastReportEntries($projectId);
+            'numStrategies' => $this->projectRepository->getNumberOfProjects(null, 'strategy'),
+            'numPrograms' => $this->projectRepository->getNumberOfProjects(null, 'program'),
+            'numClients' => $clientRepository->getNumberOfClients(),
+            'numComments' => $commentsRepository->countComments(),
+            'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
+            'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
 
-                // If we receive 2 entries we have a report already. If we have one entry then we ran the backlog one and that means there was no current sprint.
-                if (count($lastEntries) == 0) {
-                    $currentSprint = $this->sprintRepository->getCurrentSprint($projectId);
+            'numBoards' => $ideaRepository->getNumberOfBoards(),
 
-                    if ($currentSprint !== false) {
-                        $sprintReport = $this->reportRepository->runTicketReport($projectId, $currentSprint->id);
-                        if ($sprintReport !== false) {
-                            $this->reportRepository->addReport($sprintReport);
-                        }
-                    }
+            'numIdeaItems' => $ideaRepository->getNumberOfIdeas(),
+            'numHoursBooked' => $timesheetRepo->getHoursBooked(),
 
-                    $backlogReport = $this->reportRepository->runTicketReport($projectId, '');
+            'numResearchBoards' => $leanCanvasRepo->getNumberOfBoards(),
+            'numResearchItems' => $leanCanvasRepo->getNumberOfCanvasItems(),
 
-                    if ($backlogReport !== false) {
+            'numRetroBoards' => $retrosCanvasRepo->getNumberOfBoards(),
+            'numRetroItems' => $retrosCanvasRepo->getNumberOfCanvasItems(),
 
-                        $this->reportRepository->addReport($backlogReport);
+            'numGoalBoards' => $goalCanvasRepo->getNumberOfBoards(),
+            'numGoalItems' => $goalCanvasRepo->getNumberOfCanvasItems(),
 
-                        Cache::put('dailyReports-'.$projectId, dtHelper()->dbNow()->endOfDay(), 14400); // 4hours
+            'numValueCanvasBoards' => $valueCanvasRepo->getNumberOfBoards(),
+            'numValueCanvasItems' => $valueCanvasRepo->getNumberOfCanvasItems(),
 
-                    }
-                }
+            'numMinEmpathyBoards' => $minEmpathyCanvasRepo->getNumberOfBoards(),
+            'numMinEmpathyItems' => $minEmpathyCanvasRepo->getNumberOfCanvasItems(),
 
-            }
-        }
+            'numOBMBoards' => $obmCanvasRepo->getNumberOfBoards(),
+            'numOBMItems' => $obmCanvasRepo->getNumberOfCanvasItems(),
 
-        public function cronDailyIngestion(): void
-        {
-            $projects = $this->projectRepository->getAll();
+            'numSWOTBoards' => $swotCanvasRepo->getNumberOfBoards(),
+            'numSWOTItems' => $swotCanvasRepo->getNumberOfCanvasItems(),
 
-            foreach ($projects as $project) {
-                $this->runIngestionForProject($project['id']);
-            }
+            'numSBBoards' => $sbCanvasRepo->getNumberOfBoards(),
+            'numSBItems' => $sbCanvasRepo->getNumberOfCanvasItems(),
 
-        }
+            'numRISKSBoards' => $risksCanvasRepo->getNumberOfBoards(),
+            'numRISKSItems' => $risksCanvasRepo->getNumberOfCanvasItems(),
 
-        /**
-         * @api
-         */
-        public function getFullReport($projectId): false|array
-        {
-            return $this->reportRepository->getFullReport($projectId);
-        }
+            'numEABoards' => $eaCanvasRepo->getNumberOfBoards(),
+            'numEAItems' => $eaCanvasRepo->getNumberOfCanvasItems(),
 
-        /**
-         * @throws BindingResolutionException
-         *
-         * @api
-         */
-        public function getRealtimeReport($projectId, $sprintId): array|bool
-        {
-            return $this->reportRepository->runTicketReport($projectId, $sprintId);
-        }
+            'numINSIGHTSBoards' => $insightsCanvasRepo->getNumberOfBoards(),
+            'numINSIGHTSItems' => $insightsCanvasRepo->getNumberOfCanvasItems(),
 
-        /**
-         * @api
-         */
-        public function getAnonymousTelemetry(
-            IdeaRepository $ideaRepository,
-            UserRepository $userRepository,
-            ClientRepository $clientRepository,
-            CommentRepository $commentsRepository,
-            TimesheetRepository $timesheetRepo,
-            EacanvaRepository $eaCanvasRepo,
-            InsightscanvaRepository $insightsCanvasRepo,
-            LeancanvaRepository $leanCanvasRepo,
-            ObmcanvaRepository $obmCanvasRepo,
-            RetroscanvaRepository $retrosCanvasRepo,
-            GoalcanvaRepository $goalCanvasRepo,
-            ValuecanvaRepository $valueCanvasRepo,
-            MinempathycanvaRepository $minEmpathyCanvasRepo,
-            RiskscanvaRepository $risksCanvasRepo,
-            SbcanvaRepository $sbCanvasRepo,
-            SwotcanvaRepository $swotCanvasRepo,
-            WikiRepository $wikiRepo
-        ): array {
+            'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
+            'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
 
-            // Get anonymous company guid
-            $companyId = $this->settings->getCompanyId();
+            'numTaskSentimentAngry' => $taskSentiment['🤬'] ?? 0,
+            'numTaskSentimentDisgust' => $taskSentiment['🤢'] ?? 0,
+            'numTaskSentimentUnhappy' => $taskSentiment['🙁'] ?? 0,
+            'numTaskSentimentNeutral' => $taskSentiment['😐'] ?? 0,
+            'numTaskSentimentHappy' => $taskSentiment['🙂'] ?? 0,
+            'numTaskSentimentLove' => $taskSentiment['😍'] ?? 0,
+            'numTaskSentimenUnicorn' => $taskSentiment['🦄'] ?? 0,
 
-            self::dispatch_event('beforeTelemetrySend', ['companyId' => $companyId]);
+            'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
+            'phpUname' => php_uname(),
+            'isDocker' => $this->isRunningInDocker(),
+            'phpSapiName' => php_sapi_name(),
+            'phpOs' => PHP_OS ?? 'unknown',
 
-            $companyLang = $this->settings->getSetting('companysettings.language');
-            if ($companyLang != '' && $companyLang !== false) {
-                $currentLanguage = $companyLang;
-            } else {
-                $currentLanguage = $this->config->language;
-            }
+        ];
 
-            $projectStatusCount = $this->getProjectStatusReport();
+        $telemetry = self::dispatch_filter('beforeReturnTelemetry', $telemetry);
 
-            $taskSentiment = $this->generateTicketReactionsReport();
+        return $telemetry;
+    }
 
-            $telemetry = [
-                'date' => '',
-                'companyId' => $companyId,
-                'env' => 'oss',
-                'version' => $this->appSettings->appVersion,
-                'language' => $currentLanguage,
-                'numUsers' => $userRepository->getNumberOfUsers(),
-                'lastUserLogin' => $userRepository->getLastLogin(),
+    /**
+     * @throws BindingResolutionException
+     *
+     * @api
+     */
+    public function sendAnonymousTelemetry(): bool|PromiseInterface
+    {
 
-                'numProjects' => $this->projectRepository->getNumberOfProjects(null, 'project'),
-                'numProjectsGreen' => $projectStatusCount['green'] ?? 0,
-                'numProjectsYellow' => $projectStatusCount['yellow'] ?? 0,
-                'numProjectsRed' => $projectStatusCount['red'] ?? 0,
-                'numProjectsNone' => $projectStatusCount['none'] ?? 0,
+        // Only send once a day
 
-                'numStrategies' => $this->projectRepository->getNumberOfProjects(null, 'strategy'),
-                'numPrograms' => $this->projectRepository->getNumberOfProjects(null, 'program'),
-                'numClients' => $clientRepository->getNumberOfClients(),
-                'numComments' => $commentsRepository->countComments(),
-                'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
-                'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
+        $allowTelemetry = app('config')->allowTelemetry ?? true;
 
-                'numBoards' => $ideaRepository->getNumberOfBoards(),
+        if ($allowTelemetry === true) {
+            $date_utc = new DateTime('now', new DateTimeZone('UTC'));
+            $today = $date_utc->format('Y-m-d');
+            $lastUpdate = $this->settings->getSetting('companysettings.telemetry.lastUpdate');
 
-                'numIdeaItems' => $ideaRepository->getNumberOfIdeas(),
-                'numHoursBooked' => $timesheetRepo->getHoursBooked(),
+            if ($lastUpdate != $today) {
+                $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
+                $telemetry['date'] = $today;
 
-                'numResearchBoards' => $leanCanvasRepo->getNumberOfBoards(),
-                'numResearchItems' => $leanCanvasRepo->getNumberOfCanvasItems(),
+                // Do the curl
+                $httpClient = new Client;
 
-                'numRetroBoards' => $retrosCanvasRepo->getNumberOfBoards(),
-                'numRetroItems' => $retrosCanvasRepo->getNumberOfCanvasItems(),
+                try {
 
-                'numGoalBoards' => $goalCanvasRepo->getNumberOfBoards(),
-                'numGoalItems' => $goalCanvasRepo->getNumberOfCanvasItems(),
+                    $data_string = json_encode($telemetry);
 
-                'numValueCanvasBoards' => $valueCanvasRepo->getNumberOfBoards(),
-                'numValueCanvasItems' => $valueCanvasRepo->getNumberOfCanvasItems(),
+                    $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
+                        'form_params' => [
+                            'telemetry' => $data_string,
+                        ],
+                        'timeout' => 480,
+                    ])->then(function ($response) use ($today) {
+                        $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
+                    });
 
-                'numMinEmpathyBoards' => $minEmpathyCanvasRepo->getNumberOfBoards(),
-                'numMinEmpathyItems' => $minEmpathyCanvasRepo->getNumberOfCanvasItems(),
+                    return $promise;
 
-                'numOBMBoards' => $obmCanvasRepo->getNumberOfBoards(),
-                'numOBMItems' => $obmCanvasRepo->getNumberOfCanvasItems(),
+                } catch (\Exception $e) {
+                    Log::error($e);
 
-                'numSWOTBoards' => $swotCanvasRepo->getNumberOfBoards(),
-                'numSWOTItems' => $swotCanvasRepo->getNumberOfCanvasItems(),
-
-                'numSBBoards' => $sbCanvasRepo->getNumberOfBoards(),
-                'numSBItems' => $sbCanvasRepo->getNumberOfCanvasItems(),
-
-                'numRISKSBoards' => $risksCanvasRepo->getNumberOfBoards(),
-                'numRISKSItems' => $risksCanvasRepo->getNumberOfCanvasItems(),
-
-                'numEABoards' => $eaCanvasRepo->getNumberOfBoards(),
-                'numEAItems' => $eaCanvasRepo->getNumberOfCanvasItems(),
-
-                'numINSIGHTSBoards' => $insightsCanvasRepo->getNumberOfBoards(),
-                'numINSIGHTSItems' => $insightsCanvasRepo->getNumberOfCanvasItems(),
-
-                'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
-                'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
-
-                'numTaskSentimentAngry' => $taskSentiment['🤬'] ?? 0,
-                'numTaskSentimentDisgust' => $taskSentiment['🤢'] ?? 0,
-                'numTaskSentimentUnhappy' => $taskSentiment['🙁'] ?? 0,
-                'numTaskSentimentNeutral' => $taskSentiment['😐'] ?? 0,
-                'numTaskSentimentHappy' => $taskSentiment['🙂'] ?? 0,
-                'numTaskSentimentLove' => $taskSentiment['😍'] ?? 0,
-                'numTaskSentimenUnicorn' => $taskSentiment['🦄'] ?? 0,
-
-                'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
-                'phpUname' => php_uname(),
-                'isDocker' => $this->isRunningInDocker(),
-                'phpSapiName' => php_sapi_name(),
-                'phpOs' => PHP_OS ?? 'unknown',
-
-            ];
-
-            $telemetry = self::dispatch_filter('beforeReturnTelemetry', $telemetry);
-
-            return $telemetry;
-        }
-
-        /**
-         * @throws BindingResolutionException
-         *
-         * @api
-         */
-        public function sendAnonymousTelemetry(): bool|PromiseInterface
-        {
-
-            // Only send once a day
-
-            $allowTelemetry = app('config')->allowTelemetry ?? true;
-
-            if ($allowTelemetry === true) {
-                $date_utc = new DateTime('now', new DateTimeZone('UTC'));
-                $today = $date_utc->format('Y-m-d');
-                $lastUpdate = $this->settings->getSetting('companysettings.telemetry.lastUpdate');
-
-                if ($lastUpdate != $today) {
-                    $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
-                    $telemetry['date'] = $today;
-
-                    // Do the curl
-                    $httpClient = new Client;
-
-                    try {
-
-                        $data_string = json_encode($telemetry);
-
-                        $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
-                            'form_params' => [
-                                'telemetry' => $data_string,
-                            ],
-                            'timeout' => 480,
-                        ])->then(function ($response) use ($today) {
-                            $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
-                        });
-
-                        return $promise;
-
-                    } catch (\Exception $e) {
-                        Log::error($e);
-
-                        return false;
-                    }
+                    return false;
                 }
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return false|void
+     *
+     * @throws Exception
+     *
+     * @api
+     */
+    public function optOutTelemetry()
+    {
+        $date_utc = new DateTime('now', new DateTimeZone('UTC'));
+        $today = $date_utc->format('Y-m-d');
+
+        $companyId = $this->settings->getCompanyId();
+
+        $telemetry = [
+            'date' => '',
+            'companyId' => $companyId,
+            'version' => $this->appSettings->appVersion,
+            'language' => '',
+            'numUsers' => 0,
+            'lastUserLogin' => 0,
+            'numProjects' => 0,
+            'numClients' => 0,
+            'numComments' => 0,
+            'numMilestones' => 0,
+            'numTickets' => 0,
+
+            'numBoards' => 0,
+
+            'numIdeaItems' => 0,
+            'numHoursBooked' => 0,
+
+            'numResearchBoards' => 0,
+            'numResearchItems' => 0,
+
+            'numRetroBoards' => 0,
+            'numRetroItems' => 0,
+
+            'numGoalBoards' => 0,
+            'numGoalItems' => 0,
+
+            'numValueCanvasBoards' => 0,
+            'numValueCanvasItems' => 0,
+
+            'numMinEmpathyBoards' => 0,
+            'numMinEmpathyItems' => 0,
+
+            'numOBMBoards' => 0,
+            'numOBMItems' => 0,
+
+            'numSWOTBoards' => 0,
+            'numSWOTItems' => 0,
+
+            'numSBBoards' => 0,
+            'numSBItems' => 0,
+
+            'numRISKSBoards' => 0,
+            'numRISKSItems' => 0,
+
+            'numEABoards' => 0,
+            'numEAItems' => 0,
+
+            'numINSIGHTSBoards' => 0,
+        ];
+
+        $telemetry['date'] = $today;
+
+        // Do the curl
+        $httpClient = new Client;
+
+        try {
+            $data_string = json_encode($telemetry);
+
+            $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
+                'form_params' => [
+                    'telemetry' => $data_string,
+                ],
+                'timeout' => 5,
+            ])->then(function ($response) use ($today) {
+
+                $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
+                session(['skipTelemetry' => true]);
+            });
+        } catch (\Exception $e) {
+            report($e);
+
+            session(['skipTelemetry' => true]);
 
             return false;
         }
 
-        /**
-         * @return false|void
-         *
-         * @throws Exception
-         *
-         * @api
-         */
-        public function optOutTelemetry()
-        {
-            $date_utc = new DateTime('now', new DateTimeZone('UTC'));
-            $today = $date_utc->format('Y-m-d');
+        $this->settings->saveSetting('companysettings.telemetry.active', false);
 
-            $companyId = $this->settings->getCompanyId();
+        session(['skipTelemetry' => true]);
 
-            $telemetry = [
-                'date' => '',
-                'companyId' => $companyId,
-                'version' => $this->appSettings->appVersion,
-                'language' => '',
-                'numUsers' => 0,
-                'lastUserLogin' => 0,
-                'numProjects' => 0,
-                'numClients' => 0,
-                'numComments' => 0,
-                'numMilestones' => 0,
-                'numTickets' => 0,
-
-                'numBoards' => 0,
-
-                'numIdeaItems' => 0,
-                'numHoursBooked' => 0,
-
-                'numResearchBoards' => 0,
-                'numResearchItems' => 0,
-
-                'numRetroBoards' => 0,
-                'numRetroItems' => 0,
-
-                'numGoalBoards' => 0,
-                'numGoalItems' => 0,
-
-                'numValueCanvasBoards' => 0,
-                'numValueCanvasItems' => 0,
-
-                'numMinEmpathyBoards' => 0,
-                'numMinEmpathyItems' => 0,
-
-                'numOBMBoards' => 0,
-                'numOBMItems' => 0,
-
-                'numSWOTBoards' => 0,
-                'numSWOTItems' => 0,
-
-                'numSBBoards' => 0,
-                'numSBItems' => 0,
-
-                'numRISKSBoards' => 0,
-                'numRISKSItems' => 0,
-
-                'numEABoards' => 0,
-                'numEAItems' => 0,
-
-                'numINSIGHTSBoards' => 0,
-            ];
-
-            $telemetry['date'] = $today;
-
-            // Do the curl
-            $httpClient = new Client;
-
-            try {
-                $data_string = json_encode($telemetry);
-
-                $promise = $httpClient->postAsync('https://telemetry.leantime.io', [
-                    'form_params' => [
-                        'telemetry' => $data_string,
-                    ],
-                    'timeout' => 5,
-                ])->then(function ($response) use ($today) {
-
-                    $this->settings->saveSetting('companysettings.telemetry.lastUpdate', $today);
-                    session(['skipTelemetry' => true]);
-                });
-            } catch (\Exception $e) {
-                report($e);
-
-                session(['skipTelemetry' => true]);
-
-                return false;
-            }
-
-            $this->settings->saveSetting('companysettings.telemetry.active', false);
-
-            session(['skipTelemetry' => true]);
-
-            try {
-                $promise->wait();
-            } catch (\Exception $e) {
-                report($e);
-            }
-
+        try {
+            $promise->wait();
+        } catch (\Exception $e) {
+            report($e);
         }
 
-        /**
-         * @return array
-         *
-         * @throws Exception
-         *
-         * @api
-         */
-        public function getProjectStatusReport()
-        {
-
-            $projectStatus = $this->projectRepository->getAll();
-
-            $statusList = ['green' => 0, 'yellow' => 0, 'red' => 0, 'none' => 0];
-            foreach ($projectStatus as $project) {
-                if (isset($statusList[$project['status']])) {
-                    $statusList[$project['status']]++;
-                } else {
-                    $statusList['none']++;
-                }
-            }
-
-            return $statusList;
-        }
-
-        public function generateTicketReactionsReport()
-        {
-            $reactionsRepo = app()->make(Reactions::class);
-            $collectedReactions = $reactionsRepo->getReactionsByModule('ticketSentiment');
-
-            $reactions = [
-                '🤬' => 0,
-                '🤢' => 0,
-                '🙁' => 0,
-                '😐' => 0,
-                '🙂' => 0,
-                '😍' => 0,
-                '🦄' => 0,
-                'other' => 0,
-            ];
-
-            foreach ($collectedReactions as $reaction) {
-                if (isset($reactions[$reaction['reaction']])) {
-                    $reactions[$reaction['reaction']] = $reactions[$reaction['reaction']] + $reaction['reactionCount'];
-                }
-            }
-
-            return $reactions;
-        }
-
-        /**
-         * Checks if Leantime is running in a Docker environment
-         * Uses multiple detection methods and handles errors gracefully
-         */
-        private function isRunningInDocker(): bool
-        {
-            // Method 1: Check for /.dockerenv file
-            try {
-                if (is_file('/.dockerenv')) {
-                    return true;
-                }
-            } catch (\Exception $e) {
-                // Silently fail if file access is restricted
-            }
-
-            // Method 2: Check for Docker-specific environment variables
-            if (getenv('DOCKER_CONTAINER') !== false || getenv('IS_DOCKER') !== false) {
-                return true;
-            }
-
-            // Method 3: Check cgroup info (works on Linux hosts)
-            try {
-                return strpos(file_get_contents('/proc/1/cgroup'), 'docker') !== false;
-            } catch (\Exception $e) {
-                return false; // Return false if all detection methods fail
-            }
-        }
     }
 
+    /**
+     * @return array
+     *
+     * @throws Exception
+     *
+     * @api
+     */
+    public function getProjectStatusReport()
+    {
+
+        $projectStatus = $this->projectRepository->getAll();
+
+        $statusList = ['green' => 0, 'yellow' => 0, 'red' => 0, 'none' => 0];
+        foreach ($projectStatus as $project) {
+            if (isset($statusList[$project['status']])) {
+                $statusList[$project['status']]++;
+            } else {
+                $statusList['none']++;
+            }
+        }
+
+        return $statusList;
+    }
+
+    public function generateTicketReactionsReport()
+    {
+        $reactionsRepo = app()->make(Reactions::class);
+        $collectedReactions = $reactionsRepo->getReactionsByModule('ticketSentiment');
+
+        $reactions = [
+            '🤬' => 0,
+            '🤢' => 0,
+            '🙁' => 0,
+            '😐' => 0,
+            '🙂' => 0,
+            '😍' => 0,
+            '🦄' => 0,
+            'other' => 0,
+        ];
+
+        foreach ($collectedReactions as $reaction) {
+            if (isset($reactions[$reaction['reaction']])) {
+                $reactions[$reaction['reaction']] = $reactions[$reaction['reaction']] + $reaction['reactionCount'];
+            }
+        }
+
+        return $reactions;
+    }
+
+    /**
+     * Checks if Leantime is running in a Docker environment
+     * Uses multiple detection methods and handles errors gracefully
+     */
+    private function isRunningInDocker(): bool
+    {
+        // Method 1: Check for /.dockerenv file
+        try {
+            if (is_file('/.dockerenv')) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // Silently fail if file access is restricted
+        }
+
+        // Method 2: Check for Docker-specific environment variables
+        if (getenv('DOCKER_CONTAINER') !== false || getenv('IS_DOCKER') !== false) {
+            return true;
+        }
+
+        // Method 3: Check cgroup info (works on Linux hosts)
+        try {
+            return strpos(file_get_contents('/proc/1/cgroup'), 'docker') !== false;
+        } catch (\Exception $e) {
+            return false; // Return false if all detection methods fail
+        }
+    }
 }

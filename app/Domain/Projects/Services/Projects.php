@@ -24,9 +24,6 @@ use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
 
-/**
- * The Projects class is responsible for managing projects and project-related operations.
- */
 class Projects
 {
     use DispatchesEvents;

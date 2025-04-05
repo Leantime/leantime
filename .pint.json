@@ -1,0 +1,15 @@
+{
+    "exclude": [
+        "storage/",
+        "userfiles/",
+        "tests/Support/_generated"
+    ],
+    "finder": [
+        "app",
+        "config",
+        "resources"
+    ],
+    "fixers": {
+        "App\\Pint\\Fixers\\NamespaceNotNestingFixer": true
+    }
+}

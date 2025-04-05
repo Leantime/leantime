@@ -3,5 +3,11 @@
         "storage/",
         "userfiles/",
         "tests/Support/_generated"
-    ]
+    ],
+    "rules": {
+        "no_unneeded_braces": {
+            "namespaces": true
+        },
+        "no_unused_imports": true
+    }
 }

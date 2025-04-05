@@ -1,20 +1,19 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Controllers {
+namespace Leantime\Domain\Wiki\Controllers;
 
-    use Leantime\Core\Controller\Controller;
-    use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
-    class Templates extends Controller
+class Templates extends Controller
+{
+    public function init(): void {}
+
+    /**
+     * @throws \Exception
+     */
+    public function get($params): Response
     {
-        public function init(): void {}
-
-        /**
-         * @throws \Exception
-         */
-        public function get($params): Response
-        {
-            return $this->tpl->displayPartial('wiki.templates');
-        }
+        return $this->tpl->displayPartial('wiki.templates');
     }
 }
