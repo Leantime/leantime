@@ -76,16 +76,30 @@ class Mix
     {
         if (str_starts_with($manifestDirectory, APP_ROOT.'/app')) {
             $urlPrefix = Str::of($manifestDirectory)
-                ->replace(APP_ROOT.'/app', '')
+                ->replace(APP_ROOT . '/app', '')
                 ->ltrim('/')
                 ->explode('/')
-                ->map(fn ($pathPart) => Str::slug($pathPart))
+                ->map(fn($pathPart) => Str::slug($pathPart))
                 ->join('/');
 
             $urlPrefix = Str::of($urlPrefix)
                 ->prepend('/api/static-asset/')
                 ->rtrim('/')
                 ->toString();
+
+        } else if (str_starts_with($manifestDirectory, 'phar://'.APP_ROOT.'/app')) {
+
+            $urlPrefix = Str::of($manifestDirectory)
+                ->replace('phar://'.APP_ROOT . '/app', '')
+                ->ltrim('/')
+                ->explode('/')
+                ->join('/');
+
+            $urlPrefix = Str::of($urlPrefix)
+                ->prepend('/api/static-asset/')
+                ->rtrim('/')
+                ->toString();
+
         } else {
             $urlPrefix = Str::of($manifestDirectory)
                 ->replace(APP_ROOT.'/public', '')

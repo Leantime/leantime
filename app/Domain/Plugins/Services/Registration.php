@@ -13,9 +13,13 @@ class Registration
     // Plugin Id: folder name of the plugin
     private string $pluginId;
 
+    private bool $distFolderRegistered = false;
+
     public function __construct(string $pluginId)
     {
         $this->pluginId = $pluginId;
+
+        $this->registerManifestFolder();
     }
 
     public function registerMiddleware(array $middleware)
@@ -138,6 +142,26 @@ class Registration
 
     }
 
+    private function getPluginBasePath() {
+
+        $pluginPath = APP_ROOT.'/app/Plugins/';
+
+        $pharPath = "phar://{$pluginPath}{$this->pluginId}/{$this->pluginId}.phar";
+        $regularPath = "{$pluginPath}{$this->pluginId}";
+
+        if(file_exists($pharPath)) {
+            return $pharPath;
+        }
+
+        if(file_exists($regularPath)) {
+            return $regularPath;
+        }
+
+        return "/";
+
+
+    }
+
     public function addMenuItem(array $item, string $section, array $location)
     {
 
@@ -189,11 +213,90 @@ class Registration
 
     }
 
-    public function addHeaderJs(array $middleware) {}
+    public function addHeaderJs(array $jsFiles)
+    {
 
-    public function addFooterJs(array $middleware) {}
+        EventDispatcher::add_event_listener('leantime.*.afterLinkTags', function () use ($jsFiles) {
 
-    public function addCss(array $middleware) {}
+            $mix = app()->make(\Leantime\Core\Support\Mix::class);
+            $basePath = $this->getPluginBasePath();
 
-    protected function getPluginPath() {}
+            // Add jQuery UI for draggable and resizable functionality
+            $files = $mix->getManifest()[$basePath.'/dist'];
+
+            foreach ($jsFiles as $jsFile) {
+                if (isset($files[$jsFile])) {
+                    echo '<script src="'.BASE_URL.$files[$jsFile].'"></script>';
+                }
+            }
+
+        });
+
+    }
+
+    protected function registerManifestFolder() {
+
+        if($this->distFolderRegistered === false) {
+
+            $distPath = "";
+            $basePath = $this->getPluginBasePath();
+            if (file_exists($basePath."/dist")) {
+                $distPath = $basePath . "/dist";
+            }
+
+            if($distPath !== '') {
+                EventDispatcher::add_filter_listener(
+                    'leantime.core.support.mix.__construct.mix_manifest_directories',
+                    function (array $directories) use ($distPath) {
+                        return array_merge($directories, [$distPath]);
+                    }
+                );
+
+                $this->distFolderRegistered = true;
+            }
+
+        }
+    }
+
+    public function addFooterJs(array $paths) {
+
+        EventDispatcher::add_event_listener('leantime.*.beforeBodyClose', function () use ($paths) {
+
+            $mix = app()->make(\Leantime\Core\Support\Mix::class);
+            $basePath = $this->getPluginBasePath();
+
+            // Add jQuery UI for draggable and resizable functionality
+            $files = $mix->getManifest()[$basePath.'/dist'];
+
+            foreach ($paths as $jsFile) {
+                if (isset($files[$jsFile])) {
+                    echo '<script src="'.BASE_URL.$files[$jsFile].'"></script>';
+                }
+            }
+
+        });
+
+    }
+
+    public function addCss(array $paths) {
+
+        EventDispatcher::add_event_listener('leantime.*.afterLinkTags', function () use ($paths) {
+
+            $mix = app()->make(\Leantime\Core\Support\Mix::class);
+            $basePath = $this->getPluginBasePath();
+
+            // Add jQuery UI for draggable and resizable functionality
+            $files = $mix->getManifest()[$basePath.'/dist'];
+
+            foreach ($paths as $cssFile) {
+                if (isset($files[$cssFile])) {
+                    echo '<link rel="stylesheet" href="'.BASE_URL.$files[$cssFile].'" />';
+                }
+            }
+
+        });
+
+    }
+
+
 }
