@@ -145,7 +145,7 @@ test-code-style:
 	./vendor/bin/pint --test --config .pint/pint.json
 
 fix-code-style:
-	./vendor/bin/pint --config .pint/pint.json
+	./vendor/bin/pint --config .pint/pint.json --verbose
 
 clear-cache:
 	rm -rf ./bootstrap/cache/*.php

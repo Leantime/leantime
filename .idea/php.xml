@@ -323,6 +323,15 @@
       <path value="$PROJECT_DIR$/vendor/symfony/cache" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/math" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/phpword" />
+      <path value="$PROJECT_DIR$/vendor/theodo-group/llphant" />
+      <path value="$PROJECT_DIR$/vendor/openai-php/client" />
+      <path value="$PROJECT_DIR$/vendor/php-http/multipart-stream-builder" />
+      <path value="$PROJECT_DIR$/vendor/smalot/pdfparser" />
+      <path value="$PROJECT_DIR$/vendor/prism-php/prism" />
+      <path value="$PROJECT_DIR$/vendor/inspector-apm/neuron-ai" />
+      <path value="$PROJECT_DIR$/vendor/marc-mabe/php-enum" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">
