@@ -86,6 +86,20 @@ class Mix
                 ->prepend('/api/static-asset/')
                 ->rtrim('/')
                 ->toString();
+
+        } elseif (str_starts_with($manifestDirectory, 'phar://'.APP_ROOT.'/app')) {
+
+            $urlPrefix = Str::of($manifestDirectory)
+                ->replace('phar://'.APP_ROOT.'/app', '')
+                ->ltrim('/')
+                ->explode('/')
+                ->join('/');
+
+            $urlPrefix = Str::of($urlPrefix)
+                ->prepend('/api/static-asset/')
+                ->rtrim('/')
+                ->toString();
+
         } else {
             $urlPrefix = Str::of($manifestDirectory)
                 ->replace(APP_ROOT.'/public', '')
