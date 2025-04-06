@@ -1,333 +1,293 @@
 <?php
 
-namespace Leantime\Domain\Install\Repositories {
+namespace Leantime\Domain\Install\Repositories;
 
-    use Illuminate\Contracts\Container\BindingResolutionException;
-    use Illuminate\Support\Facades\Cache;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Str;
-    use Leantime\Core\Configuration\AppSettings as AppSettingCore;
-    use Leantime\Core\Configuration\Environment;
-    use Leantime\Core\Events\DispatchesEvents;
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-    use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Domain\Setting\Services\SettingCache;
-    use PDO;
-    use PDOException;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Leantime\Core\Configuration\AppSettings as AppSettingCore;
+use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+use Leantime\Domain\Setting\Repositories\Setting;
+use Leantime\Domain\Setting\Services\SettingCache;
+use PDO;
+use PDOException;
 
-    class Install
+class Install
+{
+    use DispatchesEvents;
+
+    public string $name;
+
+    public int $id;
+
+    /**
+     * database pdo object
+     */
+    private ?PDO $database = null;
+
+    /**
+     * database username
+     *
+     * @var string
+     */
+    private mixed $user = '';
+
+    /**
+     * ddatabase password
+     *
+     * @var string
+     */
+    private mixed $password = '';
+
+    /**
+     * database host
+     *
+     * @var string
+     */
+    private mixed $host = '';
+
+    /**
+     * database port
+     *
+     * @var string
+     */
+    private mixed $port = '3306';
+
+    /**
+     * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
+     */
+    private array $dbUpdates = [
+        20004,
+        20100,
+        20101,
+        20102,
+        20103,
+        20104,
+        20105,
+        20106,
+        20107,
+        20108,
+        20109,
+        20110,
+        20111,
+        20112,
+        20113,
+        20114,
+        20115,
+        20116,
+        20117,
+        20118,
+        20120,
+        20121,
+        20122,
+        20401,
+        20402,
+        20405,
+        20406,
+        20407,
+        30002,
+        30003,
+        30400,
+        30408,
+    ];
+
+    /**
+     * config object, passed into constructor
+     */
+    private Environment|string $config;
+
+    /**
+     * appSettings object, passed into constructor
+     */
+    private string|AppSettingCore $settings;
+
+    /**
+     * __construct - get database connection
+     */
+    public function __construct(Environment $config, AppSettingCore $settings)
     {
-        use DispatchesEvents;
+        // Some scripts might take a long time to execute. Set timeout to 5minutes
+        ini_set('max_execution_time', 300);
 
-        public string $name;
+        $this->config = $config;
+        $this->settings = $settings;
 
-        public int $id;
+        $this->user = $this->config->dbUser;
+        $this->password = $this->config->dbPassword;
+        $this->host = $this->config->dbHost;
+        $this->port = $this->config->dbPort ?? 3306;
 
-        /**
-         * database pdo object
-         */
-        private ?PDO $database = null;
+        try {
+            $driver_options = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'];
+            $this->database = new PDO(
+                'mysql:host='.$this->host.';port='.$this->port,
+                $this->user,
+                $this->password,
+                $driver_options
+            );
+            $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            Log::error($e);
+            echo $e->getMessage();
+        }
+    }
 
-        /**
-         * database username
-         *
-         * @var string
-         */
-        private mixed $user = '';
+    /**
+     * returns current database object
+     */
+    public function getDBObject(): ?PDO
+    {
+        return $this->database;
+    }
 
-        /**
-         * ddatabase password
-         *
-         * @var string
-         */
-        private mixed $password = '';
+    /**
+     * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
+     */
+    public function checkIfInstalled(): bool
+    {
 
-        /**
-         * database host
-         *
-         * @var string
-         */
-        private mixed $host = '';
-
-        /**
-         * database port
-         *
-         * @var string
-         */
-        private mixed $port = '3306';
-
-        /**
-         * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
-         */
-        private array $dbUpdates = [
-            20004,
-            20100,
-            20101,
-            20102,
-            20103,
-            20104,
-            20105,
-            20106,
-            20107,
-            20108,
-            20109,
-            20110,
-            20111,
-            20112,
-            20113,
-            20114,
-            20115,
-            20116,
-            20117,
-            20118,
-            20120,
-            20121,
-            20122,
-            20401,
-            20402,
-            20405,
-            20406,
-            20407,
-            30002,
-            30003,
-            30400,
-            30408,
-        ];
-
-        /**
-         * config object, passed into constructor
-         */
-        private Environment|string $config;
-
-        /**
-         * appSettings object, passed into constructor
-         */
-        private string|AppSettingCore $settings;
-
-        /**
-         * __construct - get database connection
-         */
-        public function __construct(Environment $config, AppSettingCore $settings)
-        {
-            // Some scripts might take a long time to execute. Set timeout to 5minutes
-            ini_set('max_execution_time', 300);
-
-            $this->config = $config;
-            $this->settings = $settings;
-
-            $this->user = $this->config->dbUser;
-            $this->password = $this->config->dbPassword;
-            $this->host = $this->config->dbHost;
-            $this->port = $this->config->dbPort ?? 3306;
-
-            try {
-                $driver_options = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'];
-                $this->database = new PDO(
-                    'mysql:host='.$this->host.';port='.$this->port,
-                    $this->user,
-                    $this->password,
-                    $driver_options
-                );
-                $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                Log::error($e);
-                echo $e->getMessage();
-            }
+        if (Cache::has('isInstalled') && Cache::get('isInstalled') === true) {
+            return true;
         }
 
-        /**
-         * returns current database object
-         */
-        public function getDBObject(): ?PDO
-        {
-            return $this->database;
-        }
-
-        /**
-         * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
-         */
-        public function checkIfInstalled(): bool
-        {
-
-            if (Cache::has('isInstalled') && Cache::get('isInstalled') === true) {
-                return true;
-            }
-
-            try {
-
-                $this->database->query('Use `'.$this->config->dbDatabase.'`;');
-
-                $stmn = $this->database->prepare('SELECT COUNT(*) FROM zp_user');
-
-                $stmn->execute();
-                $values = $stmn->fetchAll();
-
-                $stmn->closeCursor();
-
-                Cache::set('isInstalled', true);
-
-                return true;
-            } catch (PDOException $e) {
-
-                Cache::forget('isInstalled');
-
-                Log::error($e);
-
-                return false;
-            }
-        }
-
-        public function createDB($dbName): bool
-        {
-
-            try {
-                $stmn = $this->database->prepare('CREATE SCHEMA :schemaName ;');
-                $stmn->bindValue(':dbName', $dbName, PDO::PARAM_STR);
-
-                $stmn->execute();
-
-                $stmn->closeCursor();
-
-                return true;
-            } catch (PDOException $e) {
-
-                Log::error($e);
-
-                return false;
-            }
-        }
-
-        /**
-         * setupDB installs database
-         *
-         * @param  array  $values  Form values for admin user and company information
-         * @param  string  $db
-         */
-        public function setupDB(array $values, $db = ''): bool
-        {
-
-            $sql = $this->sqlPrep();
-
-            try {
-                if ($db == null) {
-                    $this->database->query('Use `'.$this->config->dbDatabase.'`;');
-                } else {
-                    $this->database->query('Use `'.$db.'`;');
-                }
-
-                $stmn = $this->database->prepare($sql);
-                $pwReset = Str::random(32);
-
-                $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
-                $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-                $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
-                $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
-                $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
-                $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
-
-                session()->put('pwReset', $pwReset);
-
-                $stmn->execute();
-
-                /** @noinspection PhpStatementHasEmptyBodyInspection */
-                while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */
-                }
-
-                return true;
-            } catch (PDOException $e) {
-                Log::error($e);
-
-                return false;
-            }
-        }
-
-        /**
-         * updateDB main entry point to update the db based on version number. Executes all missing db update scripts
-         *
-         * @throws BindingResolutionException
-         */
-        public function updateDB(): array|bool
-        {
-
-            // Forget all the versions we think we know and start fresh
-            session()->forget('db-version');
-            $settingsCacheService = app()->make(SettingCache::class);
-            $settingsCacheService->forget('db-version');
-
-            $errors = [];
+        try {
 
             $this->database->query('Use `'.$this->config->dbDatabase.'`;');
 
-            $versionArray = explode('.', $this->settings->dbVersion);
+            $stmn = $this->database->prepare('SELECT COUNT(*) FROM zp_user');
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+
+            $stmn->closeCursor();
+
+            Cache::set('isInstalled', true);
+
+            return true;
+        } catch (PDOException $e) {
+
+            Cache::forget('isInstalled');
+
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    public function createDB($dbName): bool
+    {
+
+        try {
+            $stmn = $this->database->prepare('CREATE SCHEMA :schemaName ;');
+            $stmn->bindValue(':dbName', $dbName, PDO::PARAM_STR);
+
+            $stmn->execute();
+
+            $stmn->closeCursor();
+
+            return true;
+        } catch (PDOException $e) {
+
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * setupDB installs database
+     *
+     * @param  array  $values  Form values for admin user and company information
+     * @param  string  $db
+     */
+    public function setupDB(array $values, $db = ''): bool
+    {
+
+        $sql = $this->sqlPrep();
+
+        try {
+            if ($db == null) {
+                $this->database->query('Use `'.$this->config->dbDatabase.'`;');
+            } else {
+                $this->database->query('Use `'.$db.'`;');
+            }
+
+            $stmn = $this->database->prepare($sql);
+            $pwReset = Str::random(32);
+
+            $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
+            $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
+            $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
+            $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
+            $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
+            $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
+
+            session()->put('pwReset', $pwReset);
+
+            $stmn->execute();
+
+            /** @noinspection PhpStatementHasEmptyBodyInspection */
+            while ($stmn->nextRowset()) {/* https://bugs.php.net/bug.php?id=61613 */
+            }
+
+            return true;
+        } catch (PDOException $e) {
+            Log::error($e);
+
+            return false;
+        }
+    }
+
+    /**
+     * updateDB main entry point to update the db based on version number. Executes all missing db update scripts
+     *
+     * @throws BindingResolutionException
+     */
+    public function updateDB(): array|bool
+    {
+
+        // Forget all the versions we think we know and start fresh
+        session()->forget('db-version');
+        $settingsCacheService = app()->make(SettingCache::class);
+        $settingsCacheService->forget('db-version');
+
+        $errors = [];
+
+        $this->database->query('Use `'.$this->config->dbDatabase.'`;');
+
+        $versionArray = explode('.', $this->settings->dbVersion);
+        if (is_array($versionArray) && count($versionArray) == 3) {
+            $major = $versionArray[0];
+            $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
+            $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
+            $newDBVersion = $major.$minor.$patch;
+        } else {
+            $errors[0] = 'Problem identifying the version number';
+
+            return $errors;
+        }
+
+        $setting = app()->make(Setting::class);
+        $dbVersion = $setting->getSetting('db-version');
+        $currentDBVersion = 0;
+        if ($dbVersion) {
+            $versionArray = explode('.', $dbVersion);
             if (is_array($versionArray) && count($versionArray) == 3) {
                 $major = $versionArray[0];
                 $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
                 $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
-                $newDBVersion = $major.$minor.$patch;
+                $currentDBVersion = $major.$minor.$patch;
             } else {
                 $errors[0] = 'Problem identifying the version number';
 
                 return $errors;
             }
+        }
 
-            $setting = app()->make(Setting::class);
-            $dbVersion = $setting->getSetting('db-version');
-            $currentDBVersion = 0;
-            if ($dbVersion) {
-                $versionArray = explode('.', $dbVersion);
-                if (is_array($versionArray) && count($versionArray) == 3) {
-                    $major = $versionArray[0];
-                    $minor = str_pad($versionArray[1], 2, '0', STR_PAD_LEFT);
-                    $patch = str_pad($versionArray[2], 2, '0', STR_PAD_LEFT);
-                    $currentDBVersion = $major.$minor.$patch;
-                } else {
-                    $errors[0] = 'Problem identifying the version number';
-
-                    return $errors;
-                }
-            }
-
-            if ($currentDBVersion == $newDBVersion) {
-
-                session()->forget('isUpdated');
-                session()->forget('dbVersion');
-
-                return true;
-            }
-
-            // Find all update functions that need to be executed
-            foreach ($this->dbUpdates as $updateVersion) {
-                if ($currentDBVersion < $updateVersion) {
-                    $functionName = 'update_sql_'.$updateVersion;
-
-                    $result = $this->$functionName();
-
-                    if ($result !== true) {
-                        $errors = array_merge($errors, $result);
-                    } else {
-                        // Update version number in db
-                        try {
-
-                            $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
-                            $settingsService->saveSetting('db-version', $this->settings->dbVersion);
-
-                            // $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
-                            // $stmn->execute();
-
-                            $currentDBVersion = $updateVersion;
-                        } catch (PDOException $e) {
-                            Log::error($e);
-                            Log::error($e->getTraceAsString());
-
-                            return ['There was a problem updating the database'];
-                        }
-                    }
-
-                    if (count($errors) > 0) {
-                        return $errors;
-                    }
-                }
-            }
+        if ($currentDBVersion == $newDBVersion) {
 
             session()->forget('isUpdated');
             session()->forget('dbVersion');
@@ -335,13 +295,53 @@ namespace Leantime\Domain\Install\Repositories {
             return true;
         }
 
-        /**
-         * sqlPrep - returns all the create table statements
-         */
-        private function sqlPrep(): string
-        {
+        // Find all update functions that need to be executed
+        foreach ($this->dbUpdates as $updateVersion) {
+            if ($currentDBVersion < $updateVersion) {
+                $functionName = 'update_sql_'.$updateVersion;
 
-            $sql = "
+                $result = $this->$functionName();
+
+                if ($result !== true) {
+                    $errors = array_merge($errors, $result);
+                } else {
+                    // Update version number in db
+                    try {
+
+                        $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
+                        $settingsService->saveSetting('db-version', $this->settings->dbVersion);
+
+                        // $stmn = $this->database->prepare("INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', '".$this->settings->dbVersion."') ON DUPLICATE KEY UPDATE `value` = '".$this->settings->dbVersion."'");
+                        // $stmn->execute();
+
+                        $currentDBVersion = $updateVersion;
+                    } catch (PDOException $e) {
+                        Log::error($e);
+                        Log::error($e->getTraceAsString());
+
+                        return ['There was a problem updating the database'];
+                    }
+                }
+
+                if (count($errors) > 0) {
+                    return $errors;
+                }
+            }
+        }
+
+        session()->forget('isUpdated');
+        session()->forget('dbVersion');
+
+        return true;
+    }
+
+    /**
+     * sqlPrep - returns all the create table statements
+     */
+    private function sqlPrep(): string
+    {
+
+        $sql = "
                 CREATE TABLE `zp_calendar` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `userId` int(11) DEFAULT NULL,
@@ -846,114 +846,114 @@ namespace Leantime\Domain\Install\Repositories {
 
             ";
 
-            return $sql;
-        }
+        return $sql;
+    }
 
-        /**
-         * update_sql_20004 - database update sql for V2.0.4
-         * - Updates all tables and db to utf8mb4
-         * - converts 255 index to be smaller
-         *
-         * @noinspection SqlResolve - A lot of tables don't exist anymore, so this will not resolve. Keeping the update script for backwards compatibility
-         */
-        private function update_sql_20004(): bool|array
-        {
+    /**
+     * update_sql_20004 - database update sql for V2.0.4
+     * - Updates all tables and db to utf8mb4
+     * - converts 255 index to be smaller
+     *
+     * @noinspection SqlResolve - A lot of tables don't exist anymore, so this will not resolve. Keeping the update script for backwards compatibility
+     */
+    private function update_sql_20004(): bool|array
+    {
 
-            $errors = [];
+        $errors = [];
 
-            $sql = [
-                'ALTER TABLE `zp_wiki_articles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_submodulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_canvas` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_wiki_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_tickethistory` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_gcallinks` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_message` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_note` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_timesheets` MODIFY kind VARCHAR(175);',
-                'ALTER TABLE `zp_timesheets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_roles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_projects` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_modulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_wiki_comments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_punch_clock` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_clients` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_account` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_sprints` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_lead` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_user` MODIFY username VARCHAR(175);',
-                'ALTER TABLE `zp_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_settings` MODIFY `key` VARCHAR(175);',
-                'ALTER TABLE `zp_settings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_stats` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_tickets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_canvas_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_dashboard_widgets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_file` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_action_tabs` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_relationuserproject` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
-            ];
+        $sql = [
+            'ALTER TABLE `zp_wiki_articles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_submodulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_canvas` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_wiki_categories` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_tickethistory` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_gcallinks` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_message` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_note` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_timesheets` MODIFY kind VARCHAR(175);',
+            'ALTER TABLE `zp_timesheets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_roles` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_projects` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_modulerights` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_wiki_comments` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_punch_clock` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_clients` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_account` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_sprints` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_lead` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_user` MODIFY username VARCHAR(175);',
+            'ALTER TABLE `zp_user` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_settings` MODIFY `key` VARCHAR(175);',
+            'ALTER TABLE `zp_settings` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_comment` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_stats` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_tickets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_canvas_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_dashboard_widgets` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_file` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_action_tabs` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_relationuserproject` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            'ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20100(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    private function update_sql_20100(): bool|array
+    {
 
-            $sql = [
-                'UPDATE `zp_user` SET role = 50 WHERE role = 2;',
-                'UPDATE `zp_user` SET role = 10 WHERE role = 3;',
-                'UPDATE `zp_user` SET role = 20 WHERE role = 4;',
-                'UPDATE `zp_user` SET role = 40 WHERE role = 5;',
-            ];
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'UPDATE `zp_user` SET role = 50 WHERE role = 2;',
+            'UPDATE `zp_user` SET role = 10 WHERE role = 3;',
+            'UPDATE `zp_user` SET role = 20 WHERE role = 4;',
+            'UPDATE `zp_user` SET role = 40 WHERE role = 5;',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20101(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    private function update_sql_20101(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;',
-                'ALTER TABLE `zp_stats`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_comment` CHANGE COLUMN `module` `module` VARCHAR(200) NULL DEFAULT NULL ;',
+            'ALTER TABLE `zp_stats`
                     ADD COLUMN `sum_teammembers` INT(11) NULL DEFAULT NULL AFTER `daily_avg_hours_remaining_todo`,
                     CHANGE COLUMN `sum_planned_hours` `sum_planned_hours` FLOAT NULL DEFAULT NULL ,
                     CHANGE COLUMN `sum_logged_hours` `sum_logged_hours` FLOAT NULL DEFAULT NULL ,
@@ -964,7 +964,7 @@ namespace Leantime\Domain\Install\Repositories {
                     CHANGE COLUMN `daily_avg_hours_planned_point` `daily_avg_hours_planned_point` FLOAT NULL DEFAULT NULL ,
                     CHANGE COLUMN `daily_avg_hours_remaining_point` `daily_avg_hours_remaining_point` FLOAT NULL DEFAULT NULL ,
                     CHANGE COLUMN `daily_avg_hours_remaining_todo` `daily_avg_hours_remaining_todo` FLOAT NULL DEFAULT NULL ;',
-                'CREATE TABLE `zp_audit` (
+            'CREATE TABLE `zp_audit` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `userId` INT NULL,
                       `projectId` INT NULL,
@@ -978,223 +978,223 @@ namespace Leantime\Domain\Install\Repositories {
                       KEY `projectAction` (`projectId` ASC, `action` ASC),
                       KEY `projectEntityEntityId` (`projectId` ASC, `entity` ASC, `entityId` ASC)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20102(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
-                'ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL',
-            ];
+    private function update_sql_20102(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
+            'ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20103(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL',
-                'ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL',
-            ];
+    private function update_sql_20103(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL',
+            'ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20104(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'ALTER TABLE `zp_user` ADD COLUMN `pwResetCount` INT(5) NULL AFTER `pwResetExpiration`',
-                'ALTER TABLE `zp_user` ADD COLUMN `forcePwReset` TINYINT NULL AFTER `pwResetCount`',
-                'ALTER TABLE `zp_user` ADD COLUMN `createdOn` DATETIME NULL AFTER `twoFASecret`',
-                'ALTER TABLE `zp_user` CHANGE COLUMN `lastpwd_change` `lastpwd_change` DATETIME NULL DEFAULT NULL AFTER `forcePwReset`',
-                'ALTER TABLE `zp_user` CHANGE COLUMN `expires` `expires` DATETIME NULL DEFAULT NULL',
-            ];
+    private function update_sql_20104(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'ALTER TABLE `zp_user` ADD COLUMN `pwResetCount` INT(5) NULL AFTER `pwResetExpiration`',
+            'ALTER TABLE `zp_user` ADD COLUMN `forcePwReset` TINYINT NULL AFTER `pwResetCount`',
+            'ALTER TABLE `zp_user` ADD COLUMN `createdOn` DATETIME NULL AFTER `twoFASecret`',
+            'ALTER TABLE `zp_user` CHANGE COLUMN `lastpwd_change` `lastpwd_change` DATETIME NULL DEFAULT NULL AFTER `forcePwReset`',
+            'ALTER TABLE `zp_user` CHANGE COLUMN `expires` `expires` DATETIME NULL DEFAULT NULL',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20105(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`',
-            ];
+    private function update_sql_20105(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'ALTER TABLE `zp_projects` ADD COLUMN `psettings` MEDIUMTEXT NULL AFTER `active`',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20106(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL',
-            ];
+    private function update_sql_20106(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20107(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')",
-            ];
+    private function update_sql_20107(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')",
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20108(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'alter table zp_relationuserproject add `projectRole` varchar(20) null',
-                'create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)',
-                'create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)',
-            ];
+    private function update_sql_20108(): bool|array
+    {
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'alter table zp_relationuserproject add `projectRole` varchar(20) null',
+            'create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)',
+            'create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)',
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20109(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    private function update_sql_20109(): bool|array
+    {
 
-            $sql = [
-                'CREATE TABLE IF NOT EXISTS `zp_queue` (
+        $errors = [];
+
+        $sql = [
+            'CREATE TABLE IF NOT EXISTS `zp_queue` (
                                `msghash` varchar(50) NOT NULL,
                                 `channel` varchar(255),
                                `userId` int(11) NOT NULL,
@@ -1206,37 +1206,37 @@ namespace Leantime\Domain\Install\Repositories {
                                KEY `projectId` (`projectId`),
                                KEY `userId` (`userId`)
 			   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        private function update_sql_20110(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    private function update_sql_20110(): bool|array
+    {
 
-            $sql = [
-                'alter table zp_canvas_items add tags text null',
-                'alter table zp_canvas_items add title varchar(255) null',
-                'alter table zp_canvas_items add parent int null',
-                'alter table zp_canvas_items add featured int null',
-                'create table zp_approvals
+        $errors = [];
+
+        $sql = [
+            'alter table zp_canvas_items add tags text null',
+            'alter table zp_canvas_items add title varchar(255) null',
+            'alter table zp_canvas_items add parent int null',
+            'alter table zp_canvas_items add featured int null',
+            'create table zp_approvals
                 (
                     id               int auto_increment,
                     module           varchar(100) null,
@@ -1249,84 +1249,84 @@ namespace Leantime\Domain\Install\Repositories {
                     constraint zp_approvals_pk
                         primary key (id)
                 )',
-                'alter table zp_comment add status varchar(50) null',
-            ];
+            'alter table zp_comment add status varchar(50) null',
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        /*         * *
-         * update_sql_20111 - Update database for new Canvas
-         *
-         * @access private
-         * @return bool|array    Success of database update or array of errors
-         */
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-        private function update_sql_20111(): bool|array
-        {
+    /*         * *
+     * update_sql_20111 - Update database for new Canvas
+     *
+     * @access private
+     * @return bool|array    Success of database update or array of errors
+     */
 
-            $errors = [];
+    private function update_sql_20111(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null',
-                "UPDATE zp_projects SET menuType = '".MenuRepository::DEFAULT_MENU."'",
-                'ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null',
-                'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
-                'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
-                'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
-                "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
-                "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
-            ];
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            'ALTER TABLE zp_projects ADD menuType MEDIUMTEXT null',
+            "UPDATE zp_projects SET menuType = '".MenuRepository::DEFAULT_MENU."'",
+            'ALTER TABLE zp_canvas_items ADD relates VARCHAR(255) null',
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
+            "SET zp_canvas_items.status = 'draft' WHERE zp_canvas_items.status = 'danger' AND zp_canvas.type = 'leancanvas'",
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
+            "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
+            'UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id '.
+            "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
+            "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        /*         * *
-         * update_sql_20112 - Update database for new Canvas
-         *
-         * @access private
-         * @return bool|array    Success of database update or array of errors
-         */
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-        private function update_sql_20112(): bool|array
-        {
+    /*         * *
+     * update_sql_20112 - Update database for new Canvas
+     *
+     * @access private
+     * @return bool|array    Success of database update or array of errors
+     */
 
-            $errors = [];
+    private function update_sql_20112(): bool|array
+    {
 
-            $sql = [
-                'CREATE TABLE `zp_plugins` (
+        $errors = [];
+
+        $sql = [
+            'CREATE TABLE `zp_plugins` (
                   `id` INT NOT NULL AUTO_INCREMENT,
                   `name` VARCHAR(45) NULL,
                   `enabled` TINYINT NULL,
@@ -1338,9 +1338,9 @@ namespace Leantime\Domain\Install\Repositories {
                   `authors` VARCHAR(255) NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-                'ALTER TABLE `zp_timesheets` ADD COLUMN `paid` SMALLINT NULL AFTER `rate`, ADD COLUMN `paidDate` DATETIME NULL AFTER `paid`;',
-                'DROP TABLE IF EXISTS zp_account, zp_action_tabs, zp_dashboard_widgets, zp_lead, zp_message, zp_modulerights, zp_roles, zp_submodulerights, zp_wiki, zp_wiki_articles, zp_wiki_categories, zp_wiki_comments;',
-                'CREATE TABLE `zp_notifications` (
+            'ALTER TABLE `zp_timesheets` ADD COLUMN `paid` SMALLINT NULL AFTER `rate`, ADD COLUMN `paidDate` DATETIME NULL AFTER `paid`;',
+            'DROP TABLE IF EXISTS zp_account, zp_action_tabs, zp_dashboard_widgets, zp_lead, zp_message, zp_modulerights, zp_roles, zp_submodulerights, zp_wiki, zp_wiki_articles, zp_wiki_categories, zp_wiki_comments;',
+            'CREATE TABLE `zp_notifications` (
                   `id` INT NOT NULL AUTO_INCREMENT,
                   `userId` INT NOT NULL,
                   `read` INT NULL,
@@ -1356,99 +1356,99 @@ namespace Leantime\Domain\Install\Repositories {
                   INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
                   INDEX `userId,read` (`userId` ASC, `read` DESC)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        /* * *
-         * update_sql_20113 - Create onboarding setting for first time installs
-         *
-         * @access private
-         * @return bool|array    Success of database update or array of errors
-         */
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-        private function update_sql_20113(): bool|array
-        {
+    /* * *
+     * update_sql_20113 - Create onboarding setting for first time installs
+     *
+     * @access private
+     * @return bool|array    Success of database update or array of errors
+     */
 
-            $errors = [];
+    private function update_sql_20113(): bool|array
+    {
 
-            $sql = [
-                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.completedOnboarding', 'true') ON DUPLICATE KEY UPDATE `value` = 'true'",
-            ];
+        $errors = [];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
+        $sql = [
+            "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.completedOnboarding', 'true') ON DUPLICATE KEY UPDATE `value` = 'true'",
+        ];
 
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20114(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20114(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_projects`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_projects`
                 ADD COLUMN `type` VARCHAR(45) NULL,
                 ADD COLUMN `start` DATETIME NULL,
                 ADD COLUMN `end` DATETIME NULL,
                 ADD COLUMN `created` DATETIME NULL,
                 ADD COLUMN `modified` DATETIME NULL',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20115(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20115(): bool|array
+    {
 
-            $sql = [
-                ' CREATE TABLE `zp_entity_relationships` (
+        $errors = [];
+
+        $sql = [
+            ' CREATE TABLE `zp_entity_relationships` (
                         `id` INT NOT NULL AUTO_INCREMENT,
                         `enitityA` INT NULL,
                         `entityAType` VARCHAR(45) NULL,
@@ -1462,34 +1462,34 @@ namespace Leantime\Domain\Install\Repositories {
                         INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
                         INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
-                "UPDATE `zp_tickets` SET milestoneid = dependingTicketId , dependingTicketId = '' WHERE type <> 'subtask' AND dependingTicketId > 0",
-            ];
+            "UPDATE `zp_tickets` SET milestoneid = dependingTicketId , dependingTicketId = '' WHERE type <> 'subtask' AND dependingTicketId > 0",
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20116(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20116(): bool|array
+    {
 
-            $sql = [
-                ' CREATE TABLE `zp_reactions` (
+        $errors = [];
+
+        $sql = [
+            ' CREATE TABLE `zp_reactions` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `userId` INT NULL,
                       `moduleId` INT NULL,
@@ -1500,110 +1500,110 @@ namespace Leantime\Domain\Install\Repositories {
                       INDEX `entity` (`moduleId` ASC, `module` ASC, `reaction` ASC),
                       INDEX `user` (`userId` ASC, `moduleId` ASC, `module` ASC, `reaction` ASC)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
-                'ALTER TABLE `zp_projects`
+            'ALTER TABLE `zp_projects`
                 ADD COLUMN `avatar` MEDIUMTEXT NULL AFTER `modified`,
                 ADD COLUMN `cover` MEDIUMTEXT NULL AFTER `avatar`;',
 
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20117(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20117(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_projects`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_projects`
                 ADD COLUMN `parent` INT(11) NULL;',
 
-                'ALTER TABLE `zp_projects`
+            'ALTER TABLE `zp_projects`
                 ADD COLUMN `sortIndex` INT(11) NULL;',
 
-                'ALTER TABLE `zp_user`
+            'ALTER TABLE `zp_user`
                 ADD COLUMN `jobTitle` VARCHAR(200) NULL ,
                 ADD COLUMN `jobLevel` VARCHAR(50) NULL ,
                 ADD COLUMN `department` VARCHAR(200) NULL ;',
 
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20118(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20118(): bool|array
+    {
 
-            $sql = [
+        $errors = [];
 
-                'UPDATE `zp_projects` SET parent = null;',
+        $sql = [
 
-                'UPDATE `zp_projects` SET start = null, end = null;',
+            'UPDATE `zp_projects` SET parent = null;',
 
-                'ALTER TABLE `zp_projects`
+            'UPDATE `zp_projects` SET start = null, end = null;',
+
+            'ALTER TABLE `zp_projects`
                 CHANGE COLUMN `parent` `parent` INT(11) NULL DEFAULT NULL,
                 CHANGE COLUMN `type` `type` VARCHAR(45) NULL DEFAULT NULL ;',
 
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20120(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20120(): bool|array
+    {
 
-            $sql = [
+        $errors = [];
 
-                'ALTER TABLE `zp_canvas_items`
+        $sql = [
+
+            'ALTER TABLE `zp_canvas_items`
                 ADD COLUMN `kpi` INT NULL DEFAULT NULL AFTER `tags`,
                 ADD COLUMN `data1` TEXT NULL DEFAULT NULL AFTER `kpi`,
                 ADD COLUMN `data2` TEXT NULL DEFAULT NULL AFTER `data1`,
@@ -1622,224 +1622,224 @@ namespace Leantime\Domain\Install\Repositories {
                 ADD COLUMN `probability` INT NULL DEFAULT NULL AFTER `effort`,
                 ADD COLUMN `action` TEXT NULL DEFAULT NULL AFTER `probability`,
                 ADD COLUMN `assignedTo` INT NULL DEFAULT NULL AFTER `action`;',
-                "UPDATE zp_canvas_items SET
+            "UPDATE zp_canvas_items SET
                     currentValue = CAST(IF(`data` = '', 0, `data`) AS DECIMAL(10,2)),
                     endValue = CAST(IF(`conclusion` = '', 0, `conclusion`) AS DECIMAL(10,2)),
                     title = description,
                     description = assumptions
                     WHERE box = 'goal';",
-                'ALTER TABLE `zp_canvas_items`
+            'ALTER TABLE `zp_canvas_items`
                 ADD INDEX `CanvasLookUp` (`canvasId` ASC, `box` ASC);',
 
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20121(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20121(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_canvas`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_canvas`
                     ADD COLUMN `description` TEXT NULL DEFAULT NULL AFTER `type`;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20122(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20122(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_settings`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_settings`
                     CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL ;',
-                'ALTER TABLE `zp_canvas_items`
+            'ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
                     CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;',
-                'ALTER TABLE `zp_user`
+            'ALTER TABLE `zp_user`
                     ADD COLUMN `modified` DATETIME NULL DEFAULT NULL;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20401(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20401(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_plugins`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_plugins`
                 ADD COLUMN `license` TEXT NULL DEFAULT NULL,
                 ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20402(): bool|array
-        {
-            $errors = [];
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $sql = [
-                'ALTER TABLE `zp_plugins`
+    public function update_sql_20402(): bool|array
+    {
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_plugins`
                 ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, "$statement Failed: {$e->getMessage()}");
-                }
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, "$statement Failed: {$e->getMessage()}");
             }
-
-            return count($errors) ? $errors : true;
         }
 
-        /**
-         * Install script did not include medium text updates. Run again
-         */
-        public function update_sql_20405(): bool|array
-        {
+        return count($errors) ? $errors : true;
+    }
 
-            $errors = [];
+    /**
+     * Install script did not include medium text updates. Run again
+     */
+    public function update_sql_20405(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_settings`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_settings`
                     CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL ;',
-                'ALTER TABLE `zp_canvas_items`
+            'ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
                     CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        /**
-         * Install script did not include medium text updates. Run again
-         */
-        public function update_sql_20406(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    /**
+     * Install script did not include medium text updates. Run again
+     */
+    public function update_sql_20406(): bool|array
+    {
 
-            $sql = [
-                'ALTER TABLE `zp_canvas_items`
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data4` `data4` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data5` `data5` MEDIUMTEXT NULL DEFAULT NULL;',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_20407(): bool|array
-        {
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
+            return true;
+        }
+    }
 
-            $errors = [];
+    public function update_sql_20407(): bool|array
+    {
 
-            $sql = [
-                'CREATE TABLE IF NOT EXISTS `zp_integration` (
+        $errors = [];
+
+        $sql = [
+            'CREATE TABLE IF NOT EXISTS `zp_integration` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `providerId` VARCHAR(45) NULL,
                       `method` VARCHAR(45) NULL,
@@ -1853,85 +1853,85 @@ namespace Leantime\Domain\Install\Repositories {
                       `createdBy` INT NULL,
                       PRIMARY KEY (`id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
-                'ALTER TABLE `zp_integration`
+            'ALTER TABLE `zp_integration`
                     ADD COLUMN `lastSync` DATETIME NULL DEFAULT NULL',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                    array_push($errors, $statement.' Failed:'.$e->getMessage());
-                }
-            }
-
-            if (count($errors) > 0) {
-                return $errors;
-            } else {
-                return true;
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                array_push($errors, $statement.' Failed:'.$e->getMessage());
             }
         }
 
-        public function update_sql_30002(): bool|array
-        {
-
-            $errors = [];
-
-            $sql = [
-                'ALTER TABLE `zp_plugins` ADD COLUMN `license` TEXT NULL DEFAULT NULL',
-                'ALTER TABLE `zp_plugins` ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL',
-            ];
-
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                }
-            }
-
+        if (count($errors) > 0) {
+            return $errors;
+        } else {
             return true;
         }
+    }
 
-        public function update_sql_30003(): bool|array
-        {
+    public function update_sql_30002(): bool|array
+    {
 
-            $errors = [];
+        $errors = [];
 
-            $sql = [
-                'ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-                'ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-                'ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-                'ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-                'ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-                'ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
-            ];
+        $sql = [
+            'ALTER TABLE `zp_plugins` ADD COLUMN `license` TEXT NULL DEFAULT NULL',
+            'ALTER TABLE `zp_plugins` ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL',
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                }
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
             }
-
-            return true;
         }
 
-        public function update_sql_30400(): bool|array
-        {
+        return true;
+    }
 
-            $errors = [];
+    public function update_sql_30003(): bool|array
+    {
 
-            $sql = [
-                'CREATE TABLE `zp_access_tokens` (
+        $errors = [];
+
+        $sql = [
+            'ALTER TABLE `zp_canvas` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+            'ALTER TABLE `zp_clients` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+            'ALTER TABLE `zp_sprints` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+            'ALTER TABLE `zp_projects` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+            'ALTER TABLE `zp_timesheets` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+            'ALTER TABLE `zp_tickets` ADD COLUMN `modified` datetime NULL DEFAULT NULL',
+        ];
+
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+            }
+        }
+
+        return true;
+    }
+
+    public function update_sql_30400(): bool|array
+    {
+
+        $errors = [];
+
+        $sql = [
+            'CREATE TABLE `zp_access_tokens` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `tokenable_id` bigint unsigned NOT NULL,
@@ -1946,7 +1946,7 @@ namespace Leantime\Domain\Install\Repositories {
                     UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
                     KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-                'CREATE TABLE `zp_jobs` (
+            'CREATE TABLE `zp_jobs` (
                     `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                     `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -1957,7 +1957,7 @@ namespace Leantime\Domain\Install\Repositories {
                     PRIMARY KEY (`id`),
                     KEY `zp_jobs_queue_index` (`queue`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;',
-                'CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
+            'CREATE TABLE IF NOT EXISTS `zp_recurring_patterns` (
                     `id` INT NOT NULL AUTO_INCREMENT,
                     `entityId` INT NOT NULL,
                     `module` VARCHAR(50) NOT NULL,
@@ -1974,47 +1974,45 @@ namespace Leantime\Domain\Install\Repositories {
                     PRIMARY KEY (`id`),
                     INDEX `entityId` (`entityId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                }
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
             }
-
-            return true;
         }
 
-        public function update_sql_30408(): bool|array
-        {
+        return true;
+    }
 
-            $errors = [];
+    public function update_sql_30408(): bool|array
+    {
 
-            $sql = [
-                'INSERT INTO zp_settings (`key`, `value`)
+        $errors = [];
+
+        $sql = [
+            'INSERT INTO zp_settings (`key`, `value`)
                     SELECT
                         CONCAT("user.", `id`, ".firstLoginComplete") AS `key`,
                         1 AS `value`
                     FROM zp_user;',
 
-            ];
+        ];
 
-            foreach ($sql as $statement) {
-                try {
-                    $stmn = $this->database->prepare($statement);
-                    $stmn->execute();
-                } catch (PDOException $e) {
-                    Log::error($statement.' Failed:'.$e->getMessage());
-                    Log::error($e);
-                }
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
             }
-
-            return true;
         }
-    }
 
+        return true;
+    }
 }

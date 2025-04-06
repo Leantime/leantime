@@ -1,18 +1,16 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Models {
+namespace Leantime\Domain\Wiki\Models;
 
-    class Template
-    {
-        public $title;
+class Template
+{
+    public $title;
 
-        public $description;
+    public $description;
 
-        public $content;
+    public $content;
 
-        public $category;
+    public $category;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }

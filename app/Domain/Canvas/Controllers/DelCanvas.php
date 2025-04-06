@@ -4,61 +4,60 @@
  * delCanvas class - Generic canvas controller / Delete Canvas
  */
 
-namespace Leantime\Domain\Canvas\Controllers {
+namespace Leantime\Domain\Canvas\Controllers;
 
-    use Illuminate\Support\Str;
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
+use Illuminate\Support\Str;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 
-    class DelCanvas extends Controller
+class DelCanvas extends Controller
+{
+    /**
+     * Constant that must be redefined
+     */
+    protected const CANVAS_NAME = '??';
+
+    private mixed $canvasRepo;
+
+    /**
+     * init - initialize private variables
+     */
+    public function init()
     {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = '??';
+        $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
+        $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
+        $this->canvasRepo = app()->make($repoName);
+    }
 
-        private mixed $canvasRepo;
+    /**
+     * run - display template and edit data
+     */
+    public function run()
+    {
 
-        /**
-         * init - initialize private variables
-         */
-        public function init()
-        {
-            $canvasName = Str::studly(static::CANVAS_NAME).'canvas';
-            $repoName = app()->getNamespace()."Domain\\$canvasName\\Repositories\\$canvasName";
-            $this->canvasRepo = app()->make($repoName);
-        }
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        /**
-         * run - display template and edit data
-         */
-        public function run()
-        {
+        if (isset($_POST['del']) && isset($_GET['id'])) {
+            $id = (int) ($_GET['id']);
+            $this->canvasRepo->deleteCanvas($id);
 
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+            $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
+            session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $allCanvas[0]['id'] ?? -1]);
 
-            if (isset($_POST['del']) && isset($_GET['id'])) {
-                $id = (int) ($_GET['id']);
-                $this->canvasRepo->deleteCanvas($id);
+            $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvas_deleted');
 
-                $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
-                session(['current'.strtoupper(static::CANVAS_NAME).'Canvas' => $allCanvas[0]['id'] ?? -1]);
+            $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
 
-                $this->tpl->setNotification($this->language->__('notification.board_deleted'), 'success', strtoupper(static::CANVAS_NAME).'canvas_deleted');
-
-                $allCanvas = $this->canvasRepo->getAllCanvas(session('currentProject'));
-
-                // Create default canvas.
-                if (! $allCanvas || count($allCanvas) == 0) {
-                    return Frontcontroller::redirect(BASE_URL.'/strategy/showBoards');
-                } else {
-                    return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
-                }
+            // Create default canvas.
+            if (! $allCanvas || count($allCanvas) == 0) {
+                return Frontcontroller::redirect(BASE_URL.'/strategy/showBoards');
+            } else {
+                return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
             }
-
-            return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvas');
         }
+
+        return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvas');
     }
 }

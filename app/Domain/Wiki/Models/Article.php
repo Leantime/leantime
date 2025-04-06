@@ -1,60 +1,58 @@
 <?php
 
-namespace Leantime\Domain\Wiki\Models {
+namespace Leantime\Domain\Wiki\Models;
 
-    class Article
-    {
-        public $id;
+class Article
+{
+    public $id;
 
-        public $title;
+    public $title;
 
-        public $description;
+    public $description;
 
-        public $canvasId;
+    public $canvasId;
 
-        public $parent;
+    public $parent;
 
-        public $tags;
+    public $tags;
 
-        public $data;
+    public $data;
 
-        public $status;
+    public $status;
 
-        public $created;
+    public $created;
 
-        public $modified;
+    public $modified;
 
-        public $author;
+    public $author;
 
-        public $milestoneId;
+    public $milestoneId;
 
-        public $firstname;
+    public $firstname;
 
-        public $lastname;
+    public $lastname;
 
-        public $profileId;
+    public $profileId;
 
-        public $sortindex;
+    public $sortindex;
 
-        public $projectId;
+    public $projectId;
 
-        public $milestoneHeadline;
+    public $milestoneHeadline;
 
-        public $milestoneEditTo;
+    public $milestoneEditTo;
 
-        public $doneTickets;
+    public $doneTickets;
 
-        public $openTicketsEffort;
+    public $openTicketsEffort;
 
-        public $doneTicketsEffort;
+    public $doneTicketsEffort;
 
-        public $allTicketsEffort;
+    public $allTicketsEffort;
 
-        public $allTickets;
+    public $allTickets;
 
-        public $percentDone;
+    public $percentDone;
 
-        public function __construct() {}
-    }
-
+    public function __construct() {}
 }
