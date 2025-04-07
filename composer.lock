@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.342.20",
+            "version": "3.342.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "eb68ff5bed48e653c1ddd84bd04a0d893f99ef46"
+                "reference": "f4d501414c553ddeea2efc9c77f72e58bd899823"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/eb68ff5bed48e653c1ddd84bd04a0d893f99ef46",
-                "reference": "eb68ff5bed48e653c1ddd84bd04a0d893f99ef46",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f4d501414c553ddeea2efc9c77f72e58bd899823",
+                "reference": "f4d501414c553ddeea2efc9c77f72e58bd899823",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.342.20"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.342.21"
             },
-            "time": "2025-04-03T18:11:14+00:00"
+            "time": "2025-04-04T18:20:53+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2048,16 +2048,16 @@
         },
         {
             "name": "inspector-apm/neuron-ai",
-            "version": "1.8.14",
+            "version": "1.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/inspector-apm/neuron-ai.git",
-                "reference": "fde1dfe7cde9e5d204f2308c355acdec23e1d30e"
+                "reference": "aeb63f849c647c2ebbc166546de4b7f6704044c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/inspector-apm/neuron-ai/zipball/fde1dfe7cde9e5d204f2308c355acdec23e1d30e",
-                "reference": "fde1dfe7cde9e5d204f2308c355acdec23e1d30e",
+                "url": "https://api.github.com/repos/inspector-apm/neuron-ai/zipball/aeb63f849c647c2ebbc166546de4b7f6704044c3",
+                "reference": "aeb63f849c647c2ebbc166546de4b7f6704044c3",
                 "shasum": ""
             },
             "require": {
@@ -2099,9 +2099,9 @@
             "description": "PHP AI Framework with built-in observability.",
             "support": {
                 "issues": "https://github.com/inspector-apm/neuron-ai/issues",
-                "source": "https://github.com/inspector-apm/neuron-ai/tree/1.8.14"
+                "source": "https://github.com/inspector-apm/neuron-ai/tree/1.8.15"
             },
-            "time": "2025-04-04T16:50:07+00:00"
+            "time": "2025-04-05T07:56:49+00:00"
         },
         {
             "name": "intervention/image",
