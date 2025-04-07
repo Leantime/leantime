@@ -77,7 +77,6 @@ class Tickets
      *
      * @api
      */
-
     #[AITool(
         name: 'getStatusLabels',
         description: 'Get the status labels available for a project. This can help get the statuses in a human readable
@@ -536,10 +535,10 @@ class Tickets
     public function getScheduledTasks(CarbonImmutable|string $dateFrom, CarbonImmutable|string $dateTo, ?int $userId)
     {
 
-        if(is_string($dateFrom) && dtHelper()->isValidDateString($dateFrom)) {
+        if (is_string($dateFrom) && dtHelper()->isValidDateString($dateFrom)) {
             $dateFrom = dtHelper()->parseUserDateTime($dateFrom);
         }
-        if(is_string($dateTo) && dtHelper()->isValidDateString($dateTo)) {
+        if (is_string($dateTo) && dtHelper()->isValidDateString($dateTo)) {
             $dateTo = dtHelper()->parseUserDateTime($dateTo);
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace Leantime\Domain\Tickets\Htmx;
+
 enum HtmxTicketEvents: string
 {
     /**

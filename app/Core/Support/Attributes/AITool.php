@@ -12,7 +12,7 @@ class AITool
      *
      * @param  string  $name  The name of the tool as it will be exposed to the AI
      * @param  string  $description  A description of what the tool does
-     * @param  string $htmxEvent An htmx event string this tool should execute after execution
+     * @param  string  $htmxEvent  An htmx event string this tool should execute after execution
      */
     public function __construct(
         public string $name,
