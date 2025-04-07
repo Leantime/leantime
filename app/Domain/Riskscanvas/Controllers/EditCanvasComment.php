@@ -4,11 +4,9 @@
  * Controller / Edit Comments
  */
 
-namespace Leantime\Domain\Riskscanvas\Controllers {
+namespace Leantime\Domain\Riskscanvas\Controllers;
 
-    class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
-    {
-        protected const CANVAS_NAME = 'risks';
-    }
-
+class EditCanvasComment extends \Leantime\Domain\Canvas\Controllers\EditCanvasComment
+{
+    protected const CANVAS_NAME = 'risks';
 }

@@ -4,10 +4,9 @@
  * XML export
  */
 
-namespace Leantime\Domain\Goalcanvas\Controllers {
+namespace Leantime\Domain\Goalcanvas\Controllers;
 
-    class Export extends \Leantime\Domain\Canvas\Controllers\Export
-    {
-        protected const CANVAS_NAME = 'goal';
-    }
+class Export extends \Leantime\Domain\Canvas\Controllers\Export
+{
+    protected const CANVAS_NAME = 'goal';
 }

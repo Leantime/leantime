@@ -4,219 +4,219 @@
  * canvas class - Generic / Tempalate of canvas repository class
  */
 
-namespace Leantime\Domain\Canvas\Repositories {
+namespace Leantime\Domain\Canvas\Repositories;
 
-    use Leantime\Core\Db\Db as DbCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Domain\Tickets\Repositories\Tickets;
-    use PDO;
+use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Tickets\Repositories\Tickets;
+use PDO;
 
-    class Canvas
+class Canvas
+{
+    /**
+     * Constant that must be redefined
+     */
+    protected const CANVAS_NAME = '??';
+
+    /***
+     * icon - Icon associated with canvas (must be extended)
+     *
+     * @access protected
+     * @var    string Fontawesome icone
+     */
+    protected string $icon = 'fa-x';
+
+    /***
+     * disclaimer - Disclaimer (may be extended)
+     *
+     * @access protected
+     * @var    string Disclaimer (including href)
+     */
+    protected string $disclaimer = '';
+
+    /**
+     * canvasTypes - Canvas elements / boxes (must be extended)
+     *
+     * @acces protected
+     */
+    protected array $canvasTypes = [
+        // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ],
+    ];
+
+    /**
+     * statusLabels - Status labels (may be extended)
+     *
+     * @acces protected
+     */
+    protected array $statusLabels = [
+        'status_draft' => ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
+        'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
+        'status_valid' => ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
+        'status_hold' => ['icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true],
+        'status_invalid' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid', 'dropdown' => 'danger',  'active' => true],
+    ];
+
+    /**
+     * relatesLabels - Relates to label (same structure as `statusLabels`)
+     *
+     * @acces public
+     */
+    protected array $relatesLabels = [
+        'relates_none' => ['icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
+        'relates_customers' => ['icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
+        'relates_offerings' => ['icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
+        'relates_capabilities' => ['icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
+        'relates_financials' => ['icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
+        'relates_markets' => ['icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
+        'relates_environment' => ['icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
+        'relates_firm' => ['icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true],
+    ];
+
+    /**
+     * dataLabels - Data labels (may be extended)
+     *
+     * @acces protected
+     */
+    protected array $dataLabels = [
+        1 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => true],
+        2 => ['title' => 'label.data',        'field' => 'data',        'active' => true],
+        3 => ['title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true],
+    ];
+
+    public ?object $result = null;
+
+    public ?object $tickets = null;
+
+    protected ?DbCore $db = null;
+
+    private LanguageCore $language;
+
+    private Tickets $ticketRepo;
+
+    /**
+     * __construct - get db connection
+     *
+     * @return void
+     */
+    public function __construct(
+        DbCore $db,
+        LanguageCore $language,
+        Tickets $ticketRepo
+    ) {
+        $this->db = $db;
+        $this->language = $language;
+        $this->ticketRepo = $ticketRepo;
+    }
+
+    /**
+     * getIcon() - Retrieve canvas icon
+     *
+     * @return string Canvas icon
+     */
+    public function getIcon(): string
     {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = '??';
 
-        /***
-         * icon - Icon associated with canvas (must be extended)
-         *
-         * @access protected
-         * @var    string Fontawesome icone
-         */
-        protected string $icon = 'fa-x';
+        return $this->icon;
+    }
 
-        /***
-         * disclaimer - Disclaimer (may be extended)
-         *
-         * @access protected
-         * @var    string Disclaimer (including href)
-         */
-        protected string $disclaimer = '';
+    /**
+     * getDisclaimer() - Retrieve disclaimer
+     *
+     * @return string Canvas disclaimer
+     */
+    public function getDisclaimer(): string
+    {
 
-        /**
-         * canvasTypes - Canvas elements / boxes (must be extended)
-         *
-         * @acces protected
-         */
-        protected array $canvasTypes = [
-            // '??_' => [ 'icon' => 'fa-????', 'title' => 'box.??.????' ],
-        ];
-
-        /**
-         * statusLabels - Status labels (may be extended)
-         *
-         * @acces protected
-         */
-        protected array $statusLabels = [
-            'status_draft' => ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
-            'status_review' => ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
-            'status_valid' => ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
-            'status_hold' => ['icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true],
-            'status_invalid' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid', 'dropdown' => 'danger',  'active' => true],
-        ];
-
-        /**
-         * relatesLabels - Relates to label (same structure as `statusLabels`)
-         *
-         * @acces public
-         */
-        protected array $relatesLabels = [
-            'relates_none' => ['icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
-            'relates_customers' => ['icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
-            'relates_offerings' => ['icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
-            'relates_capabilities' => ['icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
-            'relates_financials' => ['icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
-            'relates_markets' => ['icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
-            'relates_environment' => ['icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
-            'relates_firm' => ['icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true],
-        ];
-
-        /**
-         * dataLabels - Data labels (may be extended)
-         *
-         * @acces protected
-         */
-        protected array $dataLabels = [
-            1 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => true],
-            2 => ['title' => 'label.data',        'field' => 'data',        'active' => true],
-            3 => ['title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true],
-        ];
-
-        public ?object $result = null;
-
-        public ?object $tickets = null;
-
-        protected ?DbCore $db = null;
-
-        private LanguageCore $language;
-
-        private Tickets $ticketRepo;
-
-        /**
-         * __construct - get db connection
-         *
-         * @return void
-         */
-        public function __construct(
-            DbCore $db,
-            LanguageCore $language,
-            Tickets $ticketRepo
-        ) {
-            $this->db = $db;
-            $this->language = $language;
-            $this->ticketRepo = $ticketRepo;
+        if (empty($this->disclaimer)) {
+            return '';
         }
 
-        /**
-         * getIcon() - Retrieve canvas icon
-         *
-         * @return string Canvas icon
-         */
-        public function getIcon(): string
-        {
+        return $this->language->__($this->disclaimer);
+    }
 
-            return $this->icon;
-        }
+    /**
+     * getCanvasTypes() - Retrieve translated canvaas items
+     *
+     * @return array Array of data
+     */
+    public function getCanvasTypes(): array
+    {
 
-        /**
-         * getDisclaimer() - Retrieve disclaimer
-         *
-         * @return string Canvas disclaimer
-         */
-        public function getDisclaimer(): string
-        {
-
-            if (empty($this->disclaimer)) {
-                return '';
+        $canvasTypes = $this->canvasTypes;
+        foreach ($canvasTypes as $key => $data) {
+            if (isset($data['title'])) {
+                $canvasTypes[$key]['title'] = $this->language->__($data['title']);
             }
-
-            return $this->language->__($this->disclaimer);
         }
 
-        /**
-         * getCanvasTypes() - Retrieve translated canvaas items
-         *
-         * @return array Array of data
-         */
-        public function getCanvasTypes(): array
-        {
+        return $canvasTypes;
+    }
 
-            $canvasTypes = $this->canvasTypes;
-            foreach ($canvasTypes as $key => $data) {
-                if (isset($data['title'])) {
-                    $canvasTypes[$key]['title'] = $this->language->__($data['title']);
-                }
+    /**
+     * getStatusLabels() - Retrieve translated status labels
+     *
+     * @return array Array of data
+     */
+    public function getStatusLabels(): array
+    {
+
+        $statusLabels = $this->statusLabels;
+
+        foreach ($statusLabels as $key => $data) {
+            if (isset($data['title'])) {
+                $statusLabels[$key]['title'] = $this->language->__($data['title']);
             }
-
-            return $canvasTypes;
         }
 
-        /**
-         * getStatusLabels() - Retrieve translated status labels
-         *
-         * @return array Array of data
-         */
-        public function getStatusLabels(): array
-        {
+        return $statusLabels;
+    }
 
-            $statusLabels = $this->statusLabels;
+    /**
+     * getRelatesLabels() - Retrieve translated relates labels
+     *
+     * @return array Array of data
+     */
+    public function getRelatesLabels(): array
+    {
 
-            foreach ($statusLabels as $key => $data) {
-                if (isset($data['title'])) {
-                    $statusLabels[$key]['title'] = $this->language->__($data['title']);
-                }
+        $relatesLabels = $this->relatesLabels;
+        foreach ($relatesLabels as $key => $data) {
+            if (isset($data['title'])) {
+                $relatesLabels[$key]['title'] = $this->language->__($data['title']);
             }
-
-            return $statusLabels;
         }
 
-        /**
-         * getRelatesLabels() - Retrieve translated relates labels
-         *
-         * @return array Array of data
-         */
-        public function getRelatesLabels(): array
-        {
+        return $relatesLabels;
+    }
 
-            $relatesLabels = $this->relatesLabels;
-            foreach ($relatesLabels as $key => $data) {
-                if (isset($data['title'])) {
-                    $relatesLabels[$key]['title'] = $this->language->__($data['title']);
-                }
+    /**
+     * getDataLabels() - Retrieve translated data labels
+     *
+     * @return array Array of data
+     */
+    public function getDataLabels(): array
+    {
+
+        $dataLabels = $this->dataLabels;
+        foreach ($dataLabels as $key => $data) {
+            if (isset($data['title'])) {
+                $dataLabels[$key]['title'] = $this->language->__($data['title']);
             }
-
-            return $relatesLabels;
         }
 
-        /**
-         * getDataLabels() - Retrieve translated data labels
-         *
-         * @return array Array of data
-         */
-        public function getDataLabels(): array
-        {
+        return $dataLabels;
+    }
 
-            $dataLabels = $this->dataLabels;
-            foreach ($dataLabels as $key => $data) {
-                if (isset($data['title'])) {
-                    $dataLabels[$key]['title'] = $this->language->__($data['title']);
-                }
-            }
+    public function getAllCanvas($projectId, $type = null): false|array
+    {
 
-            return $dataLabels;
+        if ($type == null || $type == '') {
+            $canvasType = static::CANVAS_NAME.'canvas';
+        } else {
+            $canvasType = $type;
         }
 
-        public function getAllCanvas($projectId, $type = null): false|array
-        {
-
-            if ($type == null || $type == '') {
-                $canvasType = static::CANVAS_NAME.'canvas';
-            } else {
-                $canvasType = $type;
-            }
-
-            $sql = 'SELECT
+        $sql = 'SELECT
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
@@ -234,20 +234,20 @@ namespace Leantime\Domain\Canvas\Repositories {
 					zp_canvas.id, zp_canvas.title, zp_canvas.created
                 ORDER BY zp_canvas.title, zp_canvas.created';
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
-            $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+        $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getSingleCanvas($canvasId): false|array
-        {
-            $sql = "SELECT
+    public function getSingleCanvas($canvasId): false|array
+    {
+        $sql = "SELECT
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
@@ -262,44 +262,44 @@ namespace Leantime\Domain\Canvas\Repositories {
                 WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
+        return $values;
+    }
+
+    public function deleteCanvas($id): void
+    {
+
+        $query = 'DELETE FROM zp_canvas_items WHERE canvasId = :id';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->execute();
+
+        $query = 'DELETE FROM zp_canvas WHERE id = :id LIMIT 1';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->execute();
+
+        $stmn->closeCursor();
+    }
+
+    public function addCanvas($values, $type = null): false|string
+    {
+
+        if ($type == null || $type == '') {
+            $canvasType = static::CANVAS_NAME.'canvas';
+        } else {
+            $canvasType = $type;
         }
 
-        public function deleteCanvas($id): void
-        {
-
-            $query = 'DELETE FROM zp_canvas_items WHERE canvasId = :id';
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
-
-            $query = 'DELETE FROM zp_canvas WHERE id = :id LIMIT 1';
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
-
-            $stmn->closeCursor();
-        }
-
-        public function addCanvas($values, $type = null): false|string
-        {
-
-            if ($type == null || $type == '') {
-                $canvasType = static::CANVAS_NAME.'canvas';
-            } else {
-                $canvasType = $type;
-            }
-
-            $query = 'INSERT INTO zp_canvas (
+        $query = 'INSERT INTO zp_canvas (
                         title,
                        description,
                         author,
@@ -315,45 +315,45 @@ namespace Leantime\Domain\Canvas\Repositories {
                         :projectId
                 )';
 
-            $stmn = $this->db->database->prepare($query);
+        $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-            $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
+        $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
+        $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
+        $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
+        $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
 
-            $stmn->execute();
+        $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $this->db->database->lastInsertId();
-        }
+        return $this->db->database->lastInsertId();
+    }
 
-        public function updateCanvas($values): mixed
-        {
+    public function updateCanvas($values): mixed
+    {
 
-            $query = 'UPDATE zp_canvas SET
+        $query = 'UPDATE zp_canvas SET
                         title = :title,
                         description = :description
                 WHERE id = :id';
 
-            $stmn = $this->db->{'database'}->prepare($query);
+        $stmn = $this->db->{'database'}->prepare($query);
 
-            $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':id', $values['id'], PDO::PARAM_INT);
+        $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
+        $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':id', $values['id'], PDO::PARAM_INT);
 
-            $result = $stmn->execute();
+        $result = $stmn->execute();
 
-            $stmn->closeCursor();
+        $stmn->closeCursor();
 
-            return $result;
-        }
+        return $result;
+    }
 
-        public function editCanvasItem($values): void
-        {
-            $sql = 'UPDATE zp_canvas_items SET
+    public function editCanvasItem($values): void
+    {
+        $sql = 'UPDATE zp_canvas_items SET
                            title = :title,
                     description = :description,
                     assumptions =        :assumptions,
@@ -382,73 +382,73 @@ namespace Leantime\Domain\Canvas\Repositories {
 
                     WHERE id = :id LIMIT 1    ';
 
-            $stmn = $this->db->database->prepare($sql);
+        $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':id', $values['itemId'] ?? $values['id'], PDO::PARAM_STR);
-            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':id', $values['itemId'] ?? $values['id'], PDO::PARAM_STR);
+        $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+        $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $stmn->closeCursor();
+    }
+
+    public function patchCanvasItem($id, $params): bool
+    {
+
+        if (isset($params['act'])) {
+            unset($params['act']);
         }
 
-        public function patchCanvasItem($id, $params): bool
-        {
+        $sql = 'UPDATE zp_canvas_items SET';
 
-            if (isset($params['act'])) {
-                unset($params['act']);
-            }
-
-            $sql = 'UPDATE zp_canvas_items SET';
-
-            foreach ($params as $key => $value) {
-                $sql .= ' '.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
-            }
-
-            $sql .= 'id=:id WHERE id=:whereId LIMIT 1';
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':whereId', $id, PDO::PARAM_STR);
-
-            foreach ($params as $key => $value) {
-                $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
-            }
-
-            $return = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $return;
+        foreach ($params as $key => $value) {
+            $sql .= ' '.DbCore::sanitizeToColumnString($key).'=:'.DbCore::sanitizeToColumnString($key).', ';
         }
 
-        public function getCanvasItemsById($id): false|array
-        {
+        $sql .= 'id=:id WHERE id=:whereId LIMIT 1';
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->bindValue(':whereId', $id, PDO::PARAM_STR);
 
-            $sql = "SELECT
+        foreach ($params as $key => $value) {
+            $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+        }
+
+        $return = $stmn->execute();
+        $stmn->closeCursor();
+
+        return $return;
+    }
+
+    public function getCanvasItemsById($id): false|array
+    {
+
+        $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
+
+        $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
                         zp_canvas_items.assumptions,
@@ -501,20 +501,20 @@ namespace Leantime\Domain\Canvas\Repositories {
                 GROUP BY zp_canvas_items.id, zp_canvas_items.box, zp_canvas_items.sortindex
                 ORDER BY zp_canvas_items.box, zp_canvas_items.sortindex";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getCanvasItemsByKPI($id): false|array
-        {
+    public function getCanvasItemsByKPI($id): false|array
+    {
 
-            $sql = "SELECT
+        $sql = "SELECT
                         zp_canvas_items.id,
 
                         zp_canvas_items.title,
@@ -557,19 +557,19 @@ namespace Leantime\Domain\Canvas\Repositories {
 
                 AND zp_canvas_items.kpi = :id";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getAllAvailableParents($projectId): false|array
-        {
-            $sql = 'SELECT
+    public function getAllAvailableParents($projectId): false|array
+    {
+        $sql = 'SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
                         zp_canvas_items.title,
@@ -625,19 +625,19 @@ namespace Leantime\Domain\Canvas\Repositories {
                 ORDER BY board.id
                 ';
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getAllAvailableKPIs($projectId): false|array
-        {
-            $sql = "SELECT
+    public function getAllAvailableKPIs($projectId): false|array
+    {
+        $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
                         project.name as projectName,
@@ -662,31 +662,31 @@ namespace Leantime\Domain\Canvas\Repositories {
                 ORDER BY zp_canvas.id
                 ";
 
-            // programs
+        // programs
 
-            // project
-            // boards
-            // goals
+        // project
+        // boards
+        // goals
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        /**
-         * @return false|mixed
-         */
-        public function getSingleCanvasItem($id): mixed
-        {
+    /**
+     * @return false|mixed
+     */
+    public function getSingleCanvasItem($id): mixed
+    {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
+        $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session('currentProject'));
 
-            $sql = 'SELECT
+        $sql = 'SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.title,
                         zp_canvas_items.description,
@@ -755,23 +755,23 @@ namespace Leantime\Domain\Canvas\Repositories {
                 WHERE zp_canvas_items.id = :id
                 ";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-            if ($values !== false && $values['id'] != null) {
-                return $values;
-            } else {
-                return false;
-            }
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
+        if ($values !== false && $values['id'] != null) {
+            return $values;
+        } else {
+            return false;
         }
+    }
 
-        public function addCanvasItem($values): false|string
-        {
+    public function addCanvasItem($values): false|string
+    {
 
-            $query = 'INSERT INTO zp_canvas_items (
+        $query = 'INSERT INTO zp_canvas_items (
                         description,
                             title,
                         assumptions,
@@ -833,174 +833,174 @@ namespace Leantime\Domain\Canvas\Repositories {
                         :tags
                 )';
 
-            $stmn = $this->db->database->prepare($query);
+        $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
-            $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
-            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
+        $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
+        $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
+        $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
 
-            $stmn->execute();
-            $id = $this->db->database->lastInsertId();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $id = $this->db->database->lastInsertId();
+        $stmn->closeCursor();
 
-            return $id;
-        }
+        return $id;
+    }
 
-        public function delCanvasItem($id): void
-        {
-            $query = 'DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1';
+    public function delCanvasItem($id): void
+    {
+        $query = 'DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1';
 
-            $stmn = $this->db->database->prepare($query);
+        $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            $stmn->execute();
+        $stmn->execute();
 
-            $stmn->closeCursor();
-        }
+        $stmn->closeCursor();
+    }
 
-        /**
-         * @return int|mixed
-         */
-        /**
-         * @return int|mixed
-         */
-        public function getNumberOfCanvasItems($projectId = null): mixed
-        {
+    /**
+     * @return int|mixed
+     */
+    /**
+     * @return int|mixed
+     */
+    public function getNumberOfCanvasItems($projectId = null): mixed
+    {
 
-            $sql = "SELECT
+        $sql = "SELECT
                     count(zp_canvas_items.id) AS canvasCount
                 FROM
                 zp_canvas_items
                 LEFT JOIN zp_canvas AS canvasBoard ON zp_canvas_items.canvasId = canvasBoard.id
                 WHERE canvasBoard.type = '".static::CANVAS_NAME."canvas'  ";
 
-            if (! is_null($projectId)) {
-                $sql .= ' AND canvasBoard.projectId = :projectId';
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if (! is_null($projectId)) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            if (isset($values['canvasCount']) === true) {
-                return $values['canvasCount'];
-            }
-
-            return 0;
+        if (! is_null($projectId)) {
+            $sql .= ' AND canvasBoard.projectId = :projectId';
         }
 
-        /**
-         * @return int|mixed
-         */
-        /**
-         * @return int|mixed
-         */
-        public function getNumberOfBoards($projectId = null): mixed
-        {
+        $stmn = $this->db->database->prepare($sql);
 
-            $sql = "SELECT
+        if (! is_null($projectId)) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
+
+        if (isset($values['canvasCount']) === true) {
+            return $values['canvasCount'];
+        }
+
+        return 0;
+    }
+
+    /**
+     * @return int|mixed
+     */
+    /**
+     * @return int|mixed
+     */
+    public function getNumberOfBoards($projectId = null): mixed
+    {
+
+        $sql = "SELECT
                         count(zp_canvas.id) AS boardCount
                 FROM
                     zp_canvas
                 WHERE zp_canvas.type = '".static::CANVAS_NAME."canvas' ";
 
-            if (! is_null($projectId)) {
-                $sql .= ' AND zp_canvas.projectId = :projectId ';
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if (! is_null($projectId)) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            if (isset($values['boardCount'])) {
-                return $values['boardCount'];
-            }
-
-            return 0;
+        if (! is_null($projectId)) {
+            $sql .= ' AND zp_canvas.projectId = :projectId ';
         }
 
-        /**
-         * existCanvas - return if a canvas exists with a given title in the specified project
-         *
-         * @param  int  $projectId  Project identifier
-         * @param  string  $canvasTitle  Canvas title
-         * @return bool True if canvas exists
-         */
-        public function existCanvas(int $projectId, string $canvasTitle): bool
-        {
+        $stmn = $this->db->database->prepare($sql);
 
-            $sql = 'SELECT COUNT(id) as nbCanvas '.
-                'FROM zp_canvas '.
-                "WHERE projectId = :projectId AND title = :canvasTitle AND type = '".static::CANVAS_NAME."canvas'";
-            $stmn = $this->db->database->prepare($sql);
-
+        if (! is_null($projectId)) {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            $stmn->bindValue(':canvasTitle', $canvasTitle, PDO::PARAM_STR);
-
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
-
-            return isset($values['nbCanvas']) && $values['nbCanvas'] > 0;
         }
 
-        /***
-         * copyCanvas - create a copy of an existing canvas
-         *
-         * @access public
-         * @param int    $projectId   Project identifier
-         * @param int    $canvasId    Original canvas identifier
-         * @param int    $authorId    Author identifier
-         * @param  string $canvasTitle New canvas title
-         * @return int    Identifier of new Canvas
-         */
-        public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
-        {
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
 
-            // Create new Canvas
-            $values = ['title' => $canvasTitle, 'author' => $authorId, 'projectId' => $projectId, 'type' => static::CANVAS_NAME.'canvas'];
-            $newCanvasId = $this->addCanvas($values);
+        if (isset($values['boardCount'])) {
+            return $values['boardCount'];
+        }
 
-            // Copy elements from existing canvas to new Canvas
-            $sql = 'INSERT INTO '.
-              'zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
+        return 0;
+    }
+
+    /**
+     * existCanvas - return if a canvas exists with a given title in the specified project
+     *
+     * @param  int  $projectId  Project identifier
+     * @param  string  $canvasTitle  Canvas title
+     * @return bool True if canvas exists
+     */
+    public function existCanvas(int $projectId, string $canvasTitle): bool
+    {
+
+        $sql = 'SELECT COUNT(id) as nbCanvas '.
+            'FROM zp_canvas '.
+            "WHERE projectId = :projectId AND title = :canvasTitle AND type = '".static::CANVAS_NAME."canvas'";
+        $stmn = $this->db->database->prepare($sql);
+
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        $stmn->bindValue(':canvasTitle', $canvasTitle, PDO::PARAM_STR);
+
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
+
+        return isset($values['nbCanvas']) && $values['nbCanvas'] > 0;
+    }
+
+    /***
+     * copyCanvas - create a copy of an existing canvas
+     *
+     * @access public
+     * @param int    $projectId   Project identifier
+     * @param int    $canvasId    Original canvas identifier
+     * @param int    $authorId    Author identifier
+     * @param  string $canvasTitle New canvas title
+     * @return int    Identifier of new Canvas
+     */
+    public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
+    {
+
+        // Create new Canvas
+        $values = ['title' => $canvasTitle, 'author' => $authorId, 'projectId' => $projectId, 'type' => static::CANVAS_NAME.'canvas'];
+        $newCanvasId = $this->addCanvas($values);
+
+        // Copy elements from existing canvas to new Canvas
+        $sql = 'INSERT INTO '.
+          'zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
                         data1,
                         startDate,
                         endDate,
@@ -1014,7 +1014,7 @@ namespace Leantime\Domain\Canvas\Repositories {
                         startValue,
                         currentValue,
                         endValue,title) '.
-              "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '',kpi,
+          "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '',kpi,
                         data1,
                         startDate,
                         endDate,
@@ -1028,29 +1028,29 @@ namespace Leantime\Domain\Canvas\Repositories {
                         startValue,
                         currentValue,
                         endValue,title ".
-              "FROM zp_canvas_items WHERE canvasId = $canvasId";
-            $stmn = $this->db->database->prepare($sql);
+          "FROM zp_canvas_items WHERE canvasId = $canvasId";
+        $stmn = $this->db->database->prepare($sql);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $stmn->closeCursor();
 
-            return $newCanvasId;
-        }
+        return $newCanvasId;
+    }
 
-        /***
-         * mergeCanvas - merge canvas into existing canvas
-         *
-         * @access public
-         * @param int    $canvasId Original canvas identifier
-         * @param string $mergeId  Canvas to perge into existing one
-         * @return bool Status of merge
-         */
-        public function mergeCanvas(int $canvasId, string $mergeId): bool
-        {
+    /***
+     * mergeCanvas - merge canvas into existing canvas
+     *
+     * @access public
+     * @param int    $canvasId Original canvas identifier
+     * @param string $mergeId  Canvas to perge into existing one
+     * @return bool Status of merge
+     */
+    public function mergeCanvas(int $canvasId, string $mergeId): bool
+    {
 
-            // Copy elements from merge canvas into current canvas
-            $sql = 'INSERT INTO '.
-              'zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
+        // Copy elements from merge canvas into current canvas
+        $sql = 'INSERT INTO '.
+          'zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
                         data1,
                         startDate,
                         endDate,
@@ -1064,7 +1064,7 @@ namespace Leantime\Domain\Canvas\Repositories {
                         startValue,
                         currentValue,
                         endValue, title) '.
-              "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '',kpi,
+          "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '',kpi,
                         data1,
                         startDate,
                         endDate,
@@ -1078,27 +1078,27 @@ namespace Leantime\Domain\Canvas\Repositories {
                         startValue,
                         currentValue,
                         endValue, title ".
-              "FROM zp_canvas_items WHERE canvasId = $mergeId";
-            $stmn = $this->db->database->prepare($sql);
+          "FROM zp_canvas_items WHERE canvasId = $mergeId";
+        $stmn = $this->db->database->prepare($sql);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $stmn->closeCursor();
 
-            return true;
-        }
+        return true;
+    }
 
-        /***
-         * getCanvasProgressCount - gets canvases by type and counts number of items per box
-         *
-         * @access public
-         * @param int   $projectId Project od
-         * @param  array $boards    List of board types to pull
-         * @return array|bool list of boards or false
-         */
-        public function getCanvasProgressCount(int $projectId, array $boards): array|bool
-        {
+    /***
+     * getCanvasProgressCount - gets canvases by type and counts number of items per box
+     *
+     * @access public
+     * @param int   $projectId Project od
+     * @param  array $boards    List of board types to pull
+     * @return array|bool list of boards or false
+     */
+    public function getCanvasProgressCount(int $projectId, array $boards): array|bool
+    {
 
-            $sql = 'SELECT
+        $sql = 'SELECT
                     zp_canvas.id AS canvasId,
                     zp_canvas.type AS canvasType,
                     zp_canvas_items.box,
@@ -1109,51 +1109,51 @@ namespace Leantime\Domain\Canvas\Repositories {
 
                 ';
 
-            if ($projectId != '' && count($boards) > 0) {
-                $sql .= ' WHERE 1=1 ';
-            }
+        if ($projectId != '' && count($boards) > 0) {
+            $sql .= ' WHERE 1=1 ';
+        }
 
-            if ($projectId != '') {
-                $sql .= 'AND projectId = :projectId ';
-            }
+        if ($projectId != '') {
+            $sql .= 'AND projectId = :projectId ';
+        }
 
-            if (count($boards) > 0) {
-                $boardString = implode("','", $boards);
-                $sql .= "AND type IN ('".$boardString."') ";
-            }
+        if (count($boards) > 0) {
+            $boardString = implode("','", $boards);
+            $sql .= "AND type IN ('".$boardString."') ";
+        }
 
-            $sql .= '
+        $sql .= '
                 GROUP BY
                     zp_canvas.id,
                     zp_canvas.type,
                     zp_canvas_items.box
                 ORDER BY zp_canvas.title, zp_canvas.created';
 
-            $stmn = $this->db->database->prepare($sql);
+        $stmn = $this->db->database->prepare($sql);
 
-            if ($projectId != '') {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
+        if ($projectId != '') {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
         }
 
-        /***
-         * getLastUpdateCanvas - gets the list of canvas that have been updated recently
-         *
-         * @access public
-         * @param int   $projectId Project od
-         * @param  array $boards    List of board types to pull
-         * @return array    array of canvas boards sorted by last update date
-         */
-        public function getLastUpdatedCanvas(int $projectId, array $boards): array
-        {
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            $sql = 'SELECT
+        return $values;
+    }
+
+    /***
+     * getLastUpdateCanvas - gets the list of canvas that have been updated recently
+     *
+     * @access public
+     * @param int   $projectId Project od
+     * @param  array $boards    List of board types to pull
+     * @return array    array of canvas boards sorted by last update date
+     */
+    public function getLastUpdatedCanvas(int $projectId, array $boards): array
+    {
+
+        $sql = 'SELECT
                     zp_canvas.id AS id,
                     zp_canvas.type AS type,
                     zp_canvas.title AS title,
@@ -1164,50 +1164,50 @@ namespace Leantime\Domain\Canvas\Repositories {
 
                 ';
 
-            if ($projectId != '' && count($boards) > 0) {
-                $sql .= ' WHERE 1=1 ';
-            }
+        if ($projectId != '' && count($boards) > 0) {
+            $sql .= ' WHERE 1=1 ';
+        }
 
-            if ($projectId != '') {
-                $sql .= 'AND projectId = :projectId ';
-            }
+        if ($projectId != '') {
+            $sql .= 'AND projectId = :projectId ';
+        }
 
-            if (count($boards) > 0) {
-                $boardString = implode("','", $boards);
-                $sql .= "AND type IN ('".$boardString."') ";
-            }
+        if (count($boards) > 0) {
+            $boardString = implode("','", $boards);
+            $sql .= "AND type IN ('".$boardString."') ";
+        }
 
-            $sql .= '
+        $sql .= '
                 GROUP BY
                     zp_canvas.id,
                     zp_canvas.type,
                      zp_canvas.title
                 ORDER BY modified DESC';
 
-            $stmn = $this->db->database->prepare($sql);
+        $stmn = $this->db->database->prepare($sql);
 
-            if ($projectId != '') {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
+        if ($projectId != '') {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
         }
 
-        /***
-         * getTags - gets the list of tags across all canvas items in a given project
-         *
-         * @access public
-         * @param int $projectId Project od
-         * @return array    array of canvas boards sorted by last update date
-         */
-        public function getTags(int $projectId): array
-        {
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            $sql = 'SELECT
+        return $values;
+    }
+
+    /***
+     * getTags - gets the list of tags across all canvas items in a given project
+     *
+     * @access public
+     * @param int $projectId Project od
+     * @return array    array of canvas boards sorted by last update date
+     */
+    public function getTags(int $projectId): array
+    {
+
+        $sql = 'SELECT
                     zp_canvas_items.tags
                 FROM
                     zp_canvas_items
@@ -1215,15 +1215,14 @@ namespace Leantime\Domain\Canvas\Repositories {
                     WHERE zp_canvas.projectId = :projectId
                 ';
 
-            $stmn = $this->db->database->prepare($sql);
+        $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
     }
 }

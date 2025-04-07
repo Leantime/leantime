@@ -1,69 +1,68 @@
 <?php
 
-namespace Leantime\Domain\Tickets\Controllers {
+namespace Leantime\Domain\Tickets\Controllers;
 
-    use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Controller\Controller;
-    use Leantime\Core\Controller\Frontcontroller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Auth\Services\Auth;
-    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Symfony\Component\HttpFoundation\Response;
 
-    class DelMilestone extends Controller
+class DelMilestone extends Controller
+{
+    private TicketService $ticketService;
+
+    public function init(TicketService $ticketService): void
     {
-        private TicketService $ticketService;
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        public function init(TicketService $ticketService): void
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        $this->ticketService = $ticketService;
+    }
 
-            $this->ticketService = $ticketService;
-        }
+    /**
+     * @throws BindingResolutionException
+     */
+    public function get(): Response
+    {
 
-        /**
-         * @throws BindingResolutionException
-         */
-        public function get(): Response
-        {
-
-            // Only admins
-            if (Auth::userIsAtLeast(Roles::$editor)) {
-                if (isset($_GET['id'])) {
-                    $id = (int) ($_GET['id']);
-                }
-
-                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-
-                return $this->tpl->displayPartial('tickets.delMilestone');
-            } else {
-                return $this->tpl->displayPartial('errors.error403');
-            }
-        }
-
-        /**
-         * @throws BindingResolutionException
-         */
-        public function post($params): Response
-        {
-            if (! isset($_GET['id'], $params['del'])) {
-                return $this->tpl->displayPartial('errors.error400', responseCode: 400);
+        // Only admins
+        if (Auth::userIsAtLeast(Roles::$editor)) {
+            if (isset($_GET['id'])) {
+                $id = (int) ($_GET['id']);
             }
 
-            if (! Auth::userIsAtLeast(Roles::$editor)) {
-                return $this->tpl->displayPartial('errors.error403', responseCode: 403);
-            }
-
-            if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {
-                $this->tpl->setNotification($this->language->__('notification.milestone_deleted'), 'success');
-
-                return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');
-            }
-
-            $this->tpl->setNotification($this->language->__($result['msg']), 'error');
             $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
 
             return $this->tpl->displayPartial('tickets.delMilestone');
+        } else {
+            return $this->tpl->displayPartial('errors.error403');
         }
+    }
+
+    /**
+     * @throws BindingResolutionException
+     */
+    public function post($params): Response
+    {
+        if (! isset($_GET['id'], $params['del'])) {
+            return $this->tpl->displayPartial('errors.error400', responseCode: 400);
+        }
+
+        if (! Auth::userIsAtLeast(Roles::$editor)) {
+            return $this->tpl->displayPartial('errors.error403', responseCode: 403);
+        }
+
+        if ($result = $this->ticketService->deleteMilestone($id = (int) ($_GET['id']))) {
+            $this->tpl->setNotification($this->language->__('notification.milestone_deleted'), 'success');
+
+            return Frontcontroller::redirect(BASE_URL.'/tickets/roadmap');
+        }
+
+        $this->tpl->setNotification($this->language->__($result['msg']), 'error');
+        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+
+        return $this->tpl->displayPartial('tickets.delMilestone');
     }
 }

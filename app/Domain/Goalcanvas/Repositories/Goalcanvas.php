@@ -4,67 +4,67 @@
  * Repository
  */
 
-namespace Leantime\Domain\Goalcanvas\Repositories {
+namespace Leantime\Domain\Goalcanvas\Repositories;
 
-    use Leantime\Domain\Canvas\Repositories\Canvas;
-    use PDO;
+use Leantime\Domain\Canvas\Repositories\Canvas;
+use PDO;
 
-    class Goalcanvas extends Canvas
+class Goalcanvas extends Canvas
+{
+    /**
+     * Constant that must be redefined
+     */
+    protected const CANVAS_NAME = 'goal';
+
+    /***
+     * icon - Icon associated with canvas (must be extended)
+     *
+     * @access public
+     * @var    string Fontawesome icone
+     */
+    protected string $icon = 'fa-bullseye';
+
+    /**
+     * canvasTypes - Must be extended
+     *
+     * @acces protected
+     */
+    protected array $canvasTypes = [
+        'goal' => ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
+    ];
+
+    /**
+     * statusLabels - Status labels (may be extended)
+     *
+     * @acces protected
+     */
+    protected array $statusLabels = [
+        'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
+        'status_atrisk' => ['icon' => 'fa-triangle-exclamation', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
+        'status_miss' => ['icon' => 'fa-circle-xmark', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
+
+    ];
+
+    protected array $relatesLabels = [];
+
+    /**
+     * dataLabels - Data labels (may be extended)
+     *
+     * @acces protected
+     */
+    protected array $dataLabels = [
+        1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
+        2 => ['title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true],
+        3 => ['title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true],
+
+    ];
+
+    /**
+     * Gets all goals related to a milestone
+     */
+    public function getGoalsByMilestone(int $milestoneId): false|array
     {
-        /**
-         * Constant that must be redefined
-         */
-        protected const CANVAS_NAME = 'goal';
-
-        /***
-         * icon - Icon associated with canvas (must be extended)
-         *
-         * @access public
-         * @var    string Fontawesome icone
-         */
-        protected string $icon = 'fa-bullseye';
-
-        /**
-         * canvasTypes - Must be extended
-         *
-         * @acces protected
-         */
-        protected array $canvasTypes = [
-            'goal' => ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
-        ];
-
-        /**
-         * statusLabels - Status labels (may be extended)
-         *
-         * @acces protected
-         */
-        protected array $statusLabels = [
-            'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
-            'status_atrisk' => ['icon' => 'fa-triangle-exclamation', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
-            'status_miss' => ['icon' => 'fa-circle-xmark', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
-
-        ];
-
-        protected array $relatesLabels = [];
-
-        /**
-         * dataLabels - Data labels (may be extended)
-         *
-         * @acces protected
-         */
-        protected array $dataLabels = [
-            1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
-            2 => ['title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true],
-            3 => ['title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true],
-
-        ];
-
-        /**
-         * Gets all goals related to a milestone
-         */
-        public function getGoalsByMilestone(int $milestoneId): false|array
-        {
-            $sql = "SELECT
+        $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
                         zp_canvas_items.title,
@@ -107,19 +107,19 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
 
                 ";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $milestoneId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':id', $milestoneId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        public function getSingleCanvas($canvasId): false|array
-        {
-            $sql = "SELECT
+    public function getSingleCanvas($canvasId): false|array
+    {
+        $sql = "SELECT
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
@@ -135,22 +135,22 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 WHERE type = '".static::CANVAS_NAME."canvas' AND zp_canvas.id = :canvasId
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
 
-            $stmn->execute();
-            $values = $stmn->fetch();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $values = $stmn->fetch();
+        $stmn->closeCursor();
 
-            return $values;
-        }
+        return $values;
+    }
 
-        /**
-         * Gets all goals related to a milestone
-         */
-        public function getAllAccountGoals(?int $projectId, ?int $boardId): false|array
-        {
-            $sql = "SELECT
+    /**
+     * Gets all goals related to a milestone
+     */
+    public function getAllAccountGoals(?int $projectId, ?int $boardId): false|array
+    {
+        $sql = "SELECT
                     zp_canvas_items.id,
                     zp_canvas_items.description,
                     zp_canvas_items.title,
@@ -199,44 +199,44 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                 )
             ";
 
-            if (isset($projectId) && $projectId > 0) {
-                $sql .= ' AND (zp_canvas.projectId = :projectId)';
-            }
-
-            if (isset($boardId) && $boardId > 0) {
-                $sql .= ' AND (zp_canvas.id = :boardId)';
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if (session()->exists('userdata')) {
-                $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
-            } else {
-                $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
-            }
-
-            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
-            $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
-
-            if (isset($projectId) && $projectId > 0) {
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
-            }
-
-            if (isset($boardId) && $boardId > 0) {
-                $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
-            }
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
+        if (isset($projectId) && $projectId > 0) {
+            $sql .= ' AND (zp_canvas.projectId = :projectId)';
         }
 
-        public function createGoal($values): false|string
-        {
+        if (isset($boardId) && $boardId > 0) {
+            $sql .= ' AND (zp_canvas.id = :boardId)';
+        }
 
-            $query = 'INSERT INTO zp_canvas_items (
+        $stmn = $this->db->database->prepare($sql);
+
+        if (session()->exists('userdata')) {
+            $stmn->bindValue(':requesterRole', session('userdata.role'), PDO::PARAM_INT);
+        } else {
+            $stmn->bindValue(':requesterRole', -1, PDO::PARAM_INT);
+        }
+
+        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
+        $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
+
+        if (isset($projectId) && $projectId > 0) {
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+        }
+
+        if (isset($boardId) && $boardId > 0) {
+            $stmn->bindValue(':boardId', $boardId, PDO::PARAM_INT);
+        }
+
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
+
+        return $values;
+    }
+
+    public function createGoal($values): false|string
+    {
+
+        $query = 'INSERT INTO zp_canvas_items (
                         description,
                             title,
                         assumptions,
@@ -298,41 +298,40 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                         :tags
                 )';
 
-            $stmn = $this->db->database->prepare($query);
+        $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
-            $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
-            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
+        $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
+        $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
+        $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+        $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
 
-            $stmn->execute();
-            $id = $this->db->database->lastInsertId();
-            $stmn->closeCursor();
+        $stmn->execute();
+        $id = $this->db->database->lastInsertId();
+        $stmn->closeCursor();
 
-            return $id;
-        }
+        return $id;
     }
 }

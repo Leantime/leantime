@@ -1,7 +1,15 @@
+
 # Version: 3.4.11
 
 * [ded5173](https://github.com/Leantime/leantime/commit/ded5173cca67327e6e9127dc3947de8f1efd3e6d): task: version bump
 * [807bff8](https://github.com/Leantime/leantime/commit/807bff8b8d8c5ab73735b95e706d482d31900a2d): fix: update mix handling for phar files
+
+
+# Version: 3.4.10
+
+* [e9cd172](https://github.com/Leantime/leantime/commit/e9cd172255fb807a20be5c40b181abe7f49f044c): task: version bump
+* [9ac0946](https://github.com/Leantime/leantime/commit/9ac0946b5b2925bc7da2a96546a94fcb8f643ad5): task: fix code style
+* [51fbe0e](https://github.com/Leantime/leantime/commit/51fbe0eb649d370c5c866e210f7b89280d9ef230): fix: wrong identifier used when pulling and checking plugins failing validation.
 
 
 # Version: 3.4.9
