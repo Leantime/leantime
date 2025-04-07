@@ -3,12 +3,54 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $currentArticle = $tpl->get('article');
+
+/*
+Original line:
+
 $wikiHeadlines = $tpl->get('wikiHeadlines');
-?>
 
+The following block orders and formats the headlines in the combobox.
+*/
 
-<?php
+// --------------------------
 
+$wikiHL = $tpl->get('wikiHeadlines');
+
+$wikiHeadlines = [];
+
+// Adds to $wikiHeadlines all the options and suboptions from $wikiHL for articles with parent $parentId.
+// The method is called recursively.
+// $id: current page Id.
+// $parentId: the id of parent article.
+// $wikiHeadline: the output, ordered array. will be modified inside the method.
+// $wikiHL: the array returned from Service.getAllWikiHeadlines. 
+//          Even if it is passed by reference for performance the method will not modify it.
+// $indent is the string to put before the title, any level will add a space.
+function createTree($id, $parentId, &$wikiHeadlines, &$wikiHL, $indent) {
+	// Finds the first article 
+	$articles = array_filter($wikiHL, function($v) use($parentId) { return $v->parent == $parentId; });
+	if (count($articles) > 0) {
+		usort ($articles, function($a1, $a2) { return $a1->title > $a2->title; });
+		if ($parentId != null) {
+			$indent = $indent . "-";
+		}
+		foreach ($articles as $article) {
+			// This check prevents circular references by hiding the current page and its childs from list.
+			if ($article->id != $id) {				
+				$art = $article;
+				$art->title = $indent . $article->title;
+				$wikiHeadlines[] = $art;
+				createTree($id, $article->id, $wikiHeadlines, $wikiHL, $indent);
+			}
+		}
+	}
+	//var_dump($articles);
+	
+}
+
+// --------------------------
+
+// The following is the second original php block
 if (! isset($_GET['closeModal'])) {
     echo $tpl->displayNotification();
 }
@@ -17,6 +59,9 @@ $id = '';
 if (isset($currentArticle->id)) {
     $id = $currentArticle->id;
 }
+
+// Populates the options tree
+createTree($id, null, $wikiHeadlines, $wikiHL, "");
 
 ?>
 

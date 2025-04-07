@@ -131,7 +131,7 @@ class Wiki extends Canvas
 
 				WHERE canvasId = :canvasId
 				  AND box = 'article' AND (status = 'published' OR (status = 'draft' AND author = :authorId) )
-				ORDER BY parent DESC, sortindex DESC";
+				ORDER BY parent, title";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_INT);
