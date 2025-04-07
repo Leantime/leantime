@@ -31,8 +31,10 @@
 
 <div id="yourToDoContainer"
      hx-get="{{BASE_URL}}/widgets/myToDos/get"
-     hx-trigger="ticket_update from:body"
-     class="clear" hx-ext="json-enc">
+     hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body"
+     class="clear"
+     hx-swap="outerHTML"
+     hx-ext="json-enc">
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
 

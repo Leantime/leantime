@@ -93,7 +93,10 @@
         "socialiteproviders/appnet": "^4.1",
         "socialiteproviders/saml2": "^4.7",
         "php-http/guzzle7-adapter": "^1.1",
-        "symfony/cache": "^7.2"
+        "symfony/cache": "^7.2",
+        "theodo-group/llphant": "^0.9.9",
+        "prism-php/prism": "^0.57.0",
+        "inspector-apm/neuron-ai": "^1.8"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
