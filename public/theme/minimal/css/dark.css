@@ -184,25 +184,18 @@
 
 }
 
-body .mainwrapper .rightpanel:before {
-    opacity:0.2 !important;
-}
-
 .mainwrapper .header {
     background-color:var(--header-bg-color);
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
 }
 
+.rightpanel::before {
+    opacity:0.9;
+}
+
 .header .headmenu > li > a {
     text-shadow:none;
 }
-
-.mainwrapper  .rightpanel {
-    backdrop-filter: opacity(0.3) !important;
-    mix-blend-mode: darken !important;
-}
-
-
 
 .nyroModalCont .tab-primary.ui-tabs .ui-tabs-nav li,
 .maincontentinner .tab-primary.ui-tabs .ui-tabs-nav li{
