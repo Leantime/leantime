@@ -4,6 +4,7 @@ namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Leantime\Core\Language;
 
 /**
  * Class CarbonMacros
@@ -40,7 +41,27 @@ class CarbonMacros
         public string $userTimeFormat = '',
         public string $dbFormat = 'Y-m-d H:i:s',
         public string $dbTimezone = 'UTC'
-    ) {}
+    ) {
+
+        if($userLanguage == "nl_NL") {
+            $language = app()->make(Language::class);
+            $translator = \Carbon\Translator::get("nl_NL");
+            $translator->setTranslations([
+                'weekdays_short' => explode(',', $language->__('language.dayNamesShort')),
+                'weekdays_min' => explode(',', $language->__('language.dayNamesMin')),
+                'months_short' => explode(',', $language->__('language.monthNamesShort')),
+                'mmm_suffix' => ''
+            ]);
+            $translator = \Carbon\Translator::get("nl");
+            $translator->setTranslations([
+                'weekdays_short' => explode(',', $language->__('language.dayNamesShort')),
+                'weekdays_min' => explode(',', $language->__('language.dayNamesMin')),
+                'months_short' => explode(',', $language->__('language.monthNamesShort')),
+                'mmm_suffix' => ''
+            ]);
+        }
+
+    }
 
     /**
      * Formats the current date for the user based on the user's timezone,

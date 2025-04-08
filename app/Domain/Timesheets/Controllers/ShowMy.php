@@ -4,6 +4,7 @@ namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -63,7 +64,14 @@ class ShowMy extends Controller
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (! empty($_POST['startDate'])) {
-                $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
+                try {
+                    $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
+                }catch (\Exception $e) {
+                    Log::warning($e);
+                    Log::warning('User timezone: '.session('usersettings.timezone'));
+                    Log::warning('User dateTime format: '.session('usersettings.date_format'));
+                    $this->tpl->setNotification('Could not parse date', 'error', 'save_timesheet');
+                }
             }
         }
 
