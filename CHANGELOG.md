@@ -1,3 +1,10 @@
+
+# Version: 3.4.11
+
+* [ded5173](https://github.com/Leantime/leantime/commit/ded5173cca67327e6e9127dc3947de8f1efd3e6d): task: version bump
+* [807bff8](https://github.com/Leantime/leantime/commit/807bff8b8d8c5ab73735b95e706d482d31900a2d): fix: update mix handling for phar files
+
+
 # Version: 3.4.10
 
 * [e9cd172](https://github.com/Leantime/leantime/commit/e9cd172255fb807a20be5c40b181abe7f49f044c): task: version bump
