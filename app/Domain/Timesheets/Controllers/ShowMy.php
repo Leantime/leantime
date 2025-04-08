@@ -66,7 +66,7 @@ class ShowMy extends Controller
             if (! empty($_POST['startDate'])) {
                 try {
                     $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     Log::warning($e);
                     Log::warning('User timezone: '.session('usersettings.timezone'));
                     Log::warning('User dateTime format: '.session('usersettings.date_format'));

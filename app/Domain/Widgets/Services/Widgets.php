@@ -185,7 +185,7 @@ class Widgets
             $widgets = [];
             foreach ($unserializedData as $key => $widget) {
 
-                if(isset($widget['id']) === false) {
+                if (isset($widget['id']) === false) {
                     continue;
                 }
 

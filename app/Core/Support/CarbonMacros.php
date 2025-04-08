@@ -43,21 +43,21 @@ class CarbonMacros
         public string $dbTimezone = 'UTC'
     ) {
 
-        if($userLanguage == "nl_NL") {
+        if ($userLanguage == 'nl_NL') {
             $language = app()->make(Language::class);
-            $translator = \Carbon\Translator::get("nl_NL");
+            $translator = \Carbon\Translator::get('nl_NL');
             $translator->setTranslations([
                 'weekdays_short' => explode(',', $language->__('language.dayNamesShort')),
                 'weekdays_min' => explode(',', $language->__('language.dayNamesMin')),
                 'months_short' => explode(',', $language->__('language.monthNamesShort')),
-                'mmm_suffix' => ''
+                'mmm_suffix' => '',
             ]);
-            $translator = \Carbon\Translator::get("nl");
+            $translator = \Carbon\Translator::get('nl');
             $translator->setTranslations([
                 'weekdays_short' => explode(',', $language->__('language.dayNamesShort')),
                 'weekdays_min' => explode(',', $language->__('language.dayNamesMin')),
                 'months_short' => explode(',', $language->__('language.monthNamesShort')),
-                'mmm_suffix' => ''
+                'mmm_suffix' => '',
             ]);
         }
 

@@ -77,16 +77,16 @@ $ticketHours = $tpl->get('ticketHours');
 foreach ($ticketHours as $hours) {
     $sum = $sum + $hours['summe'];
     try {
-        echo "labels.push('" . dtHelper()->parseDbDateTime($hours['utc'] . " 00:00:00")->setToUserTimezone()->format(
-                "Y-m-d"
-            ) . "');
+        echo "labels.push('".dtHelper()->parseDbDateTime($hours['utc'].' 00:00:00')->setToUserTimezone()->format(
+            'Y-m-d'
+        )."');
                     ";
-        echo 'd2.push(' . $sum . ');
+        echo 'd2.push('.$sum.');
                     ';
-        echo 'd3.push(' . $ticket->planHours . ');
+        echo 'd3.push('.$ticket->planHours.');
                     ';
-    }catch (\Exception $e){
-        //not much we can do at this point. Ignore the datapoint
+    } catch (\Exception $e) {
+        // not much we can do at this point. Ignore the datapoint
     }
 } ?>
 
