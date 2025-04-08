@@ -10,6 +10,7 @@ leantime.dateController = (function () {
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
             dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
             monthNames: leantime.i18n.__("language.monthNames").split(","),
+            monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
             currentText: leantime.i18n.__("language.currentText"),
             closeText: leantime.i18n.__("language.closeText"),
             buttonText: leantime.i18n.__("language.buttonText"),

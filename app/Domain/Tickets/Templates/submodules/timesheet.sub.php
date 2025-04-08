@@ -76,13 +76,18 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 $ticketHours = $tpl->get('ticketHours');
 foreach ($ticketHours as $hours) {
     $sum = $sum + $hours['summe'];
-
-    echo "labels.push('".date('Y-m-d', strtotime($hours['utc'] ?? ''))."');
+    try {
+        echo "labels.push('".dtHelper()->parseDbDateTime($hours['utc'].' 00:00:00')->setToUserTimezone()->format(
+            'Y-m-d'
+        )."');
                     ";
-    echo 'd2.push('.$sum.');
+        echo 'd2.push('.$sum.');
                     ';
-    echo 'd3.push('.$ticket->planHours.');
+        echo 'd3.push('.$ticket->planHours.');
                     ';
+    } catch (\Exception $e) {
+        // not much we can do at this point. Ignore the datapoint
+    }
 } ?>
 
         leantime.ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")

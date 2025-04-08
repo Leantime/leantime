@@ -20,6 +20,7 @@ jQuery(document).ready(function(){
     };
 
     var setDates = function (input) {
+        console.log("setting dates");
         var $input = jQuery(input);
         var date = $input.datepicker('getDate');
 
@@ -36,7 +37,8 @@ jQuery(document).ready(function(){
 
             var inst = $input.data('datepicker');
             var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
-
+            jQuery('#startDate').datepicker("setDate", startDate);
+            jQuery('#endDate').datepicker("setDate", endDate);
             jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
             jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         }
@@ -48,6 +50,7 @@ jQuery(document).ready(function(){
         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
         dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
         monthNames: leantime.i18n.__("language.monthNames").split(","),
+        monthNamesShort: leantime.i18n.__("language.monthNamesShort").split(","),
         currentText: leantime.i18n.__("language.currentText"),
         closeText: leantime.i18n.__("language.closeText"),
         buttonText: leantime.i18n.__("language.buttonText"),
@@ -56,7 +59,8 @@ jQuery(document).ready(function(){
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
         firstDay: 1, //Hard coding to monday for this specific instance.
-
+        autoSize: true,
+        navigationAsDateFormat: true,
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
             selectCurrentWeek();
@@ -117,11 +121,20 @@ jQuery(document).ready(function(){
 
     jQuery("#nextWeek").click(function() {
         var date = jQuery("#endDate").datepicker('getDate');
+        console.log("current end date", jQuery("#endDate").datepicker('getDate'));
+
         var endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
         var startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
+        console.log("new end date", endDate);
+
         var inst = jQuery("#endDate").data('datepicker');
         var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
+        console.log("date settings format", inst.settings.dateFormat );
+        console.log("general date format", jQuery.datepicker._defaults.dateFormat );
+
+
+
         jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
