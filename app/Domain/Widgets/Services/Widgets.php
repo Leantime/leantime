@@ -185,6 +185,10 @@ class Widgets
             $widgets = [];
             foreach ($unserializedData as $key => $widget) {
 
+                if (isset($widget['id']) === false) {
+                    continue;
+                }
+
                 // Check if this widget exists in available widgets but not in user's stored widgets
                 if (isset($this->availableWidgets[$widget['id']]) && ! isset($widgetHistory[$widget['id']])) {
                     $widget['isNew'] = true;
