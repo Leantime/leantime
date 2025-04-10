@@ -1455,7 +1455,7 @@ class Tickets
 						:editorId,
 						:dependingTicketId,
 				         :milestoneid,
-						0,
+						:sortIndex,
 						0
 				)';
 
@@ -1480,6 +1480,7 @@ class Tickets
 
         $stmn->bindValue(':editFrom', $values['editFrom'], PDO::PARAM_STR);
         $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
+        $stmn->bindValue(':sortIndex', $values['sortIndex'] ?? '', PDO::PARAM_STR);
         $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
 
         $depending = $values['dependingTicketId'] ?? '';

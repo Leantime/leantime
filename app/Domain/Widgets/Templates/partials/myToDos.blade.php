@@ -220,7 +220,7 @@
                     }
                 @endphp
 
-                <x-global::accordion id="ticketBox1-{{ $loop->index }}">
+                <x-global::accordion id="ticketBox1-{{ $groupKey }}-{{ $loop->index }}">
                     <x-slot name="title">
                         {!!  __($ticketGroup["labelName"]) !!} ({{ count($ticketGroup["tickets"]) }})
                     </x-slot>
@@ -260,7 +260,7 @@
                                         <input type="hidden" name="priority"
                                                value="{{ $groupBy === "priority" ? $groupKey : '' }}"/>
                                         <input type="hidden" name="dateToFinish"
-                                               value="{{ $groupKey === 'thisWeek' ? date('Y-m-d', strtotime('next friday')) : '' }}"/>
+                                               value="{{ $groupKey === 'thisWeek' ? dtHelper()->userNow()->next('Friday')->formatDateForUser() : '' }}"/>
                                         <textarea name="description" class="description-input" style="display:none;"
                                                   placeholder="{{ __('input.placeholders.description') }}"></textarea>
                                     </div>
@@ -276,7 +276,7 @@
 
                         <div class="sortable-list" data-container-type="section" style="padding-left:5px;">
                             @foreach ($ticketGroup['tickets'] as $row)
-                                @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0])
+                                @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0, 'groupKey' => $groupKey])
                             @endforeach
                         </div>
                     </x-slot>
@@ -338,14 +338,14 @@
             // Show the quick add form when the + button is clicked
             jQuery('.add-task-button').on('click', function () {
                 var groupKey = jQuery(this).data('group');
-                jQuery('#quickAddForm-' + groupKey).slideDown();
+                jQuery('#quickAddForm-' + groupKey).show();
                 jQuery('#quickAddForm-' + groupKey + ' .main-title-input').focus();
             });
 
             // Hide the quick add form when cancel is clicked
             jQuery('.cancel-add-task').on('click', function () {
                 var groupKey = jQuery(this).data('group');
-                jQuery('#quickAddForm-' + groupKey).slideUp();
+                jQuery('#quickAddForm-' + groupKey).hide();
                 jQuery('#quickAddForm-' + groupKey + ' .main-title-input').val('');
                 jQuery('#quickAddForm-' + groupKey + ' .description-input').val('');
             });

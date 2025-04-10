@@ -19,7 +19,7 @@
 @endphp
 
 <div class="sortable-item draggable-todo"
-    id="ticket_{{ $ticket['id'] }}"
+    id="ticket_{{ $groupKey.$ticket['id'] }}"
     data-item-type="{{ $ticket['type'] == 'milestone' ? 'milestone' : ($ticket['type'] == 'subtask' ? 'subtask' : 'task') }}"
     data-id="{{ $ticket['id'] }}"
     data-project="{{ $ticket['projectId'] }}"
@@ -28,7 +28,7 @@
     data-event='{!! $ticketDataJson !!}' >
 
     @php
-        $accordionId = 'task-children-'.$ticket['id'];
+        $accordionId = 'task-children-'.$groupKey.$ticket['id'];
         $accordionState = $tpl->getToggleState($tpl->getToggleState("accordion_content-".$accordionId) == 'closed' ? 'closed' : 'open');
     @endphp
 
@@ -69,6 +69,7 @@
                     </div>
                 </div>
             </div>
+
         @else
             <div class="tw-flex tw-flex-row">
                 <div class="tw-content-center">
@@ -202,6 +203,7 @@
             </div>
         @endif
 
+
     </div>
 
     <!-- Subtask Form -->
@@ -224,7 +226,7 @@
                     <input type="hidden" name="status" value="3" />
                     <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
                     <a href="javascript:void(0);"
-                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').slideToggle();"
+                       onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
                        class="btn">{{ __('buttons.cancel') }}</a>
                 </div>
             </div>
@@ -238,10 +240,60 @@
          class="sortable-list task-children {{ $tpl->getToggleState("user.".session('userdata.id').".taskCollapsed.".$ticket['id'], 'open') }}"
          data-container-type="{{ $ticket['type'] == 'milestone' ? 'milestone' : ($ticket['type'] == 'subtask' ? 'subtask' : 'task') }}">
         @foreach(($ticket['children'] ?? []) as $childTicket)
-            @include('widgets::partials.todoItem', ['ticket' => $childTicket, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => $level + 1])
+            @include('widgets::partials.todoItem', ['ticket' => $childTicket, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => $level + 1, '$groupKey' => $groupKey])
         @endforeach
-    </div>
 
+    @if($level == 0 && $ticket['type'] === "milestone")
+
+        <!-- Subtask Form -->
+        <div id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}" class="subtask-form ticketBox" style="display:none; margin:5px 0px;">
+            <form class="form-group"
+                  id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-form"
+                  hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
+                  hx-target="#yourToDoContainer"
+                  hx-swap="outerHTML transition:true"
+                  hx-indicator=".htmx-indicator"
+                onsubmit="jQuery(this).find('.main-title-input').attr('readonly', true);"
+            >
+                <input type="hidden" name="milestone" value="{{ $ticket['type'] == "milestone" ? $ticket['id'] : '' }}"/>
+                <input type="hidden" name="status" value="3"/>
+                <input type="hidden" name="quickadd" value="true"/>
+                <input type="hidden" name="sortIndex" value="{{ ((collect($ticket['children'])->last()['sortIndex'] ?? 10)+5) }}" />
+                <input type="hidden" name="projectId" value="{{ $ticket['projectId'] }}"/>
+                <input type="hidden" name="priority"
+                       value="{{ $groupBy === "priority" ? $groupKey : '' }}"/>
+                <input type="hidden" name="dateToFinish"
+                       @if($groupKey === 'thisWeek')
+                           value="{{ dtHelper()->userNow()->next('Friday')->formatDateForUser() }}"
+                       @elseif($groupKey === 'overdue')
+                        value="{{ dtHelper()->userNow()->yesterday()->formatDateForUser() }}"
+                       @else
+                           value=""
+                       @endif
+                />
+                <div class="tw-flex tw-flex-row tw-gap-2">
+                    <div class="tw-flex-grow">
+                        <input name="headline" type="text" class="main-title-input"
+                               style="font-size:var(--base-font-size)"
+                               placeholder="{{ __('input.placeholders.what_are_you_working_on') }}" />
+                    </div>
+                    <div>
+                        <input type="hidden" name="status" value="3" />
+                        <button type="submit" class="btn btn-primary">{{ __('buttons.save') }}</button>
+                        <a href="javascript:void(0);"
+                           onclick="jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler').toggle();"
+                           class="btn">{{ __('buttons.cancel') }}</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- End Subtask Form -->
+
+        <a href="javascript:void(0);" id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-handler" onclick="jQuery(this).toggle(); jQuery('#task-add-form-{{ $groupKey }}-{{$ticket['id']}}').toggle(); "><i class="fa fa-plus-circle"></i> {{ __('links.add_task') }}</a>
+
+        </div>
+    @endif
+        </div>
 
 
 </div>

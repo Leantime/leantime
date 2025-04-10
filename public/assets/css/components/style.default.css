@@ -2812,14 +2812,17 @@ h4 .helperTooltip,
     view-transition-name: slide-it;
 }
 
+@view-transition {
+    navigation: auto;
+}
 
 ::view-transition-old(fade-it) {
-    animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-    600ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
+    animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    180ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
 }
 ::view-transition-new(fade-it) {
-    animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
-    600ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+    animation: 90ms cubic-bezier(0, 0, 0.2, 1) 45ms both fade-in,
+    180ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
 }
 
 body div .fancyLink {

@@ -18,7 +18,7 @@
             @dispatchEvent("beforeMoveTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/moveTicket/{{ $ticket["id"] }}" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> {{  __("links.move_todo") }}</a></li>
             @if($allowSubtaskCreation)
-            <li><a  href="javascript:void(0);" onclick="jQuery('#subtask-form-{{$ticket['id']}}').slideToggle();"
+            <li><a  href="javascript:void(0);" onclick="jQuery('#subtask-form-{{$ticket['id']}}').toggle();"
                     class="add-subtask-link">
                   <i class="fa-solid fa-diagram-predecessor"></i> Add Subtask</a></li>
             @endif

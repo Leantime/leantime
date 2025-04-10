@@ -1459,6 +1459,7 @@ class Tickets
             'editTo' => $params['editTo'] ?? '',
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',
             'dependingTicketId' => '',
+            'sortIndex' => $params['sortIndex'] ?? '',
         ];
 
         if ($values['headline'] == '') {
@@ -2688,7 +2689,7 @@ class Tickets
 
             if ($sortingArray) {
                 $sortIndex = collect($sortingArray)->firstWhere('id', $ticket['id']);
-                $ticket['sortIndex'] = $sortIndex['order'] ?? 10;
+                $ticket['sortIndex'] = $sortIndex['order'] ?? $ticket['sortindex'] ?? 10;
             }
 
             $ticketMap[$ticket['id']] = $ticket;

@@ -617,8 +617,8 @@
                 });
             }
 
-            // Start collecting from the root container
-            jQuery('.sortable-list').first().each(function () {
+            // Start collecting from the root containers
+            jQuery('.sortable-list').not('.sortable-list .sortable-list').each(function () {
                 collectItems(jQuery(this));
             });
 
