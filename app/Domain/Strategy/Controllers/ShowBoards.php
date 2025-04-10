@@ -123,7 +123,7 @@ class ShowBoards extends Controller
             'swotcanvas', 'obmcanvas', 'valuecanvas', 'leancanvas', 'minempathycanvas',
         ];
 
-        $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas(session('currentProject') ?? '', $boards);
+            $recentlyUpdatedCanvas = $this->canvasService->getLastUpdatedCanvas((int) session('currentProject'), $boards);
 
         $recentProgressCanvas = [];
 

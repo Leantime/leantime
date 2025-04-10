@@ -34,6 +34,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
+        <input type="hidden" value="<?php echo $id ?>" name="id" autocomplete="off" readonly/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>
@@ -45,7 +46,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <textarea rows="3" cols="10" name="data" class="complexEditor"
-                  placeholder=""><?= htmlentities($canvasItem['data']) ?></textarea><br/>
+                  placeholder=""><?= $tpl->escapeMinimal($canvasItem['data']) ?></textarea><br/>
 
         <input type="submit" value="<?php echo $tpl->__('buttons.save')?>" id="primaryCanvasSubmitButton"/>
         <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose"><?php echo $tpl->__('buttons.save_and_close')?></button>

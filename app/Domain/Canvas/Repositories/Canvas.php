@@ -1164,13 +1164,13 @@ class Canvas
 
                 ';
 
-        if ($projectId != '' && count($boards) > 0) {
-            $sql .= ' WHERE 1=1 ';
-        }
+            if ($projectId > 0 && count($boards) > 0) {
+                $sql .= ' WHERE 1=1 ';
+            }
 
-        if ($projectId != '') {
-            $sql .= 'AND projectId = :projectId ';
-        }
+            if ($projectId > 0) {
+                $sql .= 'AND projectId = :projectId ';
+            }
 
         if (count($boards) > 0) {
             $boardString = implode("','", $boards);

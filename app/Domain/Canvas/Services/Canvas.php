@@ -262,7 +262,7 @@ class Canvas
     /**
      * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
      *
-     * @param  string  $projectId  projectId (optional)
+     * @param  ?int  $projectId  projectId (optional)
      * @param  array  $boards  Array of project board types
      * @return array List of boards with a progress percentage
      *
@@ -270,10 +270,10 @@ class Canvas
      *
      * @api
      */
-    public function getLastUpdatedCanvas(string $projectId = '', array $boards = []): array
+    public function getLastUpdatedCanvas(?int $projectId = null, array $boards = []): array
     {
         $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
 
-        return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
+        return $canvasRepo->getLastUpdatedCanvas((int)$projectId, $boards);
     }
 }
