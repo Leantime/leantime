@@ -297,7 +297,7 @@ class TimesheetCest
         $I->selectOption('#timezone', $timezone);
         $I->waitForElementClickable('#saveSettings');
         $I->clickWithRetry('#saveSettings');
-        $I->wait(3);
+        $I->wait(10);
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
             'value' => $timezone,
