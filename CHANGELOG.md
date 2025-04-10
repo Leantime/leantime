@@ -1,3 +1,26 @@
+# Version: 3.4.12
+
+* [d52c516](https://github.com/Leantime/leantime/commit/d52c516ac98ff28a2204d9f1638932bc30c5e838): task: increase test wait times some more
+* [2b11266](https://github.com/Leantime/leantime/commit/2b112665b22dbf512668fd8b0ea0e6f5030cf4e6): task: update tests and wait longer
+* [3a30599](https://github.com/Leantime/leantime/commit/3a30599db7af40fffc0d913ec3c84b34631daed4): task: version bump
+* [c2f0f58](https://github.com/Leantime/leantime/commit/c2f0f5829cd01ba1ddc1faa8c28e4bc9979a8948): feat: Improve ticket sorting and add task link for individual milestones
+* [3d70b6d](https://github.com/Leantime/leantime/commit/3d70b6d9a75c7d4ed5d298ec50883e2a491a9a20): fix: nginx examples
+* [9cc4a9a](https://github.com/Leantime/leantime/commit/9cc4a9ab264bac41a2b22ca2171911775bba21e8): fix: web.config for iis fix
+* [cf15c78](https://github.com/Leantime/leantime/commit/cf15c78936f7eb67c65cf394150fbefb8fb218ec): task: fix code style
+* [3d77d81](https://github.com/Leantime/leantime/commit/3d77d81b1836d107827c1c1b2d8525d1901240f4): fix: handling of shortnames and monthnames in different languages and aligning js with php
+* [2feb097](https://github.com/Leantime/leantime/commit/2feb097113061652e64c6ace010cd9d62ae44617): fix: firefox design issue
+* [b7189e6](https://github.com/Leantime/leantime/commit/b7189e63f3e360c7c9611b02f8ac0fb424d7212c): task: fix code style and remove verbose logging
+* [2fcd516](https://github.com/Leantime/leantime/commit/2fcd516482008cc2eac8c3fb18c21e41b710ecec): task: Improve htmx event management
+* [8a1a45c](https://github.com/Leantime/leantime/commit/8a1a45ca98b170ccdcef0fc721b8215e3af8780c): Update articleDialog.tpl.php
+* [8d0e88d](https://github.com/Leantime/leantime/commit/8d0e88d03ae09e3b4f7871e2e63ea7150be3182f): Update Wiki.php
+* [7712143](https://github.com/Leantime/leantime/commit/7712143930527476445a141763ebf99ae73aeb73): task: remove not needed file
+* [45638af](https://github.com/Leantime/leantime/commit/45638af9c1bbf09ff38e84e5960dca4533d608ca): fix: increase wait timeouts on tests
+* [11541ac](https://github.com/Leantime/leantime/commit/11541acf53b721f8dc74c708e727487ea20d10b9): task: further clean up
+* [7264c3b](https://github.com/Leantime/leantime/commit/7264c3b0b800451883425bdb17cfbb674d7494ca): Update Plugins
+* [78bbc5f](https://github.com/Leantime/leantime/commit/78bbc5f3e5ba1cfbcaddba6eb2cae1f71ae3c904): Update Plugins
+* [b976849](https://github.com/Leantime/leantime/commit/b9768498802ec53f4708d91a63ea535645c49c6b): task: fix code styles
+
+
 
 # Version: 3.4.11
 
