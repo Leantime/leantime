@@ -603,11 +603,11 @@ class Tickets
             SQL;
 
         // Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
-        if (isset($projectId) && $projectId != '') {
+        if (isset($projectId) && $projectId > 0) {
             $query .= ' AND zp_tickets.projectId = :projectId';
         }
 
-        if (isset($userId) && $userId != '') {
+        if (isset($userId) && $userId > 0) {
             $query .= ' AND zp_tickets.editorId = :userId';
         }
 
@@ -615,11 +615,11 @@ class Tickets
 
         $stmn = $this->db->database->prepare($query);
 
-        if (isset($projectId) && $projectId != '') {
+        if (isset($projectId) && $projectId > 0) {
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
         }
 
-        if (isset($userId) && $userId != '') {
+        if (isset($userId) && $userId > 0) {
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
         }
 
