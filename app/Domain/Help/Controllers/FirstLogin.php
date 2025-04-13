@@ -24,7 +24,6 @@ class FirstLogin extends Controller
      */
     public function get($params)
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
         $allSteps = $this->helperService->getFirstLoginSteps();
 
