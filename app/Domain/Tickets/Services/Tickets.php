@@ -21,7 +21,6 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Htmx\HtmxTicketEvents;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
@@ -698,7 +697,6 @@ class Tickets
      *
      * @api
      */
-
     public function getTicket($id): TicketModel|bool
     {
 
@@ -1634,7 +1632,6 @@ class Tickets
      *                    If an error occurs, an array with keys 'msg' and 'type' is returned. Returns false if the update operation fails.
      *
      * @api
-     *
      */
     public function updateTicket($values): array|bool
     {

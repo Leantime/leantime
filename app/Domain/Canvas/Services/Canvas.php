@@ -274,6 +274,6 @@ class Canvas
     {
         $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
 
-        return $canvasRepo->getLastUpdatedCanvas((int)$projectId, $boards);
+        return $canvasRepo->getLastUpdatedCanvas((int) $projectId, $boards);
     }
 }

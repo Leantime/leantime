@@ -4,8 +4,6 @@ namespace Leantime\Domain\Help\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Setting\Repositories\Setting;
