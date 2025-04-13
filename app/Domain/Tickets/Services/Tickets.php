@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\Attributes\AITool;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;
@@ -77,15 +76,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getStatusLabels',
-        description: 'Get the status labels available for a project. This can help get the statuses in a human readable
-        format for a given project, since the database only stores the status id and each project can define its own statuses.
-        The array is keyed by the status id and returns an array with name (language string), class (css class),
-        statusType (INPROGRESS, DONE, NEW) and whether its available in a kanbanCol (true/false). You can use the status
-        type to get a high level understanding of the status. Whenever a user creates or updates a tasks the status has
-        to be translated to the correct status key.'
-    )]
     public function getStatusLabels($projectId = null): array
     {
         return $this->ticketRepository->getStateLabels($projectId);
@@ -99,15 +89,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getAllStatusLabelsByUserId',
-        description: 'Get the status labels available for a user across multiple projects This can help get the
-        statuses in a human readable format for a given project, since the database only stores the status id and each
-        project can define its own statuses. The array is keyed by the status id and returns an array with name
-        (language string), class (css class), statusType (INPROGRESS, DONE, NEW) and whether its available in a
-        kanbanCol (true/false). You can use the status type to get a high level understanding of the status. Whenever
-        a user creates or updates a tasks the status has to be translated to the correct status key.'
-    )]
     public function getAllStatusLabelsByUserId($userId): array
     {
 
@@ -409,16 +390,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getAll',
-        description: 'Gets all tasks from the dabase given a search criteria array. The options for the search criteria
-        array are currentProject (current project id), currentUser (current user id), users (array of user ids),
-        status (int id), term (a search term that searches the title, description and tags), effort (may be given as
-        t-shirt size by the user but needs to be translated to an int where t-shirt size is XS: 1, s: 3, M: 5, L: 8,
-        XL: 13, XXL: 21, excludeType (exclusion of a certain task type (subtasks, task, milestone), type,
-        milestone (milestone id this task is assigned to), groupBy, orderBy (specific field),
-        orderDirection, priority, clients, and sprint.'
-    )]
     public function getAll(?array $searchCriteria = null): array|false
     {
         return $this->ticketRepository->getAllBySearchCriteria(
@@ -480,11 +451,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getAllOpenUserTickets',
-        description: 'Gets all tasks open tasks for a given user and project. If none is provided a list of all open
-        tasks is returned, this should rarely be used without userid. '
-    )]
     public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array
     {
 
@@ -527,11 +493,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getScheduledTasks',
-        description: 'Gets all tasks that have been scheduled using the fields editFrom and editTo. If dateFrom and
-        dateTo are provided as strings they have to be in ISO 8601 format. UserId has to be an integer.'
-    )]
     public function getScheduledTasks(CarbonImmutable|string $dateFrom, CarbonImmutable|string $dateTo, ?int $userId)
     {
 
@@ -737,10 +698,7 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getTicket',
-        description: 'Gets one individual task by task id. If the user is not allowed to see the task, false is returned.'
-    )]
+
     public function getTicket($id): TicketModel|bool
     {
 
@@ -794,11 +752,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getOpenUserTicketsThisWeekAndLater',
-        description: 'Retrieves the open tickets assigned to a user for a specific project that are due this week
-            and later, with optional inclusion of completed tickets and milestones.'
-    )]
     public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false): array
     {
 
@@ -1045,10 +998,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'getAllMilestones',
-        description: 'Retrieves all milestones based on the provided search criteria and sort option.',
-    )]
     public function getAllMilestones($searchCriteria, string $sortBy = 'standard'): array|false
     {
         if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
@@ -1430,11 +1379,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'quickAddTicket',
-        description: 'Adds a new task quickly based on the provided parameters.',
-        htmxEvent: HtmxTicketEvents::UPDATE->value
-    )]
     public function quickAddTicket($params): array|bool
     {
 
@@ -1514,20 +1458,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'quickAddMilestone',
-        description: 'Adds a new task with the type milestone to the project. Milestones are used as hierarchical
-        element to group tasks. Tasks have a milestone id field that references the milestone they belong to. This
-        method creates a new milestone and should not be used to update an existing milestone. The fields of the params
-        array are headline: string, The title or headline of the milestone.
-                              - projectId: int|null, The ID of the project associated with the milestone (optional).
-                              - editorId: int|null, The user ID of the editor creating the milestone (optional).
-                              - userId: int|null, The user ID associated with the milestone (optional).
-                              - dependentMilestone: int|null, The ID of a milestone it depends on (optional).
-                              - tags: string|null, Tags related to the milestone (optional).
-                              - editFrom: string|null, Start time of editing (optional).
-                              - editTo: string|null, End time of editing (optional).',
-    )]
     public function quickAddMilestone(array $params): array|bool|int
     {
 
@@ -1705,7 +1635,6 @@ class Tickets
      *
      * @api
      *
-     * Notes: Don't make this available for AITools. AI can't figure out how to set the entire object consistently
      */
     public function updateTicket($values): array|bool
     {
@@ -1818,16 +1747,6 @@ class Tickets
      *
      * @api
      */
-    #[AITool(
-        name: 'patchTicket',
-        description: 'Updates an existing task as defined by the $id parameter and using an array $params where they key
-        is the column name and the value is the value that it should be updated to.
-        Dates need to be provided as iso8601 strings. Commonly updated fields are: headline, type, description,
-        projectId, status (needs to be a status id, see the getStatusLabel tool for further information), storypoints
-        (often called effort), editFrom, editTo, dateToFinish (due date), planHours.
-        This method can also be used to schedule tasks by updating editFrom and editTo.',
-        htmxEvent: HtmxTicketEvents::UPDATE->value
-    )]
     public function patch($id, $params): bool
     {
 
