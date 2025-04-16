@@ -1502,7 +1502,7 @@ class Tickets
         return false;
     }
 
-    public function patchTicket($id, $params): bool
+    public function patchTicket($id, array $params): bool
     {
 
         $this->addTicketChange(session('userdata.id'), $id, $params);

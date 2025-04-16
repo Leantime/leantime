@@ -502,13 +502,6 @@ class Tickets
             $dateTo = dtHelper()->parseUserDateTime($dateTo);
         }
 
-        if (! $dateFrom->isUtc()) {
-            $dateFrom->setTimezone('UTC');
-        }
-        if (! $dateTo->isUtc()) {
-            $dateFrom->setTimezone('UTC');
-        }
-
         $totalTasks = $this->ticketRepository->getScheduledTasks($dateFrom, $dateTo, $userId);
 
         $statusLabels = [];
@@ -1400,7 +1393,7 @@ class Tickets
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',
-            'dependingTicketId' => '',
+            'dependingTicketId' => isset($params['dependingTicketId']) ? (int) $params['dependingTicketId'] : '',
             'sortIndex' => $params['sortIndex'] ?? '',
         ];
 
@@ -1748,8 +1741,10 @@ class Tickets
     {
 
         // $params is an array of field names. Exclude id
-        unset($params['id']);
-        unset($params['act']);
+        if (is_array($params)) {
+            unset($params['id']);
+            unset($params['act']);
+        }
 
         $ticket = $this->getTicket($id);
 

@@ -36,6 +36,8 @@ class Calendar extends RepositoryCore
         'label-grey' => 'var(--grey)',
     ];
 
+    protected string $entity = 'calendar';
+
     /**
      * Class constructor.
      *

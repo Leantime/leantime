@@ -79,14 +79,14 @@ class DateTimeHelper extends CarbonImmutable
      * Parses a user input date and time and returns a CarbonImmutable object.
      *
      * @param  string  $userDate  The user input date in the format specified by $this->userDateFormat.
-     * @param  string  $userTime  The user input time in the format specified by $this->userTimeFormat.
-     *                            Defaults to an empty string. Can also be one of start|end to denote start or end time of
-     *                            day
+     * @param  ?string  $userTime  The user input time in the format specified by $this->userTimeFormat.
+     *                             Defaults to an empty string. Can also be one of start|end to denote start or end time of
+     *                             day
      * @return CarbonImmutable The parsed date and time in user timezone as a CarbonImmutable object.
      *
      * @throws InvalidDateException
      */
-    public function parseUserDateTime(string $userDate, string $userTime = ''): CarbonImmutable
+    public function parseUserDateTime(string $userDate, ?string $userTime = ''): CarbonImmutable
     {
 
         // Initialize result variable to null
@@ -102,6 +102,9 @@ class DateTimeHelper extends CarbonImmutable
             DateTime::ATOM,
             DateTime::ISO8601,
             DateTime::W3C,
+            "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
+            "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
+            "Y-m-d\TH:i:s",      // ISO 8601 without timezone (e.g., 2025-04-16T00:00:00)
         ];
 
         // Added in PHP 8.2
@@ -131,7 +134,7 @@ class DateTimeHelper extends CarbonImmutable
         } elseif ($userTime === 'end') {
             $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, $locale, $trimmedDate, $this->userTimezone)
                 ->endOfDay();
-        } elseif ($userTime === '') {
+        } elseif ($userTime === '' || $userTime === null) {
             $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, $locale, $trimmedDate, $this->userTimezone);
         } else {
             $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat.' '.$this->userTimeFormat, $locale, trim($trimmedDate.' '.$userTime), $this->userTimezone);

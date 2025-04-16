@@ -53,10 +53,10 @@
         "ext-dom": "*",
         "laravel/framework": "^v11.44",
         "guzzlehttp/guzzle": "^7.9",
-        "aws/aws-sdk-php": "^3.314",
+        "aws/aws-sdk-php": "^3.342",
         "phpmailer/phpmailer": "^6.6",
         "robthree/twofactorauth": "^1.8",
-        "endroid/qr-code": "^3.9",
+        "endroid/qr-code": "^6.0",
         "league/html-to-markdown": "^5.1",
         "ramsey/uuid": "^4.3",
         "htmlawed/htmlawed": "^1.2",
@@ -96,7 +96,8 @@
         "symfony/cache": "^7.2",
         "theodo-group/llphant": "^0.9.9",
         "prism-php/prism": "^0.57.0",
-        "inspector-apm/neuron-ai": "^1.8"
+        "inspector-apm/neuron-ai": "^1.9",
+        "johngrogg/ics-parser": "^3"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

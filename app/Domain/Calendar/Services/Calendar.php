@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Calendar\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
@@ -112,29 +113,29 @@ class Calendar
     {
         $values['allDay'] = $values['allDay'] ?? false;
 
-        $dateFrom = null;
-        if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-
+        if (isset($values['dateFrom'])) {
             try {
-                $dateFrom = dtHelper()->parseUserDateTime($values['dateFrom'], $values['timeFrom'])->formatDateTimeForDb();
+                $timeFrom = $values['timeFrom'] ?? null;
+                $values['dateFrom'] = dtHelper()->parseUserDateTime(
+                    $values['dateFrom'],
+                    $timeFrom
+                )->formatDateTimeForDb();
             } catch (\Exception $e) {
-                // silence
+                // Silent exception handling
             }
-
         }
-        $values['dateFrom'] = $dateFrom;
 
-        $dateTo = null;
-        if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-
+        if (isset($values['dateTo'])) {
             try {
-                $dateTo = dtHelper()->parseUserDateTime($values['dateTo'], $values['timeTo'])->formatDateTimeForDb();
+                $timeTo = $values['timeTo'] ?? null;
+                $values['dateTo'] = dtHelper()->parseUserDateTime(
+                    $values['dateTo'],
+                    $timeTo
+                )->formatDateTimeForDb();
             } catch (\Exception $e) {
-                // silence
+                // Silent exception handling
             }
-
         }
-        $values['dateTo'] = $dateTo;
 
         if ($values['description'] !== '') {
             $result = $this->calendarRepo->addEvent($values);
@@ -183,28 +184,29 @@ class Calendar
 
             $values['allDay'] = $allDay;
 
-            $dateFrom = null;
-            if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-
+            if (isset($values['dateFrom'])) {
                 try {
-                    $dateFrom = dtHelper()->parseUserDateTime($values['dateFrom'], $values['timeFrom'])->formatDateTimeForDb();
+                    $timeFrom = $values['timeFrom'] ?? null;
+                    $values['dateFrom'] = dtHelper()->parseUserDateTime(
+                        $values['dateFrom'],
+                        $timeFrom
+                    )->formatDateTimeForDb();
                 } catch (\Exception $e) {
-                    // silence
+                    // Silent exception handling
                 }
             }
 
-            $values['dateFrom'] = $dateFrom;
-
-            $dateTo = null;
-            if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-
+            if (isset($values['dateTo'])) {
                 try {
-                    $dateTo = dtHelper()->parseUserDateTime($values['dateTo'], $values['timeTo'])->formatDateTimeForDb();
+                    $timeTo = $values['timeTo'] ?? null;
+                    $values['dateTo'] = dtHelper()->parseUserDateTime(
+                        $values['dateTo'],
+                        $timeTo
+                    )->formatDateTimeForDb();
                 } catch (\Exception $e) {
-                    // silence
+                    // Silent exception handling
                 }
             }
-            $values['dateTo'] = $dateTo;
 
             if ($values['description'] !== '') {
                 $this->calendarRepo->editEvent($values, $id);
@@ -314,8 +316,17 @@ class Calendar
         return $icalCalendar;
     }
 
-    public function getCalendar(int $userId): array
+    public function getCalendar(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
+        // Convert date parameters to Carbon instances if they're strings
+        if (is_string($from)) {
+            $from = CarbonImmutable::parse($from);
+        }
+        if (is_string($until)) {
+            $until = CarbonImmutable::parse($until);
+        }
+
+        // Get tickets and filter by date range
         $ticketService = app()->make(Tickets::class);
         $dbTickets = $ticketService->getOpenUserTicketsThisWeekAndLater($userId, '', true);
 
@@ -332,11 +343,24 @@ class Calendar
             $tickets = array_merge($tickets, $dbTickets['overdue']['tickets']);
         }
 
-        $dbUserEvents = $this->calendarRepo->getAll($userId);
+        $dbUserEvents = $this->calendarRepo->getAll($userId, $from, $until);
 
         $newValues = [];
         foreach ($dbUserEvents as $value) {
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+            // Filter events by date range if specified
+            if ($from || $until) {
+                $eventStart = CarbonImmutable::parse($value['dateFrom']);
+                $eventEnd = CarbonImmutable::parse($value['dateTo']);
+
+                if ($from && $eventEnd < $from) {
+                    continue;
+                }
+                if ($until && $eventStart > $until) {
+                    continue;
+                }
+            }
 
             $newValues[] = [
                 'title' => $value['description'],
@@ -374,7 +398,7 @@ class Calendar
 
                 $backgroundColor = 'var(--accent2)';
 
-                if ($ticket['dateToFinish'] != '0000-00-00 00:00:00' && $ticket['dateToFinish'] != '1969-12-31 00:00:00') {
+                if ($ticket['dateToFinish'] !== '0000-00-00 00:00:00' && $ticket['dateToFinish'] !== '1969-12-31 00:00:00') {
                     $context = '❕ '.$this->language->__('label.due_todo');
 
                     $newValues[] = $this->mapEventData(
@@ -426,7 +450,6 @@ class Calendar
 
     public function getICalUrl()
     {
-
         $userId = -1;
         if (! empty(session('userdata.id'))) {
             $userId = session('userdata.id');
@@ -440,7 +463,125 @@ class Calendar
         }
 
         return BASE_URL.'/calendar/ical/'.$icalHash.'_'.$userHash;
+    }
 
+    /**
+     * Gets all events from external calendars for a user
+     *
+     * @param  int  $userId  The user ID to get external calendar events for
+     * @param  null|string|CarbonImmutable  $from  The start date to filter events by
+     * @param  null|string|CarbonImmutable  $until  The end date to filter events by
+     * @return array Array of calendar events from all external calendars
+     */
+    public function getExternalCalendarEvents(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
+    {
+        // Get all external calendars for the user
+        $externalCalendars = $this->calendarRepo->getMyExternalCalendars($userId);
+
+        if (empty($externalCalendars)) {
+            return [];
+        }
+
+        $allEvents = [];
+
+        // Convert date parameters to Carbon instances if they're strings
+        if (is_string($from)) {
+            $from = CarbonImmutable::parse($from);
+        }
+        if (is_string($until)) {
+            $until = CarbonImmutable::parse($until);
+        }
+
+        foreach ($externalCalendars as $calendar) {
+            try {
+                // Load the iCal data using existing functionality
+                $icalContent = $this->loadIcalUrl($calendar['url']);
+
+                // Parse the iCal data into events
+                $parser = new \ICal\ICal;
+                $parser->initString($icalContent);
+
+                $events = $parser->events();
+
+                // Filter events by date range if specified
+                if ($from || $until) {
+                    $events = array_filter($events, function ($event) use ($from, $until) {
+                        $eventStart = CarbonImmutable::parse($event->dtstart);
+                        $eventEnd = isset($event->dtend) ? CarbonImmutable::parse($event->dtend) : $eventStart;
+
+                        if ($from && $eventEnd < $from) {
+                            return false;
+                        }
+                        if ($until && $eventStart > $until) {
+                            return false;
+                        }
+
+                        return true;
+                    });
+                }
+
+                // Transform each event into our standard format
+                foreach ($events as $event) {
+                    $allEvents[] = [
+                        'title' => $event->summary,
+                        'description' => $event->description ?? '',
+                        'dateFrom' => $event->dtstart,
+                        'dateTo' => $event->dtend,
+                        'allDay' => isset($event->dtstart_array[3]) ? false : true,
+                        'id' => $event->uid,
+                        'projectId' => '',
+                        'eventType' => 'external',
+                        'dateContext' => 'plan',
+                        'backgroundColor' => $calendar['colorClass'],
+                        'borderColor' => $calendar['colorClass'],
+                        'url' => $event->url ?? '',
+                        'source' => $calendar['name'],
+                    ];
+                }
+
+            } catch (\Exception $e) {
+                // Log error but continue with other calendars
+                Log::error("Error fetching calendar {$calendar['name']}: ".$e->getMessage());
+
+                continue;
+            }
+        }
+
+        return $allEvents;
+    }
+
+    /**
+     * Load an iCal URL and return its contents
+     *
+     * @param  string  $url  The URL of the iCal feed
+     * @return string The iCal content
+     *
+     * @throws \Exception If there is an error loading the URL
+     */
+    private function loadIcalUrl(string $url): string
+    {
+        if (str_contains($url, 'webcal://')) {
+            $url = str_replace('webcal://', 'https://', $url);
+        }
+
+        $client = new \GuzzleHttp\Client;
+
+        try {
+            $response = $client->get($url, [
+                'headers' => [
+                    'Accept' => 'text/calendar',
+                    'User-Agent' => 'Leantime Calendar Integration v'.$this->config->appVersion,
+                ],
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                return (string) $response->getBody();
+            }
+
+            throw new \Exception('Failed to load iCal feed: HTTP '.$response->getStatusCode());
+        } catch (\Exception $e) {
+            throw new \Exception('Error loading iCal feed: '.$e->getMessage());
+        }
     }
 
     public function generateIcalHash()
