@@ -152,7 +152,7 @@ return [
             ],
             'sentry' => [
                 'driver' => 'sentry',
-                'level' => 'error',
+                'level' => env('LEAN_SENTRY_LOG_LEVEL', 'error'),
                 'bubble' => true,
             ],
         ],
