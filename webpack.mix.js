@@ -102,6 +102,8 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./node_modules/leader-line/leader-line.min.js",
         "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
         "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
+        "./node_modules/mermaid/dist/mermaid.min.js",
+        "./node_modules/marked/marked.min.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
         "./node_modules/ical.js/build/ical.min.js",
@@ -202,7 +204,3 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
             }
         }
     });
-
-
-
-

@@ -17,7 +17,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     }
 </script>
 
-<div style="min-width:90%">
+<div style="min-width:70%">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
@@ -30,7 +30,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <?php if ($login::userIsAtLeast($roles::$editor)) {
         $onTheClock = $tpl->get('onTheClock');
         ?>
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
+        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px; padding-right:10px;">
 
             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>

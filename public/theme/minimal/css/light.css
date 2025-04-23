@@ -13,9 +13,8 @@
     --nav-link-color: #222;
     --header-nav-link-color: #fff;
 
-    --tab-background: transparent;
+    --tab-background: rgba(230, 230, 230, 1);
     --tab-color: var(--accent1);
-
     --tab-active-background:  rgba(230, 230, 230, 1);
     --tab-active-color: #333;
 
