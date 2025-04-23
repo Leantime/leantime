@@ -7,6 +7,7 @@ use Carbon\CarbonInterface;
 use DateTime;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
@@ -143,14 +144,14 @@ class Tickets
                 ];
             }
 
-            session()->forget('projectsettings.ticketlabels');
-
             self::dispatchEvent('statusLabels_updated');
 
+            Cache::forget('projectsettings.'.session('currentProject').'.ticketlabels');
+
             return $this->settingsRepo->saveSetting('projectsettings.'.session('currentProject').'.ticketlabels', serialize($statusArray));
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -391,12 +392,44 @@ class Tickets
      */
     public function getAll(?array $searchCriteria = null): array|false
     {
-        return $this->ticketRepository->getAllBySearchCriteria(
+
+        $tickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria ?? [],
             sort: $searchCriteria['orderBy'] ?? 'date',
             includeCounts: false
-
         );
+
+        if (is_array($tickets)) {
+            $tickets = $this->decorateWithFriendlyStatusLabels($tickets);
+        }
+
+        return $tickets;
+    }
+
+    private function decorateWithFriendlyStatusLabels(array $tickets): array
+    {
+
+        if (is_array($tickets)) {
+
+            $ticketCounter = 0;
+            $projectStatusLabels = [];
+
+            foreach ($tickets as &$ticket) {
+
+                if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                    $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                }
+
+                if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                    $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                    $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
+                }
+
+            }
+        }
+
+        return $tickets;
+
     }
 
     public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = ''): int
@@ -507,9 +540,15 @@ class Tickets
         $statusLabels = [];
         $doneTasks = [];
 
-        foreach ($totalTasks as $ticket) {
+        foreach ($totalTasks as &$ticket) {
             if (! isset($statusLabels[$ticket['projectId']])) {
                 $statusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+            }
+
+            if (isset($statusLabels[$ticket['projectId']][$ticket['status']])) {
+                $ticket['statusLabel'] = $statusLabels[$ticket['projectId']][$ticket['status']]['name'];
+            } else {
+                $ticket['statusLabel'] = 'Unknown';
             }
 
             if (isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] == 'DONE') {

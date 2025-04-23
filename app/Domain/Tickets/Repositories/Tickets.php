@@ -4,6 +4,7 @@ namespace Leantime\Domain\Tickets\Repositories;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Language as LanguageCore;
@@ -109,6 +110,9 @@ class Tickets
      */
     public function getStateLabels($projectId = null): array
     {
+        if (Cache::has('projectsettings.'.$projectId.'.ticketlabels')) {
+            return Cache::get('projectsettings.'.$projectId.'.ticketlabels');
+        }
 
         if ($projectId == null) {
             $projectId = session('currentProject');
@@ -167,7 +171,7 @@ class Tickets
             return $a['sortKey'] <=> $b['sortKey'];
         });
 
-        session(['projectsettings.ticketlabels' => $statusList]);
+        Cache::put('projectsettings.'.$projectId.'.ticketlabels', $statusList, 3600);
 
         return $statusList;
     }
@@ -691,9 +695,9 @@ class Tickets
             $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
         }
 
-        $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
+        $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
 
-        $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
+        $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
 
         if (session()->exists('userdata')) {
             $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
