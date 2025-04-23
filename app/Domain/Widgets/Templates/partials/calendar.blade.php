@@ -7,7 +7,7 @@
 
 <div class="tw-h-full minCalendar">
     <div class="clear"></div>
-    <div class="fc-toolbar">
+    <div class="fc-toolbar tw-z-10">
         <div class="fc-left pull-left">
             <div class="fc-button-group pull-left">
                 <button class="btn btn-default fc-today-button fc-button fc-state-default fc-corner-left pull-left
@@ -107,10 +107,3 @@
     @dispatchEvent('scripts.beforeClose')
 
 </script>
-
-<style type="text/css">
-    .minCalendar {
-        height: calc(100% - 55px);
-    }
-
-</style>

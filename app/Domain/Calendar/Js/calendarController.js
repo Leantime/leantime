@@ -193,7 +193,10 @@ leantime.calendarController = (function () {
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
-            height: 'auto',
+            height: 'calc(100% - 40px)',
+            stickyHeaderDates: true,
+            height: 'calc(100% - 40px)',
+            stickyHeaderDates: true,
             initialView: initialView,
             eventStartEditable: true,
             dayHeaderFormat: userDateFormat,
