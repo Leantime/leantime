@@ -105,6 +105,8 @@ class DateTimeHelper extends CarbonImmutable
             "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
             "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
             "Y-m-d\TH:i:s",      // ISO 8601 without timezone (e.g., 2025-04-16T00:00:00)
+            "Y-m-d\TH:i:se",
+            'Y-m-d',
         ];
 
         // Added in PHP 8.2
@@ -115,7 +117,14 @@ class DateTimeHelper extends CarbonImmutable
         // Try standard formats first
         foreach ($standardFormats as $format) {
             try {
-                $this->datetime = CarbonImmutable::createFromFormat($format, $userDate);
+
+                if ($format === 'Y-m-d') {
+                    $timezone = $this->userTimezone;
+                    $this->datetime = CarbonImmutable::createFromFormat($format, $userDate, $this->userTimezone);
+                } else {
+                    $this->datetime = CarbonImmutable::createFromFormat($format, $userDate);
+                }
+
                 if ($this->datetime !== false && $this->datetime !== null) {
                     return $this->datetime;
                 }
