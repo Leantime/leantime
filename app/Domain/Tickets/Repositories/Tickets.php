@@ -812,6 +812,7 @@ class Tickets
 						zp_tickets.editTo,
 						zp_tickets.dependingTicketId,
 						zp_tickets.milestoneid,
+						milestones.headline AS milestoneHeadline,
 						zp_projects.name AS projectName,
 						zp_projects.details AS projectDescription,
 						zp_clients.name AS clientName,
@@ -827,6 +828,8 @@ class Tickets
 					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 					LEFT JOIN zp_tickets AS parent on zp_tickets.dependingTicketId = parent.id
+					LEFT JOIN zp_tickets AS milestones on zp_tickets.milestoneid = milestones.id
+
 					WHERE
 						zp_tickets.id = :ticketId
 					LIMIT 1";
