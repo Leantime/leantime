@@ -390,13 +390,30 @@ class Tickets
      *
      * @api
      */
-    public function getAll(?array $searchCriteria = null): array|false
+    public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
+
+        if(isset($searchCriteria['dateFrom'])) {
+            try {
+                $searchCriteria['dateFrom'] = dtHelper()->parseUserDateTime($searchCriteria['dateFrom']);
+            }catch(\Exception $e) {
+                Log::warning("Tickets::getAll: Could not parse dateFrom: ".$searchCriteria['dateFrom']."");
+            }
+        }
+
+        if(isset($searchCriteria['dateTo'])) {
+            try {
+                $searchCriteria['dateTo'] = dtHelper()->parseUserDateTime($searchCriteria['dateTo']);
+            }catch(\Exception $e) {
+                Log::warning("Tickets::getAll: Could not parse dateTo: ".$searchCriteria['dateTo']."");
+            }
+        }
 
         $tickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria ?? [],
             sort: $searchCriteria['orderBy'] ?? 'date',
-            includeCounts: false
+            includeCounts: false,
+            limit: $limit
         );
 
         if (is_array($tickets)) {
@@ -1247,7 +1264,7 @@ class Tickets
             $effort = empty($ticket['storypoints']) ? $defaultEffort : $ticket['storypoints'];
             $priority = empty($ticket['priority']) ? $defaultPriority : $ticket['priority'];
 
-            $ticketScore = $effort * $priorityFactor[$priority] ?? 1;
+            $ticketScore = $effort * ($priorityFactor[$priority] ?? 1);
 
             $totalScore += $ticketScore;
 

@@ -391,6 +391,14 @@ class Tickets
                 )
             ";
 
+        if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
+            $query .= ' AND zp_tickets.date > :dateFrom';
+        }
+
+        if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
+            $query .= ' AND zp_tickets.date < :dateTo';
+        }
+
         if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
             $query .= ' AND zp_tickets.type <> :excludeType';
         }
@@ -480,6 +488,14 @@ class Tickets
         }
 
         $stmn = $this->db->database->prepare($query);
+
+        if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
+            $stmn->bindValue(':dateFrom', $searchCriteria['dateFrom'], PDO::PARAM_STR);
+        }
+
+        if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
+            $stmn->bindValue(':dateTo', $searchCriteria['dateTo'], PDO::PARAM_STR);
+        }
 
         if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
             $stmn->bindValue(':excludeType', $searchCriteria['excludeType'], PDO::PARAM_STR);
@@ -589,6 +605,7 @@ class Tickets
                     zp_tickets.editorId,
                     zp_tickets.dependingTicketId,
                     zp_tickets.milestoneid,
+                    milestones.headline AS milestoneHeadline,
                     zp_tickets.planHours,
                     zp_tickets.editFrom,
                     zp_tickets.editTo,
@@ -599,6 +616,7 @@ class Tickets
                     zp_tickets
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+                    LEFT JOIN zp_tickets AS milestones ON zp_tickets.milestoneid = milestones.id
                       WHERE (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
                         OR zp_projects.psettings = 'all'
