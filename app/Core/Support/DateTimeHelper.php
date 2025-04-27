@@ -97,40 +97,12 @@ class DateTimeHelper extends CarbonImmutable
             throw new InvalidDateException('The string is not a valid date time string to parse as user datetime string', $userDate);
         }
 
-        // Define standard formats to try first
-        $standardFormats = [
-            DateTime::ATOM,
-            DateTime::ISO8601,
-            DateTime::W3C,
-            "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
-            "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
-            "Y-m-d\TH:i:s",      // ISO 8601 without timezone (e.g., 2025-04-16T00:00:00)
-            "Y-m-d\TH:i:se",
-            'Y-m-d',
-        ];
+        // Try standard formats first (non timezone formats are assumed user timezone)
+        $standardFormat = $this->tryParseStandardFormats($userDate, $this->userTimezone);
+        if ($standardFormat !== false) {
+            $this->datetime = $standardFormat;
 
-        // Added in PHP 8.2
-        if (defined('DateTime::ISO8601_EXPANDED')) {
-            $standardFormats[] = DateTime::ISO8601_EXPANDED;
-        }
-
-        // Try standard formats first
-        foreach ($standardFormats as $format) {
-            try {
-
-                if ($format === 'Y-m-d') {
-                    $timezone = $this->userTimezone;
-                    $this->datetime = CarbonImmutable::createFromFormat($format, $userDate, $this->userTimezone);
-                } else {
-                    $this->datetime = CarbonImmutable::createFromFormat($format, $userDate);
-                }
-
-                if ($this->datetime !== false && $this->datetime !== null) {
-                    return $this->datetime;
-                }
-            } catch (\Exception $e) {
-                // Continue to next format
-            }
+            return $this->datetime;
         }
 
         // If no standard format worked, handle user format cases
@@ -166,9 +138,63 @@ class DateTimeHelper extends CarbonImmutable
             throw new InvalidDateException('The string is not a valid date time string to parse as Database string', $dbDate);
         }
 
+        // Try standard formats first (non timezone formats are assumed user timezone)
+        $standardFormat = $this->tryParseStandardFormats($dbDate, $this->dbTimezone);
+        if ($standardFormat !== false) {
+            $this->datetime = $standardFormat;
+
+            return $this->datetime;
+        }
+
         $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale($this->userLanguage);
 
         return $this->datetime;
+    }
+
+    protected function tryParseStandardFormats($userDate, $timezone): CarbonImmutable|false
+    {
+        // Define standard formats to try first
+        $standardFormats = [
+            DateTime::ATOM,
+            DateTime::ISO8601,
+            DateTime::W3C,
+            "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
+            "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
+            "Ymd\THis\Z",    // ISO 8601 UTC/Zulu time (e.g., 20250429T110000Z) (for ical)
+            "Ymd\THis",    // ISO 8601 no timezone (e.g., 20250429T110000) (for ical)
+            "Y-m-d\TH:i:s",      // ISO 8601 without timezone (e.g., 2025-04-16T00:00:00)
+            "Y-m-d\TH:i:se",
+            'Y-m-d',
+            'Y-m-d H:i:s',
+            'Y-m-d H:i',
+        ];
+
+        // Added in PHP 8.2
+        if (defined('DateTime::ISO8601_EXPANDED')) {
+            $standardFormats[] = DateTime::ISO8601_EXPANDED;
+        }
+
+        // Try standard formats first
+        foreach ($standardFormats as $format) {
+            try {
+
+                // If dates provided don't timezone informaiton, we assume it's in user datetime
+                if ($format === 'Y-m-d') {
+                    return CarbonImmutable::createFromFormat($format, $userDate, $timezone)->midDay();
+                }
+
+                if ($format === 'Y-m-d H:i:s' || $format === 'Y-m-d H:i' || $format === "Ymd\THis") {
+                    return CarbonImmutable::createFromFormat($format, $userDate, $timezone);
+                } else {
+                    return CarbonImmutable::createFromFormat($format, $userDate);
+                }
+            } catch (\Exception $e) {
+                // Continue to next format
+            }
+        }
+
+        return false;
+
     }
 
     /**

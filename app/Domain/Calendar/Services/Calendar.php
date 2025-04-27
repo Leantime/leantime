@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Calendar\Services;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
@@ -473,10 +474,13 @@ class Calendar
      * @param  null|string|CarbonImmutable  $until  The end date to filter events by
      * @return array Array of calendar events from all external calendars
      */
-    public function getExternalCalendarEvents(int $userId, null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
+    public function getExternalCalendarEvents(null|string|CarbonImmutable $from = null, null|string|CarbonImmutable $until = null): array
     {
+//        if (Cache::has('calendar.external.'.session('userdata.id'))) {
+//            return Cache::get('calendar.external.'.session('userdata.id'));
+//        }
         // Get all external calendars for the user
-        $externalCalendars = $this->calendarRepo->getMyExternalCalendars($userId);
+        $externalCalendars = $this->calendarRepo->getMyExternalCalendars(session('userdata.id'));
 
         if (empty($externalCalendars)) {
             return [];
@@ -485,11 +489,18 @@ class Calendar
         $allEvents = [];
 
         // Convert date parameters to Carbon instances if they're strings
-        if (is_string($from)) {
-            $from = CarbonImmutable::parse($from);
-        }
-        if (is_string($until)) {
-            $until = CarbonImmutable::parse($until);
+        try {
+            if (is_string($from)) {
+                $from = CarbonImmutable::parse($from);
+            }
+            if (is_string($until)) {
+                $until = CarbonImmutable::parse($until);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error converting date parameters to Carbon instances: '.$e->getMessage());
+            Log::error($e);
+
+            return [];
         }
 
         foreach ($externalCalendars as $calendar) {
@@ -525,8 +536,8 @@ class Calendar
                     $allEvents[] = [
                         'title' => $event->summary,
                         'description' => $event->description ?? '',
-                        'dateFrom' => $event->dtstart,
-                        'dateTo' => $event->dtend,
+                        'dateFrom' => dtHelper()->parseUserDateTime($event->dtstart)->formatDateTimeForDb(),
+                        'dateTo' => dtHelper()->parseUserDateTime($event->dtend)->formatDateTimeForDb(),
                         'allDay' => isset($event->dtstart_array[3]) ? false : true,
                         'id' => $event->uid,
                         'projectId' => '',
@@ -546,6 +557,8 @@ class Calendar
                 continue;
             }
         }
+
+        Cache::put('calendar.external.'.session('userdata.id'), $allEvents, 240);
 
         return $allEvents;
     }
