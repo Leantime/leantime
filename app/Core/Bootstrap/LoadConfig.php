@@ -6,8 +6,10 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Http\Request;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Providers\Cache;
 use Leantime\Core\Support\Attributes\LaravelConfig;
 
@@ -17,6 +19,12 @@ class LoadConfig extends LoadConfiguration
         'configuration.sample.php',
         'configuration.php',
     ];
+
+    protected $headers = IncomingRequest::HEADER_X_FORWARDED_FOR |
+        IncomingRequest::HEADER_X_FORWARDED_HOST |
+        IncomingRequest::HEADER_X_FORWARDED_PORT |
+        IncomingRequest::HEADER_X_FORWARDED_PROTO |
+        IncomingRequest::HEADER_X_FORWARDED_AWS_ELB;
 
     /**
      * Bootstrap the application.
@@ -72,7 +80,7 @@ class LoadConfig extends LoadConfiguration
                     $finalConfig->set('app.url', $url);
                 }
 
-                $this->setBaseConstants($finalConfig->get('appUrl'), $app);
+                $this->setBaseConstants($finalConfig, $app);
 
                 if ($finalConfig->get('app.url') == '') {
                     $url = defined('BASE_URL') ? BASE_URL : 'http://localhost';
@@ -85,7 +93,7 @@ class LoadConfig extends LoadConfiguration
         }
 
         // Need to run this in case config is coming from cache
-        $this->setBaseConstants($app['config']->get('appUrl'), $app);
+        $this->setBaseConstants($app['config'], $app);
 
         $config = $app['config'];
 
@@ -115,8 +123,14 @@ class LoadConfig extends LoadConfiguration
      * @param  string  $appUrl  The URL to be used as BASE_URL and APP_URL. Defaults to an empty string.
      * @return void
      */
-    public function setBaseConstants($appUrl, $app)
+    public function setBaseConstants($config, $app)
     {
+
+        $appUrl = $config->get('appUrl');
+
+        // Set trusted prozies as early as possible to ensure schema is identified correctly
+        $proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
+        Request::setTrustedProxies($proxies, $this->headers);
 
         if (! defined('BASE_URL')) {
             if (isset($appUrl) && ! empty($appUrl)) {

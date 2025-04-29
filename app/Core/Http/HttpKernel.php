@@ -38,11 +38,13 @@ class HttpKernel extends Kernel
         // \Illuminate\Session\Middleware\AuthenticateSession::class,
         // \Illuminate\Routing\Middleware\SubstituteBindings::class,
         // \Illuminate\Auth\Middleware\Authorize::class,
-        // \App\Http\Middleware\TrustHosts::class,
+        //\Illuminate\Http\Middleware\TrustHosts::class,
 
         // \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         // \Illuminate\Cookie\Middleware\EncryptCookies::class,
         // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+
+        \Leantime\Core\Middleware\TrustProxies::class,
 
         \Leantime\Core\Middleware\StartSession::class,
         \Leantime\Core\Middleware\Installed::class,
@@ -51,7 +53,7 @@ class HttpKernel extends Kernel
         // All enabled plugins will be available from here on out
         \Leantime\Core\Middleware\LoadPlugins::class,
 
-        \Leantime\Core\Middleware\TrustProxies::class,
+
         \Leantime\Core\Middleware\InitialHeaders::class,
         // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 

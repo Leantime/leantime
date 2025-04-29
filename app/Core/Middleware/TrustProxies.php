@@ -4,7 +4,6 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,8 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TrustProxies
 {
-    use DispatchesEvents;
-
     /**
      * The trusted proxies for this application.
      *
@@ -43,15 +40,7 @@ class TrustProxies
     public function __construct(Environment $config)
     {
 
-        if (empty($config->trustedProxies)) {
-            $config->trustedProxies = '127.0.0.1,REMOTE_ADDR';
-        }
-
-        $this->proxies = self::dispatchFilter(
-            'trustedProxies',
-            explode(',', $config->trustedProxies),
-            ['bootloader' => $this]
-        );
+        $this->proxies = explode(',', ($config->trustedProxies ?? '127.0.0.1,REMOTE_ADDR'));
 
     }
 
@@ -66,7 +55,8 @@ class TrustProxies
     public function handle(IncomingRequest $request, Closure $next): Response
     {
 
-        $request::setTrustedProxies($this->proxies, $this->headers);
+        // Trusted proxies config is set in LoadConfig
+        // $request::setTrustedProxies($this->proxies, $this->headers);
 
         if (! $request->isFromTrustedProxy()) {
             return new Response(json_encode(['error' => 'Not a trusted proxy']), 403);
