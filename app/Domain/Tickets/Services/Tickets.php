@@ -393,19 +393,19 @@ class Tickets
     public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
 
-        if(isset($searchCriteria['dateFrom'])) {
+        if (isset($searchCriteria['dateFrom'])) {
             try {
                 $searchCriteria['dateFrom'] = dtHelper()->parseUserDateTime($searchCriteria['dateFrom']);
-            }catch(\Exception $e) {
-                Log::warning("Tickets::getAll: Could not parse dateFrom: ".$searchCriteria['dateFrom']."");
+            } catch (\Exception $e) {
+                Log::warning('Tickets::getAll: Could not parse dateFrom: '.$searchCriteria['dateFrom'].'');
             }
         }
 
-        if(isset($searchCriteria['dateTo'])) {
+        if (isset($searchCriteria['dateTo'])) {
             try {
                 $searchCriteria['dateTo'] = dtHelper()->parseUserDateTime($searchCriteria['dateTo']);
-            }catch(\Exception $e) {
-                Log::warning("Tickets::getAll: Could not parse dateTo: ".$searchCriteria['dateTo']."");
+            } catch (\Exception $e) {
+                Log::warning('Tickets::getAll: Could not parse dateTo: '.$searchCriteria['dateTo'].'');
             }
         }
 
