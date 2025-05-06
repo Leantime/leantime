@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Traits\ReflectsClosures;
 use InvalidArgumentException;
-use Leantime\Core\Application;
+use Leantime\Core\Application\Application;
 use Leantime\Core\UI\Template;
 use Sentry\Laravel\Integration;
 use Symfony\Component\Console\Application as ConsoleApplication;

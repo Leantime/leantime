@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\DateTimeHelper;
@@ -199,8 +199,8 @@ if (! function_exists('get_domain_key')) {
         $host = app('request')->host();
 
         $url = config('app.url');
-        if ($url && isset($url['host'])) {
-            $host = $url['host'];
+        if (is_string($url) && $url !== '') {
+            $host = $url;
         }
 
         $domainKeyParts = config('app.url').config('app.key');

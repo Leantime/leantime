@@ -6,9 +6,9 @@
 
 namespace Leantime\Domain\Goalcanvas\Controllers;
 
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Mailer;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Infrastructure\Mail\Mailer;
 use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Projects\Services\Projects;

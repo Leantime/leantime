@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Comments\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Language as LanguageCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;

@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Menu\Services\Menu;

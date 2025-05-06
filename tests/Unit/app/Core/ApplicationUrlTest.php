@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\App\Core;
 
-use Leantime\Core\Application;
+use Leantime\Core\Application\Application;
 use Leantime\Core\Bootstrap\LoadConfig;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Configuration\Environment;

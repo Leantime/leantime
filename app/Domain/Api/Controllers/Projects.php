@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Fileupload as FileuploadCore;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Infrastructure\Files\Fileupload as FileuploadCore;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Users\Services\Users as UserService;

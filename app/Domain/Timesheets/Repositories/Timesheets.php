@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Db\Repository;
+use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Infrastructure\Database\Repository;
 use PDO;
 
 class Timesheets extends Repository

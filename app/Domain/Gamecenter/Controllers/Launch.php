@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Gamecenter\Controllers;
 
-class Launch extends \Leantime\Core\Controller\Controller
+class Launch extends \Leantime\Core\Http\Controller\Controller
 {
     public function init() {}
 

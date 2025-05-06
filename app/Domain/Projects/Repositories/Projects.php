@@ -6,7 +6,7 @@ use DateInterval;
 use DatePeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Db\Db as DbCore;
+use Leantime\Infrastructure\Database\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;

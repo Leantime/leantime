@@ -46,7 +46,7 @@
 
 <!--
 //For future file based ref js loading
-<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Controller\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Controller\Frontcontroller::getModuleName() }}Controller.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/{{ ucwords(\Leantime\Core\Routing\Frontcontroller::getModuleName()) }}/Js/{{ \Leantime\Core\Routing\Frontcontroller::getModuleName() }}Controller.js"></script>
 -->
 
 <!-- theme & custom -->
@@ -65,7 +65,7 @@
     @foreach ($accents as $accent)
         @if($accent !== false)
     :root {
-        --accent{{ $loop->iteration }}: {{{ $accent }}};
+        --accent {{ $loop->iteration }}: {{{ $accent }}};
     }
     @endif
     @endforeach
@@ -78,24 +78,24 @@
 </style>
 
 
-    <style id="backgroundImageSetter">
-        @if(!empty($themeBg))
+<style id="backgroundImageSetter">
+    @if(!empty($themeBg))
             .rightpanel {
-                background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
-                opacity: {{ $themeOpacity }};
-                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
-                background-size: var(--background-size, cover);
-                background-position: center;
-                background-attachment: fixed;
-            }
+        background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
+        opacity: {{ $themeOpacity }};
+        mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+        background-size: var(--background-size, cover);
+        background-position: center;
+        background-attachment: fixed;
+    }
 
-            @if($themeType === 'image')
+    @if($themeType === 'image')
                 .rightpanel:before {
-                    background:none;
-                }
-            @endif
-        @endif
-    </style>
+        background: none;
+    }
+    @endif
+    @endif
+</style>
 
 
 @dispatchEvent('afterThemeColors')

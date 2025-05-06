@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Wiki\Services;
 
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 use Leantime\Domain\Wiki\Models\Article;
 use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 

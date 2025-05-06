@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Menu\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Composer;
-use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Http\Controller\Composer;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;

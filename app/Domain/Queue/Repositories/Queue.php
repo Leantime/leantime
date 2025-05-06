@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Queue\Repositories;
 
-use Leantime\Core\Db\Db as DbCore;
+use Leantime\Infrastructure\Database\Db as DbCore;
 use Leantime\Domain\Queue\Workers\Workers;
 use Leantime\Domain\Users\Repositories\Users as UserRepo;
 use PDO;

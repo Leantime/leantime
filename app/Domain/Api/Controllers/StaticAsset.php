@@ -4,7 +4,7 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Api\Contracts\StaticAssetType;
 use Leantime\Domain\Api\Services\Api as ApiService;

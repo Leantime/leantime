@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Exceptions\MissingParameterException;
-use Leantime\Core\Language as LanguageCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;

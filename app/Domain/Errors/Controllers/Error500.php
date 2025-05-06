@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Errors\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 class Error500 extends Controller

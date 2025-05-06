@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;

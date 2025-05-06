@@ -1,6 +1,6 @@
 <?php
 
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Domain\Sprints\Models\Sprints;
 
 $currentUrlPath = BASE_URL.'/'.str_replace('.', '/', Frontcontroller::getCurrentRoute());

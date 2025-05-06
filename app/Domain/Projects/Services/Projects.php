@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
-use Leantime\Core\Language as LanguageCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;

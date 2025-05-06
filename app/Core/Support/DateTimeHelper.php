@@ -10,7 +10,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 
 /**
  * Class DateTimeHelper

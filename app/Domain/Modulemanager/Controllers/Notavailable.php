@@ -6,7 +6,7 @@
 
 namespace Leantime\Domain\ModuleManager\Controllers;
 
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 
 class Notavailable

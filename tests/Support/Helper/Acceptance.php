@@ -4,7 +4,7 @@ namespace Tests\Support\Helper;
 
 use Codeception\Module;
 use Illuminate\Support\Facades\Session;
-use Leantime\Core\Application;
+use Leantime\Core\Application\Application;
 
 class Acceptance extends Module
 {

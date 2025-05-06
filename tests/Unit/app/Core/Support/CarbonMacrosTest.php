@@ -3,7 +3,7 @@
 namespace Tests\Unit\App\Core\Support;
 
 use Carbon\CarbonImmutable;
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 use Leantime\Core\Support\CarbonMacros;
 use Unit\TestCase;
 

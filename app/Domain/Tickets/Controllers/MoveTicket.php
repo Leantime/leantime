@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Tickets\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;

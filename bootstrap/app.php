@@ -14,7 +14,7 @@
 |
 */
 
-$app = new Leantime\Core\Application(APP_ROOT);
+$app = new \Leantime\Core\Application\Application(APP_ROOT);
 
 /*
 |--------------------------------------------------------------------------

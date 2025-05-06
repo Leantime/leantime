@@ -27,9 +27,9 @@ class FormatTest extends TestCase
 
         parent::setUp();
 
-        $this->languageMock = $this->createMock(\Leantime\Core\Language::class);
+        $this->languageMock = $this->createMock(\Leantime\Infrastructure\i18n\Language::class);
         app()->instance(\Leantime\Core\Support\CarbonMacros::class, $this->carbonMacrosMock);
-        app()->instance(\Leantime\Core\Language::class, $this->languageMock);
+        app()->instance(\Leantime\Infrastructure\i18n\Language::class, $this->languageMock);
 
         // America Los_Angeles is UTC - 8 so all db times need to come back from UTC - 8 hours
         CarbonImmutable::mixin(new CarbonMacros(

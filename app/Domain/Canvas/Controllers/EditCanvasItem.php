@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;

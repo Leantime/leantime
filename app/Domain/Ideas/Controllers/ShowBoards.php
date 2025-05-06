@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Ideas\Controllers;
 
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;

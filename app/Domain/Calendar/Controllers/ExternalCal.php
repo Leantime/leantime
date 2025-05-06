@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\AppSettings;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 
 class ExternalCal extends Controller

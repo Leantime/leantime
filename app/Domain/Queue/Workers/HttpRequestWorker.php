@@ -4,7 +4,7 @@ namespace Leantime\Domain\Queue\Workers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Leantime\Core\Mailer;
+use Leantime\Infrastructure\Mail\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;

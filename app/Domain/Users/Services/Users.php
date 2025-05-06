@@ -4,8 +4,8 @@ namespace Leantime\Domain\Users\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Mailer as MailerCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
+use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Auth\Services\Auth as AuthService;

@@ -4,8 +4,8 @@ namespace Leantime\Domain\Tickets\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;

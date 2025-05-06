@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Laravel\Socialite\Facades\Socialite;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Auth\Services\AccessToken;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\Response;
