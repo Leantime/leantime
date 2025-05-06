@@ -36,6 +36,10 @@ class MoveTicket extends Controller
 
         $ticket = $this->ticketService->getTicket($ticketId);
 
+        if(!$ticket) {
+            return $this->tpl->displayPartial('errors.error404', responseCode: 404);
+        }
+
         $projects = $this->projectService->getProjectsAssignedToUser(session('userdata.id'));
 
         $this->tpl->assign('ticket', $ticket);
