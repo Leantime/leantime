@@ -1,3 +1,24 @@
+.day-selector {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.day-button {
+    transition: all 0.2s ease;
+    border:none;
+    background:var(--secondary-background);
+    box-shadow: var(--min-shadow);
+}
+
+.day-button:hover {
+    background-color: var(--interactive-icon-color);
+}
+
+.day-button.active {
+    background-color: var(--main-action-bg);
+    color: var(--main-action-hover-color);
+}
+
 /*#calendar {*/
 /*    padding-top: 10px;*/
 /*    position: relative;*/
@@ -399,4 +420,24 @@
 
 .maincontentinner .fc-theme-standard .fc-list-day-cushion a {
     color: var(--primary-font-color);
+}
+
+
+.maincontentinner .widgetContent .fc .fc-timegrid-col.fc-day-today,
+.maincontentinner .widgetContent .fc .fc-scrollgrid-section-sticky > *,
+.maincontentinner .widgetContent .fc td, .maincontentinner .widgetContent .fc th{
+    background:none;
+}
+
+.maincontentinner .widgetContent .fc-scroller table {
+    border:0px;
+}
+
+.maincontentinner .fc-theme-standard td,
+.maincontentinner .fc-theme-standard th {
+    border-left: 0px;
+}
+
+.maincontentinner .fc-theme-standard th {
+    border-top:0px;
 }

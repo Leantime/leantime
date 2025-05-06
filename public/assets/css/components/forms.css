@@ -2101,3 +2101,13 @@ input[type=number].hide-controls {
 .form-range.is-invalid::-ms-thumb {
     background-color: var(--danger);
 }
+
+body .btn.btn-round-icon {
+    width:31px;
+    height:31px;
+    text-align:center;
+    line-height:31px;
+    padding:0px;
+    border:none;
+    color:var(--interactive-icon-color);
+}

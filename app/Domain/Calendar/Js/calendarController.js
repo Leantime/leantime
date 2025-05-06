@@ -193,9 +193,7 @@ leantime.calendarController = (function () {
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: leantime.i18n.__("usersettings.timezone"),
-            height: 'calc(100% - 40px)',
-            stickyHeaderDates: true,
-            height: 'calc(100% - 40px)',
+            height: 'calc(100% - 65px)',
             stickyHeaderDates: true,
             initialView: initialView,
             eventStartEditable: true,
@@ -209,7 +207,9 @@ leantime.calendarController = (function () {
                     multiMonthTitleFormat: {month: 'long', year: 'numeric'},
                     dayHeaderFormat: {weekday: 'short'},
                 },
-                timeGridWeek: {},
+                timeGridDay: {
+                    dayHeaders: false
+                },
                 listWeek: {
                     listDayFormat: {weekday: 'long'},
                     listDaySideFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
@@ -330,6 +330,8 @@ leantime.calendarController = (function () {
             initButtons();
 
             calendar.scrollToTime(Date.now());
+
+
         });
 
         // function setupDraggableTickets() {
@@ -423,6 +425,16 @@ leantime.calendarController = (function () {
                     }
                 });
 
+            });
+
+            // Initialize day selector buttons
+            jQuery('.day-button').on('click', function() {
+                const date = jQuery(this).data('date');
+                calendar.gotoDate(date);
+
+                // Update active state
+                jQuery('.day-button').removeClass('active');
+                jQuery(this).addClass('active');
             });
         }
 
