@@ -475,14 +475,14 @@ class Timesheets extends Repository
                 // Some broken date formats in the db. Log error and return empty results.
                 report($e);
 
-                $utc = dtHelper()->dbNow()->format('Y-m-d');
+                $utc = dtHelper()->dbNow()->format('Y-m-d H:i:s');
                 $returnValues[$utc] = [
                     'utc' => $utc,
                     'summe' => 0,
                 ];
             }
         } else {
-            $utc = dtHelper()->dbNow()->format('Y-m-d');
+            $utc = dtHelper()->dbNow()->format('Y-m-d H:i:s');
             $returnValues[$utc] = [
                 'utc' => $utc,
                 'summe' => 0,
