@@ -129,7 +129,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
                             <a href="<?= BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal" id="editTimesheet-<?php echo $row['id']?>">#<?php echo $row['id'].' - '.$tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'])->date(); ?>">
+                        <td data-order="<?php echo format($row['workDate'])->isoDateTime(); ?>">
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
                         </td>
