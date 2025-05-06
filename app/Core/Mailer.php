@@ -70,7 +70,7 @@ class Mailer
 
         $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
         // Use SMTP or php mail().
-        if ($config->useSMTP === true || $config->useSMTP == 'true') {
+        if ( filter_var($config->useSMTP, FILTER_VALIDATE_BOOLEAN) === true) {
             if ($config->debug) {
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                 $this->mailAgent->Debugoutput = function ($str, $level) {
@@ -86,8 +86,8 @@ class Mailer
             $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
             $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
 
-            if (isset($config->smtpAuth) && ($config->smtpAuth === true || $config->smtpAuth === false)) {
-                $this->mailAgent->SMTPAuth = $config->smtpAuth;             // Enable SMTP user/password authentication
+            if (isset($config->smtpAuth)) {
+                $this->mailAgent->SMTPAuth = filter_var($config->smtpAuth, FILTER_VALIDATE_BOOLEAN);             // Enable SMTP user/password authentication
             } else {
                 $this->mailAgent->SMTPAuth = true;
             }
@@ -96,8 +96,8 @@ class Mailer
             $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
             $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
             $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
-            $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-            if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     // If enabled, don't verify certifcates: accept self-signed or expired certs.
+            $this->mailAgent->Port = (int) $config->smtpPort;                                    // TCP port to connect to
+            if (isset($config->smtpSSLNoverify) && filter_var($config->smtpSSLNoverify, FILTER_VALIDATE_BOOLEAN) === true) {     // If enabled, don't verify certifcates: accept self-signed or expired certs.
                 $this->mailAgent->SMTPOptions = [
                     'ssl' => [
                         'verify_peer' => false,
