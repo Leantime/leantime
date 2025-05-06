@@ -26,7 +26,7 @@
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
     "fullcalendar": "^6.1.11",
-    "gridstack": "^11.0.1",
+    "gridstack": "^12.1.1",
     "htmx.org": "^1.9.12",
     "ical.js": "^1.5.0",
     "imagesloaded": "^5.0.0",

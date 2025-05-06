@@ -41,9 +41,10 @@
         @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
         <div class="btn-group left">
-            <button class="btn btn-link dropdown-toggle f-left" type="button"
-                    data-toggle="dropdown">{!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}</button>
-            <ul class="dropdown-menu">
+            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.group_by') }}"
+                    data-toggle="dropdown"><span class="fa-solid fa-diagram-project"></span></button>
+            <ul class="dropdown-menu pull-right">
+                <li class="nav-header">{!! __("text.group_by") !!}</li>
                 <li>
                     <span class="radio">
                         <input type="radio" name="groupBy"
@@ -97,13 +98,14 @@
             </ul>
         </div>
         <div class="btn-group left ">
-            <button class="btn btn-link dropdown-toggle f-right" type="button" data-toggle="dropdown">
-                {!! __("links.filter") !!}
+            <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-toggle="dropdown">
+                <i class="fas fa-filter"></i>
                 @if($projectFilter != '')
                     <span class='badge badge-primary'>1</span>
                 @endif
             </button>
             <ul class="dropdown-menu pull-right">
+                <li class="nav-header">{!! __("text.filter") !!}</li>
                 <li
                     @if($projectFilter == '')
                         class='active'
