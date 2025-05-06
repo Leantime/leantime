@@ -25,7 +25,7 @@
     --primary-background: #404040;
     --secondary-background: #292929;
 
-    --layered-background: #141414;
+    --layered-background: #222;
     --light-layered-background: rgba(0, 0, 0, 0.2);
 
     --primary-font-color: #bbbbbb;
@@ -35,8 +35,8 @@
     --solid-neutral:rgba(40, 40, 40, 1);
     --neutral-background: rgba(40, 40, 40, 0.7);
 
-    --col-title-bg: rgb(48, 51, 53);
-    --col-content-bg: rgb(48, 51, 53);
+    --col-title-bg: var(--secondary-background);
+    --col-content-bg: var(--secondary-background);
     --col-hover-bg: rgb(34, 34, 34);
     --col-row-striped:rgba(1,1,1,0.7);
 
@@ -47,8 +47,8 @@
     --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
-    --glass-blur: blur( 4px );
-    --glass-background: rgba(0,0,0,0.8);
+    --glass-blur: blur( 24px );
+    --glass-background: rgba(0,0,0,0.5);
     --glass-border: 1px solid rgba(0,0,0,1);
 
     --main-action-bg: var(--accent1);
@@ -64,7 +64,7 @@
     --main-menu-link-bg: var(--secondary-background);
     --main-menu-link-color: var(--primary-font-color);
 
-    --main-menu-link-hover-bg: rgba(1, 1, 1, 0.8);
+    --main-menu-link-hover-bg: #222;
     --main-menu-link-hover-color: var(--accent1);
 
     --main-menu-overlayed-link-hover-bg: rgba(1, 1, 1, 0.4);

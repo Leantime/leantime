@@ -46,7 +46,7 @@ class Messengers
      */
     public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = 'all'): void
     {
-        $this->projectName = $projectName;
+        $this->projectName = $projectName ?? 'a Leantime project';
 
         $messengersToSend = [];
         if (is_string($messengers) && $messengers == 'all') {

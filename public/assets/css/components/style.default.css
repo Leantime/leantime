@@ -2726,7 +2726,7 @@ h4 .helperTooltip,
 
 .bigNumberBox {
     border-radius: 10px;
-    background: linear-gradient(180deg, var(--col-row-striped) -85%, transparent 100%);
+    background: linear-gradient(135deg, var(--col-row-striped) -50%, transparent 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--large-shadow);

@@ -35,7 +35,7 @@
                     }
                 @endphp
                 @foreach($week as $day)
-                    <button class="day-button tw-rounded-full tw-w-12 tw-h-12 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'tw-bg-gray-200 active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+                    <button class="day-button tw-rounded-full tw-w-12 tw-h-12 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
                         <span class="tw-text-xs">{{ $day->format('D') }}</span>
                         <span class="tw-font-medium">{{ $day->format('d') }}</span>
                     </button>

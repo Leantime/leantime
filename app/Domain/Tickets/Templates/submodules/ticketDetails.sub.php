@@ -125,18 +125,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
                 <br />
-                <div class="viewDescription mce-content-body" <?php if (empty($ticket->id)) {
-                    echo 'style="display:none;"';
-                } ?>>
-                    <div class="tw-pl-[9px]">
-                        <strong><?= $tpl->__('label.description') ?></strong>
-                        <br />
-                        <?php echo $tpl->escapeMinimal($ticket->description); ?>
-                    </div>
-                </div>
-                <div class="form-group" id="descriptionEditor" <?php if (! empty($ticket->id)) {
-                    echo 'style="display:none;"';
-                } ?>>
+
+                <div class="form-group" id="descriptionEditor">
                     <textarea name="description" id="ticketDescription"
                               class="complexEditor"><?php echo $ticket->description !== null ? htmlentities($ticket->description) : ''; ?></textarea><br/>
                 </div>
@@ -378,27 +368,9 @@ $ticketTypes = $tpl->get('ticketTypes');
         //All accordions start open
         leantime.editorController.initComplexEditor();
 
-        <?php if (! empty($ticket->id)) {?>
-            tinymce.activeEditor.hide()
-        <?php } ?>
-
     });
 
     leantime.editorController.initComplexEditor();
-
-    jQuery(".viewDescription").click(function(e){
-
-        if(!jQuery(e.target).is("a")) {
-            e.stopPropagation();
-            jQuery(this).hide();
-            jQuery('#descriptionEditor').show('fast',
-                function() {
-                    tinymce.activeEditor.show();
-                }
-            );
-        }
-    });
-
 
     Prism.highlightAll();
 

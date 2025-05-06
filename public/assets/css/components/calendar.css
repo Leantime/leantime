@@ -10,6 +10,10 @@
     box-shadow: var(--min-shadow);
 }
 
+.day-button.today {
+    background-color: var(--interactive-icon-color);
+}
+
 .day-button:hover {
     background-color: var(--interactive-icon-color);
 }

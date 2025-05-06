@@ -437,15 +437,9 @@ body {
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-    backdrop-filter: blur(15px);
+    backdrop-filter: var(--glass-blur)
     /*background:var(--header-bg-color);*/
 }
-
-.header .headmenu > li > a {
-    text-shadow: 0px 1px 3px var(--primary-font-color);
-}
-
-
 
 .pageheader {
     padding: 0px 15px;
