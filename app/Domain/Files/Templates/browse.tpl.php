@@ -1,7 +1,7 @@
 <?php
 
-use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Fileupload;
+use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Infrastructure\Files\Fileupload;
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor

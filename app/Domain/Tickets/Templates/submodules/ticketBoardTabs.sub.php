@@ -2,7 +2,7 @@
 
 <?php
 
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Routing\Frontcontroller;
 
 /**
  * @throws \Illuminate\Contracts\Container\BindingResolutionException

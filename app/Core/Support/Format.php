@@ -5,7 +5,7 @@ namespace Leantime\Core\Support;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
-use Leantime\Core\Language;
+use Leantime\Infrastructure\i18n\Language;
 use PHPUnit\Exception;
 
 /**

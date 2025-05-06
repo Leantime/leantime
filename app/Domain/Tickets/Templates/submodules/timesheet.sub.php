@@ -77,7 +77,7 @@ $ticketHours = $tpl->get('ticketHours');
 foreach ($ticketHours as $hours) {
     $sum = $sum + $hours['summe'];
     try {
-        echo "labels.push('".dtHelper()->parseDbDateTime($hours['utc'].' 00:00:00')->setToUserTimezone()->format(
+        echo "labels.push('".dtHelper()->parseDbDateTime($hours['utc'])->setToUserTimezone()->format(
             'Y-m-d'
         )."');
                     ";

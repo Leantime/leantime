@@ -5,7 +5,7 @@ namespace Leantime\Domain\Files\Controllers;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;

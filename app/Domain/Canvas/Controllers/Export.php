@@ -10,9 +10,9 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

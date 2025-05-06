@@ -8,10 +8,10 @@ namespace Leantime\Domain\Menu\Repositories;
 
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 
 class Menu
 {

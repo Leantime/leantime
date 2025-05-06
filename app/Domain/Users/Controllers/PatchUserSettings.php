@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Users\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Users\Repositories\Users;
 

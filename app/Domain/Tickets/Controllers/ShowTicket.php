@@ -4,8 +4,8 @@ namespace Leantime\Domain\Tickets\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -226,7 +226,7 @@ class ShowTicket extends Controller
 
         // Save Ticket
         if (isset($params['saveTicket']) === true || isset($params['saveAndCloseTicket']) === true) {
-            $params['projectId'] = $ticket->projectId;
+            //            $params['projectId'] = $ticket->projectId;
             $params['id'] = $id;
 
             // Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format

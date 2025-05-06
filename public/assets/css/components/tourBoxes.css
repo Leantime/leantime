@@ -23,6 +23,7 @@
     font-size: var(--font-size-l);
     line-height: 1.5;
     padding:15px;
+    color:var(--primary-font-color);
 }
 
 .shepherd-title {

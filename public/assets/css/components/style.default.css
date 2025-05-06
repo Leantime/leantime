@@ -679,10 +679,10 @@ body.loginpage {
 }
 
 .tab-primary.ui-tabs .ui-tabs-nav {
-    background:transparent;
-    border-bottom-width: 1px;
-    border-bottom-color: var(--main-border-color);
-    border-bottom-style: solid;
+    background: var(--tab-background);
+    border-bottom-width: 0px;
+    border-radius: var(--box-radius-large);
+    padding: 0px 15px 0px 15px;
 
 }
 
@@ -697,9 +697,9 @@ body.loginpage {
 
 .tab-primary.ui-tabs .ui-tabs-nav {
     height:40px;
+    margin-bottom: 15px;
+    box-shadow: var(--input-shadow);
 }
-
-
 
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .ui-tabs-nav > li a {
@@ -707,11 +707,9 @@ body.loginpage {
     background:none;
 }
 
-
-
 .tab-primary.ui-tabs .ui-tabs-nav li a:hover,
 .ui-tabs-nav > li a:hover {
-    background:var(--main-menu-link-hover-bg);
+    background: var(--neutral);
     color:var(--main-menu-link-hover-color);
 
 }
@@ -721,23 +719,23 @@ body.loginpage {
 }
 
 .tab-primary.ui-tabs .ui-tabs-nav > li a {
-    line-height:38px;
+    line-height:36px;
     border-bottom:2px solid transparent;
-    border-top:0px solid #fff;
+    border-top:2px solid transparent;
     padding:0px 15px;
     color:var(--main-action-bg);
     font-weight:bold;
+    border-radius: 0;
 }
 
 body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
+    background:var(--tab-active-background);
     border-bottom:2px solid var(--main-action-bg);
     color:var(--tab-active-color);
-    background: var(--tab-active-background);
-    border-radius: 5px 5px 0px 0px;
 }
 
 .tab-primary.ui-tabs .ui-tabs-nav > li a:hover {
-    background:var(--tab-active-background);
+    background:var(--tab-hover-background);
 }
 
 
@@ -2728,7 +2726,7 @@ h4 .helperTooltip,
 
 .bigNumberBox {
     border-radius: 10px;
-    background: linear-gradient(180deg, var(--col-row-striped) -85%, transparent 100%);
+    background: linear-gradient(135deg, var(--col-row-striped) -50%, transparent 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--large-shadow);
@@ -2935,9 +2933,7 @@ body a.btn-link.btn-fancy:hover {
 }
 
 
-.fc-v-event .fc-event-main-frame {
-    flex-direction: column-reverse;
-}
+
 
 .modal-backdrop {
     display:none;
@@ -2947,8 +2943,18 @@ body a.btn-link.btn-fancy:hover {
     color:var(--primary-font-color);
 }
 
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    margin: 0;
+    position: absolute;
+    width: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 .widgetContent {
     padding:0px 2px;
+    height: calc(100% - 40px);
+    overflow: auto;
 }
 
 .modalWindowIcon {

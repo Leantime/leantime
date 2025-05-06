@@ -5,13 +5,13 @@ namespace Leantime\Domain\Calendar\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Db\Repository as RepositoryCore;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Repositories\Users;
+use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Infrastructure\Database\Repository as RepositoryCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use PDO;
 
 class Calendar extends RepositoryCore
@@ -35,6 +35,8 @@ class Calendar extends RepositoryCore
         'label-dark-red' => 'var(--dark-red)',
         'label-grey' => 'var(--grey)',
     ];
+
+    protected string $entity = 'calendar';
 
     /**
      * Class constructor.

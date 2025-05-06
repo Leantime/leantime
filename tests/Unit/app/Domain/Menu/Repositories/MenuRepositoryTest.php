@@ -3,10 +3,10 @@
 namespace Unit\app\Domain\Menu\Repositories;
 
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Language;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Leantime\Infrastructure\i18n\Language;
 use Unit\TestCase;
 
 class MenuRepositoryTest extends TestCase

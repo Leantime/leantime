@@ -34,7 +34,7 @@ class HandleExceptions
      *
      * @return void
      */
-    public function bootstrap(\Leantime\Core\Application $app)
+    public function bootstrap(\Leantime\Infrastructure\Application\Application $app)
     {
         static::$reservedMemory = str_repeat('x', 32768);
 

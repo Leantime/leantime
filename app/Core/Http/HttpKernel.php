@@ -6,9 +6,9 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
-use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Middleware\AuthenticateSession;
+use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Infrastructure\Auth\Middleware\AuthenticateSession;
 
 class HttpKernel extends Kernel
 {
@@ -38,35 +38,36 @@ class HttpKernel extends Kernel
         // \Illuminate\Session\Middleware\AuthenticateSession::class,
         // \Illuminate\Routing\Middleware\SubstituteBindings::class,
         // \Illuminate\Auth\Middleware\Authorize::class,
-        // \App\Http\Middleware\TrustHosts::class,
+        // \Illuminate\Http\Middleware\TrustHosts::class,
 
         // \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         // \Illuminate\Cookie\Middleware\EncryptCookies::class,
         // \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 
-        \Leantime\Core\Middleware\StartSession::class,
-        \Leantime\Core\Middleware\Installed::class,
-        \Leantime\Core\Middleware\Updated::class,
+        Middleware\TrustProxies::class,
+
+        \Leantime\Core\Sessions\Middleware\StartSession::class,
+        \Leantime\Infrastructure\Installation\Middleware\Installed::class,
+        \Leantime\Infrastructure\Installation\Middleware\Updated::class,
 
         // All enabled plugins will be available from here on out
-        \Leantime\Core\Middleware\LoadPlugins::class,
+        \Leantime\Core\Plugins\Middleware\LoadPlugins::class,
 
-        \Leantime\Core\Middleware\TrustProxies::class,
-        \Leantime\Core\Middleware\InitialHeaders::class,
+        Middleware\InitialHeaders::class,
         // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
-        \Leantime\Core\Middleware\AuthCheck::class,
-        \Leantime\Core\Middleware\AuthenticateSession::class,
+        \Leantime\Infrastructure\Auth\Middleware\AuthCheck::class,
+        \Leantime\Infrastructure\Auth\Middleware\AuthenticateSession::class,
 
-        \Leantime\Core\Middleware\RequestRateLimiter::class,
+        Middleware\RequestRateLimiter::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \Leantime\Core\Middleware\TrimStrings::class,
+        Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \Leantime\Core\Middleware\SetCacheHeaders::class,
-        \Leantime\Core\Middleware\Localization::class,
+        Middleware\SetCacheHeaders::class,
+        \Leantime\Infrastructure\i18n\Middleware\Localization::class,
 
-        \Leantime\Core\Middleware\CurrentProject::class,
+        \Leantime\Domain\Projects\Middleware\CurrentProject::class,
 
     ];
 
@@ -92,7 +93,7 @@ class HttpKernel extends Kernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'auth' => \Leantime\Core\Middleware\AuthCheck::class,
+        'auth' => \Leantime\Infrastructure\Auth\Middleware\AuthCheck::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

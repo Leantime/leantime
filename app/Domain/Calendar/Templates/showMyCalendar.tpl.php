@@ -170,7 +170,8 @@ foreach ($externalCalendars as $externalCalendar) { ?>
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 timeZone: leantime.i18n.__("usersettings.timezone"),
-                height:heightWindow,
+                height: 'calc(100% - 40px)',
+                stickyHeaderDates: true,
                 initialView: '<?= session('usersettings.submenuToggle.myCalendarView') ?>',
                 eventSources:eventSources,
                 editable: true,
@@ -192,6 +193,16 @@ foreach ($externalCalendars as $externalCalendar) { ?>
                         showNonCurrentDates: true,
                         multiMonthTitleFormat: { month: 'long', year: 'numeric' },
                         dayHeaderFormat: { weekday: 'short' },
+                    },
+                    multiMonthOneMonth: {
+                        type: 'multiMonth',
+                        duration: {months: 1},
+                        multiMonthTitleFormat: {month: 'long', year: 'numeric'},
+                        dayHeaderFormat: {weekday: 'short'},
+                    },
+                    listWeek: {
+                        listDayFormat: {weekday: 'long'},
+                        listDaySideFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
                     }
                 },
                 nowIndicator: true,
@@ -326,3 +337,9 @@ foreach ($externalCalendars as $externalCalendar) { ?>
     <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>
+
+<style type="text/css">
+    .maincontent .maincontentinner {
+        height:calc(100vh - 165px);
+    }
+</style>

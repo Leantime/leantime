@@ -237,7 +237,6 @@ a.barmenu:hover {
     font-weight: bold;
     line-height: 20px;
     color: var(--secondary-font-color);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
     background:var(--secondary-background);
 }

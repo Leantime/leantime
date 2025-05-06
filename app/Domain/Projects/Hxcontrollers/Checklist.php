@@ -4,7 +4,7 @@ namespace Leantime\Domain\Projects\Hxcontrollers;
 
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Http\Controller\HtmxController;
 use Leantime\Domain\Projects\Services\Projects;
 
 class Checklist extends HtmxController

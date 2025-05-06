@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Connector\Repositories;
 
-use Leantime\Core\Db\Repository;
 use Leantime\Domain\Connector\Models\Integration;
+use Leantime\Infrastructure\Database\Repository;
 
 class Integrations extends Repository
 {

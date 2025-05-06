@@ -44,18 +44,19 @@ leantime.widgetController = (function () {
             handle: ".grid-handler-top",
             minRow: 2,
             cellHeight: '30px',
-            float: false,
-            animate: false,
-            disableOneColumnMode: true,
+            float: true,
             draggable: {
                 handle: '.grid-handler-top',
                 appendTo: 'body',
-                scroll: true,
-                scrollSensitivity: 20,
-                scrollSpeed: 10
+                // scroll: true,
+                // scrollSensitivity: 20,
+                // scrollSpeed: 10
             },
             lazyLoad: false,
-            disableAutoScroll: false,
+            columnOpts: {
+                breakpointForWindow: true,  // test window vs grid size
+                breakpoints: [{w:700, c:1},{w:950, c:6}]
+            },
         });
 
         grid.on('dragstop', function(event, item) {

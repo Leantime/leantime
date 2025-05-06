@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 
 class Updates extends Controller
 {

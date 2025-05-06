@@ -6,7 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use League\Csv\Exception;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Connector\Models\Integration;

@@ -2,7 +2,8 @@
 
 namespace Leantime\Domain\Setting\Controllers;
 
-use Leantime\Core\Controller\Controller;
+use Illuminate\Support\Facades\Cache;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
@@ -101,11 +102,12 @@ class EditBoxLabel extends Controller
                 if (isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])) {
                     $currentStateLabels[$statusKey]['name'] = $sanitizedString;
 
-                    session()->forget('projectsettings.ticketlabels');
                     $this->settingsRepo->saveSetting(
                         'projectsettings.'.session('currentProject').'.ticketlabels',
                         serialize($currentStateLabels)
                     );
+
+                    Cache::forget('projectsettings.'.session('currentProject').'.ticketlabels');
                 }
             }
 

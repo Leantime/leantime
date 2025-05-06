@@ -86,11 +86,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.dropdown .dropdown-menu .nav-header {
+.dropdown-menu .nav-header {
     padding-left: 10px;
     padding-right: 10px;
     font-size:var(--font-size-m);
-    color:var(--primary-font-color);
+    color:var(--interactive-icon-color);
     text-transform:none;
 }
 

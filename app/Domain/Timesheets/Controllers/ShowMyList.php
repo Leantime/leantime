@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\CarbonInterface;
-use Leantime\Core\Controller\Controller;
+use Leantime\Core\Http\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;

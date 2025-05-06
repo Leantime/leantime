@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Users\Controllers;
 
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme as ThemeCore;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;

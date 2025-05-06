@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Files\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Fileupload;
 use Leantime\Domain\Users\Repositories\Users as UserRepo;
+use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Infrastructure\Files\Fileupload;
 use PDO;
 
 class Files

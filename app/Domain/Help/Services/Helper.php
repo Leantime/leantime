@@ -172,6 +172,17 @@ class Helper
      */
     public function isFirstLogin(int $userId): bool
     {
+
+        // We don't have a project right now. Let's set it up
+        if (session('currentProject') === null ||
+            session('currentProject') === 0 ||
+            session('currentProject') === '' ||
+            session('currentProject') === false) {
+
+            $this->createDefaultProject($userId);
+
+        }
+
         $onboardingComplete = $this->settingsRepo->getSetting('user.'.$userId.'.firstLoginCompleted');
 
         return ! isset($onboardingComplete) || $onboardingComplete === false;
@@ -358,6 +369,8 @@ class Helper
         ];
 
         $goalService->createGoal($values);
+
+        $projectService->changeCurrentSessionProject($projectId);
 
     }
 }

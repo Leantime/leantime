@@ -9,10 +9,8 @@ use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\AccessTokenRepository;
@@ -20,6 +18,8 @@ use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
+use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 use RobThree\Auth\TwoFactorAuth;
 
 class Auth implements Authenticatable

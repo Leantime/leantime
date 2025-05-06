@@ -1,0 +1,64 @@
+version: '3.3'
+
+services:
+  leantime_db:
+    image: mysql:8.4
+    container_name: mysql_leantime
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    env_file: ./.env                                        # Environment file with settings
+    networks:
+      - leantime-net
+    command: --character-set-server=UTF8MB4 --collation-server=UTF8MB4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  leantime:
+    image: leantime/leantime:3.4.12
+    restart: unless-stopped
+    env_file: ./.env                                        # Environment file with settings
+    # Add security options
+    security_opt:
+      - no-new-privileges:true
+    # Add capabilities
+    cap_add:
+      # - CAP_NET_BIND_SERVICE
+      - CAP_CHOWN
+      - CAP_SETGID
+      - CAP_SETUID
+    ports:
+      - "${LEAN_PORT:-8080}:8080"
+    networks:
+      - leantime-net
+    volumes:
+      - public_userfiles:/var/www/html/public/userfiles     # Volume to store public files, logo etc
+      - userfiles:/var/www/html/userfiles                   # Original volume name for compatibility
+      - plugins:/var/www/html/app/Plugins                   # Plugin storage
+      - logs:/var/www/html/storage/logs                     # Log storage
+    depends_on:
+      leantime_db:
+        condition: service_healthy
+
+  # Add a helper container for volume permissions
+  # Run via docker compose --profile mysql_helper up -d
+  mysql_helper:
+    image: mysql:8.4
+    command: chown -R mysql:mysql /var/lib/mysql
+    volumes:
+      - db_data:/var/lib/mysql
+    user: root
+    profiles: [ "helper" ]
+
+volumes:
+  db_data:
+  userfiles:                                               # New volume for public files
+  public_userfiles:
+  plugins:
+  logs:
+
+networks:
+  leantime-net:

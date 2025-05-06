@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Files\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 
 /**
  * @api

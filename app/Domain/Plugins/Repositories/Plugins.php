@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Plugins\Repositories;
 
-use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
+use Leantime\Infrastructure\Database\Db as DbCore;
 use PDO;
 
 class Plugins

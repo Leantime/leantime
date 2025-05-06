@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Controller\Controller;
-use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;

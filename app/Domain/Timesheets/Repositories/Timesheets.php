@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Db\Repository;
+use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Infrastructure\Database\Repository;
 use PDO;
 
 class Timesheets extends Repository
@@ -475,14 +475,14 @@ class Timesheets extends Repository
                 // Some broken date formats in the db. Log error and return empty results.
                 report($e);
 
-                $utc = dtHelper()->dbNow()->format('Y-m-d');
+                $utc = dtHelper()->dbNow()->format('Y-m-d H:i:s');
                 $returnValues[$utc] = [
                     'utc' => $utc,
                     'summe' => 0,
                 ];
             }
         } else {
-            $utc = dtHelper()->dbNow()->format('Y-m-d');
+            $utc = dtHelper()->dbNow()->format('Y-m-d H:i:s');
             $returnValues[$utc] = [
                 'utc' => $utc,
                 'summe' => 0,

@@ -3,7 +3,7 @@
 namespace Tests\Support\Helper;
 
 use Codeception\Module;
-use Leantime\Core\Application;
+use Leantime\Infrastructure\Application\Application;
 
 class Unit extends Module
 {

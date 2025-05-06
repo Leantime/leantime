@@ -4,10 +4,11 @@ namespace Leantime\Domain\Tickets\Repositories;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Users\Services\Users;
+use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use PDO;
 
 class Tickets
@@ -109,6 +110,9 @@ class Tickets
      */
     public function getStateLabels($projectId = null): array
     {
+        if (Cache::has('projectsettings.'.$projectId.'.ticketlabels')) {
+            return Cache::get('projectsettings.'.$projectId.'.ticketlabels');
+        }
 
         if ($projectId == null) {
             $projectId = session('currentProject');
@@ -167,7 +171,7 @@ class Tickets
             return $a['sortKey'] <=> $b['sortKey'];
         });
 
-        session(['projectsettings.ticketlabels' => $statusList]);
+        Cache::put('projectsettings.'.$projectId.'.ticketlabels', $statusList, 3600);
 
         return $statusList;
     }
@@ -387,6 +391,14 @@ class Tickets
                 )
             ";
 
+        if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
+            $query .= ' AND zp_tickets.date > :dateFrom';
+        }
+
+        if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
+            $query .= ' AND zp_tickets.date < :dateTo';
+        }
+
         if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
             $query .= ' AND zp_tickets.type <> :excludeType';
         }
@@ -476,6 +488,14 @@ class Tickets
         }
 
         $stmn = $this->db->database->prepare($query);
+
+        if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
+            $stmn->bindValue(':dateFrom', $searchCriteria['dateFrom'], PDO::PARAM_STR);
+        }
+
+        if (isset($searchCriteria['dateTo']) && $searchCriteria['dateTo'] != '') {
+            $stmn->bindValue(':dateTo', $searchCriteria['dateTo'], PDO::PARAM_STR);
+        }
 
         if (isset($searchCriteria['excludeType']) && $searchCriteria['excludeType'] != '') {
             $stmn->bindValue(':excludeType', $searchCriteria['excludeType'], PDO::PARAM_STR);
@@ -585,6 +605,7 @@ class Tickets
                     zp_tickets.editorId,
                     zp_tickets.dependingTicketId,
                     zp_tickets.milestoneid,
+                    milestones.headline AS milestoneHeadline,
                     zp_tickets.planHours,
                     zp_tickets.editFrom,
                     zp_tickets.editTo,
@@ -595,6 +616,7 @@ class Tickets
                     zp_tickets
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+                    LEFT JOIN zp_tickets AS milestones ON zp_tickets.milestoneid = milestones.id
                       WHERE (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
                         OR zp_projects.psettings = 'all'
@@ -691,9 +713,9 @@ class Tickets
             $stmn->bindValue(':userId', session('userdata.id') ?? '-1', PDO::PARAM_INT);
         }
 
-        $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
+        $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
 
-        $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
+        $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
 
         if (session()->exists('userdata')) {
             $stmn->bindValue(':requestorId', session('userdata.id'), PDO::PARAM_INT);
@@ -808,6 +830,7 @@ class Tickets
 						zp_tickets.editTo,
 						zp_tickets.dependingTicketId,
 						zp_tickets.milestoneid,
+						milestones.headline AS milestoneHeadline,
 						zp_projects.name AS projectName,
 						zp_projects.details AS projectDescription,
 						zp_clients.name AS clientName,
@@ -823,6 +846,8 @@ class Tickets
 					LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 					LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 					LEFT JOIN zp_tickets AS parent on zp_tickets.dependingTicketId = parent.id
+					LEFT JOIN zp_tickets AS milestones on zp_tickets.milestoneid = milestones.id
+
 					WHERE
 						zp_tickets.id = :ticketId
 					LIMIT 1";
@@ -1502,7 +1527,7 @@ class Tickets
         return false;
     }
 
-    public function patchTicket($id, $params): bool
+    public function patchTicket($id, array $params): bool
     {
 
         $this->addTicketChange(session('userdata.id'), $id, $params);

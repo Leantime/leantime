@@ -9,24 +9,22 @@ leantime.helperController = (function () {
     };
 
     var startMyWorkDashboardTour = function () {
-        if(jQuery.nmTop()) {
-            jQuery.nmTop().close();
-        }
+        leantime.modals.setCustomModalCallback(function(){});
+        leantime.modals.closeModal();
 
         // Use the tour factory instead
         return leantime.tourFactory.startTour('myWorkDashboard');
     };
 
     var closeModal = function() {
-        if(jQuery.nmTop()) {
-            jQuery.nmTop().close();
-        }
+        leantime.modals.setCustomModalCallback(function(){});
+        leantime.modals.closeModal();
+
     }
 
     var startProjectDashboardTour = function () {
-        if(jQuery.nmTop()) {
-            jQuery.nmTop().close();
-        }
+        leantime.modals.setCustomModalCallback(function(){});
+        leantime.modals.closeModal();
 
         leantime.helperRepository.updateUserModalSettings("projectDashboard");
         return leantime.tourFactory.startTour('projectDashboard');
@@ -51,9 +49,8 @@ leantime.helperController = (function () {
     };
 
     var startGoalTour = function () {
-        if(jQuery.nmTop()) {
-            jQuery.nmTop().close();
-        }
+        leantime.modals.setCustomModalCallback(function(){});
+        leantime.modals.closeModal();
 
         leantime.helperRepository.updateUserModalSettings("goals");
         return leantime.tourFactory.startTour('goalsView');
@@ -120,7 +117,8 @@ leantime.helperController = (function () {
     var hideAndKeepHidden = function (module) {
 
         leantime.helperRepository.updateUserModalSettings(module);
-        jQuery.nmTop().close();
+        leantime.modals.setCustomModalCallback(function(){});
+        leantime.modals.closeModal();
 
     };
 

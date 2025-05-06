@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Reports\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Db\Db as DbCore;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Infrastructure\Database\Db as DbCore;
 use PDO;
 
 class Reports

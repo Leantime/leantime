@@ -7,11 +7,11 @@ use Carbon\CarbonInterface;
 use DateTime;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\UI\Template as TemplateCore;
@@ -26,6 +26,7 @@ use Leantime\Domain\Tickets\Repositories\TicketHistory;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 
 /**
  * @api
@@ -143,14 +144,14 @@ class Tickets
                 ];
             }
 
-            session()->forget('projectsettings.ticketlabels');
-
             self::dispatchEvent('statusLabels_updated');
 
+            Cache::forget('projectsettings.'.session('currentProject').'.ticketlabels');
+
             return $this->settingsRepo->saveSetting('projectsettings.'.session('currentProject').'.ticketlabels', serialize($statusArray));
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -389,14 +390,63 @@ class Tickets
      *
      * @api
      */
-    public function getAll(?array $searchCriteria = null): array|false
+    public function getAll(?array $searchCriteria = null, ?int $limit = null): array|false
     {
-        return $this->ticketRepository->getAllBySearchCriteria(
+
+        if (isset($searchCriteria['dateFrom'])) {
+            try {
+                $searchCriteria['dateFrom'] = dtHelper()->parseUserDateTime($searchCriteria['dateFrom']);
+            } catch (\Exception $e) {
+                Log::warning('Tickets::getAll: Could not parse dateFrom: '.$searchCriteria['dateFrom'].'');
+            }
+        }
+
+        if (isset($searchCriteria['dateTo'])) {
+            try {
+                $searchCriteria['dateTo'] = dtHelper()->parseUserDateTime($searchCriteria['dateTo']);
+            } catch (\Exception $e) {
+                Log::warning('Tickets::getAll: Could not parse dateTo: '.$searchCriteria['dateTo'].'');
+            }
+        }
+
+        $tickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria ?? [],
             sort: $searchCriteria['orderBy'] ?? 'date',
-            includeCounts: false
-
+            includeCounts: false,
+            limit: $limit
         );
+
+        if (is_array($tickets)) {
+            $tickets = $this->decorateWithFriendlyStatusLabels($tickets);
+        }
+
+        return $tickets;
+    }
+
+    private function decorateWithFriendlyStatusLabels(array $tickets): array
+    {
+
+        if (is_array($tickets)) {
+
+            $ticketCounter = 0;
+            $projectStatusLabels = [];
+
+            foreach ($tickets as &$ticket) {
+
+                if (! isset($projectStatusLabels[$ticket['projectId']])) {
+                    $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                }
+
+                if (isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) &&
+                    $projectStatusLabels[$ticket['projectId']][$ticket['status']]['statusType'] !== 'DONE') {
+                    $ticket['statusLabel'] = $projectStatusLabels[$ticket['projectId']][$ticket['status']]['name'];
+                }
+
+            }
+        }
+
+        return $tickets;
+
     }
 
     public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = ''): int
@@ -502,21 +552,20 @@ class Tickets
             $dateTo = dtHelper()->parseUserDateTime($dateTo);
         }
 
-        if (! $dateFrom->isUtc()) {
-            $dateFrom->setTimezone('UTC');
-        }
-        if (! $dateTo->isUtc()) {
-            $dateFrom->setTimezone('UTC');
-        }
-
         $totalTasks = $this->ticketRepository->getScheduledTasks($dateFrom, $dateTo, $userId);
 
         $statusLabels = [];
         $doneTasks = [];
 
-        foreach ($totalTasks as $ticket) {
+        foreach ($totalTasks as &$ticket) {
             if (! isset($statusLabels[$ticket['projectId']])) {
                 $statusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+            }
+
+            if (isset($statusLabels[$ticket['projectId']][$ticket['status']])) {
+                $ticket['statusLabel'] = $statusLabels[$ticket['projectId']][$ticket['status']]['name'];
+            } else {
+                $ticket['statusLabel'] = 'Unknown';
             }
 
             if (isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] == 'DONE') {
@@ -1215,7 +1264,7 @@ class Tickets
             $effort = empty($ticket['storypoints']) ? $defaultEffort : $ticket['storypoints'];
             $priority = empty($ticket['priority']) ? $defaultPriority : $ticket['priority'];
 
-            $ticketScore = $effort * $priorityFactor[$priority] ?? 1;
+            $ticketScore = $effort * ($priorityFactor[$priority] ?? 1);
 
             $totalScore += $ticketScore;
 
@@ -1400,7 +1449,7 @@ class Tickets
             'editFrom' => $params['editFrom'] ?? '',
             'editTo' => $params['editTo'] ?? '',
             'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : '',
-            'dependingTicketId' => '',
+            'dependingTicketId' => isset($params['dependingTicketId']) ? (int) $params['dependingTicketId'] : '',
             'sortIndex' => $params['sortIndex'] ?? '',
         ];
 
@@ -1748,8 +1797,10 @@ class Tickets
     {
 
         // $params is an array of field names. Exclude id
-        unset($params['id']);
-        unset($params['act']);
+        if (is_array($params)) {
+            unset($params['id']);
+            unset($params['act']);
+        }
 
         $ticket = $this->getTicket($id);
 

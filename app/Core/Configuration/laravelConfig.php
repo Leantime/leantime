@@ -1,9 +1,7 @@
 <?php
 
 use Laravel\Sanctum\Sanctum;
-use Leantime\Core\Providers\Cache;
-use Leantime\Core\Providers\Redis;
-use Leantime\Core\Providers\Session;
+use Leantime\Core\Sessions\Session;
 
 return [
     'app' => [
@@ -11,24 +9,24 @@ return [
             /*
              * Application Service Providers...
              */
-            \Leantime\Core\Providers\AppServiceProvider::class,
+            \Leantime\Infrastructure\Application\AppServiceProvider::class,
 
-            \Leantime\Core\Providers\LoadMacros::class,
+            \Leantime\Core\Support\LoadMacrosServiceProvider::class,
 
-            \Leantime\Core\Providers\Cache::class, // \Illuminate\Cache\CacheServiceProvider::class,
-            \Leantime\Core\Providers\Redis::class,
+            \Leantime\Infrastructure\Cache\CacheServiceProvider::class, // \Illuminate\Cache\CacheServiceProvider::class,
+            \Leantime\Infrastructure\Cache\Redis\RedisServiceProvider::class,
             \SocialiteProviders\Manager\ServiceProvider::class,
 
-            \Leantime\Core\Providers\ConsoleSupport::class,
+            \Leantime\Core\Console\ConsoleSupportProvider::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
             // \Illuminate\Database\DatabaseServiceProvider::class,
-            \Leantime\Core\Providers\EncryptionServiceProvider::class,
-            \Leantime\Core\Providers\FileSystemServiceProvider::class,
+            \Leantime\Core\Encryption\EncryptionServiceProvider::class,
+            \Leantime\Infrastructure\Files\FileSystemServiceProvider::class,
 
             \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
             \Illuminate\Hashing\HashServiceProvider::class,
             \Laravel\Sanctum\SanctumServiceProvider::class,
-            \Leantime\Core\Providers\Sanctum::class,
+            \Leantime\Infrastructure\Auth\Tokens\SanctumServiceProvider::class,
 
             \Illuminate\Notifications\NotificationServiceProvider::class,
             \Illuminate\Pagination\PaginationServiceProvider::class,
@@ -36,19 +34,19 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             \Illuminate\Queue\QueueServiceProvider::class,
 
-            \Leantime\Core\Providers\Session::class,
+            \Leantime\Core\Sessions\Session::class,
 
             \Illuminate\Validation\ValidationServiceProvider::class,
 
-            \Leantime\Core\Providers\Authentication::class,
-            \Leantime\Core\Providers\RateLimiter::class,
-            \Leantime\Core\Providers\Db::class,
-            \Leantime\Core\Providers\Language::class,
+            \Leantime\Infrastructure\Auth\AuthenticationServiceProvider::class,
+            \Leantime\Core\Routing\Middleware\RateLimiter::class,
+            \Leantime\Infrastructure\Database\DatabaseServiceProvider::class,
+            \Leantime\Infrastructure\i18n\LanguageServiceProvider::class,
             // \Leantime\Core\Providers\RouteServiceProvider::class,
 
-            \Leantime\Core\Providers\Frontcontroller::class,
-            \Leantime\Core\Providers\Views::class,
-            \Leantime\Core\Providers\TemplateServiceProvider::class,
+            \Leantime\Core\Routing\FrontcontrollerServiceProvider::class,
+            \Leantime\Core\UI\ViewsServiceProvider::class,
+            \Leantime\Core\UI\TemplateServiceProvider::class,
 
             // Console support
             \Illuminate\Database\MigrationServiceProvider::class,
@@ -152,7 +150,7 @@ return [
             ],
             'sentry' => [
                 'driver' => 'sentry',
-                'level' => 'error',
+                'level' => env('LEAN_SENTRY_LOG_LEVEL', 'error'),
                 'bubble' => true,
             ],
         ],
@@ -262,7 +260,7 @@ return [
         |
         */
 
-        'encrypt' => false,
+        'encrypt' => true,
 
         /*
         |--------------------------------------------------------------------------

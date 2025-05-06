@@ -3,12 +3,12 @@
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
+use Leantime\Infrastructure\i18n\Language;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 if (! function_exists('__')) {
@@ -199,8 +199,8 @@ if (! function_exists('get_domain_key')) {
         $host = app('request')->host();
 
         $url = config('app.url');
-        if ($url && isset($url['host'])) {
-            $host = $url['host'];
+        if (is_string($url) && $url !== '') {
+            $host = $url;
         }
 
         $domainKeyParts = config('app.url').config('app.key');

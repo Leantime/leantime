@@ -89,7 +89,9 @@ leantime.modals = (function () {
     }
 
     var closeModal = function () {
-        jQuery.nmTop().close();
+        if( jQuery.nmTop()) {
+            jQuery.nmTop().close();
+        }
     }
 
     return {

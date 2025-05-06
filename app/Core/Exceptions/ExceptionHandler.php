@@ -17,8 +17,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Traits\ReflectsClosures;
 use InvalidArgumentException;
-use Leantime\Core\Application;
+use Leantime\Infrastructure\Application\Application;
 use Leantime\Core\UI\Template;
+use Sentry\Laravel\Integration;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
@@ -110,7 +111,9 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     public function register()
     {
-        //
+        $this->reportable(function (Throwable $e) {
+            Integration::captureUnhandledException($e);
+        });
     }
 
     /**

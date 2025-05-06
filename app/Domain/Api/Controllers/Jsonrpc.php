@@ -10,8 +10,8 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Leantime\Core\Controller\Controller;
 use Leantime\Core\Exceptions\MissingParameterException;
+use Leantime\Core\Http\Controller\Controller;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 

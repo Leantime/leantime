@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Hxcontrollers;
 
-use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Http\Controller\HtmxController;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Users\Services\Users as UserService;
 

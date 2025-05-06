@@ -1,6 +1,6 @@
 <div class="grid-stack-item" {{ $attributes }}>
     <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw-p-none">
-        <div class="{{ ($background == "default") ? "tw-pb-l" : "" }}">
+        <div class="tw-flex tw-flex-col tw-h-full {{ ($background == "default") ? "tw-pb-l" : "" }}">
             @if(empty($fixed))
             <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">
 

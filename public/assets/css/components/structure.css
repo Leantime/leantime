@@ -57,8 +57,8 @@ body {
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-right: -10px;
-    margin-left: -10px
+    margin-right: -5px;
+    margin-left: -5px
 }
 
 .no-gutters {
@@ -401,7 +401,7 @@ body {
 
 
 .primaryContent {
-    min-height:100vh;
+    min-height:calc(100vh - 50px);
     padding-top:10px;
     padding-bottom:10px;
     position: relative;
@@ -437,15 +437,9 @@ body {
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-    backdrop-filter: blur(15px);
+    backdrop-filter: var(--glass-blur)
     /*background:var(--header-bg-color);*/
 }
-
-.header .headmenu > li > a {
-    text-shadow: 0px 1px 3px var(--primary-font-color);
-}
-
-
 
 .pageheader {
     padding: 0px 15px;
@@ -471,7 +465,7 @@ body {
     -webkit-backdrop-filter: var(--glass-blur);
     position:relative;
     padding:14px; /* account for 1px border */
-    margin-bottom:20px;
+    margin-bottom:10px;
     box-shadow: var(--large-shadow);
 
     border: var(--glass-border);

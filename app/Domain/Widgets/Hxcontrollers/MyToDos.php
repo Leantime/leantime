@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
-use Leantime\Core\Controller\HtmxController;
+use Leantime\Core\Http\Controller\HtmxController;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;
