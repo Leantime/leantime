@@ -1,7 +1,7 @@
 <?php
 
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Routing\Frontcontroller;
 
 EventDispatcher::add_filter_listener('leantime.*.welcomeText', function ($welcomeText) {
 

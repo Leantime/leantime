@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core\Application;
+namespace Leantime\Infrastructure\Application;
 
 use Illuminate\Log\Context\ContextServiceProvider;
 use Illuminate\Log\LogServiceProvider;
@@ -13,7 +13,6 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\HttpKernel;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Core\Events\EventsServiceProvider;
 
 /**
  * Class Application
@@ -89,7 +88,7 @@ class Application extends \Illuminate\Foundation\Application
     public function registerLeantimeAliases()
     {
         foreach ([
-            'app' => [self::class, \Illuminate\Contracts\Container\Container::class, \Leantime\Core\Application::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
+            'app' => [self::class, \Illuminate\Contracts\Container\Container::class, Application::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
             'config' => [Environment::class, \Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
             'request' => [IncomingRequest::class, ApiRequest::class, Console\CliRequest::class, \Illuminate\Http\Request::class,  \Symfony\Component\HttpFoundation\Request::class],
         ] as $key => $aliases) {

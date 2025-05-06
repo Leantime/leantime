@@ -4,7 +4,6 @@ namespace Leantime\Core\Support;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Leantime\Core\Support\StrMacros;
 
 class LoadMacrosServiceProvider extends ServiceProvider
 {

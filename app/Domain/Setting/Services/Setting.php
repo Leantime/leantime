@@ -4,8 +4,8 @@ namespace Leantime\Domain\Setting\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Infrastructure\Files\Fileupload as FileuploadCore;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Infrastructure\Files\Fileupload as FileuploadCore;
 use Ramsey\Uuid\Uuid;
 
 /**

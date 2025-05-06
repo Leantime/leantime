@@ -5,8 +5,8 @@ namespace Leantime\Domain\Cron\Controllers;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Console\ConsoleKernel;
-use Leantime\Core\Http\Controller\Controller;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\Controller\Controller;
 use PHPMailer\PHPMailer\Exception;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -6,9 +6,9 @@
 
 namespace Leantime\Domain\Canvas\Repositories;
 
+use Leantime\Domain\Tickets\Repositories\Tickets;
 use Leantime\Infrastructure\Database\Db as DbCore;
 use Leantime\Infrastructure\i18n\Language as LanguageCore;
-use Leantime\Domain\Tickets\Repositories\Tickets;
 use PDO;
 
 class Canvas

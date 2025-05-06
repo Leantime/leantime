@@ -6,8 +6,8 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Infrastructure\Auth\Middleware\AuthenticateSession;
 
 class HttpKernel extends Kernel

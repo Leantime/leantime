@@ -5,10 +5,10 @@ namespace Leantime\Domain\Notifications\Services;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Leantime\Infrastructure\i18n\Language as LanguageCore;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Leantime\Infrastructure\i18n\Language as LanguageCore;
 
 class Messengers
 {

@@ -3,8 +3,8 @@
 namespace Leantime\Views\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\UI\Composer;
 use Leantime\Domain\Menu\Repositories\Menu;
 

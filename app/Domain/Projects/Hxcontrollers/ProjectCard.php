@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Projects\Hxcontrollers;
 
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Http\Controller\HtmxController;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Comments\Services\Comments;

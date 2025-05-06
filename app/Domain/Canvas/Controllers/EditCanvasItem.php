@@ -4,14 +4,14 @@ namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
 use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Infrastructure\i18n\Language;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\UI\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Infrastructure\i18n\Language;
 
 /**
  * editCanvasItem class - Generic canvas controller / Edit Canvas Item

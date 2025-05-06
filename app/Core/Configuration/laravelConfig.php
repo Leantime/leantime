@@ -1,8 +1,6 @@
 <?php
 
 use Laravel\Sanctum\Sanctum;
-use Leantime\Infrastructure\Cache\CacheServiceProvider;
-use Leantime\Infrastructure\Cache\Redis\RedisServiceProvider;
 use Leantime\Core\Sessions\Session;
 
 return [
@@ -11,7 +9,7 @@ return [
             /*
              * Application Service Providers...
              */
-            \Leantime\Core\Application\AppServiceProvider::class,
+            \Leantime\Infrastructure\Application\AppServiceProvider::class,
 
             \Leantime\Core\Support\LoadMacrosServiceProvider::class,
 

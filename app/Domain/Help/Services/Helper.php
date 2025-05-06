@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Setting\Repositories\Setting;
 
 class Helper
@@ -174,8 +173,8 @@ class Helper
     public function isFirstLogin(int $userId): bool
     {
 
-        //We don't have a project right now. Let's set it up
-        if(session('currentProject') === null ||
+        // We don't have a project right now. Let's set it up
+        if (session('currentProject') === null ||
             session('currentProject') === 0 ||
             session('currentProject') === '' ||
             session('currentProject') === false) {
@@ -372,7 +371,6 @@ class Helper
         $goalService->createGoal($values);
 
         $projectService->changeCurrentSessionProject($projectId);
-
 
     }
 }

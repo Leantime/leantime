@@ -36,7 +36,7 @@ class MoveTicket extends Controller
 
         $ticket = $this->ticketService->getTicket($ticketId);
 
-        if(!$ticket) {
+        if (! $ticket) {
             return $this->tpl->displayPartial('errors.error404', responseCode: 404);
         }
 

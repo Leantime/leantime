@@ -3,11 +3,11 @@
 namespace Leantime\Core\Application;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Application\Application;
 use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\HttpKernel;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Infrastructure\Application\Application;
 
 /**
  * Bootloader

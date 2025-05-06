@@ -6,8 +6,8 @@ use http\Exception\BadMethodCallException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Infrastructure\i18n\Language;
 use Leantime\Core\UI\Template;
+use Leantime\Infrastructure\i18n\Language;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 

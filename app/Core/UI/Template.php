@@ -12,13 +12,13 @@ use Illuminate\View\View;
 use Illuminate\View\ViewException;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Infrastructure\i18n\Language;
+use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Core\Support\DateTimeInfoEnum;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Infrastructure\i18n\Language;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 

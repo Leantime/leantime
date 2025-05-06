@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core\Application;
+namespace Leantime\Infrastructure\Application;
 
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\ServiceProvider;

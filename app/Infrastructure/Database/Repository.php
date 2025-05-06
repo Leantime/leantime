@@ -4,7 +4,6 @@ namespace Leantime\Infrastructure\Database;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Database;
-use Leantime\Infrastructure\Database\Db;
 use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 use PDOStatement;

@@ -9,10 +9,10 @@ namespace Leantime\Domain\Canvas\Controllers;
 use Illuminate\Support\Str;
 use Leantime\Core\Http\Controller\Controller;
 use Leantime\Core\Routing\Frontcontroller;
-use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 
 class ShowCanvas extends Controller
 {

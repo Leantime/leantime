@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Auth\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\Controller\Controller;
 use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Setting\Services\Setting;

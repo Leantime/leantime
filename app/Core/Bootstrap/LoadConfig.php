@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Infrastructure\Cache\CacheServiceProvider;
 use Leantime\Core\Support\Attributes\LaravelConfig;
 
 class LoadConfig extends LoadConfiguration
