@@ -5,8 +5,8 @@ namespace Leantime\Domain\Users\Repositories;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Files\Repositories\Files;
-use Leantime\Infrastructure\Support\Avatarcreator;
 use PDO;
 use SVG\SVG;
 

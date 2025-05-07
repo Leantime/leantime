@@ -8,7 +8,7 @@ use Carbon\Exceptions\InvalidFormatException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
 use Leantime\Core\Support\CarbonMacros;
-use Leantime\Infrastructure\Support\DateTimeHelper;
+use Leantime\Core\Support\DateTimeHelper;
 use Unit\TestCase;
 
 class DateTimeHelperTest extends TestCase

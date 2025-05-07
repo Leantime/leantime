@@ -14,7 +14,7 @@
 |
 */
 
-$app = new \Leantime\Infrastructure\Application\Application(APP_ROOT);
+$app = new \Leantime\Core\Application(APP_ROOT);
 
 /*
 |--------------------------------------------------------------------------
@@ -29,17 +29,17 @@ $app = new \Leantime\Infrastructure\Application\Application(APP_ROOT);
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
-    \Leantime\Infrastructure\Http\HttpKernel::class
+    \Leantime\Core\Http\HttpKernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
-    \Leantime\Infrastructure\Console\ConsoleKernel::class
+    \Leantime\Core\Console\ConsoleKernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    \Leantime\Infrastructure\Exceptions\ExceptionHandler::class,
+    \Leantime\Core\Exceptions\ExceptionHandler::class,
 );
 
 $app->singleton(

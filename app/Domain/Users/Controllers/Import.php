@@ -6,7 +6,7 @@ namespace Leantime\Domain\Users\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\UI\Template as TemplateCore;
+use Leantime\Core\Template as TemplateCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Ldap\Services\Ldap as LdapService;

@@ -7,7 +7,7 @@ use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Language;
-use Leantime\Core\UI\Template;
+use Leantime\Core\Template;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;

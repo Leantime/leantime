@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Projects\Middleware;
 
 use Closure;
+use Leantime\Core\Http\HtmxRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Infrastructure\Http\HtmxRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class CurrentProject

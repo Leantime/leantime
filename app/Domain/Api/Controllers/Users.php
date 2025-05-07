@@ -5,9 +5,9 @@ namespace Leantime\Domain\Api\Controllers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Files\Fileupload as FileuploadCore;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Infrastructure\Files\Fileupload as FileuploadCore;
 use Symfony\Component\HttpFoundation\Response;
 
 class Users extends Controller

@@ -3,7 +3,7 @@
 namespace Unit;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Leantime\Infrastructure\Application\Application;
+use Leantime\Core\Application;
 
 abstract class TestCase extends BaseTestCase
 {

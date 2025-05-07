@@ -22,7 +22,7 @@ define('PROJECT_ROOT', realpath(__DIR__.'/../../').'/');
 define('DEV_ROOT', PROJECT_ROOT.'.dev/');
 
 $app = require __DIR__.'/../../bootstrap/app.php';
-$app->make(\Leantime\Infrastructure\Console\ConsoleKernel::class)->bootstrap();
+$app->make(\Leantime\Core\Console\ConsoleKernel::class)->bootstrap();
 
 $bootstrapper = get_class(new class
 {

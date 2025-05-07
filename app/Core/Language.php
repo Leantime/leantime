@@ -8,8 +8,8 @@ use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
-use Leantime\Infrastructure\Http\ApiRequest;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 

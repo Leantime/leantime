@@ -3,7 +3,7 @@
 namespace Leantime\Core\Http;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Infrastructure\Http\RequestTypes\RequestTypeDetector;
+use Leantime\Core\Http\RequestTypes\RequestTypeDetector;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

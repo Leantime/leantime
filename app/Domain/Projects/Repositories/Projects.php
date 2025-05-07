@@ -8,10 +8,10 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
+use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Infrastructure\Support\Avatarcreator;
 use PDO;
 use SVG\SVG;
 

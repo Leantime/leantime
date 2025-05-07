@@ -11,6 +11,6 @@ if (file_exists($testEnv)) {
 putenv('APP_ENV=testing');
 
 $app = require __DIR__.'/../bootstrap/app.php';
-$app->make(\Leantime\Infrastructure\Console\ConsoleKernel::class)->bootstrap();
+$app->make(\Leantime\Core\Console\ConsoleKernel::class)->bootstrap();
 
 return $app;

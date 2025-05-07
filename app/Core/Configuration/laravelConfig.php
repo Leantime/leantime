@@ -8,24 +8,24 @@ return [
             /*
              * Application Service Providers...
              */
-            \Leantime\Infrastructure\Application\AppServiceProvider::class,
+            \Leantime\Core\Application\AppServiceProvider::class,
 
-            \Leantime\Infrastructure\Support\LoadMacrosServiceProvider::class,
+            \Leantime\Core\Support\LoadMacrosServiceProvider::class,
 
-            \Leantime\Infrastructure\Cache\CacheServiceProvider::class, // \Illuminate\Cache\CacheServiceProvider::class,
-            \Leantime\Infrastructure\Cache\Redis\RedisServiceProvider::class,
+            \Leantime\Core\Cache\CacheServiceProvider::class, // \Illuminate\Cache\CacheServiceProvider::class,
+            \Leantime\Core\Cache\Redis\RedisServiceProvider::class,
             \SocialiteProviders\Manager\ServiceProvider::class,
 
-            \Leantime\Infrastructure\Console\ConsoleSupportProvider::class,
+            \Leantime\Core\Console\ConsoleSupportProvider::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
             // \Illuminate\Database\DatabaseServiceProvider::class,
-            \Leantime\Infrastructure\Encryption\EncryptionServiceProvider::class,
-            \Leantime\Infrastructure\Files\FileSystemServiceProvider::class,
+            \Leantime\Core\Encryption\EncryptionServiceProvider::class,
+            \Leantime\Core\Files\FileSystemServiceProvider::class,
 
             \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
             \Illuminate\Hashing\HashServiceProvider::class,
             \Laravel\Sanctum\SanctumServiceProvider::class,
-            \Leantime\Infrastructure\Auth\Tokens\SanctumServiceProvider::class,
+            \Leantime\Core\Auth\Tokens\SanctumServiceProvider::class,
 
             \Illuminate\Notifications\NotificationServiceProvider::class,
             \Illuminate\Pagination\PaginationServiceProvider::class,
@@ -33,19 +33,19 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             \Illuminate\Queue\QueueServiceProvider::class,
 
-            \Leantime\Infrastructure\Sessions\SessionServiceProvider::class,
+            \Leantime\Core\Sessions\SessionServiceProvider::class,
 
             \Illuminate\Validation\ValidationServiceProvider::class,
 
-            \Leantime\Infrastructure\Auth\AuthenticationServiceProvider::class,
-            \Leantime\Infrastructure\Routing\Middleware\RateLimiter::class,
-            \Leantime\Infrastructure\Database\DatabaseServiceProvider::class,
-            \Leantime\Infrastructure\i18n\LanguageServiceProvider::class,
+            \Leantime\Core\Auth\AuthenticationServiceProvider::class,
+            \Leantime\Core\Middleware\RateLimiter::class,
+            \Leantime\Core\Database\DatabaseServiceProvider::class,
+            \Leantime\Core\i18n\LanguageServiceProvider::class,
             // \Leantime\Core\Providers\RouteServiceProvider::class,
 
-            \Leantime\Infrastructure\Routing\FrontcontrollerServiceProvider::class,
-            \Leantime\Infrastructure\UI\ViewsServiceProvider::class,
-            \Leantime\Infrastructure\UI\TemplateServiceProvider::class,
+            \Leantime\Core\Routing\FrontcontrollerServiceProvider::class,
+            \Leantime\Core\UI\ViewsServiceProvider::class,
+            \Leantime\Core\UI\TemplateServiceProvider::class,
 
             // Console support
             \Illuminate\Database\MigrationServiceProvider::class,

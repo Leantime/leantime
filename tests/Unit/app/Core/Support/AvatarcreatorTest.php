@@ -4,8 +4,8 @@ namespace Tests\Unit\app\Core\Support;
 
 use LasseRafn\InitialAvatarGenerator\InitialAvatar;
 use LasseRafn\Initials\Initials;
+use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\UI\Theme;
-use Leantime\Infrastructure\Support\Avatarcreator;
 use SVG\SVG;
 use Unit\TestCase;
 

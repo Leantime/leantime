@@ -4,7 +4,7 @@ namespace Unit\app\Core\Support;
 
 use Carbon\CarbonImmutable;
 use Leantime\Core\Support\CarbonMacros;
-use Leantime\Infrastructure\Support\Format;
+use Leantime\Core\Support\Format;
 use Tests\DateTimeHelper;
 use Tests\Language;
 use Tests\MockObject;

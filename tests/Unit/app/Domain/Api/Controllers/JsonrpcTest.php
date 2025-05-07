@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\app\Domain\Api\Controllers;
 
+use Leantime\Core\Application;
 use Leantime\Core\Language;
-use Leantime\Core\UI\Template;
+use Leantime\Core\Template;
 use Leantime\Domain\Api\Controllers\Jsonrpc;
-use Leantime\Infrastructure\Application\Application;
-use Leantime\Infrastructure\Bootstrap\LoadConfig;
-use Leantime\Infrastructure\Bootstrap\SetRequestForConsole;
+use Leantime\Core\Bootstrap\LoadConfig;
+use Leantime\Core\Bootstrap\SetRequestForConsole;
 
 class JsonrpcTest extends \Unit\TestCase
 {

@@ -8,10 +8,10 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository as RepositoryCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Repositories\Users;
-use Leantime\Infrastructure\Support\DateTimeHelper;
 use PDO;
 
 class Calendar extends RepositoryCore
