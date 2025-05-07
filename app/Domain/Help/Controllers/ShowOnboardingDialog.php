@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Help\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Help\Services\Helper;
 
 class ShowOnboardingDialog extends Controller

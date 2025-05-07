@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Connector\Models;
 
-use Leantime\Infrastructure\Database\DbColumn;
+use Leantime\Core\Db\DbColumn;
 
 class Integration
 {

@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Errors\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 class Error404 extends Controller

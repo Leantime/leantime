@@ -23,17 +23,20 @@ class TicketsCest
         $I->amOnPage('/tickets/showKanban#/tickets/newTicket');
         $I->waitForElementVisible('.main-title-input', 120);
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
-        $I->click('.tagsinput');
+
+        $I->waitForElementClickable('.tagsinput', 15);
+        $I->clickWithRetry('.tagsinput', 90);
+        $I->wait(2);
         $I->type('test-tag,');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);
         $I->wait(5);
-        $I->click('body');
+        $I->clickWithRetry('body');
         $I->type('Test Description');
         $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
-        $I->click('.saveTicketBtn');
+        $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
@@ -52,16 +55,15 @@ class TicketsCest
         // Currently (and only in tests) the editor is not loaded when clicked on less the page is reloaded first.
         $I->reloadPage();
         $I->waitForElementVisible('.main-title-input', 120);
-        $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);
         $I->wait(5);
-        $I->click('body');
+        $I->clickWithRetry('body');
         $I->type('Test Description Edited');
         $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
-        $I->click('.saveTicketBtn');
+        $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->seeInDatabase('zp_tickets', [

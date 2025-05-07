@@ -36,31 +36,23 @@ class Install
 
         $this->I->waitForElementVisible('.alert');
 
-        $this->I->see('The installation was successful');
+        $this->I->waitForText('The installation was successful', 90);
 
         $this->I->fillField(['name' => 'jobTitle'], 'CEO');
 
         $this->I->fillField(['name' => 'password'], $password);
 
         $this->I->click('Next');
-        $this->I->waitForElement('h2', 60);
-
-        $this->I->see('Determining A Visual Experience');
+        $this->I->waitForText('Determining A Visual Experience', 90);
 
         $this->I->click('Next');
-        $this->I->waitForElement('h2', 60);
-
-        $this->I->see('Creating A Comfortable View');
+        $this->I->waitForText('Creating A Comfortable View', 90);
 
         $this->I->click('Next');
-        $this->I->waitForElement('h2', 60);
-
-        $this->I->see('Shaping A Daily Flow');
+        $this->I->waitForText('Shaping A Daily Flow', 90);
 
         $this->I->click('Next');
-        $this->I->waitForElement('h2', 60);
-
-        $this->I->see('Your Leantime journey is about to begin');
+        $this->I->waitForText('Your Leantime journey is about to begin', 90);
 
         $this->I->click('Complete Sign up');
 

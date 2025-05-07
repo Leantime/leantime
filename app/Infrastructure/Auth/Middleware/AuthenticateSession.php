@@ -9,8 +9,8 @@ use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
 use Illuminate\Http\Request;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Domain\Setting\Services\Setting;
-use Leantime\Infrastructure\i18n\Language;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateSession implements AuthenticatesSessions

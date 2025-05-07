@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;

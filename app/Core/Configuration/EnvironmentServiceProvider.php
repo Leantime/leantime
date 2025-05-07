@@ -16,8 +16,10 @@ class EnvironmentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Leantime\Core\Configuration\AppSettings::class, \Leantime\Core\Configuration\AppSettings::class);
-        $this->app->singleton(\Leantime\Core\Configuration\Environment::class, \Leantime\Core\Configuration\Environment::class);
+        $this->app->singleton(
+            \Leantime\Core\Configuration\AppSettings::class, \Leantime\Core\Configuration\AppSettings::class);
+        $this->app->singleton(
+            \Leantime\Core\Configuration\Environment::class, \Leantime\Core\Configuration\Environment::class);
 
     }
 

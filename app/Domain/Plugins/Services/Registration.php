@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
-use Leantime\Infrastructure\i18n\Language;
+use Leantime\Core\Language;
 
 class Registration
 {

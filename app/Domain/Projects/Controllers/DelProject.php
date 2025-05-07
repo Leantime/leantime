@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
-use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;

@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Setting\Controllers;
 
 use Illuminate\Support\Facades\Cache;
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;

@@ -66,8 +66,6 @@ class Environment extends Repository implements ArrayAccess, ConfigContract
     {
         if (! empty($items) && is_array($items)) {
             $this->items = $items;
-
-            return $this;
         }
 
         $defaultConfiguration = new DefaultConfig;

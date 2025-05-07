@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Leantime\Core\Console\ConsoleKernel;
+use Leantime\Infrastructure\Console\ConsoleKernel;
 use Symfony\Component\Console\Input\ArgvInput;
 
 define('LEAN_CLI', true);

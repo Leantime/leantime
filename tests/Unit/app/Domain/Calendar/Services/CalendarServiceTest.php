@@ -3,10 +3,10 @@
 namespace Unit\app\Domain\Calendar\Services;
 
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Language;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Infrastructure\i18n\Language;
 use Unit\TestCase;
 
 class CalendarServiceTest extends TestCase

@@ -1,6 +1,6 @@
 <?php
 
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Infrastructure\Files\Fileupload;
 
 foreach ($__data as $var => $val) {

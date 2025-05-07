@@ -1,7 +1,6 @@
 <?php
 
 use Laravel\Sanctum\Sanctum;
-use Leantime\Core\Sessions\Session;
 
 return [
     'app' => [
@@ -11,16 +10,16 @@ return [
              */
             \Leantime\Infrastructure\Application\AppServiceProvider::class,
 
-            \Leantime\Core\Support\LoadMacrosServiceProvider::class,
+            \Leantime\Infrastructure\Support\LoadMacrosServiceProvider::class,
 
             \Leantime\Infrastructure\Cache\CacheServiceProvider::class, // \Illuminate\Cache\CacheServiceProvider::class,
             \Leantime\Infrastructure\Cache\Redis\RedisServiceProvider::class,
             \SocialiteProviders\Manager\ServiceProvider::class,
 
-            \Leantime\Core\Console\ConsoleSupportProvider::class,
+            \Leantime\Infrastructure\Console\ConsoleSupportProvider::class,
             \Illuminate\Cookie\CookieServiceProvider::class,
             // \Illuminate\Database\DatabaseServiceProvider::class,
-            \Leantime\Core\Encryption\EncryptionServiceProvider::class,
+            \Leantime\Infrastructure\Encryption\EncryptionServiceProvider::class,
             \Leantime\Infrastructure\Files\FileSystemServiceProvider::class,
 
             \Illuminate\Foundation\Providers\FoundationServiceProvider::class,
@@ -34,19 +33,19 @@ return [
             \Illuminate\Pipeline\PipelineServiceProvider::class,
             \Illuminate\Queue\QueueServiceProvider::class,
 
-            \Leantime\Core\Sessions\Session::class,
+            \Leantime\Infrastructure\Sessions\SessionServiceProvider::class,
 
             \Illuminate\Validation\ValidationServiceProvider::class,
 
             \Leantime\Infrastructure\Auth\AuthenticationServiceProvider::class,
-            \Leantime\Core\Routing\Middleware\RateLimiter::class,
+            \Leantime\Infrastructure\Routing\Middleware\RateLimiter::class,
             \Leantime\Infrastructure\Database\DatabaseServiceProvider::class,
             \Leantime\Infrastructure\i18n\LanguageServiceProvider::class,
             // \Leantime\Core\Providers\RouteServiceProvider::class,
 
-            \Leantime\Core\Routing\FrontcontrollerServiceProvider::class,
-            \Leantime\Core\UI\ViewsServiceProvider::class,
-            \Leantime\Core\UI\TemplateServiceProvider::class,
+            \Leantime\Infrastructure\Routing\FrontcontrollerServiceProvider::class,
+            \Leantime\Infrastructure\UI\ViewsServiceProvider::class,
+            \Leantime\Infrastructure\UI\TemplateServiceProvider::class,
 
             // Console support
             \Illuminate\Database\MigrationServiceProvider::class,

@@ -17,8 +17,8 @@ class DatabaseServiceProvider extends LaravelDatabaseServiceProvider
         // Register Laravel's database service first
         parent::register();
 
-        $this->app->bind(\Leantime\Infrastructure\Database\Db::class, function () {
-            return new \Leantime\Infrastructure\Database\Db(app());
+        $this->app->bind(\Leantime\Core\Db\Db::class, function () {
+            return new \Leantime\Core\Db\Db(app());
         });
     }
 }

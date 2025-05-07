@@ -151,6 +151,9 @@
             <span class="fa-solid fa-question-circle"></span>
         </a>
         <ul class="dropdown-menu pull-right">
+            <li class="nav-header">
+                {{ __("headline.support") }}
+            </li>
             <li>
                 <a href='#/help/showOnboardingDialog?route={{ $request->getCurrentRoute() }}'>
                 {!! __("menu.what_is_this_page") !!}
@@ -183,6 +186,8 @@
                     {!! __("menu.contact_us") !!}
                 </a>
             </li>
+            <li class="nav-header border">System</li>
+            <li><a href="https://github.com/Leantime/leantime/releases" target="_blank">Leantime V{{ app(\Leantime\Core\Configuration\AppSettings::class)->appVersion }}</a></li>
         </ul>
     </li>
 

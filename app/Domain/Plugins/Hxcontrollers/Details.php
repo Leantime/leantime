@@ -4,7 +4,7 @@ namespace Leantime\Domain\Plugins\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Client\RequestException;
-use Leantime\Core\Http\Controller\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 

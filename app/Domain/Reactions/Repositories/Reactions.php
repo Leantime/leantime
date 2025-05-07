@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Reactions\Repositories;
 
-use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Core\Db\Db as DbCore;
 use PDO;
 
 class Reactions

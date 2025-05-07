@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Dashboard\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Widgets\Services\Widgets;
 use Symfony\Component\HttpFoundation\RedirectResponse;

@@ -4,10 +4,10 @@ namespace Leantime\Infrastructure\Installation\Middleware;
 
 use Closure;
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Middleware\BindingResolutionException;
-use Leantime\Core\Routing\Frontcontroller;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\HttpFoundation\Response;
 

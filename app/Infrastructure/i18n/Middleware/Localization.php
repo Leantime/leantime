@@ -6,9 +6,9 @@ use Carbon\CarbonImmutable;
 use Closure;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Setting\Services\Setting;
-use Leantime\Infrastructure\i18n\Language;
 use Symfony\Component\HttpFoundation\Response;
 
 class Localization

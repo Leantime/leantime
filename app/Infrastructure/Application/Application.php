@@ -6,13 +6,12 @@ use Illuminate\Log\Context\ContextServiceProvider;
 use Illuminate\Log\LogServiceProvider;
 use Illuminate\Routing\RoutingServiceProvider;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Console;
-use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\ApiRequest;
-use Leantime\Core\Http\HttpKernel;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Infrastructure\Console\ConsoleKernel;
+use Leantime\Infrastructure\Http\ApiRequest;
+use Leantime\Infrastructure\Http\HttpKernel;
 
 /**
  * Class Application
@@ -90,7 +89,7 @@ class Application extends \Illuminate\Foundation\Application
         foreach ([
             'app' => [self::class, \Illuminate\Contracts\Container\Container::class, Application::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
             'config' => [Environment::class, \Illuminate\Config\Repository::class, \Illuminate\Contracts\Config\Repository::class],
-            'request' => [IncomingRequest::class, ApiRequest::class, Console\CliRequest::class, \Illuminate\Http\Request::class,  \Symfony\Component\HttpFoundation\Request::class],
+            'request' => [IncomingRequest::class, ApiRequest::class, \Leantime\Infrastructure\Console\CliRequest::class, \Illuminate\Http\Request::class,  \Symfony\Component\HttpFoundation\Request::class],
         ] as $key => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($key, $alias);

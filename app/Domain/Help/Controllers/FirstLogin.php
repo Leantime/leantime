@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Help\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Setting\Repositories\Setting;

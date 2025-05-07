@@ -2,8 +2,9 @@
 
 namespace Leantime\Domain\Projects\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -13,7 +14,6 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 
 class NewProject extends Controller
 {

@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 
 /**
  * EventDispatcher class - Handles all events and filters

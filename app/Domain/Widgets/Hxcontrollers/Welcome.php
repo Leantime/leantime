@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
-use Leantime\Core\Http\Controller\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;

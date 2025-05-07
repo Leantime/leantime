@@ -1,11 +1,11 @@
 <?php
 
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\EventDispatcher;
-use Leantime\Core\Routing\Frontcontroller;
 
 EventDispatcher::add_filter_listener('leantime.*.welcomeText', function ($welcomeText) {
 
-    $language = app()->make(\Leantime\Infrastructure\i18n\Language::class);
+    $language = app()->make(\Leantime\Core\Language::class);
 
     if (Frontcontroller::getCurrentRoute() == 'install') {
         $welcomeText = '<h1 class="mainWelcome">'.$language->__('headlines.welcome').'</h1>';

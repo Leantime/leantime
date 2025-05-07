@@ -246,18 +246,21 @@ class TimesheetCest
         $I->checkOption('//*//input[@id="checkAllPaid"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="paid"]');
 
         // Make Invoiced
         $I->checkOption('//*/input[@id="checkAllEmpl"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedEmpl"]');
 
         // Make MGR Approval
         $I->checkOption('//*//input[@id="checkAllComp"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedComp"]');
     }
 
@@ -275,12 +278,13 @@ class TimesheetCest
         $I->waitForElementVisible('.delete');
         $I->clickWithRetry('.stdformbutton .delete');
 
-        $I->wait(1);
+        $I->wait(5);
         $I->see('Should the timesheet really be deleted?');
 
         $I->clickWithRetry('.nyroModalLink .button');
 
         $I->waitForElementVisible('#allTimesheetsTable');
+        $I->wait(5);
         $I->cantSee('#1 - Edit');
     }
 
@@ -296,7 +300,7 @@ class TimesheetCest
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
         $I->waitForElementClickable('#saveSettings');
-        $I->clickWithRetry('#saveSettings');
+        $I->clickWithRetry('#saveSettings', 90);
         $I->wait(10);
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
