@@ -1,3 +1,76 @@
+# Version: 3.5.1
+
+* [1a97372](https://github.com/Leantime/leantime/commit/1a97372dcbc91f30627ec0ad84045f2058661e36): timesheet test update
+* [9c6cc20](https://github.com/Leantime/leantime/commit/9c6cc2096bcd05974f7a2354004f9d6f3535a96a): Update TimesheetCest.php
+* [3ce02cf](https://github.com/Leantime/leantime/commit/3ce02cfa71ca8bf31014fddd6712081f04a67b67): Update loginInfo.blade.php
+* [9b7020c](https://github.com/Leantime/leantime/commit/9b7020ce5cfa0640a761bc9caf74255a303f06cc): task: fix code styles
+* [fdf0bf8](https://github.com/Leantime/leantime/commit/fdf0bf88ceeaf4d6bbd2324533ce38f977632660): fix: Improved bool management of config vars
+* [946398d](https://github.com/Leantime/leantime/commit/946398d372b3d09d0df7e56d1d477080cd5f81c3): task: block list tasks
+* [b60f25a](https://github.com/Leantime/leantime/commit/b60f25ae80ea94b6f14e8f041d141f51bec71f3a): version bump
+* [001a097](https://github.com/Leantime/leantime/commit/001a097c34f1a9e5b4c3ce1fb893c5fefcd8a9ed): fix: logo padding
+* [2463812](https://github.com/Leantime/leantime/commit/24638128e964d12bebc2289bac3fb5125a7dd8dc): Update package-lock.json
+* [2cc3382](https://github.com/Leantime/leantime/commit/2cc33826a2d996f12e1af44fe10496292c51a60f): Revert core clean up changes due to plugin compatibility issues
+* [7c332ac](https://github.com/Leantime/leantime/commit/7c332acb1bb14213038171352fe0e530e055fbbe): [Changelog CI] Add Changelog for Version 3.5.0
+* [3e5009d](https://github.com/Leantime/leantime/commit/3e5009d9ce5174c7de2b94fa80caa604e821cf5b): Update composer.lock
+* [5580212](https://github.com/Leantime/leantime/commit/558021212a3ea6314e1abd676994480be6b3b795): version bump
+* [378864d](https://github.com/Leantime/leantime/commit/378864da12f1547955b80d6889a30b4c5f305498): task: additional test improvements
+* [6e4ac76](https://github.com/Leantime/leantime/commit/6e4ac76ca0408c0364a5f54d7115a826e07b39d7): task: timesheet test wait update
+* [31a41df](https://github.com/Leantime/leantime/commit/31a41df3d9165d4773917c80e233eb6f9ca062cf): task: unit tests different wait mechanisms
+* [48e0101](https://github.com/Leantime/leantime/commit/48e0101f6eae3e7518fd81c34e8728e87cee5dc7): task: increast test timeouts
+* [a0487ef](https://github.com/Leantime/leantime/commit/a0487effc520149abcd2b4a7d8532858905e9fcb): update tests
+* [16af6e0](https://github.com/Leantime/leantime/commit/16af6e038740c760584f5203a0d38c1e2da97151): task: fix tests and clean up code
+* [8fed5b1](https://github.com/Leantime/leantime/commit/8fed5b167b4decf5af94621a5c13410e17a0ae21): task: code cleanup
+* [1483e0e](https://github.com/Leantime/leantime/commit/1483e0e9bea346dcfafbf36d180ef65a3717e4d0): task: Infrastructure cleanup
+* [3ada64c](https://github.com/Leantime/leantime/commit/3ada64c009e1a134369268e50d1361b963b614b6): fix: sorting by date on timesheet list view
+* [5c195d5](https://github.com/Leantime/leantime/commit/5c195d5c235ad8240d3214ce3857fd7fc59bfa28): fix: timesheet chart timezone issue
+* [f87df7e](https://github.com/Leantime/leantime/commit/f87df7e6935561c75d4b5433e0d68376aebb4921): fix: move tasks to a different project not working on edit task screen
+* [c7e155f](https://github.com/Leantime/leantime/commit/c7e155f1b8bcaedbd1d10593ff64d0836a45b002): task: fix code styles
+* [82d1d98](https://github.com/Leantime/leantime/commit/82d1d98beaf71c619d2b6b2728b2d8f9b3184ef8): fix: first user login without project fixed.
+* [76689f0](https://github.com/Leantime/leantime/commit/76689f059fbf202d471c80c980ec7f4a103bb6f6): fix: style updates for dark mode including onboarding
+* [0e709a6](https://github.com/Leantime/leantime/commit/0e709a61b8fa2262e3ac87d145ade2363b701e27): task: Improved handling of env config in mailer
+* [a902310](https://github.com/Leantime/leantime/commit/a902310ac5ceacdfe221ba6427079754008137e7): task: updated gridstack library
+* [1438a4b](https://github.com/Leantime/leantime/commit/1438a4bd3a3d1b460a3bf0d7a91e38587788f906): task: updated gridstack library
+* [9b3b4d3](https://github.com/Leantime/leantime/commit/9b3b4d379124f365e560498a334307c5fe084363): feat: Improved calendar widget layout
+* [eded1fe](https://github.com/Leantime/leantime/commit/eded1febb62119367973995bb5d1ece5c3dc96b1): Update FUNDING.yml
+* [0aee4c9](https://github.com/Leantime/leantime/commit/0aee4c9a039059f27d2a9c7abadc10c425163030): Update FUNDING.yml
+* [13b942f](https://github.com/Leantime/leantime/commit/13b942f7e4800f5109b64373baca170ba22aef80): Update FUNDING.yml
+* [aa0b1cf](https://github.com/Leantime/leantime/commit/aa0b1cf417f075ac9ad0d6fda04f1b231d963a93): task: update packages
+* [9ec572d](https://github.com/Leantime/leantime/commit/9ec572d2ba69abf59c33a09a49125a2e28b330b8): fix: Trusted proxies not working
+* [1a47c63](https://github.com/Leantime/leantime/commit/1a47c6319dc06aaf4fe8b532e2821c96cd7afffe): task: move docker file and generation into main repo part 1
+* [a6b6767](https://github.com/Leantime/leantime/commit/a6b67671dc76094fa74d860221ac26af279d487d): task: update sentry
+* [5f8cbc1](https://github.com/Leantime/leantime/commit/5f8cbc1653f524fa8070de15e8ac089ccaa90e59): feat: Add Limit and date range to ticket getAll methods
+* [806df35](https://github.com/Leantime/leantime/commit/806df352eb865e44cf4e166b49ddcd939a747005): feat: Improve datetimehelper and add more standard formats.
+* [ab86ba4](https://github.com/Leantime/leantime/commit/ab86ba46f51afb96e32e48477be3ccda410b52da): feat: Add milestone title to results query
+* [9e0bcb8](https://github.com/Leantime/leantime/commit/9e0bcb8613313e200f3c50c140b8dfc1c00e92b8): task: code cleanup
+* [a65536a](https://github.com/Leantime/leantime/commit/a65536a9dd53f55e11a59a65cd58080aea4e8ad4): feat: Improved general UX and tabs
+* [758e053](https://github.com/Leantime/leantime/commit/758e053f88177904c92c2c39d1373f231182e73f): feat: Improved widget UX with content scrolling
+* [a0db27a](https://github.com/Leantime/leantime/commit/a0db27aa2fbd040b2b1d8e66cbd039912391aa81): feat: Improved Calendar UX
+* [ee20498](https://github.com/Leantime/leantime/commit/ee2049876e55ea6b0cdd7bc21ebeec92071c59f6): feat: Enhance datetime helper parser for api usage
+* [93dbbbb](https://github.com/Leantime/leantime/commit/93dbbbb83131b718cf1da55a9680012e5eb3a6c9): task: Improve error handling with sentry/bugsink
+* [a2ff8ae](https://github.com/Leantime/leantime/commit/a2ff8aea0b28d28f6bdd679dc64b899d6864856a): task: various small improvements to datetimehelper, calendar and ticket services
+* [1574983](https://github.com/Leantime/leantime/commit/1574983aa7bb57608db28aa53715ff871e2a1a4e): build(deps): bump http-proxy-middleware from 2.0.6 to 2.0.9
+
+Bumps [http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) from 2.0.6 to 2.0.9.
+- [Release notes](https://github.com/chimurai/http-proxy-middleware/releases)
+- [Changelog](https://github.com/chimurai/http-proxy-middleware/blob/v2.0.9/CHANGELOG.md)
+- [Commits](https://github.com/chimurai/http-proxy-middleware/compare/v2.0.6...v2.0.9)
+
+---
+updated-dependencies:
+- dependency-name: http-proxy-middleware
+  dependency-version: 2.0.9
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+* [ab4a81a](https://github.com/Leantime/leantime/commit/ab4a81a5173a085e3bb5c1f50d5ad38b4fef986a): task: fix code style
+* [3358e45](https://github.com/Leantime/leantime/commit/3358e45d4e5edb9b66ebae7b98f72b487625f03d): task: remove attribute, reorganize code
+* [18291a9](https://github.com/Leantime/leantime/commit/18291a9cc6d05eaf5b6b7cdc9830e9cc1aa4dc54): fix: first login 403 issue
+* [24de527](https://github.com/Leantime/leantime/commit/24de527490a2e20681e465a552ae14fd2f319775): Update Plugins
+* [76bf318](https://github.com/Leantime/leantime/commit/76bf3189f6a3101b6d415bfd2e4e50c9cb4b5c84): fix: type matching in ticket service
+* [60c6272](https://github.com/Leantime/leantime/commit/60c6272ce13d2879d1bfdfc45e8df50af46c5871): fix: idea board selection fixes
+
+
 # Version: 3.5.0
 
 * [3e5009d](https://github.com/Leantime/leantime/commit/3e5009d9ce5174c7de2b94fa80caa604e821cf5b): Update composer.lock
