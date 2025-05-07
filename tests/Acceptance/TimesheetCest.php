@@ -284,6 +284,7 @@ class TimesheetCest
         $I->clickWithRetry('.nyroModalLink .button');
 
         $I->waitForElementVisible('#allTimesheetsTable');
+        $I->wait(5);
         $I->cantSee('#1 - Edit');
     }
 

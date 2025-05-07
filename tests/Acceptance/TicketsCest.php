@@ -25,18 +25,18 @@ class TicketsCest
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
 
         $I->waitForElementClickable('.tagsinput', 15);
-        $I->click('.tagsinput');
+        $I->clickWithRetry('.tagsinput', 90);
         $I->wait(2);
         $I->type('test-tag,');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);
         $I->wait(5);
-        $I->click('body');
+        $I->clickWithRetry('body');
         $I->type('Test Description');
         $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
-        $I->click('.saveTicketBtn');
+        $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
@@ -59,11 +59,11 @@ class TicketsCest
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);
         $I->wait(5);
-        $I->click('body');
+        $I->clickWithRetry('body');
         $I->type('Test Description Edited');
         $I->switchToIFrame();
         $I->waitForElementClickable('.saveTicketBtn', 120);
-        $I->click('.saveTicketBtn');
+        $I->clickWithRetry('.saveTicketBtn');
         $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->seeInDatabase('zp_tickets', [
