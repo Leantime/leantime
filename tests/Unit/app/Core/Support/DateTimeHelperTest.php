@@ -7,7 +7,7 @@ use Carbon\Exceptions\InvalidDateException;
 use Carbon\Exceptions\InvalidFormatException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Language;
-use Leantime\Infrastructure\Support\CarbonMacros;
+use Leantime\Core\Support\CarbonMacros;
 use Leantime\Infrastructure\Support\DateTimeHelper;
 use Unit\TestCase;
 

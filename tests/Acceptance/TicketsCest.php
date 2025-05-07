@@ -24,8 +24,9 @@ class TicketsCest
         $I->waitForElementVisible('.main-title-input', 120);
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
 
-        $I->waitForElementClickable('.tagsinput');
+        $I->waitForElementClickable('.tagsinput', 15);
         $I->click('.tagsinput');
+        $I->wait(2);
         $I->type('test-tag,');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');

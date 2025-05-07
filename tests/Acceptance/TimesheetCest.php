@@ -246,18 +246,21 @@ class TimesheetCest
         $I->checkOption('//*//input[@id="checkAllPaid"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="paid"]');
 
         // Make Invoiced
         $I->checkOption('//*/input[@id="checkAllEmpl"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedEmpl"]');
 
         // Make MGR Approval
         $I->checkOption('//*//input[@id="checkAllComp"]');
         $I->clickWithRetry('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->wait(2);
         $I->cantSeeElement('//*//input[@class="invoicedComp"]');
     }
 
@@ -297,7 +300,7 @@ class TimesheetCest
         $I->selectOption('#timezone', $timezone);
         $I->waitForElementClickable('#saveSettings');
         $I->clickWithRetry('#saveSettings');
-        $I->wait(10);
+        $I->wait(15);
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
             'value' => $timezone,
