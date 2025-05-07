@@ -5,7 +5,7 @@
     @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
         <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
-            <img src="{{ session("companysettings.logoPath") }}" class="logo"/>
+            <img src="{{ session("companysettings.logoPath") }}" class="logo tw-scroll-pl-1" />
         </a>
     @else
         <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler" data-toggle="dropdown">
