@@ -3,9 +3,9 @@
 namespace Tests\Unit\App\Core;
 
 use Leantime\Core\Application;
-use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Bootstrap\LoadConfig;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
+use Leantime\Core\Configuration\Environment;
 
 class ApplicationUrlTest extends \Unit\TestCase
 {

@@ -7,7 +7,6 @@ use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Illuminate\Http\Request;
-use Leantime\Core\Bootstrap\The;
 use Leantime\Core\Configuration\DefaultConfig;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Http\IncomingRequest;
