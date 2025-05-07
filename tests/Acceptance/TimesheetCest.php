@@ -301,11 +301,12 @@ class TimesheetCest
         $I->selectOption('#timezone', $timezone);
         $I->waitForElementClickable('#saveSettings');
         $I->clickWithRetry('#saveSettings', 90);
-        $I->wait(10);
+        $I->wait(5);
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
             'value' => $timezone,
         ]);
+        $I->wait(5);
 
     }
 }
