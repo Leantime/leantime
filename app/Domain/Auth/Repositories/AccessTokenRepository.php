@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Auth\Repositories;
 
 use Illuminate\Support\Str;
-use Leantime\Infrastructure\Database\Db;
+use Leantime\Core\Db\Db;
 use PDO;
 
 class AccessTokenRepository

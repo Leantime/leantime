@@ -412,16 +412,17 @@ leantime.calendarController = (function () {
             jQuery('.minCalendar .fc-today-button').click(function () {
                 calendar.today();
             });
-            jQuery(".minCalendar .calendarViewSelect").on("change", function (e) {
+            jQuery(".minCalendar .calendarViewSelect").on("click", function (e) {
 
-                calendar.changeView(jQuery(".minCalendar .calendarViewSelect option:selected").val());
+                console.log(jQuery(this).data("value"));
+                calendar.changeView(jQuery(this).data("value"));
 
                 jQuery.ajax({
                     type: 'PATCH',
                     url: leantime.appUrl + '/api/submenu',
                     data: {
                         submenu: "dashboardCalendarView",
-                        state: jQuery(".minCalendar .calendarViewSelect option:selected").val()
+                        state: jQuery(this).data("value")
                     }
                 });
 

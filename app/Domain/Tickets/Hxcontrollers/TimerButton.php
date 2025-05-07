@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Hxcontrollers;
 
-use Leantime\Core\Http\Controller\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 class TimerButton extends HtmxController

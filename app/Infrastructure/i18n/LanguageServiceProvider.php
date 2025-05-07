@@ -13,8 +13,8 @@ class LanguageServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(\Leantime\Infrastructure\i18n\Language::class, function () {
-            return new \Leantime\Infrastructure\i18n\Language;
+        $this->app->singleton(\Leantime\Core\Language::class, function () {
+            return new \Leantime\Core\Language;
         });
         // $this->app->alias(\Leantime\Core\Language::class, 'translator');
     }

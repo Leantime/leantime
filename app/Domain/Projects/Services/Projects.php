@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
+use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
@@ -22,7 +23,6 @@ use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
-use Leantime\Infrastructure\i18n\Language as LanguageCore;
 
 class Projects
 {

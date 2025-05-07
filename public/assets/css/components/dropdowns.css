@@ -89,6 +89,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown-menu .nav-header {
     padding-left: 10px;
     padding-right: 10px;
+    padding-top:10px;
+    padding-bottom:5px;
     font-size:var(--font-size-m);
     color:var(--interactive-icon-color);
     text-transform:none;

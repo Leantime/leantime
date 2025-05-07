@@ -44,6 +44,7 @@ class ApiCest
 
         $I->fillField(['id' => 'firstname'], 'APIUser');
         $I->selectOption(['id' => 'role'], 'Administrator');
+        $I->waitForElementClickable('#project_1');
         $I->checkOption('My Project');
         $I->clickWithRetry('#save');
 

@@ -2,11 +2,11 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
+use Leantime\Core\Language;
+use Leantime\Core\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Users\Repositories\Users;
-use Leantime\Infrastructure\i18n\Language;
-use Leantime\Infrastructure\Mail\Mailer;
 
 class EmailWorker
 {

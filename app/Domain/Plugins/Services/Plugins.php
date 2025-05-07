@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
-use Leantime\Core\Console\ConsoleKernel;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Domain\Notifications\Services\Notifications;
 use Leantime\Domain\Plugins\Models\InstalledPlugin;
@@ -20,6 +19,7 @@ use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
 use Leantime\Domain\Users\Services\Users as UsersService;
+use Leantime\Infrastructure\Console\ConsoleKernel;
 
 /**
  * @api

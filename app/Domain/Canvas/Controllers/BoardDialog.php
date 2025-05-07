@@ -7,11 +7,11 @@
 namespace Leantime\Domain\Canvas\Controllers;
 
 use Illuminate\Support\Str;
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 
 class BoardDialog extends Controller
 {

@@ -4,7 +4,7 @@ namespace Leantime\Domain\Notifications\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
-use Leantime\Core\Http\Controller\HtmxController;
+use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 

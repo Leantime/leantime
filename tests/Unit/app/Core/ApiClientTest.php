@@ -3,7 +3,7 @@
 namespace Test\Unit;
 
 use GuzzleHttp\HandlerStack;
-use Leantime\Core\Http\Client\ApiClient;
+use Leantime\Infrastructure\Http\Client\ApiClient;
 
 class ApiClientTest extends \Unit\TestCase
 {

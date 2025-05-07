@@ -4,8 +4,8 @@ namespace Leantime\Domain\Tickets\Controllers;
 
 use DateInterval;
 use DateTime;
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;

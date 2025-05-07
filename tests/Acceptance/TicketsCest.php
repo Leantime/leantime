@@ -23,6 +23,8 @@ class TicketsCest
         $I->amOnPage('/tickets/showKanban#/tickets/newTicket');
         $I->waitForElementVisible('.main-title-input', 120);
         $I->fillField(['class' => 'main-title-input'], 'Test Ticket');
+
+        $I->waitForElementClickable('.tagsinput');
         $I->click('.tagsinput');
         $I->type('test-tag,');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
@@ -52,7 +54,6 @@ class TicketsCest
         // Currently (and only in tests) the editor is not loaded when clicked on less the page is reloaded first.
         $I->reloadPage();
         $I->waitForElementVisible('.main-title-input', 120);
-        $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible('#tinymce', 120);

@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Http\ApiRequest;
 use Leantime\Core\Http\IncomingRequest;
 use Leantime\Core\Middleware\BindingResolutionException;
+use Leantime\Infrastructure\Http\ApiRequest;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Auth\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
-use Leantime\Core\Routing\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Controller\Controller;
+use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\Response;
 

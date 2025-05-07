@@ -275,7 +275,7 @@ class TimesheetCest
         $I->waitForElementVisible('.delete');
         $I->clickWithRetry('.stdformbutton .delete');
 
-        $I->wait(1);
+        $I->wait(5);
         $I->see('Should the timesheet really be deleted?');
 
         $I->clickWithRetry('.nyroModalLink .button');

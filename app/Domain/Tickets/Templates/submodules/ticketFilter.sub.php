@@ -1,7 +1,7 @@
 
 <?php
 
-use Leantime\Core\Routing\Frontcontroller;
+use Leantime\Core\Controller\Frontcontroller;
 
 $currentRoute = Frontcontroller::getCurrentRoute();
 

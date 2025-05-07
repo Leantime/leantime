@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\Clients\Repositories;
 
-use Leantime\Infrastructure\Database\Db as DbCore;
-use Leantime\Infrastructure\Database\Repository;
+use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Db\Repository;
 use PDO;
 
 class Clients extends Repository

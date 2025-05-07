@@ -5,20 +5,30 @@
 
 @dispatchEvent('beforeCalendar')
 
-{{--<div class="fc-right pull-right">--}}
-{{--    <div class="fc-button-group">--}}
-{{--        <select class="calendarViewSelect">--}}
-{{--            <option class="fc-agendaDay-button fc-button fc-state-default fc---}}
-{{--           corner-right" value="multiMonthOneMonth" @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</option>--}}
-{{--            <option class="fc-timeGridWeek-button fc-button fc-state-default fc---}}
-{{--           corner-right" value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>Week</option>--}}
-{{--            <option class="fc-agendaWeek-button fc-button fc-state---}}
-{{--          default" value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</option>--}}
-{{--            <option class="fc-agendaWeek-button fc-button fc-state---}}
-{{--          default" value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</option>--}}
-{{--        </select>--}}
-{{--    </div>--}}
-{{--</div>--}}
+
+<div class="clear minCalendar" style="position:absolute; top:10px; right:35px;">
+
+    <button class="btn btn-link btn-round-icon dropdown-toggle f-right" type="button" data-tippy-content="{{ __('text.calendar_view') }}"
+            data-toggle="dropdown"> <i class="fa-solid fa-calendar-week"></i></button>
+    <ul class="dropdown-menu pull-right">
+        <li>
+            <a class="fc-agendaDay-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+               data-value="multiMonthOneMonth"
+               @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</a>
+        </li>
+        <li>
+            <a class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right calendarViewSelect" href="javascript:void(0);"
+               data-value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>Week</a>
+        </li>
+        <li>
+            <a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+               data-value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</a>
+        </li>
+        <li><a class="fc-agendaWeek-button fc-button fc-state-default calendarViewSelect" href="javascript:void(0);"
+               data-value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</a></li>
+    </ul>
+
+</div>
 
 <div class="tw-h-full minCalendar">
     <div class="clear"></div>
@@ -35,7 +45,7 @@
                     }
                 @endphp
                 @foreach($week as $day)
-                    <button class="day-button tw-rounded-full tw-w-12 tw-h-12 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
+                    <button class="day-button tw-rounded-md tw-w-12 tw-h-12 tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-sm {{ $day->format('Y-m-d') === $today->format('Y-m-d') ? 'today active' : '' }}" data-date="{{ $day->format('Y-m-d') }}">
                         <span class="tw-text-xs">{{ $day->format('D') }}</span>
                         <span class="tw-font-medium">{{ $day->format('d') }}</span>
                     </button>

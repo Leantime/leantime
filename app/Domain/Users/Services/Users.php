@@ -4,14 +4,14 @@ namespace Leantime\Domain\Users\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Mailer as MailerCore;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Infrastructure\i18n\Language as LanguageCore;
-use Leantime\Infrastructure\Mail\Mailer as MailerCore;
 use Ramsey\Uuid\Uuid;
 use SVG\SVG;
 

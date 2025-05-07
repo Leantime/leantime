@@ -4,7 +4,7 @@ namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Leantime\Infrastructure\i18n\Language;
+use Leantime\Core\Language;
 
 /**
  * Class CarbonMacros

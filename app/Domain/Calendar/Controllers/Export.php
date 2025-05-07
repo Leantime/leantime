@@ -7,7 +7,7 @@
 namespace Leantime\Domain\Calendar\Controllers;
 
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Symfony\Component\HttpFoundation\Response;

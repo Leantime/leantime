@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Api\Repositories;
 
-use Leantime\Infrastructure\Database\Db as DbCore;
+use Leantime\Core\Db\Db as DbCore;
 
 class Api
 {

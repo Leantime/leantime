@@ -3,8 +3,8 @@
 namespace Unit\app\Core\Support;
 
 use Carbon\CarbonImmutable;
-use Leantime\Core\Support\CarbonMacros;
-use Leantime\Core\Support\Format;
+use Leantime\Infrastructure\Support\CarbonMacros;
+use Leantime\Infrastructure\Support\Format;
 use Tests\DateTimeHelper;
 use Tests\Language;
 use Tests\MockObject;
@@ -27,9 +27,9 @@ class FormatTest extends TestCase
 
         parent::setUp();
 
-        $this->languageMock = $this->createMock(\Leantime\Infrastructure\i18n\Language::class);
-        app()->instance(\Leantime\Core\Support\CarbonMacros::class, $this->carbonMacrosMock);
-        app()->instance(\Leantime\Infrastructure\i18n\Language::class, $this->languageMock);
+        $this->languageMock = $this->createMock(\Leantime\Core\Language::class);
+        app()->instance(\Leantime\Infrastructure\Support\CarbonMacros::class, $this->carbonMacrosMock);
+        app()->instance(\Leantime\Core\Language::class, $this->languageMock);
 
         // America Los_Angeles is UTC - 8 so all db times need to come back from UTC - 8 hours
         CarbonImmutable::mixin(new CarbonMacros(

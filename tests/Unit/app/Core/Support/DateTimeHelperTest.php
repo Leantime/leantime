@@ -6,9 +6,9 @@ use Carbon\CarbonImmutable;
 use Carbon\Exceptions\InvalidDateException;
 use Carbon\Exceptions\InvalidFormatException;
 use Leantime\Core\Configuration\Environment;
-use Leantime\Core\Support\CarbonMacros;
-use Leantime\Core\Support\DateTimeHelper;
-use Leantime\Infrastructure\i18n\Language;
+use Leantime\Core\Language;
+use Leantime\Infrastructure\Support\CarbonMacros;
+use Leantime\Infrastructure\Support\DateTimeHelper;
 use Unit\TestCase;
 
 class DateTimeHelperTest extends TestCase
@@ -41,7 +41,7 @@ class DateTimeHelperTest extends TestCase
 
             return $map[$index] ?? null;
         });
-        app()->instance(\Leantime\Infrastructure\i18n\Language::class, $this->languageMock);
+        app()->instance(\Leantime\Core\Language::class, $this->languageMock);
 
         // Register mocks with the application container
         //

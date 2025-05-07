@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Errors\Controllers;
 
-use Leantime\Core\Http\Controller\Controller;
+use Leantime\Core\Controller\Controller;
 
 class Error501 extends Controller
 {
