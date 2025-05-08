@@ -444,3 +444,15 @@
 .maincontentinner .fc-theme-standard th {
     border-top:0px;
 }
+
+.maincontentinner .fc-daygrid-body table td {
+    border-bottom:0px;
+}
+
+.maincontentinner .fc-timegrid-divider {
+    border-bottom:0px;
+}
+
+.fc-scrollgrid .fc-scrollgrid-section:first-child .fc-scroller-harness {
+    box-shadow: var(--regular-shadow);
+}
