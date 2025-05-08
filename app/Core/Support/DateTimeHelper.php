@@ -5,6 +5,7 @@ namespace Leantime\Core\Support;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\Exceptions\InvalidDateException;
+use Carbon\Exceptions\InvalidFormatException;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -147,7 +148,7 @@ class DateTimeHelper extends CarbonImmutable
                 return $this->datetime;
             }
 
-            throw new InvalidDateException('The string is not a valid date time string to parse as user datetime string', $userDate);
+            throw new InvalidFormatException('The string is not a valid date time string to parse as user datetime string');
         }
 
     }
@@ -183,7 +184,7 @@ class DateTimeHelper extends CarbonImmutable
                 return $this->datetime;
             }
 
-            throw new InvalidDateException('The string is not a valid date time string to parse as Database string', $dbDate);
+            throw new InvalidFormatException('The string is not a valid date time string to parse as Database string');
         }
     }
 
