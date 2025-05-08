@@ -24,7 +24,7 @@ Built with ADHD, dyslexia and autism in mind. 🧠<br />
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/leantime)
 <br />
 
-  ![alt text](public/assets/images/Screenshots/mywork-v3.4.png "Home Screen")
+  ![alt text](public/assets/images/Screenshots/mywork-v3.5.png "Home Screen")
 
 </div>
 <br /><br />
@@ -253,6 +253,13 @@ For timesheets: <br />
 ### Common Issues
 
 Please refer to our [documentation](https://docs.leantime.io/installation/common-issues) about common issues found when installing or updating Leantime 
+
+## 🔌 Extend Leantime ##
+
+You can extend Leantime by 
+- building your own plugin: [Plugin Docs](https://docs.leantime.io/development/plugin-development)
+- using our json-rpc API: [API Docs](https://docs.leantime.io/api/usage)
+- or by purchasing a plugin from our [marketplace](https://marketplace.leantime.io)
 
 
 ## 🛟 Let us install it for you. ##
