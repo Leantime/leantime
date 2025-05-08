@@ -141,7 +141,7 @@
 
     </li>
 
-    <li>
+    <li class="userloggedinfo">
         <a
             href='javascript:void(0);'
             class="dropdown-toggle"
