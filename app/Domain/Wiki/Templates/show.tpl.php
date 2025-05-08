@@ -8,7 +8,7 @@ $wikiHeadlines = $tpl->get('wikiHeadlines');
 $currentWiki = $tpl->get('currentWiki');
 $currentArticle = $tpl->get('currentArticle');
 
-function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\Template $tplObject = null): void
+function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\UI\Template $tplObject = null): void
 {
 
     foreach ($array as $headline) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core;
+namespace Leantime\Core\UI;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -15,8 +15,8 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Http\IncomingRequest;
+use Leantime\Core\Language;
 use Leantime\Core\Support\DateTimeInfoEnum;
-use Leantime\Core\UI\Theme;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Symfony\Component\HttpFoundation\RedirectResponse;

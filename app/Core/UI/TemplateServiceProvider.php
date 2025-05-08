@@ -3,7 +3,6 @@
 namespace Leantime\Core\UI;
 
 use Illuminate\Support\ServiceProvider;
-use Leantime\Core\Template;
 
 class TemplateServiceProvider extends ServiceProvider
 {

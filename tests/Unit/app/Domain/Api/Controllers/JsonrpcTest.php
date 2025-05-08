@@ -6,7 +6,7 @@ use Leantime\Core\Application;
 use Leantime\Core\Bootstrap\LoadConfig;
 use Leantime\Core\Bootstrap\SetRequestForConsole;
 use Leantime\Core\Language;
-use Leantime\Core\Template;
+use Leantime\Core\UI\Template;
 use Leantime\Domain\Api\Controllers\Jsonrpc;
 
 class JsonrpcTest extends \Unit\TestCase

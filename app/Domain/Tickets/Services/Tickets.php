@@ -15,7 +15,7 @@ use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Core\Template as TemplateCore;
+use Leantime\Core\UI\Template as TemplateCore;
 use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
