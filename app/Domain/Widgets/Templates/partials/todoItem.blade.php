@@ -258,7 +258,7 @@
                 <input type="hidden" name="milestone" value="{{ $ticket['type'] == "milestone" ? $ticket['id'] : '' }}"/>
                 <input type="hidden" name="status" value="3"/>
                 <input type="hidden" name="quickadd" value="true"/>
-                <input type="hidden" name="sortIndex" value="{{ ((collect($ticket['children'])->last()['sortIndex'] ?? 10)+5) }}" />
+                <input type="hidden" name="sortIndex" value="{{ isset($ticket['children']) ? ((collect($ticket['children'])->last()['sortIndex'] ?? 10)+5) : 10 }}" />
                 <input type="hidden" name="projectId" value="{{ $ticket['projectId'] }}"/>
                 <input type="hidden" name="priority"
                        value="{{ $groupBy === "priority" ? $groupKey : '' }}"/>
