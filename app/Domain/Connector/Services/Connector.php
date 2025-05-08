@@ -314,7 +314,7 @@ class Connector
                 if (str_contains($row[$matchingUsernameSourceField], '@')) {
                     $user = $this->userService->getUserByEmail(
                         email: trim($row[$matchingUsernameSourceField]),
-                        status: null
+                        status: ''
                     );
                     if ($user) {
                         $row['id'] = $user['id'];
