@@ -46,6 +46,7 @@ return [
             \Leantime\Core\Routing\FrontcontrollerServiceProvider::class,
             \Leantime\Core\UI\ViewsServiceProvider::class,
             \Leantime\Core\UI\TemplateServiceProvider::class,
+            \Leantime\Core\UI\ThemeServiceProvider::class,
 
             // Console support
             \Illuminate\Database\MigrationServiceProvider::class,
