@@ -88,40 +88,68 @@ class DateTimeHelper extends CarbonImmutable
      */
     public function parseUserDateTime(string $userDate, ?string $userTime = ''): CarbonImmutable
     {
-
         // Initialize result variable to null
         $this->datetime = null;
 
         // Validate input string
         if (! $this->isValidDateString($userDate)) {
+            throw new InvalidDateException(
+                'The string is not a valid date time string to parse as user datetime string', $userDate
+            );
+        }
+
+        try {
+
+            // If no standard format worked, handle user format cases
+            $locale = substr($this->userLanguage, 0, 2);
+            $trimmedDate = trim($userDate);
+
+            if ($userTime === 'start') {
+                $this->datetime = CarbonImmutable::createFromLocaleFormat(
+                    '!'.$this->userDateFormat,
+                    $locale,
+                    $trimmedDate,
+                    $this->userTimezone
+                )
+                    ->startOfDay();
+            } elseif ($userTime === 'end') {
+                $this->datetime = CarbonImmutable::createFromLocaleFormat(
+                    '!'.$this->userDateFormat,
+                    $locale,
+                    $trimmedDate,
+                    $this->userTimezone
+                )
+                    ->endOfDay();
+            } elseif ($userTime === '' || $userTime === null) {
+                $this->datetime = CarbonImmutable::createFromLocaleFormat(
+                    '!'.$this->userDateFormat,
+                    $locale,
+                    $trimmedDate,
+                    $this->userTimezone
+                );
+            } else {
+                $this->datetime = CarbonImmutable::createFromLocaleFormat(
+                    '!'.$this->userDateFormat.' '.$this->userTimeFormat,
+                    $locale,
+                    trim($trimmedDate.' '.$userTime),
+                    $this->userTimezone
+                );
+            }
+
+            return $this->datetime;
+
+        } catch (\Exception $e) {
+            // Try standard formats first (non timezone formats are assumed user timezone)
+            $standardFormat = $this->tryParseStandardFormats($userDate, $this->userTimezone);
+            if ($standardFormat !== false) {
+                $this->datetime = $standardFormat;
+
+                return $this->datetime;
+            }
+
             throw new InvalidDateException('The string is not a valid date time string to parse as user datetime string', $userDate);
         }
 
-        // Try standard formats first (non timezone formats are assumed user timezone)
-        $standardFormat = $this->tryParseStandardFormats($userDate, $this->userTimezone);
-        if ($standardFormat !== false) {
-            $this->datetime = $standardFormat;
-
-            return $this->datetime;
-        }
-
-        // If no standard format worked, handle user format cases
-        $locale = substr($this->userLanguage, 0, 2);
-        $trimmedDate = trim($userDate);
-
-        if ($userTime === 'start') {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, $locale, $trimmedDate, $this->userTimezone)
-                ->startOfDay();
-        } elseif ($userTime === 'end') {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, $locale, $trimmedDate, $this->userTimezone)
-                ->endOfDay();
-        } elseif ($userTime === '' || $userTime === null) {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat, $locale, $trimmedDate, $this->userTimezone);
-        } else {
-            $this->datetime = CarbonImmutable::createFromLocaleFormat('!'.$this->userDateFormat.' '.$this->userTimeFormat, $locale, trim($trimmedDate.' '.$userTime), $this->userTimezone);
-        }
-
-        return $this->datetime;
     }
 
     /**
@@ -138,34 +166,42 @@ class DateTimeHelper extends CarbonImmutable
             throw new InvalidDateException('The string is not a valid date time string to parse as Database string', $dbDate);
         }
 
-        // Try standard formats first (non timezone formats are assumed user timezone)
-        $standardFormat = $this->tryParseStandardFormats($dbDate, $this->dbTimezone);
-        if ($standardFormat !== false) {
-            $this->datetime = $standardFormat;
+        try {
+            $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale(
+                $this->userLanguage
+            );
 
             return $this->datetime;
+
+        } catch (\Exception $e) {
+
+            // Try standard formats first (non timezone formats are assumed user timezone)
+            $standardFormat = $this->tryParseStandardFormats($dbDate, $this->dbTimezone);
+            if ($standardFormat !== false) {
+                $this->datetime = $standardFormat;
+
+                return $this->datetime;
+            }
+
+            throw new InvalidDateException('The string is not a valid date time string to parse as Database string', $dbDate);
         }
-
-        $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale($this->userLanguage);
-
-        return $this->datetime;
     }
 
     protected function tryParseStandardFormats($userDate, $timezone): CarbonImmutable|false
     {
         // Define standard formats to try first
         $standardFormats = [
+            "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
+            "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
+            'Y-m-d H:i:s',
             DateTime::ATOM,
             DateTime::ISO8601,
             DateTime::W3C,
-            "Y-m-d\TH:i:sP",     // ISO 8601 with timezone offset (e.g., 2025-04-16T00:00:00-04:00)
-            "Y-m-d\TH:i:s\Z",    // ISO 8601 UTC/Zulu time (e.g., 2025-04-16T00:00:00Z)
             "Ymd\THis\Z",    // ISO 8601 UTC/Zulu time (e.g., 20250429T110000Z) (for ical)
             "Ymd\THis",    // ISO 8601 no timezone (e.g., 20250429T110000) (for ical)
             "Y-m-d\TH:i:s",      // ISO 8601 without timezone (e.g., 2025-04-16T00:00:00)
             "Y-m-d\TH:i:se",
             'Y-m-d',
-            'Y-m-d H:i:s',
             'Y-m-d H:i',
         ];
 
