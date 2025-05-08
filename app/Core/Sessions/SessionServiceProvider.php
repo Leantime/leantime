@@ -46,6 +46,19 @@ class SessionServiceProvider extends LaravelSessionServiceProvider
                 $app['config']->set('session.driver', 'redis');
                 $app['config']->set('session.connection', 'sessions');
 
+            } else {
+
+                // Ensure session base path exists:
+                if (! is_dir(storage_path('framework/sessions')) && ! mkdir(
+                    $concurrentDirectory = storage_path('framework/sessions'),
+                    0755,
+                    true
+                ) && ! is_dir(
+                    $concurrentDirectory
+                )) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+                }
+
             }
 
             return new \Illuminate\Session\SessionManager($app);
