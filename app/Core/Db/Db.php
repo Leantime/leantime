@@ -11,66 +11,63 @@ use PDO;
 /**
  * Database Class - Very simple abstraction layer for pdo connection
  */
-class Db extends DatabaseManager
+class Db
 {
     use DispatchesEvents;
-
-    /**
-     * @var string database host default: localhost
-     */
-    private string $host = '';
-
-    /**
-     * @var string username for database
-     */
-    private string $user = '';
-
-    /**
-     * @var string password for database
-     */
-    private string $password = '';
-
-    /**
-     * @var string database name
-     */
-    private string $databaseName = '';
-
-    /**
-     * @var string|int database port default: 3306
-     */
-    private string|int $port = '3306';
-
-    /**
-     * @var PDO database connection
-     */
-    public PDO $database;
 
     /**
      * @var ConnectionInterface Laravel database connection
      */
     private ConnectionInterface $connection;
+    
+    /**
+     * @var DatabaseManager Laravel's database manager
+     */
+    private DatabaseManager $dbManager;
 
     /**
      * __construct - connect to database and select database
      *
+     * @param object $app Application container
+     * @param string $connection Connection name
      * @return void
      */
     public function __construct($app, $connection = 'mysql')
     {
-
-        // Get Laravel's database connection
-        $this->connection = $app['db']->connection($connection);
-
-        // Get the PDO connection from Laravel's connection
+        // Get Laravel's database manager from the container
+        $this->dbManager = $app['db'];
+        
+        // Get a connection from the manager
         try {
-
-            $this->database = $this->connection->getPdo();
-
+            $this->connection = $this->dbManager->connection($connection);
         } catch (\PDOException $e) {
-
             Log::error("Can't connect to database");
             throw new \Exception($e);
         }
+    }
+
+    /**
+     * Get the PDO connection (lazily retrieved from Laravel's connection pool)
+     *
+     * @return PDO
+     */
+    public function __get($name)
+    {
+        if ($name === 'database') {
+            return $this->connection->getPdo();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the Laravel ConnectionInterface
+     *
+     * @return ConnectionInterface
+     */
+    public function getConnection(): ConnectionInterface
+    {
+        return $this->connection;
     }
 
     /**

@@ -53,7 +53,8 @@ abstract class Repository
             {
                 $this->args = $args;
                 $this->caller_class = $caller_class;
-                $this->db = app()->make(Db::class);
+                // Use the singleton instance of Db to ensure connection pooling
+                $this->db = app()->get(Db::class);
             }
 
             /**
