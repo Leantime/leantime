@@ -1,3 +1,19 @@
+# Version: 3.5.2
+
+* [3de0011](https://github.com/Leantime/leantime/commit/3de001116ae9d79e1a0375bb6546f7f277874dba): task: fix exception format.
+* [d6e3aef](https://github.com/Leantime/leantime/commit/d6e3aef83aa5f0b71b5949082553212eb5f602ee): fix: performance issue due to datetimeparsing
+* [15d9a0d](https://github.com/Leantime/leantime/commit/15d9a0d67920333336d14a2ef306d3e4567fae2f): fix: Moved class back to where it belongs
+* [bd52903](https://github.com/Leantime/leantime/commit/bd52903a6d81f82c2c07dd896891ba99ff47a77e): Update headMenu.blade.php
+
+feat: better submenu design
+* [7a4c9a0](https://github.com/Leantime/leantime/commit/7a4c9a01b70107da379a412dba972320d3a990c0): task: version bump
+* [01c25b5](https://github.com/Leantime/leantime/commit/01c25b548d00ef52c8d1c78126ff76cba432a716): task: cleanup
+* [56ad95f](https://github.com/Leantime/leantime/commit/56ad95f22120c35c6add0a0dd9f0f5fd0601ffbd): fix: GetUserByEmail fails due to wrong user status #3034
+* [ecb5893](https://github.com/Leantime/leantime/commit/ecb589380d12effbda79b2c037cfbe2816e2a7f7): feat: calendar css improvements
+* [ddb45b3](https://github.com/Leantime/leantime/commit/ddb45b3311b9bfd2dd69188b65eb37cc14821d2a): feat: update default widget positions
+* [f8e9b89](https://github.com/Leantime/leantime/commit/f8e9b89b42caa4c38986d7e59bc1ed92aed0721d): fix: Ensure session folder exists
+
+
 # Version: 3.5.1
 
 * [1a97372](https://github.com/Leantime/leantime/commit/1a97372dcbc91f30627ec0ad84045f2058661e36): timesheet test update
