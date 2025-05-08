@@ -19,7 +19,7 @@ class Db
      * @var ConnectionInterface Laravel database connection
      */
     private ConnectionInterface $connection;
-    
+
     /**
      * @var DatabaseManager Laravel's database manager
      */
@@ -28,15 +28,15 @@ class Db
     /**
      * __construct - connect to database and select database
      *
-     * @param object $app Application container
-     * @param string $connection Connection name
+     * @param  object  $app  Application container
+     * @param  string  $connection  Connection name
      * @return void
      */
     public function __construct($app, $connection = 'mysql')
     {
         // Get Laravel's database manager from the container
         $this->dbManager = $app['db'];
-        
+
         // Get a connection from the manager
         try {
             $this->connection = $this->dbManager->connection($connection);
@@ -62,8 +62,6 @@ class Db
 
     /**
      * Get the Laravel ConnectionInterface
-     *
-     * @return ConnectionInterface
      */
     public function getConnection(): ConnectionInterface
     {
