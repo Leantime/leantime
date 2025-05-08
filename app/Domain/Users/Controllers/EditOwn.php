@@ -246,7 +246,6 @@ class EditOwn extends Controller
                 $this->themeCore->setColorScheme($postColorScheme);
                 $this->themeCore->setFont($themeFont);
 
-
                 $this->tpl->setNotification($this->language->__('notifications.changed_profile_settings_successfully'), 'success', 'themsettings_updated');
             }
 
