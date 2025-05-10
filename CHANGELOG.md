@@ -1,3 +1,14 @@
+# Version: 3.5.3
+
+* [98cdaa0](https://github.com/Leantime/leantime/commit/98cdaa05e0824553af33bc6a7e4ab9395d5a0e84): task: version bump
+* [0474f04](https://github.com/Leantime/leantime/commit/0474f041a34b9a412ff1dea98907c2448b17279b): task: fix code style
+* [8da7ba2](https://github.com/Leantime/leantime/commit/8da7ba2ccbb56ab3627b1c0290d56c50ef3bc588): task: Improve db integration with laravel
+* [88d615c](https://github.com/Leantime/leantime/commit/88d615c5eb32e1675e5de1c211984c317321e405): task: fix code style
+* [d91eb6a](https://github.com/Leantime/leantime/commit/d91eb6a7c90a521713068245eda98c22ef3fe128): fix: theme colors
+* [6e90139](https://github.com/Leantime/leantime/commit/6e901399c3a2a403489f87f94adecac8e4244519): fix: Theme not saving reliably
+* [f0e7716](https://github.com/Leantime/leantime/commit/f0e771681e6915867734f0d1a5b9b5cbd943a6e9): task: New Screenshot
+
+
 # Version: 3.5.2
 
 * [3de0011](https://github.com/Leantime/leantime/commit/3de001116ae9d79e1a0375bb6546f7f277874dba): task: fix exception format.
