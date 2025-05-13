@@ -3,8 +3,11 @@
 namespace Leantime\Core\Db;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Database;
+use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use PDO;
 use PDOStatement;
 use ReflectionClass;
@@ -20,6 +23,12 @@ abstract class Repository
     protected string $entity;
 
     protected string $model;
+
+    public function __construct(
+        DbCore $db
+    ) {
+        $this->db = $db;
+    }
 
     /**
      * dbcall - creates a new dbcall object

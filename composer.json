@@ -97,7 +97,9 @@
         "theodo-group/llphant": "^0.9.9",
         "prism-php/prism": "^0.57.0",
         "inspector-apm/neuron-ai": "^1.9",
-        "johngrogg/ics-parser": "^3"
+        "johngrogg/ics-parser": "^3",
+        "sabre/dav": "^4.7",
+        "hkulekci/qdrant": "^0.5.8"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

@@ -17,6 +17,7 @@ use Ramsey\Uuid\Uuid;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
 use Spatie\IcalendarGenerator\Enums\Display;
+use Leantime\Core\Events\EventDispatcher;
 
 class Calendar
 {
@@ -141,6 +142,9 @@ class Calendar
         if ($values['description'] !== '') {
             $result = $this->calendarRepo->addEvent($values);
 
+            // Trigger event for plugins
+            EventDispatcher::dispatch_event('afterCalendarSave', ['eventId' => $result, 'values' => $values]);
+
             return $result;
         } else {
             return false;
@@ -212,6 +216,9 @@ class Calendar
             if ($values['description'] !== '') {
                 $this->calendarRepo->editEvent($values, $id);
 
+                // Trigger event for plugins
+                EventDispatcher::dispatch_event('afterCalendarSave', ['eventId' => $id, 'values' => $values]);
+
                 return true;
             }
         }
@@ -230,6 +237,9 @@ class Calendar
      */
     public function delEvent(int $id): int|false
     {
+        // Trigger event for plugins
+        EventDispatcher::dispatch_event('afterCalendarDelete', ['eventId' => $id]);
+
         return $this->calendarRepo->delPersonalEvent($id);
     }
 
