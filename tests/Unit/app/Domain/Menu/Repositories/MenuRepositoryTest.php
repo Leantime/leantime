@@ -82,7 +82,6 @@ class MenuRepositoryTest extends TestCase
 
         // Menu structure checks if roles are set in a menu item and will disable a menu item if not allowed to see
         // User executing the test is not logged in, has no session so it being disabled is correct
-        $this->menu->menuStructures[$expected][10]['submenu'][60]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][40]['submenu'][80]['type'] = 'disabled';
         $this->menu->menuStructures[$expected][30]['submenu'][30]['href'] = '/ideas/showBoards';
 

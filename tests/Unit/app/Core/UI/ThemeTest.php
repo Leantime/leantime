@@ -4,6 +4,7 @@ namespace Unit\app\Core\UI;
 
 use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -27,6 +28,8 @@ class ThemeTest extends \Unit\TestCase
 
     protected $appSettingsMock;
 
+    protected $fileManagerMock;
+
     protected function setUp(): void
     {
 
@@ -40,6 +43,10 @@ class ThemeTest extends \Unit\TestCase
 
         ]);
         $this->languageMock = $this->make(Language::class, [
+
+        ]);
+
+        $this->fileManagerMock = $this->make(FileManager::class, [
 
         ]);
 
@@ -73,7 +80,8 @@ class ThemeTest extends \Unit\TestCase
             settingsRepo: $this->settingsRepoMock,
             language: $this->languageMock,
             config: $this->configMock,
-            appSettings: $this->appSettingsMock
+            appSettings: $this->appSettingsMock,
+            fileManager: $this->fileManagerMock
         );
 
         $colorScheme = $this->theme->getColorScheme();
@@ -93,7 +101,8 @@ class ThemeTest extends \Unit\TestCase
             settingsRepo: $this->settingsRepoMock,
             language: $this->languageMock,
             config: $configMock,
-            appSettings: $this->appSettingsMock
+            appSettings: $this->appSettingsMock,
+            fileManager: $this->fileManagerMock
         );
 
         $colorScheme = $theme->getColorScheme();

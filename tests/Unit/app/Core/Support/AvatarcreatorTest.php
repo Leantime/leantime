@@ -95,11 +95,11 @@ class AvatarcreatorTest extends TestCase
             mkdir($cacheDir, 0777, true);
         }
         $testFile = $cacheDir.'/user-jd.svg';
-        file_put_contents($testFile, '<svg></svg>');
+        file_put_contents($testFile, '<svg>test</svg>');
 
         $result = $this->avatarCreator->getAvatar('John Doe');
 
-        $this->assertEquals($testFile, $result);
+        $this->assertEquals(SVG::fromString('<svg>test</svg>'), $result);
         unlink($testFile);
     }
 
@@ -114,7 +114,8 @@ class AvatarcreatorTest extends TestCase
         $cacheDir = storage_path('framework/cache/avatars');
         $testFile = $cacheDir.'/user-jd.svg';
 
-        $this->assertEquals($testFile, $result);
+
+        $this->assertFileExists($testFile);
     }
 
     public function test_get_avatar_with_special_characters()
@@ -128,7 +129,7 @@ class AvatarcreatorTest extends TestCase
         $cacheDir = storage_path('framework/cache/avatars');
         $testFile = $cacheDir.'/user-jd.svg';
 
-        $this->assertEquals($testFile, $result);
+        $this->assertFileExists($testFile);
     }
 
     public function test_get_avatar_with_non_latin_characters()
@@ -142,6 +143,6 @@ class AvatarcreatorTest extends TestCase
         $cacheDir = storage_path('framework/cache/avatars');
         $testFile = $cacheDir.'/user-李王.svg';
 
-        $this->assertEquals($testFile, $result);
+        $this->assertFileExists($testFile);
     }
 }
