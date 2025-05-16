@@ -6,6 +6,7 @@ parameters:
     paths:
         - ../public
         - ../app
+        - ../.phpstan/Rules
     excludePaths:
         - ../app/Plugins/*/vendor/*
     scanDirectories:
@@ -35,3 +36,8 @@ parameters:
             - redirect
             - display
             - displayPartial
+# services:
+#    -
+#        class: Leanstan\Rules\FacadeRule
+#        tags:
+#            - phpstan.rules.rule

@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
+use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Auth\Models\Roles;
@@ -17,7 +18,6 @@ use Ramsey\Uuid\Uuid;
 use Spatie\IcalendarGenerator\Components\Calendar as IcalCalendar;
 use Spatie\IcalendarGenerator\Components\Event as IcalEvent;
 use Spatie\IcalendarGenerator\Enums\Display;
-use Leantime\Core\Events\EventDispatcher;
 
 class Calendar
 {

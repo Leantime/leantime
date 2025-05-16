@@ -111,5 +111,17 @@ Kebab Case (Example: `<x-global::my-directive>`)
 **Blade File Names**
 Kebab Case + `blade.php` (Example: `my-directive.blade.php`)
 
+
+## Facades
+
+While facades are a valuable tool in Laravel's toolbox exessive usage can create problems around testing 
+and modularity. For that purpose we limit the allowed facades to the following classes:
+
+`Cache::`
+`Log::`
+
+All other classes should be injected via constructor.
+
+
 ## References
 This document was adapted from the open-source contribution guidelines for [Facebook's Draft](https://github.com/facebookarchive/draft-js/blob/5dd99d327066f5f0b30b95ab95770822cff1ac65/CONTRIBUTING.md)

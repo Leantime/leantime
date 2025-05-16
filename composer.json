@@ -99,7 +99,9 @@
         "inspector-apm/neuron-ai": "^1.9",
         "johngrogg/ics-parser": "^3",
         "sabre/dav": "^4.7",
-        "hkulekci/qdrant": "^0.5.8"
+        "hkulekci/qdrant": "^0.5.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "league/flysystem-path-prefixing": "^3.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -141,6 +143,9 @@
             ],
             "Unit\\": [
                 "tests/Unit/"
+            ],
+            "Leanstan\\": [
+                ".phpstan/"
             ]
         },
         "files": [

@@ -5,21 +5,16 @@ namespace Leantime\Domain\Files\Controllers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAll extends Controller
 {
-    private FileRepository $filesRepo;
-
     private FileService $filesService;
 
     public function init(
-        FileRepository $filesRepo,
         FileService $filesService
     ): void {
-        $this->filesRepo = $filesRepo;
         $this->filesService = $filesService;
     }
 
@@ -36,7 +31,7 @@ class ShowAll extends Controller
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
-                $this->filesRepo->upload($_FILES, 'project', session('currentProject'));
+                $this->filesService->upload($_FILES, 'project', session('currentProject'));
                 $this->tpl->setNotification('notifications.file_upload_success', 'success', 'file_uploaded');
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
@@ -56,9 +51,9 @@ class ShowAll extends Controller
         }
 
         $this->tpl->assign('currentModule', $currentModule);
-        $this->tpl->assign('modules', $this->filesRepo->getModules(session('userdata.id')));
+        $this->tpl->assign('modules', $this->filesService->getModules(session('userdata.id')));
         $this->tpl->assign('imgExtensions', ['jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv']);
-        $this->tpl->assign('files', $this->filesRepo->getFilesByModule('project', session('currentProject'), session('userdata.id')));
+        $this->tpl->assign('files', $this->filesService->getFilesByModule('project', session('currentProject'), session('userdata.id')));
 
         return $this->tpl->displayPartial('files.showAll');
     }
