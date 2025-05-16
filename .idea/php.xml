@@ -342,6 +342,8 @@
       <path value="$PROJECT_DIR$/vendor/hkulekci/qdrant" />
       <path value="$PROJECT_DIR$/vendor/league/flysystem-aws-s3-v3" />
       <path value="$PROJECT_DIR$/vendor/league/flysystem-path-prefixing" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

@@ -327,7 +327,7 @@ class Format
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
-        $bytes = max(this->value, 0);
+        $bytes = max($this->value, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);
 
