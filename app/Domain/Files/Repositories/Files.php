@@ -4,38 +4,24 @@ namespace Leantime\Domain\Files\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Files\Fileupload;
-use Leantime\Domain\Users\Repositories\Users as UserRepo;
+use Leantime\Core\Files\Contracts\FileManagerInterface;
 use PDO;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Files
 {
-    private array $adminModules = ['project' => 'Projects', 'ticket' => 'Tickets', 'client' => 'Clients', 'lead' => 'Lead', 'private' => 'General']; // 'user'=>'Users',
+    public array $adminModules = ['project' => 'Projects', 'ticket' => 'Tickets', 'client' => 'Clients', 'lead' => 'Lead', 'private' => 'General']; // 'user'=>'Users',
 
-    private array $userModules = ['project' => 'Projects', 'ticket' => 'Tickets', 'private' => 'General'];
+    public array $userModules = ['project' => 'Projects', 'ticket' => 'Tickets', 'private' => 'General'];
 
     private DbCore $db;
 
-    public function __construct(DbCore $db)
+    private FileManagerInterface $fileManager;
+
+    public function __construct(DbCore $db, FileManagerInterface $fileManager)
     {
         $this->db = $db;
-    }
-
-    /**
-     * @return string[]
-     *
-     * @throws BindingResolutionException
-     */
-    public function getModules($id): array
-    {
-        $users = app()->make(UserRepo::class);
-
-        $modules = $this->userModules;
-        if ($users->isAdmin($id)) {
-            $modules = $this->adminModules;
-        }
-
-        return $modules;
+        $this->fileManager = $fileManager;
     }
 
     public function addFile($values, $module): false|string
@@ -193,7 +179,6 @@ class Files
 
     public function deleteFile($id): bool
     {
-
         $sql = 'SELECT encName, extension FROM zp_file WHERE id=:id';
 
         $stmn = $this->db->database->prepare($sql);
@@ -204,10 +189,12 @@ class Files
         $stmn->closeCursor();
 
         if (isset($values['encName']) && isset($values['extension'])) {
-            $file = ROOT.'/../userfiles/'.$values['encName'].'.'.$values['extension'];
-            if (file_exists($file)) {
-                unlink($file);
-            }
+            // Use FileManager to delete the file
+            $fileName = $values['encName'].'.'.$values['extension'];
+
+            // Try to delete from both public and private storage
+            $this->fileManager->deleteFile($fileName, false); // Private storage
+            $this->fileManager->deleteFile($fileName, true);  // Public storage
         }
 
         $sql = 'DELETE FROM zp_file WHERE id=:id';
@@ -215,8 +202,10 @@ class Files
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-        return $stmn->execute();
+        $result = $stmn->execute();
         $stmn->closeCursor();
+
+        return $result;
     }
 
     /**
@@ -226,7 +215,6 @@ class Files
      */
     public function upload($file, $module, $moduleId): false|string|array
     {
-
         // Clean module mess
         if ($module === 'projects') {
             $module = 'project';
@@ -235,25 +223,31 @@ class Files
             $module = 'ticket';
         }
 
-        $upload = app()->make(Fileupload::class);
+        try {
+            $uploadedFile = $file['file'];
+            $path = $uploadedFile['name'];
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $realName = str_replace('.'.$ext, '', $uploadedFile['name']);
 
-        $path = $file['file']['name'];
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
-
-        $upload->initFile($file['file']);
-
-        $return = false;
-
-        if ($upload->error == '') {
             // Just something unique to avoid collision in s3 (each customer has their own folder)
             $newname = md5(session('userdata.id').time());
 
-            $upload->renameFile($newname);
+            // Create a UploadedFile instance
+            $symfonyFile = new UploadedFile(
+                $uploadedFile['tmp_name'],
+                $uploadedFile['name'],
+                $uploadedFile['type'],
+                $uploadedFile['error'],
+                true
+            );
 
-            if ($upload->upload() === true) {
+            // Use FileManager to upload the file
+            $result = $this->fileManager->upload($symfonyFile, $newname, false);
+
+            if ($result !== false) {
                 $values = [
                     'encName' => $newname,
-                    'realName' => str_replace('.'.$ext, '', $file['file']['name']),
+                    'realName' => $realName,
                     'extension' => $ext,
                     'moduleId' => $moduleId,
                     'userId' => session('userdata.id'),
@@ -265,17 +259,17 @@ class Files
 
                 if ($fileAddResults) {
                     $values['fileId'] = $fileAddResults;
-                    $return = $values;
-                } else {
-                    $return = false;
-                }
-            } else {
-                // report($upload->error);
-                return $upload->error;
-            }
-        }
 
-        return $return;
+                    return $values;
+                }
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            report($e);
+
+            return $e->getMessage();
+        }
     }
 
     public function uploadCloud($name, $url, $module, $moduleId): void

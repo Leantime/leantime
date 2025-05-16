@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller\Controller;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
+use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,15 +11,15 @@ class Files extends Controller
 {
     private UserService $userService;
 
-    private FileRepository $fileRepo;
+    private FileService $fileService;
 
     /**
      * init - initialize private variables
      */
-    public function init(FileRepository $fileRepo, UserService $userService): void
+    public function init(FileService $fileService, UserService $userService): void
     {
         $this->userService = $userService;
-        $this->fileRepo = $fileRepo;
+        $this->fileService = $fileService;
     }
 
     /**
@@ -45,15 +45,20 @@ class Files extends Controller
             $module = htmlentities($_GET['module']);
             $id = (int) $_GET['moduleId'];
 
-            return $this->tpl->displayJson($this->fileRepo->upload($_FILES, $module, $id));
+            $result = $this->fileService->upload($_FILES, $module, $id);
+            if (is_string($result)) {
+                return $this->tpl->displayJson(['status' => 'error', 'message' => $result], 500);
+            } else {
+                return $this->tpl->displayJson($result);
+            }
         }
 
         if (isset($_FILES['file'])) {
+            // For image paste uploads
             $_FILES['file']['name'] = 'pastedImage.png';
-            $file = $this->fileRepo->upload($_FILES, 'project', session('currentProject'));
+            $file = $this->fileService->upload($_FILES, 'project', session('currentProject'));
 
             if (is_array($file)) {
-
                 return new Response(BASE_URL.'/files/get?'
                     .http_build_query([
                         'encName' => $file['encName'],
@@ -63,7 +68,8 @@ class Files extends Controller
             }
 
             if (is_string($file)) {
-                $this->tpl->displayJson(['status' => $file], 500);
+                // If the result is a string, it's an error message
+                $this->tpl->displayJson(['status' => 'error', 'message' => $file], 500);
             }
         }
 

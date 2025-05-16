@@ -5,7 +5,6 @@ namespace Leantime\Domain\Users\Repositories;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\Db as DbCore;
-use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Files\Repositories\Files;
 use PDO;
 use SVG\SVG;
@@ -38,7 +37,7 @@ class Users
     public function __construct(
         protected Environment $config,
         protected DbCore $db,
-        protected Avatarcreator $avatarcreator,
+
         protected Files $files
     ) {}
 
@@ -520,45 +519,24 @@ class Users
      *
      * @throws BindingResolutionException
      */
-    public function setPicture(array $_FILE, $id): void
+    public function setPicture($fileId, $id): void
     {
 
-        $sql = 'SELECT * FROM `zp_user` WHERE id=:id';
+        $sql = 'UPDATE
+                        `zp_user`
+                    SET
+                        profileId = :fileId,
+                        modified = :modified
+                    WHERE id = :userId';
 
         $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmn->bindValue(':fileId', $fileId, PDO::PARAM_INT);
+        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+        $stmn->bindValue(':modified', dtHelper()->dbNow()->formatDateTimeForDb(), PDO::PARAM_STR);
 
         $stmn->execute();
-        $values = $stmn->fetch();
         $stmn->closeCursor();
 
-        if (isset($values['profileId']) && $values['profileId'] > 0) {
-
-            $file = $this->files->getFile($values['profileId']);
-            if (is_array($file)) {
-                $img = 'userdata/'.$file['encName'].$file['extension'];
-                $this->files->deleteFile($values['profileId']);
-            }
-        }
-
-        $lastId = $this->files->upload($_FILE, 'user', $id);
-
-        if (isset($lastId['fileId'])) {
-            $sql = 'UPDATE
-                            `zp_user`
-                        SET
-                            profileId = :fileId,
-                            modified = :modified
-                        WHERE id = :userId';
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
-            $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-            $stmn->execute();
-            $stmn->closeCursor();
-        }
     }
 
     /**
@@ -566,7 +544,7 @@ class Users
      *
      * @throws BindingResolutionException
      */
-    public function getProfilePicture($id): array|SVG
+    public function getProfilePicture($id): array|false
     {
         $value = false;
         if ($id !== false) {
@@ -580,37 +558,7 @@ class Users
             $stmn->closeCursor();
         }
 
-        // If can't find user, return ghost
-        if (empty($value)) {
-            $avatar = $this->avatarcreator->getAvatar('👻');
-
-            return ['filename' => $avatar, 'type' => 'generated'];
-        }
-
-        // If user uploaded return uploaded file
-        if (! empty($value['profileId'])) {
-
-            $file = $this->files->getFile($value['profileId']);
-
-            if ($file) {
-                $filePath = $file['encName'].'.'.$file['extension'];
-                $type = $file['extension'];
-
-                return ['filename' => $filePath, 'type' => 'uploaded'];
-            }
-
-        }
-
-        // Otherwise return avatar
-        $name = $value['firstname'].' '.$value['lastname'];
-
-        $avatar = $this->avatarcreator->getAvatar($name);
-
-        if (is_string($avatar)) {
-            return ['filename' => $avatar, 'type' => 'generated'];
-        }
-
-        return $avatar;
+        return $value;
 
     }
 

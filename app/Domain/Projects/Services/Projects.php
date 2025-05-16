@@ -4,14 +4,16 @@ namespace Leantime\Domain\Projects\Services;
 
 use DateInterval;
 use DateTime;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher as EventCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\Avatarcreator;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
+use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Leancanvas\Repositories\Leancanvas as LeancanvaRepository;
@@ -23,6 +25,8 @@ use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Wiki\Repositories\Wiki;
+use SVG\SVG;
+use Symfony\Component\HttpFoundation\Response;
 
 class Projects
 {
@@ -32,10 +36,11 @@ class Projects
         private ProjectRepository $projectRepository,
         private TicketRepository $ticketRepository,
         private SettingRepository $settingsRepo,
-        private FileRepository $filesRepository,
         private LanguageCore $language,
         private Messengers $messengerService,
-        private NotificationService $notificationService
+        private NotificationService $notificationService,
+        protected Files $fileService,
+        protected Avatarcreator $avatarcreator
     ) {}
 
     /**
@@ -1238,14 +1243,34 @@ class Projects
      * Retrieves the avatar for a project.
      *
      * @param  mixed  $id  The ID of the project.
-     * @return mixed The avatar for the project.
+     * @return SVG|Response|string Returns either an SVG file, a file response or a path to a file
      *
      * @api
      */
-    public function getProjectAvatar($id): mixed
+    public function getProjectAvatar($id): SVG|Response|string
     {
-        $avatar = $this->projectRepository->getProjectAvatar($id);
-        $avatar = self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
+        $project = $this->projectRepository->getProjectAvatar($id);
+
+        if (empty($project)) {
+            return $this->avatarcreator->getAvatar('🦄');
+        }
+
+        $this->avatarcreator->setFilePrefix('project');
+        $this->avatarcreator->setBackground('#555555');
+
+        // If user uploaded return uploaded file
+        if (! empty($project['avatar'])) {
+
+            $file = $this->fileService->getFileById($project['avatar']);
+            if ($file) {
+                return $file;
+            }
+
+        }
+
+        $avatar = $this->avatarcreator->getAvatar($project['name']);
+
+        return self::dispatch_filter('afterGettingAvatar', $avatar, ['projectId' => $id]);
 
         return $avatar;
     }
@@ -1257,11 +1282,36 @@ class Projects
      * @param  mixed  $project  The project object.
      * @return bool Indicates whether the avatar was successfully set.
      *
+     * @throws BindingResolutionException
+     *
      * @api
      */
-    public function setProjectAvatar($file, $project): bool
+    public function setProjectAvatar($file, $projectId): bool
     {
-        return $this->projectRepository->setPicture($file, $project);
+
+        $project = $this->projectRepository->getProject($projectId);
+
+        // Save the path to the old picture
+        if (isset($project['avatar']) && $project['avatar'] > 0) {
+            $oldPicture = $project['avatar'];
+        }
+
+        $leantimeFile = $this->fileService->upload($file, 'project', $projectId);
+
+        if ($leantimeFile
+            && $this->projectRepository->setPicture($leantimeFile['fileId'], $projectId)
+            && $oldPicture) {
+
+            try {
+                $this->fileService->deleteFile($oldPicture);
+            } catch (\Exception $e) {
+                Log::warning('Could not delete old profile picture: '.$e->getMessage());
+                Log::warning($e);
+            }
+
+        }
+
+        return true;
     }
 
     /**

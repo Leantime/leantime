@@ -6,6 +6,7 @@ use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Controller;
+use Leantime\Core\Files\FileManager;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,14 +20,18 @@ class Get extends Controller
 
     private Environment $config;
 
+    private FileManager $fileManager;
+
     public function init(
         FileRepository $filesRepo,
         FileService $filesService,
-        Environment $config
+        Environment $config,
+        FileManager $fileManager
     ): void {
         $this->filesRepo = $filesRepo;
         $this->filesService = $filesService;
         $this->config = $config;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -34,17 +39,22 @@ class Get extends Controller
      */
     public function get(): Response
     {
-
         $encName = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['encName']);
         $realName = $_GET['realName'];
         $ext = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['ext']);
         $module = preg_replace('/[^a-zA-Z0-9]+/', '', $_GET['module'] ?? '');
 
-        if ($this->config->useS3) {
-            return $this->getFileFromS3($encName, $ext, $module, $realName);
-        } else {
-            return $this->getFileLocally($encName, $ext, $module, $realName);
+        // Construct the file name
+        $fileName = $encName.'.'.$ext;
+
+        // Use the FileManager to get the file
+        $response = $this->fileManager->getFile($fileName, $realName, false);
+
+        if ($response === false) {
+            return new Response('File not found', 404);
         }
+
+        return $response;
     }
 
     /**

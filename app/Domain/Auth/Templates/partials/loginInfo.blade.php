@@ -2,7 +2,7 @@
 
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
-    @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
+    @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false && session("companysettings.logoPath") !== '')
         <a href='{{ BASE_URL }}/users/editOwn/' preload="mouseover" class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
             <img src="{{ session("companysettings.logoPath") }}" class="logo tw-pl-1" />

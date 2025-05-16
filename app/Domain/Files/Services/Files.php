@@ -3,32 +3,30 @@
 namespace Leantime\Domain\Files\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
+use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Files\Exceptions\FileValidationException;
+use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Notifications\Models\Notification;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @api
  */
 class Files
 {
-    private FileRepository $fileRepository;
-
-    private ProjectService $projectService;
-
-    private LanguageCore $language;
+    use DispatchesEvents;
 
     public function __construct(
-        FileRepository $fileRepository,
-        ProjectService $projectService,
-        LanguageCore $language
-    ) {
-
-        $this->fileRepository = $fileRepository;
-        $this->projectService = $projectService;
-        $this->language = $language;
-    }
+        protected FileRepository $fileRepository,
+        protected FileManager $fileManager,
+        protected LanguageCore $language,
+    ) {}
 
     /**
      * @api
@@ -43,50 +41,94 @@ class Files
      *
      * @api
      */
-    public function uploadFile($file, $module, $entityId, $entity = null): array|bool
+    public function upload($file, $module, $moduleId, $entity = null, $disk = 'default'): array|string
     {
+        try {
+            // Validate input parameters
+            if (empty($module) || empty($moduleId)) {
+                Log::warning('Upload attempted with missing module or moduleId', [
+                    'module' => $module,
+                    'moduleId' => $moduleId,
+                ]);
+                throw new FileValidationException('Missing module or moduleId', FileValidationException::VALIDATION_ERROR);
+            }
 
-        if (isset($file['file'])) {
-            if ($return = $this->fileRepository->upload($file, $module, $entityId)) {
+            if (! isset($file['file']) || ! is_array($file['file'])) {
+                throw new FileNotFoundException('File not included in request or has invalid format');
+            }
+        } catch (FileValidationException $e) {
+            Log::warning('File validation failed: '.$e->getMessage());
 
-                switch ($module) {
-                    case 'ticket':
-                        $subject = sprintf($this->language->__('email_notifications.new_file_todo_subject'), $entity->id, strip_tags($entity->headline));
-                        $message = sprintf($this->language->__('email_notifications.new_file_todo_subject'), session('userdata.name'), strip_tags($entity->headline));
-                        $linkLabel = $this->language->__('email_notifications.new_file_todo_cta');
-                        break;
-                    default:
-                        $subject = $this->language->__('email_notifications.new_file_general_subject');
-                        $message = $this->language->__('email_notifications.new_file_general_message');
-                        $linkLabel = $this->language->__('email_notifications.new_file_general_cta');
-                        break;
-                }
+            return $e->getUserMessage();
+        }
 
-                if ($module !== 'user') {
-                    $notification = app()->make(Notification::class);
-                    $notification->url = [
-                        'url' => CURRENT_URL,
-                        'text' => $linkLabel,
-                    ];
+        // Normalize module names for consistency
+        if ($module === 'projects') {
+            $module = 'project';
+        }
+        if ($module === 'tickets') {
+            $module = 'ticket';
+        }
 
-                    $notification->entity = $file;
-                    $notification->module = $module;
-                    $notification->projectId = session('currentProject');
-                    $notification->subject = $subject;
-                    $notification->authorId = session('userdata.id');
-                    $notification->message = $message;
+        try {
+            // Validate file type with the enhanced validator
+            $symfonyFile = new UploadedFile(
+                $file['file']['tmp_name'],
+                $file['file']['name'],
+                $file['file']['type'],
+                $file['file']['error'],
+                true
+            );
 
-                    $this->projectService->notifyProjectUsers($notification);
-                }
+            // Validate file size before processing
+            if ($file['file']['size'] > FileManager::getMaximumFileUploadSize()) {
+                throw new FileValidationException('File exceeds maximum allowed size', FileValidationException::FILE_TOO_LARGE);
+            }
+        } catch (FileValidationException $e) {
+            Log::warning('File validation failed: '.$e->getMessage());
 
-                return $return;
+            return $e->getUserMessage();
+        }
 
-            } else {
-                return false;
+        try {
+            // Create a UploadedFile instance
+            $symfonyFile = new UploadedFile(
+                $file['file']['tmp_name'],
+                $file['file']['name'],
+                $file['file']['type'],
+                $file['file']['error'],
+                (bool) config('app.debug')
+            );
+
+            $leantimeFile = $this->fileManager->upload($symfonyFile, $disk);
+        } catch (\Exception $e) {
+            return 'Error uploading file: '.$e->getMessage();
+        }
+
+        if ($leantimeFile) {
+            $leantimeFile['module'] = $module;
+            $leantimeFile['moduleId'] = $moduleId;
+
+            $fileAddResults = $this->fileRepository->addFile($leantimeFile, $module);
+
+            if ($fileAddResults) {
+                $leantimeFile['fileId'] = $fileAddResults;
+
+                return $leantimeFile;
             }
         }
 
         return false;
+    }
+
+    public function getModules($id): array
+    {
+        $modules = $this->fileRepository->userModules;
+        if (Auth::userIsAtLeast(Roles::$admin)) {
+            $modules = $this->fileRepository->adminModules;
+        }
+
+        return $modules;
     }
 
     /**
@@ -95,5 +137,25 @@ class Files
     public function deleteFile($fileId): bool
     {
         return $this->fileRepository->deleteFile($fileId);
+    }
+
+    public function getFilePathById($fileId): false|string
+    {
+        $dbReference = $this->fileRepository->getFile($fileId);
+        if ($dbReference) {
+            return $this->fileManager->getFileUrl($dbReference['encName'].'.'.$dbReference['extension']);
+        }
+
+        return false;
+    }
+
+    public function getFileById($fileId): false|Response
+    {
+        $dbReference = $this->fileRepository->getFile($fileId);
+        if ($dbReference) {
+            return $this->fileManager->getFile($dbReference['encName'].'.'.$dbReference['extension'], $dbReference['realName']);
+        }
+
+        return false;
     }
 }

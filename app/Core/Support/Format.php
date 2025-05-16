@@ -315,4 +315,22 @@ class Format
             return $this->value->endOfDay()->diffForHumans();
         }
     }
+
+    /**
+     * Format bytes to human readable format
+     *
+     * @param  int  $bytes  The number of bytes
+     * @param  int  $precision  The number of decimal places
+     * @return string The formatted size
+     */
+    public function formatBytes(): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+        $bytes = max(this->value, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        return round($bytes / (1024 ** $pow), 2).' '.$units[$pow];
+    }
 }

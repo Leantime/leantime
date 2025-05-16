@@ -3,10 +3,12 @@
 namespace Leantime\Domain\Setting\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
-use Leantime\Core\Files\Fileupload as FileuploadCore;
+use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @api
@@ -15,10 +17,13 @@ class Setting
 {
     use DispatchesEvents;
 
+    private FileManagerInterface $fileManager;
+
     public function __construct(
         public SettingRepository $settingsRepo,
+        FileManagerInterface $fileManager
     ) {
-        //
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -28,31 +33,38 @@ class Setting
      */
     public function setLogo($file): bool
     {
+        try {
+            $uploadedFile = $file['file'];
 
-        $upload = app()->make(FileuploadCore::class);
+            // Create a UploadedFile instance
+            $symfonyFile = new UploadedFile(
+                $uploadedFile['tmp_name'],
+                $uploadedFile['name'],
+                $uploadedFile['type'],
+                $uploadedFile['error'],
+                true
+            );
 
-        $upload->initFile($file['file']);
+            $logo = $this->fileManager->upload($symfonyFile, 'public');
 
-        $newname = md5(session('userdata.id').time());
-        $upload->renameFile($newname);
+            if ($logo['newPath'] !== false) {
 
-        if ($upload->error == '') {
-            $url = $upload->uploadPublic();
+                // Save the setting
+                $this->settingsRepo->saveSetting('companysettings.logoPath', $logo['newPath']);
 
-            if ($url !== false) {
-                $this->settingsRepo->saveSetting('companysettings.logoPath', $url);
-
-                if (str_starts_with($url, 'http')) {
-                    session(['companysettings.logoPath' => $url]);
-                } else {
-                    session(['companysettings.logoPath' => BASE_URL.$url]);
-                }
+                $logoPath = $this->fileManager->getFileUrl($logo['newPath'], 'public', (60 * 24));
+                // Update the session
+                session(['companysettings.logoPath' => $logoPath]);
 
                 return true;
             }
-        }
 
-        return false;
+            return false;
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return false;
+        }
     }
 
     /**

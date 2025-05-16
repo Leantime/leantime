@@ -203,7 +203,7 @@ class DefaultConfig
      * @var bool. Sets whether the cookie should only be served via https
      */
     #[LaravelConfig('session.secure')]
-    public bool $sessionSecure = true;
+    public bool $sessionSecure = false;
 
     // Email =======================================================================================
     /**

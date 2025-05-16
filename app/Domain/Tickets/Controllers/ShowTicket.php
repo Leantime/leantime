@@ -185,7 +185,7 @@ class ShowTicket extends Controller
 
         // Upload File
         if (isset($params['upload'])) {
-            if ($this->fileService->uploadFile($_FILES, 'ticket', $id, $ticket)) {
+            if ($this->fileService->upload($_FILES, 'ticket', $id, $ticket)) {
                 $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success');
             } else {
                 $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');

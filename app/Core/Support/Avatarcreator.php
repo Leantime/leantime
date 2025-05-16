@@ -26,12 +26,12 @@ class Avatarcreator
 
     }
 
-    public function setBackground(string $color)
+    public function setBackground(string $color): void
     {
         $this->avatarGenerator->background($color);
     }
 
-    public function setFilePrefix($prefix)
+    public function setFilePrefix($prefix): void
     {
         $this->filePrefix = Str::sanitizeFilename($prefix);
     }
@@ -60,24 +60,28 @@ class Avatarcreator
         return $this->initials->getInitials();
     }
 
-    public function getAvatar($name): string|SVG
+    public function getAvatar($name): SVG
     {
         $this->setInitials($name);
         $filename = $this->getSafeFilename();
 
         if (file_exists($filename)) {
-            return $filename;
+            return SVG::fromFile($filename);
         }
 
         return $this->saveAvatar();
 
     }
 
-    protected function saveAvatar(): string|SVG
+    protected function saveAvatar(): SVG
     {
 
         if (is_dir(storage_path('framework/cache/avatars')) === false) {
-            mkdir(storage_path('framework/cache/avatars'));
+            if (! mkdir($concurrentDirectory = storage_path('framework/cache/avatars')) && ! is_dir(
+                $concurrentDirectory
+            )) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            }
 
             // Set proper permissions for security
             chmod(storage_path('framework/cache/avatars'), 0755);
@@ -99,7 +103,7 @@ class Avatarcreator
 
         }
 
-        return $filename;
+        return SVG::fromFile($filename);
 
     }
 

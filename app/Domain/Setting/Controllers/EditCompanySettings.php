@@ -4,6 +4,7 @@ namespace Leantime\Domain\Setting\Controllers;
 
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\UI\Theme;
 use Leantime\Domain\Api\Services\Api as ApiService;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
@@ -19,19 +20,24 @@ class EditCompanySettings extends Controller
 
     private SettingService $settingsSvc;
 
+    private Theme $theme;
+
     /**
      * constructor - initialize private variables
      */
     public function init(
         SettingRepository $settingsRepo,
         ApiService $APIService,
-        SettingService $settingsSvc
+        SettingService $settingsSvc,
+        Theme $theme,
+
     ) {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
         $this->settingsRepo = $settingsRepo;
         $this->APIService = $APIService;
         $this->settingsSvc = $settingsSvc;
+        $this->theme = $theme;
     }
 
     /**
@@ -50,7 +56,7 @@ class EditCompanySettings extends Controller
         }
 
         $companySettings = [
-            'logo' => session('companysettings.logoPath') ?? '',
+            'logo' => $this->theme->getLogoUrl(),
             'primarycolor' => session('companysettings.primarycolor') ?? '',
             'secondarycolor' => session('companysettings.secondarycolor') ?? '',
             'name' => session('companysettings.sitename'),
@@ -58,15 +64,6 @@ class EditCompanySettings extends Controller
             'telemetryActive' => true,
             'messageFrequency' => '',
         ];
-
-        $logoPath = $this->settingsRepo->getSetting('companysettings.logoPath');
-        if ($logoPath !== false) {
-            if (str_starts_with($logoPath, 'http')) {
-                $companySettings['logo'] = $logoPath;
-            } else {
-                $companySettings['logo'] = BASE_URL.$logoPath;
-            }
-        }
 
         $mainColor = $this->settingsRepo->getSetting('companysettings.mainColor');
         if ($mainColor !== false) {

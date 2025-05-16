@@ -1,11 +1,9 @@
 <?php
 
-use Leantime\Core\Files\Fileupload;
-
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-$maxSize = Fileupload::getMaximumFileUploadSize();
+$maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
 ?>
 
 <div id="fileManager">

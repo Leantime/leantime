@@ -1,7 +1,6 @@
 <?php
 
 use Leantime\Core\Controller\Frontcontroller;
-use Leantime\Core\Files\Fileupload;
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -9,7 +8,7 @@ foreach ($__data as $var => $val) {
 
 $module = 'project';
 $action = Frontcontroller::getActionName('');
-$maxSize = Fileupload::getMaximumFileUploadSize();
+$maxSize = \Leantime\Core\Files\FileManager::getMaximumFileUploadSize();
 $moduleId = session('currentProject');
 ?>
 <div class="pageheader">
@@ -80,7 +79,7 @@ $moduleId = session('currentProject');
                                     <?php
 
                         if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                        <li><a href="<?= BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
+                                        <li><a href="<?= BASE_URL ?>/files/browse?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete'); ?></a></li>
                                     <?php } ?>
 
                                 </ul>
@@ -143,6 +142,7 @@ $moduleId = session('currentProject');
             //jQuery("#medialist a").colorbox();
 
             <?php if (isset($_GET['modalPopUp'])) { ?>
+
                 jQuery('#medialist a.imageLink').on("click", function(event){
 
                     event.preventDefault();
@@ -155,6 +155,8 @@ $moduleId = session('currentProject');
 
                     jQuery.nmTop().close();
                 });
+
+                jQuery(".deleteFile").nyroModal();
 
             <?php } ?>
 
@@ -170,7 +172,7 @@ $moduleId = session('currentProject');
                 return false;
             });
 
-            jQuery(".deleteFile").nyroModal();
+
 
 
         });

@@ -12,7 +12,6 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -87,7 +86,7 @@ class ShowClient extends Controller
         ];
 
         if (empty($row) === false && Auth::userIsAtLeast(Roles::$admin)) {
-            $file = app()->make(FileRepository::class);
+
             $project = app()->make(ProjectRepository::class);
 
             if (session('userdata.role') == 'admin') {
@@ -96,7 +95,7 @@ class ShowClient extends Controller
 
             if (isset($_POST['upload'])) {
                 if (isset($_FILES['file']) === true && $_FILES['file']['tmp_name'] != '') {
-                    $return = $file->upload($_FILES, 'client', $id);
+                    $return = $this->fileService->upload($_FILES, 'client', $id);
                     $this->tpl->setNotification($this->language->__('notifications.file_upload_success'), 'success', 'clientfile_uploaded');
                 } else {
                     $this->tpl->setNotification($this->language->__('notifications.file_upload_error'), 'error');
@@ -154,7 +153,7 @@ class ShowClient extends Controller
             $this->tpl->assign('client', $clientValues);
             $this->tpl->assign('users', app()->make(UserRepository::class));
             $this->tpl->assign('clientProjects', $project->getClientProjects($id));
-            $this->tpl->assign('files', $file->getFilesByModule('client', $id));
+            $this->tpl->assign('files', $this->fileService->getFilesByModule('client', $id));
 
             return $this->tpl->display('clients.showClient');
         } else {

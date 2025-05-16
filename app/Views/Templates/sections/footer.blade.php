@@ -1,9 +1,9 @@
 @dispatchEvent('beforeFooterOpen')
 
 {{--<div class="footer">--}}
-
+<span style="color:var(--main-titles-color); padding-left:15px; opacity:0.5;">
     @dispatchEvent('afterFooterOpen')
-
+</span>
 {{--    <div class="row">--}}
 {{--        <div class="col-md-6">--}}
 {{--            © {{ date("Y") }} by <a href="http://leantime.io" target="_blank">Leantime</a>--}}
@@ -19,7 +19,9 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
+
     @dispatchEvent('beforeFooterClose')
+
 
 {{--</div>--}}
 

@@ -3,11 +3,12 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Configuration\Environment;
+use Illuminate\Http\File;
 use Leantime\Core\Controller\Controller;
-use Leantime\Core\Files\Fileupload as FileuploadCore;
+use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Users\Services\Users as UserService;
+use SVG\SVG;
 use Symfony\Component\HttpFoundation\Response;
 
 class Users extends Controller
@@ -16,15 +17,19 @@ class Users extends Controller
 
     private FileRepository $filesRepository;
 
+    private FileManagerInterface $fileManager;
+
     /**
      * init - initialize private variables
      */
     public function init(
         UserService $userService,
-        FileRepository $filesRepository
+        FileRepository $filesRepository,
+        FileManagerInterface $fileManager
     ): void {
         $this->userService = $userService;
         $this->filesRepository = $filesRepository;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -58,26 +63,31 @@ class Users extends Controller
         }
 
         if (isset($params['profileImage'])) {
+
             if ($params['profileImage'] === 'me') {
                 $params['profileImage'] = session('userdata.id');
             }
-            $svg = $this->userService->getProfilePicture($params['profileImage']);
-            if (is_array($svg)) {
-                $file = app()->make(FileuploadCore::class);
+            $image = $this->userService->getProfilePicture($params['profileImage']);
 
-                return match ($svg['type']) {
-                    'uploaded' => $file->displayImageFile($svg['filename']),
-                    'generated' => $file->displayImageFile('avatar', $svg['filename'], true),
-                };
-            }
+            // $image is either filepath or SVG
+            if ($image instanceof SVG) {
 
-            $response = new Response($svg->toXMLString());
-            $response->headers->set('Content-type', 'image/svg+xml');
-
-            if (app()->make(Environment::class)->debug === false) {
+                $response = new Response($image->toXMLString());
+                $response->headers->set('Content-type', 'image/svg+xml');
                 $response->headers->set('Pragma', 'public');
                 $response->headers->set('Cache-Control', 'max-age=86400');
+
+                return $response;
             }
+
+            if ($image instanceof Response) {
+                return $image;
+            }
+
+            $response = new Response(file_get_contents($image));
+            $response->headers->set('Content-type', 'application/octet-stream');
+            $response->headers->set('Pragma', 'public');
+            $response->headers->set('Cache-Control', 'max-age=86400');
 
             return $response;
         }
@@ -158,5 +168,40 @@ class Users extends Controller
     public function delete(array $params): Response
     {
         return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+    }
+
+    /**
+     * Display a generated avatar image
+     *
+     * @param  string  $filePath  Path to the generated avatar image
+     */
+    private function displayGeneratedAvatar(string $filePath): Response
+    {
+        if (! file_exists($filePath)) {
+            // Return a default image if the file doesn't exist
+            $response = new Response(file_get_contents(ROOT.'/dist/images/doc.png'));
+            $response->headers->set('Content-Type', 'image/png');
+        } else {
+            // Determine the mime type based on file extension
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            $mimeType = match ($extension) {
+                'svg' => 'image/svg+xml',
+                'jpg', 'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'gif' => 'image/gif',
+                default => 'application/octet-stream',
+            };
+
+            // Create the response with the file contents
+            $response = new Response(file_get_contents($filePath));
+            $response->headers->set('Content-Type', $mimeType);
+        }
+
+        // Set cache headers
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'max-age=86400');
+        $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s', filemtime($filePath)).' GMT');
+
+        return $response;
     }
 }

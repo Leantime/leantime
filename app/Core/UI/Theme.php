@@ -9,6 +9,7 @@ use Leantime\Core\Configuration\AppSettings;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Leantime\Core\Files\FileManager;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -110,6 +111,8 @@ class Theme
      */
     private AppSettings $appSettings;
 
+    private FileManager $fileManager;
+
     private array|false $iniData;
 
     private array $colorSchemes = [
@@ -156,13 +159,15 @@ class Theme
         Environment $config,
         Setting $settingsRepo,
         Language $language,
-        AppSettings $appSettings
+        AppSettings $appSettings,
+        FileManager $fileManager
     ) {
         $this->config = $config;
         $this->settingsRepo = $settingsRepo;
         $this->iniData = [];
         $this->language = $language;
         $this->appSettings = $appSettings;
+        $this->fileManager = $fileManager;
 
     }
 
@@ -763,28 +768,39 @@ class Theme
         // Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
         $logoPath = false;
-        if (session()->exists('companysettings.logoPath') === false || session('companysettings.logoPath') == '') {
+        if (session()->exists('companysettings.logoPath') === false
+            || session('companysettings.logoPath') == '') {
 
             $logoPath = $this->settingsRepo->getSetting('companysettings.logoPath');
 
-            if (
-                $logoPath !== false &&
-                (file_exists(ROOT.$logoPath) || str_starts_with($logoPath, 'http'))
-            ) {
-                if (str_starts_with($logoPath, 'http')) {
-                    session(['companysettings.logoPath' => $logoPath]);
-                } else {
-                    session(['companysettings.logoPath' => BASE_URL.$logoPath]);
-                }
+            if ($logoPath === false) {
+                session(['companysettings.logoPath' => false]);
+
+                return false;
+            }
+
+            // File comes from config
+            if (str_starts_with($logoPath, 'http')) {
+                session(['companysettings.logoPath' => $logoPath]);
+
+                return session('companysettings.logoPath');
+            }
+
+            // File was uploaded. Check if we can find it
+            $fileUrl = $this->fileManager->getFileUrl($logoPath, 'public', (60 * 24));
+            if ($fileUrl) {
+                session(['companysettings.logoPath' => $fileUrl]);
 
                 return session('companysettings.logoPath');
             }
 
             // If we can't find a logo in the db, the company doesn't have a logo. Stop trying
             session(['companysettings.logoPath' => false]);
+
         }
 
-        return false;
+        return session('companysettings.logoPath');
+
     }
 
     /**

@@ -60,7 +60,6 @@ return [
         'env' => env('LEAN_ENV', ''),
         'debug' => env('LEAN_DEBUG', 0),
         'key' => env('LEAN_SESSION_PASSWORD', '123'),
-
     ],
     'debug_blacklist' => [
         '_ENV' => [
@@ -130,6 +129,95 @@ return [
         '_POST' => [
             'password',
         ],
+    ],
+    'filesystems' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Default Filesystem Disk
+        |--------------------------------------------------------------------------
+        |
+        | Here you may specify the default filesystem disk that should be used
+        | by the framework. The "local" disk, as well as a variety of cloud
+        | based disks are available to your application for file storage.
+        |
+        */
+
+        'default' => env('LEAN_USE_S3', false) ? 's3' : 'local',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Filesystem Disks
+        |--------------------------------------------------------------------------
+        |
+        | Below you may configure as many filesystem disks as necessary, and you
+        | may even configure multiple disks for the same driver. Examples for
+        | most supported storage drivers are configured here for reference.
+        |
+        | Supported drivers: "local", "ftp", "sftp", "s3"
+        |
+        */
+        'disks' => [
+            'local' => [
+                'driver' => 'local',
+                'root' => base_path('userfiles'),
+                'serve' => true,
+                'throw' => false,
+                'report' => false,
+                'renameFiles' => env('LEAN_FILESYSTEM_RENAME_FILES', true),
+            ],
+            'public' => [
+                'driver' => 'local',
+                'root' => public_path('userfiles'),
+                'url' => env('LEAN_APP_URL').'/userfiles',
+                'visibility' => 'public',
+                'throw' => false,
+                'report' => false,
+                'renameFiles' => env('LEAN_FILESYSTEM_RENAME_FILES', true),
+            ],
+            's3' => [
+                'driver' => 's3',
+                'key' => env('LEAN_S3_KEY'),
+                'secret' => env('LEAN_S3_SECRET'),
+                'region' => env('LEAN_S3_REGION'),
+                'bucket' => env('LEAN_S3_BUCKET'),
+                'url' => env('LEAN_S3_URL') ?? env('LEAN_S3_END_POINT'),
+                'endpoint' => env('LEAN_S3_END_POINT'),
+                'use_path_style_endpoint' => env('LEAN_S3_USE_PATH_STYLE_ENDPOINT', false),
+                'throw' => false,
+                'report' => false,
+                'prefix' => env('LEAN_S3_FOLDER_NAME', ''),
+                'renameFiles' => env('LEAN_FILESYSTEM_RENAME_FILES', true),
+            ],
+            'null' => [
+                'driver' => 'null',
+            ],
+
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Symbolic Links
+        |--------------------------------------------------------------------------
+        |
+        | Here you may configure the symbolic links that will be created when the
+        | `storage:link` Artisan command is executed. The array keys should be
+        | the locations of the links and the values should be their targets.
+        |
+        */
+
+        'links' => [
+            public_path('storage') => storage_path('app/public/userfiles'),
+        ],
+
+        'url' => [
+            'expiration' => 60,
+        ],
+        'cache' => [
+            'enabled' => true,
+            'duration' => 60,
+        ],
+
     ],
     'logging' => [
         'channels' => [
@@ -429,7 +517,6 @@ return [
         'compiled' => realpath(storage_path('framework/views')),
 
     ],
-
     'database' => [
         'default' => env('LEAN_DB_DEFAULT_CONNECTION', 'mysql'),
         /*
@@ -481,7 +568,8 @@ return [
         'migrations' => 'migrations',
 
     ],
-    /*
+    'redis' => [
+        /*
        |--------------------------------------------------------------------------
        | Redis Databases
        |--------------------------------------------------------------------------
@@ -490,8 +578,7 @@ return [
        | provides a richer body of commands than a typical key-value system
        | such as Memcached. You may define your connection settings here.
        |
-    */
-    'redis' => [
+        */
         'client' => 'phpredis',
         'options' => [
             'parameters' => ['timeout' => 1.0],
@@ -511,8 +598,6 @@ return [
             'prefix' => 'leantime_cache',
         ],
     ],
-
-    // Driver options: eloquent, database (using database query builder),
     'auth' => [
         'defaults' => [
             'guard' => 'leantime',
@@ -851,4 +936,5 @@ return [
     'hashing' => [
         'rehash_on_login' => false,
     ],
+
 ];

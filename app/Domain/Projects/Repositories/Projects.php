@@ -10,7 +10,6 @@ use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Files\Repositories\Files;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use PDO;
 use SVG\SVG;
@@ -1075,35 +1074,26 @@ class Projects
      *
      * @throws BindingResolutionException
      */
-    public function setPicture(array $_FILE, $id): bool
+    public function setPicture($fileId, $id): bool
     {
 
-        $project = $this->getProject($id);
+        $sql = 'UPDATE
+                        `zp_projects`
+                    SET
+                        avatar = :fileId,
+                        modified = :modified
+                    WHERE id = :userId';
 
-        $files = app()->make(Files::class);
+        $stmn = $this->db->database->prepare($sql);
+        $stmn->bindValue(':fileId', $fileId, PDO::PARAM_INT);
+        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
-        $lastId = $files->upload($_FILE, 'project', $id, true, 300, 300);
+        $result = $stmn->execute();
+        $stmn->closeCursor();
 
-        if (isset($lastId['fileId'])) {
-            $sql = 'UPDATE
-                            `zp_projects`
-                        SET
-                            avatar = :fileId,
-                            modified = :modified
-                        WHERE id = :userId';
+        return $result;
 
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
-            $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-
-            $result = $stmn->execute();
-            $stmn->closeCursor();
-
-            return $result;
-        }
-
-        return false;
     }
 
     /**
@@ -1112,11 +1102,11 @@ class Projects
      * @throws BindingResolutionException
      */
     /**
-     * @return string[]|SVG
+     * @return array|SVG
      *
      * @throws BindingResolutionException
      */
-    public function getProjectAvatar($id): array|SVG
+    public function getProjectAvatar($id): array|false
     {
 
         $value = false;
@@ -1130,40 +1120,10 @@ class Projects
             $stmn->execute();
             $value = $stmn->fetch();
             $stmn->closeCursor();
-        }
-
-        $this->avatarcreator->setFilePrefix('project');
-        $this->avatarcreator->setBackground('#555555');
-
-        // If can't find user, return ghost
-        if (empty($value)) {
-            $avatar = $this->avatarcreator->getAvatar('🦄');
-
-            return ['filename' => $avatar, 'type' => 'generated'];
-        }
-
-        // If user uploaded return uploaded file
-        if (! empty($value['avatar'])) {
-
-            $files = app()->make(Files::class);
-            $file = $files->getFile($value['avatar']);
-
-            if ($file) {
-                $filePath = $file['encName'].'.'.$file['extension'];
-                $type = $file['extension'];
-
-                return ['filename' => $filePath, 'type' => 'uploaded'];
-            }
 
         }
 
-        $avatar = $this->avatarcreator->getAvatar($value['name']);
-
-        if (is_string($avatar)) {
-            return ['filename' => $avatar, 'type' => 'generated'];
-        }
-
-        return $avatar;
+        return $value;
 
     }
 }

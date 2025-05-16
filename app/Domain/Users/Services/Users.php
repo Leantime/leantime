@@ -3,17 +3,21 @@
 namespace Leantime\Domain\Users\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
+use Leantime\Core\Support\Avatarcreator;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Ramsey\Uuid\Uuid;
 use SVG\SVG;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @api
@@ -22,42 +26,51 @@ class Users
 {
     use DispatchesEvents;
 
-    private UserRepository $userRepo;
-
-    private LanguageCore $language;
-
-    private ProjectRepository $projectRepository;
-
-    private ClientRepository $clientRepo;
-
-    private AuthService $authService;
-
     public function __construct(
-        UserRepository $userRepo,
-        LanguageCore $language,
-        ProjectRepository $projectRepository,
-        ClientRepository $clientRepo,
-        AuthService $authService
-    ) {
-        $this->userRepo = $userRepo;
-        $this->language = $language;
-        $this->projectRepository = $projectRepository;
-        $this->clientRepo = $clientRepo;
-        $this->authService = $authService;
-    }
+        protected UserRepository $userRepo,
+        protected LanguageCore $language,
+        protected ProjectRepository $projectRepository,
+        protected ClientRepository $clientRepo,
+        protected AuthService $authService,
+        protected Files $fileService,
+        protected Avatarcreator $avatarcreator
+    ) {}
 
     // GET
 
     /**
-     * @return string[]|SVG
+     * @return SVG|Response|string Returns either an SVG file, a file response or a path to a file
      *
      * @throws BindingResolutionException
      *
      * @api
      */
-    public function getProfilePicture($id): array|SVG
+    public function getProfilePicture($id): SVG|Response|string
     {
-        return $this->userRepo->getProfilePicture($id);
+
+        // Get profile picture definition from db
+        $profile = $this->userRepo->getProfilePicture($id);
+
+        // If can't find user, return ghost
+        if (empty($profile)) {
+            return $this->avatarcreator->getAvatar('👻');
+        }
+
+        // If user uploaded return uploaded file
+        if (! empty($profile['profileId'])) {
+
+            $file = $this->fileService->getFileById($profile['profileId']);
+            if ($file) {
+                return $file;
+            }
+
+        }
+
+        // Otherwise return avatar
+        $name = $profile['firstname'].' '.$profile['lastname'];
+
+        return $this->avatarcreator->getAvatar($name);
+
     }
 
     /**
@@ -137,7 +150,28 @@ class Users
      */
     public function setProfilePicture($photo, $id): void
     {
-        $this->userRepo->setPicture($photo, $id);
+        $user = $this->getUser($id);
+
+        // Save the path to the old picture
+        if (isset($user['profileId']) && $user['profileId'] > 0) {
+            $oldPicture = $user['profileId'];
+        }
+
+        $leantimeFile = $this->fileService->upload($photo, 'user', $id);
+
+        if ($leantimeFile
+            && $this->userRepo->setPicture($leantimeFile['fileId'], $id)
+            && $oldPicture) {
+
+            try {
+                $this->fileService->deleteFile($oldPicture);
+            } catch (\Exception $e) {
+                Log::warning('Could not delete old profile picture: '.$e->getMessage());
+                Log::warning($e);
+            }
+
+        }
+
     }
 
     /**
