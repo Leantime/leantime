@@ -114,7 +114,6 @@ class AvatarcreatorTest extends TestCase
         $cacheDir = storage_path('framework/cache/avatars');
         $testFile = $cacheDir.'/user-jd.svg';
 
-
         $this->assertFileExists($testFile);
     }
 

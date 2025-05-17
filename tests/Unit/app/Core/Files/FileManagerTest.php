@@ -45,10 +45,10 @@ class FileManagerTest extends TestCase
 
         // Create a test file in userfiles directory
         $testDir = base_path('userfiles/test');
-        if (!is_dir($testDir)) {
+        if (! is_dir($testDir)) {
             mkdir($testDir, 0777, true);
         }
-        file_put_contents($testDir . '/test.txt', 'test content');
+        file_put_contents($testDir.'/test.txt', 'test content');
     }
 
     protected function tearDown(): void
