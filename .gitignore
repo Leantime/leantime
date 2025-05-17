@@ -126,3 +126,5 @@ config/.env
 #vscode
 .vscode
 .idea/codebuddy.xml
+
+**/.claude/settings.local.json
