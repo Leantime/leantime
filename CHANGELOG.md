@@ -1,3 +1,17 @@
+# Version: 3.5.4
+
+* [72bea52](https://github.com/Leantime/leantime/commit/72bea5211c8b91defe5edc6958463f68a5173f1e): task: version bump
+* [8dd47b6](https://github.com/Leantime/leantime/commit/8dd47b6094b1e75b19f4e2648d30a8aa3926d9bc): task: adding claude.md which can be used for claude code or other development environments
+* [9ffda24](https://github.com/Leantime/leantime/commit/9ffda247fa9fd6690ca119e49804df174f1afc71): task: fix code style
+* [7525056](https://github.com/Leantime/leantime/commit/75250562fbb28bfa69cef2a42e420dd52ab95241): task: add unit tests for filemanager
+* [466fd76](https://github.com/Leantime/leantime/commit/466fd762e50efcbe6239984b878ffe9a6b8acc22): task: fix unit tests
+* [ad07bce](https://github.com/Leantime/leantime/commit/ad07bce0823bab5553e33428f40a57fb9c6ea93a): Update Plugins
+* [8180109](https://github.com/Leantime/leantime/commit/8180109c9cb7e6423da11c5e7041a687d6aae114): task: Code cleanup
+* [dbe2293](https://github.com/Leantime/leantime/commit/dbe2293b6309aea7598d65539a59e5d4e248dd9b): fix: Fix broken file upload and refactor file management to use laravel file storage class
+* [69b5e8e](https://github.com/Leantime/leantime/commit/69b5e8e5690db9f6c4d0147408613cadc1697f30): task: adding Junie config
+* [c6aed5f](https://github.com/Leantime/leantime/commit/c6aed5f5e97c7bda009e06eb1246afa52d82248f): feat: Calendar improvements
+
+
 # Version: 3.5.3
 
 * [98cdaa0](https://github.com/Leantime/leantime/commit/98cdaa05e0824553af33bc6a7e4ab9395d5a0e84): task: version bump
