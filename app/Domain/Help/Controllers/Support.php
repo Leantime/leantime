@@ -21,7 +21,7 @@ class Support extends Controller
     public function get($params)
     {
 
-      return $this->tpl->display('help.support');
+        return $this->tpl->display('help.support');
 
     }
 }

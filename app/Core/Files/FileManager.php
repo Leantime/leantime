@@ -69,11 +69,11 @@ class FileManager implements FileManagerInterface
             throw new FileValidationException('File size exceeds the maximum allowed size of '.format($maxSize)->formatBytes(), FileValidationException::FILE_TOO_LARGE);
         }
 
-//        // Sanitize the real name for security
-//        $originalName = $file->getClientOriginalName();
-//        if ($this->sanitizeFilename($originalName) !== $originalName) {
-//            throw new FileValidationException('Filename contains invalid characters', FileValidationException::INVALID_FILE);
-//        }
+        //        // Sanitize the real name for security
+        //        $originalName = $file->getClientOriginalName();
+        //        if ($this->sanitizeFilename($originalName) !== $originalName) {
+        //            throw new FileValidationException('Filename contains invalid characters', FileValidationException::INVALID_FILE);
+        //        }
 
     }
 
@@ -332,20 +332,20 @@ class FileManager implements FileManagerInterface
         switch ($sSuffix) {
             case 'P':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'T':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'G':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'M':
                 $iValue *= 1024;
-            // Fallthrough intended
-            // no break
+                // Fallthrough intended
+                // no break
             case 'K':
                 $iValue *= 1024;
                 break;

@@ -70,7 +70,7 @@ class Plugins
         private AppSettings $appSettings,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
-        //$this->marketplaceUrl = 'https://marketplace.leantime.test';
+        // $this->marketplaceUrl = 'https://marketplace.leantime.test';
     }
 
     protected function httpClient()
