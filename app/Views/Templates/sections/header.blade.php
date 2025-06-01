@@ -81,18 +81,18 @@
 <style id="backgroundImageSetter">
     @if(!empty($themeBg))
             .rightpanel {
-        background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
-        opacity: {{ $themeOpacity }};
-        mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
-        background-size: var(--background-size, cover);
-        background-position: center;
-        background-attachment: fixed;
-    }
+                background-image: url({!! filter_var($themeBg, FILTER_SANITIZE_URL) !!});
+                opacity: {{ $themeOpacity }};
+                mix-blend-mode: {{ $themeType == 'image' ? 'normal' : 'multiply' }};
+                background-size: var(--background-size, cover);
+                background-position: center;
+                background-attachment: fixed;
+            }
 
     @if($themeType === 'image')
-                .rightpanel:before {
-        background: none;
-    }
+        .rightpanel:before {
+            background: none;
+        }
     @endif
     @endif
 </style>

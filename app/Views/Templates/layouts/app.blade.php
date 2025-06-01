@@ -50,7 +50,9 @@
                     <div class="clearfix"></div>
                     @include('global::sections.footer')
                 </div>
+
             </div>
+
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->

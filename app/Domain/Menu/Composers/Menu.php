@@ -104,7 +104,7 @@ class Menu extends Composer
 
         $settingsLink = self::dispatch_filter('settingsLink', $settingsLink, ['type' => $menuType]);
 
-        $newProjectUrl = self::dispatch_filter('startSomething', '#/projects/createnew');
+        $newProjectUrl = self::dispatch_filter('startSomething', BASE_URL.'/projects/newProject');
 
         return [
             'currentClient' => $currentClient,

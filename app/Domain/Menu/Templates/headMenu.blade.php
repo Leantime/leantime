@@ -8,16 +8,6 @@
                'progressSteps' => $onTheClock
            ])
 
-
-
-    @if ($login::userIsAtLeast("admin"))
-        <li class="appsLink">
-            <a href="{{ BASE_URL }}/plugins/marketplace" preload="mouseover" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
-        </li>
-    @endif
-
-
-
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
@@ -42,7 +32,6 @@
     </li>
 
     <li class="notificationDropdown">
-
         <a
             href='javascript:void(0);'
             class="dropdown-toggle profileHandler notificationHandler"
@@ -173,12 +162,6 @@
             <li>
                 <a href='https://discord.gg/4zMzJtAq9z' target="_blank">
                     {!! __("menu.community") !!}
-                </a>
-            </li>
-
-            <li>
-                <a href='https://github.com/sponsors/Leantime' target="_blank">
-                    {!! __("menu.support_us") !!}
                 </a>
             </li>
             <li>
