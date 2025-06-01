@@ -54,6 +54,8 @@ class Plugins
 
     public string $marketplaceUrl;
 
+    private int $timeout = 60;
+
     /**
      * @return void
      *
@@ -68,7 +70,14 @@ class Plugins
         private AppSettings $appSettings,
     ) {
         $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
-        // $this->marketplaceUrl = 'https://marketplace.leantime.test';
+        //$this->marketplaceUrl = 'https://marketplace.leantime.test';
+    }
+
+    protected function httpClient()
+    {
+
+        return Http::withoutVerifying()->timeout($this->timeout);
+
     }
 
     /**
@@ -390,7 +399,7 @@ class Plugins
      */
     public function getMarketplacePlugins(int $page, string $query = ''): array
     {
-        $plugins = Http::withoutVerifying()->get(
+        $plugins = $this->httpClient()->get(
             "{$this->marketplaceUrl}/ltmp-api"
             .(! empty($query) ? "/search/$query" : '/index')
             ."/$page".'?lt-v='.$this->appSettings->appVersion.'&groupBy=category'
@@ -431,7 +440,7 @@ class Plugins
                         ->set('vendorEmail', $plugin['vendor_email'] ?? '')
                         ->set(
                             'startingPrice',
-                            '$'.($plugin['price'] ?? '').(! empty($plugin['sub_interval']) ? '/'.$plugin['sub_interval'] : '')
+                            '$'.($plugin['price'] ?? '')
                         )
                         ->set('calculatedMonthlyPrice', $priceString)
                         ->set('rating', $plugin['rating'] ?? '')
@@ -459,7 +468,7 @@ class Plugins
      */
     public function getMarketplacePlugin(string $identifier): MarketplacePlugin|false
     {
-        $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier?lt-v=".$this->appSettings->appVersion);
+        $response = $this->httpClient()->get("$this->marketplaceUrl/ltmp-api/details/$identifier?lt-v=".$this->appSettings->appVersion);
 
         if (! $response->ok()) {
             return false;
@@ -501,7 +510,7 @@ class Plugins
 
         $this->clearCache();
 
-        $response = Http::withoutVerifying()->withHeaders([
+        $response = $this->httpClient()->withHeaders([
             'X-License-Key' => $plugin->license,
             'X-Instance-Id' => $this->settingsService->getCompanyId(),
             'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
@@ -598,7 +607,7 @@ class Plugins
         $signature = $phar->getSignature();
 
         try {
-            $response = Http::withoutVerifying()->withHeaders([
+            $response = $this->httpClient()->withHeaders([
                 'X-License-Key' => $plugin->license,
                 'X-Instance-Id' => $instanceId,
                 'X-User-Count' => $numberOfUsers,
@@ -690,7 +699,7 @@ class Plugins
         $signature = $phar->getSignature();
 
         try {
-            $response = Http::withoutVerifying()->withHeaders([
+            $response = $this->httpClient()->withHeaders([
                 'X-License-Key' => $plugin->license,
                 'X-Instance-Id' => $instanceId,
                 'X-User-Count' => $numberOfUsers,
