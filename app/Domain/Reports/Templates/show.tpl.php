@@ -57,7 +57,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
 
                                         <span class="headline"><?= $tpl->__('label.estimated_hours_remaining')?></span>
                                         <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) {
-                                          echo format($fullReportLatest['sum_estremaining_hours'])->decimal();
+                                            echo format($fullReportLatest['sum_estremaining_hours'])->decimal();
                                         } else {
                                             echo 0;
                                         } ?></span>
@@ -69,7 +69,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
 
                                         <span class="headline"><?= $tpl->__('label.booked_hours')?></span>
                                         <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) {
-                                                echo format($fullReportLatest['sum_logged_hours'])->decimal();
+                                            echo format($fullReportLatest['sum_logged_hours'])->decimal();
                                         } else {
                                             echo 0;
                                         } ?></span>
