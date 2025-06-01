@@ -585,7 +585,6 @@ return [
             'cluster' => 'redis',
             'context' => [],
             'compression' => 3, // Redis::COMPRESSION_LZ4
-            'password' => '',
         ],
         'default' => [
             'url' => env('LEAN_REDIS_URL', ''),
