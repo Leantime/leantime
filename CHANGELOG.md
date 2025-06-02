@@ -1,3 +1,15 @@
+# Version: 3.5.5
+
+* [d2d20da](https://github.com/Leantime/leantime/commit/d2d20da533c9b81fc78479713509e52b1e22ef34): task: Version bump
+* [4acb5c6](https://github.com/Leantime/leantime/commit/4acb5c6e6b090ce9481ed4da068b9a920a37b193): Update show.tpl.php
+* [0445676](https://github.com/Leantime/leantime/commit/0445676192cbd92b090aff78b53da85b97c13006): task: Remove not needed config
+* [359825a](https://github.com/Leantime/leantime/commit/359825a4addf0989298ff7cd5bd685a9941f55cc): fix: decimal issue on report screen
+* [db99380](https://github.com/Leantime/leantime/commit/db993802df81d1bcc65f5c56d0e601d3be799e52): task: code style fix
+* [f68be31](https://github.com/Leantime/leantime/commit/f68be3108389d3be8f216312be387b4a75eb5420): fix: automatic handling of invalid filenames
+* [ba21c52](https://github.com/Leantime/leantime/commit/ba21c525b71b4d80621e82931c6723b6ec230c76): feat: Improve plugin marketplace url handling
+* [7fe069c](https://github.com/Leantime/leantime/commit/7fe069cd0bfa4953d9cb17b7b8d9504ad99c4df2): feat: Remove premium links and replace with one link to support site
+
+
 # Version: 3.5.4
 
 * [72bea52](https://github.com/Leantime/leantime/commit/72bea5211c8b91defe5edc6958463f68a5173f1e): task: version bump
