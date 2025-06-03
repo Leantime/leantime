@@ -4,7 +4,6 @@ foreach ($__data as $var => $val) {
 }
 $states = $tpl->get('states');
 $projectProgress = $tpl->get('projectProgress');
-$projectProgress = $tpl->get('projectProgress');
 $sprintBurndown = $tpl->get('sprintBurndown');
 $backlogBurndown = $tpl->get('backlogBurndown');
 $efforts = $tpl->get('efforts');

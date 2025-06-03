@@ -14,7 +14,8 @@
 }
 
 .dropdown-menu > li > a,
-.bigMenu ul li a{
+.bigMenu ul li a,
+.dropdown-menu > li > .dropdown-item-wrapper {
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
     margin: 0;

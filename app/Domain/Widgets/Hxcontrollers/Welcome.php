@@ -71,7 +71,7 @@ class Welcome extends HtmxController
         }
 
         // Todo: Write queries.
-        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done');
+        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session('userdata.id'), status: 'not_done', types: ['task', 'story', 'bug']);
 
         $closedTicketsCount = 0;
         $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser(session('userdata.id'), null);

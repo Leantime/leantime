@@ -449,10 +449,10 @@ class Tickets
 
     }
 
-    public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = ''): int
+    public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = '', array $types = []): int
     {
 
-        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+        $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project, $types);
 
         if ($status != '' && is_array($tickets)) {
             $ticketCounter = 0;

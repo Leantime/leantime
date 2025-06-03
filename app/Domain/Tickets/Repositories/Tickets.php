@@ -583,7 +583,7 @@ class Tickets
         return $values;
     }
 
-    public function simpleTicketQuery(?int $userId, ?int $projectId): array|false
+    public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = []): array|false
     {
 
         $query = <<<'SQL'
@@ -633,6 +633,11 @@ class Tickets
             $query .= ' AND zp_tickets.editorId = :userId';
         }
 
+        if (count($types) > 0) {
+            $typeIn = DbCore::arrayToPdoBindingString('types', count($types));
+            $query .= ' AND zp_tickets.type IN('.$typeIn.')';
+        }
+
         $query .= ' ORDER BY zp_tickets.dateToFinish DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC';
 
         $stmn = $this->db->database->prepare($query);
@@ -643,6 +648,12 @@ class Tickets
 
         if (isset($userId) && $userId > 0) {
             $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+        }
+
+        if (count($types) > 0) {
+            foreach ($types as $key => $type) {
+                $stmn->bindValue(':types'.$key, $type, PDO::PARAM_STR);
+            }
         }
 
         // Current client is only used for authorization as it represents the current client Id assigned to a user.
