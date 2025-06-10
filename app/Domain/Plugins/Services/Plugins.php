@@ -222,6 +222,9 @@ class Plugins
                 try {
                     return $this->createPluginFromComposer($directory);
                 } catch (\Exception $e) {
+                    Log::warning("Can't create plugin from composer");
+                    Log::warning($e);
+
                     return null;
                 }
             })
