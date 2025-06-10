@@ -223,7 +223,7 @@ class DateTimeHelper extends CarbonImmutable
                 if ($format === 'Y-m-d H:i:s' || $format === 'Y-m-d H:i' || $format === "Ymd\THis") {
                     return CarbonImmutable::createFromFormat($format, $userDate, $timezone);
                 } else {
-                    return CarbonImmutable::createFromFormat($format, $userDate);
+                    return CarbonImmutable::createFromFormat($format, $userDate, $timezone);
                 }
             } catch (\Exception $e) {
                 // Continue to next format

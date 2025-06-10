@@ -5,6 +5,7 @@ namespace Leantime\Domain\Calendar\Services;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Core\Exceptions\MissingParameterException;
@@ -409,8 +410,20 @@ class Calendar
 
                 $backgroundColor = 'var(--accent2)';
 
-                if ($ticket['dateToFinish'] !== '0000-00-00 00:00:00' && $ticket['dateToFinish'] !== '1969-12-31 00:00:00') {
+                if (dtHelper()->isValidDateString($ticket['dateToFinish'])) {
+
                     $context = '❕ '.$this->language->__('label.due_todo');
+
+                    $dueDate = dtHelper()->parseDbDateTime($ticket['dateToFinish']);
+                    if ($from || $until) {
+
+                        if ($from && $dueDate < $from) {
+                            continue;
+                        }
+                        if ($until && $dueDate > $until) {
+                            continue;
+                        }
+                    }
 
                     $newValues[] = $this->mapEventData(
                         title: $context.$ticket['headline'].' ('.$statusName.')',
@@ -428,9 +441,20 @@ class Calendar
                 }
 
                 if (dtHelper()->isValidDateString($ticket['editFrom'])) {
+
                     // Set ticket to all-day ticket when no time is set
                     $dateFrom = dtHelper()->parseDbDateTime($ticket['editFrom']);
                     $dateTo = dtHelper()->parseDbDateTime($ticket['editTo']);
+
+                    if ($from || $until) {
+
+                        if ($from && $dateFrom < $from) {
+                            continue;
+                        }
+                        if ($until && $dateTo > $until) {
+                            continue;
+                        }
+                    }
 
                     $allDay = false;
                     if ($dateFrom->diffInDays($dateTo) >= 1) {
@@ -543,11 +567,24 @@ class Calendar
 
                 // Transform each event into our standard format
                 foreach ($events as $event) {
+
+                    if (Str::endsWith($event->dtstart, 'Z')) {
+                        $dtstart = dtHelper()->parseDbDateTime($event->dtstart)->formatDateTimeForDb();
+                    } else {
+                        $dtstart = dtHelper()->parseUserDateTime($event->dtstart)->formatDateTimeForDb();
+                    }
+
+                    if (Str::endsWith($event->dtend, 'Z')) {
+                        $dtend = dtHelper()->parseDbDateTime($event->dtend)->formatDateTimeForDb();
+                    } else {
+                        $dtend = dtHelper()->parseUserDateTime($event->dtend)->formatDateTimeForDb();
+                    }
+
                     $allEvents[] = [
                         'title' => $event->summary,
                         'description' => $event->description ?? '',
-                        'dateFrom' => dtHelper()->parseUserDateTime($event->dtstart)->formatDateTimeForDb(),
-                        'dateTo' => dtHelper()->parseUserDateTime($event->dtend)->formatDateTimeForDb(),
+                        'dateFrom' => $dtstart,
+                        'dateTo' => $dtend,
                         'allDay' => isset($event->dtstart_array[3]) ? false : true,
                         'id' => $event->uid,
                         'projectId' => '',
