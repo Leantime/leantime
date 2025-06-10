@@ -31,7 +31,7 @@ class ChangeCurrentProject extends Controller
             ! $this->projectService->isUserAssignedToProject(session('userdata.id'), $id) ||
             ! $project = $this->projectService->getProject($id)
         ) {
-            return Frontcontroller::redirect(BASE_URL.'/errors/error404', 404);
+            return Frontcontroller::redirect(BASE_URL.'/errors/error404');
         }
 
         $this->projectService->changeCurrentSessionProject($id);
