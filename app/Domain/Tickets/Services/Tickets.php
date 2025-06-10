@@ -1441,7 +1441,7 @@ class Tickets
             'status' => isset($params['status']) ? (int) $params['status'] : 3,
             'storypoints' => isset($params['storypoints']) ? (int) $params['storypoints'] : '',
             'hourRemaining' => '',
-            'planHours' =>  isset($params['planHours']) ? (int) $params['planHours'] : '',
+            'planHours' => isset($params['planHours']) ? (int) $params['planHours'] : '',
             'sprint' => isset($params['sprint']) ? (int) $params['sprint'] : '',
             'acceptanceCriteria' => '',
             'priority' => isset($params['priority']) ? (int) $params['priority'] : '',

@@ -54,7 +54,7 @@ class Project
     /**
      * Create a new Project instance from array data
      *
-     * @param array|null $data Array of project data
+     * @param  array|null  $data  Array of project data
      */
     public function __construct(?array $data = null)
     {
@@ -69,8 +69,8 @@ class Project
         $this->projectId = $data['projectId'] ?? $this->id;
 
         // Handle dates
-        $this->start = !empty($data['start']) ? $data['start'] : null;
-        $this->end = !empty($data['end']) ? $data['end'] : null;
+        $this->start = ! empty($data['start']) ? $data['start'] : null;
+        $this->end = ! empty($data['end']) ? $data['end'] : null;
 
         // Project metadata
         $this->type = $data['type'] ?? '';

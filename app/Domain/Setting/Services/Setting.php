@@ -99,6 +99,14 @@ class Setting
     /**
      * @api
      */
+    public function deleteSetting($key): void
+    {
+        $this->settingsRepo->deleteSetting($key);
+    }
+
+    /**
+     * @api
+     */
     public function getSettingsRepo(): SettingRepository
     {
         return $this->settingsRepo;

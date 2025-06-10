@@ -11,5 +11,4 @@ enum HtmxTicketEvents: string
 
     case SUBTASK_UPDATE = 'subtasks_update';
 
-
 }
