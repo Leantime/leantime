@@ -3,7 +3,7 @@
     margin: 15px 0;
     padding: 10px;
     background-color: #f8f9fa;
-    border-radius: 5px;
+    border-radius: var(--box-radius-large);
     overflow: auto;
 }
 
