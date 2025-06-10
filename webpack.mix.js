@@ -158,7 +158,7 @@ getFilesRecursive('app/Domain', '.js').forEach(file => {
         "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
-        "./public/assets/js/libs/tinymce-plugins/llamadorian/plugin.js",
+        "./public/assets/js/libs/tinymce-plugins/aiTools/plugin.js",
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
