@@ -20,6 +20,7 @@ use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Ramsey\Uuid\Uuid;
 use RobThree\Auth\TwoFactorAuth;
 
 class Auth implements Authenticatable
@@ -303,6 +304,7 @@ class Auth implements Authenticatable
 
         $currentUser = [
             'id' => (int) $user['id'],
+            'globalUserId' => Uuid::uuid5(Uuid::NAMESPACE_DNS, strtolower($user['username'])),
             'name' => strip_tags($user['firstname']),
             'profileId' => $user['profileId'],
             'mail' => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
