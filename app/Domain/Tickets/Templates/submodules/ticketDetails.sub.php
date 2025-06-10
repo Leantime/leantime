@@ -156,7 +156,7 @@ $ticketTypes = $tpl->get('ticketTypes');
             <div
                 id="ticketSubtasks"
                 hx-get="<?= BASE_URL ?>/tickets/subtasks/get?ticketId=<?= $ticket->id ?>"
-                hx-trigger="load"
+                hx-trigger="load, subtasksUpdated from:body"
                 hx-indicator=".subtaskIndicator"
             ></div>
             <div class="htmx-indicator subtaskIndicator">

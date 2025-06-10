@@ -56,7 +56,7 @@ class Subtasks extends HtmxController
         $id = $getVars['ticketId'];
 
         $ticket = $this->ticketService->getTicket($id);
-        $ticketSubtasks = $this->ticketService->getAllSubtasks($id);
+        $ticketSubtasks = $this->ticketService->getAllSubtasks((int)$id);
         $statusLabels = $this->ticketService->getStatusLabels(session('currentProject'));
         $efforts = $this->ticketService->getEffortLabels();
 

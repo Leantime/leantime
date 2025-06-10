@@ -9,4 +9,7 @@ enum HtmxTicketEvents: string
      */
     case UPDATE = 'ticket_update';
 
+    case SUBTASK_UPDATE = 'subtasks_update';
+
+
 }
