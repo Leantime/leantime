@@ -337,3 +337,9 @@ Code should be tested using:
 - PHP_CodeSniffer for code style
 - PHPUnit for unit testing
 - Codeception for acceptance testing
+
+## Code Style and other guidelines
+
+### Error Logging
+When logging errors use the Log Facade (ensure it's included in the use statements). 
+Example: `Log::error($exception)`
