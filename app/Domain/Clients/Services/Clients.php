@@ -76,7 +76,7 @@ class Clients
      *
      * @api
      */
-    public function editClient(object|array $values): bool
+    public function editClient(array $values): bool
     {
         return $this->clientRepository->editClient($values, $values['id']);
     }
@@ -89,7 +89,7 @@ class Clients
      *
      * @api
      */
-    public function create(object|array $values): int|false
+    public function create(array $values): int|false
     {
         return $this->clientRepository->addClient($values);
     }
