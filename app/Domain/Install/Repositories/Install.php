@@ -92,6 +92,7 @@ class Install
         30003,
         30400,
         30408,
+        30409,
     ];
 
     /**
@@ -350,7 +351,8 @@ class Install
                     `description` text,
                     `kind` varchar(255) DEFAULT NULL,
                     `allDay` varchar(10) DEFAULT NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    KEY `idx_calendar_userId_dateFrom_dateTo` (`userId`, `dateFrom`, `dateTo`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_canvas` (
@@ -363,7 +365,8 @@ class Install
                     `description` TEXT,
                     `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`),
-                    KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
+                    KEY `ProjectIdType` (`projectId` ASC, `type` ASC),
+                    KEY `idx_canvas_type_id` (`type`, `id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_canvas_items` (
@@ -404,7 +407,10 @@ class Install
                     `action` TEXT NULL DEFAULT NULL,
                     `assignedTo` INT NULL DEFAULT NULL,
                     PRIMARY KEY (`id`),
-                    KEY `CanvasLookUp` (`canvasId` ASC, `box` ASC)
+                    KEY `CanvasLookUp` (`canvasId` ASC, `box` ASC),
+                    KEY `idx_canvas_items_box_milestoneId` (`box`, `milestoneId`),
+                    KEY `idx_canvas_items_box_status_author` (`box`, `status`, `author`),
+                    KEY `idx_canvas_items_parent_title` (`parent`, `title`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_approvals` (
@@ -447,7 +453,9 @@ class Install
                     `moduleId` int(11) DEFAULT NULL,
                     `text` text,
                     `status` varchar(50) null,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    KEY `idx_comment_moduleId_module_commentParent` (`moduleId`, `module`, `commentParent`),
+                    KEY `idx_comment_userId_module` (`userId`, `module`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_file` (
@@ -459,7 +467,8 @@ class Install
                     `encName` varchar(255) DEFAULT NULL,
                     `realName` varchar(255) DEFAULT NULL,
                     `date` datetime DEFAULT NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    KEY `idx_file_module_moduleId_userId` (`module`, `moduleId`, `userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_gcallinks` (
@@ -468,7 +477,8 @@ class Install
                     `url` text,
                     `name` varchar(255) DEFAULT NULL,
                     `colorClass` varchar(100) DEFAULT NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    KEY `idx_gcallinks_userId` (`userId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_note` (
@@ -580,7 +590,16 @@ class Install
                     PRIMARY KEY (`id`),
                     KEY `ProjectUserId` (`projectId`,`userId`),
                     KEY `StatusSprint` (`status`,`sprint`),
-                    KEY `Sorting` (`sortindex`)
+                    KEY `Sorting` (`sortindex`),
+                    KEY `idx_tickets_editorId` (`editorId`),
+                    KEY `idx_tickets_milestoneid` (`milestoneid`),
+                    KEY `idx_tickets_editFrom` (`editFrom`),
+                    KEY `idx_tickets_editTo` (`editTo`),
+                    KEY `idx_tickets_dateToFinish` (`dateToFinish`),
+                    KEY `idx_tickets_modified` (`modified`),
+                    KEY `idx_tickets_projectId_status` (`projectId`, `status`),
+                    KEY `idx_tickets_projectId_type` (`projectId`, `type`),
+                    KEY `idx_tickets_status_type` (`status`, `type`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_timesheets` (
@@ -600,7 +619,10 @@ class Install
                     `paidDate` datetime DEFAULT NULL,
                     `modified` datetime DEFAULT NULL,
                     PRIMARY KEY (`id`),
-                    UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`)
+                    UNIQUE KEY `Unique` (`userId`,`ticketId`,`workDate`,`kind`),
+                    KEY `idx_timesheets_ticketId` (`ticketId`),
+                    KEY `idx_timesheets_userId_workDate` (`userId`, `workDate`),
+                    KEY `idx_timesheets_ticketId_workDate` (`ticketId`, `workDate`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_user` (
@@ -637,7 +659,8 @@ class Install
                     `department` VARCHAR(200) NULL,
                     `modified` DATETIME DEFAULT NULL,
                     PRIMARY KEY (`id`),
-                    UNIQUE KEY `username` (`username`)
+                    UNIQUE KEY `username` (`username`),
+                    KEY `idx_user_clientId` (`clientId`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 INSERT INTO `zp_user`(`id`,`username`,`firstname`,`lastname`,`phone`,`profileId`,`lastlogin`,`lastpwd_change`,`status`,`expires`,`role`,`session`,`sessiontime`,`wage`,`hours`,`description`,`clientId`, `notifications`, `createdOn`, `pwReset`)
@@ -650,7 +673,8 @@ class Install
                     `startDate` DATETIME NULL,
                     `endDate` DATETIME NULL,
                     `modified` datetime DEFAULT NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    KEY `idx_sprints_projectId_startDate_endDate` (`projectId`, `startDate`, `endDate`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_stats` (
@@ -683,13 +707,16 @@ class Install
                     `daily_avg_hours_remaining_point` FLOAT NULL,
                     `daily_avg_hours_remaining_todo` FLOAT NULL,
                     `sum_teammembers` INT NULL,
-                    INDEX `projectId` (`projectId` ASC, `sprintId` ASC)
+                    INDEX `projectId` (`projectId` ASC, `sprintId` ASC),
+                    KEY `idx_stats_projectId_sprintId_date` (`projectId`, `sprintId`, `date`),
+                    KEY `idx_stats_sprintId_date` (`sprintId`, `date`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_settings` (
                     `key` VARCHAR(175) NOT NULL,
                     `value` MEDIUMTEXT NULL,
-                    PRIMARY KEY (`key`)
+                    PRIMARY KEY (`key`),
+                    KEY `idx_settings_key` (`key`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 INSERT INTO zp_settings (`key`, `value`) VALUES ('db-version', :dbVersion);
@@ -2014,5 +2041,93 @@ class Install
         }
 
         return true;
+    }
+
+    /**
+     * Database performance optimization - add indexes for frequently used queries
+     */
+    public function update_sql_30409(): bool|array
+    {
+        $errors = [];
+
+        // High Priority Indexes - Critical Performance Impact
+        $sql = [
+            // Individual column indexes for tickets table
+            'CREATE INDEX idx_tickets_editorId ON zp_tickets (editorId)',
+            'CREATE INDEX idx_tickets_milestoneid ON zp_tickets (milestoneid)',
+            'CREATE INDEX idx_tickets_editFrom ON zp_tickets (editFrom)',
+            'CREATE INDEX idx_tickets_editTo ON zp_tickets (editTo)',
+            'CREATE INDEX idx_tickets_dateToFinish ON zp_tickets (dateToFinish)',
+            'CREATE INDEX idx_tickets_modified ON zp_tickets (modified)',
+
+            // Medium Priority - Combined indexes for common filter patterns
+            'CREATE INDEX idx_tickets_projectId_status ON zp_tickets (projectId, status)',
+            'CREATE INDEX idx_tickets_projectId_type ON zp_tickets (projectId, type)',
+
+            // User and project related indexes
+            'CREATE INDEX idx_user_clientId ON zp_user (clientId)',
+            'CREATE INDEX idx_projects_clientId ON zp_projects (clientId)',
+            'CREATE INDEX idx_projects_state ON zp_projects (state)',
+
+            // Timesheets performance
+            'CREATE INDEX idx_timesheets_ticketId ON zp_timesheets (ticketId)',
+
+            // Lower Priority - Additional combinations
+            'CREATE INDEX idx_tickets_status_type ON zp_tickets (status, type)',
+            'CREATE INDEX idx_tickethistory_ticketId_dateModified ON zp_tickethistory (ticketId, dateModified)',
+
+            // Phase 2: Canvas, Comments, Files, Notifications, Calendar, Sprints Performance
+            // Canvas and Canvas Items - High Priority for Ideas, Goals, Wiki
+            'CREATE INDEX idx_canvas_projectId_type ON zp_canvas (projectId, type)',
+            'CREATE INDEX idx_canvas_type_id ON zp_canvas (type, id)',
+            'CREATE INDEX idx_canvas_items_canvasId_box ON zp_canvas_items (canvasId, box)',
+            'CREATE INDEX idx_canvas_items_box_milestoneId ON zp_canvas_items (box, milestoneId)',
+            'CREATE INDEX idx_canvas_items_box_status_author ON zp_canvas_items (box, status, author)',
+            'CREATE INDEX idx_canvas_items_parent_title ON zp_canvas_items (parent, title)',
+
+            // Notifications - High Priority for user interactions
+            'CREATE INDEX idx_notifications_userId_read_datetime ON zp_notifications (userId, `read`, datetime)',
+
+            // Timesheets - Additional High Priority indexes
+            'CREATE INDEX idx_timesheets_userId_workDate ON zp_timesheets (userId, workDate)',
+            'CREATE INDEX idx_timesheets_ticketId_workDate ON zp_timesheets (ticketId, workDate)',
+
+            // Calendar - High Priority for scheduling
+            'CREATE INDEX idx_calendar_userId_dateFrom_dateTo ON zp_calendar (userId, dateFrom, dateTo)',
+            'CREATE INDEX idx_gcallinks_userId ON zp_gcallinks (userId)',
+
+            // Comments - Medium Priority for threaded discussions
+            'CREATE INDEX idx_comment_moduleId_module_commentParent ON zp_comment (moduleId, module, commentParent)',
+            'CREATE INDEX idx_comment_userId_module ON zp_comment (userId, module)',
+
+            // Files - Medium Priority for file access
+            'CREATE INDEX idx_file_module_moduleId_userId ON zp_file (module, moduleId, userId)',
+
+            // Sprints - Medium Priority for project management
+            'CREATE INDEX idx_sprints_projectId_startDate_endDate ON zp_sprints (projectId, startDate, endDate)',
+
+            // Settings - For project configuration lookups
+            'CREATE INDEX idx_settings_key ON zp_settings (`key`)',
+
+            // Stats table for reports (if exists) - Lower Priority
+            'CREATE INDEX idx_stats_projectId_sprintId_date ON zp_stats (projectId, sprintId, date)',
+            'CREATE INDEX idx_stats_sprintId_date ON zp_stats (sprintId, date)',
+        ];
+
+        foreach ($sql as $statement) {
+            try {
+                $stmn = $this->database->prepare($statement);
+                $stmn->execute();
+            } catch (PDOException $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                // Don't fail the entire migration for duplicate indexes
+                if (!str_contains($e->getMessage(), 'Duplicate key name')) {
+                    array_push($errors, $statement.' Failed:'.$e->getMessage());
+                }
+            }
+        }
+
+        return count($errors) ? $errors : true;
     }
 }
