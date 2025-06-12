@@ -291,7 +291,7 @@ class Tickets
 				WHERE (
 				    ticket.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :id)
                     OR project.psettings = 'all'
-                    OR (project.psettings = 'client' AND project.clientId = :clientId)
+                    OR (project.psettings = 'clients' AND project.clientId = :clientId)
                 )
                 AND ticket.type <> 'milestone'
 				ORDER BY ticket.id DESC";
@@ -386,7 +386,7 @@ class Tickets
                 WHERE (
                     zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
                     OR zp_projects.psettings = 'all'
-                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                    OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
                     OR (requestor.role >= 40)
                 )
             ";
@@ -620,6 +620,7 @@ class Tickets
                       WHERE (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
                         OR zp_projects.psettings = 'all'
+                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
                         OR (requestor.role >= 40)
                     )
             SQL;
@@ -655,6 +656,8 @@ class Tickets
                 $stmn->bindValue(':types'.$key, $type, PDO::PARAM_STR);
             }
         }
+
+        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
 
         // Current client is only used for authorization as it represents the current client Id assigned to a user.
         // Do not attempt to filter tickets using this value.
@@ -705,7 +708,8 @@ class Tickets
                     (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
                         OR zp_projects.psettings = 'all'
-                        OR requestor.role >= 40
+                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
+                        OR (requestor.role >= 40)
                     )
                     AND zp_tickets.type <> 'milestone'
             SQL;
@@ -733,6 +737,8 @@ class Tickets
         } else {
             $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
         }
+
+        $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
 
         $stmn->execute();
         $values = $stmn->fetchAll();
@@ -1050,6 +1056,7 @@ class Tickets
 						AND (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
                         OR zp_projects.psettings = 'all'
+                        OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
                         OR (requestor.role >= 40)
                     )
                     ";
@@ -1164,6 +1171,14 @@ class Tickets
             foreach (explode(',', $searchCriteria['clients']) as $key => $client) {
                 $stmn->bindValue(':clients'.$key, $client, PDO::PARAM_STR);
             }
+        }
+
+        // Current client is only used for authorization as it represents the current client Id assigned to a user.
+        // Do not attempt to filter tickets using this value.
+        if (isset($searchCriteria['currentClient'])) {
+            $stmn->bindValue(':clientId', $searchCriteria['currentClient'], PDO::PARAM_INT);
+        } else {
+            $stmn->bindValue(':clientId', session('userdata.clientId') ?? '-1', PDO::PARAM_INT);
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {

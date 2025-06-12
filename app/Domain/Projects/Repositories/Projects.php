@@ -847,7 +847,7 @@ class Projects
         }
 
         // Everyone in client is allowed to see project
-        if ($project['psettings'] === 'client' || $project['psettings'] === 'clients') {
+        if ($project['psettings'] === 'clients') {
             if ($user['clientId'] == $project['clientId']) {
                 return true;
             }

@@ -215,7 +215,7 @@ class Comments
 
                 (zp_projects.id IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
                     OR zp_projects.psettings = 'all'
-                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                    OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
                     OR (:requesterRole = 'admin' OR :requesterRole = 'manager')) ";
 
         if (isset($projectId) && $projectId > 0) {
