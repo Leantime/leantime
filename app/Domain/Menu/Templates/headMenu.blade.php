@@ -8,6 +8,30 @@
                'progressSteps' => $onTheClock
            ])
 
+    @if ($login::userIsAtLeast("manager", true))
+        <li class="notificationDropdown">
+        <a
+            class="dropdown-toggle profileHandler newsDropDownHandler"
+            hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"
+            hx-target="#pluginNewsDropdown"
+            hx-indicator=".htmx-news-indicator"
+            hx-trigger="click"
+            preload="mouseover"
+            data-toggle='dropdown'
+            data-tippy-content='{{ __('popover.latest_plugins') }}'
+        >
+            <i class="fa-solid fa-puzzle-piece"></i>
+
+        </a>
+
+        <div class='dropdown-menu tw-p-m tw-h-screen tw-overflow-y-auto' id='pluginNewsDropdown'>
+            <div class="htmx-indicator htmx-news-indicator">
+                <x-global::loadingText type="text" count="3" includeHeadline="true" />
+            </div>
+        </div>
+    </li>
+    @endif
+
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
