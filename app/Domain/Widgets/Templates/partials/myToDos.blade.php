@@ -34,7 +34,9 @@
      hx-trigger="{{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::UPDATE }} from:body, {{ \Leantime\Domain\Tickets\Htmx\HtmxTicketEvents::SUBTASK_UPDATE }} from:body"
      class="clear"
      hx-swap="outerHTML"
-     hx-ext="json-enc">
+     hx-ext="json-enc"
+     hx-indicator=".htmx-indicator"
+>
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
 
