@@ -53,7 +53,7 @@
         "ext-dom": "*",
         "laravel/framework": "^v11.44",
         "guzzlehttp/guzzle": "^7.9",
-        "aws/aws-sdk-php": "^3.342",
+        "aws/aws-sdk-php": "3.343.10",
         "phpmailer/phpmailer": "^6.6",
         "robthree/twofactorauth": "^1.8",
         "endroid/qr-code": "^6.0",

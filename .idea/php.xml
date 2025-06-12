@@ -82,8 +82,6 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
-      <path value="$PROJECT_DIR$/vendor/symfony/property-access" />
-      <path value="$PROJECT_DIR$/vendor/symfony/property-info" />
       <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/string" />
       <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
@@ -330,9 +328,6 @@
       <path value="$PROJECT_DIR$/vendor/marc-mabe/php-enum" />
       <path value="$PROJECT_DIR$/vendor/inspector-apm/neuron-ai" />
       <path value="$PROJECT_DIR$/vendor/johngrogg/ics-parser" />
-      <path value="$PROJECT_DIR$/vendor/symfony/type-info" />
-      <path value="$PROJECT_DIR$/vendor/symfony/validator" />
-      <path value="$PROJECT_DIR$/vendor/symfony/serializer" />
       <path value="$PROJECT_DIR$/vendor/sabre/dav" />
       <path value="$PROJECT_DIR$/vendor/sabre/vobject" />
       <path value="$PROJECT_DIR$/vendor/sabre/xml" />
