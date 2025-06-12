@@ -169,17 +169,33 @@ leantime.ticketsController = (function () {
                             progress: false,
                             is_draggable: false,
                             custom_popup_html: function (task) {
-                                // the task object will contain the updated
-                                // dates and progress value
-                                var end_date = task._end;
-                                return '<div class="details-container"> ' +
-                                    '<small><b>' + task.projectName + '</b></small>' +
-                                    '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
-                                    '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
-                                    '' + Math.round(task.progress) + '%</p> ' +
-                                    '<a href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
-                                    '</div>';
+
+                                var end_date = task._end;
+                                var dateObject = new Date(end_date);
+                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
+
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
+
+                                if (task.projectName !== undefined) {
+                                    popUpHTML +=  '<h3><b>' + task.projectName + '</b></h3>';
+                                }
+                                popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
+
+                                if (task.type === 'milestone') {
+                                    popUpHTML += '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
+                                        '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
+                                        '' + Math.round(task.progress) + '%</p> ' +
+                                        '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                } else {
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                        '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                }
+
+                                popUpHTML += '</div>';
+
+                                return popUpHTML;
+
                             },
                             on_click: function (task) {
 
