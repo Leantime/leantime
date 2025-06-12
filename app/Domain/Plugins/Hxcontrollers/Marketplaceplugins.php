@@ -33,5 +33,18 @@ class Marketplaceplugins extends HtmxController
         $this->tpl->assign('plugins', $plugins);
     }
 
+    public function getLatest()
+    {
+        /** @var MarketplacePlugin[] $plugins */
+        $plugins = $this->pluginService->getLatestPluginUpdates(
+            $this->incomingRequest->query->get('page', 1),
+            $this->incomingRequest->query->get('search', ''),
+        );
+
+        $this->tpl->assign('plugins', $plugins);
+
+        return $this->tpl->displayPartial("plugins::partials.latestPlugins");
+    }
+
     public function search(): void {}
 }

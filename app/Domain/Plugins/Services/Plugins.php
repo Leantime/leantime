@@ -461,6 +461,67 @@ class Plugins
         return $plugins;
     }
 
+    public function getLatestPluginUpdates(int $page, string $query = ''): array
+    {
+        $plugins = $this->httpClient()->get(
+            "{$this->marketplaceUrl}/ltmp-api"
+            .(! empty($query) ? "/search/$query" : '/index')
+            ."/$page".'?lt-v='.$this->appSettings->appVersion
+        );
+
+        $pluginArray = $plugins->collect()->toArray();
+
+        $plugins = [];
+        $pluginsFlat = [];
+
+        if (isset($pluginArray['categories'])) {
+            foreach ($pluginArray['categories'] as $category) {
+
+                $plugins[$category['slug']] = [
+                    'name' => $category['name'],
+                    'description' => $category['description'],
+                    'plugins' => [],
+
+                ];
+
+                foreach ($category['products'] as $plugin) {
+                    $priceString = '';
+                    if (! empty($plugin['sub_interval']) && $plugin['sub_interval'] === 'year') {
+                        $price = $plugin['price'] ?? 0;
+                        $months = 12;
+                        $lowestUserTier = 10;
+                        $perUserMonth = round(($price / $months / $lowestUserTier), 2);
+                        $priceString = '$'.$perUserMonth.' per user/month (billed annually) <a href="javascript:void(0)" data-tippy-content="10 user minimum, billed annually"><i class="fa fa-circle-info"></i></a>';
+                    }
+
+                    $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])] = build(new MarketplacePlugin)
+                        ->set('identifier', $plugin['identifier'] ?? '')
+                        ->set('name', $plugin['post_title'] ?? '')
+                        ->set('excerpt', $plugin['excerpt'] ?? '')
+                        ->set('imageUrl', $plugin['icon'] ?? '')
+                        ->set('vendorDisplayName', $plugin['vendor'] ?? '')
+                        ->set('vendorId', $plugin['vendor_id'] ?? '')
+                        ->set('vendorEmail', $plugin['vendor_email'] ?? '')
+                        ->set(
+                            'startingPrice',
+                            '$'.($plugin['price'] ?? '')
+                        )
+                        ->set('calculatedMonthlyPrice', $priceString)
+                        ->set('rating', $plugin['rating'] ?? '')
+                        ->set('version', $plugin['version'] ?? '')
+                        ->get();
+
+                    $pluginsFlat[Str::lower($plugin['identifier'])] = $plugins[$category['slug']]['plugins'][Str::lower($plugin['identifier'])];
+                }
+            }
+        }
+
+        Cache::store('installation')->set('plugins.marketplacePlugins', $plugins);
+        Cache::store('installation')->set('plugins.marketplacePluginsFlat', $pluginsFlat);
+
+        return $pluginsFlat;
+    }
+
     /**
      * Retrieves a marketplace plugin's details by its identifier.
      *
