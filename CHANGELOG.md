@@ -1,3 +1,31 @@
+# Version: 3.5.6
+
+* [1c8c3cc](https://github.com/Leantime/leantime/commit/1c8c3cc186f1f538eaf3de9384fde256177b3b4c): task: fix code style
+* [98ce4c0](https://github.com/Leantime/leantime/commit/98ce4c05188b3b6a08d9d844b838ac0dfc363741): fix: project selector tabs break design in german
+* [740fba1](https://github.com/Leantime/leantime/commit/740fba142670f9631557626d6ce493eb18a847e2): task: version bump
+* [a17ee45](https://github.com/Leantime/leantime/commit/a17ee4550b2a18381b531faf63134a0df4a5da82): feat: add menu link to show latest plugin updates
+* [8d0fcfd](https://github.com/Leantime/leantime/commit/8d0fcfdb36128a3c4fd59521ac1f9f16b8989d83): feat: preload tasks on kanban board
+* [f01b11c](https://github.com/Leantime/leantime/commit/f01b11ce72864e6639481e87637deb52506f3ec4): feat: Show plugin updates
+* [b8ccaeb](https://github.com/Leantime/leantime/commit/b8ccaebf827e164522129eb22e14f5a360a20a59): feat: optimize sql indexes across the system
+* [36fefc7](https://github.com/Leantime/leantime/commit/36fefc7a63990576fb48e75daa36909daa42e335): fix: readonly/commenter users were not able to see milestone cards and link was broken #3047
+* [2975e15](https://github.com/Leantime/leantime/commit/2975e1536feba6055053a3c6a1c2184ecb6c331c): feat: update progress bar animation to be continuous
+* [26efe4a](https://github.com/Leantime/leantime/commit/26efe4a5b114ce27b6cf21652e15ba22db9fa1f2): fix: show loading bar when reloading tasks on dashboard
+* [10c4f5a](https://github.com/Leantime/leantime/commit/10c4f5ad12dfe68d3e8455611ad89f46f23b031b): task: add logging to failed event dispatches
+* [a399425](https://github.com/Leantime/leantime/commit/a399425b55be743379cc1a3c88bbeeb85beb32a1): fix: users with project access through clients did not see all tasks due to wrong string comparison
+* [465d1f2](https://github.com/Leantime/leantime/commit/465d1f2287f9c17554cf3280da5b1b33c9d9ebab): task: webpack udpate
+* [1c06042](https://github.com/Leantime/leantime/commit/1c0604295bdd52602e0b5f55ad22a933d1bbb872): fix: project redirect for client assigned projects was not working correctly.
+* [8371932](https://github.com/Leantime/leantime/commit/837193234bd777eff18bd24af54e527e887ffead): task: Clean code style
+* [8b56da3](https://github.com/Leantime/leantime/commit/8b56da38dad2d7a2d9e9a4fbba320b5db9515e95): task: add logging to composer loaded plugin init
+* [aeb889f](https://github.com/Leantime/leantime/commit/aeb889f775ac2b16bd69727d59ea03f712f1bf23): task: update claude code instructions
+* [c946869](https://github.com/Leantime/leantime/commit/c946869313a58223aa8ee0d782dfe20e1c32accf): fix: minor css upate for mermaid support
+* [9c34b99](https://github.com/Leantime/leantime/commit/9c34b99922a7cb8a1c9ec1c9123f8dcdaed75fa7): feat: improved subtask handling including htmx events and additional properties for creation
+* [ecfa46a](https://github.com/Leantime/leantime/commit/ecfa46ae9eac48030415269fb761bbccd74ebe2b): feat: create project model through constructor
+* [62b136b](https://github.com/Leantime/leantime/commit/62b136b1f3d52217326f25d57b2a280a8585d445): fix: object parameter breaks jsonrpc usage
+* [db42edd](https://github.com/Leantime/leantime/commit/db42edde5c8bd5205bc5cf5882ac858f3d01d9af): feat: add unique user id to session
+* [7d8d54d](https://github.com/Leantime/leantime/commit/7d8d54d264af767ceaa9d5e6e6f3a49ecb75ecd7): fix: Inconsistent datetime handling of ical events
+* [b6ba0f5](https://github.com/Leantime/leantime/commit/b6ba0f5deb6fbcea4abfe8e1a97b2d9d64c68d21): fix: Welcome widget ticket counter should not count milestones as tasks left to do
+
+
 # Version: 3.5.5
 
 * [d2d20da](https://github.com/Leantime/leantime/commit/d2d20da533c9b81fc78479713509e52b1e22ef34): task: Version bump
