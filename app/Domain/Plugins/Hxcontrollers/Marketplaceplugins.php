@@ -43,7 +43,7 @@ class Marketplaceplugins extends HtmxController
 
         $this->tpl->assign('plugins', $plugins);
 
-        return $this->tpl->displayPartial("plugins::partials.latestPlugins");
+        return $this->tpl->displayPartial('plugins::partials.latestPlugins');
     }
 
     public function search(): void {}

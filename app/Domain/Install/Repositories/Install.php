@@ -2122,7 +2122,7 @@ class Install
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 // Don't fail the entire migration for duplicate indexes
-                if (!str_contains($e->getMessage(), 'Duplicate key name')) {
+                if (! str_contains($e->getMessage(), 'Duplicate key name')) {
                     array_push($errors, $statement.' Failed:'.$e->getMessage());
                 }
             }
