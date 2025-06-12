@@ -7,6 +7,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
@@ -340,6 +341,8 @@ class EventDispatcher implements Dispatcher
             if (! isset($filteredPayload) && $index === 0) {
                 $filteredPayload = $payload;
             }
+
+            Log::error($e);
         }
 
         return $isEvent ? null : $filteredPayload;
