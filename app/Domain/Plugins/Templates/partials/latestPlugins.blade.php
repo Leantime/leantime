@@ -1,6 +1,7 @@
 
 <h1>Latest Plugin Updates</h1>
-<p>Extend Leantime using our latest plugins.</p>
+<p>Extend Leantime using our latest plugins.<br /><a href="{{ BASE_URL }}/plugins/marketplace"><i class="fa fa-cogs"></i> Manage Your Apps</a></p><br />
+
 <br />
 <div>
     <ul>
