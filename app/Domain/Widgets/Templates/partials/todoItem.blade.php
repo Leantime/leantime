@@ -108,11 +108,12 @@
                     </div>
                 </div>
 
-                @dispatchEvent('beforePlaceholder')
+                @dispatchEvent('beforePlaceholder', ['ticket' => (object)$ticket])
                 <div class="placeholder-container tw-flex-1 tw-flex tw-flex-row tw-content-center">
+                    @dispatchEvent('placeholderContainer', ['ticket' => (object)$ticket])
                 </div>
 
-                @dispatchEvent('beforeDueDate')
+                @dispatchEvent('beforeDueDate', ['ticket' => (object)$ticket])
                 <div class="due-date-container tw-flex-1 tw-justify-right tw-flex tw-flex-row tw-justify-end tw-content-center due-date-wrapper">
                     <div class="tw-content-center">
                         <div class="date-picker-form-control">
