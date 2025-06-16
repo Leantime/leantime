@@ -2,7 +2,7 @@
 
 namespace Leantime\Core\Configuration;
 
-use Leantime\Core\Support\Attributes\LaravelConfig;
+use Leantime\Core\Configuration\Attributes\LaravelConfig;
 
 /**
  * Default Configuration Class

@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Core\Support\Attributes;
+namespace Leantime\Core\Configuration\Attributes;
 
 use Attribute;
 
