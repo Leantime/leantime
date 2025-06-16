@@ -6,9 +6,12 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Middleware\AuthenticateSession;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class HttpKernel extends Kernel
 {
@@ -162,7 +165,7 @@ class HttpKernel extends Kernel
                     payload: [],
                     function: 'handle',
                 ))
-                ->then(fn () => Frontcontroller::dispatch_request($request))
+                ->then(fn () => $this->findAndDispatchToRouter($request))
             );
 
         return $response;
@@ -175,5 +178,38 @@ class HttpKernel extends Kernel
 
         parent::terminate($request, $response);
 
+    }
+
+    /**
+     * Dispatch request to router with Laravel routing precedence
+     *
+     * Tries Laravel routing first, falls back to Frontcontroller if no route found
+     *
+     * Frontcontroller is now deprecated and will be removed in future versions once we have route files for everythihng
+     */
+    protected function findAndDispatchToRouter($request)
+    {
+
+        $this->app->instance('request', $request);
+
+        try {
+            // Try Laravel routing first
+            $route = $this->router->getRoutes()->match($request);
+
+            if ($route) {
+                // Use Laravel's router to handle the request
+                return $this->router->dispatch($request);
+            }
+        } catch (NotFoundHttpException $e) {
+            // No Laravel route found, fall back to Frontcontroller
+        } catch (\Exception $e) {
+            // Log other exceptions but continue to Frontcontroller
+            if (config('app.debug')) {
+                Log::error($e);
+            }
+        }
+
+        // Fall back to Leantime's Frontcontroller routing
+        return Frontcontroller::dispatch_request($request);
     }
 }

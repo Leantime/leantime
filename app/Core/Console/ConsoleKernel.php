@@ -117,10 +117,25 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         // Load Dynamic command paths for leantime
         $ltCommands = collect(glob(APP_ROOT.'/app/Domain/**/Command/') ?? []);
-        $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
 
-        foreach ($ltPluginCommands as $pluginPath) {
-            $this->load($pluginPath);
+        // Load commands from enabled plugins
+        try {
+            $pluginService = app()->make(\Leantime\Core\Plugins\Plugins::class);
+            $enabledPluginPaths = $pluginService->getEnabledPluginPaths();
+
+            foreach ($enabledPluginPaths as $pluginInfo) {
+                $commandPath = $pluginInfo['path'].'/Command/';
+
+                if (is_dir($commandPath)) {
+                    $this->load($commandPath);
+                }
+            }
+        } catch (\Exception $e) {
+            // Fallback to scanning all plugin directories if service unavailable
+            $ltPluginCommands = collect(glob(APP_ROOT.'/app/Plugins/**/Command/') ?? []);
+            foreach ($ltPluginCommands as $pluginPath) {
+                $this->load($pluginPath);
+            }
         }
 
         foreach ($this->commandRoutePaths as $path) {

@@ -13,6 +13,7 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Core\Routing\RouteLoader;
 
 /**
  * EventDispatcher class - Handles all events and filters
@@ -485,6 +486,10 @@ class EventDispatcher implements Dispatcher
             }
         }
 
+        // Load routes.php files from domains and system plugins
+        // User plugin routes will be loaded via event after plugins are enabled
+        RouteLoader::loadRoutes();
+
         EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsStart', function () {
 
             if (! session('isInstalled')) {
@@ -540,15 +545,7 @@ class EventDispatcher implements Dispatcher
 
     public static function getDomainPaths()
     {
-
-        $customModules = collect(glob(APP_ROOT.'/custom/Domain'.'/*', GLOB_ONLYDIR));
-        $domainModules = collect(glob(APP_ROOT.'/app/Domain'.'/*', GLOB_ONLYDIR));
-
-        $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
-
-        $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
-
-        return $customModules->concat($filteredModules)->all();
+        return collect(glob(APP_ROOT.'/app/Domain'.'/*', GLOB_ONLYDIR))->all();
     }
 
     /**
