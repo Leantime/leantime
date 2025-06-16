@@ -75,4 +75,72 @@ class Plugins
 
         return false;
     }
+
+    /**
+     * Gets paths for enabled plugins, supporting both folder and phar formats
+     *
+     * @return array Array of plugin paths with format information
+     */
+    public function getEnabledPluginPaths(): array
+    {
+        $pluginPaths = [];
+        $pluginDirectory = APP_ROOT.'/app/Plugins/';
+
+        // Get enabled plugins from the domain service
+        try {
+            $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+            $enabledPlugins = $pluginService->getEnabledPlugins();
+
+            foreach ($enabledPlugins as $plugin) {
+                // Skip incomplete class objects
+                if (is_a($plugin, '__PHP_Incomplete_Class') || $plugin == null) {
+                    continue;
+                }
+
+                $pluginPath = $pluginDirectory.$plugin->foldername;
+
+                if ($plugin->format == 'phar') {
+                    $pharPath = "phar://{$pluginPath}/{$plugin->foldername}.phar";
+
+                    if (file_exists($pharPath)) {
+                        $pluginPaths[] = [
+                            'path' => $pharPath,
+                            'foldername' => $plugin->foldername,
+                            'format' => 'phar',
+                            'namespace' => "Leantime\\Plugins\\{$plugin->foldername}\\",
+                        ];
+                    }
+                } else {
+                    // Folder-based plugin
+                    if (is_dir($pluginPath)) {
+                        $pluginPaths[] = [
+                            'path' => $pluginPath,
+                            'foldername' => $plugin->foldername,
+                            'format' => 'folder',
+                            'namespace' => "Leantime\\Plugins\\{$plugin->foldername}\\",
+                        ];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Fall back to system plugins if service unavailable
+            if (isset($this->enabledPlugins)) {
+                foreach ($this->enabledPlugins as $pluginName => $enabled) {
+                    if ($enabled) {
+                        $pluginPath = $pluginDirectory.$pluginName;
+                        if (is_dir($pluginPath)) {
+                            $pluginPaths[] = [
+                                'path' => $pluginPath,
+                                'foldername' => $pluginName,
+                                'format' => 'folder',
+                                'namespace' => "Leantime\\Plugins\\{$pluginName}\\",
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $pluginPaths;
+    }
 }

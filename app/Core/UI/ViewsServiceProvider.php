@@ -252,40 +252,21 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
         $appComposerClasses = collect(glob(APP_ROOT.'/app/Views/Composers/*.php'))
             ->concat(glob(APP_ROOT.'/app/Domain/*/Composers/*.php'));
 
-        $enabledPlugins = $this->app->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
-        $pluginComposerClasses = collect($enabledPlugins)
-            ->map(function ($plugin) {
+        try {
+            $pluginService = $this->app->make(\Leantime\Core\Plugins\Plugins::class);
+            $enabledPluginPaths = $pluginService->getEnabledPluginPaths();
 
-                if ($plugin->format === 'phar') {
-                    $pharPath = APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/'.$plugin->foldername.'.phar';
+            $pluginComposerClasses = collect($enabledPluginPaths)
+                ->map(function ($pluginInfo) {
+                    $composersPath = $pluginInfo['path'].'/Composers/';
 
-                    if (! file_exists($pharPath)) {
-                        return [];
-                    }
-
-                    try {
-
-                        $composers = [];
-                        $composerPath = 'phar://'.$pharPath.'/Composers';
-                        $p = new \Phar($composerPath, 0);
-                        $paths = collect(new \RecursiveIteratorIterator($p));
-
-                        foreach ($paths as $path) {
-                            $something = $path;
-                            $composers[] = 'Plugins/'.$plugin->foldername.'/Composers/'.$path->getFileName();
-                        }
-
-                        return $composers;
-
-                    } catch (\Exception $e) {
-                        return [];
-                    }
-                }
-
-                // If not a phar, we can just use glob
-                return glob(APP_ROOT.'/app/Plugins/'.$plugin->foldername.'/Composers/*.php') ?: [];
-            })
-            ->flatten();
+                    // Use glob which works for both folder and phar paths
+                    return glob($composersPath.'*.php') ?: [];
+                })
+                ->flatten();
+        } catch (\Exception $e) {
+            $pluginComposerClasses = collect();
+        }
 
         $composerList = $appComposerClasses
             ->concat($pluginComposerClasses)
@@ -375,22 +356,23 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
                 return [];
             });
 
-        // Not all plugins will be enabled but that is okay, considering the alternative is doing a db request while
-        // registering a service provider
+        // Get all plugin paths (both enabled and disabled) since views are discovered at service provider registration
+        // For view paths we need to include all plugins, not just enabled ones, to avoid database calls during registration
         $pluginPaths = collect(glob($this->app->basePath().'/app/Plugins/*'))
             ->mapWithKeys(function ($path) {
 
                 $pluginFolder = basename($path);
 
-                // To far or not to phar
-                $path = 'phar://'.APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar/Templates';
-                if (is_dir($path)) {
-                    return [strtolower($pluginFolder) => [$path]];
+                // Check phar templates first
+                $pharTemplatesPath = 'phar://'.APP_ROOT.'/app/Plugins/'.$pluginFolder.'/'.$pluginFolder.'.phar/Templates';
+                if (is_dir($pharTemplatesPath)) {
+                    return [strtolower($pluginFolder) => [$pharTemplatesPath]];
                 }
 
-                $path = APP_ROOT.'/app/Plugins/'.$pluginFolder.'/Templates';
-                if (is_dir($path)) {
-                    return [strtolower($pluginFolder) => [$path]];
+                // Check folder templates
+                $folderTemplatesPath = APP_ROOT.'/app/Plugins/'.$pluginFolder.'/Templates';
+                if (is_dir($folderTemplatesPath)) {
+                    return [strtolower($pluginFolder) => [$folderTemplatesPath]];
                 }
 
                 return [];
