@@ -308,15 +308,25 @@
                 console.log.apply(this, arguments);
             };
 
-            @if(session('userdata.id') != null)
-            leantime.ticketsController.initMilestoneDropdown();
-            leantime.ticketsController.initStatusDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
+            var sortableEnabled = @dispatchFilter('todoWidgetSortableEnabled', true);
 
-            // Initialize the sortable lists for hierarchical tasks
-            jQuery('.sortable-list').nestedSortable();
+            @if(session('userdata.id') != null)
+                leantime.ticketsController.initMilestoneDropdown();
+                leantime.ticketsController.initStatusDropdown();
+                leantime.ticketsController.initDueDateTimePickers();
+
+
+                if(sortableEnabled) {
+
+                    // Initialize the sortable lists for hierarchical tasks
+                    jQuery('.sortable-list').nestedSortable();
+
+                }
+
             @else
-            leantime.authController.makeInputReadonly(".maincontentinner");
+                if(sortableEnabled) {
+                    leantime.authController.makeInputReadonly(".maincontentinner");
+                }
             @endif
         });
 
