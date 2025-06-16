@@ -91,7 +91,7 @@ docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.
 ```
 
 ### CLI Commands
-Leantime includes several command-line tools located in the `app/Command` directory that can be executed via:
+Leantime extended the standard Laravel artisan command and includes several command-line tools located in the `app/Command` directory that can be executed via:
 ```bash
 php bin/leantime [command]
 ```
@@ -145,18 +145,42 @@ Common commands:
   - `Acceptance/` - Acceptance tests
   - `Unit/` - Unit tests
 
-### Architecture Overview
+### General Architecture Overview
+The application is built on Laravel with a few custom components. It uses a plugin system for extensibility.
+Leantime follows a domain-driven-architecture:
 
-Leantime follows a layered architecture:
+**Core**
+
+Framework code (laravel) and any extended classes are in the `app/Core` folder.
+Core manages all shared functionality and base features. 
+
+**Domain**
+
+Each module in Domain has several layers representing on domain: 
 
 1. **Controllers** handle HTTP requests and delegate to services
 2. **Services** contain business logic and orchestrate operations
 3. **Repositories** access and manipulate data storage
 4. **Models** represent data structures
+5. **Templates** represents view files (using blade)
+6. **Listeners** contain event listeners
+7. **Jobs** are queueing jobs
 
-The application is built on a custom PHP framework with Laravel components. It uses a plugin system for extensibility.
+**Plugins**
+Plugins are installable domain modules living in app/Plugins
+Each plugin follows the same structure as domain modules but also contains a composer.json file for plugin identification.
+Plugins can be managed as folders or pre-packaged phar files. 
 
-### Data Layer Architecture (To Be Refactored)
+
+### Architecture Details
+
+#### Config
+
+System Administrators can configure Leantime using .env files or Environment variables. These need to be stored in the config/ folder.
+We have a custom config loader in app/Core/Configuration that loads the env file, maps some old config parameters and merges it with laravel config. Configs can be extended by plugins.
+Important: The list of ServiceProviders are also stored in laravelConfig.
+
+#### Data Layer Architecture (To Be Refactored)
 
 The current data layer consists of:
 
@@ -177,7 +201,7 @@ The following areas will need refactoring for Doctrine integration:
 - **Transactions**: Current manual transaction handling would be replaced with Doctrine's transaction management.
 - **Relationship Management**: Current manual relationship handling would be replaced with Doctrine's relationship mappings.
 
-### HTTP Layer Architecture
+#### HTTP Layer Architecture
 
 Leantime uses a custom HTTP layer with the following components:
 
@@ -202,7 +226,7 @@ Leantime uses a custom HTTP layer with the following components:
    - `Localization`: Sets up language settings
    - `AuthCheck`: Validates user authentication
 
-### Event System
+#### Event System
 
 Leantime has a rich event system located in `Core/Events/` that provides:
 
@@ -224,7 +248,7 @@ Leantime has a rich event system located in `Core/Events/` that provides:
    - Creating an event registry or enum for type-safety
    - Implementing IDE tooling to identify event usage throughout the codebase
 
-### Service Layer Architecture
+#### Service Layer Architecture
 
 The service layer implements business logic and follows these principles:
 
@@ -247,17 +271,23 @@ When refactoring for Doctrine:
 - Transaction handling would be moved from repositories to services
 - Hydration logic can be simplified using Doctrine's entity manager
 
-### API Architecture
+#### JSONRPC API Architecture
+
+Leantime provides it's users with a JsonRPC API. The api is a thin wrapper accessible through the API domain and provides a structured access to the service layers of all domains.
 
 The API layer uses:
 
 1. **JSON-RPC**: The primary API protocol exposed via `Jsonrpc.php` controller
-2. **REST Endpoints**: Domain-specific REST controllers in each domain's `Controllers` folder
-3. **Response Format**: Standard JSON responses with consistent structure
-4. **Authentication**: Token-based authentication with API keys
-5. **Controllers**: API controllers follow a consistent pattern with `get`, `post`, `patch`, and `delete` methods
+2. **Response Format**: Standard JSON responses with consistent structure
+3. **Authentication**: Token-based authentication with API keys
+4. **Controllers**: API controllers follow a consistent pattern with `get`, `post`, `patch`, and `delete` methods
 
-### Template System
+**Deprecated API controllers**
+The api domain modules contains various api controllers for different modules in most cases returning json. This was used to enable javascript functionality.
+The pattern has been deprecated and all javascript api calls should go through the jsonrpc api. 
+
+
+#### Template System
 
 Leantime uses a dual template system:
 
@@ -266,13 +296,131 @@ Leantime uses a dual template system:
 3. **Template Composers**: Classes that prepare view data before rendering
 4. **Theme Support**: Supports customizable themes through the `theme/` directory
 
-### Key Concepts
+**Shared View Folder**
 
-- **Domains**: Features are organized by domain (Tickets, Projects, Users, etc.)
-- **Plugins**: Extend functionality through a plugin architecture
-- **Events**: Uses event dispatching for loose coupling between components
-- **Front Controller**: Custom routing system that maps URLs to the appropriate domain controller
-- **HTMX Integration**: Modern UI updates use HTMX for partial page updates without full page reloads
+There is a central `app/Views/` folder for various shared views, components and composers.
+- layouts: to bootstrap the general skeleton of various layouts (blank, app, login/entry, registration).
+- components: shared blade components
+- composer: shared composers
+- sections: various sections used in the skeletons for headers, footers, nav etc.
+
+**HTMX for aynchronous calls**
+
+Leantime is using HTMX for elements that should update asynchronously. The process is ongoing. 
+The goal is that the main page controllers are loading minimal amounts of data to show the page and some shared components (think filters or similar) and all content is being loaded via htmx.
+All htmx controllers are inside the HxControllers folder. Templates for htmx calls should be in templates/partials as they only represent a small part of the page content.
+If a partial or htmx call represents an entity that may be used in various other places (ticket cards, project cards, user cards etc) a component should be created. 
+
+#### Role Management, Authorization and Authentication
+- Leantime uses a combination of Laravel's standard Authentication and Sanctum and Custom auth providers. 
+- Each user can have a role which is currently hard coded
+- Each user can be assigned to 1 client
+- Users can be assigned to projects
+- Roles give users access to data or parts of the system
+- Additionally each user has specific project access. 
+- - Projects can be either "Accessible to everyone", "accessible only by users within a client" or accessible by users directly assigned to the project only. 
+- - Admins and Owners can access all projects
+
+**API Authentication**
+
+System admins and users can create API Keys. There are 2 types of keys
+1. Leantime API Keys which act as service accounts and are handled like a regular user. The username is the api key name and password is the api-secret
+2. Personal Access Tokens can be created by users (if the AdvancedAuth plugin is installed). Tokens can be used to authenticate the user owning them. We use Laravel Sanctum for this.
+
+**Additional Auth providers**
+Leantime supports LDAP and OIDC authentication natively but can also integrate additional providers via Laravel Socialite.
+
+## Coding Guidelines
+
+### Task Approach Hierarchy
+
+When handling user requests, follow this priority order:
+
+1. **Simple Queries**: For straightforward questions about existing code, use Read/Grep tools directly
+2. **Code Modifications**: For changes to existing functionality, analyze the current implementation first
+3. **New Features**: For new functionality, research similar existing patterns before implementing
+4. **Debugging**: For bug fixes, reproduce the issue first, then implement the fix
+5. **Complex Tasks**: For multi-step operations, use TodoWrite to plan before executing
+
+### Context Management
+
+#### Working with Large Codebases
+- Use search tools (Grep, Glob) strategically to find relevant code before reading files
+- When multiple files might be relevant, batch tool calls to read them efficiently
+- Focus on understanding the specific area of code related to the user's request
+
+#### Clarifying Requirements
+- Ask clarifying questions when the user's request is ambiguous
+- When multiple implementation approaches are possible, present options to the user
+- If unsure about existing patterns or conventions, research the codebase first
+
+#### Efficient Tool Usage
+- Use Task tool for complex searches that might require multiple rounds
+- Batch independent tool calls in single responses
+- Read related files together when working on connected functionality
+
+### Testing Strategy
+
+#### When to Run Tests
+- **Before making changes**: Run relevant tests to establish baseline
+- **During development**: Run unit tests for the specific domain being modified
+- **After implementation**: Run full test suite for the affected areas
+- **Before committing**: Always run code style checks and static analysis
+
+#### Test Selection Guidelines
+- For API changes: Run API-specific acceptance tests (`-g api`)
+- For domain-specific changes: Run tests for that domain (e.g., `-g timesheet`)
+- For core changes: Run full test suite
+- For frontend changes: Test both functionality and styling
+
+#### Test Failure Handling
+- Never ignore test failures
+- Fix failing tests before proceeding with new functionality
+- If tests are legitimately outdated, update them as part of the task
+
+### Security Guidelines
+
+#### Data Protection
+- Never log sensitive user data (passwords, API keys, personal information)
+- Use proper input validation and sanitization for all user inputs
+- Follow the existing authentication and authorization patterns
+- Be mindful of SQL injection prevention when working with database queries
+
+#### Plugin Development Security
+- When working with plugins, ensure they follow the same security standards
+- Validate plugin inputs and outputs
+- Don't expose internal system information through plugin APIs
+- Follow the principle of least privilege for plugin permissions
+
+#### Code Security Practices
+- Use parameterized queries through the existing Repository pattern
+- Validate file uploads and handle them securely
+- Ensure proper session management
+- Follow OWASP guidelines for web application security
+
+### Performance Guidelines
+
+#### Database Operations
+- Use the existing Repository pattern instead of direct queries
+- Be mindful of N+1 query problems when working with related data
+- Consider database indexes when adding new query patterns
+- Use pagination for large result sets
+
+#### File Operations
+- Use batch tool calls when reading multiple related files
+- Avoid reading large files unnecessarily - use targeted searches first
+- Consider memory usage when processing large datasets
+
+#### Frontend Performance
+- Minimize JavaScript bundle size when adding new features
+- Use HTMX for efficient partial page updates
+- Optimize images and assets appropriately
+- Follow existing patterns for lazy loading and caching
+- Use htmx for information updates and reloads, use javascript for interactivity
+
+#### CachingW
+- Leantimne uses the Laravel cache either file based or redis. 
+- Cache should be used wherever expensive operations are happening. 
 
 ## Development Practices
 
@@ -298,21 +446,30 @@ Leantime has a comprehensive plugin system that allows extending core functional
    - The `PluginManager` and `Plugins` service handle loading plugins
 
 4. **Integration Points**:
-   - String-based event hooks (a refactoring target)
+   - Create event classes when adding new event hooks
+   - String-based event hooks (a refactoring target) are depreacted
    - Extension via Service Provider pattern
    - UI extensions through templates and composers
    - API extensions through controllers
 
 5. **Plugin Types**:
-   - Custom: Local folder-based plugins
-   - System: Core enabled plugins defined in config
-   - Marketplace: Plugins from the Leantime marketplace
+   - System: Core enabled plugins defined in config. These plugins are always loaded, cannot be disabled via UI and load earlier in the stack
+   - Marketplace: Plugins from the Leantime marketplace. These plugins are delivered as phar packages and check for license keys
+   - Plugin Folders: Regular plugins or plugins in development are in folders.
 
-6. **Refactoring Considerations**:
+6. **Plugin license keys and validation**:
+- Plugins can be purchased from the marketplace (marketplace.leantime.io). 
+- Each plugin needs to be installed with a license key which is stored in the database
+- License Keys are prepetual however they are restricted by the number of users. 
+- Leantime checks number of active users in the system reegularly and against the server.
+- If a system has more users than allowed for a plugin the plugin is disabled. Data remains in the database
+
+7. **Refactoring Considerations**:
    - Move away from string-based event hooks to class-based events
    - Implement a more robust dependency management system
    - Standardize plugin activation/deactivation hooks
    - Add versioning and compatibility checking
+   - Plugin updates should be handled automatically without having to enter license keys
 
 ### Frontend Development
 The frontend uses:
@@ -322,8 +479,8 @@ The frontend uses:
 - Less CSS preprocessor
 - Use HTMX for asynchronous requests (keep in mind that htmx controllers are organized under hxcontrollers in each domain)
 
-### Database Access
-Database operations should use the Repository pattern through the appropriate Repository classes.
+The general guidance for frontend development is that information and updates should happen using htmx elements and endpoints. 
+Javascript is used primarily to interact with the UI (think editors, drag and drop, etc) 
 
 ### Event System
 Features should use the event system to maintain loose coupling between components. Event System is custom extension of Laravel events and also includes options for filters.
@@ -338,8 +495,37 @@ Code should be tested using:
 - PHPUnit for unit testing
 - Codeception for acceptance testing
 
-## Code Style and other guidelines
+## Specific Code Style Guidelines
+
+### Code Style
+We use laravel pint for code style. 
+
+### Configs
+All laravel configs need to be stored in the laravelConfig file inside the core configuration folder. Any variables that should be editable by the user should be
+added to the sample.end file and exposed via `LEAN_*`. We do not load any custom php configs from the root config folder and as such things like artisaon publish will not publish configs correctly. Instead the content needs to be added to laravelConfig.
+When redis is available for a certain service (queue, cache, sessions etc) we should check if the admin has chosen to use redis and then automatically load the redis config via the respective serviceProvider.
 
 ### Error Logging
-When logging errors use the Log Facade (ensure it's included in the use statements). 
+When logging errors ALWAYS use the Log Facade NOT the helper (ensure it's included in the use statements). 
 Example: `Log::error($exception)`
+
+### Strict types
+- Use strict types where ever possible (for returns and for parameters)
+- When creating arrays evaluate whether a model/object should be used and create one if deemed appropriate
+
+### Comments
+- Add valid phpDoc comments to all methods and classes. 
+- For each method that is changed verify that PhpDoc comment exists and is aligned
+- Methods in services that should be available to our jsonRPC should include the @api doc comment
+
+### DateTime Handling
+We are using the CarbonImmutable class for all things datetime and have various macros to help with common date formats.
+As a general rule all dates from the database are assumed to be in UTC and in the format YYYY-MM-DD HH:MM:SS 
+Dates coming from the frontend/user are assumed in the user's timezone and their respective date format. 
+We have a DateTimeHelper class to parse commone datetime formats we find, the dateTimehelper should be used in most cases.
+
+### Layer enforcement
+- Controllers should only call services NOT repositories. If a repo call is detected it should be refactored.
+- Services can call repositories
+- Be careful when calling domain services in other domain services as circular references can happen
+- Services should validated input and throw exceptions when validation fails
