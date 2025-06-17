@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'cache:clearAll',
-    description: 'Backs up database',
+    description: 'Clear all caches',
 )]
 class ClearAll extends Command
 {

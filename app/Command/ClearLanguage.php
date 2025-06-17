@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'language:clear',
-    description: 'Backs up database',
+    description: 'Clear all cached language files',
 )]
 class ClearLanguage extends Command
 {

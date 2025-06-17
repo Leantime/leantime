@@ -2652,6 +2652,11 @@ class Tickets
 
         // First pass: create a map of all tickets by ID
         foreach ($tickets as $ticket) {
+
+            if(!isset($ticket['id'])) {
+                continue;
+            }
+
             $ticket['children'] = [];
 
             if ($sortingArray) {
@@ -2664,6 +2669,10 @@ class Tickets
 
         // Second pass: build the hierarchy
         foreach ($tickets as $ticket) {
+
+            if(!isset($ticket['id'])) {
+                continue;
+            }
 
             // If this ticket has a parent (depending ticket)
             if (! empty($ticket['dependingTicketId']) && isset($ticketMap[$ticket['dependingTicketId']])) {

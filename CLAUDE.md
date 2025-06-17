@@ -63,6 +63,10 @@ make clear-cache
 
 # Package for release
 make package
+
+# Build js/css using webpack (run in root or within a plugin)
+npx mix
+
 ```
 
 ### Testing Commands
@@ -481,6 +485,12 @@ The frontend uses:
 
 The general guidance for frontend development is that information and updates should happen using htmx elements and endpoints. 
 Javascript is used primarily to interact with the UI (think editors, drag and drop, etc) 
+
+**CSS**
+- The primary css files are inside of public/assets and included through the main.less file which gets built by npx mix
+- We support theming which is mostly based on updating css variables. Themes are inside of public/themes and based on the selected theme either the dark or light css will be used which sets various css variables
+- Many values like box-shadow, borders, paddings, colors, font sizes etc are available as css variables and we should always use those. 
+- Leantime is moving towards using tailwind for most css. At this point all tailwind classes are prefixed with tw-*
 
 ### Event System
 Features should use the event system to maintain loose coupling between components. Event System is custom extension of Laravel events and also includes options for filters.

@@ -34,6 +34,7 @@
             "url": "https://marketplace.leantime.io/product/support-leantime"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
         "ext-ldap": "*",
@@ -53,7 +54,7 @@
         "ext-dom": "*",
         "laravel/framework": "^v11.44",
         "guzzlehttp/guzzle": "^7.9",
-        "aws/aws-sdk-php": "3.343.10",
+        "aws/aws-sdk-php": "^3.344.6",
         "phpmailer/phpmailer": "^6.6",
         "robthree/twofactorauth": "^1.8",
         "endroid/qr-code": "^6.0",
@@ -94,14 +95,15 @@
         "socialiteproviders/saml2": "^4.7",
         "php-http/guzzle7-adapter": "^1.1",
         "symfony/cache": "^7.2",
-        "theodo-group/llphant": "^0.9.9",
         "prism-php/prism": "^0.57.0",
-        "inspector-apm/neuron-ai": "^1.9",
+        "inspector-apm/neuron-ai": "1.12.8",
         "johngrogg/ics-parser": "^3",
         "sabre/dav": "^4.7",
         "hkulekci/qdrant": "^0.5.8",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "league/flysystem-path-prefixing": "^3.0"
+        "league/flysystem-path-prefixing": "^3.0",
+        "php-mcp/server": "dev-main as 2.3.1",
+        "php-mcp/laravel": "2.1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -157,6 +159,14 @@
         {
             "type": "vcs",
             "url": "https://github.com/leantime/leantime-documentor.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/leantime/php-mcp-server.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Leantime/reactphp-http.git"
         }
     ],
     "config": {
