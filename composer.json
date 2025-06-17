@@ -34,7 +34,6 @@
             "url": "https://marketplace.leantime.io/product/support-leantime"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
         "ext-ldap": "*",
