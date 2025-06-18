@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Support;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Leantime\Core\Support\String\AlphaNumeric;
@@ -31,5 +32,17 @@ class LoadMacrosServiceProvider extends ServiceProvider
         Str::mixin(new SanitizeFilename);
         Str::mixin(new SanitizeForLLM);
         Str::mixin(new ToMarkdown);
+
+        Collection::macro('countNested', function ($childrenKey = 'children') {
+            return $this->reduce(function ($count, $item) use ($childrenKey) {
+                $itemCount = 1;
+
+                if (isset($item[$childrenKey]) && is_array($item[$childrenKey])) {
+                    $itemCount += collect($item[$childrenKey])->countNested($childrenKey);
+                }
+
+                return $count + $itemCount;
+            }, 0);
+        });
     }
 }
