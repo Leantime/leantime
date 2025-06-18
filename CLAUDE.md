@@ -492,6 +492,12 @@ Javascript is used primarily to interact with the UI (think editors, drag and dr
 - Many values like box-shadow, borders, paddings, colors, font sizes etc are available as css variables and we should always use those. 
 - Leantime is moving towards using tailwind for most css. At this point all tailwind classes are prefixed with tw-*
 
+**Javascript Requests**
+- Most requests that expect information should be created using htmx.
+- Use fetch only when htmx is not feasable. 
+- Use the jsonrpc endpoint when requesting information from the server using fetch
+- When using fetch set ` "credentials": "include"` and `'X-Requested-With': 'XMLHttpRequest'` to ensure jsonrpc requests are authenticated
+
 ### Event System
 Features should use the event system to maintain loose coupling between components. Event System is custom extension of Laravel events and also includes options for filters.
 
