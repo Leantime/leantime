@@ -290,7 +290,7 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
 
         app('blade.compiler')->directive(
             'dispatchFilter',
-            fn ($args) => "<?php echo \$tpl->dispatchTplFilter($args); ?>",
+            fn ($args) => "<?php \$tpl->dispatchTplFilter($args); ?>",
         );
 
         app('blade.compiler')->directive(
