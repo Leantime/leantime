@@ -226,7 +226,10 @@
 
                 <x-global::accordion id="ticketBox1-{{ $groupKey }}-{{ $loop->index }}">
                     <x-slot name="title">
-                        {!!  __($ticketGroup["labelName"]) !!} ({{ count($ticketGroup["tickets"]) }})
+                        {!!  __($ticketGroup["labelName"]) !!}
+                        <span class="task-count" id="task-count-{{ $groupKey }}">
+                            ({{ count($ticketGroup["tickets"]) }})
+                        </span>
                     </x-slot>
                     <x-slot name="actionlink">
                         <a href="javascript:void(0);" class="add-task-button btn btn-link" style="padding:0px; padding-left:1px; width:31px; line-height:31px; height:31px; font-weight:bold; text-align: center; font-size:var(--font-size-l);" data-group="{{ $groupKey }}">
@@ -290,6 +293,26 @@
             @endforeach
 
         </div>
+
+        @if($hasMoreTickets)
+            <!-- Global Load more trigger for infinite scroll -->
+            <div id="global-load-more"
+                 class="load-more-trigger"
+                 hx-get="{{ BASE_URL }}/widgets/myToDos/loadMore"
+                 hx-trigger="intersect once"
+                 hx-target="#yourToDoContainer"
+                 hx-swap="outerHTML"
+                 hx-vals='{"limit": {{ $limit }}, "groupBy": "{{ $groupBy }}", "projectFilter": "{{ $projectFilter }}"}'>
+                <div class="tw-text-center tw-py-4">
+                    <div class="htmx-indicator">
+                        <div class="indeterminate"></div>
+                    </div>
+                    <div class="tw-text-sm tw-text-gray-500">
+                        {{ __('text.loading_more_tasks') }}
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     @dispatchEvent('afterTodoListWidgetBox')
@@ -308,7 +331,7 @@
                 console.log.apply(this, arguments);
             };
 
-            var sortableEnabled = @dispatchFilter('todoWidgetSortableEnabled', true);
+            var sortableEnabled = {{ $tpl->dispatchFilter('todoWidgetSortableEnabled', 'true') ? 'true' : 'false' }};
 
             @if(session('userdata.id') != null)
                 leantime.ticketsController.initMilestoneDropdown();

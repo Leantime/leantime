@@ -21,6 +21,8 @@ class MyToDos extends HtmxController
 
     private Setting $settingsService;
 
+    private int $limit = 50;
+
     public function init(
         TicketService $ticketsService,
         Setting $settingsService,
@@ -39,6 +41,11 @@ class MyToDos extends HtmxController
     {
         $params = $this->incomingRequest->query->all();
 
+        // Set initial pagination - only load first 20 tasks per group
+        if (! isset($params['limit'])) {
+            $params['limit'] = $this->limit;
+        }
+
         // Get hierarchical tasks
         $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
 
@@ -47,6 +54,16 @@ class MyToDos extends HtmxController
         $sortingKey = "user.{$userId}.myTodosSorting";
         $sorting = $this->settingsService->getSetting($sortingKey);
 
+        $totalLoadedTickets = 0;
+
+        foreach ($tplVars['tickets'] as $ticketGroup) {
+            $totalLoadedTickets += collect($tplVars['tickets'])->countNested("tickets");
+        }
+
+        $hasMoreTickets = $totalLoadedTickets >= $params['limit'];
+
+        $tplVars['hasMoreTickets'] = $hasMoreTickets;
+
         if ($sorting) {
             $tplVars['sorting'] = json_decode($sorting, true);
         } else {
@@ -54,6 +71,7 @@ class MyToDos extends HtmxController
         }
 
         $tplVars['sorting'] = collect($tplVars['sorting']);
+        $this->tpl->assign("limit", $params['limit']);
 
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
     }
@@ -298,5 +316,34 @@ class MyToDos extends HtmxController
 
         $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
+    }
+
+    /**
+     * Load more todos for infinite scroll
+     */
+    public function loadMore()
+    {
+        $params = $this->incomingRequest->query->all();
+
+        // Set default pagination values
+        $params['limit'] = $params['limit'] + $this->limit;
+        $params['offset'] = 0;
+
+        // Get hierarchical tasks with global pagination
+        $tplVars = $this->ticketsService->getToDoWidgetHierarchicalAssignments($params);
+
+        // Check if there are more tickets to load by seeing if we got a full page
+        $totalLoadedTickets = 0;
+        foreach ($tplVars['tickets'] as $ticketGroup) {
+            $totalLoadedTickets += collect($tplVars['tickets'])->countNested("tickets");
+        }
+
+        $hasMoreTickets = $totalLoadedTickets >= $params['limit'];
+        $tplVars['hasMoreTickets'] = $hasMoreTickets;
+        $tplVars['nextOffset'] = $params['offset'] + $params['limit'];
+        $tplVars['isLoadMore'] = true;
+        $this->tpl->assign("limit", $params['limit']);
+        array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
+
     }
 }

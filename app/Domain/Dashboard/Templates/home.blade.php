@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
 
     leantime.widgetController.initGrid();
 
-    @php(session(["usersettings.modals.homeDashboardTour" => 1]));
+    @php(session(["usersettings.modals.homeDashboardTour" => 1]))
 
 });
 </script>

@@ -799,7 +799,7 @@ class Tickets
      *
      * @api
      */
-    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false): array
+    public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         if ($includeDoneTickets === true) {
@@ -814,7 +814,9 @@ class Tickets
         $allTickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria,
             sort: 'duedate',
-            includeCounts: false);
+            limit: $limit,
+            includeCounts: false,
+            offset: $offset);
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -898,7 +900,7 @@ class Tickets
     /**
      * @api
      */
-    public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false): array
+    public function getOpenUserTicketsByProject($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -908,7 +910,9 @@ class Tickets
         $allTickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria,
             sort: 'duedate',
-            includeCounts: false);
+            limit: $limit,
+            includeCounts: false,
+            offset: $offset);
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -939,18 +943,20 @@ class Tickets
     /**
      * @api
      */
-    public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false): array
+    public function getOpenUserTicketsByPriority($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
+        if ($includeMilestones) {
+            $searchCriteria['excludeType'] = '';
+        }
 
         $allTickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria,
             sort: 'priority',
-            includeCounts: false);
-        if ($includeMilestones) {
-            $searchCriteria['excludeType'] = '';
-        }
+            limit: $limit,
+            includeCounts: false,
+            offset: $offset);
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
         $tickets = [];
@@ -995,7 +1001,7 @@ class Tickets
     /**
      * @api
      */
-    public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false): array
+    public function getOpenUserTicketsBySprint($userId, $projectId, bool $includeMilestones = false, ?int $limit = null, ?int $offset = null, ?string $group = null): array
     {
 
         $searchCriteria = $this->prepareTicketSearchArray(['currentProject' => $projectId, 'users' => $userId, 'status' => '', 'sprint' => '']);
@@ -1005,7 +1011,9 @@ class Tickets
         $allTickets = $this->ticketRepository->getAllBySearchCriteria(
             searchCriteria: $searchCriteria,
             sort: 'duedate',
-            includeCounts: false);
+            limit: $limit,
+            includeCounts: false,
+            offset: $offset);
 
         $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
@@ -2525,20 +2533,35 @@ class Tickets
             $groupBy = 'time';
         }
 
+        // Pagination parameters
+        $limit = $params['limit'] ?? 20;
+        $offset = $params['offset'] ?? 0;
+        $group = $params['group'] ?? null; // Specific group to load
+
         $userId = session('userdata.id');
         $sortingKey = "user.{$userId}.myTodosSorting";
         $userSorting = $this->settingsRepo->getSetting($sortingKey);
 
-        // Get tickets based on grouping
-        if ($groupBy === 'time') {
-            $tickets = $this->getOpenUserTicketsThisWeekAndLater(session('userdata.id'), $projectFilter);
-        } elseif ($groupBy === 'project') {
-            $tickets = $this->getOpenUserTicketsByProject(session('userdata.id'), $projectFilter);
-        } elseif ($groupBy === 'priority') {
-            $tickets = $this->getOpenUserTicketsByPriority(session('userdata.id'), $projectFilter);
-        } elseif ($groupBy === 'sprint') {
-            $tickets = $this->getOpenUserTicketsBySprint(session('userdata.id'), $projectFilter);
-        }
+        // Get ALL tickets with global pagination first, then group them
+        $searchCriteria = $this->prepareTicketSearchArray([
+            'currentProject' => $projectFilter,
+            'currentUser' => session('userdata.id'),
+            'users' => session('userdata.id'),
+            'status' => 'not_done',
+            'sprint' => '',
+        ]);
+
+        // Get paginated tickets first
+        $allTickets = $this->ticketRepository->getAllBySearchCriteria(
+            searchCriteria: $searchCriteria,
+            sort: $groupBy === 'priority' ? 'priority' : 'duedate',
+            limit: $limit,
+            includeCounts: false,
+            offset: $offset
+        );
+
+        // Then apply grouping based on groupBy parameter
+        $tickets = $this->applyGroupingToTickets($allTickets, $groupBy, session('userdata.id'));
 
         $sortingArray = false;
         if ($userSorting) {
@@ -2639,6 +2662,145 @@ class Tickets
     }
 
     /**
+     * Apply grouping logic to a set of tickets based on groupBy parameter
+     */
+    private function applyGroupingToTickets(array $allTickets, string $groupBy, int $userId): array
+    {
+        $statusLabels = $this->getAllStatusLabelsByUserId($userId);
+        $tickets = [];
+
+        foreach ($allTickets as $row) {
+            // Skip tickets that are done or don't have proper status labels
+            if (! isset($statusLabels[$row['projectId']]) ||
+                ! isset($statusLabels[$row['projectId']][$row['status']]) ||
+                $statusLabels[$row['projectId']][$row['status']]['statusType'] === 'DONE') {
+                continue;
+            }
+
+            $groupKey = $this->getGroupKeyForTicket($row, $groupBy);
+            $groupLabel = $this->getGroupLabelForTicket($row, $groupBy, $groupKey);
+
+            if (isset($tickets[$groupKey])) {
+                $tickets[$groupKey]['tickets'][] = $row;
+            } else {
+                $tickets[$groupKey] = [
+                    'labelName' => $groupLabel,
+                    'tickets' => [$row],
+                    'groupValue' => $groupKey,
+                    'order' => $this->getGroupOrder($groupKey, $groupBy),
+                ];
+            }
+        }
+
+        // Sort groups by their order
+        uasort($tickets, function ($a, $b) {
+            return ($a['order'] ?? 999) <=> ($b['order'] ?? 999);
+        });
+
+        return $tickets;
+    }
+
+    /**
+     * Get the group key for a ticket based on grouping type
+     */
+    private function getGroupKeyForTicket(array $ticket, string $groupBy): string
+    {
+        switch ($groupBy) {
+            case 'time':
+                if ($ticket['dateToFinish'] == '0000-00-00 00:00:00' ||
+                    $ticket['dateToFinish'] == '1969-12-31 00:00:00' ||
+                    $ticket['dateToFinish'] == null) {
+                    return 'later';
+                }
+
+                $today = dtHelper()->userNow()->setToDbTimezone();
+                try {
+                    $dbDueDate = dtHelper()->parseDbDateTime($ticket['dateToFinish']);
+                } catch (\Exception $e) {
+                    return 'later';
+                }
+
+                if ($dbDueDate->lt($today->startOfDay())) {
+                    return 'overdue';
+                } elseif ($dbDueDate->lte($today->endOfWeek())) {
+                    return 'thisWeek';
+                } else {
+                    return 'later';
+                }
+
+            case 'project':
+                return (string) $ticket['projectId'];
+
+            case 'priority':
+                return (string) ($ticket['priority'] ?: 999);
+
+            case 'sprint':
+                return (string) ($ticket['sprint'] ?: 'backlog');
+
+            default:
+                return 'default';
+        }
+    }
+
+    /**
+     * Get the display label for a group
+     */
+    private function getGroupLabelForTicket(array $ticket, string $groupBy, string $groupKey): string
+    {
+        switch ($groupBy) {
+            case 'time':
+                switch ($groupKey) {
+                    case 'overdue': return 'subtitles.overdue';
+                    case 'thisWeek': return 'subtitles.due_this_week';
+                    case 'later': return 'subtitles.due_later';
+                    default: return 'subtitles.due_later';
+                }
+
+            case 'project':
+                return $ticket['clientName'].' / '.$ticket['projectName'];
+
+            case 'priority':
+                if ($groupKey === '999') {
+                    return $this->language->__('label.priority_not_defined');
+                }
+
+                return $this->ticketRepository->priority[$groupKey] ?? 'Unknown Priority';
+
+            case 'sprint':
+                if ($groupKey === 'backlog') {
+                    return $ticket['projectName'].' / '.$this->language->__('label.not_assigned_to_sprint');
+                }
+
+                return $ticket['projectName'].' / '.($ticket['sprintName'] ?: 'Sprint '.$groupKey);
+
+            default:
+                return 'Default Group';
+        }
+    }
+
+    /**
+     * Get the sort order for a group
+     */
+    private function getGroupOrder(string $groupKey, string $groupBy): int
+    {
+        switch ($groupBy) {
+            case 'time':
+                switch ($groupKey) {
+                    case 'overdue': return 1;
+                    case 'thisWeek': return 2;
+                    case 'later': return 3;
+                    default: return 999;
+                }
+
+            case 'priority':
+                return (int) $groupKey;
+
+            default:
+                return 100; // Default order for project and sprint grouping
+        }
+    }
+
+    /**
      * Build a hierarchical structure of tickets based on dependencies and milestones
      *
      * @param  array  $tickets  Flat array of tickets
@@ -2653,7 +2815,7 @@ class Tickets
         // First pass: create a map of all tickets by ID
         foreach ($tickets as $ticket) {
 
-            if(!isset($ticket['id'])) {
+            if (! isset($ticket['id'])) {
                 continue;
             }
 
@@ -2670,7 +2832,7 @@ class Tickets
         // Second pass: build the hierarchy
         foreach ($tickets as $ticket) {
 
-            if(!isset($ticket['id'])) {
+            if (! isset($ticket['id'])) {
                 continue;
             }
 

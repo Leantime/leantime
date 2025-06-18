@@ -318,7 +318,7 @@ class Tickets
      *
      * @param  null  $limit
      */
-    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true): bool|array
+    public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null, $includeCounts = true, $offset = null): bool|array
     {
         $query = "
                 SELECT
@@ -484,7 +484,11 @@ class Tickets
         }
 
         if ($limit !== null && $limit > 0) {
-            $query .= ' LIMIT :limit';
+            if ($offset !== null && $offset > 0) {
+                $query .= ' LIMIT :offset, :limit';
+            } else {
+                $query .= ' LIMIT :limit';
+            }
         }
 
         $stmn = $this->db->database->prepare($query);
@@ -567,6 +571,9 @@ class Tickets
 
         if ($limit !== null && $limit > 0) {
             $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
+            if ($offset !== null && $offset > 0) {
+                $stmn->bindValue(':offset', $offset, PDO::PARAM_INT);
+            }
         }
 
         if (session()->exists('userdata')) {
