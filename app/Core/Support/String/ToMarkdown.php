@@ -17,8 +17,7 @@ class ToMarkdown
      */
     public function toMarkdown($headerLevel = 2)
     {
-        $sanitizeForMarkdown = function ($value)
-        {
+        $sanitizeForMarkdown = function ($value) {
             if ($value === null) {
                 return '*null*';
             }
@@ -124,5 +123,4 @@ class ToMarkdown
             return trim($result);
         };
     }
-
 }

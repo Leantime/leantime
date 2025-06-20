@@ -57,7 +57,7 @@ class MyToDos extends HtmxController
         $totalLoadedTickets = 0;
 
         foreach ($tplVars['tickets'] as $ticketGroup) {
-            $totalLoadedTickets += collect($tplVars['tickets'])->countNested("tickets");
+            $totalLoadedTickets += collect($tplVars['tickets'])->countNested('tickets');
         }
 
         $hasMoreTickets = $totalLoadedTickets >= $params['limit'];
@@ -71,7 +71,7 @@ class MyToDos extends HtmxController
         }
 
         $tplVars['sorting'] = collect($tplVars['sorting']);
-        $this->tpl->assign("limit", $params['limit']);
+        $this->tpl->assign('limit', $params['limit']);
 
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
     }
@@ -335,14 +335,14 @@ class MyToDos extends HtmxController
         // Check if there are more tickets to load by seeing if we got a full page
         $totalLoadedTickets = 0;
         foreach ($tplVars['tickets'] as $ticketGroup) {
-            $totalLoadedTickets += collect($tplVars['tickets'])->countNested("tickets");
+            $totalLoadedTickets += collect($tplVars['tickets'])->countNested('tickets');
         }
 
         $hasMoreTickets = $totalLoadedTickets >= $params['limit'];
         $tplVars['hasMoreTickets'] = $hasMoreTickets;
         $tplVars['nextOffset'] = $params['offset'] + $params['limit'];
         $tplVars['isLoadMore'] = true;
-        $this->tpl->assign("limit", $params['limit']);
+        $this->tpl->assign('limit', $params['limit']);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
 
     }

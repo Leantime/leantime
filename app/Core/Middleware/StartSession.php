@@ -61,7 +61,7 @@ class StartSession
         self::dispatchEvent('session_initialized');
 
         // For API requests, use array driver unless it's coming from js
-        if ($request->isApiOrCronRequest() && !$request->ajax()) {
+        if ($request->isApiOrCronRequest() && ! $request->ajax()) {
             config(['session.driver' => 'array']);
             $this->manager->setDefaultDriver('array');
         }

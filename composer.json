@@ -71,7 +71,7 @@
         "phpseclib/phpseclib": "~3.0",
         "spatie/icalendar-generator": "^2.6",
         "sentry/sentry-laravel": "^4.13",
-        "stripe/stripe-php": "~7.128.0",
+        "stripe/stripe-php": "^v17.3.0",
         "crispchat/php-crisp-api": "^1.7",
         "php-http/httplug": "^2.4",
         "laravel/sanctum": "^4.0",
