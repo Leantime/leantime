@@ -313,6 +313,7 @@
                 </div>
             </div>
         @endif
+
     </div>
 
     @dispatchEvent('afterTodoListWidgetBox')
@@ -414,6 +415,5 @@
         }
 
     </script>
-
 
 </div>
