@@ -137,6 +137,7 @@
   "tw-px-m",
   "tw-py-0",
   "tw-py-0.5",
+  "tw-py-4",
   "tw-py-[5px]",
   "tw-pb-1",
   "tw-pb-[10px]",
@@ -169,6 +170,7 @@
   "tw-leading-[25px]",
   "tw-leading-[32px]",
   "tw-leading-[50px]",
+  "tw-text-gray-500",
   "tw-text-green-500",
   "tw-text-primary",
   "tw-text-red-500"
