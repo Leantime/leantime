@@ -1,5 +1,10 @@
 # Version: 3.5.7
 
+* [99275ca](https://github.com/Leantime/leantime/commit/99275ca751477ddaf9cd1f653502f848d5390c77): fix: allow loading commands from phar files
+
+
+# Version: 3.5.7
+
 * [92d1521](https://github.com/Leantime/leantime/commit/92d1521e84118ca49d6d4c088ecbfd5964f9b6d3): task: version bump
 * [0485867](https://github.com/Leantime/leantime/commit/04858678d93f602eeb887793934592d8778300fb): fix: Todowidget hierarchy issue with nested milestones
 * [4cb4de5](https://github.com/Leantime/leantime/commit/4cb4de57d3bf7bf1e690a31d40e1341be5499aa5): task: update packages
