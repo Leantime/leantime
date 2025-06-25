@@ -1,3 +1,9 @@
+# Version: 3.5.8
+
+* [7474171](https://github.com/Leantime/leantime/commit/7474171b57235d4be8bdd051e759b99db24c1714): task: version bump
+* [99275ca](https://github.com/Leantime/leantime/commit/99275ca751477ddaf9cd1f653502f848d5390c77): fix: allow loading commands from phar files
+
+
 # Version: 3.5.7
 
 * [92d1521](https://github.com/Leantime/leantime/commit/92d1521e84118ca49d6d4c088ecbfd5964f9b6d3): task: version bump
