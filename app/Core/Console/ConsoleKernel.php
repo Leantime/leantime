@@ -2,16 +2,20 @@
 
 namespace Leantime\Core\Console;
 
+use Illuminate\Console\Application as Artisan;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Leantime\Core\Console\Application as LeantimeCli;
 use Leantime\Core\Events\DispatchesEvents;
 use Leantime\Core\Events\EventDispatcher;
+use Symfony\Component\Finder\Finder;
 
 class ConsoleKernel extends Kernel implements ConsoleKernelContract
 {
@@ -127,6 +131,13 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
                 $commandPath = $pluginInfo['path'].'/Command/';
 
                 if (is_dir($commandPath)) {
+
+                    if ($pluginInfo['format'] == 'phar') {
+
+                        include_once $pluginInfo['path'];
+                        $this->loadPhar($commandPath, $pluginInfo['foldername'].'.phar');
+                    }
+
                     $this->load($commandPath);
                 }
             }
@@ -206,5 +217,40 @@ class ConsoleKernel extends Kernel implements ConsoleKernelContract
 
         }
 
+    }
+
+    protected function loadPhar($paths, $pharName)
+    {
+        $paths = array_unique(Arr::wrap($paths));
+
+        $paths = array_filter($paths, function ($path) {
+            return is_dir($path);
+        });
+
+        if (empty($paths)) {
+            return;
+        }
+
+        $this->loadedPaths = array_values(
+            array_unique(array_merge($this->loadedPaths, $paths))
+        );
+
+        $namespace = $this->app->getNamespace();
+
+        foreach (Finder::create()->in($paths)->files() as $file) {
+
+            $command = $namespace.str_replace(
+                ['/', '.php', '\\'.$pharName],
+                ['\\', '', ''],
+                Str::after($file->getPath().DIRECTORY_SEPARATOR.$file->getFilename(), realpath(app_path()).DIRECTORY_SEPARATOR)
+            );
+
+            if (is_subclass_of($command, Command::class) &&
+                ! (new \ReflectionClass($command))->isAbstract()) {
+                Artisan::starting(function ($artisan) use ($command) {
+                    $artisan->resolve($command);
+                });
+            }
+        }
     }
 }
