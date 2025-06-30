@@ -1,3 +1,11 @@
+# Version: 3.5.9
+
+* [1f45dc0](https://github.com/Leantime/leantime/commit/1f45dc06a7c596b6310a764e36f9fa6f52e1e526): task: version bump
+* [2c0279a](https://github.com/Leantime/leantime/commit/2c0279adca06ec0d47b600c63e89c2b984a2a5c8): task: downgrade plugin route loader so that config updates load before route files
+* [4dd0895](https://github.com/Leantime/leantime/commit/4dd08953c04e40a53532c9099f91e94cddaa00ef): feat: allow removing all new line characters from string sanitizer
+* [bb31269](https://github.com/Leantime/leantime/commit/bb3126960324a0415f00ddd8d3275bc44c9edc7c): task: Update php-mcp to latest version
+
+
 # Version: 3.5.8
 
 * [7474171](https://github.com/Leantime/leantime/commit/7474171b57235d4be8bdd051e759b99db24c1714): task: version bump
