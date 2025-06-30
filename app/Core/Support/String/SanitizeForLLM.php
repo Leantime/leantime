@@ -89,8 +89,8 @@ class SanitizeForLLM
             // Step 7: Remove consecutive spaces (which can occur after other replacements)
             $result = preg_replace('/ {2,}/', ' ', $result);
 
-            if($removeNewlines) {
-                $result = str_replace("\n", " ", $value);
+            if ($removeNewlines) {
+                $result = str_replace("\n", ' ', $value);
             }
 
             return $result;
