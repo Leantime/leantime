@@ -2,7 +2,10 @@
 
 namespace Leantime\Domain\TwoFA\Controllers;
 
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
@@ -37,10 +40,16 @@ class Edit extends Controller
 
             public function getQRCodeImage($qrtext, $size): string
             {
-                $qrCode = new QrCode($qrtext);
-                $qrCode->setSize($size);
+                $writer = new PngWriter();
 
-                return $qrCode->writeString();
+                $qrCode = new QrCode(data: $qrtext, size: $size, backgroundColor: new Color(255, 255, 255, 127));
+
+                $label = new Label(
+                    text: 'Label',
+                    textColor: new Color(255, 0, 0)
+                );
+
+                return $writer->write($qrCode, null, null)->getString();
             }
         });
         $secret = $user['twoFASecret'];

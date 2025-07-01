@@ -26,8 +26,9 @@ foreach ($__data as $var => $val) {
 
                         <?php if (! $tpl->get('twoFAEnabled')) { ?>
                             <h5>1. <?php echo $tpl->__('text.twoFA_qr'); ?></h5>
-                            <img src="<?php echo $tpl->get('qrData'); ?>"/><br />
-                            Secret: <p><?php echo $tpl->get('secret'); ?></p>
+                            <br />
+                            <img src="<?php echo $tpl->get('qrData'); ?>" style="border-radius: var(--box-radius);"/><br />
+                            Secret: <p><?php echo $tpl->get('secret'); ?></p><br/>
                             <form action="" method="post" class='stdform'>
                                 <h5>2. <?php echo $tpl->__('text.twoFA_verify_code'); ?></h5>
                                 <p>
