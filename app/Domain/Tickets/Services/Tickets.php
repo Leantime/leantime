@@ -2534,7 +2534,8 @@ class Tickets
         }
 
         // Pagination parameters
-        $limit = $params['limit'] ?? 20;
+        //$limit = $params['limit'] ?? 20;
+        $limit = null;
         $offset = $params['offset'] ?? 0;
         $group = $params['group'] ?? null; // Specific group to load
 
