@@ -262,7 +262,7 @@ class Canvas
     /**
      * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
      *
-     * @param  ?int  $projectId  projectId (optional)
+     * @param  string  $projectId  projectId (optional)
      * @param  array  $boards  Array of project board types
      * @return array List of boards with a progress percentage
      *

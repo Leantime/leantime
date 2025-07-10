@@ -135,7 +135,7 @@ class UpdateLeantime extends Command
 
         $io->success('Plugins disabled successfully');
 
-        // Apllying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+        // Applying Update + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
         $io->section('Applying Update');
         $cp_retval = 0;
         $cp_output = [];
@@ -162,13 +162,8 @@ class UpdateLeantime extends Command
         exec('rm -rf "'.APP_ROOT.'/storage/framework/cache/latest.zip"');
 
         exec('find "'.APP_ROOT.'/storage/framework/cache" -type f ! -name ".gitignore" -delete');
-        exec('find "'.APP_ROOT.'/storage/framework/cache" -type d -empty -delete');
-
         exec('find "'.APP_ROOT.'/storage/framework/sessions" -type f ! -name ".gitignore" -delete');
-        exec('find "'.APP_ROOT.'/storage/framework/sessions" -type d -empty -delete');
-
         exec('find "'.APP_ROOT.'/storage/framework/views" -type f ! -name ".gitignore" -delete');
-        exec('find "'.APP_ROOT.'/storage/framework/views" -type d -empty -delete');
 
         $io->success('Clearing Cache Complete');
 
