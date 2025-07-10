@@ -25,7 +25,7 @@ class DelCanvas extends Controller
      */
     public function init()
     {
-        $repoName = app()->getNamespace().'Domain\\goalcanvas\\Repositories\\goalcanvas';
+        $repoName = app()->getNamespace().'Domain\\Goalcanvas\\Repositories\\Goalcanvas';
         $this->canvasRepo = app()->make($repoName);
     }
 
@@ -36,6 +36,8 @@ class DelCanvas extends Controller
     {
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        $id = ((int) $_GET['id']) ?? '';
 
         if (isset($_POST['del']) && isset($_GET['id'])) {
             $id = (int) ($_GET['id']);
@@ -55,6 +57,8 @@ class DelCanvas extends Controller
                 return Frontcontroller::redirect(BASE_URL.'/'.static::CANVAS_NAME.'canvas/showCanvas');
             }
         }
+
+        $this->tpl->assign("id", $id);
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvas');
     }
