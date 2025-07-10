@@ -77,6 +77,30 @@ class ApiCest
         $I->seeResponseMatchesJsonType([
             'jsonrpc' => 'string',
             'result' => 'array',
+            'id' => 'integer',
+        ]);
+    }
+
+    #[Group('api')]
+    #[Depends('createAPIKey')]
+    public function testJsonRpcEndpointStringId(AcceptanceTester $I)
+    {
+
+        $I->haveHttpHeader('Content-Type', 'application/json');
+        $I->haveHttpHeader('x-api-key', $this->apiKey);
+
+        $I->sendPost('/api/jsonrpc', [
+            'jsonrpc' => '2.0',
+            'method' => 'leantime.rpc.Comments.pollComments',
+            'params' => ['projectId' => 1],
+            'id' => 'one',
+        ]);
+
+        $I->seeResponseCodeIs(200);
+        $I->seeResponseIsJson();
+        $I->seeResponseMatchesJsonType([
+            'jsonrpc' => 'string',
+            'result' => 'array',
             'id' => 'string',
         ]);
     }
