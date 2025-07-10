@@ -40,7 +40,7 @@ class Edit extends Controller
 
             public function getQRCodeImage($qrtext, $size): string
             {
-                $writer = new PngWriter();
+                $writer = new PngWriter;
 
                 $qrCode = new QrCode(data: $qrtext, size: $size, backgroundColor: new Color(255, 255, 255, 127));
 
