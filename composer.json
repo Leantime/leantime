@@ -197,6 +197,11 @@
             "include": [
                 "app/Plugins/*/composer.json"
             ]
+        },
+        "laravel": {
+            "dont-discover": [
+                "php-mcp/laravel"
+            ]
         }
     }
 }
