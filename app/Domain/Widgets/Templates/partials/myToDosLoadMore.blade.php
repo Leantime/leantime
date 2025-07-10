@@ -39,9 +39,9 @@
     @endif
 @endforeach
 
-@if ($hasMoreTickets)
+@if(isset($hasMoreTickets) && $hasMoreTickets === true)
     <!-- Global Load more trigger for infinite scroll -->
-    <div id="global-load-more" 
+    <div id="global-load-more"
          class="load-more-trigger"
          hx-get="{{ BASE_URL }}/widgets/myToDos/loadMore"
          hx-trigger="intersect once"
@@ -63,18 +63,18 @@
     // Process additional tasks and append to existing groups
     htmx.onLoad(function(content) {
         const additionalTasks = content.querySelectorAll('.additional-task');
-        
+
         additionalTasks.forEach(function(taskDiv) {
             const groupKey = taskDiv.dataset.groupKey;
             const taskContent = taskDiv.innerHTML;
-            
+
             // Find existing group's sortable container
             const existingGroup = document.querySelector(`[id*="ticketBox1-${groupKey}-"] .sortable-list`);
-            
+
             if (existingGroup) {
                 // Append task to existing group
                 existingGroup.insertAdjacentHTML('beforeend', taskContent);
-                
+
                 // Update counter
                 const counter = document.querySelector(`#task-count-${groupKey}`);
                 if (counter) {
@@ -88,16 +88,16 @@
                 console.warn('Group not found for key:', groupKey);
             }
         });
-        
+
         if (additionalTasks.length > 0) {
             // Re-initialize nested sortable for new content
             jQuery('.sortable-list').nestedSortable();
-            
+
             // Re-initialize interactive elements
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initStatusDropdown();
             leantime.ticketsController.initDueDateTimePickers();
-            
+
             // Re-initialize add task buttons
             initAddTaskBtns();
         }

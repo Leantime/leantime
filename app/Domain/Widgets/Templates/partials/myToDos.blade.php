@@ -294,7 +294,7 @@
 
         </div>
 
-        @if($hasMoreTickets)
+        @if(isset($hasMoreTickets) && $hasMoreTickets === true)
             <!-- Global Load more trigger for infinite scroll -->
             <div id="global-load-more"
                  class="load-more-trigger"
