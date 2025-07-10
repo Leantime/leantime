@@ -240,6 +240,7 @@ leantime.editorController = (function () {
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
                 autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
                 autosave_restore_when_empty: true,
+                autosave_retention: '10m',
                 browser_spellcheck: true,
                 contextmenu: false,
                 autosave_retention: '120m',
