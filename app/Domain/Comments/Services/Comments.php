@@ -35,9 +35,9 @@ class Comments
     /**
      * @api
      */
-    public function getComments($module, $entityId, int $commentOrder = 0): false|array
+    public function getComments($module, $entityId, int $commentOrder = 0, int $parent = 0): false|array
     {
-        return $this->commentRepository->getComments($module, $entityId, 0, $commentOrder);
+        return $this->commentRepository->getComments($module, $entityId, $parent, $commentOrder);
     }
 
     /**
