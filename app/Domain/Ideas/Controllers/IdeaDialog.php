@@ -214,6 +214,7 @@ class IdeaDialog extends Controller
                     return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $params['itemId']);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+                    return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/');
                 }
             } else {
                 if (isset($_POST['description']) === true) {
@@ -256,6 +257,7 @@ class IdeaDialog extends Controller
                     return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/'.(int) $id);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
+                    return Frontcontroller::redirect(BASE_URL.'/ideas/ideaDialog/');
                 }
             }
 
