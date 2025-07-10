@@ -212,7 +212,7 @@ class ShowProject extends Controller
 
                 $this->projectRepo->editProjectRelations($values, $id);
 
-                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
 
                 $this->tpl->setNotification($this->language->__('notifications.user_was_added_to_project'), 'success');
             }
@@ -241,7 +241,7 @@ class ShowProject extends Controller
                     } else {
                         $this->projectRepo->editProject($values, $id);
 
-                        $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                        $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
 
                         $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
 
