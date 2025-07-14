@@ -34,6 +34,7 @@ class FileManager implements FileManagerInterface
 
     /**
      * Sanitize filename to prevent path traversal and other security issues
+     * Source: https://stackoverflow.com/questions/2021624/string-sanitizer-for-filename
      *
      * @param  string  $filename  The filename to sanitize
      * @return string Sanitized filename
@@ -43,9 +44,26 @@ class FileManager implements FileManagerInterface
         // Remove any directory paths
         $filename = basename($filename);
 
-        // Remove special characters that could be problematic
-        return preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
+        // sanitize filename
+        $filename = preg_replace(
+            '~
+        [<>:"/\\\|?*]|           # file system reserved https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+        [\x00-\x1F]|             # control characters http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+        [\x7F\xA0\xAD]|          # non-printing characters DEL, NO-BREAK SPACE, SOFT HYPHEN
+        [#\[\]@!$&\'()+,;=]|     # URI reserved https://www.rfc-editor.org/rfc/rfc3986#section-2.2
+        [{}^\~`]                 # URL unsafe characters https://www.ietf.org/rfc/rfc1738.txt
+        ~x',
+            '-', $filename);
+        // avoids ".", ".." or ".hiddenFiles"
+        $filename = ltrim($filename, '.-');
+
+        // maximize filename length to 255 bytes http://serverfault.com/a/9548/44086
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+        return mb_strcut(pathinfo($filename, PATHINFO_FILENAME), 0, 255 - ($ext ? strlen($ext) + 1 : 0), mb_detect_encoding($filename)).($ext ? '.'.$ext : '');
     }
+
+    public function filter_filename($filename, $beautify = true) {}
 
     /**
      * Validates a file before upload
