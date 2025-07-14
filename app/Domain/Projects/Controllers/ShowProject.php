@@ -66,8 +66,6 @@ class ShowProject extends Controller
 
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
-
-
         // services
         $this->projectService = $projectService;
         $this->commentService = $commentService;
@@ -99,9 +97,9 @@ class ShowProject extends Controller
 
             $id = (int) ($_GET['id']);
 
-            //Additional check. Managers should only access their own projects if not directly assigned
-            if(Auth::userHasRole(Roles::$manager)) {
-                if($this->projectService->isUserAssignedToProject(session('userdata.id'), $id) === false){
+            // Additional check. Managers should only access their own projects if not directly assigned
+            if (Auth::userHasRole(Roles::$manager)) {
+                if ($this->projectService->isUserAssignedToProject(session('userdata.id'), $id) === false) {
                     throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL.'/errors/error403'));
                 }
             }
