@@ -589,16 +589,50 @@
             }
         }
 
+        // Function to get group key from a sortable item's ancestor group
+        function getItemGroupKey($item) {
+            // Find the closest sortable-list that has a data-group-key attribute
+            const $groupContainer = $item.closest('.sortable-list[data-group-key]');
+            return $groupContainer.data('group-key') || null;
+        }
+
 
 
         function saveSorting() {
             const sortingData = [];
+            
+            // Get current grouping context from the widget container
+            const groupBy = jQuery('#yourToDoContainer').data('group-by') || '';
+            const groupChanges = [];
+
+            // Track original group positions before move
+            function detectGroupChanges() {
+                if (!groupBy) return;
+                
+                jQuery('.sortable-item').each(function() {
+                    const $item = jQuery(this);
+                    const itemId = $item.data('id');
+                    const currentGroupKey = getItemGroupKey($item);
+                    const originalGroupKey = $item.data('original-group-key');
+                    
+                    // If item moved to a different group
+                    if (originalGroupKey && currentGroupKey && originalGroupKey !== currentGroupKey) {
+                        groupChanges.push({
+                            id: itemId,
+                            fromGroup: originalGroupKey,
+                            toGroup: currentGroupKey,
+                            groupBy: groupBy
+                        });
+                    }
+                });
+            }
 
             // Recursively collect all items with their hierarchy
             function collectItems(container, parentId = null, level = 0) {
                 container.children('.sortable-item').each(function (index) {
                     const $item = jQuery(this);
                     const itemId = $item.data('id');
+                    const currentGroupKey = getItemGroupKey($item);
 
                     // Add this item to the sorting data
                     sortingData.push({
@@ -606,7 +640,8 @@
                         parentId: parentId,
                         parentType: getContainerType($item.parent()),
                         level: level,
-                        order: index
+                        order: index,
+                        groupKey: currentGroupKey
                     });
 
                     // Process children if any
@@ -616,6 +651,9 @@
                     }
                 });
             }
+
+            // Detect any group changes
+            detectGroupChanges();
 
             // Start collecting from the root containers
             jQuery('.sortable-list').not('.sortable-list .sortable-list').each(function () {
@@ -630,10 +668,28 @@
             // Send the sorting data to the server
             if (sortingData.length > 0) {
                 //console..log("Saving sorting data:", sortingData);
+                //console..log("Group changes detected:", groupChanges);
+                
+                // Convert sorting data to the original indexed format
+                const requestData = {};
+                
+                // Add sorting data in original indexed format
+                sortingData.forEach((item, index) => {
+                    requestData[index] = JSON.stringify(item);
+                });
+                
+                // Add group changes and groupBy if present
+                if (groupChanges.length > 0) {
+                    groupChanges.forEach((change, index) => {
+                        requestData[`groupChanges[${index}]`] = JSON.stringify(change);
+                    });
+                    requestData['groupBy'] = groupBy;
+                }
+                
                 htmx.ajax('POST', leantime.appUrl+'/hx/widgets/myToDos/saveSorting', {
                     target: '#htmx-indicator',
                     swap: 'none',
-                    values: sortingData
+                    values: requestData
                 });
             }
         }
@@ -662,6 +718,18 @@
                 ui.item.data('startPos', ui.item.index());
                 const startParent = ui.item.parent();
                 ui.item.data('startParent', startParent);
+
+                // Store original group key for group change detection
+                const originalGroupKey = getItemGroupKey(ui.item);
+                ui.item.data('original-group-key', originalGroupKey);
+                
+                // Store original group key for all items (not just the dragged one)
+                jQuery('.sortable-item').each(function() {
+                    const $item = jQuery(this);
+                    if (!$item.data('original-group-key')) {
+                        $item.data('original-group-key', getItemGroupKey($item));
+                    }
+                });
 
                 // Store the item type
                 //console..log("Drag started with item:", ui.item);

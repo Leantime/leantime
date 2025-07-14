@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Controller\HtmxController;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -85,14 +86,36 @@ class MyToDos extends HtmxController
         $userId = session('userdata.id');
         unset($params['act']);
 
+        // Check if group changes are present (indicating new format)
+        $hasGroupChanges = false;
+        $groupChanges = [];
+        $groupBy = $post['groupBy'] ?? '';
+
+        // Extract group changes from POST data
+        if (isset($post['groupChanges'])) {
+            foreach ($post['groupChanges'] as $key => $value) {
+                $hasGroupChanges = true;
+                $groupChanges[] = json_decode($value, true);
+            }
+        }
+
+        // Process group changes first if present
+        if ($hasGroupChanges && ! empty($groupChanges)) {
+            $this->processGroupChanges($groupChanges, $groupBy);
+        }
+
+        // Handle sorting
         if (is_array($params)) {
             $taskList = array_map(function ($item) {
-                $task = json_decode($item, true);
-                if (is_array($task) && isset($task['id'])) {
-                    // start sorting at 10 so we have room for new tasks at the top
-                    $task['order'] += 10;
+                if (is_string($item)) {
+                    $task = json_decode($item, true);
+                    if (is_array($task) && isset($task['id'])) {
+                        // start sorting at 10 so we have room for new tasks at the top
+                        $task['order'] = $task['order'] ?? 0;
+                        $task['order'] += 10;
 
-                    return $task;
+                        return $task;
+                    }
                 }
             }, $params);
 
@@ -105,6 +128,7 @@ class MyToDos extends HtmxController
         }
 
         $this->tpl->setNotification($this->language->__('notifications.sorting_error'), 'error');
+
     }
 
     /**
@@ -125,6 +149,199 @@ class MyToDos extends HtmxController
             $this->settingsService->saveSetting($toggleKey, $newState);
 
             return $newState;
+        }
+    }
+
+    /**
+     * Process group changes and update corresponding task fields
+     *
+     * @param  array  $groupChanges  Array of group change data
+     * @param  string  $groupBy  The grouping type (time, project, priority)
+     */
+    private function processGroupChanges(array $groupChanges, string $groupBy): void
+    {
+        $successCount = 0;
+        $errorCount = 0;
+
+        foreach ($groupChanges as $change) {
+            $taskId = $change['id'] ?? null;
+            $toGroup = $change['toGroup'] ?? null;
+            $fromGroup = $change['fromGroup'] ?? null;
+
+            // Skip invalid changes
+            if (empty($taskId) || empty($toGroup)) {
+                $errorCount++;
+
+                continue;
+            }
+
+            // Validate that user has permission to update this task
+            if (! $this->canUserUpdateTask($taskId)) {
+                Log::warning("User does not have permission to update task {$taskId}");
+                $errorCount++;
+
+                continue;
+            }
+
+            $fieldsToUpdate = $this->mapGroupToFields($groupBy, $toGroup);
+
+            if (! empty($fieldsToUpdate)) {
+                try {
+                    $result = $this->ticketsService->patch($taskId, $fieldsToUpdate);
+
+                    if ($result) {
+                        $successCount++;
+
+                        // Log successful group change for debugging
+                        Log::info("Successfully moved task {$taskId} from group {$fromGroup} to {$toGroup} ({$groupBy})");
+                    } else {
+                        $errorCount++;
+                        Log::error("Failed to update task {$taskId} with group change to {$toGroup}");
+                    }
+                } catch (\Exception $e) {
+                    $errorCount++;
+                    Log::error("Error updating task {$taskId}: ".$e->getMessage());
+                }
+            } else {
+                // No valid field mapping found
+                Log::warning("No valid field mapping found for group {$toGroup} in groupBy {$groupBy}");
+            }
+        }
+
+        // Set user notifications based on results
+        if ($successCount > 0 && $errorCount === 0) {
+            $this->tpl->setNotification($this->language->__('notifications.group_changes_applied'), 'success');
+        } elseif ($successCount > 0 && $errorCount > 0) {
+            $this->tpl->setNotification(
+                $this->language->__('notifications.group_changes_partial'),
+                'warning'
+            );
+        } elseif ($errorCount > 0) {
+            $this->tpl->setNotification(
+                $this->language->__('notifications.group_changes_failed'),
+                'error'
+            );
+        }
+    }
+
+    /**
+     * Map group key to field updates based on grouping type
+     *
+     * @param  string  $groupBy  The grouping type
+     * @param  string  $groupKey  The target group key
+     * @return array Fields to update
+     */
+    private function mapGroupToFields(string $groupBy, string $groupKey): array
+    {
+        switch ($groupBy) {
+            case 'time':
+                return $this->mapTimeGroupToFields($groupKey);
+
+            case 'project':
+                return $this->mapProjectGroupToFields($groupKey);
+
+            case 'priority':
+                return $this->mapPriorityGroupToFields($groupKey);
+
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * Map time group to date fields
+     *
+     * @param  string  $groupKey  Time group key (overdue, thisWeek, later)
+     * @return array Fields to update
+     */
+    private function mapTimeGroupToFields(string $groupKey): array
+    {
+        switch ($groupKey) {
+            case 'overdue':
+                // Set due date to yesterday to make it overdue
+                return ['dateToFinish' => date('Y-m-d', strtotime('yesterday'))];
+
+            case 'thisWeek':
+                // Set due date to end of current week (Friday)
+                return ['dateToFinish' => date('Y-m-d', strtotime('next friday'))];
+
+            case 'later':
+                // Clear due date for "later" group
+                return ['dateToFinish' => ''];
+
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * Map project group to project field
+     *
+     * @param  string  $groupKey  Project ID
+     * @return array Fields to update
+     */
+    private function mapProjectGroupToFields(string $groupKey): array
+    {
+        // Validate that the group key is a valid project ID
+        if (is_numeric($groupKey) && $groupKey > 0) {
+            $projectId = (int) $groupKey;
+
+            // Additional validation: Check if user has access to the target project
+            // This could be enhanced with a proper project permission check
+            // For now, we'll trust that the group was presented to the user, so they have access
+
+            return ['projectId' => $projectId];
+        }
+
+        return [];
+    }
+
+    /**
+     * Map priority group to priority field
+     *
+     * @param  string  $groupKey  Priority value
+     * @return array Fields to update
+     */
+    private function mapPriorityGroupToFields(string $groupKey): array
+    {
+        // Handle priority mapping
+        if ($groupKey === '999') {
+            // 999 represents "undefined priority" - clear the priority
+            return ['priority' => ''];
+        }
+
+        // Validate priority is within valid range (1-4)
+        if (is_numeric($groupKey) && $groupKey >= 1 && $groupKey <= 4) {
+            return ['priority' => (int) $groupKey];
+        }
+
+        return [];
+    }
+
+    /**
+     * Check if the current user can update a specific task
+     *
+     * @param  int  $taskId  The task ID to check
+     * @return bool True if user can update, false otherwise
+     */
+    private function canUserUpdateTask(int $taskId): bool
+    {
+        try {
+            // Attempt to get the ticket - this will return false if user doesn't have access
+            $ticket = $this->ticketsService->getTicket($taskId);
+
+            if (! $ticket || empty($ticket)) {
+                return false;
+            }
+
+            // Additional permission checks can be added here if needed
+            // For now, if user can view the ticket, they can update it
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error("Permission check failed for task {$taskId}: ".$e->getMessage());
+
+            return false;
         }
     }
 

@@ -503,6 +503,8 @@ class Tickets
             $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
         }
 
+        $query .= ' GROUP BY zp_tickets.id ';
+
         if ($sort == 'standard') {
             $query .= ' ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC';
         } elseif ($sort == 'kanbansort') {

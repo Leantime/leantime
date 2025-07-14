@@ -36,6 +36,7 @@
      hx-swap="outerHTML"
      hx-ext="json-enc"
      hx-indicator=".htmx-indicator"
+     data-group-by="{{ $groupBy }}"
 >
 
     <div class="clear" style="position:absolute; top:10px; right:35px;">
@@ -266,8 +267,17 @@
                                         <input type="hidden" name="status" value="3"/>
                                         <input type="hidden" name="priority"
                                                value="{{ $groupBy === "priority" ? $groupKey : '' }}"/>
+
+                                        @php
+                                            $dueDate = '';
+                                            if($groupKey === 'thisWeek'){
+                                                $dueDate = dtHelper()->userNow()->next('Friday')->formatDateForUser();
+                                            }else if($groupKey === 'overdue'){
+                                                $dueDate = dtHelper()->userNow()->subtract("3 days")->formatDateForUser();
+                                            }
+                                        @endphp
                                         <input type="hidden" name="dateToFinish"
-                                               value="{{ $groupKey === 'thisWeek' ? dtHelper()->userNow()->next('Friday')->formatDateForUser() : '' }}"/>
+                                               value="{{ $dueDate }}"/>
                                         <textarea name="description" class="description-input" style="display:none;"
                                                   placeholder="{{ __('input.placeholders.description') }}"></textarea>
                                     </div>
@@ -281,7 +291,7 @@
                             </form>
                         </div>
 
-                        <div class="sortable-list" data-container-type="section" style="padding-left:5px;">
+                        <div class="sortable-list" data-container-type="section" data-group-key="{{ $groupKey }}" style="padding-left:5px;">
                             @foreach ($ticketGroup['tickets'] as $row)
                                 @include('widgets::partials.todoItem', ['ticket' => $row, 'statusLabels' => $statusLabels, 'onTheClock' => $onTheClock, 'tpl' => $tpl, 'level' => 0, 'groupKey' => $groupKey])
                             @endforeach
