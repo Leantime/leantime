@@ -831,7 +831,7 @@ class Projects
         }
 
         // admins owners and managers can access everything
-        if (in_array(Roles::getRoleString($user['role']), [Roles::$admin, Roles::$owner, Roles::$manager])) {
+        if (in_array(Roles::getRoleString($user['role']), [Roles::$admin, Roles::$owner])) {
             return true;
         }
 
