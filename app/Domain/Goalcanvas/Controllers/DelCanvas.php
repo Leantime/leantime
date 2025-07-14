@@ -58,7 +58,7 @@ class DelCanvas extends Controller
             }
         }
 
-        $this->tpl->assign("id", $id);
+        $this->tpl->assign('id', $id);
 
         return $this->tpl->displayPartial(static::CANVAS_NAME.'canvas.delCanvas');
     }
