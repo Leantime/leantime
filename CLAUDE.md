@@ -516,14 +516,19 @@ Code should be tested using:
 ### Code Style
 We use laravel pint for code style. 
 
+### Backwards Compatibility
+Unless specifically called out DO NOT keep any old code or build any sort of backwards compatibility.
+
 ### Configs
 All laravel configs need to be stored in the laravelConfig file inside the core configuration folder. Any variables that should be editable by the user should be
 added to the sample.end file and exposed via `LEAN_*`. We do not load any custom php configs from the root config folder and as such things like artisaon publish will not publish configs correctly. Instead the content needs to be added to laravelConfig.
 When redis is available for a certain service (queue, cache, sessions etc) we should check if the admin has chosen to use redis and then automatically load the redis config via the respective serviceProvider.
 
 ### Error Logging
-When logging errors ALWAYS use the Log Facade NOT the helper (ensure it's included in the use statements). 
+When logging errors ALWAYS use the Log Facade (ensure it's included in the use statements). 
 Example: `Log::error($exception)`
+
+DO NOT use the helper functions error_log()
 
 ### Strict types
 - Use strict types where ever possible (for returns and for parameters)
@@ -535,7 +540,7 @@ Example: `Log::error($exception)`
 - Methods in services that should be available to our jsonRPC should include the @api doc comment
 
 ### DateTime Handling
-We are using the CarbonImmutable class for all things datetime and have various macros to help with common date formats.
+Always use `CarbonImmutable` or the `dtHelper()` function class for all things datetime and have various macros to help with common date formats.
 As a general rule all dates from the database are assumed to be in UTC and in the format YYYY-MM-DD HH:MM:SS 
 Dates coming from the frontend/user are assumed in the user's timezone and their respective date format. 
 We have a DateTimeHelper class to parse commone datetime formats we find, the dateTimehelper should be used in most cases.
