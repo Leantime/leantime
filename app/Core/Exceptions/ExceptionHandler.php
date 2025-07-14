@@ -19,6 +19,7 @@ use Illuminate\Support\Traits\ReflectsClosures;
 use InvalidArgumentException;
 use Leantime\Core\Application;
 use Leantime\Core\UI\Template;
+use Psr\Log\LoggerInterface;
 use Sentry\Laravel\Integration;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
@@ -219,14 +220,13 @@ class ExceptionHandler implements ExceptionHandlerContract
             }
         }
 
-        Log::error(
-            $e->getMessage(),
-            array_merge(
-                $this->exceptionContext($e),
-                $this->context(),
-                ['exception' => $e]
-            )
-        );
+        try {
+            $logger = app(LoggerInterface::class);
+        } catch (Exception $ex) {
+            throw $e; // throw the original exception
+        }
+
+        $logger->error($e->getMessage(), ['exception' => $e]);
 
     }
 

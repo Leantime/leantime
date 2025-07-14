@@ -368,14 +368,14 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#response_object
      */
-    private function returnResponse(?array $returnValue, ?string $id = null): Response
+    private function returnResponse(?array $returnValue, int|string|null $id = null): Response
     {
         /**
          * No IDs imply notification and MUST not be responded to
          *
          * @see https://jsonrpc.org/specification#notification
          */
-        if ($id == null) {
+        if ($id === null) {
             return new Response;
         }
 

@@ -9,7 +9,7 @@
            ])
 
     @if ($login::userIsAtLeast("manager", true))
-        <li class="notificationDropdown">
+        <li class="notificationDropdown appsLink">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
             hx-get="{{ BASE_URL }}/plugins/marketplaceplugins/getLatest"

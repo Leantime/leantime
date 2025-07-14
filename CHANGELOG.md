@@ -1,3 +1,45 @@
+# Version: 3.5.9
+
+* [1f45dc0](https://github.com/Leantime/leantime/commit/1f45dc06a7c596b6310a764e36f9fa6f52e1e526): task: version bump
+* [2c0279a](https://github.com/Leantime/leantime/commit/2c0279adca06ec0d47b600c63e89c2b984a2a5c8): task: downgrade plugin route loader so that config updates load before route files
+* [4dd0895](https://github.com/Leantime/leantime/commit/4dd08953c04e40a53532c9099f91e94cddaa00ef): feat: allow removing all new line characters from string sanitizer
+* [bb31269](https://github.com/Leantime/leantime/commit/bb3126960324a0415f00ddd8d3275bc44c9edc7c): task: Update php-mcp to latest version
+
+
+# Version: 3.5.8
+
+* [7474171](https://github.com/Leantime/leantime/commit/7474171b57235d4be8bdd051e759b99db24c1714): task: version bump
+* [99275ca](https://github.com/Leantime/leantime/commit/99275ca751477ddaf9cd1f653502f848d5390c77): fix: allow loading commands from phar files
+
+
+# Version: 3.5.7
+
+* [99275ca](https://github.com/Leantime/leantime/commit/99275ca751477ddaf9cd1f653502f848d5390c77): fix: allow loading commands from phar files
+
+
+# Version: 3.5.7
+
+* [92d1521](https://github.com/Leantime/leantime/commit/92d1521e84118ca49d6d4c088ecbfd5964f9b6d3): task: version bump
+* [0485867](https://github.com/Leantime/leantime/commit/04858678d93f602eeb887793934592d8778300fb): fix: Todowidget hierarchy issue with nested milestones
+* [4cb4de5](https://github.com/Leantime/leantime/commit/4cb4de57d3bf7bf1e690a31d40e1341be5499aa5): task: update packages
+* [9e7dda0](https://github.com/Leantime/leantime/commit/9e7dda0b2fe6bdc581b24bf5a977c3eff0549a7e): task: Claude code updates
+* [e496168](https://github.com/Leantime/leantime/commit/e49616861e881666cc63f213d620d043ff9101e8): feat: Infinity scroll for tasks in todowidget to reduce html bloat
+* [9d748a0](https://github.com/Leantime/leantime/commit/9d748a02e9d144b6a0dd04f15bff41eaa4bb7833): fix: dispatchFilter should return and not just echo
+* [819fe66](https://github.com/Leantime/leantime/commit/819fe669d6e887f044e4fcacade273e982ffbe27): feat: new countNested macros for collections
+* [a24ad44](https://github.com/Leantime/leantime/commit/a24ad442be9b64b7ef6eb52af51a81521d7acf09): fix: Ensure jsonrpc requests can be made from frontend
+* [ba55c55](https://github.com/Leantime/leantime/commit/ba55c55b03eb1171cdb7c480001ef7e0a36f0fdd): Update Plugins
+* [f69ec85](https://github.com/Leantime/leantime/commit/f69ec85e5ebb626955bc5c1959ddcc2b97214302): task: update min stability setting
+* [5e4f875](https://github.com/Leantime/leantime/commit/5e4f875c0bc4ce209916f6102b46ea86dee04f20): task: revert reverts
+* [335b8e4](https://github.com/Leantime/leantime/commit/335b8e4b1b724bb2342385c66334bc8f5e365798): feat: claude code helpers
+* [92168b9](https://github.com/Leantime/leantime/commit/92168b96bd49df38001f18c4b1b2a59d9232b7d4): feat: add link to marketplace in plugin news dropdown
+* [7cec492](https://github.com/Leantime/leantime/commit/7cec49247186576081912f69774d7277b7a45d31): feat: add flag to allow turning off sortable via event filter
+* [318182e](https://github.com/Leantime/leantime/commit/318182edbb03a1ed7b48c09721ba65eba04a7946): task: add additional template events to mytodo widget
+* [02aeb7b](https://github.com/Leantime/leantime/commit/02aeb7b4efb2cea4c88696bf470f0489abd6a14f): feat: new string mixins for AI support
+* [a8338bb](https://github.com/Leantime/leantime/commit/a8338bb745e7b9069b36c3f5aa706af6aab0de33): task: clean up how we load plugin paths
+* [818c7ac](https://github.com/Leantime/leantime/commit/818c7acb8e8f2062c3888f6793eee6e3c7fc4388): feat: Add support for routes.php files in plugins and modules (takes precedence over frontcontroller routing)
+* [a816dfb](https://github.com/Leantime/leantime/commit/a816dfb496294f01a49e5c7f44bc354e7d68b582): task: move config attribute to the appropriate folder
+
+
 # Version: 3.5.6
 
 * [1c8c3cc](https://github.com/Leantime/leantime/commit/1c8c3cc186f1f538eaf3de9384fde256177b3b4c): task: fix code style

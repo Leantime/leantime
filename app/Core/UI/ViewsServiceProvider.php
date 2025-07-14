@@ -3,6 +3,8 @@
 namespace Leantime\Core\UI;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\DynamicComponent;
@@ -232,6 +234,9 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
         });
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function getComposerPaths()
     {
         $pathRepo = app()->make(PathManifestRepository::class);
@@ -258,13 +263,39 @@ class ViewsServiceProvider extends LaravelViewServiceProvider
 
             $pluginComposerClasses = collect($enabledPluginPaths)
                 ->map(function ($pluginInfo) {
+
                     $composersPath = $pluginInfo['path'].'/Composers/';
+
+                    if ($pluginInfo['format'] === 'phar') {
+
+                        if (! file_exists($pluginInfo['path'])) {
+                            return [];
+                        }
+
+                        try {
+
+                            $composers = [];
+                            $p = new \Phar($composersPath, 0);
+                            $paths = collect(new \RecursiveIteratorIterator($p));
+
+                            foreach ($paths as $path) {
+                                $something = $path;
+                                $composers[] = 'Plugins/'.$pluginInfo['foldername'].'/Composers/'.$path->getFileName();
+                            }
+
+                            return $composers;
+
+                        } catch (\Exception $e) {
+                            return [];
+                        }
+                    }
 
                     // Use glob which works for both folder and phar paths
                     return glob($composersPath.'*.php') ?: [];
                 })
                 ->flatten();
         } catch (\Exception $e) {
+            Log::error($e);
             $pluginComposerClasses = collect();
         }
 

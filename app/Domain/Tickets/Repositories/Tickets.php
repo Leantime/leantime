@@ -322,47 +322,47 @@ class Tickets
     {
         $query = "
                 SELECT
-                    zp_tickets.id,
-                    zp_tickets.headline,
-                    zp_tickets.description,
-                    zp_tickets.date,
-                    zp_tickets.sprint,
-                    zp_sprints.name as sprintName,
-                    zp_tickets.storypoints,
-                    zp_tickets.sortindex,
-                    zp_tickets.dateToFinish,
-                    zp_tickets.projectId,
-                    zp_tickets.priority,
-                    IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
-                    zp_tickets.status,
-                    zp_tickets.tags,
-                    zp_tickets.editorId,
-                    zp_tickets.dependingTicketId,
-                    zp_tickets.milestoneid,
-                    zp_tickets.planHours,
-                    zp_tickets.editFrom,
-                    zp_tickets.editTo,
-                    zp_tickets.hourRemaining,
-                    (SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
-                    zp_projects.name AS projectName,
-                    zp_clients.name AS clientName,
-                    zp_clients.id AS clientId,
-                    t1.id AS authorId,
-                    t1.lastname AS authorLastname,
-                    t1.firstname AS authorFirstname,
-                    t1.profileId AS authorProfileId,
-                    t2.firstname AS editorFirstname,
-                    t2.lastname AS editorLastname,
-                    t2.profileId AS editorProfileId,
-                    milestone.headline AS milestoneHeadline,
-                    IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,";
+                     zp_tickets.id,
+                zp_tickets.headline,
+                zp_tickets.description,
+                zp_tickets.date,
+                zp_tickets.sprint,
+                zp_sprints.name as sprintName,
+                zp_tickets.storypoints,
+                zp_tickets.sortindex,
+                zp_tickets.dateToFinish,
+                zp_tickets.projectId,
+                zp_tickets.priority,
+                IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
+                zp_tickets.status,
+                zp_tickets.tags,
+                zp_tickets.editorId,
+                zp_tickets.dependingTicketId,
+                zp_tickets.milestoneid,
+                zp_tickets.planHours,
+                zp_tickets.editFrom,
+                zp_tickets.editTo,
+                zp_tickets.hourRemaining,
+                COALESCE(ROUND(timesheet_agg.total_hours, 2), 0) AS bookedHours,
+                zp_projects.name AS projectName,
+                zp_clients.name AS clientName,
+                zp_clients.id AS clientId,
+                t1.id AS authorId,
+                t1.lastname AS authorLastname,
+                t1.firstname AS authorFirstname,
+                t1.profileId AS authorProfileId,
+                t2.firstname AS editorFirstname,
+                t2.lastname AS editorLastname,
+                t2.profileId AS editorProfileId,
+                milestone.headline AS milestoneHeadline,
+                IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,";
 
         if ($includeCounts) {
-            $query .= "
-                        (SELECT COUNT(*) FROM zp_comment WHERE zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket') AS commentCount,
-                        (SELECT COUNT(*) FROM zp_file WHERE zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket') AS fileCount,
-                        (SELECT COUNT(*) FROM zp_tickets AS subtasks WHERE zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0) AS subtaskCount,
-                    ";
+            $query .= '
+                    COALESCE(comment_agg.comment_count, 0) AS commentCount,
+                    COALESCE(file_agg.file_count, 0) AS fileCount,
+                    COALESCE(subtask_agg.subtask_count, 0) AS subtaskCount,
+                           ';
         } else {
             $query .= '
                         0 AS commentCount,
@@ -382,14 +382,46 @@ class Tickets
                 LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
                 LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
                 LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
-                LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id
-                WHERE (
-                    zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :userId)
-                    OR zp_projects.psettings = 'all'
-                    OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
-                    OR (requestor.role >= 40)
-                )
-            ";
+                LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id";
+
+        $query .= '
+            LEFT JOIN (
+                SELECT ticketId, SUM(hours) as total_hours
+                FROM zp_timesheets
+                GROUP BY ticketId
+            ) AS timesheet_agg ON zp_tickets.id = timesheet_agg.ticketId';
+
+        if ($includeCounts) {
+            $query .= "
+            LEFT JOIN (
+                SELECT moduleId, COUNT(*) as comment_count
+                FROM zp_comment
+                WHERE module = 'ticket'
+                GROUP BY moduleId
+            ) AS comment_agg ON zp_tickets.id = comment_agg.moduleId
+            LEFT JOIN (
+                SELECT moduleId, COUNT(*) as file_count
+                FROM zp_file
+                WHERE module = 'ticket'
+                GROUP BY moduleId
+            ) AS file_agg ON zp_tickets.id = file_agg.moduleId
+            LEFT JOIN (
+                SELECT dependingTicketId, COUNT(*) as subtask_count
+                FROM zp_tickets
+                WHERE dependingTicketId > 0
+                GROUP BY dependingTicketId
+            ) AS subtask_agg ON zp_tickets.id = subtask_agg.dependingTicketId";
+        }
+
+        $query .= "
+            LEFT JOIN zp_relationuserproject AS rup ON zp_tickets.projectId = rup.projectId AND rup.userId = :userId
+            WHERE (
+                rup.projectId IS NOT NULL
+                OR zp_projects.psettings = 'all'
+                OR (zp_projects.psettings = 'clients' AND zp_projects.clientId = :clientId)
+                OR (requestor.role >= 40)
+            )
+        ";
 
         if (isset($searchCriteria['dateFrom']) && $searchCriteria['dateFrom'] != '') {
             $query .= ' AND zp_tickets.date > :dateFrom';

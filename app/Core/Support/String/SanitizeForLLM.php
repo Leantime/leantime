@@ -15,7 +15,8 @@ class SanitizeForLLM
      */
     public function sanitizeForLLM()
     {
-        return function ($value) {
+        return function ($value, bool $removeNewlines = false) {
+
             if (! is_string($value)) {
                 return $value ?? '';
             }
@@ -87,6 +88,10 @@ class SanitizeForLLM
 
             // Step 7: Remove consecutive spaces (which can occur after other replacements)
             $result = preg_replace('/ {2,}/', ' ', $result);
+
+            if ($removeNewlines) {
+                $result = str_replace("\n", ' ', $value);
+            }
 
             return $result;
         };

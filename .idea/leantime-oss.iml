@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/.phpstan" isTestSource="true" packagePrefix="Leanstan\" />
       <sourceFolder url="file://$MODULE_DIR$/app/Plugins/Billing/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/Plugins/McpServer/vendor/php-mcp/server/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/html-to-markdown" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/bacon/bacon-qr-code" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/htmlawed/htmlawed" />

@@ -5,7 +5,6 @@ namespace Leantime\Domain\Projects\Controllers;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Core\Controller\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
@@ -212,7 +211,7 @@ class ShowProject extends Controller
 
                 $this->projectRepo->editProjectRelations($values, $id);
 
-                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
 
                 $this->tpl->setNotification($this->language->__('notifications.user_was_added_to_project'), 'success');
             }
@@ -231,8 +230,8 @@ class ShowProject extends Controller
                     'menuType' => $_POST['menuType'],
                     'type' => $_POST['type'] ?? $project['type'],
                     'parent' => $_POST['parent'] ?? '',
-                    'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
-                    'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime() : '',
+                    'start' => isset($_POST['start']) && dtHelper()->isValidDateString($_POST['start']) ? dtHelper()->parseUserDateTime($_POST['start'])->formatDateTimeForDb() : '',
+                    'end' => isset($_POST['end']) && dtHelper()->isValidDateString($_POST['end']) ? dtHelper()->parseUserDateTime($_POST['end'])->formatDateTimeForDb() : '',
                 ];
 
                 if ($values['name'] !== '') {
@@ -241,7 +240,7 @@ class ShowProject extends Controller
                     } else {
                         $this->projectRepo->editProject($values, $id);
 
-                        $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id);
+                        $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
 
                         $this->tpl->setNotification($this->language->__('notification.project_saved'), 'success');
 

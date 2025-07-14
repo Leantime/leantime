@@ -101,8 +101,8 @@
         "hkulekci/qdrant": "^0.5.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-path-prefixing": "^3.0",
-        "php-mcp/server": "dev-main as 2.3.1",
-        "php-mcp/laravel": "2.1.0"
+        "php-mcp/server": "dev-main as 3.1.1",
+        "php-mcp/laravel": "3.0.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -196,6 +196,11 @@
             "ignore-duplicates": true,
             "include": [
                 "app/Plugins/*/composer.json"
+            ]
+        },
+        "laravel": {
+            "dont-discover": [
+                "php-mcp/laravel"
             ]
         }
     }

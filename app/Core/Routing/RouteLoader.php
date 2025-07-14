@@ -27,9 +27,9 @@ class RouteLoader
         self::loadSystemPluginRoutes();
 
         // Load user plugin routes (will be called via event after plugins are loaded)
-        EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsStart', function () {
+        EventDispatcher::add_event_listener('leantime.core.middleware.loadplugins.handle.pluginsEvents', function () {
             self::loadUserPluginRoutes();
-        });
+        }, 50);
 
         $loaded = true;
     }

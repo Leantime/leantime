@@ -37,14 +37,18 @@ class Comments
 					user.modified AS userModified
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
-				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
-				ORDER BY comment.date ".$orderBy;
+				WHERE moduleId = :moduleId AND module = :module";
+        if ($parent >= 0) {
+            $sql .= ' AND commentParent = :parent';
+        }
+        $sql .= ' ORDER BY comment.date '.$orderBy;
 
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':module', $module, PDO::PARAM_STR);
         $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
-        $stmn->bindvalue(':parent', $parent, PDO::PARAM_INT);
-
+        if ($parent >= 0) {
+            $stmn->bindvalue(':parent', $parent, PDO::PARAM_INT);
+        }
         $stmn->execute();
         $values = $stmn->fetchAll();
         $stmn->closeCursor();
