@@ -353,8 +353,12 @@ class FileManagerTest extends TestCase
         $this->assertEquals('test.txt', $result);
 
         // Test with special characters
-        $result = $method->invoke($this->fileManager, 'test@file#$%.txt');
-        $this->assertEquals('test_file___.txt', $result);
+        $result = $method->invoke($this->fileManager, 'test@file#$.txt');
+        $this->assertEquals('test-file--.txt', $result);
+
+        // Allow chinese characters
+        $result = $method->invoke($this->fileManager, '测试文件.txt');
+        $this->assertEquals('测试文件.txt', $result);
     }
 
     public function test_get_avatar_with_cache_hit()
