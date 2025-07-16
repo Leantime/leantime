@@ -128,3 +128,4 @@ config/.env
 .idea/codebuddy.xml
 
 **/.claude/settings.local.json
+.serena/project.yml
