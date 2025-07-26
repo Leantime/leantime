@@ -1256,7 +1256,6 @@ a.barmenu:hover {
     border-radius: 5px;
     line-height:21px;
     display:block;
-    transition: background-color 0.2s ease-in-out 0s;
     color:var(--primary-font-color);
 }
 

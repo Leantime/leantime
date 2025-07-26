@@ -11,7 +11,6 @@
 <meta name="theme" content="{{ $theme }}">
 <meta name="identifier-URL" content="{!! BASE_URL !!}">
 <meta name="leantime-version" content="{{ $version }}">
-<meta name="view-transition" content="same-origin"/>
 
 @dispatchEvent('afterMetaTags')
 

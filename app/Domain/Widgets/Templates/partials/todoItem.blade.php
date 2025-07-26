@@ -264,7 +264,7 @@
                       id="task-add-form-{{ $groupKey }}-{{$ticket['id']}}-form"
                       hx-post="{{ BASE_URL }}/widgets/myToDos/addTodo"
                       hx-target="#yourToDoContainer"
-                      hx-swap="outerHTML transition:true"
+                      hx-swap="outerHTML"
                       hx-indicator=".htmx-indicator"
                       onsubmit="jQuery(this).find('.main-title-input').attr('readonly', true);"
                 >

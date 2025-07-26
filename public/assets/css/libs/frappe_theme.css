@@ -34,7 +34,6 @@
 
   stroke: #8D99A6;
   stroke-width: 0;
-  transition: stroke-width .3s ease;
   user-select: none; }
 
 .gantt .bar-progress {
@@ -63,7 +62,7 @@
   cursor: ew-resize;
   opacity: 0;
   visibility: hidden;
-  transition: opacity .3s ease; }
+ }
 
 .gantt .bar-wrapper {
   cursor: pointer; }

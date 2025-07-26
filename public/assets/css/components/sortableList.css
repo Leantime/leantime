@@ -151,7 +151,6 @@
     border: 1px dashed rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     margin-bottom: 5px;
-    transition: all 0.2s ease;
     height: 60px;
     position: relative;
 }
@@ -170,7 +169,6 @@
     z-index: 10;
     text-align: center;
     border-radius: 50%;
-    transition: background-color 0.2s ease;
     background: var(--secondary-background);
 }
 
@@ -189,7 +187,6 @@
 }
 
 .task-collapse-toggle i {
-    transition: transform 0.2s ease;
 }
 
 .ticketBox.has-children {
@@ -214,7 +211,6 @@
     display: inline-block;
     margin-left: 10px;
     color: var(--primary-font-color);
-    transition: all 0.2s ease;
 }
 
 .add-task-button:hover {

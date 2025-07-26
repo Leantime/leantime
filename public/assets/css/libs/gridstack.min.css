@@ -157,13 +157,13 @@
 
 .grid-stack-animate,
 .grid-stack-animate .grid-stack-item {
-    transition: left 0.3s, top 0.3s, height 0.3s, width 0.3s;
+
 }
 
 .grid-stack-animate .grid-stack-item.ui-draggable-dragging,
 .grid-stack-animate .grid-stack-item.ui-resizable-resizing,
 .grid-stack-animate .grid-stack-item.grid-stack-placeholder {
-    transition: left 0s, top 0s, height 0s, width 0s;
+
 }
 
 .grid-stack > .grid-stack-item[gs-y="0"] {

@@ -4,7 +4,6 @@
 }
 
 .day-button {
-    transition: all 0.2s ease;
     border:none;
     background:var(--secondary-background);
     box-shadow: var(--min-shadow);

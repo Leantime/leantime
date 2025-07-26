@@ -221,7 +221,6 @@
     background:var(--col-title-bg);
     padding: 10px 10px;
     font-weight:bold;
-    transition: all 0.2s ease-in-out 0s;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {

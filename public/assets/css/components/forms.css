@@ -42,10 +42,6 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
     box-shadow: var(--input-shadow);
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
     padding: var(--input-padding);
     color:var(--primary-font-color);
@@ -356,10 +352,6 @@ body input[type='submit'].btn-primary .caret,
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
     box-shadow: var(--input-shadow);
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
     padding: var(--input-padding);
     color:var(--primary-font-color);
@@ -744,11 +736,6 @@ input[type=color] {
     background-color: var(--input-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-
-    -webkit-transition: border linear .2s, box-shadow linear .2s;
-    -moz-transition: border linear .2s, box-shadow linear .2s;
-    -o-transition: border linear .2s, box-shadow linear .2s;
-    transition: border linear .2s, box-shadow linear .2s;
     border-radius: 3px;
     padding: 6px 12px;
     color:var(--primary-font-color);
@@ -1191,7 +1178,6 @@ input[type=range]:focus::-ms-fill-upper {
 
     outline: 0;
     box-sizing: border-box;
-    transition: background-color .2s;
 }
 
 .ss-main {
@@ -1204,7 +1190,6 @@ input[type=range]:focus::-ms-fill-upper {
     line-height: 21px;
     border: 1px solid var(--main-border-color);
     box-shadow: var(--input-shadow);
-    transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
 }
 
@@ -1556,7 +1541,6 @@ input[type="checkbox"].toggle {
     border: 0px solid var(--primary-font-color);
     background: var(--input-background);
     box-shadow: var(--min-shadow);
-    transition: all .2s ease;
     margin-top: 5px;
 
 }
@@ -1571,7 +1555,6 @@ input[type="checkbox"].toggle:after {
     border-radius: 50%;
     box-shadow: var(--regular-shadow);
     background:var(--primary-font-color);
-    transition: all .2s cubic-bezier(.5, .1, .75, 1.35);
 
 }
 
@@ -1805,7 +1788,6 @@ input[type=number].hide-controls {
     background: #f5f5f5;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .weekday-label:hover {
