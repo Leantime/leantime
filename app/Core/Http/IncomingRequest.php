@@ -42,6 +42,13 @@ class IncomingRequest extends \Illuminate\Http\Request
 
     public const HEADER_X_FORWARDED_TRAEFIK = parent::HEADER_X_FORWARDED_TRAEFIK; // All "X-Forwarded-*"
 
+    // List of valid api endpoint urls
+    public array $apiEndpoints = [
+        '/api/jsonrpc',
+        '/mcp',
+        '/api',
+    ];
+
     public static function createFromGlobals(): static
     {
         return parent::createFromBase(parent::createFromGlobals());
@@ -321,8 +328,15 @@ class IncomingRequest extends \Illuminate\Http\Request
      */
     public function isApiRequest(): bool
     {
-        $requestUri = $this->getRequestUri();
+        $requestUri = strtolower($this->getRequestUri());
 
-        return str_starts_with(strtolower($requestUri), '/api/jsonrpc');
+        // Check the endpoint
+        foreach ($this->apiEndpoints as $apiEndpoint) {
+            if (str_starts_with($requestUri, $apiEndpoint)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

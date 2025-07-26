@@ -342,6 +342,7 @@
       <path value="$PROJECT_DIR$/vendor/opis/json-schema" />
       <path value="$PROJECT_DIR$/vendor/php-mcp/laravel" />
       <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/php-mcp/schema" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

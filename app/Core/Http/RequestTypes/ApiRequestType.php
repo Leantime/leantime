@@ -11,8 +11,10 @@ class ApiRequestType implements RequestTypeInterface
     {
         $requestUri = strtolower($request->getRequestUri());
 
-        return $request->headers->has('x-api-key') ||
-               str_starts_with($requestUri, '/api/jsonrpc');
+        return
+            $request->headers->has('x-api-key')
+            || $request->bearerToken()
+            || $request->isApiRequest();
     }
 
     public function getPriority(): int
