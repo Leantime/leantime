@@ -7,6 +7,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
 use Leantime\Domain\Notifications\Models\Notification;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Users\Services\Users as UserService;
 
 /**
  * @api
@@ -17,15 +18,19 @@ class Comments
 
     private ProjectService $projectService;
 
+    private UserService $userService;
+
     private LanguageCore $language;
 
     public function __construct(
         CommentRepository $commentRepository,
         ProjectService $projectService,
+        UserService $userService,
         LanguageCore $language
     ) {
         $this->commentRepository = $commentRepository;
         $this->projectService = $projectService;
+        $this->userService = $userService;
         $this->language = $language;
     }
 
@@ -48,12 +53,26 @@ class Comments
     public function addComment($values, $module, $entityId, $entity): bool
     {
         if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) && isset($entityId) && isset($entity)) {
+            $userId = $values['userId'] ?? session('userdata.id');
+            $user = $this->userService->getUser($userId ?? -1);
+            if (! $user) {
+                return false;
+            }
+            // Cf. \Leantime\Core\Middleware::setLeantimeSession().
+            $user['name'] = strip_tags($user['firstname']);
+
+            $projectId = $values['projectId'] ?? session('currentProject');
+            $project = $this->projectService->getProject($projectId ?? -1);
+            if (! $project) {
+                return false;
+            }
+
             $mapper = [
                 'text' => $values['text'],
                 'date' => dtHelper()->dbNow()->formatDateTimeForDb(),
-                'userId' => (session('userdata.id')),
+                'userId' => $user['id'],
                 'moduleId' => $entityId,
-                'commentParent' => ($values['father']),
+                'commentParent' => $values['father'],
                 'status' => $values['status'] ?? '',
             ];
 
@@ -66,19 +85,20 @@ class Comments
 
                 switch ($module) {
                     case 'ticket':
+                        $entity = (object) $entity;
                         $subject = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_subject'), $this->language->__('label.'.strtolower($entity->type)), $entity->id, strip_tags($entity->headline));
-                        $message = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_message'), session('userdata.name'), $this->language->__('label.'.strtolower($entity->type)), strip_tags($entity->headline), strip_tags($values['text']));
+                        $message = sprintf($this->language->__('email_notifications.new_comment_todo_with_type_message'), $user['name'], $this->language->__('label.'.strtolower($entity->type)), strip_tags($entity->headline), strip_tags($values['text']));
                         $linkLabel = $this->language->__('email_notifications.new_comment_todo_cta');
                         $currentUrl = BASE_URL.'#/tickets/showTicket/'.$entity->id;
                         break;
                     case 'project':
                         $subject = sprintf($this->language->__('email_notifications.new_comment_project_subject'), $entityId, strip_tags($entity['name']));
-                        $message = sprintf($this->language->__('email_notifications.new_comment_project_message'), session('userdata.name'), strip_tags($entity['name']));
+                        $message = sprintf($this->language->__('email_notifications.new_comment_project_message'), $user['name'], strip_tags($entity['name']));
                         $linkLabel = $this->language->__('email_notifications.new_comment_project_cta');
                         break;
                     default:
                         $subject = $this->language->__('email_notifications.new_comment_general_subject');
-                        $message = sprintf($this->language->__('email_notifications.new_comment_general_message'), session('userdata.name'));
+                        $message = sprintf($this->language->__('email_notifications.new_comment_general_message'), $user['name']);
                         $linkLabel = $this->language->__('email_notifications.new_comment_general_cta');
                         break;
                 }
@@ -87,15 +107,15 @@ class Comments
 
                 $urlQueryParameter = str_contains($currentUrl, '?') ? '&' : '?';
                 $notification->url = [
-                    'url' => $currentUrl.$urlQueryParameter.'projectId='.session('currentProject'),
+                    'url' => $currentUrl.$urlQueryParameter.'projectId='.$projectId,
                     'text' => $linkLabel,
                 ];
 
                 $notification->entity = $mapper;
                 $notification->module = 'comments';
-                $notification->projectId = session('currentProject');
+                $notification->projectId = $projectId;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id');
+                $notification->authorId = $user['id'];
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
