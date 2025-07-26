@@ -17,7 +17,7 @@ class DatabaseServiceProvider extends LaravelDatabaseServiceProvider
         parent::register();
 
         // Register Db as a singleton with proper dependency injection
-        $this->app->singleton(\Leantime\Core\Db\Db::class, function ($app) {
+        app()->singleton(\Leantime\Core\Db\Db::class, function ($app) {
             return new \Leantime\Core\Db\Db($app);
         });
     }

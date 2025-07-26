@@ -223,14 +223,22 @@ return [
         'channels' => [
             'stack' => [
                 'driver' => 'stack',
-                'channels' => ['single', 'sentry'],
+                'channels' => ['single', 'syslog', 'sentry'],
+                'ignore_exceptions' => false,
             ],
             'single' => [
                 'driver' => 'daily',
                 'path' => storage_path('logs/leantime.log'),
+                'level' => env('LEAN_DEBUG', 0) ? 'debug' : 'error',
                 'permission' => 0664,
                 'days' => 5,
                 'bubble' => true,
+            ],
+            'syslog' => [
+                'driver' => 'syslog',
+                'level' => env('LEAN_DEBUG', 0) ? 'debug' : 'error',
+                'facility' => env('LOG_SYSLOG_FACILITY', LOG_USER),
+                'replace_placeholders' => true,
             ],
             'deprecations' => [
                 'driver' => 'single',
@@ -562,6 +570,17 @@ return [
                     PDO::MYSQL_ATTR_SSL_CERT => env('LEAN_DB_MYSQL_ATTR_SSL_CERT'),
                     PDO::MYSQL_ATTR_SSL_CA => env('LEAN_DB_MYSQL_ATTR_SSL_CA'),
                     PDO::ATTR_EMULATE_PREPARES => true,
+                    // Connection pooling and management options
+                    PDO::ATTR_PERSISTENT => env('LEAN_DB_PERSISTENT_CONNECTIONS', true),
+                    PDO::ATTR_TIMEOUT => env('LEAN_DB_CONNECTION_TIMEOUT', 30),
+                    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                    PDO::MYSQL_ATTR_FOUND_ROWS => true,
+                    // Connection limits and timeouts
+                    PDO::MYSQL_ATTR_INIT_COMMAND => sprintf(
+                        'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, @@session.wait_timeout = %d, @@session.interactive_timeout = %d',
+                        env('LEAN_DB_IDLE_TIMEOUT', 3600),
+                        env('LEAN_DB_IDLE_TIMEOUT', 3600)
+                    ),
                 ]) : [],
             ],
         ],
@@ -759,7 +778,7 @@ return [
 
         'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
             '%s%s',
-            'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+            'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,127.0.0.1:8080,::1',
             Sanctum::currentApplicationUrlWithPort()
         ))),
 

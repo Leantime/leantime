@@ -150,17 +150,42 @@ abstract class Repository
                 $this->stmn = $this->caller_class::dispatch_filter('stmn', $this->stmn, $this->getArgs(), 4);
                 $method = $this->caller_class::dispatch_filter('method', $method, $this->getArgs(), 4);
 
-                $values = $this->stmn->execute();
+                try {
+                    $values = $this->stmn->execute();
 
-                if (in_array($method, ['fetch', 'fetchAll'])) {
-                    $values = $this->stmn->$method();
+                    if (in_array($method, ['fetch', 'fetchAll'])) {
+                        $values = $this->stmn->$method();
+                    }
+                } catch (\Exception $e) {
+                    // Ensure cursor is closed even on exceptions
+                    if (isset($this->stmn)) {
+                        $this->stmn->closeCursor();
+                    }
+                    throw $e;
+                } finally {
+                    // Always ensure proper cleanup
+                    if (isset($this->stmn)) {
+                        $this->stmn->closeCursor();
+                    }
                 }
-
-                $this->stmn->closeCursor();
 
                 $this->caller_class::dispatch_event('afterExecute', $this->getArgs(), 4);
 
                 return $this->caller_class::dispatch_filter('return', $values, $this->getArgs(), 4);
+            }
+
+            /**
+             * Destructor to ensure proper cleanup of database resources
+             */
+            public function __destruct()
+            {
+                if (isset($this->stmn)) {
+                    try {
+                        $this->stmn->closeCursor();
+                    } catch (\Exception $e) {
+                        // Silently handle any cleanup errors
+                    }
+                }
             }
         };
     }
