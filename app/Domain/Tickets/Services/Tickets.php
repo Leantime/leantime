@@ -1589,6 +1589,7 @@ class Tickets
      */
     public function addTicket($values): array|int|bool
     {
+        $userId = $values['userId'] ?? session('userdata.id');
         $values = [
             'id' => '',
             'headline' => $values['headline'] ?? '',
@@ -1596,7 +1597,7 @@ class Tickets
             'description' => $values['description'] ?? '',
             'projectId' => $values['projectId'] ?? session('currentProject'),
             'editorId' => $values['editorId'] ?? '',
-            'userId' => session('userdata.id'),
+            'userId' => $userId,
             'date' => gmdate('Y-m-d H:i:s'),
             'dateToFinish' => $values['dateToFinish'] ?? '',
             'timeToFinish' => $values['timeToFinish'] ?? '',
@@ -1616,7 +1617,7 @@ class Tickets
             'milestoneid' => $values['milestoneid'] ?? '',
         ];
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
+        if (! $this->projectService->isUserAssignedToProject($userId, $values['projectId'])) {
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
@@ -1645,7 +1646,7 @@ class Tickets
                 $notification->module = 'tickets';
                 $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
                 $notification->subject = $subject;
-                $notification->authorId = session('userdata.id') ?? -1;
+                $notification->authorId = $userId ?? -1;
                 $notification->message = $message;
 
                 $this->projectService->notifyProjectUsers($notification);
@@ -1692,6 +1693,7 @@ class Tickets
      */
     public function updateTicket($values): array|bool
     {
+        $userId = $values['userId'] ?? session('userdata.id');
         if (! isset($values['headline'])) {
             $currentTicket = $this->getTicket($values['id']);
 
@@ -1732,7 +1734,7 @@ class Tickets
             return ['msg' => 'project id is not set', 'type' => 'error'];
         }
 
-        if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
+        if (! $this->projectService->isUserAssignedToProject($userId, $values['projectId'])) {
             return ['msg' => 'notifications.ticket_save_error_no_access', 'type' => 'error'];
         }
 
@@ -1753,7 +1755,7 @@ class Tickets
             $notification->module = 'tickets';
             $notification->projectId = $values['projectId'] ?? session('currentProject') ?? -1;
             $notification->subject = $subject;
-            $notification->authorId = session('userdata.id') ?? -1;
+            $notification->authorId = $userId ?? -1;
             $notification->message = $message;
 
             $this->projectService->notifyProjectUsers($notification);
