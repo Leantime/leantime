@@ -97,6 +97,18 @@ foreach ($__data as $var => $val) {
                         </select>
                     </td>
                     <td>
+                        <label for="ticket"><?php echo $tpl->__('label.ticket'); ?></label>
+                            <select name="ticket" style="max-width:120px;">
+                                <option value="-1"><?php echo strip_tags($tpl->__('menu.all_tickets')) ?></option>
+                                <?php foreach ($tpl->get('allTickets') as $ticket) {?>
+                                    <option value="<?= $ticket['id'] ?>"
+                                        <?php if ($tpl->get('ticketFilter') == $ticket['id']) {
+                                            echo "selected='selected'";
+                                        } ?>><?= $tpl->escape($ticket['headline'])?></option>
+                                <?php } ?>
+                            </select>
+                    </td>
+                    <td>
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                         <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
                         value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
