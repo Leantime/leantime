@@ -132,7 +132,7 @@ class ShowAll extends Controller
             $projectFilter = strip_tags($_POST['project']);
         }
 
-        $ticketFilter = '';
+        $ticketFilter = -1;
         if (! empty($_POST['ticket'])) {
             $ticketFilter = strip_tags($_POST['ticket']);
         }
