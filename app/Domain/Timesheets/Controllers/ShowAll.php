@@ -142,6 +142,17 @@ class ShowAll extends Controller
             $clientId = strip_tags($_POST['clientId']);
         }
 
+        // Determine if the selected ticket is in the selected project
+        $projectMismatch = false;
+        if ($ticketFilter != '') {
+            $selectedTicket = $this->ticketService->getTicket($ticketFilter);
+
+            if ($selectedTicket && $selectedTicket->projectId != $projectFilter) {
+                $projectMismatch = true;
+            }
+        }
+
+
         $user = app()->make(UserRepository::class);
         $employees = $user->getAll();
 
@@ -157,7 +168,7 @@ class ShowAll extends Controller
         $this->tpl->assign('paid', $paidCheck);
         $this->tpl->assign('allProjects', $this->projectService->getAll());
         $this->tpl->assign('projectFilter', $projectFilter);
-        $this->tpl->assign('allTickets', $this->ticketService->getAll());
+        $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll( ['currentProject' => $projectFilter]));
         $this->tpl->assign('ticketFilter', $ticketFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());
@@ -169,7 +180,7 @@ class ShowAll extends Controller
             $userId,
             $invEmplCheck,
             $invCompCheck,
-            $ticketFilter,
+            ($projectMismatch ? '-1' : ($projectFilter == -1 ? '-1' : ($ticketFilter ?: '-1'))),
             $paidCheck,
             $clientId
         ));
