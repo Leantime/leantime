@@ -262,7 +262,7 @@ class Timesheets
     /**
      * @api
      */
-    public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
+    public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '-1', string $invComp = '-1', string $ticketFilter = '-1', string $paid = '-1', string $clientId = '-1'): array|false
     {
         return $this->timesheetsRepo->getAll(
             id: $projectId,

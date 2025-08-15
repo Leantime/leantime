@@ -59,9 +59,9 @@ class ShowMyList extends Controller
             projectId: -1,
             kind: $kind,
             userId: session('userdata.id'),
-            invEmpl: 0,
-            invComp: 0,
-            paid: 0
+            invEmpl: -1,
+            invComp: -1,
+            paid: -1
         ));
 
         return $this->tpl->display('timesheets.showMyList');
