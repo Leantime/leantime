@@ -101,6 +101,8 @@ class Timesheets extends Repository
 
         if ($invEmpl == '1') {
             $query .= ' AND (zp_timesheets.invoicedEmpl = 1)';
+        } elseif ($invEmpl == '0') {
+            $query .= ' AND (zp_timesheets.invoicedEmpl = 0)';
         }
 
         if ($paid == '1') {

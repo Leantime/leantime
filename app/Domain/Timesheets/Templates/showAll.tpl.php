@@ -135,14 +135,18 @@ foreach ($__data as $var => $val) {
                         </select>
                     </td>
                     <td>
-                        <input type="checkbox" value="on" name="invEmpl" id="invEmpl" onclick="submit();"
-                            <?php
-if ($tpl->get('invEmpl') == '1') {
-    echo ' checked="checked"';
-}
-?>
-                        />
-                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced'); ?></label>
+                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced')?></label>
+                        <select name="invEmpl" id="invEmpl" style="max-width:120px;">
+                            <option value="all" <?php if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl')) {
+                                echo 'selected="selected"';
+                            } ?>><?php echo $tpl->__('label.invoiced_all'); ?></option>
+                            <option value="1" <?php if ($tpl->get('invEmpl') == '1') {
+                                echo 'selected="selected"';
+                            } ?>><?php echo $tpl->__('label.invoiced'); ?></option>
+                            <option value="0" <?php if ($tpl->get('invEmpl') == '0') {
+                                echo 'selected="selected"';
+                            } ?>><?php echo $tpl->__('label.invoiced_not'); ?></option>
+                        </select>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"

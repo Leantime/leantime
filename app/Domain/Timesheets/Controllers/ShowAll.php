@@ -90,14 +90,11 @@ class ShowAll extends Controller
 
         if (isset($_POST['invEmpl'])) {
             $invEmplCheck = $_POST['invEmpl'];
-
-            if ($invEmplCheck == 'on') {
-                $invEmplCheck = '1';
-            } else {
-                $invEmplCheck = '0';
+            if ($invEmplCheck == 'all') {
+                $invEmplCheck = '-1';
             }
         } else {
-            $invEmplCheck = '0';
+            $invEmplCheck = '-1';
         }
 
         if (isset($_POST['invComp'])) {
