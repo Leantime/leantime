@@ -16,7 +16,6 @@
            hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/start-timer/"
            hx-target="#timerHeadMenu"
            hx-swap="outerHTML"
-           class="pulse-click"
            onclick="this.classList.add('starting');"
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"start"}'
             data-tippy-content="{{ __("links.start_work") }}">
@@ -37,13 +36,12 @@
            hx-target="#timerHeadMenu"
            hx-vals='{"ticketId": "{{ $parentTicketId }}", "action":"stop"}'
            hx-swap="outerHTML"
-           class="pulse"
            onclick="this.classList.add('stopped');"
            data-tippy-content="@if (is_array($onTheClock) == true) {!! strip_tags(sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"]))) !!} @else {!! strip_tags(sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), time()))) !!} @endif"
         >
 
 
-                <span class="fa-regular fa-circle-stop color-change-2x" style="font-size:18px; padding-top:3px;"></span>
+                <span class="fa-regular fa-circle-stop" style="font-size:18px; padding-top:3px;"></span>
                 @if($style=="full")
                     @if (is_array($onTheClock) == true)
                         {!!  sprintf(__("links.stop_work_started_at"), date(__("language.timeformat"), $onTheClock["since"])) !!}
