@@ -145,7 +145,7 @@ foreach ($__data as $var => $val) {
                             } ?>><?php echo $tpl->__('label.invoiced'); ?></option>
                             <option value="0" <?php if ($tpl->get('invEmpl') == '0') {
                                 echo 'selected="selected"';
-                            } ?>><?php echo $tpl->__('label.not_invoiced'); ?></option>
+                            } ?>><?php echo $tpl->__('label.invoiced_not'); ?></option>
                         </select>
                     </td>
                     <td>
