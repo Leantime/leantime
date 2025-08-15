@@ -127,7 +127,7 @@ class ShowAll extends Controller
             $paidCheck = '0';
         }
 
-        $projectFilter = '';
+        $projectFilter = -1;
         if (! empty($_POST['project'])) {
             $projectFilter = strip_tags($_POST['project']);
         }
