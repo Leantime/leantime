@@ -8,9 +8,9 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShowAll extends Controller
@@ -152,7 +152,6 @@ class ShowAll extends Controller
             }
         }
 
-
         $user = app()->make(UserRepository::class);
         $employees = $user->getAll();
 
@@ -168,7 +167,7 @@ class ShowAll extends Controller
         $this->tpl->assign('paid', $paidCheck);
         $this->tpl->assign('allProjects', $this->projectService->getAll());
         $this->tpl->assign('projectFilter', $projectFilter);
-        $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll( ['currentProject' => $projectFilter]));
+        $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll(['currentProject' => $projectFilter]));
         $this->tpl->assign('ticketFilter', $ticketFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());

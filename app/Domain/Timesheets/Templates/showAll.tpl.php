@@ -96,7 +96,7 @@ foreach ($__data as $var => $val) {
                                 <?php } ?>
                             </select>
                         </td>
-                    <?php if (!empty($tpl->get('allTickets'))) { ?>
+                    <?php if (! empty($tpl->get('allTickets'))) { ?>
                     <td>
                         <label for="ticket"><?php echo $tpl->__('label.ticket'); ?></label>
                             <select name="ticket" style="max-width:120px;">
