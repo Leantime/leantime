@@ -129,3 +129,4 @@ config/.env
 
 **/.claude/settings.local.json
 .serena/project.yml
+/.serena
