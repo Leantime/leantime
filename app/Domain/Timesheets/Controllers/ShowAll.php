@@ -8,6 +8,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Clients\Services\Clients as ClientService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,8 @@ class ShowAll extends Controller
 
     private TimesheetService $timesheetsService;
 
+    private TicketService $ticketService;
+
     /**
      * init - initialize private variables
      */
@@ -27,10 +30,12 @@ class ShowAll extends Controller
         ProjectService $projectService,
         TimesheetService $timesheetsService,
         ClientService $clientService,
+        TicketService $ticketService
     ): void {
         $this->timesheetsService = $timesheetsService;
         $this->projectService = $projectService;
         $this->clientService = $clientService;
+        $this->ticketService = $ticketService;
     }
 
     /**
@@ -119,14 +124,29 @@ class ShowAll extends Controller
             $paidCheck = '0';
         }
 
-        $projectFilter = '';
+        $projectFilter = -1;
         if (! empty($_POST['project'])) {
             $projectFilter = strip_tags($_POST['project']);
+        }
+
+        $ticketFilter = -1;
+        if (! empty($_POST['ticket'])) {
+            $ticketFilter = strip_tags($_POST['ticket']);
         }
 
         $clientId = -1;
         if (! empty($_POST['clientId'])) {
             $clientId = strip_tags($_POST['clientId']);
+        }
+
+        // Determine if the selected ticket is in the selected project
+        $projectMismatch = false;
+        if ($ticketFilter != '') {
+            $selectedTicket = $this->ticketService->getTicket($ticketFilter);
+
+            if ($selectedTicket && $selectedTicket->projectId != $projectFilter) {
+                $projectMismatch = true;
+            }
         }
 
         $user = app()->make(UserRepository::class);
@@ -144,6 +164,8 @@ class ShowAll extends Controller
         $this->tpl->assign('paid', $paidCheck);
         $this->tpl->assign('allProjects', $this->projectService->getAll());
         $this->tpl->assign('projectFilter', $projectFilter);
+        $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll(['currentProject' => $projectFilter]));
+        $this->tpl->assign('ticketFilter', $ticketFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());
         $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
@@ -154,7 +176,7 @@ class ShowAll extends Controller
             $userId,
             $invEmplCheck,
             $invCompCheck,
-            '-1',
+            ($projectMismatch ? '-1' : ($projectFilter == -1 ? '-1' : ($ticketFilter ?: '-1'))),
             $paidCheck,
             $clientId
         ));

@@ -83,19 +83,34 @@ foreach ($__data as $var => $val) {
                                     } ?>><?= $tpl->escape($client['name'])?></option>
                             <?php } ?>
                         </select>
-                    </td>
+                    </td
                     <td>
                         <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
                         <select name="project" style="max-width:120px;">
                             <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
-                            <?php foreach ($tpl->get('allProjects') as $project) {?>
+                            <?php foreach ($tpl->get('allProjects') as $project) { ?>
                                 <option value="<?= $project['id'] ?>"
                                     <?php if ($tpl->get('projectFilter') == $project['id']) {
                                         echo "selected='selected'";
-                                    } ?>><?= $tpl->escape($project['name'])?></option>
+                                    } ?>><?= $tpl->escape($project['name']) ?></option>
                             <?php } ?>
                         </select>
                     </td>
+                    <?php if (! empty($tpl->get('allTickets'))) { ?>
+                    <td>
+                        <label for="ticket"><?php echo $tpl->__('label.ticket'); ?></label>
+                            <select name="ticket" style="max-width:120px;">
+                                <option value="-1"><?php echo strip_tags($tpl->__('menu.all_tickets')) ?></option>
+                                <?php foreach ($tpl->get('allTickets') as $ticket) {?>
+                                    <option value="<?= $ticket['id'] ?>"
+                                        <?php if ($tpl->get('ticketFilter') == $ticket['id']) {
+                                            echo "selected='selected'";
+                                        } ?>><?= $tpl->escape($ticket['headline'])?></option>
+                                <?php } ?>
+                            </select>
+                    </td>
+                    <?php } ?>
+
                     <td>
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                         <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
