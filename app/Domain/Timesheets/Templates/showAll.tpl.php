@@ -137,7 +137,7 @@ foreach ($__data as $var => $val) {
                     <td>
                         <label for="invEmpl"><?php echo $tpl->__('label.invoiced')?></label>
                         <select name="invEmpl" id="invEmpl" style="max-width:120px;">
-                            <option value="all" <?php if ($tpl->get('invEmpl') == 'all' || !$tpl->get('invEmpl')) {
+                            <option value="all" <?php if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl')) {
                                 echo 'selected="selected"';
                             } ?>><?php echo $tpl->__('label.invoiced_all'); ?></option>
                             <option value="1" <?php if ($tpl->get('invEmpl') == '1') {
