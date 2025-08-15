@@ -83,19 +83,19 @@ foreach ($__data as $var => $val) {
                                     } ?>><?= $tpl->escape($client['name'])?></option>
                             <?php } ?>
                         </select>
+                    </td
+                    <td>
+                        <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
+                        <select name="project" style="max-width:120px;">
+                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
+                            <?php foreach ($tpl->get('allProjects') as $project) { ?>
+                                <option value="<?= $project['id'] ?>"
+                                    <?php if ($tpl->get('projectFilter') == $project['id']) {
+                                        echo "selected='selected'";
+                                    } ?>><?= $tpl->escape($project['name']) ?></option>
+                            <?php } ?>
+                        </select>
                     </td>
-                        <td>
-                            <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
-                            <select name="project" style="max-width:120px;">
-                                <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
-                                <?php foreach ($tpl->get('allProjects') as $project) { ?>
-                                    <option value="<?= $project['id'] ?>"
-                                        <?php if ($tpl->get('projectFilter') == $project['id']) {
-                                            echo "selected='selected'";
-                                        } ?>><?= $tpl->escape($project['name']) ?></option>
-                                <?php } ?>
-                            </select>
-                        </td>
                     <?php if (! empty($tpl->get('allTickets'))) { ?>
                     <td>
                         <label for="ticket"><?php echo $tpl->__('label.ticket'); ?></label>
