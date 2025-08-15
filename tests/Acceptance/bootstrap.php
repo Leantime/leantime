@@ -77,7 +77,7 @@ $bootstrapper = get_class(new class
             "--host=$host",
             "--user=$user",
             "--password=$pass",
-            '--ssl-mode=DISABLED',
+            '--skip-ssl',
             '-e',
             "DROP DATABASE IF EXISTS $db;",
         ], ['cwd' => DEV_ROOT]);
@@ -88,7 +88,7 @@ $bootstrapper = get_class(new class
             "--host=$host",
             "--user=$user",
             "--password=$pass",
-            '--ssl-mode=DISABLED',
+            '--skip-ssl',
             '-e',
             'CREATE DATABASE IF NOT EXISTS leantime_test;',
         ], ['cwd' => DEV_ROOT]);
