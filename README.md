@@ -123,7 +123,7 @@ There are two main ways to install LeanTime for production. The first of which i
 * Create an empty MySQL database
 * Upload the entire directory to your server 
 * Point your domain root to the `public/` directory
-* Rename `config/.env.sample` to `config/.env`
+* Rename `config/sample.env` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
@@ -185,7 +185,7 @@ There are two ways to install a development setup of LeanTime. The first (but mo
 * Create MySQL database
 * Run webpack builder via `make build-dev`
 * Point your local domain to the `public/` directory
-* Rename `config/.env.sample` to `config/.env`
+* Rename `config/sample.env` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
@@ -256,7 +256,7 @@ Please refer to our [documentation](https://docs.leantime.io/installation/common
 
 ## 🔌 Extend Leantime ##
 
-You can extend Leantime by 
+#### You can extend Leantime by:
 - building your own plugin: [Plugin Docs](https://docs.leantime.io/development/plugin-development)
 - using our json-rpc API: [API Docs](https://docs.leantime.io/api/usage)
 - or by purchasing a plugin from our [marketplace](https://marketplace.leantime.io)
