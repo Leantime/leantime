@@ -60,7 +60,7 @@
                 @if ($plugin->reviewCount > 0)
                     <x-global::tabs.content name="reviews">
                         <div class="tw-flex tw-flex-col tw-gap-base">
-                            @foreach($plugin['reviews'] as $review)
+                            @foreach($plugin->reviews as $review)
                                 <p>{{ $review }}</p>
                             @endforeach
                         </div>
