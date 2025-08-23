@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leantime\Domain\Ldap\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -39,7 +41,7 @@ class Ldap
 
     private mixed $settingsRepo;
 
-    private mixed $defaultRoleKey;
+    private int $defaultRoleKey;
 
     private mixed $directoryType = 'OL';
 
@@ -64,16 +66,16 @@ class Ldap
 
             // Don't do anything else if ldap is turned off
             if ($this->useLdap === false) {
-                return false;
+                return;
             }
 
             // Prepare and map in case we want to get the config from somewhere else in the future
             $this->host = $this->config->ldapHost;
             $this->ldapDn = $this->config->ldapDn;
-            $this->defaultRoleKey = $this->config->ldapDefaultRoleKey;
+            $this->defaultRoleKey = (int) $this->config->ldapDefaultRoleKey;
             $this->port = $this->config->ldapPort;
-            $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
-            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
+            $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)), true);
+            $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys'), true) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)), true);
             $this->directoryType = $this->config->ldapType;
 
             $this->ldapDomain = $this->config->ldapDomain;
@@ -81,24 +83,19 @@ class Ldap
 
             if (! is_object($this->ldapLtGroupAssignments)) {
                 Log::error('LDAP: Group Assignment array failed to parse. Please check for valid json');
-
-                return false;
             }
 
             if (! is_object($this->ldapKeys)) {
                 Log::error('LDAP: Ldap Keys failed to parse. Please check for valid json');
-
-                return false;
             }
         }
 
-        return true;
     }
 
     /**
      * @return bool|void
      */
-    public function connect()
+    public function connect(): ?bool
     {
 
         if (! $this->config->useLdap) {
@@ -106,7 +103,7 @@ class Ldap
         }
 
         if (function_exists('ldap_connect')) {
-            if ($this->ldapUri != '' && str_starts_with($this->ldapUri, 'ldap')) {
+            if ($this->ldapUri !== '' && str_starts_with($this->ldapUri, 'ldap')) {
                 $this->ldapConnection = ldap_connect($this->ldapUri);
             } else {
                 $this->ldapConnection = ldap_connect($this->host, $this->port);
@@ -120,21 +117,21 @@ class Ldap
             }
 
             return true;
-        } else {
-            Log::error('ldap extension not installed');
-
-            return false;
         }
+
+        Log::error('ldap extension not installed');
+
+        return false;
     }
 
     public function bind(string $username = '', string $password = ''): bool
     {
 
-        if ($username != '' && $password != '') {
+        if ($username !== '' && $password !== '') {
             $passwordBind = $password;
 
             // AD allows usenrame login
-            if ($this->directoryType == 'AD') {
+            if ($this->directoryType === 'AD') {
                 $usernameDN = $username;
 
                 if (str_contains($usernameDN, '@')) {
@@ -156,7 +153,7 @@ class Ldap
                 return true;
             }
 
-            if ($this->config->debug == 1) {
+            if ((bool) $this->config->debug === true) {
                 Log::error(ldap_error($this->ldapConnection));
                 ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
                 if ($err) {
@@ -183,18 +180,15 @@ class Ldap
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit('Unable to search LDAP server');
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
-        if ($entries === false) {
-            if ($this->config->debug == 1) {
-                Log::error(ldap_error($this->ldapConnection));
-                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-                if ($err) {
-                    Log::error($err);
-                }
+        if ($entries === false && (bool) $this->config->debug === true) {
+            Log::error(ldap_error($this->ldapConnection));
+            ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+            if ($err) {
+                Log::error($err);
             }
         }
-        $mail = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
 
-        return $mail;
+        return isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
     }
 
     /**
@@ -204,7 +198,7 @@ class Ldap
     {
 
         if (! $this->ldapConnection) {
-            report('No connection, last error: '.ldap_error($this->ldapConnection));
+            Log::error('No connection, last error: '.ldap_error($this->ldapConnection));
         }
 
         $filter = '('.$this->ldapKeys->username.'='.$this->extractLdapFromUsername($username).')';
@@ -215,7 +209,7 @@ class Ldap
         $entries = ldap_get_entries($this->ldapConnection, $result);
 
         if ($entries === false || ! isset($entries[0])) {
-            if ($this->config->debug == 1) {
+            if ((bool) $this->config->debug === true) {
                 Log::error(ldap_error($this->ldapConnection));
                 ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
                 if ($err) {
@@ -231,12 +225,8 @@ class Ldap
 
         foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
             foreach ($this->ldapLtGroupAssignments as $key => $row) {
-                if ($row->ldapRole != '') {
-                    if (strpos($grps, $row->ldapRole)) {
-                        if ($key > $role) {
-                            $role = $key;
-                        }
-                    }
+                if ($row->ldapRole !== '' && (int) $key > $role && strpos($grps, $row->ldapRole)) {
+                    $role = $key;
                 }
             }
         }
@@ -296,9 +286,9 @@ class Ldap
 
         if ($getLdap && is_array($getLdap)) {
             return $getLdap[0];
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**
@@ -331,11 +321,11 @@ class Ldap
             }
 
             return $allUsers;
-        } else {
-            report('ldap extension not installed', 0);
-
-            return false;
         }
+
+        Log::error('ldap extension not installed', 0);
+
+        return false;
     }
 
     /**
