@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Leantime\Domain\Ldap\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
