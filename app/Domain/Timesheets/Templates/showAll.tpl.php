@@ -83,7 +83,7 @@ foreach ($__data as $var => $val) {
                                     } ?>><?= $tpl->escape($client['name'])?></option>
                             <?php } ?>
                         </select>
-                    </td
+                    </td>
                     <td>
                         <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
                         <select name="project" style="max-width:120px;">
