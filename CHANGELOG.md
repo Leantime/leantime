@@ -26,7 +26,7 @@
 * [e496168](https://github.com/Leantime/leantime/commit/e49616861e881666cc63f213d620d043ff9101e8): feat: Infinity scroll for tasks in todowidget to reduce HTML bloat
 * [9d748a0](https://github.com/Leantime/leantime/commit/9d748a02e9d144b6a0dd04f15bff41eaa4bb7833): fix: dispatchFilter should return and not just echo
 * [819fe66](https://github.com/Leantime/leantime/commit/819fe669d6e887f044e4fcacade273e982ffbe27): feat: new countNested macros for collections
-* [a24ad44](https://github.com/Leantime/leantime/commit/a24ad442be9b64b7ef6eb52af51a81521d7acf09): fix: Ensure JSON-RPC requests can be made from the frontend
+* [a24ad44](https://github.com/Leantime/leantime/commit/a24ad442be9b64b7ef6eb52af51a81521d7acf09): fix: Ensure jsonrpc requests can be made from the frontend
 * [ba55c55](https://github.com/Leantime/leantime/commit/ba55c55b03eb1171cdb7c480001ef7e0a36f0fdd): Update Plugins
 * [f69ec85](https://github.com/Leantime/leantime/commit/f69ec85e5ebb626955bc5c1959ddcc2b97214302): task: update min stability setting
 * [5e4f875](https://github.com/Leantime/leantime/commit/5e4f875c0bc4ce209916f6102b46ea86dee04f20): task: revert reverts
