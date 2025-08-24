@@ -3,7 +3,7 @@
 * [1f45dc0](https://github.com/Leantime/leantime/commit/1f45dc06a7c596b6310a764e36f9fa6f52e1e526): task: version bump
 * [2c0279a](https://github.com/Leantime/leantime/commit/2c0279adca06ec0d47b600c63e89c2b984a2a5c8): task: downgrade plugin route loader so that config updates load before route files
 * [4dd0895](https://github.com/Leantime/leantime/commit/4dd08953c04e40a53532c9099f91e94cddaa00ef): feat: allow removing all new line characters from string sanitizer
-* [bb31269](https://github.com/Leantime/leantime/commit/bb3126960324a0415f00ddd8d3275bc44c9edc7c): task: Update php-mcp to latest version
+* [bb31269](https://github.com/Leantime/leantime/commit/bb3126960324a0415f00ddd8d3275bc44c9edc7c): task: Update php-mcp to the latest version
 
 
 # Version: 3.5.8
@@ -23,10 +23,10 @@
 * [0485867](https://github.com/Leantime/leantime/commit/04858678d93f602eeb887793934592d8778300fb): fix: Todowidget hierarchy issue with nested milestones
 * [4cb4de5](https://github.com/Leantime/leantime/commit/4cb4de57d3bf7bf1e690a31d40e1341be5499aa5): task: update packages
 * [9e7dda0](https://github.com/Leantime/leantime/commit/9e7dda0b2fe6bdc581b24bf5a977c3eff0549a7e): task: Claude code updates
-* [e496168](https://github.com/Leantime/leantime/commit/e49616861e881666cc63f213d620d043ff9101e8): feat: Infinity scroll for tasks in todowidget to reduce html bloat
+* [e496168](https://github.com/Leantime/leantime/commit/e49616861e881666cc63f213d620d043ff9101e8): feat: Infinity scroll for tasks in todowidget to reduce HTML bloat
 * [9d748a0](https://github.com/Leantime/leantime/commit/9d748a02e9d144b6a0dd04f15bff41eaa4bb7833): fix: dispatchFilter should return and not just echo
 * [819fe66](https://github.com/Leantime/leantime/commit/819fe669d6e887f044e4fcacade273e982ffbe27): feat: new countNested macros for collections
-* [a24ad44](https://github.com/Leantime/leantime/commit/a24ad442be9b64b7ef6eb52af51a81521d7acf09): fix: Ensure jsonrpc requests can be made from frontend
+* [a24ad44](https://github.com/Leantime/leantime/commit/a24ad442be9b64b7ef6eb52af51a81521d7acf09): fix: Ensure JSON-RPC requests can be made from the frontend
 * [ba55c55](https://github.com/Leantime/leantime/commit/ba55c55b03eb1171cdb7c480001ef7e0a36f0fdd): Update Plugins
 * [f69ec85](https://github.com/Leantime/leantime/commit/f69ec85e5ebb626955bc5c1959ddcc2b97214302): task: update min stability setting
 * [5e4f875](https://github.com/Leantime/leantime/commit/5e4f875c0bc4ce209916f6102b46ea86dee04f20): task: revert reverts
@@ -43,27 +43,27 @@
 # Version: 3.5.6
 
 * [1c8c3cc](https://github.com/Leantime/leantime/commit/1c8c3cc186f1f538eaf3de9384fde256177b3b4c): task: fix code style
-* [98ce4c0](https://github.com/Leantime/leantime/commit/98ce4c05188b3b6a08d9d844b838ac0dfc363741): fix: project selector tabs break design in german
+* [98ce4c0](https://github.com/Leantime/leantime/commit/98ce4c05188b3b6a08d9d844b838ac0dfc363741): fix: project selector tabs break design in German
 * [740fba1](https://github.com/Leantime/leantime/commit/740fba142670f9631557626d6ce493eb18a847e2): task: version bump
 * [a17ee45](https://github.com/Leantime/leantime/commit/a17ee4550b2a18381b531faf63134a0df4a5da82): feat: add menu link to show latest plugin updates
 * [8d0fcfd](https://github.com/Leantime/leantime/commit/8d0fcfdb36128a3c4fd59521ac1f9f16b8989d83): feat: preload tasks on kanban board
 * [f01b11c](https://github.com/Leantime/leantime/commit/f01b11ce72864e6639481e87637deb52506f3ec4): feat: Show plugin updates
-* [b8ccaeb](https://github.com/Leantime/leantime/commit/b8ccaebf827e164522129eb22e14f5a360a20a59): feat: optimize sql indexes across the system
+* [b8ccaeb](https://github.com/Leantime/leantime/commit/b8ccaebf827e164522129eb22e14f5a360a20a59): feat: optimize SQL indexes across the system
 * [36fefc7](https://github.com/Leantime/leantime/commit/36fefc7a63990576fb48e75daa36909daa42e335): fix: readonly/commenter users were not able to see milestone cards and link was broken #3047
 * [2975e15](https://github.com/Leantime/leantime/commit/2975e1536feba6055053a3c6a1c2184ecb6c331c): feat: update progress bar animation to be continuous
 * [26efe4a](https://github.com/Leantime/leantime/commit/26efe4a5b114ce27b6cf21652e15ba22db9fa1f2): fix: show loading bar when reloading tasks on dashboard
 * [10c4f5a](https://github.com/Leantime/leantime/commit/10c4f5ad12dfe68d3e8455611ad89f46f23b031b): task: add logging to failed event dispatches
 * [a399425](https://github.com/Leantime/leantime/commit/a399425b55be743379cc1a3c88bbeeb85beb32a1): fix: users with project access through clients did not see all tasks due to wrong string comparison
-* [465d1f2](https://github.com/Leantime/leantime/commit/465d1f2287f9c17554cf3280da5b1b33c9d9ebab): task: webpack udpate
-* [1c06042](https://github.com/Leantime/leantime/commit/1c0604295bdd52602e0b5f55ad22a933d1bbb872): fix: project redirect for client assigned projects was not working correctly.
+* [465d1f2](https://github.com/Leantime/leantime/commit/465d1f2287f9c17554cf3280da5b1b33c9d9ebab): task: webpack update
+* [1c06042](https://github.com/Leantime/leantime/commit/1c0604295bdd52602e0b5f55ad22a933d1bbb872): fix: project redirect for client-assigned projects was not working correctly.
 * [8371932](https://github.com/Leantime/leantime/commit/837193234bd777eff18bd24af54e527e887ffead): task: Clean code style
 * [8b56da3](https://github.com/Leantime/leantime/commit/8b56da38dad2d7a2d9e9a4fbba320b5db9515e95): task: add logging to composer loaded plugin init
-* [aeb889f](https://github.com/Leantime/leantime/commit/aeb889f775ac2b16bd69727d59ea03f712f1bf23): task: update claude code instructions
-* [c946869](https://github.com/Leantime/leantime/commit/c946869313a58223aa8ee0d782dfe20e1c32accf): fix: minor css upate for mermaid support
-* [9c34b99](https://github.com/Leantime/leantime/commit/9c34b99922a7cb8a1c9ec1c9123f8dcdaed75fa7): feat: improved subtask handling including htmx events and additional properties for creation
+* [aeb889f](https://github.com/Leantime/leantime/commit/aeb889f775ac2b16bd69727d59ea03f712f1bf23): task: update Claude code instructions
+* [c946869](https://github.com/Leantime/leantime/commit/c946869313a58223aa8ee0d782dfe20e1c32accf): fix: minor CSS update for Mermaid support
+* [9c34b99](https://github.com/Leantime/leantime/commit/9c34b99922a7cb8a1c9ec1c9123f8dcdaed75fa7): feat: improved subtask handling including HTMX events and additional properties for creation
 * [ecfa46a](https://github.com/Leantime/leantime/commit/ecfa46ae9eac48030415269fb761bbccd74ebe2b): feat: create project model through constructor
 * [62b136b](https://github.com/Leantime/leantime/commit/62b136b1f3d52217326f25d57b2a280a8585d445): fix: object parameter breaks jsonrpc usage
-* [db42edd](https://github.com/Leantime/leantime/commit/db42edde5c8bd5205bc5cf5882ac858f3d01d9af): feat: add unique user id to session
+* [db42edd](https://github.com/Leantime/leantime/commit/db42edde5c8bd5205bc5cf5882ac858f3d01d9af): feat: add unique user ID to session
 * [7d8d54d](https://github.com/Leantime/leantime/commit/7d8d54d264af767ceaa9d5e6e6f3a49ecb75ecd7): fix: Inconsistent datetime handling of ical events
 * [b6ba0f5](https://github.com/Leantime/leantime/commit/b6ba0f5deb6fbcea4abfe8e1a97b2d9d64c68d21): fix: Welcome widget ticket counter should not count milestones as tasks left to do
 
@@ -76,14 +76,14 @@
 * [359825a](https://github.com/Leantime/leantime/commit/359825a4addf0989298ff7cd5bd685a9941f55cc): fix: decimal issue on report screen
 * [db99380](https://github.com/Leantime/leantime/commit/db993802df81d1bcc65f5c56d0e601d3be799e52): task: code style fix
 * [f68be31](https://github.com/Leantime/leantime/commit/f68be3108389d3be8f216312be387b4a75eb5420): fix: automatic handling of invalid filenames
-* [ba21c52](https://github.com/Leantime/leantime/commit/ba21c525b71b4d80621e82931c6723b6ec230c76): feat: Improve plugin marketplace url handling
+* [ba21c52](https://github.com/Leantime/leantime/commit/ba21c525b71b4d80621e82931c6723b6ec230c76): feat: Improve plugin marketplace URL handling
 * [7fe069c](https://github.com/Leantime/leantime/commit/7fe069cd0bfa4953d9cb17b7b8d9504ad99c4df2): feat: Remove premium links and replace with one link to support site
 
 
 # Version: 3.5.4
 
 * [72bea52](https://github.com/Leantime/leantime/commit/72bea5211c8b91defe5edc6958463f68a5173f1e): task: version bump
-* [8dd47b6](https://github.com/Leantime/leantime/commit/8dd47b6094b1e75b19f4e2648d30a8aa3926d9bc): task: adding claude.md which can be used for claude code or other development environments
+* [8dd47b6](https://github.com/Leantime/leantime/commit/8dd47b6094b1e75b19f4e2648d30a8aa3926d9bc): task: adding claude.md which can be used for Claude code or other development environments
 * [9ffda24](https://github.com/Leantime/leantime/commit/9ffda247fa9fd6690ca119e49804df174f1afc71): task: fix code style
 * [7525056](https://github.com/Leantime/leantime/commit/75250562fbb28bfa69cef2a42e420dd52ab95241): task: add unit tests for filemanager
 * [466fd76](https://github.com/Leantime/leantime/commit/466fd762e50efcbe6239984b878ffe9a6b8acc22): task: fix unit tests
@@ -98,7 +98,7 @@
 
 * [98cdaa0](https://github.com/Leantime/leantime/commit/98cdaa05e0824553af33bc6a7e4ab9395d5a0e84): task: version bump
 * [0474f04](https://github.com/Leantime/leantime/commit/0474f041a34b9a412ff1dea98907c2448b17279b): task: fix code style
-* [8da7ba2](https://github.com/Leantime/leantime/commit/8da7ba2ccbb56ab3627b1c0290d56c50ef3bc588): task: Improve db integration with laravel
+* [8da7ba2](https://github.com/Leantime/leantime/commit/8da7ba2ccbb56ab3627b1c0290d56c50ef3bc588): task: Improve db integration with Laravel
 * [88d615c](https://github.com/Leantime/leantime/commit/88d615c5eb32e1675e5de1c211984c317321e405): task: fix code style
 * [d91eb6a](https://github.com/Leantime/leantime/commit/d91eb6a7c90a521713068245eda98c22ef3fe128): fix: theme colors
 * [6e90139](https://github.com/Leantime/leantime/commit/6e901399c3a2a403489f87f94adecac8e4244519): fix: Theme not saving reliably
@@ -108,7 +108,7 @@
 # Version: 3.5.2
 
 * [3de0011](https://github.com/Leantime/leantime/commit/3de001116ae9d79e1a0375bb6546f7f277874dba): task: fix exception format.
-* [d6e3aef](https://github.com/Leantime/leantime/commit/d6e3aef83aa5f0b71b5949082553212eb5f602ee): fix: performance issue due to datetimeparsing
+* [d6e3aef](https://github.com/Leantime/leantime/commit/d6e3aef83aa5f0b71b5949082553212eb5f602ee): fix: performance issue due to datetime parsing
 * [15d9a0d](https://github.com/Leantime/leantime/commit/15d9a0d67920333336d14a2ef306d3e4567fae2f): fix: Moved class back to where it belongs
 * [bd52903](https://github.com/Leantime/leantime/commit/bd52903a6d81f82c2c07dd896891ba99ff47a77e): Update headMenu.blade.php
 
@@ -116,7 +116,7 @@ feat: better submenu design
 * [7a4c9a0](https://github.com/Leantime/leantime/commit/7a4c9a01b70107da379a412dba972320d3a990c0): task: version bump
 * [01c25b5](https://github.com/Leantime/leantime/commit/01c25b548d00ef52c8d1c78126ff76cba432a716): task: cleanup
 * [56ad95f](https://github.com/Leantime/leantime/commit/56ad95f22120c35c6add0a0dd9f0f5fd0601ffbd): fix: GetUserByEmail fails due to wrong user status #3034
-* [ecb5893](https://github.com/Leantime/leantime/commit/ecb589380d12effbda79b2c037cfbe2816e2a7f7): feat: calendar css improvements
+* [ecb5893](https://github.com/Leantime/leantime/commit/ecb589380d12effbda79b2c037cfbe2816e2a7f7): feat: calendar CSS improvements
 * [ddb45b3](https://github.com/Leantime/leantime/commit/ddb45b3311b9bfd2dd69188b65eb37cc14821d2a): feat: update default widget positions
 * [f8e9b89](https://github.com/Leantime/leantime/commit/f8e9b89b42caa4c38986d7e59bc1ed92aed0721d): fix: Ensure session folder exists
 
@@ -201,7 +201,7 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [378864d](https://github.com/Leantime/leantime/commit/378864da12f1547955b80d6889a30b4c5f305498): task: additional test improvements
 * [6e4ac76](https://github.com/Leantime/leantime/commit/6e4ac76ca0408c0364a5f54d7115a826e07b39d7): task: timesheet test wait update
 * [31a41df](https://github.com/Leantime/leantime/commit/31a41df3d9165d4773917c80e233eb6f9ca062cf): task: unit tests different wait mechanisms
-* [48e0101](https://github.com/Leantime/leantime/commit/48e0101f6eae3e7518fd81c34e8728e87cee5dc7): task: increast test timeouts
+* [48e0101](https://github.com/Leantime/leantime/commit/48e0101f6eae3e7518fd81c34e8728e87cee5dc7): task: increase test timeouts
 * [a0487ef](https://github.com/Leantime/leantime/commit/a0487effc520149abcd2b4a7d8532858905e9fcb): update tests
 * [16af6e0](https://github.com/Leantime/leantime/commit/16af6e038740c760584f5203a0d38c1e2da97151): task: fix tests and clean up code
 * [8fed5b1](https://github.com/Leantime/leantime/commit/8fed5b167b4decf5af94621a5c13410e17a0ae21): task: code cleanup
@@ -230,8 +230,8 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [a65536a](https://github.com/Leantime/leantime/commit/a65536a9dd53f55e11a59a65cd58080aea4e8ad4): feat: Improved general UX and tabs
 * [758e053](https://github.com/Leantime/leantime/commit/758e053f88177904c92c2c39d1373f231182e73f): feat: Improved widget UX with content scrolling
 * [a0db27a](https://github.com/Leantime/leantime/commit/a0db27aa2fbd040b2b1d8e66cbd039912391aa81): feat: Improved Calendar UX
-* [ee20498](https://github.com/Leantime/leantime/commit/ee2049876e55ea6b0cdd7bc21ebeec92071c59f6): feat: Enhance datetime helper parser for api usage
-* [93dbbbb](https://github.com/Leantime/leantime/commit/93dbbbb83131b718cf1da55a9680012e5eb3a6c9): task: Improve error handling with sentry/bugsink
+* [ee20498](https://github.com/Leantime/leantime/commit/ee2049876e55ea6b0cdd7bc21ebeec92071c59f6): feat: Enhance datetime helper parser for API usage
+* [93dbbbb](https://github.com/Leantime/leantime/commit/93dbbbb83131b718cf1da55a9680012e5eb3a6c9): task: Improve error handling with Sentry/Bugsink
 * [a2ff8ae](https://github.com/Leantime/leantime/commit/a2ff8aea0b28d28f6bdd679dc64b899d6864856a): task: various small improvements to datetimehelper, calendar and ticket services
 * [1574983](https://github.com/Leantime/leantime/commit/1574983aa7bb57608db28aa53715ff871e2a1a4e): build(deps): bump http-proxy-middleware from 2.0.6 to 2.0.9
 
@@ -263,10 +263,10 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [3a30599](https://github.com/Leantime/leantime/commit/3a30599db7af40fffc0d913ec3c84b34631daed4): task: version bump
 * [c2f0f58](https://github.com/Leantime/leantime/commit/c2f0f5829cd01ba1ddc1faa8c28e4bc9979a8948): feat: Improve ticket sorting and add task link for individual milestones
 * [3d70b6d](https://github.com/Leantime/leantime/commit/3d70b6d9a75c7d4ed5d298ec50883e2a491a9a20): fix: nginx examples
-* [9cc4a9a](https://github.com/Leantime/leantime/commit/9cc4a9ab264bac41a2b22ca2171911775bba21e8): fix: web.config for iis fix
+* [9cc4a9a](https://github.com/Leantime/leantime/commit/9cc4a9ab264bac41a2b22ca2171911775bba21e8): fix: web.config for ISS fix
 * [cf15c78](https://github.com/Leantime/leantime/commit/cf15c78936f7eb67c65cf394150fbefb8fb218ec): task: fix code style
-* [3d77d81](https://github.com/Leantime/leantime/commit/3d77d81b1836d107827c1c1b2d8525d1901240f4): fix: handling of shortnames and monthnames in different languages and aligning js with php
-* [2feb097](https://github.com/Leantime/leantime/commit/2feb097113061652e64c6ace010cd9d62ae44617): fix: firefox design issue
+* [3d77d81](https://github.com/Leantime/leantime/commit/3d77d81b1836d107827c1c1b2d8525d1901240f4): fix: handling of shortnames and monthnames in different languages and aligning JS with PHP
+* [2feb097](https://github.com/Leantime/leantime/commit/2feb097113061652e64c6ace010cd9d62ae44617): fix: Firefox design issue
 * [b7189e6](https://github.com/Leantime/leantime/commit/b7189e63f3e360c7c9611b02f8ac0fb424d7212c): task: fix code style and remove verbose logging
 * [2fcd516](https://github.com/Leantime/leantime/commit/2fcd516482008cc2eac8c3fb18c21e41b710ecec): task: Improve htmx event management
 * [8a1a45c](https://github.com/Leantime/leantime/commit/8a1a45ca98b170ccdcef0fc721b8215e3af8780c): Update articleDialog.tpl.php
@@ -423,13 +423,13 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [a96da72](https://github.com/Leantime/leantime/commit/a96da7242b976da9e3104bb746c659f7010e2b5a): fix: allow adding tasks on empty task list
 * [58bcdf0](https://github.com/Leantime/leantime/commit/58bcdf09f0f738caf6c32e7ae855dc7aa06fa6da): fix: set various default milestone card properties
 * [2e1eaa3](https://github.com/Leantime/leantime/commit/2e1eaa387c30cfb011a007dde142ffac0d55e458): fix: Allow adding tasks when no tasks assigned
-* [3f4f03a](https://github.com/Leantime/leantime/commit/3f4f03aac946a34965fb8ca36275db7563471ce6): fix: Ensure due date label for groups come in as string
+* [3f4f03a](https://github.com/Leantime/leantime/commit/3f4f03aac946a34965fb8ca36275db7563471ce6): fix: Ensure due date label for groups comes in as a string
 * [774be6a](https://github.com/Leantime/leantime/commit/774be6a2644ea6c33307e73b0dec807e0c9d2f7f): fix: headmenu notification should not trigger other htmx-indicators
 * [5b8117b](https://github.com/Leantime/leantime/commit/5b8117b57b6d839c457c7204618ef29d909566e7): Fixed helm chart services and deployment
 
 Changed service target port and container port to 8080 to match leantime
 image config.
-Made the storageClass optionnal, Empty will use system default
+Made the storageClass optional; Empty will use the system default
 Added a configuration for the LEAN_SESSION_SECURE with true as default
 
 
@@ -441,7 +441,7 @@ Added a configuration for the LEAN_SESSION_SECURE with true as default
 * [44ae552](https://github.com/Leantime/leantime/commit/44ae5523d8aaceebbad53256bee881637fb469bd): Update README.md
 * [df45904](https://github.com/Leantime/leantime/commit/df45904229381bb7401d1b14cd5a32ed784c08cc): fix: pseudo element on overlay took over click events on dark mode
 * [0cee868](https://github.com/Leantime/leantime/commit/0cee868b3220fdba6694f5649475ad46463f48bd): fix: update user tests
-* [92b87a6](https://github.com/Leantime/leantime/commit/92b87a6e4a4bb83c2191924ff186395b0f16e7c0): fix: silent is now part of laravel itself and should not be added anymore
+* [92b87a6](https://github.com/Leantime/leantime/commit/92b87a6e4a4bb83c2191924ff186395b0f16e7c0): fix: silent is now part of Laravel itself and should not be added anymore
 * [2fa52c1](https://github.com/Leantime/leantime/commit/2fa52c119f687bb32f630840fb0af038b5f6d6af): New translations en-us.ini (German (Informal))
 * [e68c1f5](https://github.com/Leantime/leantime/commit/e68c1f562f4bbdca12d936821d73cac1edf3ab6c): New translations en-us.ini (Karakalpak)
 * [ed6f2e3](https://github.com/Leantime/leantime/commit/ed6f2e3ba00ad7c579e02f3b842af54a9c912c6a): New translations en-us.ini (Spanish, Latin America)
@@ -494,20 +494,20 @@ Added a configuration for the LEAN_SESSION_SECURE with true as default
 * [d017787](https://github.com/Leantime/leantime/commit/d017787754e8354be5220433d1d1f6fb8ee85755): feat: improve session lockout management
 * [83907b8](https://github.com/Leantime/leantime/commit/83907b8452df74334321a17aa362f0238c395d5f): fix: better handling of news update failure
 * [5d7dd67](https://github.com/Leantime/leantime/commit/5d7dd67e5ac62a5ea6b3161a3947e0677bd137c7): task: variable and application hardening
-* [87da869](https://github.com/Leantime/leantime/commit/87da869f6c5c522779f23adb427be0abe7868143): fix: broken console script after laravel 11 update
+* [87da869](https://github.com/Leantime/leantime/commit/87da869f6c5c522779f23adb427be0abe7868143): fix: broken console script after Laravel 11 update
 
 
 # Version: 3.4.4
 
 * [32bcfb1](https://github.com/Leantime/leantime/commit/32bcfb1f5eaf7762ecdc0a4b86ff6d167abd2da9): task: version bump
-* [029315d](https://github.com/Leantime/leantime/commit/029315dc430fc7ed2be9192100333162c1e8f1b2): fix: data types matter folks...
+* [029315d](https://github.com/Leantime/leantime/commit/029315dc430fc7ed2be9192100333162c1e8f1b2): fix: Data types matter folks...
 
-This fixes an issue where we compare floats to 0 (int) but technically floats need to be compared to 0.0. In this case we don't particularly care the about the float itself we just need to figure out if there is an offset worth dealing with. casting to int is just fine.
+This fixes an issue where we compare floats to 0 (int) but technically floats need to be compared to 0.0. In this case we don't particularly care about the float itself; we just need to figure out if there is an offset worth dealing with. Casting to int is just fine.
 * [698820b](https://github.com/Leantime/leantime/commit/698820b1b4641c5334da50b96b8cc05dd6b6479b): Update composer.lock
 * [e78c6f0](https://github.com/Leantime/leantime/commit/e78c6f0b5d77256015a89ffa28a9d20282b9d509): task: fix code styles
 * [6d8e915](https://github.com/Leantime/leantime/commit/6d8e91594a2c3ab3b598896a9904129c1e92ca4a): fix: harden date time handling and check for constant #2975
 * [af3eba4](https://github.com/Leantime/leantime/commit/af3eba459aace1b008acaa5f278c06a9f1c19775): fix: Idea dialog throwing 500 when missing title or description
-* [5f01410](https://github.com/Leantime/leantime/commit/5f01410766218631ccb47e3697bc58dbdbe3dd0b): task: complete list of php extensions
+* [5f01410](https://github.com/Leantime/leantime/commit/5f01410766218631ccb47e3697bc58dbdbe3dd0b): task: complete list of PHP extensions
 * [268de1b](https://github.com/Leantime/leantime/commit/268de1b524ea5a22265c72dbe912930a58e57e94): Delete .github/ISSUE_TEMPLATE/bug_report.md
 * [25fe9bf](https://github.com/Leantime/leantime/commit/25fe9bfb6ff7a6a758df906763e1af812c0655da): Update issue templates
 * [92425a2](https://github.com/Leantime/leantime/commit/92425a24988d0aa78687f5a13bd39a72b6b295e3): Update README.md
@@ -516,9 +516,9 @@ This fixes an issue where we compare floats to 0 (int) but technically floats ne
 # Version: 3.4.3
 
 * [af62ea4](https://github.com/Leantime/leantime/commit/af62ea4e6e467240a180a0fa073c127ef6c212b4): task: clean up ticket service
-* [deffc4e](https://github.com/Leantime/leantime/commit/deffc4e855682ba28eeaa846d92d7d84708a6c2e): fix: not sending notifications when project id is not set correctly
+* [deffc4e](https://github.com/Leantime/leantime/commit/deffc4e855682ba28eeaa846d92d7d84708a6c2e): fix: not sending notifications when project ID is not set correctly
 * [e5384f2](https://github.com/Leantime/leantime/commit/e5384f22a9dd0b3ccc3a05f233d754b25fcd7a2e): fix: console kernel to point to the correct binary
-* [12ad2e5](https://github.com/Leantime/leantime/commit/12ad2e501945ecc27a96cab5d1df31dd511fcc9b): fix api endpoint to get open user tickets
+* [12ad2e5](https://github.com/Leantime/leantime/commit/12ad2e501945ecc27a96cab5d1df31dd511fcc9b): fix API endpoint to get open user tickets
 * [7b3539d](https://github.com/Leantime/leantime/commit/7b3539d94071df590cf20e5724a81d2f2aa06ee3): task: update version
 * [2759494](https://github.com/Leantime/leantime/commit/2759494d2cd55a4c727abb8718ee866ceffb8637): task: Improve dailyIngestion report management
 * [8a3ee6a](https://github.com/Leantime/leantime/commit/8a3ee6a1cfd918f49c5ed396584043f5a4c46ce0): fix: add missing field
@@ -531,22 +531,22 @@ This fixes an issue where we compare floats to 0 (int) but technically floats ne
 
 * [14e71ad](https://github.com/Leantime/leantime/commit/14e71adada985e1c1f759cebde46d68da4301eb7): fix: typo in provider name
 * [268ae34](https://github.com/Leantime/leantime/commit/268ae349570bd87fe6d823382633a503a6dc273a): Update DateTimeHelper.php
-* [e9d59a0](https://github.com/Leantime/leantime/commit/e9d59a05dc96556b963f48d8edf84a2438265d33): fix: update and expand standard iso8601 dateformat management
+* [e9d59a0](https://github.com/Leantime/leantime/commit/e9d59a05dc96556b963f48d8edf84a2438265d33): fix: update and expand standard ISO8601 dateformat management
 * [c7964a1](https://github.com/Leantime/leantime/commit/c7964a17feec73f782d8046a965918fa4514bba1): fix: datetime issues in calendar and sprints
 * [a9ec032](https://github.com/Leantime/leantime/commit/a9ec03242489c597e3bc8f448709f938d38ba24b): fix: dashboard delete status and allow replies
 * [be8ee46](https://github.com/Leantime/leantime/commit/be8ee466b42f1bf9c41f0b0f85f7c25c6f3e44bf): task: fix code style and update version number
 * [9ed32f9](https://github.com/Leantime/leantime/commit/9ed32f9d140da2a68170c59dfb9059bfc8196bcc): Update Plugins
 * [ca1a2f6](https://github.com/Leantime/leantime/commit/ca1a2f6a37307297f033e5c559a7e2acce1b80e7): fix: Ensure milestone hierarchy is loaded and displayed correctly
 * [abd7343](https://github.com/Leantime/leantime/commit/abd734333fd3655ed95374465c1036b3268a9676): feat: various small design improvements
-* [fd4a040](https://github.com/Leantime/leantime/commit/fd4a040b1bbdfa285222f6ef2438a31a6708adcf): fix: theme image could not be loaded due to test chars in header
+* [fd4a040](https://github.com/Leantime/leantime/commit/fd4a040b1bbdfa285222f6ef2438a31a6708adcf): fix: The theme image could not be loaded due to test chars in the header
 * [241303b](https://github.com/Leantime/leantime/commit/241303b31652f36c6b51f57efaf740ea3b42f608): feat: add new template event for ticket due date
 * [8451caf](https://github.com/Leantime/leantime/commit/8451caf3d903421ff49797ebf130c0bd35e43cf7): fix: formatting for status field in subtasks
-* [04169c5](https://github.com/Leantime/leantime/commit/04169c50c6deb005e96e3307e39b81a161022350): fix: import project via csv import failed due to missing state
-* [3e35f56](https://github.com/Leantime/leantime/commit/3e35f568939d1f320f59a2f2e7e9280e34788d12): feat: preload important urls on mouseover
+* [04169c5](https://github.com/Leantime/leantime/commit/04169c50c6deb005e96e3307e39b81a161022350): fix: import project via CSV import failed due to missing state
+* [3e35f56](https://github.com/Leantime/leantime/commit/3e35f568939d1f320f59a2f2e7e9280e34788d12): feat: preload important URLs on mouseover
 * [af056a9](https://github.com/Leantime/leantime/commit/af056a9598feb58ec6172860fb1f1438f93540f4): fix: name in testemail command
 * [c1bd5c4](https://github.com/Leantime/leantime/commit/c1bd5c467d7f5fae46fd10ec71870ea4a31760a7): feat: Ensure images and other static files are cached by browsers
-* [65fe92e](https://github.com/Leantime/leantime/commit/65fe92e6323139c76930c3473bb43149fe47355a): feat: Improved error reporting for json parse errors on api requests
-* [8d33277](https://github.com/Leantime/leantime/commit/8d332775e3935b1db7116c904936521adcbaac3f): fix: Allow usernames with spaces (ldap issue)
+* [65fe92e](https://github.com/Leantime/leantime/commit/65fe92e6323139c76930c3473bb43149fe47355a): feat: Improved error reporting for JSON parse errors on API requests
+* [8d33277](https://github.com/Leantime/leantime/commit/8d332775e3935b1db7116c904936521adcbaac3f): fix: Allow usernames with spaces (LDAP issue)
 * [9ebf1ea](https://github.com/Leantime/leantime/commit/9ebf1ea68b2fe16c5459ee1d72028e53ef092e0f): fix: i18n file for js was not loaded correctly with plugin language files
 * [15de91e](https://github.com/Leantime/leantime/commit/15de91e474679613f45db34caff44939e2781cde): feat: new command to clear language cache files
 
@@ -629,7 +629,7 @@ Fixes #2944
 * [056e8cb](https://github.com/Leantime/leantime/commit/056e8cb8a537b9cbd82afb150d74db5d9f12e309): New translations en-us.ini (French)
 * [96b9d0e](https://github.com/Leantime/leantime/commit/96b9d0e08e8b6053a48d916b5afcd1b0a954166d): New translations en-us.ini (Romanian)
 * [440c4a4](https://github.com/Leantime/leantime/commit/440c4a4e97d6c489256a860668bec226afd79ab4): update leantime color
-* [ca1488e](https://github.com/Leantime/leantime/commit/ca1488e6657b8cead3506d655a8d6812950f571f): Ensure that url changes will be reflected in widget dashbaords
+* [ca1488e](https://github.com/Leantime/leantime/commit/ca1488e6657b8cead3506d655a8d6812950f571f): Ensure that URL changes will be reflected in widget dashboards
 * [759a3c1](https://github.com/Leantime/leantime/commit/759a3c18abfc5f37de6876d7e0c1ff704c9cf702): Ensure notification links go to places #2929
 * [1649f52](https://github.com/Leantime/leantime/commit/1649f52f7bc1635d49d8704f2fcb6f67d0b3fdb6): clean up user class
 * [b5228d3](https://github.com/Leantime/leantime/commit/b5228d306f2230557105b17fc64cdbbf05b723e1): Fix upload image issue #2919
@@ -690,14 +690,14 @@ Fixes #2944
 * [743beee](https://github.com/Leantime/leantime/commit/743beee87b9603f8460ebd9b94269e6035d33fa5): Code style fixes
 * [ad64371](https://github.com/Leantime/leantime/commit/ad64371e719d3a9443d583d0457678305fc5ccc9): Fix access issues regarding manager role #2820
 * [3619037](https://github.com/Leantime/leantime/commit/3619037a7cb4fe71893da1936d1578d7e49332c3): code style fix
-* [28343d3](https://github.com/Leantime/leantime/commit/28343d36dfe02e93a0c9951e79d4e9ec7cb6e9db): Fix issue with api guard not having access to apikey
+* [28343d3](https://github.com/Leantime/leantime/commit/28343d36dfe02e93a0c9951e79d4e9ec7cb6e9db): Fix issue with API guard not having access to apikey
 * [120f578](https://github.com/Leantime/leantime/commit/120f578698e28e921d029a6b8749eab44b4c8d8a): Fix missing value submission for notifications checkbox #2818
 * [29ad2e6](https://github.com/Leantime/leantime/commit/29ad2e6bf9f73881309e9d75e2c2e0047abb99ae): Fixing code style
 * [ee6285b](https://github.com/Leantime/leantime/commit/ee6285bd7e735f23a977cd1162bb5609936332a2): Add unit tests
-* [73af0b6](https://github.com/Leantime/leantime/commit/73af0b65610d13c1538dd3932a4a204d3879b674): Create new avatar creator support class and ensure avatars can be generated in various languages and encodings
+* [73af0b6](https://github.com/Leantime/leantime/commit/73af0b65610d13c1538dd3932a4a204d3879b674): Create a new avatar creator support class and ensure avatars can be generated in various languages and encodings
 * [936dcbf](https://github.com/Leantime/leantime/commit/936dcbf68a0639c969792b9d011a0c5ec373c2d6): fix code styles
 * [4e2c859](https://github.com/Leantime/leantime/commit/4e2c859a8d4b1fcf08963dfa10b5e499cd04351d): Fix authcheck missing parameter
-* [5d18d8c](https://github.com/Leantime/leantime/commit/5d18d8cc1fccb24dabe290b54fa6fe04d23346f2): Using laravel auth and adding leantime as auth provider.
+* [5d18d8c](https://github.com/Leantime/leantime/commit/5d18d8cc1fccb24dabe290b54fa6fe04d23346f2): Using Laravel auth and adding leantime as an auth provider.
 * [fabd409](https://github.com/Leantime/leantime/commit/fabd4091d09f9e571afcfc9cf28b978ff6711e3c): Check translations strings
 
 
@@ -706,7 +706,7 @@ Fixes #2944
 * [4a952c8](https://github.com/Leantime/leantime/commit/4a952c8b521fa9db7b7b04d968102521310b0440): Update README.md
 * [d5d1c8f](https://github.com/Leantime/leantime/commit/d5d1c8f90f66fbff397727757ac1b377a6a49140): Version bump
 * [034a158](https://github.com/Leantime/leantime/commit/034a1581bb04babc54595cfb46d8ef56146ec599): attribute class
-* [7e2ea50](https://github.com/Leantime/leantime/commit/7e2ea500500f047460d70747a569b1cd0b756fcd): fix csv importer
+* [7e2ea50](https://github.com/Leantime/leantime/commit/7e2ea500500f047460d70747a569b1cd0b756fcd): fix CSV importer
 * [112d550](https://github.com/Leantime/leantime/commit/112d550a803b890ba15fc544e774b669cefc7cce): New translations en-us.ini (German (Informal))
 * [f944a62](https://github.com/Leantime/leantime/commit/f944a62be856105c51cf466bceb232047a45230f): New translations en-us.ini (Karakalpak)
 * [8549a4c](https://github.com/Leantime/leantime/commit/8549a4c47fbd19cbece7becba4db83d29eeae2eb): New translations en-us.ini (Spanish, Latin America)
@@ -759,7 +759,7 @@ Fixes #2944
 * [4b78fdd](https://github.com/Leantime/leantime/commit/4b78fdde3a6e9bfaeb17ba245df24e690f69906b): update readme and test location
 * [ec63cdc](https://github.com/Leantime/leantime/commit/ec63cdc2bf49b093c04855d49f05e86501ce65c6): Update en-US.ini
 * [a5c9ff8](https://github.com/Leantime/leantime/commit/a5c9ff8a3cda237ad9186c654d6b5219cb3dabf9): Fix API calls and write unit tests
-* [aebcf67](https://github.com/Leantime/leantime/commit/aebcf67ecc331adc29d3c0f19bae4ce3acba7f42): Fixes issue where milestones without end dates are causing 500 error
+* [aebcf67](https://github.com/Leantime/leantime/commit/aebcf67ecc331adc29d3c0f19bae4ce3acba7f42): Fixes issue where milestones without end dates are causing 500 errors
 * [cd3cf13](https://github.com/Leantime/leantime/commit/cd3cf13d4e78b0971ee47e71f2e949c92569bb43): delete Pirate.json
 * [6cffcf6](https://github.com/Leantime/leantime/commit/6cffcf6d67349e3632a00894a829fe724dd1c6db): Fixes wrong dates in milestone calendar header
 
@@ -776,11 +776,11 @@ Fixes #2944
 * [8ad64a6](https://github.com/Leantime/leantime/commit/8ad64a64c0b65b12d41c1091ff420ec4a284a717): Update .gitignore
 * [99357d0](https://github.com/Leantime/leantime/commit/99357d001372721773a3614d3a122c2ce9717299): Deprecate configuration.php file and create backward support
 * [cbc8aff](https://github.com/Leantime/leantime/commit/cbc8affd3ff4a03efb03c3554be3fd2bb6a45b0d): Ensure current project is selected for new sprints
-* [6da255a](https://github.com/Leantime/leantime/commit/6da255a3824a40aaf564424d2b50a262f5d65915): Fix debug calls in ldap service
+* [6da255a](https://github.com/Leantime/leantime/commit/6da255a3824a40aaf564424d2b50a262f5d65915): Fix debug calls in LDAP service
 * [e1f8943](https://github.com/Leantime/leantime/commit/e1f8943b75beeb38f6c0aad335ca7060f7b05bc8): code style fixes
 * [9aa3ffb](https://github.com/Leantime/leantime/commit/9aa3ffb1d389af0508c7956d9f8df099cb936447): code style fixes
-* [ded3cac](https://github.com/Leantime/leantime/commit/ded3cac475d630c0f7f8f26eb509c1e9e394ff58): Fix constant url handling
-* [60ed1c1](https://github.com/Leantime/leantime/commit/60ed1c16a2954e3185d60d5ecc2ca1d528f8453c): Move BASE_URL set to config bootstrap to fix mixed url issue #2787
+* [ded3cac](https://github.com/Leantime/leantime/commit/ded3cac475d630c0f7f8f26eb509c1e9e394ff58): Fix constant URL handling
+* [60ed1c1](https://github.com/Leantime/leantime/commit/60ed1c16a2954e3185d60d5ecc2ca1d528f8453c): Move BASE_URL set to config bootstrap to fix mixed URL issue #2787
 * [beccd6c](https://github.com/Leantime/leantime/commit/beccd6c1ec6f17f0bb1767329c7971774ab54019): Fixing cache pre-fix issues when using redis cluster
 
 
@@ -797,13 +797,13 @@ Fixes #2944
 * [c66d964](https://github.com/Leantime/leantime/commit/c66d9644c70f618e48578729c2a8598266f8fc22): tests and event dispatcher test
 * [56e475c](https://github.com/Leantime/leantime/commit/56e475ccd8f3a7eb371bb8627e51e9ea6b18c5f4): Update Projects.php
 * [608a409](https://github.com/Leantime/leantime/commit/608a409c1e792913d0825fb8c1f9bb1d24ae9984): Fix plugin loading issue with phar files
-* [28d8c23](https://github.com/Leantime/leantime/commit/28d8c23d6b2a406776c123754a94946ec303cded): Find different way to clear viewPath Cache on plugin enablement
+* [28d8c23](https://github.com/Leantime/leantime/commit/28d8c23d6b2a406776c123754a94946ec303cded): Find a different way to clear viewPath Cache on plugin enablement
 * [b042953](https://github.com/Leantime/leantime/commit/b042953efb4e6c8bcff51056d62a3c07b391e49c): Harden plugin installation process
 * [3c518cc](https://github.com/Leantime/leantime/commit/3c518cc046438e24359670ccea9cdc5c67da5615): Config updates
 * [67d2cdb](https://github.com/Leantime/leantime/commit/67d2cdbbc87e6563e46609a57e278bd0ce47c6b7): Update Db.php
 * [81d753b](https://github.com/Leantime/leantime/commit/81d753b69f60980df985dcaf37ca860018043054): fix code style
 * [02c4b9b](https://github.com/Leantime/leantime/commit/02c4b9b48a2efaf29e42a9e5cc71b5d624acaa9b): fixing tests
-* [401c8fb](https://github.com/Leantime/leantime/commit/401c8fbe34e2ed8f60b9977adfb0215f91866d40): Updating db provider to use laravel db class
+* [401c8fb](https://github.com/Leantime/leantime/commit/401c8fbe34e2ed8f60b9977adfb0215f91866d40): Updating db provider to use Laravel db class
 * [6343c4e](https://github.com/Leantime/leantime/commit/6343c4ecba2cc66c0172f5fed9859ea1aeb9a717): clean up grouping design
 * [a93d7c1](https://github.com/Leantime/leantime/commit/a93d7c12b5ede8332d5e00494eb905e00aefae95): Copmposer file clean up
 * [d59e63e](https://github.com/Leantime/leantime/commit/d59e63e699aece29fdead7b5c2a5e923c997c579): Bump @sentry/browser from 7.119.0 to 7.119.1
@@ -854,7 +854,7 @@ updated-dependencies:
 ...
 
 Signed-off-by: dependabot[bot] <support@github.com>
-* [284ec9b](https://github.com/Leantime/leantime/commit/284ec9b2ad07b64eb9d14f19a0f081e260176781): check host set up
+* [284ec9b](https://github.com/Leantime/leantime/commit/284ec9b2ad07b64eb9d14f19a0f081e260176781): check host setup
 * [b64483f](https://github.com/Leantime/leantime/commit/b64483fcf85b716501bc8de2d8b05f4f0547f805): Update .gitignore
 * [4d3b9c9](https://github.com/Leantime/leantime/commit/4d3b9c981d4e44e60eac6f74921d14c68fd9c110): Delete .idea/codebuddy.xml
 * [65f38b8](https://github.com/Leantime/leantime/commit/65f38b89fcd4c194f450edfd824f997ec0ae41ce): Fixing code styles
@@ -869,9 +869,9 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [73c6540](https://github.com/Leantime/leantime/commit/73c6540bfa26fc54a58962208ea56f21190a3685): fix code style
 * [1eb6ac1](https://github.com/Leantime/leantime/commit/1eb6ac1c7f334703aa1186aaa95bd2b17fdfa448): turn off autocomplete
 * [6b03ecc](https://github.com/Leantime/leantime/commit/6b03ecc6f2c978ae0ceb7414a198369c5c8d88d3): Escape get calls
-* [d8b1099](https://github.com/Leantime/leantime/commit/d8b1099b0629da64ad30a1c4daee104fadc6c227): Don't display svgs
-* [28ec349](https://github.com/Leantime/leantime/commit/28ec349cf61c5a69e3c6c3528e910b0bfe82a3c1): project webhook url escapes
-* [71fe68a](https://github.com/Leantime/leantime/commit/71fe68ad08f1bff0003152195bb0424d457341e8): escaping api key name
+* [d8b1099](https://github.com/Leantime/leantime/commit/d8b1099b0629da64ad30a1c4daee104fadc6c227): Don't display SVGs
+* [28ec349](https://github.com/Leantime/leantime/commit/28ec349cf61c5a69e3c6c3528e910b0bfe82a3c1): project webhook URL escapes
+* [71fe68a](https://github.com/Leantime/leantime/commit/71fe68ad08f1bff0003152195bb0424d457341e8): escaping API key name
 * [3f8b2c6](https://github.com/Leantime/leantime/commit/3f8b2c6346111694bb18cec558b27c22d3a2b9d1): Escaping input
 * [ce1d207](https://github.com/Leantime/leantime/commit/ce1d2073e4601183e1bdd90f4b433d16aee46a50): html entities around firstname in emails to prevent html from showing up
 * [2c3ad8d](https://github.com/Leantime/leantime/commit/2c3ad8d64d366c76253b7d645171c7ec9ae99f6f): Strip tags from notifications
@@ -881,14 +881,14 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [66c97e6](https://github.com/Leantime/leantime/commit/66c97e66038db9f2700f03262cac715d0787a95c): Update SetCacheHeaders.php
 * [0d8611d](https://github.com/Leantime/leantime/commit/0d8611dbd4d880da20d54acbbf59993db76e45f0): Testing Suite cleanup
 * [5e8005a](https://github.com/Leantime/leantime/commit/5e8005ae96c9440b1047e318569ec8204538477d): Fix code styles
-* [40cc55a](https://github.com/Leantime/leantime/commit/40cc55aa18684f249f1de5b99d36880230db889f): Secure cache handling for logged in users
+* [40cc55a](https://github.com/Leantime/leantime/commit/40cc55aa18684f249f1de5b99d36880230db889f): Secure cache handling for logged-in users
 * [20a25f9](https://github.com/Leantime/leantime/commit/20a25f91f2ad763c9321981742ddad644c9af7be): Adding constant to test setup
 * [f07e266](https://github.com/Leantime/leantime/commit/f07e2664c02245589c34a3113494a2af50b91ed4): Update Acceptance.php
 * [18da027](https://github.com/Leantime/leantime/commit/18da027bfb38d7a340aa8e8d68fdb8abb3a80b83): remove cached files
 * [77f5383](https://github.com/Leantime/leantime/commit/77f538336c6a0f244134e131e0282578a31cf318): Create .gitignore
 * [dcfdb75](https://github.com/Leantime/leantime/commit/dcfdb75652a61fd1a820194eda02763f53835dee): missing folders
-* [8c68cbe](https://github.com/Leantime/leantime/commit/8c68cbe8cd585e623c5d89a26637645b8d33b1d8): update to latest ubuntu action runner
-* [1dbd0a2](https://github.com/Leantime/leantime/commit/1dbd0a24f7092237c3829d649fd995f77a58dc05): check newer version of ubuntu
+* [8c68cbe](https://github.com/Leantime/leantime/commit/8c68cbe8cd585e623c5d89a26637645b8d33b1d8): update to latest Ubuntu action runner
+* [1dbd0a2](https://github.com/Leantime/leantime/commit/1dbd0a24f7092237c3829d649fd995f77a58dc05): check newer version of Ubuntu
 * [62e8309](https://github.com/Leantime/leantime/commit/62e830967c15e06af0ffa83785a37ec1b01acd27): Update composer.lock
 * [e82c97f](https://github.com/Leantime/leantime/commit/e82c97f068817ff094e16a7bcd9fb83853ebc291): Fixing tests
 * [efdd31f](https://github.com/Leantime/leantime/commit/efdd31fa41924de2cb9c1e388db1f0a998aca22c): Update acceptance tests
@@ -901,7 +901,7 @@ Signed-off-by: dependabot[bot] <support@github.com>
 * [3b0cd0a](https://github.com/Leantime/leantime/commit/3b0cd0a5b404ec147541231632ff7e7a3db112f3): Calendar fixes
 * [7887663](https://github.com/Leantime/leantime/commit/7887663c059d268f3d1f979a84d49db4549de275): API management improvements
 * [b4c9e82](https://github.com/Leantime/leantime/commit/b4c9e8282175261b2028446317fe73cd936a300c): Onboarding improvements
-* [d1a6c71](https://github.com/Leantime/leantime/commit/d1a6c713206c8934c67e3a5f139687288b19dad0): Improved Authentication layer
+* [d1a6c71](https://github.com/Leantime/leantime/commit/d1a6c713206c8934c67e3a5f139687288b19dad0): Improved authentication layer
 * [61e4fb2](https://github.com/Leantime/leantime/commit/61e4fb29f733e446326a3241227628f9b53372b4): Improved theme styles
 * [b672289](https://github.com/Leantime/leantime/commit/b672289554f94c79046fff30e1675425fb812dee): Improved caching
 * [ddccedb](https://github.com/Leantime/leantime/commit/ddccedb1aa8cae0e98a784d45dc0f415cae390c8): Event Management Improvements and compliance with Laravel
@@ -918,7 +918,7 @@ The capitalisation of "autism" was removed since, according to English style gui
 Note that the capitalisation is still present in the "About" section.
 * [4634603](https://github.com/Leantime/leantime/commit/4634603ec54270ecf2b974bb465246d9410fffc4): cli: fix crash when running commands
 
-The commands are cached in cache store and not in session object.
+The commands are cached in the cache store and not in the session object.
 
 Fixes #2710
 * [0c44064](https://github.com/Leantime/leantime/commit/0c440643f307a0546efc586b3b91e2ba759987f1): Update README.md
@@ -927,8 +927,8 @@ Fixes #2710
 * [282dfd0](https://github.com/Leantime/leantime/commit/282dfd04da2ce0625f941627d7806f4101a84d85): 1744: remove whitespace
 * [b53abfc](https://github.com/Leantime/leantime/commit/b53abfc3a0ea048773401bce9331dad6301adc8a): 1744: add sr label to button
 * [d83ee73](https://github.com/Leantime/leantime/commit/d83ee739cb7906164880ee2e8e5c400be77a4788): 1744: add reset due date feature to dashboard ticket
-* [14b648c](https://github.com/Leantime/leantime/commit/14b648ca22c242ea13243f218eb1ce80a210ac0d): feat(i10n): add and update informal german translations
-* [71e216a](https://github.com/Leantime/leantime/commit/71e216a9e55aeea27ccf0773bc8ba501669e8673): feat(i10n): add and update formal german translations
+* [14b648c](https://github.com/Leantime/leantime/commit/14b648ca22c242ea13243f218eb1ce80a210ac0d): feat(i10n): add and update informal German translations
+* [71e216a](https://github.com/Leantime/leantime/commit/71e216a9e55aeea27ccf0773bc8ba501669e8673): feat(i10n): add and update formal German translations
 
 
 # Version: 3.2.1
@@ -937,20 +937,20 @@ Fixes #2710
 * [1a4b3a4](https://github.com/Leantime/leantime/commit/1a4b3a4d13f7aeddbc79cd3ea1f0259d649ceaeb): update notifications
 * [d72930a](https://github.com/Leantime/leantime/commit/d72930a11dd57e9a08596244b2981ec86ca73d04): revert trait
 * [87b5995](https://github.com/Leantime/leantime/commit/87b5995b59d7e4131da8c0f644834c4ea9949d63): some broken links
-* [017a75e](https://github.com/Leantime/leantime/commit/017a75eb5c573d4c367f99ff7360c0e6b338216f): Various deprecation message fixed
+* [017a75e](https://github.com/Leantime/leantime/commit/017a75eb5c573d4c367f99ff7360c0e6b338216f): Various deprecation messages fixed
 * [807c849](https://github.com/Leantime/leantime/commit/807c849676bcc12fa75a3f508acfcfc0251b5622): Update showAll.tpl.php
-* [1e07271](https://github.com/Leantime/leantime/commit/1e072712617b54bc1785a66dcc380a40136a66ec): fixing varipous editor issues and wiki 500s
+* [1e07271](https://github.com/Leantime/leantime/commit/1e072712617b54bc1785a66dcc380a40136a66ec): fixing various editor issues and wiki 500s
 * [37dd4c6](https://github.com/Leantime/leantime/commit/37dd4c688371e5a38d506811089279d1fbc97d3f): Fix drag and drop for due + edit dates
 * [1194c8b](https://github.com/Leantime/leantime/commit/1194c8b77869f5a63a091cf5593ceded5f61c50e): Update ShowMy.php
-* [45d69b0](https://github.com/Leantime/leantime/commit/45d69b00a8e74b2e781de344b1819278c0aea729): Remove existing ticket entries from dropdown list in my timesheet view
+* [45d69b0](https://github.com/Leantime/leantime/commit/45d69b00a8e74b2e781de344b1819278c0aea729): Remove existing ticket entries from the dropdown list in my timesheet view
 * [2d2ef6b](https://github.com/Leantime/leantime/commit/2d2ef6bf45e7690e88d44554492e72f8f46cb772): Check if ticket has timesheets before deleting
 * [a768bf3](https://github.com/Leantime/leantime/commit/a768bf32b27ebd11b8ab892ce26ce28741abd0bf): Update Export.php
 * [89597c1](https://github.com/Leantime/leantime/commit/89597c1a3d7dce337890fcd88c546b1c6b61ac82): fix exception issue
 * [1f351e3](https://github.com/Leantime/leantime/commit/1f351e3787658aeca4f522413fc07118f977b77e): Update Calendar.php
 * [3136c33](https://github.com/Leantime/leantime/commit/3136c33c1317a00f774b3fc8dc38d5737acb89a4): create a unit test for getting ical
-* [673296f](https://github.com/Leantime/leantime/commit/673296f699d4e84869f7e07cbfdd4c1e18dc36a5): fixing ical export issues
+* [673296f](https://github.com/Leantime/leantime/commit/673296f699d4e84869f7e07cbfdd4c1e18dc36a5): fixing iCal export issues
 * [8a13a1c](https://github.com/Leantime/leantime/commit/8a13a1c1c4347eb1198f72018cc549e174e33bf6): Update Plugins
-* [4e8f6d3](https://github.com/Leantime/leantime/commit/4e8f6d3e3c5024b11b0052cae5ecc857d0f3333b): Fix Theme Management and write tests
+* [4e8f6d3](https://github.com/Leantime/leantime/commit/4e8f6d3e3c5024b11b0052cae5ecc857d0f3333b): Fix theme management and write tests
 * [32e8ff5](https://github.com/Leantime/leantime/commit/32e8ff51b6cfe759c7de2b9fcd60d5adc7216d77): Refactor module manager
 * [cfe4539](https://github.com/Leantime/leantime/commit/cfe45394bc837ef358a3adc7f891cd3074f13f45): [fix] EventCache Management for plugins + add tests
 * [59d5c56](https://github.com/Leantime/leantime/commit/59d5c5667fe7f16bc30b56f94e8b0d4a5a1ca18d): phpstan fixes
@@ -959,10 +959,10 @@ Fixes #2710
 * [533ba5f](https://github.com/Leantime/leantime/commit/533ba5fc68c5452ae36fbf89279cf00076392ab6): Update staticAnalysis.yml
 * [3c80050](https://github.com/Leantime/leantime/commit/3c800500d53184c56b330758d9397143fc8755fa): Update Plugins
 * [d7387ad](https://github.com/Leantime/leantime/commit/d7387adc04b4814cbe607e1a06aef08a7dcb9b15): update comments
-* [fc6a91f](https://github.com/Leantime/leantime/commit/fc6a91f8e89a8eb4a4efa202b004b2195f28fff0): updaet doc comments
+* [fc6a91f](https://github.com/Leantime/leantime/commit/fc6a91f8e89a8eb4a4efa202b004b2195f28fff0): update doc comments
 * [ec8d1d4](https://github.com/Leantime/leantime/commit/ec8d1d4830e07bc4fab0e7698858f854ef9cd274): use json instead of curl
 * [a8593d8](https://github.com/Leantime/leantime/commit/a8593d8bc166a326e3dff2e5b0bbf39238ac1b08): remove module from headline
-* [e19945f](https://github.com/Leantime/leantime/commit/e19945f3017e047ef8569d0ee38a78a326306d78): Add api documentation generation via phpdocumentor
+* [e19945f](https://github.com/Leantime/leantime/commit/e19945f3017e047ef8569d0ee38a78a326306d78): Add API documentation generation via phpdocumentor
 * [a8b0d08](https://github.com/Leantime/leantime/commit/a8b0d085cead67ae6c9c93d99c0e6d5e616bec63): Fix double slash in modal calls
 * [0ad3069](https://github.com/Leantime/leantime/commit/0ad306950e34829b0b5572f2d696b39551d78f0a): check for wiki issue
 * [814f109](https://github.com/Leantime/leantime/commit/814f1092fa6d20426eb7734c8dce277a1268f798): Fix LDAP AD login without domain (simply user ID).
@@ -971,9 +971,9 @@ Fixes #2710
 * [9b3eb06](https://github.com/Leantime/leantime/commit/9b3eb069acde6406c81622931a44ea229f5e4dbd): workaround for broken openbasedir issue with fonts
 * [3385cd7](https://github.com/Leantime/leantime/commit/3385cd7acf5ddd3611133c2ef8d1e4f126967233): Fix use statements
 * [f51cccb](https://github.com/Leantime/leantime/commit/f51cccb68150f992a38a6057206d3391644dccdb): Remove not needed counters from repos
-* [46a5179](https://github.com/Leantime/leantime/commit/46a51793367107069f1df1e1900f2584ffeb552a): Fix file reuturn message on broken files
-* [a0cbf62](https://github.com/Leantime/leantime/commit/a0cbf62ea4bd675ce91a0e037b77b6432d89de1c): Improve api handling
-* [bc041b8](https://github.com/Leantime/leantime/commit/bc041b8b1f74af1b898cf1e7935bc1d2d7b35204): Identify cli usage
+* [46a5179](https://github.com/Leantime/leantime/commit/46a51793367107069f1df1e1900f2584ffeb552a): Fix file return message on broken files
+* [a0cbf62](https://github.com/Leantime/leantime/commit/a0cbf62ea4bd675ce91a0e037b77b6432d89de1c): Improve API handling
+* [bc041b8](https://github.com/Leantime/leantime/commit/bc041b8b1f74af1b898cf1e7935bc1d2d7b35204): Identify CLI usage
 * [92d3698](https://github.com/Leantime/leantime/commit/92d3698e6982d83ce9837fe6164faaa349d11420): Update makefile.yml
 * [dc22181](https://github.com/Leantime/leantime/commit/dc221817138146c6dc0eaeaf9ede6dc2cc1a73af): Update acceptancetests.yml
 
@@ -989,7 +989,7 @@ Fixes #2710
 * [5aeafc0](https://github.com/Leantime/leantime/commit/5aeafc0d87f2cbc8e30ba05802cbb45e941a1aca): Update ApiClientTest.php
 * [b365dbe](https://github.com/Leantime/leantime/commit/b365dbeebb7d990d6fb4ee1182a0c06c0155c315): fixing csv
 * [103c79e](https://github.com/Leantime/leantime/commit/103c79ecb5ac4af169a5ff74731a18509a6d17fb): Rename eventhelpers trait
-* [0c41896](https://github.com/Leantime/leantime/commit/0c418967fe3044bb65914184acbe632597ee8978): fixing menu related bugs
+* [0c41896](https://github.com/Leantime/leantime/commit/0c418967fe3044bb65914184acbe632597ee8978): fixing menu-related bugs
 * [d8afdd9](https://github.com/Leantime/leantime/commit/d8afdd9a45cf926b822a072f5009726abfbd2c67): Support for head requests
 * [a83f645](https://github.com/Leantime/leantime/commit/a83f6457bdd8437d1309c0b3ffa00fac1efa6a3d): Update ApiClient.php
 * [cdf332d](https://github.com/Leantime/leantime/commit/cdf332dea983bc7835ebf32924b60778cf503499): more cleanup
@@ -999,10 +999,10 @@ Fixes #2710
 * [f601580](https://github.com/Leantime/leantime/commit/f6015804e36ce4aa440413b2c72b7fe446048dd0): Update composer.lock
 * [679364a](https://github.com/Leantime/leantime/commit/679364acefdfcbc337adb956834a50c00157a1d0): Fixing phpstan issues
 * [73ad52c](https://github.com/Leantime/leantime/commit/73ad52c86f4fb488809ccaaa75a913fca401593f): Misc template enhancements
-* [d58e164](https://github.com/Leantime/leantime/commit/d58e1648f3d1fd8a115b6ba712b74000533385aa): Improves update check in case dbs have to be downgraded.
+* [d58e164](https://github.com/Leantime/leantime/commit/d58e1648f3d1fd8a115b6ba712b74000533385aa): Improves update check in case DBs have to be downgraded.
 * [0538d68](https://github.com/Leantime/leantime/commit/0538d68019719d2c615a842edfeacfe0cadcf68a): Fixing various dateTime bugs across the system
 * [c64f09c](https://github.com/Leantime/leantime/commit/c64f09c8be8a74c728bb72f90760aefa1ada19c8): Adding a new default job worker that can execute queue jobs via classes added to subject
-* [7cb0199](https://github.com/Leantime/leantime/commit/7cb019985e324006c56234832c55d86b787c1430): Allow API to use any service and new api endpoints
+* [7cb0199](https://github.com/Leantime/leantime/commit/7cb019985e324006c56234832c55d86b787c1430): Allow API to use any service and new API endpoints
 * [9ac2732](https://github.com/Leantime/leantime/commit/9ac273265a0309acbcb6481f81d1de2c0ade3a68): Adding Redis Support for cache and sessions
 * [30b4fff](https://github.com/Leantime/leantime/commit/30b4fff567662fabb902ad5c982f52aee0066542): fix the canvas dialogue
 * [9fd512b](https://github.com/Leantime/leantime/commit/9fd512b64fe1061b52d60acd763771cd490dc84f): Fix for broken project favorite function
@@ -1013,13 +1013,13 @@ Fixes #2710
 * [d3d9008](https://github.com/Leantime/leantime/commit/d3d90080c53ce738f3519197dfd093eb0519c32f): test improvements
 * [aa36199](https://github.com/Leantime/leantime/commit/aa36199344e6b5bd2f6895f2fdaee1bc9078ce39): Update dockerfile
 * [a028f1e](https://github.com/Leantime/leantime/commit/a028f1eaca0e7fb0cf855cc1c6c085ecd5c4e03e): Fix docker permissions for log files
-* [d362108](https://github.com/Leantime/leantime/commit/d36210882671457867921f008fe827df98471d96): Fix make file
-* [6358e85](https://github.com/Leantime/leantime/commit/6358e857e12c78ff27b601f0c511be6a1ffa3929): Clean up old excception handling in httpkernel
+* [d362108](https://github.com/Leantime/leantime/commit/d36210882671457867921f008fe827df98471d96): Fix makefile
+* [6358e85](https://github.com/Leantime/leantime/commit/6358e857e12c78ff27b601f0c511be6a1ffa3929): Clean up old exception handling in httpkernel
 * [199ce6d](https://github.com/Leantime/leantime/commit/199ce6d351717abfedefa2c125a65bc02d38db8b): piping environment config through
 * [1fa1f46](https://github.com/Leantime/leantime/commit/1fa1f467ef792dde4f2bfd630bddf6b0c26d2e4d): Removed exception service provider since handler is managed in environment
 * [5e5c0a6](https://github.com/Leantime/leantime/commit/5e5c0a6ad1a3a7ad3bb40925bce1a65991daeaec): Added Laravel exception handler with whoops
 * [c12ea2c](https://github.com/Leantime/leantime/commit/c12ea2cdee852f338ce73f21feaeb58453114a8f): Update PULL_REQUEST_TEMPLATE.md
-* [9397ee7](https://github.com/Leantime/leantime/commit/9397ee739f7304748539679d03fda01c91adf501): Fix localization issues for dates with translated day, month names
+* [9397ee7](https://github.com/Leantime/leantime/commit/9397ee739f7304748539679d03fda01c91adf501): Fix localization issues for dates with translated day and month names
 * [83a06bf](https://github.com/Leantime/leantime/commit/83a06bfbe7ffe26f42c6f558ff6632f0331273be): Fix for storing language
 * [b4bfcd3](https://github.com/Leantime/leantime/commit/b4bfcd3a841e2171260728367ed46571045b850a): Move changelogConfig out of the workflow folder
 * [6cd0649](https://github.com/Leantime/leantime/commit/6cd06493830d39ba421bd6ae09828187c5c9b9e1): version bump
@@ -1035,16 +1035,16 @@ Fixes #2710
 * [961b829](https://github.com/Leantime/leantime/commit/961b82963287c95988345cf9bb406bc5cda157a7): 1882: move moreinfo into span
 * [a4e0b11](https://github.com/Leantime/leantime/commit/a4e0b11f1ae9311122eacba9193866472336ac76): resolving the feedback
 * [9422468](https://github.com/Leantime/leantime/commit/94224686829fe2dfd9d27eb254f3fde2398e9944): blade conversion
-* [7a37ee2](https://github.com/Leantime/leantime/commit/7a37ee20f32492880021cc55a8a304f75db83ca6): Update README.md for newer mysql version
+* [7a37ee2](https://github.com/Leantime/leantime/commit/7a37ee20f32492880021cc55a8a304f75db83ca6): Update README.md for newer MySQL version
 
 Changed the requirements from MySQL 5.7+ to MySQL 8.0+
 The 5.7 version is not supported anymore since 2023-10-31 and will not get any security updates. We should not encourage our users to use old and insecure software.
 
-MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS release (Generic support until 2025-04-30 and extended until 2026-04-30)
+MySQL 8.0 is the lowest version that is still supported by Oracle and is an LTS release (Generic support until 2025-04-30 and extended until 2026-04-30)
 * [a78ed98](https://github.com/Leantime/leantime/commit/a78ed984a48dbb3d343e7aad479de3acad1ea789): Lossless image filesize reduction
 * [5c82d32](https://github.com/Leantime/leantime/commit/5c82d328b8a1fa9ce673b92d14aa194a852feae8): 1882: add translations
-* [8eaee14](https://github.com/Leantime/leantime/commit/8eaee143ae13a855c5e24d1ec12e407133bb5149): 1882: improve danish translation
-* [966beb5](https://github.com/Leantime/leantime/commit/966beb5fc241c65bc329477d3dca0ddbf2238775): 1882: add status, start and end date to milestone headline
+* [8eaee14](https://github.com/Leantime/leantime/commit/8eaee143ae13a855c5e24d1ec12e407133bb5149): 1882: improve Danish translation
+* [966beb5](https://github.com/Leantime/leantime/commit/966beb5fc241c65bc329477d3dca0ddbf2238775): 1882: add status, start, and end date to milestone headline
 * [3cf5c54](https://github.com/Leantime/leantime/commit/3cf5c54c1cdf61871fc1a9a1808a14a97db87668): Improve current project setting flow
 
 
@@ -1057,7 +1057,7 @@ MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS r
 * [5aeafc0](https://github.com/Leantime/leantime/commit/5aeafc0d87f2cbc8e30ba05802cbb45e941a1aca): Update ApiClientTest.php
 * [b365dbe](https://github.com/Leantime/leantime/commit/b365dbeebb7d990d6fb4ee1182a0c06c0155c315): fixing csv
 * [103c79e](https://github.com/Leantime/leantime/commit/103c79ecb5ac4af169a5ff74731a18509a6d17fb): Rename eventhelpers trait
-* [0c41896](https://github.com/Leantime/leantime/commit/0c418967fe3044bb65914184acbe632597ee8978): fixing menu related bugs
+* [0c41896](https://github.com/Leantime/leantime/commit/0c418967fe3044bb65914184acbe632597ee8978): fixing menu-related bugs
 * [d8afdd9](https://github.com/Leantime/leantime/commit/d8afdd9a45cf926b822a072f5009726abfbd2c67): Support for head requests
 * [a83f645](https://github.com/Leantime/leantime/commit/a83f6457bdd8437d1309c0b3ffa00fac1efa6a3d): Update ApiClient.php
 * [cdf332d](https://github.com/Leantime/leantime/commit/cdf332dea983bc7835ebf32924b60778cf503499): more cleanup
@@ -1067,10 +1067,10 @@ MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS r
 * [f601580](https://github.com/Leantime/leantime/commit/f6015804e36ce4aa440413b2c72b7fe446048dd0): Update composer.lock
 * [679364a](https://github.com/Leantime/leantime/commit/679364acefdfcbc337adb956834a50c00157a1d0): Fixing phpstan issues
 * [73ad52c](https://github.com/Leantime/leantime/commit/73ad52c86f4fb488809ccaaa75a913fca401593f): Misc template enhancements
-* [d58e164](https://github.com/Leantime/leantime/commit/d58e1648f3d1fd8a115b6ba712b74000533385aa): Improves update check in case dbs have to be downgraded.
+* [d58e164](https://github.com/Leantime/leantime/commit/d58e1648f3d1fd8a115b6ba712b74000533385aa): Improves update check in case DBs have to be downgraded.
 * [0538d68](https://github.com/Leantime/leantime/commit/0538d68019719d2c615a842edfeacfe0cadcf68a): Fixing various dateTime bugs across the system
 * [c64f09c](https://github.com/Leantime/leantime/commit/c64f09c8be8a74c728bb72f90760aefa1ada19c8): Adding a new default job worker that can execute queue jobs via classes added to subject
-* [7cb0199](https://github.com/Leantime/leantime/commit/7cb019985e324006c56234832c55d86b787c1430): Allow API to use any service and new api endpoints
+* [7cb0199](https://github.com/Leantime/leantime/commit/7cb019985e324006c56234832c55d86b787c1430): Allow API to use any service and new API endpoints
 * [9ac2732](https://github.com/Leantime/leantime/commit/9ac273265a0309acbcb6481f81d1de2c0ade3a68): Adding Redis Support for cache and sessions
 * [30b4fff](https://github.com/Leantime/leantime/commit/30b4fff567662fabb902ad5c982f52aee0066542): fix the canvas dialogue
 * [9fd512b](https://github.com/Leantime/leantime/commit/9fd512b64fe1061b52d60acd763771cd490dc84f): Fix for broken project favorite function
@@ -1081,13 +1081,13 @@ MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS r
 * [d3d9008](https://github.com/Leantime/leantime/commit/d3d90080c53ce738f3519197dfd093eb0519c32f): test improvements
 * [aa36199](https://github.com/Leantime/leantime/commit/aa36199344e6b5bd2f6895f2fdaee1bc9078ce39): Update dockerfile
 * [a028f1e](https://github.com/Leantime/leantime/commit/a028f1eaca0e7fb0cf855cc1c6c085ecd5c4e03e): Fix docker permissions for log files
-* [d362108](https://github.com/Leantime/leantime/commit/d36210882671457867921f008fe827df98471d96): Fix make file
-* [6358e85](https://github.com/Leantime/leantime/commit/6358e857e12c78ff27b601f0c511be6a1ffa3929): Clean up old excception handling in httpkernel
+* [d362108](https://github.com/Leantime/leantime/commit/d36210882671457867921f008fe827df98471d96): Fix makefile
+* [6358e85](https://github.com/Leantime/leantime/commit/6358e857e12c78ff27b601f0c511be6a1ffa3929): Clean up old exception handling in httpkernel
 * [199ce6d](https://github.com/Leantime/leantime/commit/199ce6d351717abfedefa2c125a65bc02d38db8b): piping environment config through
 * [1fa1f46](https://github.com/Leantime/leantime/commit/1fa1f467ef792dde4f2bfd630bddf6b0c26d2e4d): Removed exception service provider since handler is managed in environment
 * [5e5c0a6](https://github.com/Leantime/leantime/commit/5e5c0a6ad1a3a7ad3bb40925bce1a65991daeaec): Added Laravel exception handler with whoops
 * [c12ea2c](https://github.com/Leantime/leantime/commit/c12ea2cdee852f338ce73f21feaeb58453114a8f): Update PULL_REQUEST_TEMPLATE.md
-* [9397ee7](https://github.com/Leantime/leantime/commit/9397ee739f7304748539679d03fda01c91adf501): Fix localization issues for dates with translated day, month names
+* [9397ee7](https://github.com/Leantime/leantime/commit/9397ee739f7304748539679d03fda01c91adf501): Fix localization issues for dates with translated day and month names
 * [83a06bf](https://github.com/Leantime/leantime/commit/83a06bfbe7ffe26f42c6f558ff6632f0331273be): Fix for storing language
 * [b4bfcd3](https://github.com/Leantime/leantime/commit/b4bfcd3a841e2171260728367ed46571045b850a): Move changelogConfig out of the workflow folder
 * [6cd0649](https://github.com/Leantime/leantime/commit/6cd06493830d39ba421bd6ae09828187c5c9b9e1): version bump
@@ -1103,18 +1103,18 @@ MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS r
 * [961b829](https://github.com/Leantime/leantime/commit/961b82963287c95988345cf9bb406bc5cda157a7): 1882: move moreinfo into span
 * [a4e0b11](https://github.com/Leantime/leantime/commit/a4e0b11f1ae9311122eacba9193866472336ac76): resolving the feedback
 * [9422468](https://github.com/Leantime/leantime/commit/94224686829fe2dfd9d27eb254f3fde2398e9944): blade conversion
-* [7a37ee2](https://github.com/Leantime/leantime/commit/7a37ee20f32492880021cc55a8a304f75db83ca6): Update README.md for newer mysql version
+* [7a37ee2](https://github.com/Leantime/leantime/commit/7a37ee20f32492880021cc55a8a304f75db83ca6): Update README.md for newer MySQL version
 
 Changed the requirements from MySQL 5.7+ to MySQL 8.0+
 The 5.7 version is not supported anymore since 2023-10-31 and will not get any security updates. We should not encourage our users to use old and insecure software.
 
-MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS release (Generic support until 2025-04-30 and extended until 2026-04-30)
+MySQL 8.0 is the lowest version that is still supported by Oracle and is an LTS release (Generic support until 2025-04-30 and extended until 2026-04-30)
 * [a78ed98](https://github.com/Leantime/leantime/commit/a78ed984a48dbb3d343e7aad479de3acad1ea789): Lossless image filesize reduction
 * [5c82d32](https://github.com/Leantime/leantime/commit/5c82d328b8a1fa9ce673b92d14aa194a852feae8): 1882: add translations
-* [8eaee14](https://github.com/Leantime/leantime/commit/8eaee143ae13a855c5e24d1ec12e407133bb5149): 1882: improve danish translation
-* [966beb5](https://github.com/Leantime/leantime/commit/966beb5fc241c65bc329477d3dca0ddbf2238775): 1882: add status, start and end date to milestone headline
+* [8eaee14](https://github.com/Leantime/leantime/commit/8eaee143ae13a855c5e24d1ec12e407133bb5149): 1882: improve Danish translation
+* [966beb5](https://github.com/Leantime/leantime/commit/966beb5fc241c65bc329477d3dca0ddbf2238775): 1882: add status, start, and end date to milestone headline
 * [3cf5c54](https://github.com/Leantime/leantime/commit/3cf5c54c1cdf61871fc1a9a1808a14a97db87668): Improve current project setting flow
-* [c84d0ff](https://github.com/Leantime/leantime/commit/c84d0ff4da6074a151de06f1708d5fbfdc3353a8): Making laravel commands available
+* [c84d0ff](https://github.com/Leantime/leantime/commit/c84d0ff4da6074a151de06f1708d5fbfdc3353a8): Making Laravel commands available
 
 
 # Version: 3.2.0-beta-2
@@ -1128,9 +1128,9 @@ MySQL 8.0 is the lowest version that is still supported by Oracle and is a LTS r
 * [7eafa1e](https://github.com/Leantime/leantime/commit/7eafa1e821c43b3929f329805f29bbc9fffc4a96): Confetti
 * [8e274a4](https://github.com/Leantime/leantime/commit/8e274a43d699750f8a0f8f2570670dd98407d23b): Apply suggestions from code review
 
-remove embarrassing comma that snuck into my function declaration
+Remove the embarrassing comma that snuck into my function declaration
 
-Co-authored-by: Jeppe Julius Krogh <106669866+jeppekroghitk@users.noreply.github.com>
+Co-authored by: Jeppe Julius Krogh <106669866+jeppekroghitk@users.noreply.github.com>
 * [e1e0e6a](https://github.com/Leantime/leantime/commit/e1e0e6ab7658c7362339eed216526c8ef8436e9f): 1717: introduce space between texts
 * [7492cdd](https://github.com/Leantime/leantime/commit/7492cdd4692514d588e0ca161345bf08b18a6f3a): 1717: update strings to use an anchor
 
@@ -1166,10 +1166,10 @@ https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?ut
 * [3c0c9ed](https://github.com/Leantime/leantime/commit/3c0c9ed5aa5267ee5f594572ddde1c2ff91fd0b9): Fix typo
 * [6bc3e8e](https://github.com/Leantime/leantime/commit/6bc3e8e666b6d4ec16d999a8262c502655cc1ab3): Add ratelimits to default config
 * [d670a27](https://github.com/Leantime/leantime/commit/d670a2769f5eb1957f99a5d471c99cc97bcc0384): Add better ratelimits for unit tests
-* [a91b8cc](https://github.com/Leantime/leantime/commit/a91b8ccc0f9aefcd7ff773aacd3a8bd0c588dc19): Update Comments.php to fix ticket comment notification url
+* [a91b8cc](https://github.com/Leantime/leantime/commit/a91b8ccc0f9aefcd7ff773aacd3a8bd0c588dc19): Update Comments.php to fix ticket comment notification URL
 * [4bae0a0](https://github.com/Leantime/leantime/commit/4bae0a0fd6fe6e0cf9b7984853cc46798b4cc34b): fix: upgrade uppy from 3.24.0 to 3.25.3
 
-Snyk has created this PR to upgrade uppy from 3.24.0 to 3.25.3.
+Snyk has created this PR to upgrade Uppy from 3.24.0 to 3.25.3.
 
 See this package in npm:
 uppy
@@ -1187,14 +1187,14 @@ See this project in Snyk:
 https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
 * [0559ac7](https://github.com/Leantime/leantime/commit/0559ac7ae23febdff90b4790150bbf2b8095bc6e): Add ServiceProvider for ratelimiter
 * [6f9fcee](https://github.com/Leantime/leantime/commit/6f9fceed5e99f100ebcec7e43900627b096513b1): Create .gitignore
-* [418fce9](https://github.com/Leantime/leantime/commit/418fce974d9d9127996935b53a8a035d8ae6525f): * add ldap fields to AD config suggestions
+* [418fce9](https://github.com/Leantime/leantime/commit/418fce974d9d9127996935b53a8a035d8ae6525f): * Add LDAP fields to AD config suggestions
 * [f562ad3](https://github.com/Leantime/leantime/commit/f562ad39ce389f79b10537953ec1ea2f5211952d): Update unit tests
 * [630d578](https://github.com/Leantime/leantime/commit/630d57859c006d187c0fc152f963a5a5677985ea): Setting ServiceProviders
 * [329b478](https://github.com/Leantime/leantime/commit/329b4782c0983480f9b1cda0221965240bc7ae1e): Update Tickets.php to include zp_tickets.userId in simpleTicketQuery
 * [43c3c18](https://github.com/Leantime/leantime/commit/43c3c18d08e444b625e47e236906b11f6565ae4b): 1620: remove -22px, as it pushed the pop-up out of the browser
 * [283e0f7](https://github.com/Leantime/leantime/commit/283e0f7897ab650f0665a9659189494c21ad0975): Move language caching into installation cache
-* [76cb99d](https://github.com/Leantime/leantime/commit/76cb99d315ddcb796f64c61a97f0e55e8d8d964f): Enable Session locking for file driver
-* [2d82668](https://github.com/Leantime/leantime/commit/2d82668fdbd9465c34909f07befecfd604a91890): session naming clean up & core core clean up
+* [76cb99d](https://github.com/Leantime/leantime/commit/76cb99d315ddcb796f64c61a97f0e55e8d8d964f): Enable session locking for file driver
+* [2d82668](https://github.com/Leantime/leantime/commit/2d82668fdbd9465c34909f07befecfd604a91890): session naming cleanup & core cleanup
 * [35b64b6](https://github.com/Leantime/leantime/commit/35b64b6d6aea8a9931dde68f82d52810e9e5df0e): 1618: add group by priority to dashboard/home
 * [bc4d921](https://github.com/Leantime/leantime/commit/bc4d92189728fa3cb15b299be2a5ca8e2fae687b): haskey check in environment file
 * [1dcf5b1](https://github.com/Leantime/leantime/commit/1dcf5b13f695fd6368c6836829d463a52b08b3ab): Add redis
@@ -1243,9 +1243,9 @@ https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?ut
 * [c3bdd04](https://github.com/Leantime/leantime/commit/c3bdd044a7e30b73518e5e6398448f000658698e): [fix] news notification doesn't disappear bug
 * [ef6a6c6](https://github.com/Leantime/leantime/commit/ef6a6c63bd0c4ea346b0af87af42e12a0bea91b7): [fix] news notification doesn't disappear bug
 * [fc6cf2f](https://github.com/Leantime/leantime/commit/fc6cf2f95077573b2f6a5876c017183db0724497): [enhancement] Align initial filters to be the current week
-* [ab40097](https://github.com/Leantime/leantime/commit/ab400978b501e0665ef9154278f1bd5edeead286): [fix] disabling adding time registrations in previous timezones
+* [ab40097](https://github.com/Leantime/leantime/commit/ab400978b501e0665ef9154278f1bd5edeead286): [fix] disabling adding time registrations in previous time zones
 * [9f9adf0](https://github.com/Leantime/leantime/commit/9f9adf0fd0a9d2fec41cc8bd02c4ce1eb62cd273): [housekeeping] clean up whitespaces and comments
-* [2e9db31](https://github.com/Leantime/leantime/commit/2e9db313fee6c5380ebe04e34567cc6c97485103): [fix] timesheet entries that fall on midnight were not included
+* [2e9db31](https://github.com/Leantime/leantime/commit/2e9db313fee6c5380ebe04e34567cc6c97485103): [fix] Timesheet entries that fall on midnight were not included
 
 # Version: 3.1.3
 
@@ -1253,22 +1253,22 @@ https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?ut
 * [df3cef4](https://github.com/Leantime/leantime/commit/df3cef4c1339f7709447aa6c50955c2bd33348f1): [housekeeping] version bump
 * [ef21247](https://github.com/Leantime/leantime/commit/ef21247e3eb9d726111965596c4405a6803908ab): [housekeeping] Update changelog.yml
 * [27ba535](https://github.com/Leantime/leantime/commit/27ba535f7c8c494a909475354b204a5a9e964204): [Changelog CI] Add Changelog for Version 3.1.2
-* [8d5e47f](https://github.com/Leantime/leantime/commit/8d5e47f4c579983f0966bbb87c9ac84f16451a58): [featuer] New onboarding flow
-* [cb95173](https://github.com/Leantime/leantime/commit/cb95173932942d243344223589a5852c50cadecb): [fix] Delete user should remove project relationships
+* [8d5e47f](https://github.com/Leantime/leantime/commit/8d5e47f4c579983f0966bbb87c9ac84f16451a58): [feature] New onboarding flow
+* [cb95173](https://github.com/Leantime/leantime/commit/cb95173932942d243344223589a5852c50cadecb): [fix] Deleting a user should remove project relationships
 * [11f02af](https://github.com/Leantime/leantime/commit/11f02af475a33600ed70a5a54c362d1ac50667d3): [fix] Add servername as fallback for http_host
 * [739b5ec](https://github.com/Leantime/leantime/commit/739b5ec54c709e1b18be376a1ad272a1d6c5fd75): [enhancement] Update Language.php
-* [edfc9fc](https://github.com/Leantime/leantime/commit/edfc9fc219c71a08da779b98e2c75e328be5a797): [fix] #2473  custom themes and colors were not cleared/stored correctly
+* [edfc9fc](https://github.com/Leantime/leantime/commit/edfc9fc219c71a08da779b98e2c75e328be5a797): [fix] #2473  Custom themes and colors were not cleared/stored correctly
 * [f4304a5](https://github.com/Leantime/leantime/commit/f4304a5844d956800d550f4ccea2097d9b1d6d07): [fix] upgrade @sentry/webpack-plugin from 2.16.0 to 2.16.1
 
 # Version: 3.1.2
 * [b73d95f](https://github.com/Leantime/leantime/commit/b73d95ff91b5c1a26e35f96eee4f3ed378adaf68): [housekeeping] version bump
 * [fb6f64d](https://github.com/Leantime/leantime/commit/fb6f64ddfce1c60fa47b4938a499b90848d12d44): [Changelog CI] Add Changelog for Version 3.1.1
 * [b33e7be](https://github.com/Leantime/leantime/commit/b33e7bea1c17c7a27283145f3a9bfcdc1279bd31): [fix] global role check for plugin modules
-* [9fade7a](https://github.com/Leantime/leantime/commit/9fade7ac6867f0f204751911ea119c2bf73ebfc0): [fix] editors with manager project roles were seeing company menu point. (403 on click though)
+* [9fade7a](https://github.com/Leantime/leantime/commit/9fade7ac6867f0f204751911ea119c2bf73ebfc0): [fix] Editors with manager project roles were seeing the company menu point. (403 on click though)
 * [e51588d](https://github.com/Leantime/leantime/commit/e51588d65e4e50c8da558081dd645f13882105ac): [Changelog CI] Add Changelog for Version 3.1.1
 * [a95dd86](https://github.com/Leantime/leantime/commit/a95dd86c2e741db29d119a2fb3ff5d5cceb1f7db): [enhancement] add project id as return to addProject service method
 * [ba25f29](https://github.com/Leantime/leantime/commit/ba25f29689036ca72570e1bcc063274ecb351a49): [Changelog CI] Add Changelog for Version 3.1.1
-* [b2d22be](https://github.com/Leantime/leantime/commit/b2d22beb3d58678dbfee3cc01d980c256b80ab48): [fix] Select correct project based on session or current milestone id
+* [b2d22be](https://github.com/Leantime/leantime/commit/b2d22beb3d58678dbfee3cc01d980c256b80ab48): [fix] Select the correct project based on the session or current milestone ID
 * [b44fce9](https://github.com/Leantime/leantime/commit/b44fce98477967ba9563e27b6c34cb88823ff954): [fix] Milestone screen project selector showing all types.
 * [c1cfd20](https://github.com/Leantime/leantime/commit/c1cfd200349679b17f98f2a62a9054fa639b800b): [Changelog CI] Add Changelog for Version 3.1.1
 * [c73e858](https://github.com/Leantime/leantime/commit/c73e8586f8d5d16cd0db0571e21a4cf03045042c): [fix] upgrade @sentry/browser from 7.108.0 to 7.109.0
@@ -1277,7 +1277,7 @@ https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?ut
 * [92efc6f](https://github.com/Leantime/leantime/commit/92efc6f4f68445c0fac5ff0a3fbb72ed9b831ae3): Create changelogConfig.yml
 * [a0c6f99](https://github.com/Leantime/leantime/commit/a0c6f99be571ad8fdc81dcb0328f9f920f479498): Create changelog.yml
 * [ad0a182](https://github.com/Leantime/leantime/commit/ad0a182421de58538a5401cf38aead77f71e9eb3): [fix] upgrade gridstack from 10.1.1 to 10.1.2
-* [cd79ec1](https://github.com/Leantime/leantime/commit/cd79ec11dbecbb05346961b472652d74786d93a0): [enhancement] Added mew middleware methods to secure Leantime
+* [cd79ec1](https://github.com/Leantime/leantime/commit/cd79ec11dbecbb05346961b472652d74786d93a0): [enhancement] Added new middleware methods to secure Leantime
 * [fd5d7c4](https://github.com/Leantime/leantime/commit/fd5d7c496575f150754b60c64a4e593e3e11e386): [fix] Fix calendar dates
 * [aa79983](https://github.com/Leantime/leantime/commit/aa799830bcaa17232e37d77dda4185146507ef91): [fix] Fixes misc issues
   * Open redirect
