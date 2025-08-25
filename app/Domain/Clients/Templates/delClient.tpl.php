@@ -24,7 +24,7 @@ $client = $tpl->get('client');
         <?php echo $tpl->displayNotification() ?>
 
         <h4 class="widget widgettitle"><?php echo $tpl->__('subtitles.delete') ?></h4>
-        <div class="widgetcontent">
+        <div class="widgetcontent ">
 
             <form method="post">
 

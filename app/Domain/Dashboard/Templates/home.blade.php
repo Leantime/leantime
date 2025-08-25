@@ -6,7 +6,7 @@
 
     {!! $tpl->displayNotification() !!}
 
-    <div class="grid-stack">
+    <div class="grid-stack overflow-hidden ">
 
         @foreach($dashboardGrid as $widget)
 
@@ -25,7 +25,7 @@
                 alwaysVisible="{{ $widget->alwaysVisible }}"
                 id="widget_wrapper_{{ $widget->id }}"
             >
-                <div hx-get="{{$widget->widgetUrl }}"
+                <div  hx-get="{{$widget->widgetUrl }}"
                      hx-trigger="revealed"
                      id="{{ $widget->id }}"
                      class="tw-h-full"

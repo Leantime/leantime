@@ -15,7 +15,7 @@ $user = $tpl->get('user');
 </div><!--pageheader-->
 
 <div class="maincontent">
-    <div class="maincontentinner">
+    <div class="maincontentinner ">
 
         <?php echo $tpl->displayNotification() ?>
 
