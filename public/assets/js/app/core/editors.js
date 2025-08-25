@@ -214,7 +214,7 @@ leantime.editorController = (function () {
 
         var entityId = jQuery("input[name=id]").val();
 
-        if(entityId == undefined) {
+        if(!entityId) {
             entityId = "new";
         }
 
@@ -239,7 +239,7 @@ leantime.editorController = (function () {
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
                 autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+projectId+'-'+entityId+'-',
-                autosave_restore_when_empty: true,
+                autosave_restore_when_empty: entityId !== "new",
                 autosave_retention: '10m',
                 browser_spellcheck: true,
                 contextmenu: false,
