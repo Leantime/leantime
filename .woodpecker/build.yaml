@@ -1,0 +1,17 @@
+when:
+  - event: push
+    branch: chore/frankenphp-conversion
+
+steps:
+  - name: Build Sales Docs
+    image: woodpeckerci/plugin-docker-buildx:6.0.0
+    settings:
+      registry: http://registry.kisoft.me/v2
+      repo: registry.kisoft.me/leantime
+      platforms: windows/amd64,darwin/amd64,darwin/arm64,freebsd/amd64,linux/amd64,linux/arm64/v8
+      dockerfile: .docker/franken.dockerfile
+      auto_tag: true
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
