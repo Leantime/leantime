@@ -19,6 +19,9 @@ build: install-deps clear-cache
 	npx mix --production
 	node generateBlocklist.mjs
 
+docker:
+	docker build -t leantime-frankenphp:latest -f .docker/franken.dockerfile .
+
 build-dev: install-deps-dev clear-cache
 	npx mix
 	node generateBlocklist.mjs
