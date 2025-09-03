@@ -27,14 +27,14 @@ jobs:
           fetch-depth: 0
 
       - name: Universal Version Bump
-        uses: taj54/universal-version-bump@v0.13.2
+        uses: taj54/universal-version-bump@v0.13.3
         with:
           release_type: ${{ inputs.release_type }}
           target_platform: 'custom'
           bump_targets: |
             [
               { "path": "package.json", "variable": "version" },
-              { "path": "app\core\Configuration\AppSettings.php", "variable": "$appVersion" }
+              { "path": "app\core\Configuration\AppSettings.php", "variable": "appVersion" }
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
