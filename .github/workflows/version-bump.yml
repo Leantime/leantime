@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
       - name: Universal Version Bump
-        uses: taj54/universal-version-bump@v0.13.3
+        uses: taj54/universal-version-bump@v0.14.0
         with:
           release_type: ${{ inputs.release_type }}
           target_platform: 'custom'
