@@ -1187,7 +1187,7 @@ class Tickets
         $searchParams = ['sprint' => '', 'type' => 'milestone', 'clients' => $clientId];
 
         // Apply search criteria if provided
-        if (!empty($searchCriteria)) {
+        if (! empty($searchCriteria)) {
             // Map search criteria to repository parameters
             if (isset($searchCriteria['status']) && $searchCriteria['status'] !== '') {
                 $searchParams['status'] = $searchCriteria['status'];
