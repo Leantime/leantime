@@ -25,11 +25,11 @@ jobs:
         run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
       - name: build artifacts
         run: make package
-        
+
       - name: Extract Repo Attributes
         id: attrs
         uses: ibnesayeed/repo-attrs@master
-      
+
       - name: release
         uses: ncipollo/release-action@v1
         id: create_release
@@ -38,7 +38,7 @@ jobs:
           prerelease: false
           name: Leantime v${{ steps.version.outputs.version }}
           tag: v${{ steps.version.outputs.version }}
-          generateReleaseNotes: false
+          generateReleaseNotes: true
           makeLatest: true
           body: |
             ## Changes in this Release
@@ -60,7 +60,7 @@ jobs:
             ```
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      
+
       - name: upload zip
         uses: actions/upload-release-asset@v1
         env:
@@ -70,7 +70,7 @@ jobs:
           asset_path: ./target/Leantime-v${{ steps.version.outputs.version }}.zip
           asset_name: Leantime-v${{ steps.version.outputs.version }}.zip
           asset_content_type: application/gzip
-      
+
       - name: upload tar
         uses: actions/upload-release-asset@v1
         env:
@@ -80,14 +80,14 @@ jobs:
           asset_path: ./target/Leantime-v${{ steps.version.outputs.version }}.tar.gz
           asset_name: Leantime-v${{ steps.version.outputs.version }}.tar.gz
           asset_content_type: application/gzip
-      
+
       - name: Run latest-tag
         uses: EndBug/latest-tag@latest
         with:
           # You can change the name of the tag or branch with this input.
           # Default: 'latest'
           ref: latest
-        
+
           # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
           # Default: ''
-          description: Latest Release of Leantime. 
+          description: Latest Release of Leantime.
