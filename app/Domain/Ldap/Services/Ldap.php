@@ -79,21 +79,30 @@ class Ldap
             $this->ldapDomain = $this->config->ldapDomain;
             $this->ldapUri = $this->config->ldapUri;
 
-            if (! is_object($this->ldapLtGroupAssignments)) {
-                Log::error('LDAP: Group Assignment array failed to parse. Please check for valid json');
+            if (! is_object($this->ldapLtGroupAssignments) || json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('LDAP: Group Assignment array failed to parse. Please check for valid json. Error: '.json_last_error_msg());
+                $this->ldapLtGroupAssignments = [];
             }
 
-            if (! is_object($this->ldapKeys)) {
-                Log::error('LDAP: Ldap Keys failed to parse. Please check for valid json');
+            if (! is_object($this->ldapKeys) || json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('LDAP: Ldap Keys failed to parse. Please check for valid json. Error: '.json_last_error_msg());
+                $this->ldapKeys = (object) [
+                    'username' => 'uid',
+                    'groups' => 'memberof',
+                    'email' => 'mail',
+                    'firstname' => 'displayname',
+                    'lastname' => '',
+                    'phone' => 'telephonenumber',
+                    'jobTitle' => 'title',
+                    'jobLevel' => 'level',
+                    'department' => 'department',
+                ];
             }
         }
 
     }
 
-    /**
-     * @return bool|void
-     */
-    public function connect(): ?bool
+    public function connect(): bool
     {
 
         if (! $this->config->useLdap) {
@@ -163,10 +172,7 @@ class Ldap
         return false;
     }
 
-    /**
-     * @return mixed|string|void
-     */
-    public function getEmail($username)
+    public function getEmail(string $username): string
     {
         if (! $this->ldapConnection) {
             Log::error('No connection, last error: '.ldap_error($this->ldapConnection));
@@ -189,10 +195,7 @@ class Ldap
         return isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
     }
 
-    /**
-     * @return array|false|void
-     */
-    public function getSingleUser($username)
+    public function getSingleUser(string $username): array|false
     {
 
         if (! $this->ldapConnection) {
@@ -221,10 +224,12 @@ class Ldap
         // Find Role
         $role = $this->defaultRoleKey;
 
-        foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
-            foreach ($this->ldapLtGroupAssignments as $key => $row) {
-                if ($row->ldapRole !== '' && (int) $key > $role && strpos($grps, $row->ldapRole)) {
-                    $role = $key;
+        if (isset($entries[0][$this->ldapKeys->groups]) && is_array($entries[0][$this->ldapKeys->groups])) {
+            foreach ($entries[0][$this->ldapKeys->groups] as $grps) {
+                foreach ($this->ldapLtGroupAssignments as $key => $row) {
+                    if ($row->ldapRole !== '' && (int) $key > $role && strpos($grps, $row->ldapRole) !== false) {
+                        $role = $key;
+                    }
                 }
             }
         }
@@ -274,10 +279,7 @@ class Ldap
         ];
     }
 
-    /**
-     * @return mixed|string
-     */
-    public function extractLdapFromUsername($username): mixed
+    public function extractLdapFromUsername(string $username): string
     {
 
         $getLdap = explode('@', $username);
@@ -289,13 +291,7 @@ class Ldap
         return '';
     }
 
-    /**
-     * @return array|false|void
-     */
-    /**
-     * @return array|false|void
-     */
-    public function getAllMembers()
+    public function getAllMembers(): array|false
     {
 
         if (function_exists('ldap_search')) {
@@ -329,7 +325,7 @@ class Ldap
     /**
      * @throws BindingResolutionException
      */
-    public function upsertUsers($ldapUsers): bool
+    public function upsertUsers(array $ldapUsers): bool
     {
 
         $userRepo = app()->make(UserRepository::class);
