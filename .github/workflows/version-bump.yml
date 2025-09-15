@@ -34,7 +34,7 @@ jobs:
           bump_targets: |
             [
               { "path": "package.json", "variable": "version" },
-              { "path": "app\core\Configuration\AppSettings.php", "variable": "appVersion" }
+              { "path": "app/Core/Configuration/AppSettings.php", "variable": "appVersion" }
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
