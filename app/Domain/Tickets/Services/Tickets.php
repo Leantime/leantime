@@ -1181,10 +1181,35 @@ class Tickets
     /**
      * @api
      */
-    public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = 'duedate', bool $includeTasks = false, int $clientId = 0): false|array
+    public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = 'duedate', bool $includeTasks = false, int $clientId = 0, array $searchCriteria = []): false|array
     {
 
-        $allProjectMilestones = $this->ticketRepository->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'clients' => $clientId]);
+        $searchParams = ['sprint' => '', 'type' => 'milestone', 'clients' => $clientId];
+
+        // Apply search criteria if provided
+        if (!empty($searchCriteria)) {
+            // Map search criteria to repository parameters
+            if (isset($searchCriteria['status']) && $searchCriteria['status'] !== '') {
+                $searchParams['status'] = $searchCriteria['status'];
+            }
+            if (isset($searchCriteria['users']) && $searchCriteria['users'] !== '') {
+                $searchParams['users'] = $searchCriteria['users'];
+            }
+            if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] !== '') {
+                $searchParams['milestone'] = $searchCriteria['milestone'];
+            }
+            if (isset($searchCriteria['term']) && $searchCriteria['term'] !== '') {
+                $searchParams['term'] = $searchCriteria['term'];
+            }
+            if (isset($searchCriteria['priority']) && $searchCriteria['priority'] !== '') {
+                $searchParams['priority'] = $searchCriteria['priority'];
+            }
+            if (isset($searchCriteria['currentProject']) && $searchCriteria['currentProject'] !== '') {
+                $searchParams['currentProject'] = $searchCriteria['currentProject'];
+            }
+        }
+
+        $allProjectMilestones = $this->ticketRepository->getAllMilestones($searchParams);
 
         return $allProjectMilestones;
     }

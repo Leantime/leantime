@@ -72,7 +72,7 @@ class ShowAllMilestonesOverview extends Controller
             $searchCriteria['status'] = 'not_done';
         }
 
-        $this->tpl->assign('allTickets', $this->ticketService->getAllMilestonesOverview(false, 'duedate', false, $clientId));
+        $this->tpl->assign('allTickets', $this->ticketService->getAllMilestonesOverview(false, 'duedate', false, $clientId, $searchCriteria));
         $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
         $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
         $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
@@ -89,7 +89,12 @@ class ShowAllMilestonesOverview extends Controller
         $this->tpl->assign('currentClient', $clientId);
 
         $this->tpl->assign('users', $this->userService->getAll());
-        $this->tpl->assign('milestones', $this->ticketService->getAllMilestonesOverview());
+        $this->tpl->assign('milestones', $this->ticketService->getAllMilestones([
+            'sprint' => '',
+            'type' => 'milestone',
+            'currentProject' => session('currentProject'),
+        ]));
+        $this->tpl->assign('types', $this->ticketService->getTicketTypes());
 
         return $this->tpl->display('tickets.showAllMilestonesOverview');
     }
