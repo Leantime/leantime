@@ -34,6 +34,11 @@ class News extends HtmxController
      */
     public function get()
     {
+        if (! env('LEAN_NEWS_ENABLED', true)) {
+            $this->tpl->assign('rss', 'News service is disabled');
+
+            return;
+        }
 
         $news = false;
         try {
