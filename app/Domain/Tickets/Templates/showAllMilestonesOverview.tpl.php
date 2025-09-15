@@ -38,6 +38,11 @@ $size = floor(100 / $numberofColumns);
                 <div class="col-md-5">
                     <?php
                     $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+$tpl->displaySubmodule('tickets-ticketNewBtn');
+
+$tpl->displaySubmodule('tickets-ticketFilter');
+
 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 ?>
                 </div>

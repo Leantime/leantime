@@ -46,6 +46,9 @@ class News
 
     public function getLatest(int $userId): false|\SimpleXMLElement
     {
+        if (! env('LEAN_NEWS_ENABLED', true)) {
+            return false;
+        }
 
         try {
             $rss = $this->getFeed();
@@ -67,6 +70,9 @@ class News
 
     public function hasNews(int $userId): bool
     {
+        if (! env('LEAN_NEWS_ENABLED', true)) {
+            return false;
+        }
 
         try {
             $rss = $this->getFeed();
@@ -108,7 +114,7 @@ class News
         $client = new \GuzzleHttp\Client;
         $response = $client->request('GET', 'https://leantime.io/category/leantime-updates/feature-updates/feed/', [
             'headers' => ['Accept' => 'application/xml'],
-            'timeout' => 20,
+            'timeout' => 5,
         ])->getBody()->getContents();
 
         if (function_exists('simplexml_load_string')) {

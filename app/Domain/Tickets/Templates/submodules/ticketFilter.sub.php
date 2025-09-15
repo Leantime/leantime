@@ -140,7 +140,7 @@ $taskToggle = $tpl->get('enableTaskTypeToggle');
                 <div class="">
                     <label class="inline"><?= $tpl->__('label.todo_status') ?></label>
                     <div class="form-group">
-                        <select multiple="multiple"  data-placeholder="<?= $tpl->__('input.placeholders.filter_by_status')?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
+                        <select multiple="multiple"  data-placeholder="<?= $tpl->__('input.placeholders.filter_by_status')?>" name="status"  multiple="multiple" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">All Statuses</option>
                             <option value="not_done" <?php if (
                                 $searchCriteria['status'] !== false && str_contains(

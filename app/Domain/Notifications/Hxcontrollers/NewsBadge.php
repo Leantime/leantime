@@ -33,6 +33,11 @@ class NewsBadge extends HtmxController
      */
     public function get()
     {
+        if (! env('LEAN_NEWS_ENABLED', true)) {
+            $this->tpl->assign('hasNews', false);
+
+            return;
+        }
 
         try {
             $hasNews = $this->newsService->hasNews(session('userdata.id'));

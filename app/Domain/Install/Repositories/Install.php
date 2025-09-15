@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Install\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -24,37 +26,14 @@ class Install
     public int $id;
 
     /**
-     * database pdo object
+     * Laravel database connection interface
      */
-    private ?PDO $database = null;
+    private ConnectionInterface $connection;
 
     /**
-     * database username
-     *
-     * @var string
+     * Laravel database manager for creating connections
      */
-    private mixed $user = '';
-
-    /**
-     * ddatabase password
-     *
-     * @var string
-     */
-    private mixed $password = '';
-
-    /**
-     * database host
-     *
-     * @var string
-     */
-    private mixed $host = '';
-
-    /**
-     * database port
-     *
-     * @var string
-     */
-    private mixed $port = '3306';
+    private DatabaseManager $dbManager;
 
     /**
      * db update scripts listed out by version number with leading zeros A.BB.CC => ABBCC
@@ -106,33 +85,27 @@ class Install
     private string|AppSettingCore $settings;
 
     /**
-     * __construct - get database connection
+     * __construct - get database connection using Laravel's database manager
      */
-    public function __construct(Environment $config, AppSettingCore $settings)
-    {
+    public function __construct(
+        Environment $config,
+        AppSettingCore $settings,
+        DatabaseManager $dbManager
+    ) {
         // Some scripts might take a long time to execute. Set timeout to 5minutes
         ini_set('max_execution_time', 300);
 
         $this->config = $config;
         $this->settings = $settings;
+        $this->dbManager = $dbManager;
 
-        $this->user = $this->config->dbUser;
-        $this->password = $this->config->dbPassword;
-        $this->host = $this->config->dbHost;
-        $this->port = $this->config->dbPort ?? 3306;
-
+        // Use Laravel's database connection for consistency with the rest of the application
         try {
-            $driver_options = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'];
-            $this->database = new PDO(
-                'mysql:host='.$this->host.';port='.$this->port,
-                $this->user,
-                $this->password,
-                $driver_options
-            );
-            $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            Log::error($e);
-            echo $e->getMessage();
+            $this->connection = $this->dbManager->connection('mysql');
+        } catch (\Exception $e) {
+            Log::error('Failed to establish database connection during installation: '.$e->getMessage());
+            // During installation, we may need to create a temporary connection without database selection
+            $this->createTemporaryConnection();
         }
     }
 
@@ -141,7 +114,38 @@ class Install
      */
     public function getDBObject(): ?PDO
     {
-        return $this->database;
+        return $this->connection?->getPdo();
+    }
+
+    /**
+     * Create a temporary database connection for installation purposes
+     * This is used when the main database connection fails during installation
+     */
+    private function createTemporaryConnection(): void
+    {
+        try {
+            // Create a temporary connection without selecting a specific database
+            $config = [
+                'driver' => 'mysql',
+                'host' => $this->config->dbHost,
+                'port' => $this->config->dbPort ?? 3306,
+                'username' => $this->config->dbUser,
+                'password' => $this->config->dbPassword,
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'options' => [
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"',
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                ],
+            ];
+
+            // Use Laravel's DB manager to create a temporary connection
+            config(['database.connections.install_temp' => $config]);
+            $this->connection = $this->dbManager->connection('install_temp');
+        } catch (\Exception $e) {
+            Log::error('Failed to create temporary database connection: '.$e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -156,14 +160,10 @@ class Install
 
         try {
 
-            $this->database->query('Use `'.$this->config->dbDatabase.'`;');
+            // Use Laravel's database connection
+            $this->connection->statement('USE `'.$this->config->dbDatabase.'`');
 
-            $stmn = $this->database->prepare('SELECT COUNT(*) FROM zp_user');
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-
-            $stmn->closeCursor();
+            $count = $this->connection->table('zp_user')->count();
 
             Cache::set('isInstalled', true);
 
@@ -171,26 +171,6 @@ class Install
         } catch (PDOException $e) {
 
             Cache::forget('isInstalled');
-
-            Log::error($e);
-
-            return false;
-        }
-    }
-
-    public function createDB($dbName): bool
-    {
-
-        try {
-            $stmn = $this->database->prepare('CREATE SCHEMA :schemaName ;');
-            $stmn->bindValue(':dbName', $dbName, PDO::PARAM_STR);
-
-            $stmn->execute();
-
-            $stmn->closeCursor();
-
-            return true;
-        } catch (PDOException $e) {
 
             Log::error($e);
 
@@ -210,14 +190,18 @@ class Install
         $sql = $this->sqlPrep();
 
         try {
-            if ($db == null) {
-                $this->database->query('Use `'.$this->config->dbDatabase.'`;');
-            } else {
-                $this->database->query('Use `'.$db.'`;');
-            }
+            // Use Laravel's database connection
+            $dbName = $db ?: $this->config->dbDatabase;
+            $this->connection->statement('USE `'.$dbName.'`');
 
-            $stmn = $this->database->prepare($sql);
             $pwReset = Str::random(32);
+            session()->put('pwReset', $pwReset);
+
+            // Use PDO for multi-statement SQL with parameter binding
+            // We need to use PDO directly because Laravel's statement() method
+            // may not handle multi-statement SQL properly
+            $pdo = $this->connection->getPdo();
+            $stmn = $pdo->prepare($sql);
 
             $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
@@ -225,8 +209,6 @@ class Install
             $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);
             $stmn->bindValue(':company', $values['company'], PDO::PARAM_STR);
             $stmn->bindValue(':pwReset', $pwReset, PDO::PARAM_STR);
-
-            session()->put('pwReset', $pwReset);
 
             $stmn->execute();
 
@@ -257,7 +239,7 @@ class Install
 
         $errors = [];
 
-        $this->database->query('Use `'.$this->config->dbDatabase.'`;');
+        $this->connection->statement('USE `'.$this->config->dbDatabase.'`');
 
         $versionArray = explode('.', $this->settings->dbVersion);
         if (is_array($versionArray) && count($versionArray) == 3) {
@@ -927,9 +909,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -957,9 +938,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1009,9 +989,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1036,9 +1015,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1063,9 +1041,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1093,9 +1070,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1119,9 +1095,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1145,9 +1120,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1171,9 +1145,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1199,9 +1172,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1237,9 +1209,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1281,9 +1252,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1324,9 +1294,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1387,9 +1356,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1421,9 +1389,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1453,9 +1420,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1494,9 +1460,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1535,9 +1500,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1572,9 +1536,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1607,9 +1570,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1662,9 +1624,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1690,9 +1651,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1723,9 +1683,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1752,9 +1711,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1779,12 +1737,11 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
-                array_push($errors, "$statement Failed: {$e->getMessage()}");
+                $errors[] = "$statement Failed: {$e->getMessage()}";
             }
         }
 
@@ -1809,9 +1766,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1844,9 +1800,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1886,9 +1841,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 array_push($errors, $statement.' Failed:'.$e->getMessage());
@@ -1914,9 +1868,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
@@ -1941,9 +1894,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
@@ -2005,9 +1957,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
@@ -2032,9 +1983,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
             }
@@ -2116,9 +2066,8 @@ class Install
 
         foreach ($sql as $statement) {
             try {
-                $stmn = $this->database->prepare($statement);
-                $stmn->execute();
-            } catch (PDOException $e) {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
                 Log::error($statement.' Failed:'.$e->getMessage());
                 Log::error($e);
                 // Don't fail the entire migration for duplicate indexes
