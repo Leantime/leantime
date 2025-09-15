@@ -16,7 +16,7 @@
     </a>
 </div>
 
-<div class="row" style="height:100vh; width: 95vw;">
+<div class="row" style="min-height:100vh; max-width: 98vw; height: auto;">
     <div class="col-md-4 hidden-phone regLeft">
 
         <div class="logo">

@@ -13,6 +13,12 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
+
+    .tab-primary.ui-tabs .ui-tabs-nav {
+        padding:0px;
+        height:auto;
+    }
+
      .leftmenu .nav-tabs .projectselector .projectSelectorTabs .scrollingTab {
         height:auto;
         overflow:scroll;
@@ -96,7 +102,7 @@ min-width: 1200px
 
     .mainwrapper .headmenu,
     .mainwrapper.menuclosed .headmenu {
-        margin-left: 15px;
+        margin-left: 10px;
     }
 
 
@@ -193,9 +199,40 @@ min-width: 1200px
 
     .loginpage .header {
         margin-left: 0 !important;
-        /* margin-bottom: 10px; */
-
         width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Fix mobile login scrollbar issues */
+    body.loginpage {
+        overflow-x: hidden;
+        max-width: 100vw;
+        min-height: 100vh;
+    }
+
+    .loginpage .row {
+        margin: 0;
+        width: 100vw;
+        max-width: 100vw;
+        min-height: 100vh;
+        height: auto;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        padding: 0;
+    }
+
+    .loginpage .regRight {
+        padding-left: 10px;
+        padding-right: 10px;
+        max-width: 100%;
+    }
+
+    .regcontent {
+        max-width: 100vw;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-sizing: border-box;
     }
 
     .headmenu > li > a {
@@ -469,16 +506,35 @@ min-width: 1200px
         height: 50px;
     }
 
+    /* Fix header navigation icon overflow */
+    .headmenu {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE 10+ */
+    }
+
+    .headmenu::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
     .headmenu > li {
         padding: unset;
-        width: 40px;
+        width: 36px;
+        min-width: 36px;
+        flex-shrink: 0;
     }
 
     .headmenu > li > a {
-        padding: 0 5px;
-        line-height:50px;
-        text-align:center;
-
+        padding: 0 3px;
+        line-height: 50px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px; /* Touch-friendly minimum */
     }
 
     .userloggedinfo .userinfo a.profileHandler {
@@ -492,9 +548,9 @@ min-width: 1200px
     }
 
     .headmenu > li > a .head-icon {
-        width: 30px;
-        height: 30px;
+        width: 28px;
         background-size: cover;
+        flex-shrink: 0;
     }
 
     .headmenu > li > a .headmenu-label {
@@ -779,6 +835,189 @@ min-width: 1200px
 
     .userinfo .fa-caret-down {
         display:none;
+    }
+
+    /* Kanban board mobile optimizations */
+    .kanbanBoard .row {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+    }
+
+    .kanbanBoard .row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .kanbanBoard .column {
+        min-width: 280px;
+        flex-shrink: 0;
+        margin-right: 10px;
+    }
+
+    .kanbanBoard .column:last-child {
+        margin-right: 0;
+    }
+
+    /* Improve touch targets for mobile */
+    .ticketBox {
+        min-height: 44px;
+        cursor: pointer;
+    }
+
+    .ticketBox .dropdown > a {
+        min-height: 44px;
+        padding: 8px 12px;
+    }
+
+    /* Table responsive improvements */
+    .maincontentinner .dataTables_wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .maincontentinner .table {
+        min-width: 500px;
+    }
+
+    .maincontentinner .dataTables_filter {
+        position: static;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        right: auto;
+        text-align: left;
+    }
+
+    .maincontentinner .dataTables_filter input {
+        width: 100%;
+        max-width: 200px;
+        margin: 5px 0 0 0;
+    }
+
+    /* Project overview mobile improvements */
+    .col-md-4, .col-md-8 {
+        margin-bottom: 15px;
+    }
+
+    .rightpanel {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Better spacing for mobile cards/widgets */
+    .maincontentinner .row > div {
+        margin-bottom: 15px;
+    }
+
+    /* Mobile content padding optimization - reclaim horizontal space */
+    .maincontent {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .rightpanel {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    /* Fix login page layout and text cutoff issues */
+    .loginpage .regRight {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: visible;
+    }
+
+    /* Fix login form positioning - key fix for cutoff issues */
+    .loginpage .row .regRight {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .loginpage .regpanel {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    /* Ensure form elements don't overflow and have proper spacing */
+    .loginpage input[type="text"],
+    .loginpage input[type="password"],
+    .loginpage input[type="email"],
+    .loginpage .form-control {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    /* Fix submit button */
+    .loginpage input[type="submit"],
+    .loginpage .btn {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    /* Fix "Forgot password?" link positioning and visibility */
+    .loginpage form {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Ensure the forgot password link container has proper spacing */
+    .loginpage .forgotPwContainer,
+    .loginpage form > div {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        padding-right: 0;
+        overflow: visible;
+    }
+
+    .loginpage .forgotPw,
+    .loginpage form a[href*="resetPw"] {
+        display: inline-block !important;
+        float: right;
+        clear: both;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        padding-right: 0;
+        white-space: nowrap;
+        font-size: 14px;
+        color: #0866c6;
+        text-decoration: none;
+    }
+
+    /* Ensure form fields container has proper spacing */
+    .loginpage .regpanelinner {
+        padding: 10px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    .loginpage .regpanelinner > div {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 15px;
+        padding: 0;
     }
 }
 
@@ -1177,9 +1416,71 @@ min-width: 1200px
         padding-left: 5px
     }
 
+    /* Fix modal responsive issues and content cutoff */
     .nyroModalCont {
-        width: 90% !important;
+        width: 95% !important;
         left: 2.5% !important;
+        max-width: 100vw !important;
+        padding: 20px 10px !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box;
+    }
+
+    /* Override fixed min-width from base CSS - key fix for task modal */
+    .nyroModalCont .row .regRight {
+        min-width: auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Ensure modal close button stays visible */
+    .nyroModalCloseButton {
+        right: 15px !important;
+        top: 15px !important;
+        z-index: 101;
+    }
+
+    /* Make modal content scrollable if needed */
+    .nyroModalCont .modal-icons {
+        margin-right: 40px;
+    }
+
+    /* Fix modal form elements */
+    .nyroModalCont input,
+    .nyroModalCont select,
+    .nyroModalCont textarea {
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Additional fixes for task modal layout */
+    .nyroModalCont .tabbable {
+        width: 100% !important;
+        overflow-x: auto;
+    }
+
+    .nyroModalCont .tab-content {
+        padding: 10px 5px;
+    }
+
+    /* Ensure dropdowns and form controls are mobile-friendly */
+    .nyroModalCont .form-control,
+    .nyroModalCont .dropdown-menu {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Fix sidebar layout in task modal */
+    .nyroModalCont .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .nyroModalCont .row > div {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
     }
 
     .maincontentinner {
