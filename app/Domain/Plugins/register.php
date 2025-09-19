@@ -33,5 +33,5 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
 
                 $pluginsService->disablePluginNotifyOwner($plugin->id);
             });
-    })->name('plugins:checkLicense')->everyDay();
+    })->name('plugins:checkLicense')->daily();
 });
