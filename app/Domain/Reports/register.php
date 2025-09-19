@@ -32,9 +32,9 @@ EventDispatcher::add_event_listener('leantime.core.console.consolekernel.schedul
             Log::error($e);
         }
 
-    })->name('reports:telemetry')->everyMinute();
+    })->name('reports:telemetry')->daily();
 
     $scheduler->call(function () use ($reportService) {
         $reportService->cronDailyIngestion();
-    })->name('reports:dailyIngestion')->everyMinute();
+    })->name('reports:dailyIngestion')->daily();
 });
