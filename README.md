@@ -186,11 +186,11 @@ afterwards, run
 
 ```make run-dev```
 
-this will start the development server on port 8090.
+this will start the development server on port 5080.
 
-The dev environment provides a MySQL server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
+The dev environment provides a MySQL server, mail server, s3 server, and should be good to go for your needs out of the box. The basic configuration of the development environment is already defined in the composer file. You can create .env file inside of `config/.env` to augment the base configuration by setting some of the configs out of sample.env). **Important: Don't update the database information as this will disconnect the app from the docker database**. The applications you get are as follows
 
-* [http://localhost:8090](http://localhost:8090) : leantime
+* [http://localhost:8090](http://localhost:5080) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
 * [http://localhost:8082](http://localhost:8082) : phpMyAdmin(authentication ``leantime:leantime``) to check the DB schema and data
 * [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
