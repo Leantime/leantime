@@ -1525,7 +1525,8 @@ class Tickets
 						dependingTicketId,
                         milestoneid,
 						sortindex,
-						kanbanSortindex
+						kanbanSortindex,
+                        modified
 				) VALUES (
 						:headline,
 						:type,
@@ -1548,7 +1549,8 @@ class Tickets
 						:dependingTicketId,
 				         :milestoneid,
 						:sortIndex,
-						0
+						0,
+                        :modified
 				)';
 
         $stmn = $this->db->database->prepare($query);
@@ -1574,6 +1576,7 @@ class Tickets
         $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
         $stmn->bindValue(':sortIndex', $values['sortIndex'] ?? '', PDO::PARAM_STR);
         $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $depending = $values['dependingTicketId'] ?? '';
 
@@ -1582,6 +1585,7 @@ class Tickets
         $milestoneId = $values['milestoneid'] ?? '';
 
         $stmn->bindValue(':milestoneid', $milestoneId, PDO::PARAM_STR);
+
 
         $stmn->execute();
 
@@ -1652,7 +1656,8 @@ class Tickets
 				editTo = :editTo,
 				acceptanceCriteria = :acceptanceCriteria,
 				dependingTicketId = :dependingTicketId,
-				milestoneid = :milestoneid
+                milestoneid = :milestoneid,
+                modified = :modified
 			WHERE id = :id LIMIT 1';
 
         $stmn = $this->db->database->prepare($query);
@@ -1677,6 +1682,7 @@ class Tickets
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
         $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
         $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         $result = $stmn->execute();
 
@@ -1716,9 +1722,11 @@ class Tickets
 
         static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
 
-        return $stmn->execute();
+        $result = $stmn->execute();
 
         $stmn->closeCursor();
+
+        return $result;
     }
 
     public function addTicketChange($userId, $ticketId, $values): void
