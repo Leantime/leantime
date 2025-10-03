@@ -1613,7 +1613,7 @@ class Tickets
             }
         }
 
-        $sql .= 'id=:id, modified = :modified WHERE id=:id LIMIT 1';
+        $sql .= 'id=:id, modified=:modified WHERE id=:id LIMIT 1';
 
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
@@ -1702,7 +1702,7 @@ class Tickets
 					SET
 						kanbanSortIndex = :sortIndex,
 						status = :status,
-					        modified = :modified
+                        modified = :modified
 					WHERE id = :ticketId
 					LIMIT 1';
 
@@ -1715,7 +1715,7 @@ class Tickets
             $query = 'UPDATE zp_tickets
 					SET
 						status = :status,
-    					        modified = :modified
+                        modified = :modified
 					WHERE id = :ticketId
 					LIMIT 1';
 
