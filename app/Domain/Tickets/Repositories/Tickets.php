@@ -1613,10 +1613,11 @@ class Tickets
             }
         }
 
-        $sql .= 'id=:id WHERE id=:id LIMIT 1';
+        $sql .= 'id=:id, modified = :modified WHERE id=:id LIMIT 1';
 
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
 
         foreach ($params as $key => $value) {
             $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
@@ -1700,7 +1701,8 @@ class Tickets
             $query = 'UPDATE zp_tickets
 					SET
 						kanbanSortIndex = :sortIndex,
-						status = :status
+						status = :status,
+					        modified = :modified
 					WHERE id = :ticketId
 					LIMIT 1';
 
@@ -1708,16 +1710,19 @@ class Tickets
             $stmn->bindValue(':status', $status, PDO::PARAM_INT);
             $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
         } else {
             $query = 'UPDATE zp_tickets
 					SET
-						status = :status
+						status = :status,
+    					        modified = :modified
 					WHERE id = :ticketId
 					LIMIT 1';
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':status', $status, PDO::PARAM_INT);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
+            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
         }
 
         static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
@@ -1826,11 +1831,13 @@ class Tickets
 
         $query = "UPDATE zp_tickets
                 SET
-                    milestoneid = ''
+                    milestoneid = '',
+                    modified = :modified
                 WHERE milestoneid = :id";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
         $stmn->execute();
 
         $query = "UPDATE zp_canvas_items
