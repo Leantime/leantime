@@ -1576,7 +1576,7 @@ class Tickets
         $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
         $stmn->bindValue(':sortIndex', $values['sortIndex'] ?? '', PDO::PARAM_STR);
         $stmn->bindValue(':editorId', $values['editorId'], PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
 
         $depending = $values['dependingTicketId'] ?? '';
 
@@ -1617,7 +1617,7 @@ class Tickets
 
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
 
         foreach ($params as $key => $value) {
             $stmn->bindValue(':'.DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
@@ -1683,7 +1683,7 @@ class Tickets
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
         $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
         $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
 
         $result = $stmn->execute();
 
@@ -1710,7 +1710,7 @@ class Tickets
             $stmn->bindValue(':status', $status, PDO::PARAM_INT);
             $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
         } else {
             $query = 'UPDATE zp_tickets
 					SET
@@ -1722,7 +1722,7 @@ class Tickets
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':status', $status, PDO::PARAM_INT);
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-            $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
         }
 
         static::dispatch_event('ticketStatusUpdate', ['ticketId' => $ticketId, 'status' => $status, 'action' => 'ticketStatusUpdate', 'handler' => $handler]);
@@ -1837,7 +1837,7 @@ class Tickets
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmn->bindValue(':modified', dtHelper()->userNow()->formatDateTimeForDb(), PDO::PARAM_STR);
         $stmn->execute();
 
         $query = "UPDATE zp_canvas_items
