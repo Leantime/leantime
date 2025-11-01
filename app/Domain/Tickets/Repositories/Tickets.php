@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\EntityRelationshipEnum;
 use Leantime\Domain\Users\Services\Users;
 use PDO;
 
@@ -415,6 +416,7 @@ class Tickets
 
         $query .= "
             LEFT JOIN zp_relationuserproject AS rup ON zp_tickets.projectId = rup.projectId AND rup.userId = :userId
+            LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.entityA = zp_tickets.id  AND er.relationship = '" .EntityRelationshipEnum::Collaborator->value . "'
             WHERE (
                 rup.projectId IS NOT NULL
                 OR zp_projects.psettings = 'all'
@@ -443,6 +445,7 @@ class Tickets
         if (isset($searchCriteria['users']) && $searchCriteria['users'] != '') {
             $editorIdIn = DbCore::arrayToPdoBindingString('users', count(explode(',', $searchCriteria['users'])));
             $query .= ' AND zp_tickets.editorId IN('.$editorIdIn.')';
+            $query .= ' OR er.entityB IN('.$editorIdIn.')';
         }
 
         if (isset($searchCriteria['milestone']) && $searchCriteria['milestone'] != '') {
@@ -658,6 +661,7 @@ class Tickets
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
                     LEFT JOIN zp_tickets AS milestones ON zp_tickets.milestoneid = milestones.id
+                    LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.relationship = '$EntityRelationshipEnum::Collaborator->value' AND er.entityA = zp_tickets.id
                       WHERE (
                         zp_tickets.projectId IN (SELECT projectId FROM zp_relationuserproject WHERE zp_relationuserproject.userId = :requestorId)
                         OR zp_projects.psettings = 'all'
@@ -673,6 +677,7 @@ class Tickets
 
         if (isset($userId) && $userId > 0) {
             $query .= ' AND zp_tickets.editorId = :userId';
+            $query .= ' OR er.entityB = :userId';
         }
 
         if (count($types) > 0) {
@@ -916,6 +921,10 @@ class Tickets
         $stmn->execute();
         $values = $stmn->fetchObject('\Leantime\Domain\Tickets\Models\Tickets');
         $stmn->closeCursor();
+
+        if ($values) {
+            $values->collaborators = $this->getCollaborators($id);
+        }
 
         return $values;
     }
@@ -1591,8 +1600,14 @@ class Tickets
 
         $stmn->closeCursor();
 
-        if ($this->db->database->lastInsertId() !== false) {
-            return intval($this->db->database->lastInsertId());
+        $ticketId = $this->db->database->lastInsertId();
+
+        if ($ticketId !== false) {
+            $ticketId = intval($ticketId);
+            if (!empty($values['collaborators'])) {
+                $this->addCollaborators($ticketId, $values['collaborators'], $values['userId']);
+            }
+            return $ticketId;
         }
 
         return false;
@@ -1688,6 +1703,11 @@ class Tickets
         $result = $stmn->execute();
 
         $stmn->closeCursor();
+
+        $this->removeCollaborators($id);
+
+        // Add new collaborators
+        $this->addCollaborators($id, $values['collaborators'] ?? [], session('userdata.id'));
 
         return $result;
     }
@@ -1806,7 +1826,7 @@ class Tickets
      */
     public function delticket($id): bool
     {
-
+        $this->removeCollaborators($id);
         $query = 'DELETE FROM zp_tickets WHERE id = :id';
 
         $stmn = $this->db->database->prepare($query);
@@ -1857,4 +1877,68 @@ class Tickets
 
         return true;
     }
+
+    /**
+     * Adds collaborators to a ticket.
+     *
+     * @param int $ticketId The ID of the ticket.
+     * @param array $collaborators An array of user IDs to add as collaborators.
+     * @param int $createdBy The ID of the user adding the collaborators.
+     * @return bool Returns true if the operation is successful.
+     */
+    public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
+    {
+        $query = "INSERT INTO zp_entity_relationship (
+                    entityA, entityAType, entityB, entityBType, relationship, createdOn, createdBy
+                ) VALUES (
+                    :entityA, 'Ticket', :entityB, 'User', '" . EntityRelationshipEnum::Collaborator->value . "', NOW(), :createdBy
+                )";
+
+        $stmn = $this->db->database->prepare($query);
+
+        foreach ($collaborators as $userId) {
+            $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
+            $stmn->bindValue(':entityB', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':createdBy', $createdBy, PDO::PARAM_INT);
+            $stmn->execute();
+        }
+
+        return true;
+    }
+
+    /**
+     * Retrieves all collaborators for a ticket.
+     *
+     * @param int $ticketId The ID of the ticket.
+     * @return array An array of user IDs who are collaborators.
+     */
+    public function getCollaborators(int $ticketId): array
+    {
+        $query = "SELECT entityB AS userId
+                FROM zp_entity_relationship
+                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '". EntityRelationshipEnum::Collaborator->value ."'";
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
+        $stmn->execute();
+
+        return $stmn->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Removes all collaborators from a ticket.
+     *
+     * @param int $ticketId The ID of the ticket.
+     * @return bool Returns true if the operation is successful.
+     */
+    public function removeCollaborators(int $ticketId): bool
+    {
+        $query = "DELETE FROM zp_entity_relationship
+                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '". EntityRelationshipEnum::Collaborator->value ."'";
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
+
+        return $stmn->execute();
+    }    
 }

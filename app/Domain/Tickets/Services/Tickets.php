@@ -1639,6 +1639,7 @@ class Tickets
             'timeTo' => $values['timeTo'] ?? '',
             'dependingTicketId' => $values['dependingTicketId'] ?? '',
             'milestoneid' => $values['milestoneid'] ?? '',
+            'collaborators' => $values['collaborators'] ?? [],
         ];
 
         if (! $this->projectService->isUserAssignedToProject(session('userdata.id'), $values['projectId'])) {
@@ -1751,6 +1752,7 @@ class Tickets
             'timeTo' => $values['timeTo'] ?? '',
             'dependingTicketId' => $values['dependingTicketId'] ?? '',
             'milestoneid' => $values['milestoneid'] ?? '',
+            'collaborators' => $values['collaborators'] ?? [],
         ];
 
         if ($values['projectId'] === null || $values['projectId'] === '' || $values['projectId'] === false) {

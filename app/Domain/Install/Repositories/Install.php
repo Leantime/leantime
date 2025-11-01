@@ -72,6 +72,7 @@ class Install
         30400,
         30408,
         30409,
+        30410
     ];
 
     /**
@@ -2078,5 +2079,32 @@ class Install
         }
 
         return count($errors) ? $errors : true;
+    }
+
+    public function update_sql_30410(): bool|array
+    {
+        $errors = [];
+    
+        $sql = [
+            // Rename the column `enitityA` to `entityA`
+            "ALTER TABLE `zp_entity_relationship` CHANGE COLUMN `enitityA` `entityA` INT NULL;",
+    
+            // Drop the old index on `enitityA`
+            "ALTER TABLE `zp_entity_relationship` DROP INDEX `entityA`;",
+    
+            // Create a new index on `entityA`
+            "ALTER TABLE `zp_entity_relationship` ADD INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC);"
+        ];
+    
+        foreach ($sql as $statement) {
+            try {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
+                Log::error($statement . ' Failed: ' . $e->getMessage());
+                Log::error($e);
+            }
+        }
+    
+        return true;
     }
 }
