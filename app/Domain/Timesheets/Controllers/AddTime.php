@@ -5,6 +5,7 @@ namespace Leantime\Domain\Timesheets\Controllers;
 use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
+use Leantime\Domain\Timesheets\Controllers\Concerns\ValidatesTimesheetValues;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AddTime extends Controller
 {
+    use ValidatesTimesheetValues;
+
     private TimesheetRepository $timesheetsRepo;
 
     private ProjectRepository $projects;
@@ -64,6 +67,9 @@ class AddTime extends Controller
             ];
 
             if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
+                $parseError = false;
+                $parseErrorMessage = '';
+
                 if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
                     $temp = ($_POST['tickets']);
 
@@ -82,7 +88,21 @@ class AddTime extends Controller
                 }
 
                 if (! empty($_POST['hours'])) {
-                    $values['hours'] = ($_POST['hours']);
+                    try {
+                        $parser = app(\Leantime\Domain\Timesheets\Services\TimeParser::class);
+                        $values['hours'] = $parser->parseTimeToDecimal($_POST['hours']);
+
+                        if ($values['hours'] > 24 * 365) {
+                            throw new \InvalidArgumentException('Time value is unreasonably large. Please enter a valid amount of time.');
+                        }
+                    } catch (\InvalidArgumentException $e) {
+                        $parseErrorMessage = $e->getMessage();
+                        $this->tpl->setNotification($parseErrorMessage, 'error', 'time_parse_error');
+                        $values['hours'] = '';
+                        $parseError = true;
+                    }
+                } else {
+                    $values['hours'] = '';
                 }
 
                 if (! empty($_POST['invoicedEmpl'])) {
@@ -123,23 +143,15 @@ class AddTime extends Controller
                     $values['description'] = ($_POST['description']);
                 }
 
-                if ($values['ticket'] != '' && $values['project'] != '') {
-                    if ($values['kind'] != '') {
-                        if ($values['date'] != '') {
-                            if ($values['hours'] != '' && $values['hours'] > 0) {
-                                $this->timesheetsRepo->addTime($values);
-                                $info = 'TIME_SAVED';
-                            } else {
-                                $info = 'NO_HOURS';
-                            }
-                        } else {
-                            $info = 'NO_DATE';
-                        }
+                if (! $parseError) {
+                    $validationError = $this->determineTimesheetFieldError($values);
+
+                    if ($validationError === null) {
+                        $this->timesheetsRepo->addTime($values);
+                        $info = 'TIME_SAVED';
                     } else {
-                        $info = 'NO_KIND';
+                        $info = $validationError;
                     }
-                } else {
-                    $info = 'NO_TICKET';
                 }
 
                 if (isset($_POST['save']) === true) {
@@ -155,11 +167,14 @@ class AddTime extends Controller
                         'description' => '',
                         'invoicedEmpl' => '',
                         'invoicedComp' => '',
-                        'invoicedEmplDate' => '',
                         'invoicedCompDate' => '',
                         'paid' => '',
                         'paidDate' => '',
                     ];
+
+                    if ($parseError && !empty($parseErrorMessage)) {
+                        $this->tpl->setNotification($parseErrorMessage, 'error', 'time_parse_error');
+                    }
 
                     $this->tpl->assign('values', $values);
                 }

@@ -40,31 +40,48 @@ leantime.timesheetsController = (function () {
 
             });
 
-            var buttons = new jQuery.fn.dataTable.Buttons(allTimesheets, {
-                buttons: [
-                    {
-                        extend: 'csvHtml5',
-                        title: leantime.i18n.__("label.filename_fileexport"),
-                        charset: 'utf-8',
-                        bom: true,
-                        exportOptions: {
-                            format: {
-                                body: function ( data, row, column, node ) {
-                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
-                                        data = jQuery(node).data('order');
+            if (jQuery.fn.dataTable && jQuery.fn.dataTable.Buttons) {
+                var buttons = new jQuery.fn.dataTable.Buttons(allTimesheets, {
+                    buttons: [
+                        {
+                            extend: 'csvHtml5',
+                            title: leantime.i18n.__("label.filename_fileexport"),
+                            charset: 'utf-8',
+                            bom: true,
+                            exportOptions: {
+                                format: {
+                                    body: function ( data, row, column, node ) {
+                                        if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                            data = jQuery(node).data('order');
+                                        }
+                                        return data;
                                     }
-                                    return data;
                                 }
                             }
+                        },
+                        {
+                            extend: 'colvis',
+                            columns: ':not(.noVis)'
                         }
-                }, {
-                    extend: 'colvis',
-                    columns: ':not(.noVis)'
-                }
-                ]
-            }).container().appendTo(jQuery('#tableButtons'));
+                    ]
+                });
 
-            jQuery('#allTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
+                var buttonsContainer = buttons.container();
+
+                try {
+                    if (jQuery('#tableButtons').length) {
+                        jQuery('#tableButtons').empty().append(buttonsContainer);
+                    } else {
+                        jQuery(allTimesheets.table().container())
+                            .find('.dataTables_length')
+                            .append(buttonsContainer);
+                    }
+                } catch (e) {
+                    // Swallow exception to avoid breaking rendering if Buttons fails
+                }
+            }
+
+            jQuery('# reallTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
             });
         });

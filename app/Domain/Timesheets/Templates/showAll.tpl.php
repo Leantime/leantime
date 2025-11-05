@@ -6,6 +6,22 @@ foreach ($__data as $var => $val) {
 }
 ?>
 <script type="text/javascript">
+    const projectAllLabel = <?php echo json_encode(strip_tags($tpl->__('menu.all_projects'))); ?>;
+
+    function updateProjectCountInline() {
+        var checkedCount = document.querySelectorAll('.project-checkbox:checked').length;
+        var allChecked = document.getElementById('projectCheckboxAll') ? document.getElementById('projectCheckboxAll').checked : false;
+        var countElement = document.getElementById('projectSelectedCount');
+
+        if (countElement) {
+            if (allChecked || checkedCount === 0) {
+                countElement.textContent = projectAllLabel;
+            } else {
+                countElement.textContent = checkedCount + ' project(s) selected';
+            }
+        }
+    }
+
     jQuery(document).ready(function(){
         jQuery("#checkAllEmpl").change(function(){
             jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
@@ -46,7 +62,17 @@ foreach ($__data as $var => $val) {
             leantime.timesheetsController.initEditTimeModal();
         <?php } ?>
 
-        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1)
+        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
+
+        // Close project checkbox dropdown when clicking outside
+        jQuery(document).on('click', function(e) {
+            if (!jQuery(e.target).closest('.project-dropdown-container').length) {
+                var dropdown = document.getElementById('projectCheckboxDropdown');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        });
     });
 </script>
 
@@ -85,16 +111,43 @@ foreach ($__data as $var => $val) {
                         </select>
                     </td>
                     <td>
-                        <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
-                        <select name="project" style="max-width:120px;">
-                            <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
-                            <?php foreach ($tpl->get('allProjects') as $project) { ?>
-                                <option value="<?= $project['id'] ?>"
-                                    <?php if ($tpl->get('projectFilter') == $project['id']) {
-                                        echo "selected='selected'";
-                                    } ?>><?= $tpl->escape($project['name']) ?></option>
-                            <?php } ?>
-                        </select>
+                        <label><?php echo $tpl->__('label.project'); ?></label>
+                        <div class="project-dropdown-container" style="position: relative; width: 200px; border-radius: 20px;">
+                            <button type="button" class="project-dropdown-toggle" style="width: 100%; padding: 8px 14px; text-align: left; background: #fff; border: 1px solid #d0d5dd; cursor: pointer; border-radius: 20px; font-size: 13px; line-height: 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px;" onclick="document.getElementById('projectCheckboxDropdown').style.display = document.getElementById('projectCheckboxDropdown').style.display === 'none' ? 'block' : 'none';">
+                                <span class="selected-count" id="projectSelectedCount">
+                                    <?php
+                                    $selectedProjects = is_array($tpl->get('projectFilter')) ? $tpl->get('projectFilter') : [$tpl->get('projectFilter')];
+                                    if ($tpl->get('projectFilter') == -1 || !is_array($tpl->get('projectFilter'))) {
+                                        echo $tpl->__('menu.all_projects');
+                                    } else {
+                                        echo count($selectedProjects) . ' project(s) selected';
+                                    }
+                                    ?>
+                                </span>
+                                <span style="font-size: 11px;">▼</span>
+                            </button>
+                            <div id="projectCheckboxDropdown" class="project-checkbox-dropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 14px; width: 100%; max-height: 250px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); margin-top: 6px;">
+                                <label style="display: block; padding: 10px 12px; border-bottom: 1px solid #eef2f7; background: #f7f9fc; font-weight: bold; border-top-left-radius: 14px; border-top-right-radius: 14px;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" name="project[]" value="-1" class="project-checkbox-all" id="projectCheckboxAll"
+                                        onchange="if(this.checked) { document.querySelectorAll('.project-checkbox').forEach(function(cb){cb.checked=false;}); } updateProjectCountInline();"
+                                        <?php if (!is_array($tpl->get('projectFilter')) || $tpl->get('projectFilter') == -1) {
+                                            echo 'checked="checked"';
+                                        } ?>>
+                                    <?php echo strip_tags($tpl->__('menu.all_projects')) ?>
+                                </label>
+                                <?php
+                                foreach ($tpl->get('allProjects') as $project) { ?>
+                                    <label style="display: block; padding: 10px 12px; cursor: pointer;" class="project-checkbox-label" onmouseover="this.style.background='#eef2f7'" onmouseout="this.style.background='white'" onclick="event.stopPropagation();">
+                                        <input type="checkbox" name="project[]" value="<?= $project['id'] ?>" class="project-checkbox"
+                                            onchange="if(this.checked) { document.getElementById('projectCheckboxAll').checked=false; } else { var anyChecked = document.querySelectorAll('.project-checkbox:checked').length > 0; if(!anyChecked) { document.getElementById('projectCheckboxAll').checked=true; } } updateProjectCountInline();"
+                                            <?php if (is_array($selectedProjects) && in_array($project['id'], $selectedProjects)) {
+                                                echo 'checked="checked"';
+                                            } ?>>
+                                        <?= $tpl->escape($project['name']) ?>
+                                    </label>
+                                <?php } ?>
+                            </div>
+                        </div>
                     </td>
                     <?php if (! empty($tpl->get('allTickets'))) { ?>
                     <td>
@@ -150,18 +203,14 @@ foreach ($__data as $var => $val) {
                         </select>
                     </td>
                     <td>
-                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced')?></label>
-                        <select name="invEmpl" id="invEmpl" style="max-width:120px;">
-                            <option value="all" <?php if ($tpl->get('invEmpl') == 'all' || ! $tpl->get('invEmpl')) {
-                                echo 'selected="selected"';
-                            } ?>><?php echo $tpl->__('label.invoiced_all'); ?></option>
-                            <option value="1" <?php if ($tpl->get('invEmpl') == '1') {
-                                echo 'selected="selected"';
-                            } ?>><?php echo $tpl->__('label.invoiced'); ?></option>
-                            <option value="0" <?php if ($tpl->get('invEmpl') == '0') {
-                                echo 'selected="selected"';
-                            } ?>><?php echo $tpl->__('label.invoiced_not'); ?></option>
-                        </select>
+                        <input type="checkbox" value="1" name="invEmpl" id="invEmpl" onclick="submit();"
+                            <?php
+if ($tpl->get('invEmpl') == '1') {
+    echo ' checked="checked"';
+}
+?>
+                        />
+                        <label for="invEmpl"><?php echo $tpl->__('label.invoiced'); ?></label>
                     </td>
                     <td>
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"

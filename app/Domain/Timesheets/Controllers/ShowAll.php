@@ -93,13 +93,9 @@ class ShowAll extends Controller
             $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
-        if (isset($_POST['invEmpl'])) {
-            $invEmplCheck = $_POST['invEmpl'];
-            if ($invEmplCheck == 'all') {
-                $invEmplCheck = '-1';
-            }
-        } else {
-            $invEmplCheck = '-1';
+        $invEmplCheck = '-1';
+        if (isset($_POST['invEmpl']) && $_POST['invEmpl'] === '1') {
+            $invEmplCheck = '1';
         }
 
         if (isset($_POST['invComp'])) {
@@ -126,26 +122,47 @@ class ShowAll extends Controller
 
         $projectFilter = -1;
         if (! empty($_POST['project'])) {
-            $projectFilter = strip_tags($_POST['project']);
+            $selectedProjects = $_POST['project'];
+
+            if (is_array($selectedProjects)) {
+                $selectedProjects = array_map(static fn ($value) => (int) $value, $selectedProjects);
+
+                // Remove any entries that are zero/empty to avoid invalid IDs
+                $selectedProjects = array_values(array_filter($selectedProjects, static fn ($value) => $value !== 0));
+
+                if (in_array(-1, $selectedProjects, true) || empty($selectedProjects)) {
+                    $projectFilter = -1;
+                } else {
+                    $projectFilter = $selectedProjects;
+                }
+            } else {
+                $projectFilter = (int) strip_tags($selectedProjects);
+            }
         }
 
         $ticketFilter = -1;
         if (! empty($_POST['ticket'])) {
-            $ticketFilter = strip_tags($_POST['ticket']);
+            $ticketFilter = (int) strip_tags($_POST['ticket']);
         }
 
         $clientId = -1;
         if (! empty($_POST['clientId'])) {
-            $clientId = strip_tags($_POST['clientId']);
+            $clientId = (int) strip_tags($_POST['clientId']);
         }
 
         // Determine if the selected ticket is in the selected project
         $projectMismatch = false;
-        if ($ticketFilter != '') {
+        if ($ticketFilter != '' && $ticketFilter > 0) {
             $selectedTicket = $this->ticketService->getTicket($ticketFilter);
 
-            if ($selectedTicket && $selectedTicket->projectId != $projectFilter) {
-                $projectMismatch = true;
+            if ($selectedTicket) {
+                if (is_array($projectFilter)) {
+                    if (! in_array((int) $selectedTicket->projectId, $projectFilter, true)) {
+                        $projectMismatch = true;
+                    }
+                } elseif ($selectedTicket->projectId != $projectFilter) {
+                    $projectMismatch = true;
+                }
             }
         }
 
@@ -164,19 +181,33 @@ class ShowAll extends Controller
         $this->tpl->assign('paid', $paidCheck);
         $this->tpl->assign('allProjects', $this->projectService->getAll());
         $this->tpl->assign('projectFilter', $projectFilter);
-        $this->tpl->assign('allTickets', ($projectFilter == -1) ? [] : $this->ticketService->getAll(['currentProject' => $projectFilter]));
+
+        $ticketDropdownProjects = $projectFilter;
+        if (is_array($ticketDropdownProjects)) {
+            // Ticket filter only supports single project selection; disable dropdown when multiple selected
+            $ticketDropdownProjects = -1;
+        }
+
+        $this->tpl->assign('allTickets', ($ticketDropdownProjects == -1) ? [] : $this->ticketService->getAll(['currentProject' => $ticketDropdownProjects]));
         $this->tpl->assign('ticketFilter', $ticketFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());
+        $resolvedProjectFilter = is_array($projectFilter) ? $projectFilter : (int) $projectFilter;
+
+        $ticketParameter = '-1';
+        if (! $projectMismatch && ! is_array($projectFilter) && $projectFilter != -1) {
+            $ticketParameter = $ticketFilter ?: '-1';
+        }
+
         $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
             $dateFrom,
             $dateTo,
-            (int) $projectFilter,
+            $resolvedProjectFilter,
             $kind,
             $userId,
             $invEmplCheck,
             $invCompCheck,
-            ($projectMismatch ? '-1' : ($projectFilter == -1 ? '-1' : ($ticketFilter ?: '-1'))),
+            $ticketParameter,
             $paidCheck,
             $clientId
         ));

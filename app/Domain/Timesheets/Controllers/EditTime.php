@@ -9,10 +9,13 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Timesheets\Controllers\Concerns\ValidatesTimesheetValues;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditTime extends Controller
 {
+    use ValidatesTimesheetValues;
+
     private TimesheetRepository $timesheetsRepo;
 
     private ProjectRepository $projects;
@@ -81,6 +84,8 @@ class EditTime extends Controller
 
                 if (Auth::userIsAtLeast(Roles::$manager) || session('userdata.id') == $values['userId']) {
                     if (isset($_POST['saveForm']) === true) {
+                        $parseError = false;
+
                         if (! empty($_POST['tickets'])) {
                             $values['project'] = (int) $_POST['projects'];
                             $values['ticket'] = (int) $_POST['tickets'];
@@ -96,7 +101,17 @@ class EditTime extends Controller
                         }
 
                         if (! empty($_POST['hours'])) {
-                            $values['hours'] = (float) ($_POST['hours']);
+                            try {
+                                $parser = app(\Leantime\Domain\Timesheets\Services\TimeParser::class);
+                                $values['hours'] = $parser->parseTimeToDecimal($_POST['hours']);
+
+                                if ($values['hours'] > 24 * 365) {
+                                    throw new \InvalidArgumentException('Time value is unreasonably large. Please enter a valid amount of time.');
+                                }
+                            } catch (\InvalidArgumentException $e) {
+                                $this->tpl->setNotification($e->getMessage(), 'error', 'time_parse_error');
+                                $parseError = true;
+                            }
                         }
 
                         if (! empty($_POST['description'])) {
@@ -154,51 +169,42 @@ class EditTime extends Controller
                             }
                         }
 
-                        if ($values['ticket'] != '' && $values['project'] != '') {
-                            if ($values['kind'] != '') {
-                                if ($values['date'] != '') {
-                                    if ($values['hours'] != '' && $values['hours'] > 0) {
-                                        try {
-                                            $this->timesheetsRepo->updateTime($values);
-                                            $this->tpl->setNotification('notifications.time_logged_success', 'success');
-                                        } catch (\Exception $e) {
-                                            $this->tpl->setNotification('notifications.could_not_store_time', 'error');
-                                        }
+                        if (! $parseError) {
+                            $validationError = $this->determineTimesheetFieldError($values);
 
-                                        $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
-
-                                        // Date validation.
-                                        $timesheetUpdated['invoicedEmplDate'] = $timesheetUpdated['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedEmplDate'];
-                                        $timesheetUpdated['invoicedCompDate'] = $timesheetUpdated['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedCompDate'];
-                                        $timesheetUpdated['paidDate'] = $timesheetUpdated['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['paidDate'];
-
-                                        $values = [
-                                            'id' => $id,
-                                            'userId' => $timesheetUpdated['userId'],
-                                            'ticket' => $timesheetUpdated['ticketId'],
-                                            'project' => $timesheetUpdated['projectId'],
-                                            'date' => new Carbon($timesheetUpdated['workDate'], 'UTC'),
-                                            'kind' => $timesheetUpdated['kind'],
-                                            'hours' => $timesheetUpdated['hours'],
-                                            'description' => $timesheetUpdated['description'],
-                                            'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
-                                            'invoicedComp' => $timesheetUpdated['invoicedComp'],
-                                            'invoicedEmplDate' => new Carbon($timesheetUpdated['invoicedEmplDate'], 'UTC'),
-                                            'invoicedCompDate' => new Carbon($timesheetUpdated['invoicedCompDate'], 'UTC'),
-                                            'paid' => $timesheetUpdated['paid'],
-                                            'paidDate' => new Carbon($timesheetUpdated['paidDate'], 'UTC'),
-                                        ];
-                                    } else {
-                                        $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
-                                    }
-                                } else {
-                                    $this->tpl->setNotification('notifications.time_logged_error_no_date', 'error');
+                            if ($validationError === null) {
+                                try {
+                                    $this->timesheetsRepo->updateTime($values);
+                                    $this->tpl->setNotification('notifications.time_logged_success', 'success');
+                                } catch (\Exception $e) {
+                                    $this->tpl->setNotification('notifications.could_not_store_time', 'error');
                                 }
+
+                                $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
+
+                                $timesheetUpdated['invoicedEmplDate'] = $timesheetUpdated['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedEmplDate'];
+                                $timesheetUpdated['invoicedCompDate'] = $timesheetUpdated['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedCompDate'];
+                                $timesheetUpdated['paidDate'] = $timesheetUpdated['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['paidDate'];
+
+                                $values = [
+                                    'id' => $id,
+                                    'userId' => $timesheetUpdated['userId'],
+                                    'ticket' => $timesheetUpdated['ticketId'],
+                                    'project' => $timesheetUpdated['projectId'],
+                                    'date' => new Carbon($timesheetUpdated['workDate'], 'UTC'),
+                                    'kind' => $timesheetUpdated['kind'],
+                                    'hours' => $timesheetUpdated['hours'],
+                                    'description' => $timesheetUpdated['description'],
+                                    'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
+                                    'invoicedComp' => $timesheetUpdated['invoicedComp'],
+                                    'invoicedEmplDate' => new Carbon($timesheetUpdated['invoicedEmplDate'], 'UTC'),
+                                    'invoicedCompDate' => new Carbon($timesheetUpdated['invoicedCompDate'], 'UTC'),
+                                    'paid' => $timesheetUpdated['paid'],
+                                    'paidDate' => new Carbon($timesheetUpdated['paidDate'], 'UTC'),
+                                ];
                             } else {
-                                $this->tpl->setNotification('notifications.time_logged_error_no_kind', 'error');
+                                $this->notifyValidationFailure($validationError);
                             }
-                        } else {
-                            $this->tpl->setNotification('notifications.time_logged_error_no_ticket', 'error');
                         }
                     }
 
@@ -219,5 +225,19 @@ class EditTime extends Controller
         } else {
             return $this->tpl->displayPartial('errors.error403');
         }
+    }
+
+    private function notifyValidationFailure(string $errorCode): void
+    {
+        $translationMap = [
+            'NO_TICKET' => 'notifications.time_logged_error_no_ticket',
+            'NO_KIND' => 'notifications.time_logged_error_no_kind',
+            'NO_DATE' => 'notifications.time_logged_error_no_date',
+            'NO_HOURS' => 'notifications.time_logged_error_no_hours',
+        ];
+
+        $messageKey = $translationMap[$errorCode] ?? 'notifications.could_not_store_time';
+
+        $this->tpl->setNotification($messageKey, 'error');
     }
 }

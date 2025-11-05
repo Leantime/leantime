@@ -1,17 +1,50 @@
-### Description
+# Description
 
-*Please include a short description of the suggested change and the reasoning behind the approach you have chosen.*
+<!--- Provide a general summary of the changes in the Title above -->
+Preview link:
 
-### Link to ticket
+Resolves [](https://leantime.pearshadow.com/tickets)
 
-*Please add a link to the GitHub issue being addressed by this change.*
 
-### Type
+# Screenshots
 
-- [ ] Fix
-- [ ] Feature
-- [ ] Cleanup 
+Please make sure to include both desktop and mobile screenshots.
 
-### Screenshot of the result
+### Before
 
-*If your change affects the user interface, you should include a screenshot of the result with the pull request.*
+<table style="width: 100%;">
+  <tr>
+    <th>Desktop</th>
+    <th>Mobile</th>
+  </tr>
+  <tr>
+    <td>SCREENSHOT</td>
+    <td>SCREENSHOT</td>
+  </tr>
+</table>
+
+### After
+
+<table style="width: 100%;">
+  <tr>
+    <th>Desktop</th>
+    <th>Mobile</th>
+  </tr>
+  <tr>
+    <td>SCREENSHOT</td>
+    <td>SCREENSHOT</td>
+  </tr>
+</table>
+
+### Figma
+
+<table style="width: 100%;">
+  <tr>
+    <th>Desktop</th>
+    <th>Mobile</th>
+  </tr>
+  <tr>
+    <td>SCREENSHOT</td>
+    <td>SCREENSHOT</td>
+  </tr>
+</table>
