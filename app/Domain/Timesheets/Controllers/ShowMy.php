@@ -128,12 +128,31 @@ class ShowMy extends Controller
                     }
                 }
 
+                // Parse hours using TimeParser for flexible input formats
+                $parsedHours = $hours;
+                if (!empty($hours) && !is_numeric($hours)) {
+                    try {
+                        $parser = app(\Leantime\Domain\Timesheets\Services\TimeParser::class);
+                        $parsedHours = $parser->parseTimeToDecimal($hours);
+                        
+                        // Additional validation: check for unreasonably large values
+                        if ($parsedHours > 24 * 365) { // More than a year of work
+                            throw new \InvalidArgumentException('Time value is unreasonably large. Please enter a valid amount of time.');
+                        }
+                    } catch (\InvalidArgumentException $e) {
+                        $this->tpl->setNotification($e->getMessage(), 'error', 'time_parse_error');
+                        
+                        // Skip saving this entry if parsing failed
+                        continue;
+                    }
+                }
+                
                 $values = [
                     'userId' => session('userdata.id'),
                     'ticket' => $ticketId,
                     'date' => $date,
                     'timestamp' => $timestamp,
-                    'hours' => $hours,
+                    'hours' => $parsedHours,
                     'kind' => $kind,
                 ];
 

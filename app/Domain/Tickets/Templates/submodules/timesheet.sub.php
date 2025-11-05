@@ -6,6 +6,8 @@ $values = $tpl->get('timesheetValues');
 $ticket = $tpl->get('ticket');
 $userInfo = $tpl->get('userInfo');
 $remainingHours = $tpl->get('remainingHours');
+$timesheetEntries = $tpl->get('timesheetEntries');
+$kindMap = $tpl->get('kind');
 if ($remainingHours < 0) {
     $remainingHours = 0;
 }
@@ -24,7 +26,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                     <label for="kind"><?php echo $tpl->__('label.timesheet_kind') ?></label>
                     <span class="field">
                     <select id="kind" name="kind">
-                    <?php foreach ($tpl->get('kind') as $key => $row) {
+                    <?php foreach ($kindMap as $key => $row) {
                         echo '<option value="'.$key.'"';
                         if ($row == $values['kind']) {
                             echo ' selected="selected"';
@@ -61,6 +63,59 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                     <?php echo $tpl->__('label.booked_hours') ?>: <?php echo $tpl->get('timesheetsAllHours'); ?><br />
                     <?php echo $tpl->__('label.actual_hours_remaining') ?>: <?php echo $remainingHours; ?><br />
                 </p>
+
+                <div style="margin-top: 20px;">
+                    <h4 class="widgettitle title-light"><span class="fa fa-list"></span><?php echo $tpl->__('subtitles.logged_hours_chart'); ?> <?php echo $tpl->__('label.list'); ?></h4>
+
+                    <?php if (! empty($timesheetEntries)) { ?>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" style="background-color: #fff; border-collapse: collapse;">
+                                <thead style="background-color: #f9f9f9;">
+                                <tr>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.date'); ?></th>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.user'); ?></th>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.type'); ?></th>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.hours'); ?></th>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.description'); ?></th>
+                                </tr>
+                                </thead>
+                                <tbody style="background-color: #fff;">
+                                <?php foreach ($timesheetEntries as $entry) {
+                                    $dateValue = format($entry['workDate'])->date();
+                                    $timeValue = format($entry['workDate'])->time();
+                                    $displayDate = trim($dateValue.' '.$timeValue);
+                                    if ($displayDate === '') {
+                                        $displayDate = (string) $entry['workDate'];
+                                    }
+
+                                    $userName = trim(($entry['firstname'] ?? '').' '.($entry['lastname'] ?? ''));
+                                    if ($userName === '') {
+                                        $userName = '#'.($entry['userId'] ?? '');
+                                    }
+
+                                    $kindLabel = $entry['kind'] ?? '';
+                                    if (! empty($entry['kind']) && isset($kindMap[$entry['kind']])) {
+                                        $kindLabel = $tpl->__(strtolower($kindMap[$entry['kind']]));
+                                    }
+
+                                    $hoursFormatted = format($entry['hours'])->decimal();
+                                    $description = $entry['description'] ?? '';
+                                    ?>
+                                    <tr>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($displayDate, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($kindLabel, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($hoursFormatted, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo nl2br(htmlspecialchars($description, ENT_QUOTES, 'UTF-8')); ?></td>
+                                    </tr>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php } else { ?>
+                        <p class="text-muted"><?php echo $tpl->__('label.no_results'); ?></p>
+                    <?php } ?>
+                </div>
             </div>
         </div>
 

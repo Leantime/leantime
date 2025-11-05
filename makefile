@@ -148,6 +148,7 @@ fix-code-style:
 	./vendor/bin/pint --config .pint/pint.json
 
 clear-cache:
+	mkdir -p ./storage/framework/cache
 	rm -rf ./bootstrap/cache/*.php
 	rm -rf ./storage/framework/composerPaths.php
 	rm -rf ./storage/framework/viewPaths.php

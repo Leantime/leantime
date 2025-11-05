@@ -132,3 +132,6 @@ config/.env
 /.serena
 /.playwright-mcp
 /.idea
+
+.env
+config/.env

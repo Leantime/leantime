@@ -125,6 +125,7 @@ class ShowTicket extends Controller
 
         $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
         $this->tpl->assign('ticketHours', $this->timesheetService->getLoggedHoursForTicketByDate($id));
+        $this->tpl->assign('timesheetEntries', $this->timesheetService->getTimesheetEntriesForTicket($id));
         $this->tpl->assign('userHours', $this->timesheetService->getUsersTicketHours($id, session('userdata.id')));
 
         $this->tpl->assign('timesheetsAllHours', $this->timesheetService->getSumLoggedHoursForTicket($id));

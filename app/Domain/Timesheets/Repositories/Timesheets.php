@@ -37,8 +37,17 @@ class Timesheets extends Repository
      *
      * @return array|false An array of timesheets or false if there was an error
      */
-    public function getAll(?int $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(int|array|null $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
+        $sanitizedProjectIds = [];
+        $singleProjectId = null;
+
+        if (is_array($id)) {
+            $sanitizedProjectIds = array_values(array_filter(array_map(static fn ($value) => (int) $value, $id), static fn ($value) => $value > 0));
+        } else {
+            $singleProjectId = (int) $id;
+        }
+
         $query = 'SELECT
                     zp_timesheets.id,
                     zp_timesheets.userId,
@@ -75,7 +84,15 @@ class Timesheets extends Repository
                 WHERE
                     ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateFrom)) AND (TO_SECONDS(zp_timesheets.workDate) <= (TO_SECONDS(:dateTo))))';
 
-        if ($id > 0) {
+        if (! empty($sanitizedProjectIds)) {
+            $projectPlaceholders = [];
+
+            foreach ($sanitizedProjectIds as $index => $projectId) {
+                $projectPlaceholders[] = ':projectId'.$index;
+            }
+
+            $query .= ' AND (zp_tickets.projectId IN ('.implode(',', $projectPlaceholders).'))';
+        } elseif ($singleProjectId > 0) {
             $query .= ' AND (zp_tickets.projectId = :projectId)';
         }
 
@@ -129,8 +146,12 @@ class Timesheets extends Repository
             $call->bindValue(':clientId', $clientId);
         }
 
-        if ($id > 0) {
-            $call->bindValue(':projectId', $id);
+        if (! empty($sanitizedProjectIds)) {
+            foreach ($sanitizedProjectIds as $index => $projectId) {
+                $call->bindValue(':projectId'.$index, $projectId, PDO::PARAM_INT);
+            }
+        } elseif ($singleProjectId > 0) {
+            $call->bindValue(':projectId', $singleProjectId, PDO::PARAM_INT);
         }
 
         if ($ticketFilter > 0) {
@@ -492,6 +513,34 @@ class Timesheets extends Repository
         }
 
         return $returnValues;
+    }
+
+    public function getTimesheetEntriesForTicket(int $ticketId): array
+    {
+        $query = 'SELECT
+                zp_timesheets.id,
+                zp_timesheets.userId,
+                zp_timesheets.workDate,
+                zp_timesheets.hours,
+                zp_timesheets.description,
+                zp_timesheets.kind,
+                zp_user.firstname,
+                zp_user.lastname
+            FROM
+                zp_timesheets
+            LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
+            WHERE
+                zp_timesheets.ticketId = :ticketId
+            ORDER BY
+                zp_timesheets.workDate DESC,
+                zp_timesheets.id DESC';
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
+        $call->bindValue(':ticketId', $ticketId);
+
+        return $call->fetchAll();
     }
 
     public function getTimesheetsByTicket($id)

@@ -117,7 +117,7 @@ class Timesheets
             $values['date'] = dtHelper()->parseUserDateTime($params['date'], $params['time'])->formatDateTimeForDb();
         }
 
-        $values['hours'] = $params['hours'];
+        $values['hours'] = $this->parseTimeToDecimal($params['hours']);
         $values['description'] = $params['description'] ?? '';
 
         $loggingUser = $this->userRepo->getUser($values['userId']);
@@ -126,6 +126,82 @@ class Timesheets
         $this->timesheetsRepo->addTime($values);
 
         return true;
+    }
+
+    function parseTimeToDecimal($input) {
+        // Handle numeric inputs directly (plain numbers)
+        if (is_numeric($input)) {
+            return round(floatval($input), 4);
+        }
+
+        // For string inputs, normalize (trim spaces, lowercase)
+        if (!is_string($input)) {
+            return 0; // Invalid input type
+        }
+
+        $input = trim($input);
+
+        // Handle plain numeric strings like "6" or "2.5"
+        if (is_numeric($input)) {
+            return round(floatval($input), 4);
+        }
+
+        // Convert to lowercase for case-insensitive matching
+        $input = strtolower($input);
+
+        // Conversion factors
+        $conversions = [
+            'w' => 40, // 1 week = 40 hours
+            'd' => 8,  // 1 day = 8 hours
+            'h' => 1,  // 1 hour = 1 hour
+            'm' => 1/60 // 1 minute = 0.016667 hours
+        ];
+
+        // Handle natural language formats
+        if (preg_match('/(\d+(?:\.\d+)?)\s*(minute|minutes|hour|hours|day|days|week|weeks)/i', $input, $matches)) {
+            $value = floatval($matches[1]);
+            $unit = strtolower($matches[2]);
+
+            switch ($unit) {
+                case 'week':
+                case 'weeks':
+                    return round($value * 40, 4); // 40 hours per week
+                case 'day':
+                case 'days':
+                    return round($value * 8, 4); // 8 hours per day
+                case 'hour':
+                case 'hours':
+                    return round($value, 4);
+                case 'minute':
+                case 'minutes':
+                    return round($value / 60, 4);
+            }
+        }
+
+        // Handle Jira-style formats (3w 2d 4h 30m) in any order
+        $total = 0;
+
+        // Match weeks
+        if (preg_match('/(\d+(?:\.\d+)?)w/i', $input, $matches)) {
+            $total += floatval($matches[1]) * $conversions['w'];
+        }
+
+        // Match days
+        if (preg_match('/(\d+(?:\.\d+)?)d/i', $input, $matches)) {
+            $total += floatval($matches[1]) * $conversions['d'];
+        }
+
+        // Match hours
+        if (preg_match('/(\d+(?:\.\d+)?)h/i', $input, $matches)) {
+            $total += floatval($matches[1]) * $conversions['h'];
+        }
+
+        // Match minutes
+        if (preg_match('/(\d+(?:\.\d+)?)m/i', $input, $matches)) {
+            $total += floatval($matches[1]) * $conversions['m'];
+        }
+
+        return round($total, 5);
     }
 
     /**
@@ -201,6 +277,11 @@ class Timesheets
         return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
     }
 
+    public function getTimesheetEntriesForTicket(int $ticketId): array
+    {
+        return $this->timesheetsRepo->getTimesheetEntriesForTicket($ticketId);
+    }
+
     /**
      * @return int|mixed
      *
@@ -262,7 +343,7 @@ class Timesheets
     /**
      * @api
      */
-    public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '-1', string $invComp = '-1', string $ticketFilter = '-1', string $paid = '-1', string $clientId = '-1'): array|false
+    public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int|array $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '-1', string $invComp = '-1', string $ticketFilter = '-1', string $paid = '-1', string $clientId = '-1'): array|false
     {
         return $this->timesheetsRepo->getAll(
             id: $projectId,

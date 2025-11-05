@@ -103,7 +103,6 @@ class MigrateCommand extends Command
                     $usersRepo->patchUser($userId, ['password' => $adminPassword, 'status' => 'a']);
 
                     $helperService = app()->make(Helper::class);
-                    $helperService->createDefaultProject($userId, 'owner');
                 }
 
                 if ($silent) {
