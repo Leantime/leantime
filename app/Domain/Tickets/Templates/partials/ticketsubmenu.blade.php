@@ -11,7 +11,12 @@
         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
         </a>
-<ul class="dropdown-menu" style="{{ $isFirstColumn ? 'left:0; right:auto;' : ($isLastColumn ? 'right:0; left:auto;' : '') }}">
+        <ul class="dropdown-menu" 
+            style="{{ ($isFirstColumn ?? false)
+                ? 'left:0; right:auto;'
+                : (($isLastColumn ?? false)
+                    ? 'right:0; left:auto;'
+                    : '') }}">            
             <li class="nav-header">{{ __("subtitles.todo") }}</li>
             @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/showTicket/{{ $ticket["id"] }}" class=''><i class="fa fa-edit"></i> {{  __("links.edit_todo") }}</a></li>
