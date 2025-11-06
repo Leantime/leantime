@@ -727,6 +727,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
+        self::dispatchEvent('time_logged', $ticketId);
         return $hoursWorked;
     }
 
@@ -792,7 +793,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
-        self::dispatchEvent('ticket_updated');
+        self::dispatchEvent('time_logged', $values['ticket']);
         $this->cleanUpEmptyTimesheets();
     }
 
