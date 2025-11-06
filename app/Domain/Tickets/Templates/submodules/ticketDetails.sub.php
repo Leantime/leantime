@@ -24,7 +24,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="">
                         <select
                             id="status-select"
-                            class=""
+                            class="autosave-field"
                             name="status"
                             data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : ''; ?>"
                         >
@@ -38,19 +38,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                         </select>
                     </div>
                 </div>
-                <script>
-                    jQuery(document).ready(function($) {
-                    $('#status-select').on('change', function() {
-                        $('.saveTicketBtn').click();
-                            });
-                        });
-                </script>
 
                 <!-- Priority -->
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.priority'); ?></label>
                     <div class="">
-                        <select id='priority' name='priority' class="">
+                        <select id='priority' name='priority' class="autosave-field">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
                                 echo "<option value='".$priorityKey."' ";
@@ -67,7 +60,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.effort'); ?></label>
                     <div class="">
-                        <select id='storypoints' name='storypoints' class="">
+                        <select id='storypoints' name='storypoints' class="autosave-field">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
                                 echo "<option value='".$effortKey."' ";
@@ -86,7 +79,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="">
 
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" id="editorId" class="user-select tw-mr-sm">
+                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
                                 <?php echo "<option value='".$userRow['id']."'";
@@ -111,11 +104,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.due_date'); ?></label>
                     <div class="">
-                        <input type="text" class="dates" style="width:110px;" id="deadline" autocomplete="off"
+                        <input type="text" class="dates autosave-field" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
                                name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
-                        <input type="time" class="timepicker tw-mr-sm" style="width:120px;" id="dueTime" autocomplete="off"
+                        <input type="time" class="timepicker tw-mr-sm autosave-after-lost-focus" style="width:120px;" id="dueTime" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->time24(); ?>"
                                name="timeToFinish"/>
                     </div>
@@ -126,7 +119,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.tags'); ?></label>
+                    <label class="control-label tw-mx-m tw-w-[100px] "><?php echo $tpl->__('label.tags'); ?></label>
                     <div class="">
                         <input type="text" value="<?php $tpl->e($ticket->tags); ?>" name="tags" id="tags" />
                     </div>
@@ -367,7 +360,6 @@ $ticketTypes = $tpl->get('ticketTypes');
         <?php $tpl->dispatchTplEvent('beforeEndRightColumn', ['ticket' => $ticket]); ?>
     </div>
 </div>
-
 <script>
 
     jQuery(document).ready(function(){
@@ -381,4 +373,15 @@ $ticketTypes = $tpl->get('ticketTypes');
 
     Prism.highlightAll();
 
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        $('.autosave-field').on('change', function() {
+            $('.saveTicketBtn').trigger('click');
+        });
+
+        $('.autosave-after-lost-focus').on('blur', function() {
+            $('.saveTicketBtn').trigger('click');
+        });
 </script>
