@@ -38,6 +38,13 @@ $ticketTypes = $tpl->get('ticketTypes');
                         </select>
                     </div>
                 </div>
+                <script>
+                    jQuery(document).ready(function($) {
+                    $('#status-select').on('change', function() {
+                        $('.saveTicketBtn').click();
+                            });
+                        });
+                </script>
 
                 <!-- Priority -->
                 <div class="form-group tw-flex tw-w-3/5">
