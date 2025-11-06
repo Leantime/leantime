@@ -637,6 +637,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
+        self::dispatchEvent('time_logged', $values['ticket']);
         $this->cleanUpEmptyTimesheets();
     }
 
@@ -839,6 +840,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
+        self::dispatchEvent('time_logged', $values['ticket']);
         $this->cleanUpEmptyTimesheets();
     }
 
@@ -877,6 +879,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
+        self::dispatchEvent('time_logged', $values['ticket']);
         $this->cleanUpEmptyTimesheets();
     }
 
