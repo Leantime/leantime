@@ -8,10 +8,13 @@ use Carbon\CarbonPeriod;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Db\Repository;
+use Leantime\Core\Events\DispatchesEvents;
 use PDO;
 
 class Timesheets extends Repository
 {
+    use DispatchesEvents;
+
     private DbCore $db;
 
     public array $kind = [
@@ -789,6 +792,7 @@ class Timesheets extends Repository
 
         $call->execute();
 
+        self::dispatchEvent('ticket_updated');
         $this->cleanUpEmptyTimesheets();
     }
 
