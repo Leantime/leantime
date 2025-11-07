@@ -119,7 +119,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="form-group tw-flex tw-w-3/5">
-                    <label class="control-label tw-mx-m tw-w-[100px] "><?php echo $tpl->__('label.tags'); ?></label>
+                    <label class="control-label tw-mx-m tw-w-[100px] tags"><?php echo $tpl->__('label.tags'); ?></label>
                     <div class="">
                         <input class="autosave-after-lost-focus" type="text" value="<?php $tpl->e($ticket->tags); ?>" name="tags" id="tags" />
                     </div>
@@ -384,6 +384,18 @@ jQuery(document).ready(function($) {
     $('.autosave-after-lost-focus').on('blur', function() {
         $('.saveTicketBtn').trigger('click');
     });
-}); 
+   $(document).on('keyup blur', 'div.tagsinput input.ui-autocomplete-input', function(e) {
+    if (e.type === 'blur' || e.keyCode === 13 || e.keyCode === 188) {
+        setTimeout(function() {
+            $('.saveTicketBtn').trigger('click');
+        }, 300);
+    }
+});
+$(document).on('click', '.tagsinput .tag a', function() {
+    setTimeout(function() {
+        $('.saveTicketBtn').trigger('click');
+    }, 300);
+});
+});
 </script>
 
