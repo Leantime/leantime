@@ -240,6 +240,8 @@ jQuery(document).ready(function(){
                 </div>
 
             </div>
+            <div class="timesheet-wrapper" style="max-width: 100%;">
+                <div style="overflow-x: scroll; width: 100%;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
                       <col class="con0" >
@@ -442,6 +444,8 @@ foreach ($colSum as $key => $col) {
                     </tr>
                 </tfoot>
             </table>
+    </div>
+</div>
             <div class="right">
                 <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
             </div>
