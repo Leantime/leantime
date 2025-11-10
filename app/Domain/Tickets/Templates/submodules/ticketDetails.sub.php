@@ -388,14 +388,17 @@ jQuery(document).ready(function($) {
     if (e.type === 'blur' || e.keyCode === 13 || e.keyCode === 188) {
         setTimeout(function() {
             $('.saveTicketBtn').trigger('click');
-        }, 300);
+        }, 10);
     }
 });
-$(document).on('click', '.tagsinput .tag a', function() {
-    setTimeout(function() {
-        $('.saveTicketBtn').trigger('click');
-    }, 300);
-});
+
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.tagsinput .tag a')) {
+            setTimeout(function() {
+                $('.saveTicketBtn').trigger('click');
+            }, 10);
+        }
+    }, true); 
 });
 </script>
 
