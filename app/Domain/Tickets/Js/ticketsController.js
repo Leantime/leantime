@@ -33,121 +33,13 @@ leantime.ticketsController = (function () {
     }
 
 
-    var applyKanbanSearchFilter = function (term) {
-        var normalized = '';
-        if (typeof term === 'string') {
-            normalized = term.trim().toLowerCase();
-        }
-
-        var $wrapper = jQuery('#kanbanSearchWrapper');
-        if ($wrapper.length) {
-            if (normalized.length > 0) {
-                $wrapper.addClass('has-value');
-            } else {
-                $wrapper.removeClass('has-value');
-            }
-        }
-
-        var $cards = jQuery('.sortableTicketList.kanbanBoard .ticketBox.moveable');
-        if (!$cards.length) {
-            return;
-        }
-
-        if (!normalized.length) {
-            $cards.removeClass('kanban-search-hidden');
-        } else {
-            $cards.each(function () {
-                var $card = jQuery(this);
-                var cached = $card.data('kanbanSearchText');
-
-                if (typeof cached !== 'string') {
-                    cached = $card.text().toLowerCase();
-                    $card.data('kanbanSearchText', cached);
-                }
-
-                if (cached.indexOf(normalized) !== -1) {
-                    $card.removeClass('kanban-search-hidden');
-                } else {
-                    $card.addClass('kanban-search-hidden');
-                }
-            });
-        }
-
-        countTickets();
-    };
-
     var initKanbanSearch = function () {
         jQuery(document).ready(function () {
-            var $input = jQuery('#kanbanBoardSearch');
-            if (!$input.length) {
-                return;
-            }
-
-            // Apply initial client-side filter if term exists in input
-            var initialTerm = $input.val();
-            if (initialTerm && initialTerm.trim() !== '') {
-                applyKanbanSearchFilter(initialTerm);
-            }
-
-            // Debounce function to avoid too many URL updates
-            var debounceTimer;
-            var debounceDelay = 800; // Wait 800ms after user stops typing
-
-            $input.on('input', function () {
-                var searchTerm = jQuery(this).val();
-                
-                // Apply client-side filter immediately for better UX
-                applyKanbanSearchFilter(searchTerm);
-
-                // Clear existing timer
-                clearTimeout(debounceTimer);
-
-                // Set new timer to update URL (server-side search)
-                debounceTimer = setTimeout(function() {
-                    updateUrlWithSearchTerm(searchTerm);
-                }, debounceDelay);
-            });
-
-            // Handle Enter key to immediately trigger search
-            $input.on('keypress', function(e) {
-                if (e.which === 13) { // Enter key
-                    e.preventDefault();
-                    clearTimeout(debounceTimer);
-                    var searchTerm = jQuery(this).val();
-                    updateUrlWithSearchTerm(searchTerm);
-                }
-            });
-
-            jQuery('#kanbanBoardSearchClear').on('click', function () {
-                $input.val('');
-                applyKanbanSearchFilter('');
-                clearTimeout(debounceTimer);
-                updateUrlWithSearchTerm('');
-                $input.trigger('focus');
-            });
-
-            // Function to update URL with search term
-            function updateUrlWithSearchTerm(term) {
-                var url = new URL(window.location.href);
-                
-                if (term && term.trim() !== '') {
-                    url.searchParams.set('term', term.trim());
-                    url.searchParams.set('search', 'true');
-                } else {
-                    url.searchParams.delete('term');
-                    // Only remove 'search' if no other search params exist
-                    var hasOtherParams = url.searchParams.has('users') || 
-                                        url.searchParams.has('milestone') || 
-                                        url.searchParams.has('type') || 
-                                        url.searchParams.has('priority') || 
-                                        url.searchParams.has('status');
-                    if (!hasOtherParams) {
-                        url.searchParams.delete('search');
-                    }
-                }
-                
-                // Update URL without page reload, then reload to apply server-side filter
-                window.location.href = url.toString();
+            if (window.leantime && leantime.kanbanSearch && typeof leantime.kanbanSearch.init === 'function') {
+                leantime.kanbanSearch.init({
+                    inputSelector: '#kanbanSearch',
+                    wrapperSelector: '#kanbanSearchWrapper',
+                });
             }
         });
     };
