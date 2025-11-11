@@ -342,7 +342,9 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                             />
 
                                             <?php if (! empty($timeRow[$dayKey]['description'])) {?>
+                                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $timeRow[$dayKey]['id']?>">
                                                 <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]['description']); ?>"></i>
+                                                </a>
                                             <?php } ?>
                                         </td>
                                     <?php

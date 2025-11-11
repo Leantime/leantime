@@ -411,6 +411,7 @@ class Timesheets
 
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day2' => [
                         'start' => $fromDate->addDays(1),
@@ -418,6 +419,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day3' => [
                         'start' => $fromDate->addDays(2),
@@ -425,6 +427,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day4' => [
                         'start' => $fromDate->addDays(3),
@@ -432,6 +435,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day5' => [
                         'start' => $fromDate->addDays(4),
@@ -439,6 +443,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day6' => [
                         'start' => $fromDate->addDays(5),
@@ -446,6 +451,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'day7' => [
                         'start' => $fromDate->addDays(6),
@@ -453,6 +459,7 @@ class Timesheets
                         'actualWorkDate' => $workdateOffsetStart === 0 ? $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : '',
                         'hours' => 0,
                         'description' => '',
+                        'id' => null
                     ],
                     'rowSum' => 0,
                 ];
@@ -476,7 +483,7 @@ class Timesheets
                     $timesheetGroups[$groupKey]['day'.$i]['hours'] += $timesheet['hours'];
                     $timesheetGroups[$groupKey]['day'.$i]['actualWorkDate'] = $currentWorkDate;
                     $timesheetGroups[$groupKey]['day'.$i]['description'] = $timesheet['description'];
-
+                    $timesheetGroups[$groupKey]['day'.$i]['id'] = $timesheet['id']; // DODAJ OVO
                     // No need to check further, we found what we came for
                     break;
                 }
