@@ -240,8 +240,7 @@ jQuery(document).ready(function(){
                 </div>
 
             </div>
-            <div class="timesheet-wrapper" style="max-width: 100%;">
-                <div style="overflow-x: scroll; width: 100%;">
+                <div style=" width: 100%; overflow-x:scroll;">
             <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
                 <colgroup>
                       <col class="con0" >
@@ -445,7 +444,6 @@ foreach ($colSum as $key => $col) {
                 </tfoot>
             </table>
     </div>
-</div>
             <div class="right">
                 <input type="submit" name="saveTimeSheet" class="saveTimesheetBtn" value="Save" />
             </div>
@@ -453,3 +451,16 @@ foreach ($colSum as $key => $col) {
         </form>
     </div>
 </div>
+<style>
+.timesheet-wrapper > div::-webkit-scrollbar {
+    height: 12px;
+    -webkit-appearance: none;
+}
+.timesheet-wrapper > div::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+}
+.timesheet-wrapper > div::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+</style>
