@@ -451,16 +451,3 @@ foreach ($colSum as $key => $col) {
         </form>
     </div>
 </div>
-<style>
-.timesheet-wrapper > div::-webkit-scrollbar {
-    height: 12px;
-    -webkit-appearance: none;
-}
-.timesheet-wrapper > div::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 6px;
-}
-.timesheet-wrapper > div::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-</style>
