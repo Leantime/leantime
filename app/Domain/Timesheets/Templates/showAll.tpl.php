@@ -240,7 +240,7 @@ if ($tpl->get('paid') == '1') {
                 </tr>
             </table>
             </div>
-
+            <div style = "overflow-x:auto;">
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>
                       <col class="con0" width="100px"/>
@@ -381,6 +381,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                     </tr>
                 </tfoot>
             </table>
+            </div>
         </form>
     </div>
 </div>
