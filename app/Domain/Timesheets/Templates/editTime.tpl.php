@@ -55,7 +55,7 @@ $values = $tpl->get('values');
 
 <?php echo $tpl->displayNotification() ?>
 
-<h4  class="widgettitle title-light" style = "color: white;"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_time'); ?></h4>
+<h4  class="widgettitle title-light" style = "color: white;"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
 <form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
 <label for="projects" style="color: white;"><?php echo $tpl->__('label.project')?></label>

@@ -483,7 +483,7 @@ class Timesheets
                     $timesheetGroups[$groupKey]['day'.$i]['hours'] += $timesheet['hours'];
                     $timesheetGroups[$groupKey]['day'.$i]['actualWorkDate'] = $currentWorkDate;
                     $timesheetGroups[$groupKey]['day'.$i]['description'] = $timesheet['description'];
-                    $timesheetGroups[$groupKey]['day'.$i]['id'] = $timesheet['id']; // DODAJ OVO
+                    $timesheetGroups[$groupKey]['day'.$i]['id'] = $timesheet['id'];
                     // No need to check further, we found what we came for
                     break;
                 }
