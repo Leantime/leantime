@@ -22,78 +22,6 @@ $allTicketGroups = $tpl->get('allTickets');
 
 <?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
-<style>
-    .kanban-search-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 82%;
-    }
-
-    .kanban-search-input {
-        position: relative;
-        width: 100%;
-        max-width: 340px;
-    }
-
-    .kanban-search-input input {
-        height: 35px;
-        line-height: 40px;
-        padding: 0 16px;
-        border: 1px solid #d5d5d5;
-        border-radius: 22px;
-        font-size: 14px;
-        background-color: #fff;
-        color: var(--primary-font-color);
-        transition: border-color 0.2s ease;
-        position: relative;
-        z-index: 1;
-    }
-
-    .kanban-search-input input:focus {
-        border-color: var(--primary-color);
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0, 94, 168, 0.1);
-    }
-
-    .kanban-search-clear {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        border: none;
-        background: none;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 6px;
-        border-radius: 50%;
-        display: none;
-        z-index: 10;
-        line-height: 1;
-        font-size: 14px;
-    }
-
-    .kanban-search-input.has-value .kanban-search-clear {
-        display: block;
-    }
-
-    .kanban-search-clear:hover {
-        color: var(--primary-color);
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .kanban-search-hidden {
-        display: none !important;
-    }
-
-    @media (max-width: 991px) {
-        .kanban-search-container {
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-    }
-</style>
-
 <div class="maincontent">
 
     <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
@@ -112,25 +40,11 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
 ?>
             </div>
 
-            <div class="col-md-4 center">
-                <div class="kanban-search-container">
-                    <div class="kanban-search-input" id="kanbanSearchWrapper">
-                        <input
-                            type="search"
-                            id="kanbanBoardSearch"
-                            value="<?= $tpl->escape($searchCriteria['term'] ?? '') ?>"
-                            placeholder="<?= $tpl->__('label.search_term') ?>"
-                            aria-label="<?= $tpl->__('label.search_term') ?>"
-                            autocomplete="off"
-                        />
-                        <button type="button" id="kanbanBoardSearchClear" class="kanban-search-clear" aria-label="Clear search">
-                            <span class="fa fa-times" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-4">
 
+            </div>
+            <div class="col-md-4">
+                <?php $tpl->displaySubmodule('tickets-kanbanSearchBar') ?>
             </div>
         </div>
 
@@ -224,7 +138,21 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                 <div class="contentInner <?php echo 'status_'.$key; ?>" >
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row['status'] == $key) {?>
-                                        <div class="ticketBox moveable container priority-border-<?= $row['priority']?>" id="ticket_<?php echo $row['id']; ?>">
+                                        <?php
+                                            $descriptionText = trim(strip_tags($row['description'] ?? ''));
+                                            $editorFullName = trim(($row['editorFirstname'] ?? '') . ' ' . ($row['editorLastname'] ?? ''));
+                                            $tagsText = is_string($row['tags'] ?? null) ? $row['tags'] : '';
+                                        ?>
+                                        <div
+                                            class="ticketBox moveable container priority-border-<?= $row['priority']?>"
+                                            id="ticket_<?php echo $row['id']; ?>"
+                                            data-ticket-id="<?= $row['id']; ?>"
+                                            data-headline="<?= $tpl->escape($row['headline']); ?>"
+                                            data-description="<?= $tpl->escape($descriptionText); ?>"
+                                            data-tags="<?= $tpl->escape($tagsText); ?>"
+                                            data-editor-name="<?= $tpl->escape($editorFullName); ?>"
+                                            data-editor-id="<?= $tpl->escape($row['editorId'] ?? ''); ?>"
+                                        >
 
                                             <div class="row" >
 
@@ -458,7 +386,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
     <?php } ?>
 
     leantime.ticketsController.setUpKanbanColumns();
-	leantime.ticketsController.initKanbanSearch();
+	// leantime.ticketsController.initKanbanSearch(); // Moved to kanbanSearchBar.sub.php for proper async loading
 
         <?php if (isset($_GET['showTicketModal'])) {
             if ($_GET['showTicketModal'] == '') {
