@@ -1,0 +1,13 @@
+.button-primary {
+    background-color: #004666;
+    color: white;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.title-button-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
