@@ -1,5 +1,7 @@
 <?php
 
+namespace Leantime\Domain\Tickets\Controllers;
+
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -16,18 +18,25 @@ class CloneTicket extends Controller
 
     public function post($params): Response
     {
-        $originalTicket = $this->ticketService->getTicketById($params['id']);
+        $originalTicket = $this->ticketService->getTicket($params['id']);
+
+        if (!$originalTicket) {
+            return Frontcontroller::redirect(BASE_URL.'/tickets/showKanban');
+        }
 
         $cloneParams = [
-            'summary' => $originalTicket->get('summary'),
-            'description' => $originalTicket->get('description'),
-            'projectId' => $originalTicket->get('projectId'),
-            'status' => $originalTicket->get('status'),
-            'assigneeId' => $originalTicket->get('assigneeId'),
+            'headline' => $originalTicket->headline,
+            'description' => $originalTicket->description,
+            'projectId' => $originalTicket->projectId,
+            'status' => $originalTicket->status,
+            'editorId' => $originalTicket->editorId,
+            'type' => $originalTicket->type,
+            'priority' => $originalTicket->priority,
         ];
 
         $newTicketId = $this->ticketService->addTicket($cloneParams);
 
-        return Frontcontroller::redirect(BASE_URL.'/tickets/showTicket?id='.$newTicketId);
+        $this->tpl->setNotification('To-Do successfully cloned!', 'success', 'ticket_cloned');
+        return Frontcontroller::redirect(BASE_URL.'/tickets/showKanban');
     }
 }

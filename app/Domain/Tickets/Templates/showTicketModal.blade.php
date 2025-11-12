@@ -29,6 +29,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <div class="title-button-wrapper">
     <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
     <form method="POST" action="<?= BASE_URL ?>/tickets/cloneTicket">
+        <input type="hidden" name="id" value="<?= $ticket->id ?>">
         <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
         <input type="hidden" name="projectId" value="<?= $ticket->projectId ?>">
         <input type="hidden" name="status" value="<?= $ticket->status ?>">
