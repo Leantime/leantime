@@ -8,6 +8,9 @@ $projectData = $tpl->get('projectData');
 $todoTypeIcons = $tpl->get('ticketTypeIcons');
 
 ?>
+
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/components/ticket-details.css">
+
 <script type="text/javascript">
     window.onload = function() {
         if (!window.jQuery) {
@@ -23,8 +26,16 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <small><a href="#/tickets/showTicket/<?= $ticket->dependingTicketId ?>"><?= $tpl->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
     <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
+    <div class="title-button-wrapper">
     <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
+    <form method="POST" action="<?= BASE_URL ?>/tickets/cloneTicket">
+        <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
+        <input type="hidden" name="projectId" value="<?= $ticket->projectId ?>">
+        <input type="hidden" name="status" value="<?= $ticket->status ?>">
+        <button type="submit" class="button-primary">Clone To-Do</button>
+    </form>
 
+    </div>
     <br />
 
     <?php if ($login::userIsAtLeast($roles::$editor)) {
