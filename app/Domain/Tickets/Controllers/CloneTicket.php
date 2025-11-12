@@ -35,8 +35,8 @@ class CloneTicket extends Controller
         ];
 
         $newTicketId = $this->ticketService->addTicket($cloneParams);
-
-        $this->tpl->setNotification('To-Do successfully cloned!', 'success', 'ticket_cloned');
+        error_log('Current language: ' . session('usersettings.language'));
+        $this->tpl->setNotification('To-Do was cloned succesfully!', 'success', 'ticket_cloned');
         return Frontcontroller::redirect(BASE_URL.'/tickets/showKanban');
     }
 }
