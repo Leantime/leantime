@@ -112,9 +112,9 @@ class Timesheets
         }
 
         if (empty($params['time'])) {
-            $values['date'] = dtHelper()->parseUserDateTime($params['date'], 'start')->formatDateTimeForDb();
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'])->format('Y-m-d H:i:s');
         } else {
-            $values['date'] = dtHelper()->parseUserDateTime($params['date'], $params['time'])->formatDateTimeForDb();
+            $values['date'] = dtHelper()->parseUserDateTime($params['date'], $params['time'])->format('Y-m-d H:i:s');
         }
 
         $values['hours'] = $this->parseTimeToDecimal($params['hours']);
