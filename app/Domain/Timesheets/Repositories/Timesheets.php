@@ -758,12 +758,12 @@ class Timesheets extends Repository
         }
 
         $workDate = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')
-    ->setToUserTimezone();
+            ->setToUserTimezone();
 
-$formattedDate = $workDate->setTimezone('CEST')->format('Y-m-d H:i:s');
+        $formattedDate = $workDate->setTimezone('CEST')->format('Y-m-d H:i:s');
 
 
-$call->bindValue(':workDate', $formattedDate);
+        $call->bindValue(':workDate', $formattedDate);
         
         $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
                   VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
