@@ -762,10 +762,6 @@ class Timesheets extends Repository
 
 $formattedDate = $workDate->setTimezone('CEST')->format('Y-m-d H:i:s');
 
-// DEBUG - privremeno dodaj ovo
-error_log("inTimestamp: " . $inTimestamp);
-error_log("workDate formatted: " . $formattedDate);
-die("DEBUG: workDate = " . $formattedDate); // Zaustavi izvršavanje i prikaži
 
 $call->bindValue(':workDate', $formattedDate);
         
