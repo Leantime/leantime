@@ -6,6 +6,7 @@ use Leantime\Core\Support\FromFormat;
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
+$hoursFormat = session('usersettings.hours_format', 'decimal');
 ?>
 
 <!-- page header -->
@@ -84,7 +85,7 @@ foreach ($__data as $var => $val) {
 
             <div class="clearfix"></div>
 
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
+            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
                 <colgroup>
                       <col class="con0" width="100px"/>
                       <col class="con1" />
@@ -133,15 +134,18 @@ foreach ($tpl->get('allTimesheets') as $row) {
                             <?php echo format($row['workDate'])->date(); ?>
                             <?php echo format($row['workDate'])->time(); ?>
                         </td>
-                        <td data-order="<?php $tpl->e($row['hours']); ?>">
-                            <?php $tpl->e($row['hours'] ?: 0); ?>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours'] ?: 0); ?></td> */ ?>
+                        <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours'] ?: 0); ?>" class="js-timesheet-hours">
+                            <?php echo format_hours($row['hours'] ?: 0); ?>
                         </td>
-                        <td data-order="<?php $tpl->e($row['planHours']); ?>">
-                            <?php $tpl->e($row['planHours'] ?: 0); ?>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours'] ?: 0); ?></td> */ ?>
+                        <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours'] ?: 0); ?>" class="js-timesheet-hours">
+                            <?php echo format_hours($row['planHours'] ?: 0); ?>
                         </td>
                         <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
-                        <td data-order="<?php echo $diff; ?>">
-                            <?php echo $diff; ?>
+                        <?php /* legacy: <td data-order="<?php echo $diff; ?>"><?php echo $diff; ?></td> */ ?>
+                        <td data-order="<?php echo $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours">
+                            <?php echo format_hours($diff); ?>
                         </td>
                         <td data-order="<?php echo $tpl->e($row['headline']); ?>">
                             <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a>
@@ -193,7 +197,8 @@ foreach ($tpl->get('allTimesheets') as $row) {
                     <tr>
                         <td></td>
                         <td colspan="1"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <td colspan="11"><strong><?php echo $sum; ?></strong></td>
+                        <?php /* legacy total: <td colspan="11"><strong><?php echo $sum; ?></strong></td> */ ?>
+                        <td colspan="11" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
                     </tr>
                 </tfoot>
             </table>
@@ -202,6 +207,35 @@ foreach ($tpl->get('allTimesheets') as $row) {
 </div>
 
 <script type="text/javascript">
+    // Initialize CSV export formatter (inline to avoid build dependency)
+    window.leantime = window.leantime || {};
+    window.leantime.timesheetsExport = window.leantime.timesheetsExport || {};
+    
+    if (typeof window.leantime.timesheetsExport.resolveCell !== 'function') {
+        window.leantime.timesheetsExport.resolveCell = function ($node, fallbackData) {
+            if (typeof $node.data('order') === 'undefined') {
+                return fallbackData;
+            }
+            
+            if (! $node.hasClass('js-timesheet-hours')) {
+                return $node.data('order');
+            }
+            
+            var tableFormat = ($node.closest('table[data-hours-format]').data('hoursFormat') || '').toString();
+            
+            if (tableFormat === 'human') {
+                // jQuery converts data-export-display to exportDisplay in .data()
+                if (typeof $node.data('exportDisplay') !== 'undefined') {
+                    return $node.data('exportDisplay');
+                }
+                
+                return $node.text().trim();
+            }
+            
+            return $node.data('order');
+        };
+    }
+
     jQuery(document).ready(function(){
         leantime.timesheetsController.initTimesheetsTable();
         leantime.timesheetsController.initEditTimeModal();

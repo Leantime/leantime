@@ -301,3 +301,84 @@ if (! function_exists('get_release_version')) {
     }
 
 }
+
+if (! function_exists('format_hours')) {
+    /**
+     * Format hours according to user preference (decimal or human-readable)
+     *
+     * @param  float|int|string  $hours  The hours to format (decimal)
+     * @param  string|null  $format  Override format ('decimal' or 'human'). If null, uses user preference.
+     * @param  bool  $compact  Use compact format (e.g., '1h 30m' instead of '1 hour 30 minutes')
+     * @return string Formatted hours string
+     */
+    function format_hours(float|int|string $hours, ?string $format = null, bool $compact = true): string
+    {
+        $hours = floatval($hours);
+
+        // Get user preference if format not specified
+        if ($format === null) {
+            $userId = session('userdata.id');
+            if ($userId) {
+                $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
+                $format = $settingsService->getSetting('usersettings.'.$userId.'.hours_format', 'decimal');
+            } else {
+                $format = 'decimal';
+            }
+        }
+
+        // Return decimal format
+        if ($format === 'decimal') {
+            return number_format($hours, 2);
+        }
+
+        // Return human-readable format
+        return format_hours_human($hours, $compact);
+    }
+}
+
+if (! function_exists('format_hours_human')) {
+    /**
+     * Convert decimal hours to human-readable format
+     *
+     * @param  float|int  $hours  The hours in decimal format
+     * @param  bool  $compact  Use compact format (e.g., '1h 30m' instead of '1 hour 30 minutes')
+     * @return string Human-readable hours string (e.g., '1h 30m' or '1 hour 30 minutes')
+     */
+    function format_hours_human(float|int $hours, bool $compact = true): string
+    {
+        $hours = floatval($hours);
+
+        if ($hours == 0) {
+            return $compact ? '0m' : '0 minutes';
+        }
+
+        $weeks = floor($hours / 40);
+        $hours = fmod($hours, 40);
+
+        $days = floor($hours / 8);
+        $hours = fmod($hours, 8);
+
+        $wholeHours = floor($hours);
+        $minutes = floor(($hours - $wholeHours) * 60);
+
+        $parts = [];
+
+        if ($weeks > 0) {
+            $parts[] = $compact ? "{$weeks}w" : ($weeks == 1 ? '1 week' : "{$weeks} weeks");
+        }
+
+        if ($days > 0) {
+            $parts[] = $compact ? "{$days}d" : ($days == 1 ? '1 day' : "{$days} days");
+        }
+
+        if ($wholeHours > 0) {
+            $parts[] = $compact ? "{$wholeHours}h" : ($wholeHours == 1 ? '1 hour' : "{$wholeHours} hours");
+        }
+
+        if ($minutes > 0) {
+            $parts[] = $compact ? "{$minutes}m" : ($minutes == 1 ? '1 minute' : "{$minutes} minutes");
+        }
+
+        return implode(' ', $parts);
+    }
+}

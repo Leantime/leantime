@@ -4,8 +4,38 @@ defined('RESTRICTED') or exit('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
+$hoursFormat = session('usersettings.hours_format', 'decimal');
 ?>
 <script type="text/javascript">
+    // Initialize CSV export formatter (inline to avoid build dependency)
+    window.leantime = window.leantime || {};
+    window.leantime.timesheetsExport = window.leantime.timesheetsExport || {};
+    
+    if (typeof window.leantime.timesheetsExport.resolveCell !== 'function') {
+        window.leantime.timesheetsExport.resolveCell = function ($node, fallbackData) {
+            if (typeof $node.data('order') === 'undefined') {
+                return fallbackData;
+            }
+            
+            if (! $node.hasClass('js-timesheet-hours')) {
+                return $node.data('order');
+            }
+            
+            var tableFormat = ($node.closest('table[data-hours-format]').data('hoursFormat') || '').toString();
+            
+            if (tableFormat === 'human') {
+                // jQuery converts data-export-display to exportDisplay in .data()
+                if (typeof $node.data('exportDisplay') !== 'undefined') {
+                    return $node.data('exportDisplay');
+                }
+                
+                return $node.text().trim();
+            }
+            
+            return $node.data('order');
+        };
+    }
+
     const projectAllLabel = <?php echo json_encode(strip_tags($tpl->__('menu.all_projects'))); ?>;
 
     function updateProjectCountInline() {
@@ -251,7 +281,7 @@ if ($tpl->get('paid') == '1') {
             </table>
             </div>
             <div style = "overflow-x:auto;">
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
+            <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
                 <colgroup>
                       <col class="con0" width="100px"/>
                       <col class="con1" width="80px"/>
@@ -317,10 +347,13 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
                         </td>
-                        <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td>
-                        <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php echo format_hours($row['hours']); ?></td> */ ?>
+                        <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['hours']); ?></td>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php echo format_hours($row['planHours']); ?></td> */ ?>
+                        <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
-                        <td data-order="<?= $diff; ?>"><?php echo $diff; ?></td>
+                        <?php /* legacy: <td data-order="<?= $diff; ?>"><?php echo format_hours($diff); ?></td> */ ?>
+                        <td data-order="<?= $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours"><?php echo format_hours($diff); ?></td>
                         <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 
                         <td data-order="<?= $tpl->e($row['name']); ?>"><a href="<?= BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
@@ -373,7 +406,8 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <td colspan="10"><strong><?php echo $sum; ?></strong></td>
+                        <?php /* legacy total: <td colspan="10"><strong><?php echo format_hours($sum); ?></strong></td> */ ?>
+                        <td colspan="10" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
 
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>

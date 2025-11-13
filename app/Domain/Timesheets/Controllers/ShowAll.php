@@ -212,6 +212,15 @@ class ShowAll extends Controller
             $clientId
         ));
 
+        // Pass user's hours format preference to template for CSV export
+        $userId = session('userdata.id');
+        $hoursFormat = 'decimal';
+        if ($userId) {
+            $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
+            $hoursFormat = $settingsService->getSetting('usersettings.'.$userId.'.hours_format', 'decimal');
+        }
+        $this->tpl->assign('hoursFormat', $hoursFormat);
+
         return $this->tpl->display('timesheets.showAll');
     }
 }
