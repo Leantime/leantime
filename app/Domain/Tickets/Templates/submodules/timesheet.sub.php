@@ -81,7 +81,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                                 </thead>
                                 <tbody style="background-color: #fff;">
                                 <?php foreach ($timesheetEntries as $entry) {
-                                    $date = new \DateTime($entry['workDate'], new \DateTimeZone('UTC'));
+                                    $date = new \DateTime($entry['workDate']);
 
                                     $displayDate = $date->format('Y-m-d H:i:s');
 
