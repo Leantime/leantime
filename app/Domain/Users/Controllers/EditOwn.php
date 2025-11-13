@@ -83,6 +83,12 @@ class EditOwn extends Controller
             $timezone = date_default_timezone_get();
         }
 
+        $hoursFormat = $this->settingsService->getSetting('usersettings.'.$this->userId.'.hours_format');
+
+        if (! $hoursFormat) {
+            $hoursFormat = 'decimal';
+        }
+
         $timezonesAvailable = timezone_identifiers_list();
 
         // Build values array
@@ -121,6 +127,7 @@ class EditOwn extends Controller
         $this->tpl->assign('timeFormat', $userTimeFormat);
         $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
         $this->tpl->assign('timezone', $timezone);
+        $this->tpl->assign('hoursFormat', $hoursFormat);
         $this->tpl->assign('availableColorSchemes', $availableColorSchemes);
         $this->tpl->assign('availableFonts', $this->themeCore->getAvailableFonts());
         $this->tpl->assign('availableThemes', $this->themeCore->getAll());
@@ -258,17 +265,20 @@ class EditOwn extends Controller
                 $dateFormat = htmlentities($_POST['date_format']);
                 $timeFormat = htmlentities($_POST['time_format']);
                 $tz = htmlentities($_POST['timezone']);
+                $hoursFormat = htmlentities($_POST['hours_format'] ?? 'decimal');
 
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.language', $postLang);
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.date_format', $dateFormat);
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.time_format', $timeFormat);
                 $this->settingsService->saveSetting('usersettings.'.$this->userId.'.timezone', $tz);
+                $this->settingsService->saveSetting('usersettings.'.$this->userId.'.hours_format', $hoursFormat);
 
                 session()->forget('cache.language_resources_'.$this->language->getCurrentLanguage());
 
                 session(['usersettings.date_format' => $dateFormat]);
                 session(['usersettings.time_format' => $timeFormat]);
                 session(['usersettings.timezone' => $tz]);
+                session(['usersettings.hours_format' => $hoursFormat]);
 
                 $this->language->setLanguage($postLang);
 

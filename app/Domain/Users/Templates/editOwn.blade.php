@@ -270,6 +270,23 @@
                                         </select>
                                     </span>
                                 </div>
+                                <div class="form-group">
+                                    <label for="hours_format" >{{ __('label.hours_format') }}</label>
+                                    <span>
+                                        <select name="hours_format" id="hours_format" style="width: 220px">
+                                            <option value="decimal"
+                                                    @if ($hoursFormat === 'decimal' )
+                                                        selected='selected'
+                                                    @endif
+                                                    >Decimal (e.g. 2.50)</option>
+                                            <option value="human"
+                                                    @if ($hoursFormat === 'human' )
+                                                        selected='selected'
+                                                    @endif
+                                                    >Human-readable (e.g. 2h 30m)</option>
+                                        </select>
+                                    </span>
+                                </div>
                             </div>
                             <input type="hidden" name="saveSettings" value="1" />
                             <input type="submit" name="save" id="saveSettings" value="{{ __('buttons.save') }}" class="button"/>
