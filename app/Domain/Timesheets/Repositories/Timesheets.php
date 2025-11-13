@@ -644,7 +644,7 @@ class Timesheets extends Repository
         ) VALUES (
             :userId,
             :ticket,
-            :date,
+            NOW(),
             :hours,
             :kind,
             :description,
@@ -757,18 +757,29 @@ class Timesheets extends Repository
             return 0;
         }
 
+        $workDate = dtHelper()::createFromTimestamp($inTimestamp, 'UTC')
+    ->setToUserTimezone();
+
+$formattedDate = $workDate->setTimezone('CEST')->format('Y-m-d H:i:s');
+
+// DEBUG - privremeno dodaj ovo
+error_log("inTimestamp: " . $inTimestamp);
+error_log("workDate formatted: " . $formattedDate);
+die("DEBUG: workDate = " . $formattedDate); // Zaustavi izvršavanje i prikaži
+
+$call->bindValue(':workDate', $formattedDate);
+        
         $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
                   VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
-                  ON DUPLICATE KEY UPDATE hours = hours + VALUES(hours)";
+                  ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
-        $workDate = dtHelper()::createFromTimestamp($inTimestamp, 'UTC');
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
         $call->prepare($query);
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', session('userdata.id'));
+        $call->bindValue(':workDate', $workDate->setTimezone('UTC')->format('Y-m-d H:i:s'));
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', date('Y-m-d H:i:s', $inTimestamp));
         $call->bindValue(':modified', date('Y-m-d H:i:s'));
 
         $call->execute();
