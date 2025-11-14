@@ -244,7 +244,7 @@ if ($tpl->get('paid') == '1') {
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>
                       <col class="con0" width="100px"/>
-                      <col class="con1" />
+                      <col class="con1" width="80px"/>
                       <col class="con0"/>
                       <col class="con1" />
                       <col class="con0"/>
@@ -259,10 +259,12 @@ if ($tpl->get('paid') == '1') {
                       <col class="con1"/>
                       <col class="con0"/>
                       <col class="con1"/>
+                      <col class="con0"/>
                 </colgroup>
                 <thead>
                     <tr>
                         <th><?php echo $tpl->__('label.id'); ?></th>
+                        <th>Tick.ID</th>
                         <th><?php echo $tpl->__('label.date'); ?></th>
                         <th><?php echo $tpl->__('label.hours'); ?></th>
                         <th><?php echo $tpl->__('label.plan_hours'); ?></th>
@@ -297,6 +299,9 @@ foreach ($tpl->get('allTimesheets') as $row) {
                                 <?php } else { ?>
                                 #<?= $row['id']?>
                                 <?php } ?>
+                        </td>
+                        <td data-order="<?= $tpl->e($row['ticketId']); ?>">
+                                <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>">#<?php echo $tpl->escape($row['ticketId']); ?></a>
                         </td>
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
@@ -356,7 +361,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
+                        <td colspan="3"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
                         <td colspan="10"><strong><?php echo $sum; ?></strong></td>
 
                         <td>
