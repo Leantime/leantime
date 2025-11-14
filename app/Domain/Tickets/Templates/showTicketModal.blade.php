@@ -28,13 +28,6 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
     <small class="tw-float-right tw-pr-md" style="padding:5px 30px 0px 0px">Created by <?php $tpl->e($ticket->userFirstname); ?> <?php $tpl->e($ticket->userLastname); ?> | Last Updated: <?= format($ticket->date)->date(); ?> </small>
     <div class="title-button-wrapper">
     <h1 class="tw-mb-0" style="margin-bottom:0px;"><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?= $ticket->id ?> - <?php $tpl->e($ticket->headline); ?></h1>
-    <form method="POST" action="<?= BASE_URL ?>/tickets/cloneTicket">
-        <input type="hidden" name="id" value="<?= $ticket->id ?>">
-        <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
-        <input type="hidden" name="projectId" value="<?= $ticket->projectId ?>">
-        <input type="hidden" name="status" value="<?= $ticket->status ?>">
-        <button type="submit" class="button-primary">Clone To-Do</button>
-    </form>
 
     </div>
     <br />
@@ -52,6 +45,13 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
+                <li><form method="POST" action="<?= BASE_URL ?>/tickets/cloneTicket">
+        <input type="hidden" name="id" value="<?= $ticket->id ?>">
+        <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
+        <input type="hidden" name="projectId" value="<?= $ticket->projectId ?>">
+        <input type="hidden" name="status" value="<?= $ticket->status ?>">
+        <button type="submit" class="button-primary"><i class="fa fa-clone"></i> Clone To-Do</button>
+    </form></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
                     hx-trigger="timerUpdate from:body"

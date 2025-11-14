@@ -1,13 +1,16 @@
 .button-primary {
-    background-color: #004666;
-    color: white;
-    border-radius: 20px;
-    font-weight: 500;
+    color: #333333;
+    font-weight: 100;
+    background-color: transparent;
+    border: 1px solid transparent;
+    width: 100%;
+    text-align: left;
+    margin-left: 3px;
 }
 
-.title-button-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.button-primary:hover {
+    background-color: #f0f0f0;
+    color: #000000;
+    height: 24px;
 }
 
