@@ -767,7 +767,7 @@ class Install
 
                 CREATE TABLE `zp_entity_relationship` (
                     `id` INT NOT NULL AUTO_INCREMENT,
-                    `enitityA` INT NULL,
+                    `entityA` INT NULL,
                     `entityAType` VARCHAR(45) NULL,
                     `entityB` INT NULL,
                     `entityBType` VARCHAR(45) NULL,
@@ -776,7 +776,7 @@ class Install
                     `createdBy` INT NULL,
                     `meta` TEXT NULL,
                     PRIMARY KEY (`id`),
-                    INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
+                    INDEX `entityA` (`entityA` ASC, `entityAType` ASC, `relationship` ASC),
                     INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
