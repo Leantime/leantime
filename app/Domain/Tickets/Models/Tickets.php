@@ -92,6 +92,8 @@ class Tickets
 
     public ?array $children = null;
 
+    public ?array $collaborators = null;
+
     /**
      * @param  false  $values
      */

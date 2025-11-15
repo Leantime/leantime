@@ -100,6 +100,29 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
                 </div>
 
+                <!-- Collaborators -->
+                <div class="form-group tw-flex tw-w-3/5">
+                    <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.collaborators'); ?></label>
+                    <div class="">
+                        <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" 
+                                style="width:175px;" 
+                                name="collaborators[]" 
+                                id="collaborators" 
+                                class="user-select tw-mr-sm" 
+                                multiple>
+                            <?php foreach ($tpl->get('users') as $userRow) { ?>
+                                <option value="<?php echo $userRow['id']; ?>"
+                                    <?php if (in_array($userRow['id'], $ticket->collaborators ?? [])) {
+                                        echo "selected='selected'";
+                                    } ?>
+                                >
+                                    <?php echo $tpl->escape($userRow['firstname'] . ' ' . $userRow['lastname']); ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Due Date -->
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.due_date'); ?></label>
