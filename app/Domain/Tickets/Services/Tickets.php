@@ -2954,10 +2954,11 @@ class Tickets
                         )->formatDateTimeForDb();
                         unset($values['timeFrom']);
                     } else {
+                        // Use noon (12:00:00) instead of start of day to preserve date when converting to UTC
                         $values['editFrom'] = dtHelper()->parseUserDateTime(
                             $values['editFrom'],
                             'start'
-                        )->formatDateTimeForDb();
+                        )->setTime(12, 0, 0)->formatDateTimeForDb();
                     }
                 }
             } catch (\Exception $e) {
@@ -2979,10 +2980,11 @@ class Tickets
                         )->formatDateTimeForDb();
                         unset($values['timeTo']);
                     } else {
+                        // Use noon (12:00:00) instead of end of day to preserve date when converting to UTC
                         $values['editTo'] = dtHelper()->parseUserDateTime(
                             $values['editTo'],
-                            'end'
-                        )->formatDateTimeForDb();
+                            'start'
+                        )->setTime(12, 0, 0)->formatDateTimeForDb();
                     }
                 }
 
