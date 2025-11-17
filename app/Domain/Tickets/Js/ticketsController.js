@@ -451,7 +451,6 @@ leantime.ticketsController = (function () {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
             } catch ( error ) {
                 date = null;
-                console.log(error);
             }
 
             return date;
@@ -518,7 +517,6 @@ leantime.ticketsController = (function () {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
             } catch ( error ) {
                 date = null;
-                console.log(error);
             }
 
             return date;
@@ -614,7 +612,6 @@ leantime.ticketsController = (function () {
                 date = jQuery.datepicker.parseDate(dateFormat, element.value);
             } catch ( error ) {
                 date = null;
-                console.log(error);
             }
 
             return date;
@@ -662,8 +659,6 @@ leantime.ticketsController = (function () {
 
                     }
                 );
-            } else {
-                console.log("Ticket Controller: Effort data value not set correctly");
             }
         });
 
@@ -711,8 +706,6 @@ leantime.ticketsController = (function () {
 
                     }
                 );
-            } else {
-                console.log("Ticket Controller: Priority data value not set correctly");
             }
         });
 
