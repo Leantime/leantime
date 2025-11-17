@@ -347,12 +347,12 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
                         </td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php echo format_hours($row['hours']); ?></td> */ ?>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td> */ ?>
                         <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['hours']); ?></td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php echo format_hours($row['planHours']); ?></td> */ ?>
+                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td> */ ?>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
-                        <?php /* legacy: <td data-order="<?= $diff; ?>"><?php echo format_hours($diff); ?></td> */ ?>
+                        <?php /* legacy: <td data-order="<?= $diff; ?>"><?php echo $diff; ?></td> */ ?>
                         <td data-order="<?= $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours"><?php echo format_hours($diff); ?></td>
                         <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 
@@ -406,7 +406,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <?php /* legacy total: <td colspan="10"><strong><?php echo format_hours($sum); ?></strong></td> */ ?>
+                        <?php /* legacy total: <td colspan="10"><strong><?php echo $sum; ?></strong></td> */ ?>
                         <td colspan="10" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
 
                         <td>
