@@ -195,9 +195,9 @@ class DefaultConfig
     public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
-     * @var int How many minutes after inactivity should we logout?  480min = 8hours
+     * @var int How many seconds after inactivity should we logout?  28800seconds = 8hours
      */
-    public int $sessionExpiration = 480;
+    public int $sessionExpiration = 28800;
 
     /**
      * @var bool. Sets whether the cookie should only be served via https
