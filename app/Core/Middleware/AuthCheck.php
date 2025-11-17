@@ -77,9 +77,11 @@ class AuthCheck
 
         $response = $next($request);
 
-        if ($authCheckResponse === true) {
-            $this->setCookie($response);
-        }
+        // #4771 - Commented out custom cookie logic in favor of Laravel's standard session management
+        // This custom cookie was causing inconsistent session behavior
+        // if ($authCheckResponse === true) {
+        //     $this->setCookie($response);
+        // }
 
         return $response;
     }
@@ -164,25 +166,28 @@ class AuthCheck
         return new RedirectResponse($destination.$queryParams);
     }
 
-    public function setCookie($response): void
-    {
-
-        // Set cookie to increase session timeout
-        $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
-            'esl', // Extend Session Lifetime
-            'true',
-            Date::instance(
-                Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))
-            ),
-            $this->config->get('session.path'),
-            $this->config->get('session.domain'),
-            false,
-            $this->config->get('session.http_only', true),
-            false,
-            $this->config->get('session.same_site', null),
-            $this->config->get('session.partitioned', false)
-        ));
-    }
+    // #4771 - Commented out custom cookie extension logic
+    // This was causing type errors and inconsistent session behavior
+    // Laravel's standard session management handles this properly
+    // public function setCookie($response): void
+    // {
+    //
+    //     // Set cookie to increase session timeout
+    //     $response->headers->setCookie(new \Symfony\Component\HttpFoundation\Cookie(
+    //         'esl', // Extend Session Lifetime
+    //         'true',
+    //         Date::instance(
+    //             Carbon::now()->addRealMinutes($this->config->get('session.lifetime'))
+    //         ),
+    //         $this->config->get('session.path'),
+    //         $this->config->get('session.domain'),
+    //         false,
+    //         $this->config->get('session.http_only', true),
+    //         false,
+    //         $this->config->get('session.same_site', null),
+    //         $this->config->get('session.partitioned', false)
+    //     ));
+    // }
 
     public function isPublicController($currentPath): bool
     {

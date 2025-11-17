@@ -341,7 +341,7 @@ return [
         |
         */
 
-        'lifetime' => env('LEAN_SESSION_EXPIRATION', 480), // 8 hours
+        'lifetime' => env('LEAN_SESSION_EXPIRATION', 28800) / 60, // Convert seconds to minutes, default 8 hours
 
         'expire_on_close' => false,
 
