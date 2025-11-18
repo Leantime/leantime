@@ -18,6 +18,23 @@ $ticketTypes = $tpl->get('ticketTypes');
                 <div class="form-group">
                     <input type="text" value="<?php $tpl->e($ticket->headline); ?>" name="headline" class="main-title-input" autocomplete="off" style="width:99%; margin-bottom:10px;" placeholder="<?= $tpl->__('input.placeholders.enter_title_of_todo')?>"/>
                 </div>
+               <?php
+use Leantime\Domain\Users\Services\Users;
+
+$userService = app()->make(Users::class);
+
+// Get currently logged-in user
+$currentUserId = session('userdata.id') ?? null;
+$currentUser = $currentUserId ? $userService->getUser($currentUserId) : null;
+
+if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) {
+    $currentUserName = $currentUser['firstname'] . ' ' . $currentUser['lastname'];
+} else {
+    $currentUserName = 'Unknown User';
+}
+?>
+
+
                 <!-- Status -->
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.todo_status'); ?></label>
@@ -27,7 +44,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             class="autosave-field"
                             name="status"
                             data-old-status="<?php echo $ticket->status; ?>"
-                            data-user="<?php echo auth()->user()->name ?? 'Unknown'; ?>"
+                            data-user="<?= htmlspecialchars($currentUserName) ?>"
                             data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : ''; ?>"
                         >
                             <?php foreach ($statusLabels as $key => $label) {?>
