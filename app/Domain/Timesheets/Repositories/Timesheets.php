@@ -644,7 +644,7 @@ class Timesheets extends Repository
         ) VALUES (
             :userId,
             :ticket,
-            NOW(),
+            :loggingDate,
             :hours,
             :kind,
             :description,
@@ -665,10 +665,21 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
+    
+        $workDateTime = new \DateTime($values['date']);
+        $currentTime = new \DateTime('now');
 
+        $currentHours = $currentTime -> format('H');
+        $currentMinutes = $currentTime -> format('i');
+        $currentSeconds = $currentTime -> format('s');
+
+        $workDateTime->setTime($currentHours, $currentMinutes, $currentSeconds);
+
+        $combinedWorkDate = $workDateTime->format('Y-m-d H:i:s');
+        
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
-        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':loggingDate', $combinedWorkDate);
         $call->bindValue(':kind', $values['kind']);
         $call->bindValue(':description', $values['description'] ?? '');
         $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
