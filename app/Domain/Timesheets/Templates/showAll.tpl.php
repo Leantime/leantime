@@ -76,6 +76,10 @@ foreach ($__data as $var => $val) {
     });
 </script>
 
+<!-- ADDITIVE: Column State Persistence -->
+<script src="<?= BASE_URL ?>/assets/js/app/core/datatablesColumnState.js"></script>
+<!-- END ADDITIVE -->
+
 <!-- page header -->
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
@@ -263,23 +267,24 @@ if ($tpl->get('paid') == '1') {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th><?php echo $tpl->__('label.id'); ?></th>
-                        <th>Tick.ID</th>
-                        <th><?php echo $tpl->__('label.date'); ?></th>
-                        <th><?php echo $tpl->__('label.hours'); ?></th>
-                        <th><?php echo $tpl->__('label.plan_hours'); ?></th>
-                        <th><?php echo $tpl->__('label.difference'); ?></th>
-                        <th><?php echo $tpl->__('label.ticket'); ?></th>
-                        <th><?php echo $tpl->__('label.project'); ?></th>
-                        <th><?php echo $tpl->__('label.client'); ?></th>
-                        <th><?php echo $tpl->__('label.employee'); ?></th>
-                        <th><?php echo $tpl->__('label.type')?></th>
-                        <th><?php echo $tpl->__('label.milestone') ?></th>
-                        <th><?php echo $tpl->__('label.tags') ?></th>
-                        <th><?php echo $tpl->__('label.description'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
-                        <th><?php echo $tpl->__('label.paid'); ?></th>
+                        <!-- ADDITIVE: data-column-name for state persistence -->
+                        <th data-column-name="id"><?php echo $tpl->__('label.id'); ?></th>
+                        <th data-column-name="tickId">Tick.ID</th>
+                        <th data-column-name="date"><?php echo $tpl->__('label.date'); ?></th>
+                        <th data-column-name="hours"><?php echo $tpl->__('label.hours'); ?></th>
+                        <th data-column-name="planHours"><?php echo $tpl->__('label.plan_hours'); ?></th>
+                        <th data-column-name="difference"><?php echo $tpl->__('label.difference'); ?></th>
+                        <th data-column-name="ticket"><?php echo $tpl->__('label.ticket'); ?></th>
+                        <th data-column-name="project"><?php echo $tpl->__('label.project'); ?></th>
+                        <th data-column-name="client"><?php echo $tpl->__('label.client'); ?></th>
+                        <th data-column-name="employee"><?php echo $tpl->__('label.employee'); ?></th>
+                        <th data-column-name="type"><?php echo $tpl->__('label.type')?></th>
+                        <th data-column-name="milestone"><?php echo $tpl->__('label.milestone') ?></th>
+                        <th data-column-name="tags"><?php echo $tpl->__('label.tags') ?></th>
+                        <th data-column-name="description"><?php echo $tpl->__('label.description'); ?></th>
+                        <th data-column-name="invoiced"><?php echo $tpl->__('label.invoiced'); ?></th>
+                        <th data-column-name="mgrApproval"><?php echo $tpl->__('label.invoiced_comp'); ?></th>
+                        <th data-column-name="paid"><?php echo $tpl->__('label.paid'); ?></th>
                     </tr>
 
                 </thead>
