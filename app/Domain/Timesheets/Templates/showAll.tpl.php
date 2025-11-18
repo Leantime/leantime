@@ -76,6 +76,10 @@ foreach ($__data as $var => $val) {
     });
 </script>
 
+<!-- ADDITIVE: Column State Persistence -->
+<script src="<?= BASE_URL ?>/assets/js/app/core/datatablesColumnState.js"></script>
+<!-- END ADDITIVE -->
+
 <!-- page header -->
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-business-time"></span></div>
@@ -98,7 +102,7 @@ foreach ($__data as $var => $val) {
 
             <table cellpadding="10" cellspacing="0" width="90%" class="table dataTable filterTable">
                 <tr>
-                    <td>
+                    <td style="vertical-align: top;">
                         <label for="clients"><?php echo $tpl->__('label.client'); ?></label>
                         <select name="clientId">
                             <option value="-1"><?php echo strip_tags($tpl->__('menu.all_clients')) ?></option>
@@ -110,47 +114,47 @@ foreach ($__data as $var => $val) {
                             <?php } ?>
                         </select>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <label><?php echo $tpl->__('label.project'); ?></label>
-                        <div class="project-dropdown-container" style="position: relative; width: 200px; border-radius: 20px;">
-                            <button type="button" class="project-dropdown-toggle" style="width: 100%; padding: 8px 14px; text-align: left; background: #fff; border: 1px solid #d0d5dd; cursor: pointer; border-radius: 20px; font-size: 13px; line-height: 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px;" onclick="document.getElementById('projectCheckboxDropdown').style.display = document.getElementById('projectCheckboxDropdown').style.display === 'none' ? 'block' : 'none';">
-                                <span class="selected-count" id="projectSelectedCount">
+                        <div class="project-dropdown-container" style="position: relative; width: 200px;">
+                            <button type="button" class="project-dropdown-toggle" style="width: 100%; padding: 4px 14px; text-align: left; background: #fff; border: 1px solid #ccc; cursor: pointer; border-radius: 20px; font-size: 14px; line-height: 20px; height: 30px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #555; box-sizing: border-box;" onclick="document.getElementById('projectCheckboxDropdown').style.display = document.getElementById('projectCheckboxDropdown').style.display === 'none' ? 'block' : 'none';">
+                                <span class="selected-count" id="projectSelectedCount" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     <?php
                                     $selectedProjects = is_array($tpl->get('projectFilter')) ? $tpl->get('projectFilter') : [$tpl->get('projectFilter')];
                                     if ($tpl->get('projectFilter') == -1 || !is_array($tpl->get('projectFilter'))) {
-                                        echo $tpl->__('menu.all_projects');
+                                        echo strip_tags($tpl->__('menu.all_projects'));
                                     } else {
                                         echo count($selectedProjects) . ' project(s) selected';
                                     }
                                     ?>
                                 </span>
-                                <span style="font-size: 11px;">▼</span>
+                                <i class="fa fa-chevron-down" style="font-size: 10px; flex-shrink: 0;"></i>
                             </button>
                             <div id="projectCheckboxDropdown" class="project-checkbox-dropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 14px; width: 100%; max-height: 250px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); margin-top: 6px;">
-                                <label style="display: block; padding: 10px 12px; border-bottom: 1px solid #eef2f7; background: #f7f9fc; font-weight: bold; border-top-left-radius: 14px; border-top-right-radius: 14px;" onclick="event.stopPropagation();">
-                                    <input type="checkbox" name="project[]" value="-1" class="project-checkbox-all" id="projectCheckboxAll"
+                                <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #eef2f7; background: #f7f9fc; font-weight: bold; border-top-left-radius: 14px; border-top-right-radius: 14px; cursor: pointer;" onclick="event.stopPropagation();">
+                                    <input type="checkbox" name="project[]" value="-1" class="project-checkbox-all" id="projectCheckboxAll" style="margin: 0; vertical-align: middle;"
                                         onchange="if(this.checked) { document.querySelectorAll('.project-checkbox').forEach(function(cb){cb.checked=false;}); } updateProjectCountInline();"
                                         <?php if (!is_array($tpl->get('projectFilter')) || $tpl->get('projectFilter') == -1) {
                                             echo 'checked="checked"';
                                         } ?>>
-                                    <?php echo strip_tags($tpl->__('menu.all_projects')) ?>
+                                    <span><?php echo strip_tags($tpl->__('menu.all_projects')) ?></span>
                                 </label>
                                 <?php
                                 foreach ($tpl->get('allProjects') as $project) { ?>
-                                    <label style="display: block; padding: 10px 12px; cursor: pointer;" class="project-checkbox-label" onmouseover="this.style.background='#eef2f7'" onmouseout="this.style.background='white'" onclick="event.stopPropagation();">
-                                        <input type="checkbox" name="project[]" value="<?= $project['id'] ?>" class="project-checkbox"
+                                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; color: #333; transition: background-color 0.2s ease;" class="project-checkbox-label" onmouseover="this.style.background='#eef2f7'; this.style.color='#333';" onmouseout="this.style.background='white'; this.style.color='#333';" onclick="event.stopPropagation();">
+                                        <input type="checkbox" name="project[]" value="<?= $project['id'] ?>" class="project-checkbox" style="margin: 0; vertical-align: middle;"
                                             onchange="if(this.checked) { document.getElementById('projectCheckboxAll').checked=false; } else { var anyChecked = document.querySelectorAll('.project-checkbox:checked').length > 0; if(!anyChecked) { document.getElementById('projectCheckboxAll').checked=true; } } updateProjectCountInline();"
                                             <?php if (is_array($selectedProjects) && in_array($project['id'], $selectedProjects)) {
                                                 echo 'checked="checked"';
                                             } ?>>
-                                        <?= $tpl->escape($project['name']) ?>
+                                        <span><?= $tpl->escape($project['name']) ?></span>
                                     </label>
                                 <?php } ?>
                             </div>
                         </div>
                     </td>
                     <?php if (! empty($tpl->get('allTickets'))) { ?>
-                    <td>
+                    <td style="vertical-align: top;">
                         <label for="ticket"><?php echo $tpl->__('label.ticket'); ?></label>
                             <select name="ticket" style="max-width:120px;">
                                 <option value="-1"><?php echo strip_tags($tpl->__('menu.all_tickets')) ?></option>
@@ -164,15 +168,15 @@ foreach ($__data as $var => $val) {
                     </td>
                     <?php } ?>
 
-                    <td>
+                    <td style="vertical-align: top;">
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                         <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
                         value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <label for="dateTo"><?php echo $tpl->__('label.date_to'); ?></label>
                         <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
                         value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
-                    <td>
+                    <td style="vertical-align: top;">
                     <label for="userId"><?php echo $tpl->__('label.employee'); ?></label>
                         <select name="userId" id="userId" onchange="submit();" style="max-width:120px;">
                             <option value="all"><?php echo $tpl->__('label.all_employees'); ?></option>
@@ -187,7 +191,7 @@ foreach ($__data as $var => $val) {
 ?>
                         </select>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <label for="kind"><?php echo $tpl->__('label.type')?></label>
                         <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
                             <option value="all"><?php echo $tpl->__('label.all_types'); ?></option>
@@ -202,7 +206,7 @@ foreach ($__data as $var => $val) {
 
                         </select>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <input type="checkbox" value="1" name="invEmpl" id="invEmpl" onclick="submit();"
                             <?php
 if ($tpl->get('invEmpl') == '1') {
@@ -212,7 +216,7 @@ if ($tpl->get('invEmpl') == '1') {
                         />
                         <label for="invEmpl"><?php echo $tpl->__('label.invoiced'); ?></label>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <input type="checkbox" value="on" name="invComp" id="invComp" onclick="submit();"
                             <?php
 if ($tpl->get('invComp') == '1') {
@@ -223,7 +227,7 @@ if ($tpl->get('invComp') == '1') {
                         <label for="invEmpl"><?php echo $tpl->__('label.invoiced_comp'); ?></label>
                     </td>
 
-                    <td>
+                    <td style="vertical-align: top;">
                         <input type="checkbox" value="on" name="paid" id="paid" onclick="submit();"
                             <?php
 if ($tpl->get('paid') == '1') {
@@ -233,7 +237,7 @@ if ($tpl->get('paid') == '1') {
                         />
                         <label for="paid"><?php echo $tpl->__('label.paid'); ?></label>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <input type="hidden" name='filterSubmit' value="1"/>
                         <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
                     </td>
@@ -263,23 +267,24 @@ if ($tpl->get('paid') == '1') {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th><?php echo $tpl->__('label.id'); ?></th>
-                        <th>Tick.ID</th>
-                        <th><?php echo $tpl->__('label.date'); ?></th>
-                        <th><?php echo $tpl->__('label.hours'); ?></th>
-                        <th><?php echo $tpl->__('label.plan_hours'); ?></th>
-                        <th><?php echo $tpl->__('label.difference'); ?></th>
-                        <th><?php echo $tpl->__('label.ticket'); ?></th>
-                        <th><?php echo $tpl->__('label.project'); ?></th>
-                        <th><?php echo $tpl->__('label.client'); ?></th>
-                        <th><?php echo $tpl->__('label.employee'); ?></th>
-                        <th><?php echo $tpl->__('label.type')?></th>
-                        <th><?php echo $tpl->__('label.milestone') ?></th>
-                        <th><?php echo $tpl->__('label.tags') ?></th>
-                        <th><?php echo $tpl->__('label.description'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced'); ?></th>
-                        <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
-                        <th><?php echo $tpl->__('label.paid'); ?></th>
+                        <!-- ADDITIVE: data-column-name for state persistence -->
+                        <th data-column-name="id"><?php echo $tpl->__('label.id'); ?></th>
+                        <th data-column-name="tickId">Tick.ID</th>
+                        <th data-column-name="date"><?php echo $tpl->__('label.date'); ?></th>
+                        <th data-column-name="hours"><?php echo $tpl->__('label.hours'); ?></th>
+                        <th data-column-name="planHours"><?php echo $tpl->__('label.plan_hours'); ?></th>
+                        <th data-column-name="difference"><?php echo $tpl->__('label.difference'); ?></th>
+                        <th data-column-name="ticket"><?php echo $tpl->__('label.ticket'); ?></th>
+                        <th data-column-name="project"><?php echo $tpl->__('label.project'); ?></th>
+                        <th data-column-name="client"><?php echo $tpl->__('label.client'); ?></th>
+                        <th data-column-name="employee"><?php echo $tpl->__('label.employee'); ?></th>
+                        <th data-column-name="type"><?php echo $tpl->__('label.type')?></th>
+                        <th data-column-name="milestone"><?php echo $tpl->__('label.milestone') ?></th>
+                        <th data-column-name="tags"><?php echo $tpl->__('label.tags') ?></th>
+                        <th data-column-name="description"><?php echo $tpl->__('label.description'); ?></th>
+                        <th data-column-name="invoiced"><?php echo $tpl->__('label.invoiced'); ?></th>
+                        <th data-column-name="mgrApproval"><?php echo $tpl->__('label.invoiced_comp'); ?></th>
+                        <th data-column-name="paid"><?php echo $tpl->__('label.paid'); ?></th>
                     </tr>
 
                 </thead>
