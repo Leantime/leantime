@@ -26,6 +26,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                             id="status-select"
                             class="autosave-field"
                             name="status"
+                            data-old-status="<?php echo $ticket->status; ?>"
+                            data-user="<?php echo auth()->user()->name ?? 'Unknown'; ?>"
                             data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : ''; ?>"
                         >
                             <?php foreach ($statusLabels as $key => $label) {?>
@@ -134,6 +136,66 @@ $ticketTypes = $tpl->get('ticketTypes');
 
             </div>
         </div>
+
+<div class="status-change-log" id="status-change-log"></div>
+
+<script>
+jQuery(document).ready(function($) {
+    const $statusChangeDiv = $('#status-change-log');
+
+    function loadStatusHistory(ticketId) {
+        $.ajax({
+            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/getStatusChanges',
+            method: 'GET',
+            data: { ticketId: ticketId },
+            success: function(html) {
+                $statusChangeDiv.html(html);
+            },
+            error: function() {
+                $statusChangeDiv.html('<p style="color:red;">Greška pri učitavanju statusa.</p>');
+            }
+        });
+    }
+
+    const ticketIdOnLoad = $('input[name="id"]').val();
+    if (ticketIdOnLoad) {
+        loadStatusHistory(ticketIdOnLoad);
+    }
+
+    $('#status-select').on('change', function() {
+        const ticketId = $('input[name="id"]').val();
+        const oldStatusKey = $(this).data('old-status');
+        const newStatusKey = $(this).val();
+        const oldStatusText = $(this).find(`option[value="${oldStatusKey}"]`).text() || 'Unknown';
+        const newStatusText = $(this).find(`option[value="${newStatusKey}"]`).text() || 'Unknown';
+        const user = $(this).data('user') || 'Unknown User';
+
+        $.ajax({
+            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+            method: 'POST',
+            data: {
+                ticketId: ticketId,
+                oldStatus: oldStatusKey,
+                newStatus: newStatusKey,
+                oldStatusText: oldStatusText,
+                newStatusText: newStatusText,
+                user: user
+            },
+            success: function(response) {
+                console.log('Status change saved', response);
+                loadStatusHistory(ticketId);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving status:', error);
+                console.error('Response:', xhr.responseText);
+            }
+        });
+
+        $(this).data('old-status', newStatusKey);
+    });
+});
+</script>
+
 
         <div class="sticky-modal-footer">
             <div class="row">
