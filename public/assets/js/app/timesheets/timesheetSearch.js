@@ -32,11 +32,11 @@ leantime.timesheetSearch = (function () {
             document.querySelectorAll('#allTimesheetsTable tbody tr').forEach(row => {
                 const cells = row.querySelectorAll('td');
                 
-                // Extract Task ID from ticket link (e.g., #/tickets/showTicket/31)
+                // Extract Tick.ID from column 1 (ticketId link)
                 let taskId = '';
-                const ticketLink = cells[5]?.querySelector('a');
-                if (ticketLink) {
-                    const href = ticketLink.getAttribute('href') || '';
+                const ticketIdLink = cells[1]?.querySelector('a');
+                if (ticketIdLink) {
+                    const href = ticketIdLink.getAttribute('href') || '';
                     const match = href.match(/showTicket\/(\d+)/);
                     if (match) {
                         taskId = match[1];
@@ -46,13 +46,13 @@ leantime.timesheetSearch = (function () {
                 timesheets.push({
                     id: cells[0]?.textContent.trim().replace(/[^0-9]/g, '') || '',
                     taskId: taskId,
-                    ticket: cells[5]?.textContent.trim() || '',
-                    project: cells[6]?.textContent.trim() || '',
-                    client: cells[7]?.textContent.trim() || '',
-                    employee: cells[8]?.textContent.trim() || '',
-                    type: cells[9]?.textContent.trim() || '',
-                    tags: cells[11]?.textContent.trim() || '',
-                    description: cells[12]?.textContent.trim() || ''
+                    ticket: cells[6]?.textContent.trim() || '',
+                    project: cells[7]?.textContent.trim() || '',
+                    client: cells[8]?.textContent.trim() || '',
+                    employee: cells[9]?.textContent.trim() || '',
+                    type: cells[10]?.textContent.trim() || '',
+                    tags: cells[12]?.textContent.trim() || '',
+                    description: cells[13]?.textContent.trim() || ''
                 });
             });
         } catch (e) {
@@ -190,27 +190,29 @@ leantime.timesheetSearch = (function () {
             const query = currentSearchQuery.toLowerCase().trim();
             
             // Extract relevant columns (0-indexed)
-            // Column 5: Ticket (headline) + link contains Task ID
-            // Column 6: Project
-            // Column 8: Employee
-            // Column 11: Tags
-            // Column 12: Description
+            // Column 1: Tick.ID (ticketId) - link contains Task ID
+            // Column 6: Ticket (headline)
+            // Column 7: Project
+            // Column 8: Client
+            // Column 9: Employee
+            // Column 12: Tags
+            // Column 13: Description
             
-            // Extract Task ID from ticket link in raw data
+            // Extract Tick.ID from column 1
             let taskId = '';
-            // data[5] contains HTML like: <a href="#/tickets/showTicket/31">ticket name</a>
-            const ticketHtml = data[5] || '';
-            const taskIdMatch = ticketHtml.match(/showTicket\/(\d+)/);
+            // data[1] contains HTML like: <a href="#/tickets/showTicket/31">#31</a>
+            const tickIdHtml = data[1] || '';
+            const taskIdMatch = tickIdHtml.match(/showTicket\/(\d+)/);
             if (taskIdMatch) {
                 taskId = taskIdMatch[1].toLowerCase();
             }
             
-            const ticket = ticketHtml.toLowerCase();
-            const project = (data[6] || '').toLowerCase();
-            const client = (data[7] || '').toLowerCase();
-            const employee = (data[8] || '').toLowerCase();
-            const tags = (data[11] || '').toLowerCase();
-            const description = (data[12] || '').toLowerCase();
+            const ticket = (data[6] || '').toLowerCase();
+            const project = (data[7] || '').toLowerCase();
+            const client = (data[8] || '').toLowerCase();
+            const employee = (data[9] || '').toLowerCase();
+            const tags = (data[12] || '').toLowerCase();
+            const description = (data[13] || '').toLowerCase();
 
             const activeType = (currentSearchType || 'all').toLowerCase();
             let matches = false;

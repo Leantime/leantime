@@ -33,6 +33,12 @@ leantime.timesheetsController = (function () {
                     }
 
                 },
+                "columnDefs": [
+                    {
+                        "targets": 5, // Difference column (index 5)
+                        "searchable": false // Disable filtering for this column
+                    }
+                ],
                 "dom": '<"top">rt<"bottom"ilp><"clear">',
                 // CUSTOM: Enable searching for modern search component
                 "searching": true,
