@@ -1,51 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BladeDebugConfiguration">
-    <cachePath>$PROJECT_DIR$/storage/framework/views</cachePath>
-  </component>
-  <component name="LaravelPint">
-    <laravel_pint_settings>
-      <LaravelPintConfiguration tool_path="$PROJECT_DIR$/vendor/bin/pint" />
-      <laravel_pint_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/pint">
-        <option name="timeout" value="30000" />
-      </laravel_pint_by_interpreter>
-    </laravel_pint_settings>
-  </component>
-  <component name="LaravelPintOptionsConfiguration">
-    <option name="pintJsonPath" value="$PROJECT_DIR$/.pint/pint.json" />
-  </component>
-  <component name="MessDetector">
-    <phpmd_settings>
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="30000" />
-    </phpmd_settings>
-  </component>
-  <component name="MessDetectorOptionsConfiguration">
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PHPCSFixerOptionsConfiguration">
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PHPCodeSnifferOptionsConfiguration">
-    <option name="codingStandard" value="Custom" />
-    <option name="customRuleset" value="$PROJECT_DIR$/phpcs.xml" />
-    <option name="showSniffs" value="true" />
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PhpCSFixer">
-    <phpcsfixer_settings>
-      <PhpCSFixerConfiguration standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="10000" />
-      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" standards="PSR1;PSR2;Symfony;DoctrineAnnotation;PHP70Migration;PHP71Migration" tool_path="/Volumes/Source/leantime-oss/vendor/squizlabs/php_codesniffer/bin/phpcs" timeout="30000" />
-    </phpcsfixer_settings>
-  </component>
-  <component name="PhpCodeSniffer">
-    <phpcs_settings>
-      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="/Volumes/Source/leantime-oss/vendor/bin/phpcs" timeout="30000" />
-    </phpcs_settings>
-  </component>
-  <component name="PhpExternalFormatter">
-    <option name="externalFormatter" value="LARAVEL_PINT" />
-  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/dasprid/enum" />
@@ -90,25 +44,6 @@
       <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/vendor/mpdf/psr-log-aware-trait" />
-      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
-      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
-      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
-      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
-      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
-      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/contracts" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/pipeline" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/filesystem" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/bus" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/support" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/container" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/view" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/macroable" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/collections" />
-      <path value="$PROJECT_DIR$/vendor/illuminate/events" />
-      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
-      <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
       <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/vendor/symfony/finder" />
       <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
@@ -310,7 +245,6 @@
       <path value="$PROJECT_DIR$/vendor/php-http/guzzle7-adapter" />
       <path value="$PROJECT_DIR$/vendor/litesaml/schemas" />
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
-      <path value="$PROJECT_DIR$/vendor/symfony/clock" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/oauth-subscriber" />
       <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
@@ -353,36 +287,5 @@
         </path_mappings>
       </server>
     </servers>
-  </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
-    <option name="suggestChangeDefaultLanguageLevel" value="false" />
-  </component>
-  <component name="PhpStan">
-    <PhpStan_settings>
-      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
-      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" tool_path="$PROJECT_DIR$/vendor/bin/phpstan" timeout="60000" />
-    </PhpStan_settings>
-  </component>
-  <component name="PhpStanOptionsConfiguration">
-    <option name="autoload" value="$PROJECT_DIR$/vendor/autoload.php" />
-    <option name="config" value="$PROJECT_DIR$/.phpstan/phpstan.neon" />
-    <option name="level" value="1" />
-    <option name="transferred" value="true" />
-  </component>
-  <component name="PhpUnit">
-    <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" phpunit_phar_path="" />
-    </phpunit_settings>
-  </component>
-  <component name="Psalm">
-    <Psalm_settings>
-      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="a06551ca-6eca-4b0a-b3f8-cfeb27b9b34e" timeout="60000" />
-    </Psalm_settings>
-  </component>
-  <component name="PsalmOptionsConfiguration">
-    <option name="transferred" value="true" />
-  </component>
-  <component name="TwigDebugConfiguration">
-    <cachePath />
   </component>
 </project>
