@@ -50,6 +50,16 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
         <input type="hidden" name="projectId" value="<?= $ticket->projectId ?>">
         <input type="hidden" name="status" value="<?= $ticket->status ?>">
+        <input type="hidden" name="priority" value="<?= $ticket->priority ?>">
+        <input type="hidden" name="effort" value="<?= $ticket->storypoints ?>">
+        <input type="hidden" name="dueDate" value="<?=  $ticket->dateToFinish?>">
+        <input type="hidden" name="tags" value="<?=  $ticket->tags?>">
+        <input type="hidden" name="milestone" value="<?=  $ticket->milestoneid?>">
+        <input type="hidden" name="relatedTo" value="<?=  $ticket->dependingTicketId?>">
+        <input type="hidden" name="workStart" value="<?=  $ticket->editFrom?>">
+        <input type="hidden" name="workEnd" value="<?=  $ticket->editTo?>">
+        <input type="hidden" name="planHours" value="<?=  $ticket->planHours?>">
+        <input type="hidden" name="hourRemaining" value="<?=  $ticket->hourRemaining?>">
         <button type="submit" class="button-primary"><i class="fa fa-clone"></i> Clone To-Do</button>
     </form></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
