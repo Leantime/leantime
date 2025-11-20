@@ -18,7 +18,6 @@ class CloneTicket extends Controller
 
     public function post($params): Response
     {
-        error_log(print_r($params, true));
         $originalTicket = $this->ticketService->getTicket($params['id']);
 
         if (!$originalTicket) {
