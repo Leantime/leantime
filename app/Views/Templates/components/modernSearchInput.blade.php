@@ -21,4 +21,3 @@
         <span class="fa fa-times"></span>
     </button>
 </div>
-

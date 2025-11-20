@@ -230,4 +230,3 @@ leantime.modernSearch = (function () {
         init: init
     };
 })();
-
