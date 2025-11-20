@@ -54,7 +54,7 @@ $values = $tpl->get('values');
 </script>
 
 <?php echo $tpl->displayNotification() ?>
-
+<div style="width: 50%; margin: 0 auto;">
 <h4  class="widgettitle title-light" style = "color: white;"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
 <form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
@@ -160,11 +160,8 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="delete editTimeModal pull-right" href="<?= BASE_URL?>/timesheets/delTime/<?= $tpl->escape($_GET['id']) ?>"><?= $tpl->__('links.delete') ?></a>
+        <a class="delete editTimeModal pull-right" style ="border-radius:45%; background-color:white; padding:5px;" href="<?= BASE_URL?>/timesheets/delTime/<?= $tpl->escape($_GET['id']) ?>"><?= $tpl->__('links.delete') ?></a>
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>
-
-
-
-
+        </div>
