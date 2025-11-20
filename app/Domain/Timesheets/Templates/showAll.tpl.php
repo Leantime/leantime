@@ -97,6 +97,12 @@ foreach ($__data as $var => $val) {
             <div class="pull-right">
                 <div id="tableButtons" style="display:inline-block"></div>
             </div>
+            
+            <?php 
+            // CUSTOM: Add modern search bar component
+            $tpl->displaySubmodule('timesheets-timesheetSearchBar'); 
+            ?>
+            
             <div class="clearfix"></div>
             <div class="headtitle" style="">
 

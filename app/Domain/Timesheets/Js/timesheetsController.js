@@ -34,7 +34,8 @@ leantime.timesheetsController = (function () {
 
                 },
                 "dom": '<"top">rt<"bottom"ilp><"clear">',
-                "searching": false,
+                // CUSTOM: Enable searching for modern search component
+                "searching": true,
                 "stateSave": true,
                 "displayLength":100,
 
@@ -84,6 +85,11 @@ leantime.timesheetsController = (function () {
             jQuery('# reallTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
             });
+            
+            // CUSTOM: Initialize modern search component
+            if (typeof leantime.timesheetSearch !== 'undefined') {
+                leantime.timesheetSearch.init(allTimesheets);
+            }
         });
     };
 
