@@ -2,7 +2,7 @@
 /**
  * Timesheet Search Bar Submodule
  * Reusable search component for timesheets
- * 
+ *
  * This is a separate module that can be included without modifying core files
  */
 defined('RESTRICTED') or exit('Restricted access');
@@ -17,7 +17,7 @@ defined('RESTRICTED') or exit('Restricted access');
             type="text"
             id="timesheetSearch"
             class="modern-search-input"
-            placeholder="Search by task ID, ticket, project, employee, tag, or description..."
+            placeholder="Search by ticket ID, ticket label, project, employee or tag..."
             autocomplete="off"
         />
         <button type="button" id="timesheetSearchClear" class="modern-search-clear" aria-label="Clear search">
@@ -40,10 +40,10 @@ if (typeof leantime.modernSearch === 'undefined') {
             // Wait for DataTable to be initialized
             var initAttempts = 0;
             var maxAttempts = 50;
-            
+
             var tryInit = function() {
                 initAttempts++;
-                
+
                 try {
                     var dt = jQuery('#allTimesheetsTable').DataTable();
                     if (dt && dt.settings && dt.settings().length > 0) {
@@ -53,13 +53,13 @@ if (typeof leantime.modernSearch === 'undefined') {
                 } catch (e) {
                     // DataTable not ready yet
                 }
-                
+
                 // Try again if not ready
                 if (initAttempts < maxAttempts) {
                     setTimeout(tryInit, 200);
                 }
             };
-            
+
             // Start trying after a short delay
             setTimeout(tryInit, 500);
         };

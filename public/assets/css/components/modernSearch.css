@@ -27,13 +27,13 @@
 }
 
 .modern-search-input::placeholder {
-    color: #999;
+    color: #000000;
 }
 
 .modern-search-clear {
     position: absolute;
     right: 10px;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     border: none;
     background: none;
