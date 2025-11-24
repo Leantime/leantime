@@ -69,8 +69,8 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 
                     <?php if (! empty($timesheetEntries)) { ?>
                         <div class="table-responsive">
-                            <table class="table table-bordered" style="background-color: #fff; border-collapse: collapse;">
-                                <thead style="background-color: #f9f9f9;">
+                            <table class="table table-bordered" style="border-collapse: collapse;">
+                                <thead>
                                 <tr>
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.date'); ?></th>
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.user'); ?></th>
@@ -79,7 +79,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.description'); ?></th>
                                 </tr>
                                 </thead>
-                                <tbody style="background-color: #fff;">
+                                <tbody>
                                 <?php foreach ($timesheetEntries as $entry) {
                                     $date = new \DateTime($entry['workDate']);
 
