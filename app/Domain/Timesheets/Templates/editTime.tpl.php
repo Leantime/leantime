@@ -55,6 +55,9 @@ $values = $tpl->get('values');
 
 <?php echo $tpl->displayNotification() ?>
 <div style="width: 50%; margin: 0 auto;">
+     <p class="stdformbutton" style ="text-align: right;">
+        <a class="delete editTimeModal pull-right" style ="border-radius:45%; background-color:white; padding:5px;margin-top:5px;" href="<?= BASE_URL?>/timesheets/showMy/<?= $tpl->escape($_GET['id']) ?>">Close</a>
+    </p>
 <h4  class="widgettitle title-light" style = "color: white;"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
 <form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
@@ -121,7 +124,7 @@ $values = $tpl->get('values');
 
             <label for="invoicedEmpl" style="color: white;"><?php echo $tpl->__('label.invoiced') ?></label>
 
-            <span style="color: white;"><?php echo $tpl->__('label.date') ?></span>&nbsp;<input type="text" autocomplete="off"
+            <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
                                                   value="<?php echo format(value: $values['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                   size="7"/><br/>
@@ -135,7 +138,7 @@ $values = $tpl->get('values');
             } ?> />
 
         <label for="invoicedComp" style="color: white;"><?php echo $tpl->__('label.invoiced_comp') ?></label>
-        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span>&nbsp;<input type="text" autocomplete="off"
+        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
                                                       value="<?php echo format(value: $values['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
@@ -149,7 +152,7 @@ $values = $tpl->get('values');
             } ?> />
 
         <label for="paid" style="color: white;"><?php echo $tpl->__('label.paid') ?></label>
-        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span>&nbsp;<input type="text" autocomplete="off"
+        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                           id="paidDate"
                                                           name="paidDate"
                                                           value="<?php echo format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
