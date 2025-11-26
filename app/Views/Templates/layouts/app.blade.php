@@ -37,7 +37,12 @@
         <div class="overlay" style="position: relative">
             <div class="leftpanel">
                 <div class="leftmenu">
-                    @include('menu::menu')
+                    @php $current_path = $_SERVER['REQUEST_URI'];@endphp
+                    @php $pattern = '/^\/timesheets\/editTime\/[0-9]+$/'; @endphp
+                    @php error_log('Current Path: ' . $current_path); @endphp
+                    @if(!(preg_match($pattern, $current_path)))
+                        @include('menu::menu')
+                    @endif
                 </div><!-- leftmenu -->
             </div>
             <div class="rightpanel {{ $section }}">
