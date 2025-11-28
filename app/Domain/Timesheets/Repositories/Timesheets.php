@@ -665,7 +665,7 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-    
+
         $workDateTime = new \DateTime($values['date']);
         $currentTime = new \DateTime('now');
 
@@ -676,7 +676,7 @@ class Timesheets extends Repository
         $workDateTime->setTime($currentHours, $currentMinutes, $currentSeconds);
 
         $combinedWorkDate = $workDateTime->format('Y-m-d H:i:s');
-        
+
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':loggingDate', $combinedWorkDate);
@@ -775,7 +775,7 @@ class Timesheets extends Repository
 
 
         $call->bindValue(':workDate', $formattedDate);
-        
+
         $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind, modified)
                   VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE', :modified)
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
@@ -864,6 +864,29 @@ class Timesheets extends Repository
      */
     public function updateTime(array $values): void
     {
+        // Get the original timesheet to preserve the time component
+        $originalTimesheet = $this->getTimesheet($values['id']);
+
+        // If we have an original timesheet, preserve its time component
+        if ($originalTimesheet && !empty($originalTimesheet['workDate'])) {
+            $originalDate = new Carbon($originalTimesheet['workDate'], 'UTC');
+
+            if (is_string($values['date'])) {
+                $newDate = new Carbon($values['date'], 'UTC');
+            } else {
+                $newDate = $values['date'];
+            }
+
+            // Preserve original time (hour, minute, second) with new date
+            $preservedDateTime = $newDate->setTime(
+                $originalDate->hour,
+                $originalDate->minute,
+                $originalDate->second
+            );
+
+            $values['date'] = $preservedDateTime->format('Y-m-d H:i:s');
+        }
+
         $query = 'UPDATE
                 zp_timesheets
             SET

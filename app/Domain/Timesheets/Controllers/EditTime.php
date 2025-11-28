@@ -57,7 +57,7 @@ class EditTime extends Controller
         if (Auth::userIsAtLeast(Roles::$editor)) {
             if (isset($_GET['id']) === true) {
                 $id = ($_GET['id']);
-                
+
                 $timesheet = $this->timesheetsRepo->getTimesheet($id);
 
                 // Date validation.

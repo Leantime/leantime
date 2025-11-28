@@ -72,6 +72,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                             <table class="table table-bordered" style="border-collapse: collapse;">
                                 <thead>
                                 <tr>
+                                    <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.id'); ?></th>
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.date'); ?></th>
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.user'); ?></th>
                                     <th style="font-weight: bold; padding: 12px; border: 1px solid #e0e0e0;"><?php echo $tpl->__('label.type'); ?></th>
@@ -101,8 +102,18 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 
                                     $hoursFormatted = format_hours($entry['hours']);
                                     $description = $entry['description'] ?? '';
+                                    $entryId = $entry['id'] ?? '';
                                     ?>
                                     <tr>
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0;">
+                                            <?php if (!empty($entryId)) { ?>
+                                                <a href="<?= BASE_URL ?>/timesheets/editTime/<?= htmlspecialchars($entryId, ENT_QUOTES, 'UTF-8') ?>" class="editTimeModal" id="editTimesheet-<?= htmlspecialchars($entryId, ENT_QUOTES, 'UTF-8') ?>">
+                                                    #<?= htmlspecialchars($entryId, ENT_QUOTES, 'UTF-8') ?>
+                                                </a>
+                                            <?php } else { ?>
+                                                -
+                                            <?php } ?>
+                                        </td>
                                         <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($displayDate, ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td style="padding: 10px; border: 1px solid #e0e0e0;"><?php echo htmlspecialchars($kindLabel, ENT_QUOTES, 'UTF-8'); ?></td>
@@ -147,6 +158,31 @@ foreach ($ticketHours as $hours) {
 } ?>
 
         leantime.ticketsController.initTimeSheetChart(labels, d2, d3, "canvas")
+
+        // Initialize editTimeModal for timesheet entries
+        if (typeof leantime.timesheetsController !== 'undefined' && typeof leantime.timesheetsController.initEditTimeModal === 'function') {
+            leantime.timesheetsController.initEditTimeModal();
+        } else {
+            // Fallback: Initialize nyroModal directly if timesheetsController is not available
+            var canvasoptions = {
+                sizes: {
+                    minW:  700,
+                    minH: 1000,
+                },
+                resizable: true,
+                autoSizable: true,
+                callbacks: {
+                    beforeShowCont: function () {
+                        jQuery(".showDialogOnLoad").show();
+                    },
+                    beforeClose: function () {
+                        location.reload();
+                    }
+                },
+                titleFromIframe: true
+            };
+            jQuery(".editTimeModal").nyroModal(canvasoptions);
+        }
 
     });
 
