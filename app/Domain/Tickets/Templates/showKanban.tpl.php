@@ -269,7 +269,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                         <small><a href="#/tickets/showTicket/<?= $row['dependingTicketId'] ?>" class="form-modal"><?= $tpl->escape($row['parentHeadline']) ?></a></small> //
                                                     <?php } ?>
                                                     <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $tpl->__('label.'.strtolower($row['type'])); ?></small>
-                                                    <small>#<?php echo $row['id']; ?></small>
+                                                    <small><?php echo ($row['projectKey'] ?? 'PROJ') . '-' . $row['id']; ?></small>
                                                     <div class="kanbanCardContent">
                                                         <h4><a href="#/tickets/showTicket/<?php echo $row['id']; ?>" data-hx-get="<?= BASE_URL?>/tickets/showTicket/<?php echo $row['id']; ?>" hx-swap="none" preload="mouseover"><?php $tpl->e($row['headline']); ?></a></h4>
 

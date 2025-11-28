@@ -226,9 +226,19 @@ class ShowProject extends Controller
 
             // save changed project data
             if (isset($_POST['save']) === true) {
+                // Handle project key
+                $projectKey = $_POST['projectKey'] ?? '';
+                if (empty($projectKey) && ! empty($_POST['name'])) {
+                    $projectKey = $this->projectService->generateProjectKey($_POST['name'], $id);
+                } else {
+                    // Normalize user input to uppercase
+                    $projectKey = strtoupper(trim($projectKey));
+                }
+
                 // bind Post Data into one array
                 $values = [
                     'name' => $_POST['name'],
+                    'projectKey' => $projectKey,
                     'details' => $_POST['details'],
                     'clientId' => $_POST['clientId'],
                     'state' => $_POST['projectState'],
@@ -241,6 +251,24 @@ class ShowProject extends Controller
                     'start' => isset($_POST['start']) && dtHelper()->isValidDateString($_POST['start']) ? dtHelper()->parseUserDateTime($_POST['start'])->formatDateTimeForDb() : '',
                     'end' => isset($_POST['end']) && dtHelper()->isValidDateString($_POST['end']) ? dtHelper()->parseUserDateTime($_POST['end'])->formatDateTimeForDb() : '',
                 ];
+
+                // Validate project key
+                if (! empty($projectKey)) {
+                    $validation = $this->projectService->validateProjectKey($projectKey, $id);
+                    if (! $validation['valid']) {
+                        $this->tpl->setNotification($validation['message'], 'error');
+                        $project['assignedUsers'] = $this->projectRepo->getUsersAssignedToProject($id, true);
+                        $this->tpl->assign('project', array_merge($project, $values));
+                        $this->tpl->assign('availableUsers', $this->userRepo->getAll());
+                        $this->tpl->assign('clients', $this->clientsRepo->getAll());
+                        $this->tpl->assign('todoStatus', $this->ticketService->getStatusLabels());
+                        $this->tpl->assign('employees', $this->userRepo->getEmployees());
+                        $this->tpl->assign('projectTypes', $projectTypes);
+                        $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+
+                        return $this->tpl->display('projects.showProject');
+                    }
+                }
 
                 if ($values['name'] !== '') {
                     if ($this->projectRepo->hasTickets($id) && $values['state'] == 1) {

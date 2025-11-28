@@ -9,6 +9,7 @@ use DateTime;
  *
  * @property int|string $id
  * @property string $name
+ * @property string|null $projectKey
  * @property int|string|null $clientId
  * @property DateTime|string|null $start
  * @property DateTime|string|null $end
@@ -18,6 +19,8 @@ class Project
     public int|string $id;
 
     public $name;
+
+    public ?string $projectKey;
 
     public null|int|string $clientId;
 
@@ -65,6 +68,7 @@ class Project
         // Map array data to object properties
         $this->id = $data['id'] ?? 0;
         $this->name = $data['name'] ?? '';
+        $this->projectKey = $data['projectKey'] ?? $data['project_key'] ?? null;
         $this->clientId = $data['clientId'] ?? null;
         $this->projectId = $data['projectId'] ?? $this->id;
 

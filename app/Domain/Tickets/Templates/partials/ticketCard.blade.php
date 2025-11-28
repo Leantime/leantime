@@ -7,6 +7,7 @@
                     <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ $row['parentHeadline'] }}</a> //
                 @endif
             @endif
+            <small class="tw-text-gray-500">{{ $row['projectKey'] ?? 'PROJ' }}-{{ $row['id'] }}</small><br />
             <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a></strong>
 
         </div>

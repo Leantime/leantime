@@ -27,6 +27,22 @@ $menuTypes = $tpl->get('menuTypes');
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="projectKey" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                            <?php echo $tpl->__('label.project_key'); ?>
+                            <span style="font-weight: normal; font-size: 0.9em; color: #666;">(2-10 characters, letters and numbers only)</span>
+                        </label>
+                        <input type="text" name="projectKey" id="projectKey" maxlength="10" style="width:150px; text-transform: uppercase;" 
+                               value="<?php $tpl->e($project['projectKey'] ?? $project['project_key'] ?? '') ?>" 
+                               placeholder="<?= $tpl->__('input.placeholders.enter_project_key') ?>"/>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            <?php echo $tpl->__('label.project_key_description'); ?>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <p>
                         <?php echo $tpl->__('label.accomplish'); ?>
                         <br /><br />
@@ -34,6 +50,18 @@ $menuTypes = $tpl->get('menuTypes');
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
                 </div>
             </div>
+            <script>
+            // Force uppercase for project key
+            jQuery(document).ready(function() {
+                var projectKeyInput = jQuery('#projectKey');
+                
+                // Force uppercase and remove special characters
+                projectKeyInput.on('input', function() {
+                    var val = jQuery(this).val();
+                    jQuery(this).val(val.toUpperCase().replace(/[^A-Z0-9]/g, ''));
+                });
+            });
+            </script>
             <div class="row padding-top">
                 <div class="col-md-12">
 
@@ -121,13 +149,13 @@ $menuTypes = $tpl->get('menuTypes');
                         <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
-                                   value="<?php echo format($project['start'])->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo !empty($project['start']) ? format($project['start'])->date() : ''; ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                         </div>
                         <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
-                                   value="<?php echo format($project['end'])->date(); ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo !empty($project['end']) ? format($project['end'])->date() : ''; ?>" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
 
                         </div>
                     </div>

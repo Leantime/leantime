@@ -13,7 +13,7 @@
                             @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
                                 <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
                             @else
-                                <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  format($project['modified'])->timestamp() }}' />
+                                <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{ !empty($project['modified']) ? format($project['modified'])->timestamp() : time() }}' />
                             @endif
                         </span>
                         @if($project["clientName"] != '')

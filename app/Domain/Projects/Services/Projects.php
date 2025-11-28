@@ -908,10 +908,10 @@ class Projects
             'start' => $values['start'] ?? null,
             'end' => $values['end'] ?? null,
         ];
-        if ($values['start'] != null) {
+        if ($values['start'] != null && $values['start'] !== '') {
             $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
         }
-        if ($values['end'] != null) {
+        if ($values['end'] != null && $values['end'] !== '') {
             $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
         }
 
@@ -1799,5 +1799,120 @@ class Projects
 
         return $project;
 
+    }
+
+    /**
+     * Generate a project key from the project name
+     * Similar to Jira style: takes first letters of each word
+     *
+     * @param  string  $projectName  The name of the project
+     * @param  int  $projectId  The ID of the project (used for ensuring uniqueness, 0 for new projects)
+     * @return string The generated project key
+     *
+     * @api
+     */
+    public function generateProjectKey(string $projectName, int $projectId = 0): string
+    {
+        // Remove special characters and extra spaces
+        $cleanName = preg_replace('/[^a-zA-Z0-9\s]/', '', $projectName);
+        $cleanName = preg_replace('/\s+/', ' ', trim($cleanName));
+
+        // Split into words
+        $words = explode(' ', $cleanName);
+
+        // Generate key from first letters
+        $key = '';
+        foreach ($words as $word) {
+            if (! empty($word)) {
+                $key .= strtoupper(substr($word, 0, 1));
+            }
+        }
+
+        // If key is empty or too short, use first 2-3 chars of project name
+        if (strlen($key) < 2) {
+            $key = strtoupper(substr($cleanName, 0, min(3, strlen($cleanName))));
+        }
+
+        // Ensure key is not too long (max 10 characters)
+        $key = substr($key, 0, 10);
+
+        // Check for uniqueness and add number suffix if needed
+        $originalKey = $key;
+        $counter = 1;
+
+        while ($this->isProjectKeyTaken($key, $projectId)) {
+            $key = $originalKey.$counter;
+            $counter++;
+
+            // Ensure we don't exceed 10 characters
+            if (strlen($key) > 10) {
+                $key = substr($originalKey, 0, 10 - strlen((string) $counter)).$counter;
+            }
+        }
+
+        return $key;
+    }
+
+    /**
+     * Check if a project key is already taken by another project
+     *
+     * @param  string  $key  The project key to check
+     * @param  int  $excludeProjectId  Project ID to exclude from the check (0 for new projects)
+     * @return bool True if the key is taken, false otherwise
+     *
+     * @api
+     */
+    public function isProjectKeyTaken(string $key, int $excludeProjectId = 0): bool
+    {
+        return $this->projectRepository->isProjectKeyTaken($key, $excludeProjectId);
+    }
+
+    /**
+     * Validate a project key format and availability
+     *
+     * @param  string  $key  The project key to validate
+     * @param  int  $projectId  The ID of the project (0 for new projects)
+     * @return array Returns an array with 'valid' boolean and 'message' string
+     *
+     * @api
+     */
+    public function validateProjectKey(string $key, int $projectId = 0): array
+    {
+        // Check if key is empty
+        if (empty($key)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_required'),
+            ];
+        }
+
+        // Check key length (2-10 characters)
+        if (strlen($key) < 2 || strlen($key) > 10) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_length'),
+            ];
+        }
+
+        // Check for valid characters (only letters and numbers)
+        if (! preg_match('/^[A-Z0-9]+$/', $key)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_format'),
+            ];
+        }
+
+        // Check if key is already taken
+        if ($this->isProjectKeyTaken($key, $projectId)) {
+            return [
+                'valid' => false,
+                'message' => $this->language->__('validation.project_key_taken'),
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'message' => '',
+        ];
     }
 }

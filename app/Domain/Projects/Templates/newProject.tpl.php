@@ -47,6 +47,22 @@ $project = $tpl->get('project');
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="projectKey" style="font-weight: 600; display: block; margin-bottom: 5px;">
+                                            <?php echo $tpl->__('label.project_key'); ?>
+                                            <span style="font-weight: normal; font-size: 0.9em; color: #666;">(2-10 characters, letters and numbers only)</span>
+                                        </label>
+                                        <input type="text" name="projectKey" id="projectKey" maxlength="10" style="width:150px; text-transform: uppercase;" 
+                                               value="<?php $tpl->e($project['projectKey'] ?? '') ?>" 
+                                               placeholder="<?= $tpl->__('input.placeholders.auto_generated') ?>"/>
+                                        <small style="display: block; margin-top: 5px; color: #666;">
+                                            <?php echo $tpl->__('label.project_key_description'); ?>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <br />
                                     <p>
                                         <?php echo $tpl->__('label.accomplish'); ?>
@@ -57,6 +73,51 @@ $project = $tpl->get('project');
 
                                 </div>
                             </div>
+                            <script>
+                            // Auto-generate project key from project name
+                            jQuery(document).ready(function() {
+                                var projectKeyInput = jQuery('#projectKey');
+                                var projectNameInput = jQuery('#name');
+                                var userModifiedKey = false;
+
+                                // Track if user manually edited the key
+                                projectKeyInput.on('input', function() {
+                                    if (jQuery(this).val().length > 0) {
+                                        userModifiedKey = true;
+                                    }
+                                });
+
+                                // Auto-generate key when name changes (if user hasn't modified it)
+                                projectNameInput.on('blur', function() {
+                                    if (!userModifiedKey || projectKeyInput.val().length === 0) {
+                                        var name = jQuery(this).val();
+                                        if (name.length > 0) {
+                                            // Generate key from first letters of each word
+                                            var words = name.replace(/[^a-zA-Z0-9\s]/g, '').trim().split(/\s+/);
+                                            var key = '';
+                                            words.forEach(function(word) {
+                                                if (word.length > 0) {
+                                                    key += word.charAt(0).toUpperCase();
+                                                }
+                                            });
+                                            // If key is too short, use first 2-3 chars of name
+                                            if (key.length < 2) {
+                                                key = name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 3).toUpperCase();
+                                            }
+                                            // Limit to 10 characters
+                                            key = key.substring(0, 10);
+                                            projectKeyInput.val(key);
+                                        }
+                                    }
+                                });
+
+                                // Force uppercase
+                                projectKeyInput.on('input', function() {
+                                    var val = jQuery(this).val();
+                                    jQuery(this).val(val.toUpperCase().replace(/[^A-Z0-9]/g, ''));
+                                });
+                            });
+                            </script>
                             <div class="padding-top">
                                 <?php if (isset($project['id']) && $project['id'] != '') { ?>
                                     <div class="pull-right padding-top">

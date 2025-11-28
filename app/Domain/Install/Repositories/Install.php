@@ -72,6 +72,7 @@ class Install
         30400,
         30408,
         30409,
+        30410,
     ];
 
     /**
@@ -474,6 +475,7 @@ class Install
                 CREATE TABLE `zp_projects` (
                     `id` int(11) NOT NULL AUTO_INCREMENT,
                     `name` varchar(100) DEFAULT NULL,
+                    `project_key` varchar(10) DEFAULT NULL,
                     `clientId` int(100) DEFAULT NULL,
                     `details` text,
                     `state` int(2) DEFAULT NULL,
@@ -491,7 +493,8 @@ class Install
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
                     `sortIndex` INT(11) NULL,
-                    PRIMARY KEY (`id`)
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `idx_project_key` (`project_key`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_punch_clock` (
@@ -2078,5 +2081,126 @@ class Install
         }
 
         return count($errors) ? $errors : true;
+    }
+
+    /**
+     * Add project_key column to zp_projects table and generate keys for existing projects
+     */
+    public function update_sql_30410(): bool|array
+    {
+        $errors = [];
+
+        // Step 1: Add the project_key column to zp_projects table
+        $sql = [
+            'ALTER TABLE `zp_projects` ADD COLUMN `project_key` VARCHAR(10) NULL DEFAULT NULL AFTER `name`',
+            'ALTER TABLE `zp_projects` ADD UNIQUE INDEX `idx_project_key` (`project_key`)',
+        ];
+
+        foreach ($sql as $statement) {
+            try {
+                $this->connection->statement($statement);
+            } catch (\Exception $e) {
+                Log::error($statement.' Failed:'.$e->getMessage());
+                Log::error($e);
+                // Don't fail for duplicate columns or indexes
+                if (! str_contains($e->getMessage(), 'Duplicate column name') &&
+                    ! str_contains($e->getMessage(), 'Duplicate key name')) {
+                    array_push($errors, $statement.' Failed:'.$e->getMessage());
+                }
+            }
+        }
+
+        // Step 2: Generate project keys for existing projects
+        try {
+            // Get all projects that don't have a key yet
+            $projects = $this->connection->select('SELECT id, name FROM zp_projects WHERE project_key IS NULL OR project_key = ""');
+
+            foreach ($projects as $project) {
+                $projectKey = $this->generateProjectKey($project->name, $project->id);
+
+                // Update the project with the generated key
+                $this->connection->update(
+                    'UPDATE zp_projects SET project_key = ? WHERE id = ?',
+                    [$projectKey, $project->id]
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to generate project keys: '.$e->getMessage());
+            Log::error($e);
+            array_push($errors, 'Failed to generate project keys: '.$e->getMessage());
+        }
+
+        return count($errors) ? $errors : true;
+    }
+
+    /**
+     * Generate a project key from the project name
+     * Similar to Jira style: takes first letters of each word
+     *
+     * @param  string  $projectName  The name of the project
+     * @param  int  $projectId  The ID of the project (used for ensuring uniqueness)
+     * @return string The generated project key
+     */
+    private function generateProjectKey(string $projectName, int $projectId): string
+    {
+        // Remove special characters and extra spaces
+        $cleanName = preg_replace('/[^a-zA-Z0-9\s]/', '', $projectName);
+        $cleanName = preg_replace('/\s+/', ' ', trim($cleanName));
+
+        // Split into words
+        $words = explode(' ', $cleanName);
+
+        // Generate key from first letters
+        $key = '';
+        foreach ($words as $word) {
+            if (! empty($word)) {
+                $key .= strtoupper(substr($word, 0, 1));
+            }
+        }
+
+        // If key is empty or too short, use first 2-3 chars of project name
+        if (strlen($key) < 2) {
+            $key = strtoupper(substr($cleanName, 0, min(3, strlen($cleanName))));
+        }
+
+        // Ensure key is not too long (max 10 characters)
+        $key = substr($key, 0, 10);
+
+        // Check for uniqueness and add number suffix if needed
+        $originalKey = $key;
+        $counter = 1;
+
+        while ($this->projectKeyExists($key, $projectId)) {
+            $key = $originalKey.$counter;
+            $counter++;
+
+            // Ensure we don't exceed 10 characters
+            if (strlen($key) > 10) {
+                $key = substr($originalKey, 0, 10 - strlen((string) $counter)).$counter;
+            }
+        }
+
+        return $key;
+    }
+
+    /**
+     * Check if a project key already exists
+     *
+     * @param  string  $key  The project key to check
+     * @param  int  $excludeProjectId  Project ID to exclude from the check
+     * @return bool True if the key exists, false otherwise
+     */
+    private function projectKeyExists(string $key, int $excludeProjectId = 0): bool
+    {
+        try {
+            $result = $this->connection->selectOne(
+                'SELECT id FROM zp_projects WHERE project_key = ? AND id != ?',
+                [$key, $excludeProjectId]
+            );
+
+            return $result !== null;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
