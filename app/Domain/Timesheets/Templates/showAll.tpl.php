@@ -10,28 +10,28 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     // Initialize CSV export formatter (inline to avoid build dependency)
     window.leantime = window.leantime || {};
     window.leantime.timesheetsExport = window.leantime.timesheetsExport || {};
-    
+
     if (typeof window.leantime.timesheetsExport.resolveCell !== 'function') {
         window.leantime.timesheetsExport.resolveCell = function ($node, fallbackData) {
             if (typeof $node.data('order') === 'undefined') {
                 return fallbackData;
             }
-            
+
             if (! $node.hasClass('js-timesheet-hours')) {
                 return $node.data('order');
             }
-            
+
             var tableFormat = ($node.closest('table[data-hours-format]').data('hoursFormat') || '').toString();
-            
+
             if (tableFormat === 'human') {
                 // jQuery converts data-export-display to exportDisplay in .data()
                 if (typeof $node.data('exportDisplay') !== 'undefined') {
                     return $node.data('exportDisplay');
                 }
-                
+
                 return $node.text().trim();
             }
-            
+
             return $node.data('order');
         };
     }
@@ -347,12 +347,9 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
                         </td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td> */ ?>
                         <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['hours']); ?></td>
-                        <?php /* legacy: <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td> */ ?>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
-                        <?php /* legacy: <td data-order="<?= $diff; ?>"><?php echo $diff; ?></td> */ ?>
                         <td data-order="<?= $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours"><?php echo format_hours($diff); ?></td>
                         <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 
@@ -406,7 +403,6 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 <tfoot>
                     <tr>
                         <td colspan="3"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <?php /* legacy total: <td colspan="10"><strong><?php echo $sum; ?></strong></td> */ ?>
                         <td colspan="10" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
 
                         <td>
