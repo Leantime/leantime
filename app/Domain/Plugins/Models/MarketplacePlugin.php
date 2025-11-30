@@ -46,6 +46,12 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
     public string $version;
 
+    public string $icon;
+
+    public array $categories;
+
+    public array $tags;
+
     public function getCardDesc(): string
     {
         return $this->excerpt;

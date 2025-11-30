@@ -182,7 +182,7 @@ class Plugins
     public function getEnabledPlugins(): mixed
     {
 
-        if (Cache::store('installation')->has('plugins.enabledPlugins')) {
+        if (Cache::store('installation')->has('plugins.enabledPlugins') && $this->config->debug === false) {
             $enabledPlugins = static::dispatch_filter('beforeReturnCachedPlugins', Cache::store('installation')->get('plugins.enabledPlugins'), ['enabledOnly' => true]);
 
             return $enabledPlugins;

@@ -2005,23 +2005,103 @@ class Tickets
     }
 
     /**
-     * @return false|void
+     * Update ticket sorting with hierarchical cascade for milestone children
+     *
+     * When milestones are reordered, this method ensures all child tasks
+     * maintain their hierarchical relationship with their parent milestone.
+     * Uses a hierarchical sortindex scheme where:
+     * - Milestones: position * 100 (100, 200, 300, ...)
+     * - Tasks under milestone: milestoneSort + offset (101, 102, 103, ...)
+     *
+     * @param  array  $params  Array of ticketId => sortPosition from Gantt drag-drop
+     * @return bool True on success, false on failure
      *
      * @api
      */
-    public function updateTicketSorting($params)
+    public function updateTicketSorting($params): bool
     {
+        if (empty($params)) {
+            return true;
+        }
 
-        // ticketId: sortIndex
-        foreach ($params as $id => $sortKey) {
-            if ($this->ticketRepository->patchTicket($id, ['sortIndex' => $sortKey]) === false) {
-                return false;
+        $allUpdates = [];
+
+        // Fetch all tickets to determine types and relationships
+        $ticketIds = array_keys($params);
+        $tickets = [];
+
+        foreach ($ticketIds as $ticketId) {
+            $ticket = $this->getTicket($ticketId);
+            if ($ticket) {
+                $tickets[$ticketId] = [
+                    'id' => $ticket->id,
+                    'type' => $ticket->type,
+                    'milestoneid' => $ticket->milestoneid,
+                    'projectId' => $ticket->projectId,
+                ];
             }
         }
 
-        self::dispatchEvent('ticket_updated');
+        // Separate TOP-LEVEL milestones from other tickets
+        // Top-level milestones have no milestoneid (or milestoneid = 0/null)
+        $topLevelMilestones = [];
+        $otherTickets = [];
 
-        return true;
+        foreach ($tickets as $ticketId => $ticket) {
+            if ($ticket['type'] === 'milestone' && empty($ticket['milestoneid'])) {
+                $topLevelMilestones[$ticketId] = $ticket;
+            } else {
+                $otherTickets[$ticketId] = $ticket;
+            }
+        }
+
+        // Process top-level milestones with hierarchical structure
+        foreach ($topLevelMilestones as $ticketId => $milestone) {
+            $position = $params[$ticketId];
+
+            // Calculate base sortindex for milestone (position * 100)
+            $baseSortIndex = $position * 100;
+            $allUpdates[$ticketId] = $baseSortIndex;
+
+            // Get all children for this milestone
+            $children = $this->getTicketChildren($ticketId, $milestone['projectId']);
+
+            if (! empty($children)) {
+                // Calculate hierarchical sortindex for all descendants
+                $childOffset = 1;
+                $childUpdates = $this->calculateHierarchicalSortIndex($children, $baseSortIndex, $childOffset);
+                // array_merge reindexes numeric keys, use + to preserve keys
+                foreach ($childUpdates as $childId => $childSort) {
+                    $allUpdates[$childId] = $childSort;
+                }
+            }
+        }
+
+        // Process other tickets (non-top-level-milestones that were dragged)
+        // This includes sub-milestones and regular tasks
+        foreach ($otherTickets as $ticketId => $ticket) {
+            $position = $params[$ticketId];
+
+            // If this ticket belongs to a top-level milestone that was also updated,
+            // skip it (already handled above with hierarchical sorting)
+            if (! empty($ticket['milestoneid']) && isset($topLevelMilestones[$ticket['milestoneid']])) {
+                continue;
+            }
+
+            // For orphan tickets or tickets whose parent wasn't moved,
+            // assign sortindex based on position
+            // Use position * 100 to maintain spacing
+            $allUpdates[$ticketId] = $position * 100;
+        }
+
+        // Bulk update all sortindex values in a single transaction
+        $result = $this->ticketRepository->bulkUpdateSortIndex($allUpdates);
+
+        if ($result) {
+            self::dispatchEvent('ticket_updated');
+        }
+
+        return $result;
     }
 
     /**
@@ -2908,6 +2988,87 @@ class Tickets
     }
 
     /**
+     * Get all children (tasks and subtasks) for a given ticket recursively
+     *
+     * @param  int  $ticketId  The parent ticket ID
+     * @param  int|null  $projectId  The project ID
+     * @return array Array of all descendants with nested structure
+     */
+    private function getTicketChildren(int $ticketId, ?int $projectId = null): array
+    {
+        $children = [];
+
+        // Get direct children (tasks under milestone or subtasks under task)
+        $directChildren = $this->ticketRepository->getSubtasksByParent($ticketId);
+
+        // If this is a milestone, also get tasks assigned to it
+        $tasksInMilestone = $this->ticketRepository->getTasksByMilestone($ticketId, $projectId);
+
+        // Merge both lists
+        $allChildren = array_merge($directChildren, $tasksInMilestone);
+
+        // Remove duplicates (in case a task is both a subtask and assigned to milestone)
+        $uniqueChildren = [];
+        foreach ($allChildren as $child) {
+            if (! isset($uniqueChildren[$child['id']])) {
+                $uniqueChildren[$child['id']] = $child;
+            }
+        }
+
+        // Recursively get children for each child
+        foreach ($uniqueChildren as $child) {
+            $child['children'] = $this->getTicketChildren($child['id'], $projectId);
+            $children[] = $child;
+        }
+
+        return $children;
+    }
+
+    /**
+     * Calculate hierarchical sortindex values for a tree of tickets
+     *
+     * @param  array  $tickets  Array of tickets to assign sortindex
+     * @param  int  $baseIndex  The base sortindex (e.g., 100 for first milestone)
+     * @param  int  $offset  Current offset within the base (starts at 1)
+     * @return array Array of ['ticketId' => sortindex]
+     */
+    private function calculateHierarchicalSortIndex(array $tickets, int $baseIndex, int &$offset = 1): array
+    {
+        $updates = [];
+
+        foreach ($tickets as $ticket) {
+            $ticketId = $ticket['id'];
+
+            // Check if we've exceeded the 99-slot limit per parent
+            if ($offset > 99) {
+                Log::warning("Ticket hierarchy exceeds 99 children for base index {$baseIndex}. Ticket {$ticketId} will use overflow slot.");
+            }
+
+            // Assign sortindex: baseIndex + offset
+            $sortIndex = $baseIndex + $offset;
+            $updates[$ticketId] = $sortIndex;
+
+            // Recursively handle children if present
+            if (! empty($ticket['children'])) {
+                $childOffset = 1;
+                $childUpdates = $this->calculateHierarchicalSortIndex(
+                    $ticket['children'],
+                    $sortIndex,
+                    $childOffset
+                );
+                $updates = array_merge($updates, $childUpdates);
+
+                // Update offset to account for all children
+                $offset += $childOffset;
+            } else {
+                $offset++;
+            }
+        }
+
+        return $updates;
+    }
+
+    /**
      * Prepare ticket dates for database.
      *
      * @param  array  $values  The values of the ticket fields.
@@ -2939,6 +3100,7 @@ class Tickets
                 }
             } catch (\Exception $e) {
                 $values['dateToFinish'] = '';
+                unset($values['timeToFinish']);
             }
         }
 
@@ -2964,6 +3126,7 @@ class Tickets
                 }
             } catch (\Exception $e) {
                 $values['editFrom'] = '';
+                unset($values['timeFrom']);
             }
         }
 
@@ -2990,6 +3153,7 @@ class Tickets
 
             } catch (\Exception $e) {
                 $values['editTo'] = '';
+                unset($values['timeTo']);
             }
 
         }

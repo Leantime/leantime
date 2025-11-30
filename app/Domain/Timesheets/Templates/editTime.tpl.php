@@ -11,7 +11,28 @@ $values = $tpl->get('values');
 ?>
 <script type="text/javascript">
 
+    function filterProjectsByClient() {
+        var selectedClientId = jQuery('#clients option:selected').val();
+        var projectSelect = jQuery('#projects');
+
+        // Show all projects if "all" is selected
+        if (selectedClientId === 'all') {
+            projectSelect.find('option').show();
+        } else {
+            // Hide all options first (except the "all" option)
+            projectSelect.find('option[data-client-id]').hide();
+
+            // Show only projects matching the selected client
+            projectSelect.find('option[data-client-id="' + selectedClientId + '"]').show();
+        }
+
+        // Reset project selection to "all" and trigger chosen update
+        projectSelect.val('all');
+        projectSelect.trigger("chosen:updated");
+    }
+
     jQuery(document).ready(function() {
+        jQuery(".client-select").chosen();
         jQuery(".project-select").chosen();
         jQuery(".ticket-select").chosen();
 
@@ -58,12 +79,20 @@ $values = $tpl->get('values');
 <h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_time'); ?></h4>
 <form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
+<label for="clients"><?php echo $tpl->__('label.client')?></label>
+<select name="clients" id="clients" class="client-select" onchange="filterProjectsByClient();">
+    <option value="all"><?php echo $tpl->__('headline.all_clients'); ?></option>
+    <?php foreach ($tpl->get('allClients') as $client) {
+        echo '<option value="'.$client['id'].'">'.$tpl->escape($client['name']).'</option>';
+    } ?>
+</select> <br />
+
 <label for="projects"><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
     <option value="all"><?php echo $tpl->__('headline.all_projects'); ?></option>
 
     <?php foreach ($tpl->get('allProjects') as $row) {
-        echo '<option value="'.$row['id'].'"';
+        echo '<option value="'.$row['id'].'" data-client-id="'.$row['clientId'].'"';
         if ($row['id'] == $values['project']) {
             echo ' selected="selected" ';
         }

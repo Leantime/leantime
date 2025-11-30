@@ -329,7 +329,7 @@ class Frontcontroller
             return 'run';
         }
 
-        throw new NotFoundHttpException("Can't find valid method for".strip_tags($method).' in '.strip_tags($controllerClass));
+        throw new NotFoundHttpException("Can't find valid method for ".strip_tags($method).' in '.strip_tags($controllerClass));
     }
 
     /**

@@ -137,6 +137,7 @@ $users = $tpl->get('users');
                                     <th><?php echo $tpl->__('label.name') ?></th>
                                     <th><?php echo $tpl->__('label.email') ?></th>
                                     <th><?php echo $tpl->__('label.phone') ?></th>
+                                    <th><?php echo $tpl->__('label.actions') ?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -147,11 +148,22 @@ $users = $tpl->get('users');
                                         </td>
                                         <td><a href='mailto:<?php $tpl->e($user['username']); ?>'><?php $tpl->e($user['username']); ?></a></td>
                                         <td><?php $tpl->e($user['phone']); ?></td>
+                                        <td>
+                                            <a href="<?= BASE_URL ?>/users/editUser/<?= $user['id'] ?>" title="<?php echo $tpl->__('buttons.edit') ?>">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="<?= BASE_URL ?>/clients/removeUser/<?= $values['id'] ?>/<?= $user['id'] ?>"
+                                               class="delete"
+                                               title="<?php echo $tpl->__('buttons.remove') ?>"
+                                               onclick="return confirm('<?php echo $tpl->__('text.confirm_remove_user_from_client') ?>')">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 <?php } ?>
 
                                 <?php if (count($tpl->get('userClients')) == 0) {
-                                    echo "<tr><td colspan='3'>".$tpl->__('text.no_users_assigned_to_this_client').'</td></tr>';
+                                    echo "<tr><td colspan='4'>".$tpl->__('text.no_users_assigned_to_this_client').'</td></tr>';
                                 }?>
                                 </tbody>
                             </table>

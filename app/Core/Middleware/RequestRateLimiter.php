@@ -80,7 +80,7 @@ class RequestRateLimiter
             $keyModifier = session('userdata.id');
         }
 
-        $key = 'ratelimit-'.md5($request->getClientIp()).'-'.$keyModifier;
+        $key = 'ratelimit-'.($request->getClientIp()).'-'.$keyModifier;
 
         // General Limit per minute
         $limit = $rateLimitGeneral;
@@ -95,6 +95,7 @@ class RequestRateLimiter
         if ($route == 'auth.login') {
             $limit = $rateLimitAuth;
             $key = $key.':loginAttempts';
+
         }
 
         $key = self::dispatchFilter(

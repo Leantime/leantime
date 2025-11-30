@@ -138,20 +138,6 @@ if ($roadmapView == 'Day') {
 
             $sortIndex = $mlst->sortIndex;
 
-            // Item is milestone itself, set first index + .0
-            //            if ($mlst->type == 'milestone') {
-            //                $sortIndex = $lastMilestoneSortIndex[$mlst->id].'.000';
-            //            } else {
-            //                // If it has a milestone dependency, add milestone index
-            //                if ($mlst->dependingTicketId > 0) {
-            //                    $sortIndex = ($lastMilestoneSortIndex[$mlst->dependingTicketId] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-            //                } elseif ($mlst->milestoneid > 0) {
-            //                    $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? '999').'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-            //                } else {
-            //                    $sortIndex = '999'.'.'.str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
-            //                }
-            //            }
-
             $dependencyList = [];
 
             // Show subtask dependencies only within tasks

@@ -1226,10 +1226,15 @@ class Projects
     }
 
     /**
-     * Updates a project with the given parameters.
+     * Patches a project with partial updates.
+     *
+     * Unlike editProject(), this method only updates the fields provided in $params,
+     * preserving all other existing values including the project type.
+     *
+     * Recommended for API usage to avoid accidentally overwriting fields.
      *
      * @param  int  $id  The ID of the project.
-     * @param  array  $params  The parameters to update the project.
+     * @param  array  $params  Fields to update (only these fields will be changed).
      * @return bool Returns true if the project was successfully updated, false otherwise.
      *
      * @api
@@ -1324,6 +1329,30 @@ class Projects
     public function getAllProjects()
     {
         return $this->projectRepository->getAll();
+    }
+
+    /**
+     * Gets all strategy projects.
+     *
+     * @return array All strategies with their details
+     *
+     * @api
+     */
+    public function getAllStrategies(): array
+    {
+        return $this->projectRepository->getProjectsByType('strategy');
+    }
+
+    /**
+     * Gets all program projects.
+     *
+     * @return array All programs with their details
+     *
+     * @api
+     */
+    public function getAllPrograms(): array
+    {
+        return $this->projectRepository->getProjectsByType('program');
     }
 
     /**
@@ -1582,16 +1611,47 @@ class Projects
     }
 
     /**
-     * Updates the sorting of multiple projects.
+     * Updates the sorting of multiple projects and tickets in Program Timeline.
      *
-     * @param  array  $params  The array containing the project IDs as keys and their corresponding sort index as values (ticketId: sortIndex).
+     * Handles mixed payload from Program Timeline Gantt chart which contains both:
+     * - Project IDs prefixed with "pgm-" (e.g., "pgm-123")
+     * - Ticket IDs prefixed with "ticket-" (e.g., "ticket-456")
+     *
+     * @param  array  $params  The array containing IDs as keys and sort positions as values.
      * @return bool Returns true if the sorting update was successful, false otherwise.
      */
     public function updateProjectSorting($params): bool
     {
-        // ticketId: sortIndex
-        foreach ($params as $id => $sortKey) {
-            if ($this->projectRepository->patch($id, ['sortIndex' => $sortKey * 100]) === false) {
+        $projectUpdates = [];
+        $ticketUpdates = [];
+
+        // Separate projects from tickets based on ID prefix
+        foreach ($params as $id => $sortPosition) {
+            if (str_starts_with($id, 'pgm-')) {
+                // Extract numeric project ID
+                $projectId = (int) substr($id, 4);
+                $projectUpdates[$projectId] = $sortPosition;
+            } elseif (str_starts_with($id, 'ticket-')) {
+                // Extract numeric ticket ID
+                $ticketId = (int) substr($id, 7);
+                $ticketUpdates[$ticketId] = $sortPosition;
+            } else {
+                // Legacy: plain numeric IDs are projects
+                $projectUpdates[$id] = $sortPosition;
+            }
+        }
+
+        // Update projects
+        foreach ($projectUpdates as $projectId => $sortPosition) {
+            if ($this->projectRepository->patch($projectId, ['sortIndex' => $sortPosition * 100]) === false) {
+                return false;
+            }
+        }
+
+        // Update tickets (milestones) using the Tickets service
+        if (! empty($ticketUpdates)) {
+            $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
+            if (! $ticketService->updateTicketSorting($ticketUpdates)) {
                 return false;
             }
         }
@@ -1602,6 +1662,11 @@ class Projects
     /**
      * Edits a project.
      *
+     * IMPORTANT: If 'type' is not provided in $values, it will be preserved from the existing project.
+     * To change the type, explicitly include it in $values.
+     *
+     * For partial updates that only modify specified fields, consider using patch() instead.
+     *
      * @param  mixed  $values  The values to be updated in the project.
      * @param  int  $id  The ID of the project to be edited.
      * @return void
@@ -1610,6 +1675,16 @@ class Projects
      */
     public function editProject($values, $id)
     {
+        // Preserve existing type if not provided
+        if (! isset($values['type'])) {
+            $currentProject = $this->getProject($id);
+            if ($currentProject) {
+                $values['type'] = $currentProject['type'] ?? 'project';
+            } else {
+                $values['type'] = 'project';
+            }
+        }
+
         $this->projectRepository->editProject($values, $id);
     }
 

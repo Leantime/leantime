@@ -1,0 +1,74 @@
+# Poll Comments
+# @no-redirect
+POST {{ base-url }}/api/jsonrpc
+x-api-key: {{ x-api-key }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.2.4
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+Content-Length: 234
+
+[
+{
+  "method":  "leantime.rpc.Comments.pollComments",
+  "params": {"projectId": 3},
+  "id": 1,
+  "jsonrpc": "2.0"
+},
+{
+  "method":  "leantime.rpc.Comments.pollComments",
+  "params": {"projectId": 3},
+  "id": 1,
+  "jsonrpc": "2.0"
+}
+]
+
+<> 2025-09-30T081831.303.html
+
+
+###
+
+# api key auth
+# @no-redirect
+POST {{ base-url }}/api/jsonrpc
+x-api-key: {{x-api-key}}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Content-Length: 193
+x-http2-scheme: https
+
+
+<> 2025-06-09T190524.200.json
+
+###
+
+# create client
+# @no-redirect
+POST {{ base-url }}/api/jsonrpc
+x-api-key: {{x-api-key}}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Content-Length: 193
+x-http2-scheme: https
+
+{
+    "method": "leantime.rpc.Clients.Clients.create",
+    "jsonrpc": "2.0",
+    "id": "create-client-1",
+    "params": {
+        "values": {
+            "name": "Test Client"
+        }
+    }
+}
+
+<> 2025-06-09T190503.200.json
+
+
+
+

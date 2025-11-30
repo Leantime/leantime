@@ -192,9 +192,8 @@ class Files
             // Use FileManager to delete the file
             $fileName = $values['encName'].'.'.$values['extension'];
 
-            // Try to delete from both public and private storage
-            $this->fileManager->deleteFile($fileName, false); // Private storage
-            $this->fileManager->deleteFile($fileName, true);  // Public storage
+            // Delete file from default storage
+            $this->fileManager->deleteFile($fileName, 'default');
         }
 
         $sql = 'DELETE FROM zp_file WHERE id=:id';

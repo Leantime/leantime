@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -18,6 +19,8 @@ class EditTime extends Controller
     private ProjectRepository $projects;
 
     private TicketRepository $tickets;
+
+    private ClientRepository $clients;
 
     // This is the date we get back from the database, when no date has been sat. This is somewhat a hack and should
     // be looked into.
@@ -32,11 +35,13 @@ class EditTime extends Controller
     public function init(
         TimesheetRepository $timesheetsRepo,
         ProjectRepository $projects,
-        TicketRepository $tickets
+        TicketRepository $tickets,
+        ClientRepository $clients
     ) {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->projects = $projects;
         $this->tickets = $tickets;
+        $this->clients = $clients;
     }
 
     /**
@@ -205,7 +210,8 @@ class EditTime extends Controller
                     $this->tpl->assign('values', $values);
 
                     $this->tpl->assign('info', $info);
-                    $this->tpl->assign('allProjects', $this->projects->getAll());
+                    $this->tpl->assign('allClients', $this->clients->getAll());
+                    $this->tpl->assign('allProjects', $this->projects->getAll(showClosedProjects: false));
                     $this->tpl->assign('allTickets', $this->tickets->getAll());
                     $this->tpl->assign('kind', $this->timesheetsRepo->kind);
 

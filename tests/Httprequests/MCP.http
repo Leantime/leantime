@@ -1,0 +1,112 @@
+# List Prompts
+# @no-redirect
+POST {{ base-url }}/mcp
+Authorization: Bearer {{ bearer-token }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: application/json
+x-http2-scheme: https
+Mcp-Session-Id: f703118b3b1e83a46fb02c22511da140
+Content-Length: 106
+
+{
+    "method": "prompts/list",
+    "jsonrpc": "2.0",
+    "id": "create-client-1",
+    "params": {
+    }
+}
+
+<> 2025-06-28T161808.200.json
+
+###
+# Initiatlize
+# @no-redirect
+POST {{ base-url }}/mcp
+Authorization: Bearer {{ bearer-token }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: application/json
+x-http2-scheme: https
+Mcp-Session-Id: f703118b3b1e83a46fb02c22511da140
+Content-Length: 200
+
+{
+    "method": "initialize",
+    "jsonrpc": "2.0",
+    "id": "1",
+    "params": {"protocolVersion":"2025-03-26","capabilities":[],"clientInfo":{"name":"mcp-remote-fallback-test","version":"0.0.0"}}
+}
+
+<> 2025-06-28T161740.400.json
+
+
+###
+
+# Tool Call getCalendar
+# @no-redirect
+POST {{ base-url }}/mcp
+Authorization: Bearer {{ bearer-token }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+Content-Length: 236
+
+{
+    "method": "tools/call",
+    "jsonrpc": "2.0",
+    "id": "1",
+    "params": {
+      "name": "getCalendar",
+      "arguments": {
+        "from": "2025-06-15 00:00:00-0100",
+        "until": "2025-06-17 00:00:00-0100"
+      }
+    }
+}
+
+<> 2025-06-20T122107.200.json
+
+###
+
+# Tools List
+# @no-redirect
+POST {{ base-url }}/mcp
+Authorization: Bearer {{ bearer-token }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+Content-Length: 104
+
+{
+    "method": "tools/list",
+    "jsonrpc": "2.0",
+    "id": "create-client-1",
+    "params": {
+    }
+}
+
+<> 2025-06-16T081130.200.json
+
+###
+
+# Auth no body
+# @no-redirect
+POST {{ base-url }}/mcp
+Authorization: Bearer {{ bearer-token }}
+Content-Type: Content-Type: application/json
+User-Agent: IntelliJ HTTP Client/PhpStorm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+x-http2-scheme: https
+content-length: 0
+
+<> 2025-06-16T081028.200.json
+
+###

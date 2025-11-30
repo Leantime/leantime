@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Repositories;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Leantime\Core\Db\Db as DbCore;
 use Leantime\Core\Events\DispatchesEvents as EventhelperCore;
 use Leantime\Core\Language as LanguageCore;
@@ -416,7 +417,7 @@ class Tickets
 
         $query .= "
             LEFT JOIN zp_relationuserproject AS rup ON zp_tickets.projectId = rup.projectId AND rup.userId = :userId
-            LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.entityA = zp_tickets.id  AND er.relationship = '" .EntityRelationshipEnum::Collaborator->value . "'
+            LEFT JOIN zp_entity_relationship AS er ON er.entityAType = 'Ticket' AND er.entityBType = 'User' AND er.entityA = zp_tickets.id  AND er.relationship = '".EntityRelationshipEnum::Collaborator->value."'
             WHERE (
                 rup.projectId IS NOT NULL
                 OR zp_projects.psettings = 'all'
@@ -1595,7 +1596,6 @@ class Tickets
 
         $stmn->bindValue(':milestoneid', $milestoneId, PDO::PARAM_STR);
 
-
         $stmn->execute();
 
         $stmn->closeCursor();
@@ -1604,9 +1604,10 @@ class Tickets
 
         if ($ticketId !== false) {
             $ticketId = intval($ticketId);
-            if (!empty($values['collaborators'])) {
+            if (! empty($values['collaborators'])) {
                 $this->addCollaborators($ticketId, $values['collaborators'], $values['userId']);
             }
+
             return $ticketId;
         }
 
@@ -1822,6 +1823,98 @@ class Tickets
     }
 
     /**
+     * Get all tasks (and optionally subtasks) that belong to a milestone
+     *
+     * @param  int  $milestoneId  The milestone ID
+     * @param  int|null  $projectId  The project ID (defaults to current project)
+     * @return array Array of tickets
+     */
+    public function getTasksByMilestone(int $milestoneId, ?int $projectId = null): array
+    {
+        if ($projectId === null) {
+            $projectId = session('currentProject');
+        }
+
+        $query = 'SELECT * FROM zp_tickets
+                  WHERE milestoneid = :milestoneId
+                  AND projectId = :projectId
+                  ORDER BY sortindex ASC, id DESC';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':milestoneId', $milestoneId, PDO::PARAM_INT);
+        $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+        $stmn->execute();
+        $tickets = $stmn->fetchAll();
+        $stmn->closeCursor();
+
+        return $tickets ?: [];
+    }
+
+    /**
+     * Get all subtasks that have a parent task
+     *
+     * @param  int  $parentTicketId  The parent ticket ID
+     * @return array Array of subtasks
+     */
+    public function getSubtasksByParent(int $parentTicketId): array
+    {
+        $query = 'SELECT * FROM zp_tickets
+                  WHERE dependingTicketId = :parentTicketId
+                  ORDER BY sortindex ASC, id DESC';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':parentTicketId', $parentTicketId, PDO::PARAM_INT);
+
+        $stmn->execute();
+        $tickets = $stmn->fetchAll();
+        $stmn->closeCursor();
+
+        return $tickets ?: [];
+    }
+
+    /**
+     * Bulk update sortindex for multiple tickets in a single transaction
+     *
+     * @param  array  $updates  Array of ['ticketId' => sortindex]
+     * @return bool True on success
+     */
+    public function bulkUpdateSortIndex(array $updates): bool
+    {
+        if (empty($updates)) {
+            return true;
+        }
+
+        // Build CASE statement for bulk update
+        $caseStatements = [];
+        $ticketIds = [];
+
+        foreach ($updates as $ticketId => $sortIndex) {
+            // Cast to int for safety
+            $ticketId = (int) $ticketId;
+            $sortIndex = (int) $sortIndex;
+            $caseStatements[] = "WHEN id = {$ticketId} THEN {$sortIndex}";
+            $ticketIds[] = $ticketId;
+        }
+
+        $query = 'UPDATE zp_tickets
+                  SET sortindex = CASE
+                      '.implode(' ', $caseStatements).'
+                  END
+                  WHERE id IN ('.implode(',', $ticketIds).')';
+
+        try {
+            $result = $this->db->database->exec($query);
+
+            return $result !== false;
+        } catch (\PDOException $e) {
+            Log::error('Failed to bulk update sortindex: '.$e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * delTicket - delete a Ticket and all dependencies
      */
     public function delticket($id): bool
@@ -1881,9 +1974,9 @@ class Tickets
     /**
      * Adds collaborators to a ticket.
      *
-     * @param int $ticketId The ID of the ticket.
-     * @param array $collaborators An array of user IDs to add as collaborators.
-     * @param int $createdBy The ID of the user adding the collaborators.
+     * @param  int  $ticketId  The ID of the ticket.
+     * @param  array  $collaborators  An array of user IDs to add as collaborators.
+     * @param  int  $createdBy  The ID of the user adding the collaborators.
      * @return bool Returns true if the operation is successful.
      */
     public function addCollaborators(int $ticketId, array $collaborators, int $createdBy): bool
@@ -1891,7 +1984,7 @@ class Tickets
         $query = "INSERT INTO zp_entity_relationship (
                     entityA, entityAType, entityB, entityBType, relationship, createdOn, createdBy
                 ) VALUES (
-                    :entityA, 'Ticket', :entityB, 'User', '" . EntityRelationshipEnum::Collaborator->value . "', NOW(), :createdBy
+                    :entityA, 'Ticket', :entityB, 'User', '".EntityRelationshipEnum::Collaborator->value."', NOW(), :createdBy
                 )";
 
         $stmn = $this->db->database->prepare($query);
@@ -1909,14 +2002,14 @@ class Tickets
     /**
      * Retrieves all collaborators for a ticket.
      *
-     * @param int $ticketId The ID of the ticket.
+     * @param  int  $ticketId  The ID of the ticket.
      * @return array An array of user IDs who are collaborators.
      */
     public function getCollaborators(int $ticketId): array
     {
         $query = "SELECT entityB AS userId
                 FROM zp_entity_relationship
-                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '". EntityRelationshipEnum::Collaborator->value ."'";
+                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '".EntityRelationshipEnum::Collaborator->value."'";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
@@ -1928,17 +2021,17 @@ class Tickets
     /**
      * Removes all collaborators from a ticket.
      *
-     * @param int $ticketId The ID of the ticket.
+     * @param  int  $ticketId  The ID of the ticket.
      * @return bool Returns true if the operation is successful.
      */
     public function removeCollaborators(int $ticketId): bool
     {
         $query = "DELETE FROM zp_entity_relationship
-                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '". EntityRelationshipEnum::Collaborator->value ."'";
+                WHERE entityA = :entityA AND entityAType = 'Ticket' AND relationship = '".EntityRelationshipEnum::Collaborator->value."'";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':entityA', $ticketId, PDO::PARAM_INT);
 
         return $stmn->execute();
-    }    
+    }
 }

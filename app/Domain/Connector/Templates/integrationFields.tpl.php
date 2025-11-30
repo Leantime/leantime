@@ -52,7 +52,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
                                 <td class="center">
                                     <select class="form-control" name="field_<?= md5($entity) ?>">
                                         <?php foreach ($leantimeFields as $key2 => $fields) { ?>
-                                            <option value="<?= $entity ?>|<?= $key2 ?>" <?= $entity == $fields['name'] ? "selected='selected'" : '' ?>>
+                                            <option value="<?= $entity ?>|<?= $key2 ?>" <?= ($entity == $fields['name'] && ! in_array($key2, ['id', 'itemId'])) ? "selected='selected'" : '' ?>>
                                                 <?= $fields['name'] ?>
                                             </option>
                                         <?php } ?>
@@ -75,7 +75,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
         </div>
         <div class="col-md-3">
             <div class="maincontentinner">
-            <h5 class="subtitle">Requirements for a successful impot</h5>
+            <h5 class="subtitle">Requirements for a successful import</h5>
             <p>Please review these requirements and make sure your import and mapping covers everything.</p>
             <?php foreach ($flags as $flag) { ?>
                 <hr />

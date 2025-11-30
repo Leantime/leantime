@@ -149,26 +149,27 @@ $state = $tpl->get('state');
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
                                                     <input type="text" readonly disabled value="<?php echo $tpl->__('label.roles.'.$roles::getRoles()[$row['role']]) ?>" />
                                                 <?php } else { ?>
+                                                    <?php $assignedUserMatch = collect($project['assignedUsers'])->where('id', $row['id'])->first(); ?>
                                                     <select name="userProjectRole-<?php echo $row['id'] ?>">
                                                         <option value="inherit">Inherit</option>
                                                         <option value="<?php echo array_search($roles::$readonly, $roles::getRoles()); ?>"
-                                                        <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
+                                                        <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
                                                             echo " selected='selected' ";
                                                         }?>
                                                             ><?php echo $tpl->__('label.roles.'.$roles::$readonly) ?></option>
 
                                                         <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
+                                                            <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
                                                             }?>
                                                         ><?php echo $tpl->__('label.roles.'.$roles::$commenter) ?></option>
                                                         <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
+                                                            <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
                                                             }?>
                                                         ><?php echo $tpl->__('label.roles.'.$roles::$editor) ?></option>
                                                         <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
-                                                            <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
+                                                            <?php if ($assignedUserMatch && $assignedUserMatch['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
                                                                 echo " selected='selected' ";
                                                             }?>
                                                         ><?php echo $tpl->__('label.roles.'.$roles::$manager) ?></option>

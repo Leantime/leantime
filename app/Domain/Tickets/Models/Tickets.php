@@ -94,6 +94,8 @@ class Tickets
 
     public ?array $collaborators = null;
 
+    public mixed $modified = null;
+
     /**
      * @param  false  $values
      */
@@ -129,6 +131,7 @@ class Tickets
             $this->userLastname = $values['userLastname'] ?? '';
             $this->editorFirstname = $values['editorFirstname'] ?? '';
             $this->editorLastname = $values['editorLastname'] ?? '';
+            $this->modified = $values['modified'] ?? '';
         }
     }
 

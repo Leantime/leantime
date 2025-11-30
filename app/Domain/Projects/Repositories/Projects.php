@@ -93,6 +93,53 @@ class Projects
     }
 
     /**
+     * Get projects by type
+     *
+     * @param  string  $type  The project type (project, strategy, program)
+     * @return array Projects of the specified type
+     */
+    public function getProjectsByType(string $type): array
+    {
+        $query = 'SELECT
+					project.id,
+					project.name,
+					project.clientId,
+					project.hourBudget,
+					project.dollarBudget,
+					project.state,
+                    project.menuType,
+                    project.type,
+                    project.modified,
+					client.name AS clientName,
+					client.id AS clientId,
+					comments.status as status,
+					project.start,
+					project.end
+				FROM zp_projects as project
+				LEFT JOIN zp_clients as client ON project.clientId = client.id
+                LEFT JOIN zp_comment as comments ON comments.id = (
+                      SELECT id
+                      FROM zp_comment
+                      WHERE module = \'project\' AND moduleId = project.id
+                      ORDER BY date DESC LIMIT 1
+                    )
+				WHERE project.type = :type
+				GROUP BY
+					project.id,
+					project.name,
+					project.clientId
+				ORDER BY clientName, project.name';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmn->execute();
+        $values = $stmn->fetchAll();
+        $stmn->closeCursor();
+
+        return $values;
+    }
+
+    /**
      * Gets all users that have access to a project.
      * For direct access only set the teamOnly flag to true
      */

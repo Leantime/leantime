@@ -42,6 +42,13 @@ $values = $tpl->get('values');
                         <h4 class="widgettitle"><?php echo $tpl->__('OVERVIEW'); ?></h4>
                         <div class="widgetcontent" style="min-height: 460px">
 
+                            <label for="clients"><?php echo $tpl->__('label.client') ?></label>
+                            <select name="clients" id="clients" onchange="filterProjectsByClient();">
+                                <option value="all"><?php echo $tpl->__('headline.all_clients'); ?></option>
+                                <?php foreach ($tpl->get('allClients') as $client) {
+                                    echo '<option value="'.$client['id'].'">'.$tpl->escape($client['name']).'</option>';
+                                } ?>
+                            </select> <br/>
 
                             <label for="projects"><?php echo $tpl->__('PROJECT') ?></label> <select
                                     name="projects" id="projects"
@@ -57,7 +64,7 @@ $values = $tpl->get('values');
                                             echo '</optgroup><optgroup label="'.$currentClientName.'">';
                                         }
 
-                                        echo '<option value="'.$row['id'].'"';
+                                        echo '<option value="'.$row['id'].'" data-client-id="'.$row['clientId'].'"';
                                         if ($row['id'] == $values['project']) {
                                             echo ' selected="selected" ';
                                         }
@@ -157,6 +164,27 @@ $values = $tpl->get('values');
 
 <script type="text/javascript">
 
+        function filterProjectsByClient() {
+            var selectedClientId = jQuery('#clients option:selected').val();
+            var projectSelect = jQuery('#projects');
+
+            // Show all projects if "all" is selected
+            if (selectedClientId === 'all') {
+                projectSelect.find('option').show();
+                projectSelect.find('optgroup').show();
+            } else {
+                // Hide all options first
+                projectSelect.find('option[data-client-id]').hide();
+                projectSelect.find('optgroup').hide();
+
+                // Show only projects matching the selected client
+                projectSelect.find('option[data-client-id="' + selectedClientId + '"]').show();
+                projectSelect.find('option[data-client-id="' + selectedClientId + '"]').parent('optgroup').show();
+            }
+
+            // Reset project selection to "all"
+            projectSelect.val('all');
+        }
 
         jQuery("#date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
 

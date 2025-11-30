@@ -384,6 +384,26 @@ class Users
     }
 
     /**
+     * removeFromClient - Remove user from client by setting clientId to null
+     *
+     * @param  int  $userId  User ID to remove from client
+     * @return bool Success status
+     */
+    public function removeFromClient(int $userId): bool
+    {
+        $query = 'UPDATE `zp_user` SET clientId = NULL, modified = :modified WHERE id = :id LIMIT 1';
+
+        $stmn = $this->db->database->prepare($query);
+        $stmn->bindValue(':id', $userId, PDO::PARAM_INT);
+        $stmn->bindValue(':modified', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+
+        $result = $stmn->execute();
+        $stmn->closeCursor();
+
+        return $result;
+    }
+
+    /**
      * editOwn - Edit own Userdates
      */
     public function editOwn($values, $id): void

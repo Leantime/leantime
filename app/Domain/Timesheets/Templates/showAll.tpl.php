@@ -6,6 +6,53 @@ foreach ($__data as $var => $val) {
 }
 ?>
 <script type="text/javascript">
+    function filterProjectsByClient() {
+        var selectedClientId = jQuery('select[name="clientId"]').val();
+        var projectSelect = jQuery('select[name="project"]');
+
+        if (selectedClientId === '-1') {
+            // Show all projects when "All Clients" is selected
+            projectSelect.find('option[data-client-id]').show();
+        } else {
+            // Hide all projects first
+            projectSelect.find('option[data-client-id]').hide();
+            // Show only projects for selected client
+            projectSelect.find('option[data-client-id="' + selectedClientId + '"]').show();
+        }
+
+        // Reset to "All Projects" if current selection is now hidden
+        if (projectSelect.find('option:selected').is(':hidden')) {
+            projectSelect.val('-1');
+        }
+
+        // Also filter tickets when project selection changes
+        filterTicketsByProject();
+    }
+
+    function filterTicketsByProject() {
+        var selectedProjectId = jQuery('select[name="project"]').val();
+        var ticketSelect = jQuery('select[name="ticket"]');
+
+        if (ticketSelect.length === 0) {
+            return; // No ticket dropdown exists
+        }
+
+        if (selectedProjectId === '-1') {
+            // Show all tickets when "All Projects" is selected
+            ticketSelect.find('option[data-project-id]').show();
+        } else {
+            // Hide all tickets first
+            ticketSelect.find('option[data-project-id]').hide();
+            // Show only tickets for selected project
+            ticketSelect.find('option[data-project-id="' + selectedProjectId + '"]').show();
+        }
+
+        // Reset to "All Tickets" if current selection is now hidden
+        if (ticketSelect.find('option:selected').is(':hidden')) {
+            ticketSelect.val('-1');
+        }
+    }
+
     jQuery(document).ready(function(){
         jQuery("#checkAllEmpl").change(function(){
             jQuery(".invoicedEmpl").prop('checked', jQuery(this).prop("checked"));
@@ -39,6 +86,12 @@ foreach ($__data as $var => $val) {
                 jQuery(".paid").parent().removeClass("checked");
             }
         });
+
+        // Filter projects when client dropdown changes
+        jQuery('select[name="clientId"]').change(filterProjectsByClient);
+
+        // Filter tickets when project dropdown changes
+        jQuery('select[name="project"]').change(filterTicketsByProject);
 
         leantime.timesheetsController.initTimesheetsTable();
 
@@ -89,7 +142,7 @@ foreach ($__data as $var => $val) {
                         <select name="project" style="max-width:120px;">
                             <option value="-1"><?php echo strip_tags($tpl->__('menu.all_projects')) ?></option>
                             <?php foreach ($tpl->get('allProjects') as $project) { ?>
-                                <option value="<?= $project['id'] ?>"
+                                <option value="<?= $project['id'] ?>" data-client-id="<?= $project['clientId'] ?>"
                                     <?php if ($tpl->get('projectFilter') == $project['id']) {
                                         echo "selected='selected'";
                                     } ?>><?= $tpl->escape($project['name']) ?></option>
@@ -102,7 +155,7 @@ foreach ($__data as $var => $val) {
                             <select name="ticket" style="max-width:120px;">
                                 <option value="-1"><?php echo strip_tags($tpl->__('menu.all_tickets')) ?></option>
                                 <?php foreach ($tpl->get('allTickets') as $ticket) {?>
-                                    <option value="<?= $ticket['id'] ?>"
+                                    <option value="<?= $ticket['id'] ?>" data-project-id="<?= $ticket['projectId'] ?>"
                                         <?php if ($tpl->get('ticketFilter') == $ticket['id']) {
                                             echo "selected='selected'";
                                         } ?>><?= $tpl->escape($ticket['headline'])?></option>

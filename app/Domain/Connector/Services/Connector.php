@@ -677,12 +677,21 @@ class Connector
                 }
                 $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
             }
-            if (isset($values['id'])) {
-                $this->projectService->editProject($values, $values['id']);
-            } else {
-                $this->projectService->addProject($values);
+
+            try {
+                if (isset($values['id']) && is_numeric($values['id'])) {
+                    $this->projectService->editProject($values, $values['id']);
+                } else {
+                    $this->projectService->addProject($values);
+                }
+            } catch (\Exception $e) {
+                Log::error($e);
+
+                return $e->getMessage();
             }
         }
+
+        return true;
     }
 
     private function importUsers($finalMappings, $finalValues)

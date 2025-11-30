@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
+use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -20,17 +21,21 @@ class AddTime extends Controller
 
     private TicketRepository $tickets;
 
+    private ClientRepository $clients;
+
     /**
      * init - initialize private variables
      */
     public function init(
         TimesheetRepository $timesheetsRepo,
         ProjectRepository $projects,
-        TicketRepository $tickets
+        TicketRepository $tickets,
+        ClientRepository $clients
     ): void {
         $this->timesheetsRepo = $timesheetsRepo;
         $this->projects = $projects;
         $this->tickets = $tickets;
+        $this->clients = $clients;
     }
 
     /**
@@ -166,7 +171,8 @@ class AddTime extends Controller
             }
 
             $this->tpl->assign('info', $info);
-            $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
+            $this->tpl->assign('allClients', $this->clients->getAll());
+            $this->tpl->assign('allProjects', $this->projects->getAll(showClosedProjects: false));
             $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
 

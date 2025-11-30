@@ -116,7 +116,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                         echo "selected='selected'";
                                     } ?>
                                 >
-                                    <?php echo $tpl->escape($userRow['firstname'] . ' ' . $userRow['lastname']); ?>
+                                    <?php echo $tpl->escape($userRow['firstname'].' '.$userRow['lastname']); ?>
                                 </option>
                             <?php } ?>
                         </select>
