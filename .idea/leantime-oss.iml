@@ -100,7 +100,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/encryption" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/redis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/prompts" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/filp/whoops" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/log" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stream-filter" />
