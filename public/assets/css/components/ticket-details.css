@@ -6,10 +6,11 @@
     width: 100%;
     text-align: left;
     margin-left: 3px;
+    height: 30px;
 }
 
 .button-primary:hover {
     background-color: #f0f0f0;
     color: #000000;
-    height: 24px;
+    height: 30px;
 }

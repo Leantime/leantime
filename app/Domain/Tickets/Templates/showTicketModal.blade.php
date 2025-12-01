@@ -44,7 +44,6 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
                 <li class="nav-header"><?php echo $tpl->__('subtitles.todo'); ?></li>
                 <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__('links.move_todo'); ?></a></li>
                 <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('links.delete_todo'); ?></a></li>
-                <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li><form method="POST" action="<?= BASE_URL ?>/tickets/cloneTicket">
         <input type="hidden" name="id" value="<?= $ticket->id ?>">
         <input type="hidden" name="description" value="<?= htmlspecialchars($ticket->description) ?>">
@@ -62,6 +61,7 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <input type="hidden" name="hourRemaining" value="<?=  $ticket->hourRemaining?>">
         <button type="submit" class="button-primary"><i class="fa fa-clone"></i> Clone To-Do</button>
     </form></li>
+                <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
                     hx-trigger="timerUpdate from:body"
