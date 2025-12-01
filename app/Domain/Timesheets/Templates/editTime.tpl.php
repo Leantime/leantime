@@ -54,14 +54,10 @@ $values = $tpl->get('values');
 </script>
 
 <?php echo $tpl->displayNotification() ?>
-<div style="width: 50%; margin: 0 auto;">
-     <p class="stdformbutton" style ="text-align: right;">
-        <a class="delete editTimeModal pull-right" style ="border-radius:45%; background-color:white; padding:5px;margin-top:5px;" href="<?= BASE_URL?>/timesheets/showMy/<?= $tpl->escape($_GET['id']) ?>">Close</a>
-    </p>
-<h4  class="widgettitle title-light" style = "color: white;"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
+<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_todo'); ?></h4>
 <form action="<?= BASE_URL?>/timesheets/editTime/<?= (int) $_GET['id']?>" method="post" class="editTimeModal">
 
-<label for="projects" style="color: white;"><?php echo $tpl->__('label.project')?></label>
+<label for="projects" ><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
     <option value="all"><?php echo $tpl->__('headline.all_projects'); ?></option>
 
@@ -77,7 +73,7 @@ $values = $tpl->get('values');
 </select> <br />
 
 <div id="ticketSelect">
-<label for="tickets" style="color: white;"><?php echo $tpl->__('label.ticket')?></label>
+<label for="tickets"><?php echo $tpl->__('label.ticket')?></label>
 <select name="tickets" id="tickets" class="ticket-select">
 
     <?php foreach ($tpl->get('allTickets') as $row) {
@@ -90,7 +86,7 @@ $values = $tpl->get('values');
 
 </select> <br />
 </div>
-    <label for="kind" style="color: white;"><?php echo $tpl->__('label.kind')?></label> <select id="kind"
+    <label for="kind" ><?php echo $tpl->__('label.kind')?></label> <select id="kind"
     name="kind">
     <?php
     foreach ($tpl->get('kind') as $key => $row) {
@@ -103,13 +99,13 @@ $values = $tpl->get('values');
 ?>
 
 </select><br />
-<label for="date" style="color: white;"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
+<label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
     id="datepicker" name="date" value="<?php echo format(value: $values['date'], fromFormat: FromFormat::DbDate)->date(); ?>" size="7" />
 <br />
-<label for="hours" style="color: white;"><?php echo $tpl->__('label.hours')?></label> <input
+<label for="hours" ><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
     value="<?php echo $values['hours'] ?>" size="7" /> <br />
-<label for="description" style="color: white;"><?php echo $tpl->__('label.description')?></label> <textarea
+<label for="description"><?php echo $tpl->__('label.description')?></label> <textarea
     rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
 
 
@@ -122,23 +118,23 @@ $values = $tpl->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-            <label for="invoicedEmpl" style="color: white;"><?php echo $tpl->__('label.invoiced') ?></label>
+            <label for="invoicedEmpl" ><?php echo $tpl->__('label.invoiced') ?></label>
 
-            <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
+            <span><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
                                                   value="<?php echo format(value: $values['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                   size="7"/><br/>
 
 
         <br/>
-        <input style="float:left; margin-right:5px; color: white;"
+        <input style="float:left; margin-right:5px;"
                 type="checkbox" name="invoicedComp" id="invoicedComp"
             <?php if ($values['invoicedComp'] == '1') {
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="invoicedComp" style="color: white;"><?php echo $tpl->__('label.invoiced_comp') ?></label>
-        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
+        <label for="invoicedComp" ><?php echo $tpl->__('label.invoiced_comp') ?></label>
+        <span><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
                                                       value="<?php echo format(value: $values['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
@@ -151,8 +147,8 @@ $values = $tpl->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="paid" style="color: white;"><?php echo $tpl->__('label.paid') ?></label>
-        <span style="color: white;"><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
+        <label for="paid"><?php echo $tpl->__('label.paid') ?></label>
+        <span ><?php echo $tpl->__('label.date') ?></span><br><input type="text" autocomplete="off" style="margin-top:5px;"
                                                           id="paidDate"
                                                           name="paidDate"
                                                           value="<?php echo format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
@@ -167,4 +163,3 @@ $values = $tpl->get('values');
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>
-        </div>

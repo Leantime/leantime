@@ -197,6 +197,9 @@ jQuery(document).ready(function(){
 
         jQuery("#finalSum").text(roundedSum);
     });
+    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+        leantime.timesheetsController.initEditTimeModal();
+<?php } ?>
  });
 </script>
 
@@ -342,7 +345,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                             />
 
                                             <?php if (! empty($timeRow[$dayKey]['description'])) {?>
-                                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $timeRow[$dayKey]['id']?>">
+                                                <a href="<?= BASE_URL?>/timesheets/editTime/<?= $timeRow[$dayKey]['id']?>" class="editTimeModal">
                                                 <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]['description']); ?>"></i>
                                                 </a>
                                             <?php } ?>
