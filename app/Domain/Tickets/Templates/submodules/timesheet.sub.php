@@ -99,7 +99,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                                         $kindLabel = $tpl->__(strtolower($kindMap[$entry['kind']]));
                                     }
 
-                                    $hoursFormatted = format($entry['hours'])->decimal();
+                                    $hoursFormatted = format_hours($entry['hours']);
                                     $description = $entry['description'] ?? '';
                                     ?>
                                     <tr>
