@@ -62,7 +62,8 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.priority'); ?></label>
                     <div class="">
-                        <select id='priority' name='priority' class="autosave-field">
+                        <select id='priority' name='priority' class="autosave-field" data-old-status="<?php echo $ticket->priority; ?>"
+                            data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
                                 echo "<option value='".$priorityKey."' ";
@@ -79,7 +80,8 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.effort'); ?></label>
                     <div class="">
-                        <select id='storypoints' name='storypoints' class="autosave-field">
+                        <select id='storypoints' name='storypoints' class="autosave-field" data-old-status="<?php echo $ticket->storypoints; ?>"
+                            data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
                                 echo "<option value='".$effortKey."' ";
@@ -179,7 +181,8 @@ jQuery(document).ready(function($) {
         loadStatusHistory(ticketIdOnLoad);
     }
 
-    $('#status-select').on('change', function() {
+   $('#status-select, #priority, #storypoints').on('change', function() {
+        var changedElementId = $(this).attr('id');
         const ticketId = $('input[name="id"]').val();
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
@@ -196,7 +199,8 @@ jQuery(document).ready(function($) {
                 newStatus: newStatusKey,
                 oldStatusText: oldStatusText,
                 newStatusText: newStatusText,
-                user: user
+                user: user,
+                detailsAttributeId: changedElementId
             },
             success: function(response) {
                 console.log('Status change saved', response);
