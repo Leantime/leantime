@@ -42,7 +42,7 @@
     background: var(--secondary-background);
     border-radius:20px;
     margin-bottom:50px;
-    min-height: 200px !important;
+    min-height: 200px;
 }
 .nyroModalCont iframe {
 }
