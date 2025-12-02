@@ -27,7 +27,7 @@
 }
 
 .modern-search-input::placeholder {
-    color: #000000;
+    color: var(--primary-font-color);
 }
 
 .modern-search-clear {
