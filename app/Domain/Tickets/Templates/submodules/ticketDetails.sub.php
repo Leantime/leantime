@@ -100,7 +100,8 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                     <div class="">
 
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field">
+                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field" data-old-status="<?php echo $ticket->editorId; ?>"
+                            data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
                                 <?php echo "<option value='".$userRow['id']."'";
@@ -127,11 +128,15 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                     <div class="">
                         <input type="text" class="dates autosave-field" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
-                               name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"/>
+                               name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"
+                               data-old-status="<?php echo date('Y-m-d', strtotime($ticket->dateToFinish)); ?>"
+                               data-user="<?= htmlspecialchars($currentUserName) ?>"/>
 
                         <input type="time" class="timepicker tw-mr-sm autosave-after-lost-focus" style="width:120px;" id="dueTime" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->time24(); ?>"
-                               name="timeToFinish"/>
+                               name="timeToFinish"
+                               data-old-status="<?php echo date('H:i', strtotime($ticket->dateToFinish)); ?>"
+                               data-user="<?= htmlspecialchars($currentUserName) ?>"/>
                     </div>
                     <div style="padding-top:6px;">
                         <?php $tpl->dispatchTplEvent('afterDates', ['ticket' => $ticket]);
@@ -181,14 +186,51 @@ jQuery(document).ready(function($) {
         loadStatusHistory(ticketIdOnLoad);
     }
 
-   $('#status-select, #priority, #storypoints').on('change', function() {
+   $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
         var changedElementId = $(this).attr('id');
         const ticketId = $('input[name="id"]').val();
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
-        const oldStatusText = $(this).find(`option[value="${oldStatusKey}"]`).text() || 'Unknown';
-        const newStatusText = $(this).find(`option[value="${newStatusKey}"]`).text() || 'Unknown';
+        console.log("Searching for status key:", newStatusKey);
+        const oldStatusText = $(this).data('old-status');
+        const newStatusText = $(this).val();
         const user = $(this).data('user') || 'Unknown User';
+        console.log('Date: ', oldStatusText, newStatusText);
+
+        $.ajax({
+            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+            method: 'POST',
+            data: {
+                ticketId: ticketId,
+                oldStatus: oldStatusKey,
+                newStatus: newStatusKey,
+                oldStatusText: oldStatusText,
+                newStatusText: newStatusText,
+                user: user,
+                detailsAttributeId: changedElementId
+            },
+            success: function(response) {
+                console.log('Status change saved', response);
+                loadStatusHistory(ticketId);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving status:', error);
+                console.error('Response:', xhr.responseText);
+            }
+        });
+
+        $(this).data('old-status', newStatusKey);
+    });
+    $('#dueTime').on('blur', function() {
+        var changedElementId = $(this).attr('id');
+        const ticketId = $('input[name="id"]').val();
+        const oldStatusKey = $(this).data('old-status');
+        const newStatusKey = $(this).val();
+        console.log("Searching for status key:", newStatusKey);
+        const oldStatusText = $(this).data('old-status');
+        const newStatusText = $(this).val();
+        const user = $(this).data('user') || 'Unknown User';
+        console.log('Date: ', oldStatusText, newStatusText);
 
         $.ajax({
             url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',

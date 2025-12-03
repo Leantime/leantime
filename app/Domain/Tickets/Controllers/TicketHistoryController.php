@@ -111,6 +111,12 @@ class TicketHistoryController extends Controller
                         $attributeLabel = 'Priority';
                     } elseif($detailsAttributeId === 'storypoints') {
                         $attributeLabel = 'Effort';
+                    } elseif($detailsAttributeId === 'editorId') {
+                        $attributeLabel = 'Assigned to';
+                    } elseif($detailsAttributeId === 'deadline') {
+                        $attributeLabel = 'Due Date';
+                    } elseif($detailsAttributeId === 'dueTime') {
+                        $attributeLabel = 'Due Date Time';
                     } else {
                         $attributeLabel = 'Status';
                     }
