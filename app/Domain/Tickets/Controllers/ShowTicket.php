@@ -15,6 +15,7 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Symfony\Component\HttpFoundation\Response;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 class ShowTicket extends Controller
 {
@@ -39,7 +40,8 @@ class ShowTicket extends Controller
         FileService $fileService,
         CommentService $commentService,
         TimesheetService $timesheetService,
-        UserService $userService
+        UserService $userService,
+        SettingService $settingsService
     ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
@@ -48,6 +50,7 @@ class ShowTicket extends Controller
         $this->commentService = $commentService;
         $this->timesheetService = $timesheetService;
         $this->userService = $userService;
+        $this->settingsService = $settingsService;
 
         if (session()->exists('lastPage') === false) {
             session(['lastPage' => BASE_URL.'/tickets/showKanban']);
@@ -133,6 +136,10 @@ class ShowTicket extends Controller
 
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($ticket->projectId));
+
+
+        $timezone = $this->settingsService->getSetting('usersettings.'.$this->userService->getUser(session('userdata.id'))['id'].'.timezone');
+        $this->tpl->assign('timezone', $timezone);
 
         $projectData = $this->projectService->getProject($ticket->projectId);
         $this->tpl->assign('projectData', $projectData);
