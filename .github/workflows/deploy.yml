@@ -111,7 +111,7 @@ jobs:
           fi
 
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/feature/master'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -120,14 +120,14 @@ jobs:
           echo "Deploying to PRODUCTION using Git Pull..."
 
           # Deploy using git pull on server
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'ENDSSH'
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << ENDSSH
             set -e  # Exit on error
 
             echo "Changing to deployment directory..."
             cd $PRODUCTION_PATH
 
             echo "Fetching latest changes..."
-            git fetch origin master
+            git fetch -v origin master
 
             echo "Creating backup tag..."
             BACKUP_TAG="backup-production-$(date +%Y%m%d_%H%M%S)"
@@ -141,7 +141,7 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction
 
             echo "Installing NPM dependencies..."
-            npm ci --production
+            npm ci 
 
             echo "Building frontend assets..."
             npx mix --production
