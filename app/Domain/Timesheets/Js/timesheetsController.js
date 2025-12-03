@@ -56,8 +56,18 @@ leantime.timesheetsController = (function () {
                             charset: 'utf-8',
                             bom: true,
                             exportOptions: {
+                                orthogonal: 'export',
+                                columns: ':visible',
                                 format: {
                                     body: function ( data, row, column, node ) {
+                                        // Use the export formatter if available
+                                        if (typeof window.leantime !== 'undefined' &&
+                                            typeof window.leantime.timesheetsExport !== 'undefined' &&
+                                            typeof window.leantime.timesheetsExport.resolveCell === 'function') {
+                                            return window.leantime.timesheetsExport.resolveCell(jQuery(node), data);
+                                        }
+
+                                        // Fallback to original logic
                                         if ( typeof jQuery(node).data('order') !== 'undefined') {
                                             data = jQuery(node).data('order');
                                         }
@@ -88,10 +98,10 @@ leantime.timesheetsController = (function () {
                 }
             }
 
-            jQuery('# reallTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
+            jQuery('#allTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
             });
-            
+
             // CUSTOM: Initialize modern search component
             if (typeof leantime.timesheetSearch !== 'undefined') {
                 leantime.timesheetSearch.init(allTimesheets);
