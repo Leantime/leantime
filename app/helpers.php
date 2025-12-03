@@ -336,49 +336,67 @@ if (! function_exists('format_hours')) {
     }
 }
 
-if (! function_exists('format_hours_human')) {
+if (!function_exists('format_hours_human')) {
     /**
      * Convert decimal hours to human-readable format
      *
-     * @param  float|int  $hours  The hours in decimal format
-     * @param  bool  $compact  Use compact format (e.g., '1h 30m' instead of '1 hour 30 minutes')
+     * @param float|int $hours The hours in decimal format
+     * @param bool $compact Use compact format (e.g., '1h 30m' instead of '1 hour 30 minutes')
      * @return string Human-readable hours string (e.g., '1h 30m' or '1 hour 30 minutes')
      */
     function format_hours_human(float|int $hours, bool $compact = true): string
     {
-        $hours = floatval($hours);
+        $totalMinutes = (int)round($hours * 60);
 
-        if ($hours == 0) {
-            return $compact ? '0m' : '0 minutes';
+        if ($totalMinutes === 0) {
+            return $compact ? 'Om' : '0 minutes';
         }
 
-        $weeks = floor($hours / 40);
-        $hours = fmod($hours, 40);
+        $minutesInWeek = 40 * 60;
+        $minutesInDay = 8 * 60;
 
-        $days = floor($hours / 8);
-        $hours = fmod($hours, 8);
+        $weeks = intdiv($totalMinutes, $minutesInWeek);
+        $totalMinutes %= $minutesInWeek;
 
-        $wholeHours = floor($hours);
-        $minutes = floor(($hours - $wholeHours) * 60);
+        $days = intdiv($totalMinutes, $minutesInDay);
+        $totalMinutes %= $minutesInDay;
+
+        $wholeHours = intdiv($totalMinutes, 60);
+        $minutes = $totalMinutes % 60;
 
         $parts = [];
 
         if ($weeks > 0) {
-            $parts[] = $compact ? "{$weeks}w" : ($weeks == 1 ? '1 week' : "{$weeks} weeks");
+            if ($compact) {
+                $parts[] = "{$weeks}w";
+            } else {
+                $parts[] = $weeks === 1 ? "1 week" : "{$weeks} weeks";
+            }
         }
 
         if ($days > 0) {
-            $parts[] = $compact ? "{$days}d" : ($days == 1 ? '1 day' : "{$days} days");
+            if ($compact) {
+                $parts[] = "{$days}d";
+            } else {
+                $parts[] = $days === 1 ? "1 day" : "{$days} days";
+            }
         }
 
         if ($wholeHours > 0) {
-            $parts[] = $compact ? "{$wholeHours}h" : ($wholeHours == 1 ? '1 hour' : "{$wholeHours} hours");
+            if ($compact) {
+                $parts[] = "{$wholeHours}h";
+            } else {
+                $parts[] = $wholeHours === 1 ? "1 hour" : "{$wholeHours} hours";
+            }
         }
 
         if ($minutes > 0) {
-            $parts[] = $compact ? "{$minutes}m" : ($minutes == 1 ? '1 minute' : "{$minutes} minutes");
+            if ($compact) {
+                $parts[] = "{$minutes}m";
+            } else {
+                $parts[] = $minutes === 1 ? "1 minute" : "{$minutes} minutes";
+            }
         }
-
-        return implode(' ', $parts);
+        return implode('', $parts);
     }
 }
