@@ -111,7 +111,7 @@ jobs:
           fi
 
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/feature/master'
+        if: github.ref == 'refs/heads/master'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
