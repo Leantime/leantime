@@ -367,36 +367,21 @@ if (!function_exists('format_hours_human')) {
         $parts = [];
 
         if ($weeks > 0) {
-            if ($compact) {
-                $parts[] = "{$weeks}w";
-            } else {
-                $parts[] = $weeks === 1 ? "1 week" : "{$weeks} weeks";
-            }
+            $parts[] = $compact ? "{$weeks}w" : ($weeks == 1 ? '1 week' : "{$weeks} weeks");
         }
 
         if ($days > 0) {
-            if ($compact) {
-                $parts[] = "{$days}d";
-            } else {
-                $parts[] = $days === 1 ? "1 day" : "{$days} days";
-            }
+            $parts[] = $compact ? "{$days}d" : ($days == 1 ? '1 day' : "{$days} days");
         }
 
         if ($wholeHours > 0) {
-            if ($compact) {
-                $parts[] = "{$wholeHours}h";
-            } else {
-                $parts[] = $wholeHours === 1 ? "1 hour" : "{$wholeHours} hours";
-            }
+            $parts[] = $compact ? "{$wholeHours}h" : ($wholeHours == 1 ? '1 hour' : "{$wholeHours} hours");
         }
 
         if ($minutes > 0) {
-            if ($compact) {
-                $parts[] = "{$minutes}m";
-            } else {
-                $parts[] = $minutes === 1 ? "1 minute" : "{$minutes} minutes";
-            }
+            $parts[] = $compact ? "{$minutes}m" : ($minutes == 1 ? '1 minute' : "{$minutes} minutes");
         }
-        return implode('', $parts);
+
+        return implode(' ', $parts);
     }
 }
