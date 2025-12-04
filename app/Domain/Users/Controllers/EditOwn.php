@@ -150,7 +150,7 @@ class EditOwn extends Controller
         if (isset($_POST[session('formTokenName')]) && session()->exists('formTokenName') && $_POST[session('formTokenName')] === session('formTokenValue')) {
             $row = $this->userRepo->getUser($this->userId);
 
-            // profile Info
+            // profile Info 
             if (isset($_POST['profileInfo'])) {
                 $tab = '#myProfile';
 

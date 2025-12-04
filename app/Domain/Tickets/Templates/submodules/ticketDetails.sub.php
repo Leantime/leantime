@@ -135,7 +135,12 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                         <input type="time" class="timepicker tw-mr-sm autosave-after-lost-focus" style="width:120px;" id="dueTime" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->time24(); ?>"
                                name="timeToFinish"
-                               data-old-status="<?php echo date('H:i', strtotime($ticket->dateToFinish)); ?>"
+                               <?php
+                                $dt = new \DateTime($ticket->dateToFinish, new \DateTimeZone('UTC')); 
+                                $dt->setTimezone(new \DateTimeZone('Europe/Sarajevo')); // ovdje staviti user specific timezone
+                                $formattedTime = $dt->format('H:i');
+                                ?>
+                               data-old-status="<?= $formattedTime ?>"
                                data-user="<?= htmlspecialchars($currentUserName) ?>"/>
                     </div>
                     <div style="padding-top:6px;">
@@ -191,11 +196,9 @@ jQuery(document).ready(function($) {
         const ticketId = $('input[name="id"]').val();
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
-        console.log("Searching for status key:", newStatusKey);
         const oldStatusText = $(this).data('old-status');
         const newStatusText = $(this).val();
         const user = $(this).data('user') || 'Unknown User';
-        console.log('Date: ', oldStatusText, newStatusText);
 
         $.ajax({
             url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
@@ -226,7 +229,6 @@ jQuery(document).ready(function($) {
         const ticketId = $('input[name="id"]').val();
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
-        console.log("Searching for status key:", newStatusKey);
         const oldStatusText = $(this).data('old-status');
         const newStatusText = $(this).val();
         const user = $(this).data('user') || 'Unknown User';

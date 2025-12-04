@@ -13,17 +13,6 @@ class TicketHistoryModel
         $this->db = $db;
     }
 
-    /**
-     * Add status change to history
-     *
-     * @param int $ticketId
-     * @param string $oldStatus
-     * @param string $newStatus
-     * @param string $oldStatusText
-     * @param string $newStatusText
-     * @param string $changedBy
-     * @return int|false Last insert ID or false on failure
-     */
     public function addStatusChange($ticketId, $oldStatus, $newStatus, $oldStatusText, $newStatusText, $changedBy, $detailsAttributeId )
     {
         $sql = "INSERT INTO zp_ticket_status_changes 
@@ -46,12 +35,6 @@ class TicketHistoryModel
         return false;
     }
 
-    /**
-     * Get all status changes for a ticket
-     *
-     * @param int $ticketId
-     * @return array
-     */
     public function getStatusChangesByTicket($ticketId)
     {
         $sql = "SELECT * FROM zp_ticket_status_changes 
@@ -65,12 +48,6 @@ class TicketHistoryModel
         return $stmn->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Get latest status change for a ticket
-     *
-     * @param int $ticketId
-     * @return array|false
-     */
     public function getLatestStatusChange($ticketId)
     {
         $sql = "SELECT * FROM zp_ticket_status_changes 
@@ -85,12 +62,6 @@ class TicketHistoryModel
         return $stmn->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Delete all status changes for a ticket
-     *
-     * @param int $ticketId
-     * @return bool
-     */
     public function deleteStatusChangesByTicket($ticketId)
     {
         $sql = "DELETE FROM zp_ticket_status_changes WHERE ticketId = :ticketId";
