@@ -96,8 +96,12 @@ class EditTime extends Controller
                         }
 
                         if (! empty($_POST['date'])) {
-                            $date = dtHelper()->parseUserDateTime($_POST['date'], 'start')->formatDateTimeForDb();
-                            $values['date'] = $date;
+                            // Parse the new date and preserve the original time from the existing timesheet
+                            $newDate = dtHelper()->parseUserDateTime($_POST['date'], 'start');
+                            // Keep the original time (hours, minutes, seconds) from the existing timesheet
+                            $originalTime = $values['date']->setTimezone(session('usersettings.timezone'));
+                            $newDate = $newDate->setTime($originalTime->hour, $originalTime->minute, $originalTime->second);
+                            $values['date'] = $newDate->formatDateTimeForDb();
                         }
 
                         if (! empty($_POST['hours'])) {
