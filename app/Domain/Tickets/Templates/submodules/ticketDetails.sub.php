@@ -6,6 +6,9 @@ $ticket = $tpl->get('ticket');
 $remainingHours = $tpl->get('remainingHours');
 $statusLabels = $tpl->get('statusLabels');
 $ticketTypes = $tpl->get('ticketTypes');
+$efforts = $tpl->get('efforts');
+$priorities = $tpl->get('priorities');
+$assignedUsers = $tpl->get('users');
 
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
@@ -43,7 +46,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                             id="status-select"
                             class="autosave-field"
                             name="status"
-                            data-old-status="<?php echo $ticket->status; ?>"
+                            data-old-status="<?php echo $statusLabels[$ticket->status]['name'] ?>"
                             data-user="<?= htmlspecialchars($currentUserName) ?>"
                             data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]['name'] ?? '' : ''; ?>"
                         >
@@ -62,7 +65,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.priority'); ?></label>
                     <div class="">
-                        <select id='priority' name='priority' class="autosave-field" data-old-status="<?php echo $ticket->priority; ?>"
+                        <select id='priority' name='priority' class="autosave-field" data-old-status="<?php echo $priorities[$ticket->priority] ?? 'Priority not defined'; ?>"
                             data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.priority_not_defined'); ?></option>
                             <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {
@@ -80,7 +83,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.effort'); ?></label>
                     <div class="">
-                        <select id='storypoints' name='storypoints' class="autosave-field" data-old-status="<?php echo $ticket->storypoints; ?>"
+                        <select id='storypoints' name='storypoints' class="autosave-field" data-old-status="<?php echo $efforts[$ticket->storypoints] ?? 'Effort not defined'; ?>"
                             data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.effort_not_defined'); ?></option>
                             <?php foreach ($tpl->get('efforts') as $effortKey => $effortValue) {
@@ -100,7 +103,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                     <div class="">
 
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field" data-old-status="<?php echo $ticket->editorId; ?>"
+                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field" data-old-status="<?php echo $assignedUsers[$ticket->editorId]['firstname'] ?? '' ?>"
                             data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
@@ -129,7 +132,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                         <input type="text" class="dates autosave-field" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
                                name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"
-                               data-old-status="<?php echo date('Y-m-d', strtotime($ticket->dateToFinish)); ?>"
+                               data-old-status="<?php echo date('m/d/Y', strtotime($ticket->dateToFinish)); ?>"
                                data-user="<?= htmlspecialchars($currentUserName) ?>"/>
 
                         <input type="time" class="timepicker tw-mr-sm autosave-after-lost-focus" style="width:120px;" id="dueTime" autocomplete="off"
@@ -137,7 +140,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                                name="timeToFinish"
                                <?php
                                 $dt = new \DateTime($ticket->dateToFinish, new \DateTimeZone('UTC'));
-                                $dt->setTimezone(new \DateTimeZone('Europe/Sarajevo'));
+                                $dt->setTimezone(new \DateTimeZone($timezone)); 
                                 $formattedTime = $dt->format('H:i');
                                 ?>
                                data-old-status="<?= $formattedTime ?>"
@@ -197,7 +200,7 @@ jQuery(document).ready(function($) {
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
         const oldStatusText = $(this).data('old-status');
-        const newStatusText = $(this).val();
+        const newStatusText = $(this).find('option:selected').text() || $(this).val();
         const user = $(this).data('user') || 'Unknown User';
 
         $.ajax({
