@@ -136,8 +136,8 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                                value="<?= format($ticket->dateToFinish)->time24(); ?>"
                                name="timeToFinish"
                                <?php
-                                $dt = new \DateTime($ticket->dateToFinish, new \DateTimeZone('UTC')); 
-                                $dt->setTimezone(new \DateTimeZone('Europe/Sarajevo')); // ovdje staviti user specific timezone
+                                $dt = new \DateTime($ticket->dateToFinish, new \DateTimeZone('UTC'));
+                                $dt->setTimezone(new \DateTimeZone('Europe/Sarajevo'));
                                 $formattedTime = $dt->format('H:i');
                                 ?>
                                data-old-status="<?= $formattedTime ?>"
