@@ -26,7 +26,6 @@ use Leantime\Domain\Users\Services\Users;
 
 $userService = app()->make(Users::class);
 
-// Get currently logged-in user
 $currentUserId = session('userdata.id') ?? null;
 $currentUser = $currentUserId ? $userService->getUser($currentUserId) : null;
 
