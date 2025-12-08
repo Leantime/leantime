@@ -9,7 +9,6 @@ $ticketTypes = $tpl->get('ticketTypes');
 $efforts = $tpl->get('efforts');
 $priorities = $tpl->get('priorities');
 $assignedUsers = $tpl->get('users');
-error_log('Assigned Users: ' . print_r($assignedUsers, true));
 
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
