@@ -141,7 +141,12 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                         <input type="text" class="dates autosave-field" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
                                name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"
-                               data-old-status="<?php echo date('m/d/Y', strtotime($ticket->dateToFinish)); ?>"
+                               <?php if (date('m/d/Y', strtotime($ticket->dateToFinish)) == '11/30/-0001') {
+                                   $oldDate = 'No value';
+                                 } else {
+                                   $oldDate = date('m/d/Y', strtotime($ticket->dateToFinish));
+                               } ?>
+                               data-old-status="<?php echo $oldDate; ?>"
                                data-user="<?= htmlspecialchars($currentUserName) ?>"/>
 
                         <input type="time" class="timepicker tw-mr-sm autosave-after-lost-focus" style="width:120px;" id="dueTime" autocomplete="off"
