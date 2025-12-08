@@ -94,6 +94,7 @@ class TicketHistoryController extends Controller
 
         try {
             $changes = $this->ticketHistoryModel->getStatusChangesByTicket($ticketId);
+            error_log(print_r($changes, true));
 
             if (empty($changes)) {
                 $html = '<p style="color: #999; padding: 10px;">No status changes yet.</p>';

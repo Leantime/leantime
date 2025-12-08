@@ -9,7 +9,7 @@ $ticketTypes = $tpl->get('ticketTypes');
 $efforts = $tpl->get('efforts');
 $priorities = $tpl->get('priorities');
 $assignedUsers = $tpl->get('users');
-
+$timezone = $tpl->get('timezone');
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
 
@@ -149,7 +149,9 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                                name="timeToFinish"
                                <?php
                                 $dt = new \DateTime($ticket->dateToFinish, new \DateTimeZone('UTC'));
-                                $dt->setTimezone(new \DateTimeZone($timezone)); 
+                                if($timezone){
+                                    $dt->setTimezone(new \DateTimeZone($timezone));
+                                }
                                 $formattedTime = $dt->format('H:i');
                                 ?>
                                data-old-status="<?= $formattedTime ?>"
@@ -178,7 +180,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
             </div>
         </div>
 
-<div class="status-change-log" id="status-change-log"></div>
+<div class="status-change-log" id="status-change-log" data-ticket-id="<?= $ticket->id ?>"></div>
 
 <script>
 jQuery(document).ready(function($) {
@@ -198,7 +200,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    const ticketIdOnLoad = $('input[name="id"]').val();
+    const ticketIdOnLoad = $('#status-change-log').data('ticket-id');
     if (ticketIdOnLoad) {
         loadStatusHistory(ticketIdOnLoad);
     }
