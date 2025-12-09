@@ -126,6 +126,6 @@ class Show extends Controller
 
     public function post($params): Response
     {
-        return Frontcontroller::redirect(BASE_URL.'/dashboard/show');
+        return Frontcontroller::redirect(BASE_URL.'/tickets/showKanban');
     }
 }

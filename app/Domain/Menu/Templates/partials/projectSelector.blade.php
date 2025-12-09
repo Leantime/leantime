@@ -1,5 +1,5 @@
 @props([
-    'redirect' => 'dashboard/show',
+    'redirect' => 'tickets/showKanban',
     'currentProject'
 ])
 

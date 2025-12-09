@@ -8,7 +8,7 @@
         <div class="col-md-12 fixed">
             <div class="row tw-pb-sm">
                 <div class="col-md-10">
-                    <a href="{{ BASE_URL }}/dashboard/show?projectId={{ $project['id'] }}">
+                    <a href="{{ BASE_URL }}/tickets/showKanban?projectId={{ $project['id'] }}">
                         <span class="projectAvatar">
                             @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
                                 <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>

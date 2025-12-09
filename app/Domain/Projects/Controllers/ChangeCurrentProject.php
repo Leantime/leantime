@@ -36,7 +36,7 @@ class ChangeCurrentProject extends Controller
 
         $this->projectService->changeCurrentSessionProject($id);
 
-        $defaultURL = '/dashboard/show';
+        $defaultURL = '/tickets/showKanban';
         $redirectFilter = self::dispatch_filter('defaultProjectUrl', $defaultURL, $project);
 
         return Frontcontroller::redirect(BASE_URL.$redirectFilter);

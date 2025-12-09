@@ -74,7 +74,7 @@ class ProjectSelector extends Composer
         }
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
-            $redirectUrl = '/dashboard/show';
+            $redirectUrl = '/tickets/showKanban';
         }
 
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
