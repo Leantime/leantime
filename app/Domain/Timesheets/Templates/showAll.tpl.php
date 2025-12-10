@@ -126,6 +126,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
             <div class="pull-right">
                 <div id="tableButtons" style="display:inline-block"></div>
+                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
             </div>
 
             <?php
@@ -275,7 +276,6 @@ if ($tpl->get('paid') == '1') {
                     </td>
                     <td style="vertical-align: top;">
                         <input type="hidden" name='filterSubmit' value="1"/>
-                        <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
                     </td>
                 </tr>
             </table>
