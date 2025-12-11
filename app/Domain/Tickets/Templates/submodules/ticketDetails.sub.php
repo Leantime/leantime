@@ -9,7 +9,6 @@ $ticketTypes = $tpl->get('ticketTypes');
 $efforts = $tpl->get('efforts');
 $priorities = $tpl->get('priorities');
 $assignedUsers = $tpl->get('users');
-error_log('Assigned Users: ' . print_r($assignedUsers, true));
 
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
@@ -102,18 +101,9 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.editor'); ?></label>
                     <div class="">
-                        <?php 
-                        $oldEditorName = '';
-                        foreach ($assignedUsers as $user) {
-                            if ($user['id'] == $ticket->editorId) {
-                                $oldEditorName = $user['firstname'] . ' ' . $user['lastname'];
-                                break;
-                            }
-                        }
-                        ?>
 
                         <select data-placeholder="<?php echo $tpl->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field" data-old-status="<?php echo $oldEditorName; ?>"
+                                name="editorId" id="editorId" class="user-select tw-mr-sm autosave-field" data-old-status="<?php echo $assignedUsers[$ticket->editorId]['firstname'] ?? '' ?>"
                             data-user="<?= htmlspecialchars($currentUserName) ?>">
                             <option value=""><?php echo $tpl->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($tpl->get('users') as $userRow) { ?>
