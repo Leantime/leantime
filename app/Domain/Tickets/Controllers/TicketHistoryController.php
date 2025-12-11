@@ -41,7 +41,6 @@ class TicketHistoryController extends Controller
         $oldStatusText = $_POST['oldStatusText'] ?? '';
         $newStatusText = $_POST['newStatusText'] ?? '';
         $user = $_POST['user'] ?? $this->authService->getUserName();
-        $detailsAttributeId = $_POST['detailsAttributeId'] ?? '';
 
         // Validate ticket ID
         if (!$ticketId) {
@@ -59,8 +58,7 @@ class TicketHistoryController extends Controller
                 $newStatus,
                 $oldStatusText,
                 $newStatusText,
-                $user,
-                $detailsAttributeId
+                $user
             );
 
             if ($insertId) {
@@ -106,16 +104,8 @@ class TicketHistoryController extends Controller
             } else {
                 $html = '<ul style="list-style: none; padding: 0; margin: 0;">';
                 foreach ($changes as $change) {
-                    $detailsAttributeId = $change['detailsAttributeId'];
-                    if($detailsAttributeId === 'priority') {
-                        $attributeLabel = 'Priority';
-                    } elseif($detailsAttributeId === 'storypoints') {
-                        $attributeLabel = 'Effort';
-                    } else {
-                        $attributeLabel = 'Status';
-                    }
                     $html .= '<li style="padding: 8px 0; border-bottom: 1px solid #eee;">';
-                    $html .= '<strong>' . htmlspecialchars($change['changedBy']) . '</strong> changed '. $attributeLabel . ' on ';
+                    $html .= '<strong>' . htmlspecialchars($change['changedBy']) . '</strong> ';
                     $html .= '<span style="color: #666; font-size: 0.9em;">' . date('d.m.Y H:i', strtotime($change['changedAt'])) . '</span><br>';
                     $html .= '<span style="color: #999;">' . htmlspecialchars($change['oldStatusText']) . '</span>';
                     $html .= ' <i class="fa fa-arrow-right" style="color: #999; font-size: 0.8em;"></i> ';
