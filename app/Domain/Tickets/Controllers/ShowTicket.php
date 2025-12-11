@@ -137,9 +137,7 @@ class ShowTicket extends Controller
         $this->tpl->assign('userInfo', $this->userService->getUser(session('userdata.id')));
         $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($ticket->projectId));
 
-
-        $timezone = $this->settingsService->getSetting('usersettings.'.$this->userService->getUser(session('userdata.id'))['id'].'.timezone');
-        $this->tpl->assign('timezone', $timezone);
+     
 
         $projectData = $this->projectService->getProject($ticket->projectId);
         $this->tpl->assign('projectData', $projectData);
