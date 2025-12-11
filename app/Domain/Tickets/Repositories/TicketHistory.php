@@ -9,6 +9,9 @@ class TicketHistory
 {
     private DbCore $db;
 
+    /**
+     * __construct - get database connection
+     */
     public function __construct(DbCore $db)
     {
         $this->db = $db;
