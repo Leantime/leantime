@@ -41,6 +41,8 @@ class TicketHistoryController extends Controller
         $newStatusText = $_POST['newStatusText'] ?? '';
         $user = $_POST['user'] ?? $this->authService->getUserName();
         $detailsAttributeId = $_POST['detailsAttributeId'] ?? '';
+        error_log('New Status Text: ' . $newStatusText);
+        error_log('Old Status Text: ' . $oldStatusText);
 
         if (!$ticketId) {
             return new JsonResponse([
