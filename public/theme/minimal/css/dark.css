@@ -2,7 +2,7 @@
 
     --accent1: hsla(198, 100%, 32%, 1);
     --accent1-hsl: 199, 100%, 20%;
-    --accent1-hover: #404040;
+    --accent1-hover: hsla(198, 100%, 33%, 1);
     --accent1-color: #fff;
 
     --accent2: hsla(168, 100%, 33%, 1);
@@ -158,8 +158,8 @@
     --brown: #4C212A;
     --brown-text-color: #fff;
 
-    --grey: #b0b0b0;
-    --grey-text-color:#000;
+    --grey: #707070;
+    --grey-text-color:#fff;
 
     --dark-grey: #707070;
     --dark-grey-text-color: #fff;
@@ -181,6 +181,66 @@
 
     --transparencyLayer: rgba(0,0,0,1);
 
+}
+
+.maincontentinner .btn-group .btn-primary.dropdown-toggle {
+    background: var(--grey);
+    color: var(--grey-text-color);
+    border-color: var(--grey);
+}
+
+.maincontentinner .btn-group .btn-primary.dropdown-toggle:hover,
+.maincontentinner .btn-group .btn-primary.dropdown-toggle:active,
+.maincontentinner .btn-group .btn-primary.dropdown-toggle:focus {
+    background: var(--dark-grey);
+    color: #fff;
+    border-color: var(--dark-grey);
+}
+
+.maincontentinner .btn-group .btn-primary.dropdown-toggle .caret {
+    border-top-color: var(--grey-text-color);
+}
+
+.maincontentinner input[type='submit'],
+.maincontentinner button[type='submit'],
+.maincontentinner .btn-primary,
+.nyroModalCont input[type='submit'],
+.nyroModalCont button[type='submit'],
+.nyroModalCont .btn-primary,
+input[type='submit'].saveTicketBtn,
+button[type='submit'].saveTicketBtn {
+    background: var(--grey);
+    color: var(--grey-text-color);
+    border-color: var(--grey);
+}
+
+.maincontentinner input[type='submit']:hover,
+.maincontentinner button[type='submit']:hover,
+.maincontentinner .btn-primary:hover,
+.maincontentinner input[type='submit']:active,
+.maincontentinner button[type='submit']:active,
+.maincontentinner .btn-primary:active,
+.maincontentinner input[type='submit']:focus,
+.maincontentinner button[type='submit']:focus,
+.maincontentinner .btn-primary:focus,
+.nyroModalCont input[type='submit']:hover,
+.nyroModalCont button[type='submit']:hover,
+.nyroModalCont .btn-primary:hover,
+.nyroModalCont input[type='submit']:active,
+.nyroModalCont button[type='submit']:active,
+.nyroModalCont .btn-primary:active,
+.nyroModalCont input[type='submit']:focus,
+.nyroModalCont button[type='submit']:focus,
+.nyroModalCont .btn-primary:focus,
+input[type='submit'].saveTicketBtn:hover,
+button[type='submit'].saveTicketBtn:hover,
+input[type='submit'].saveTicketBtn:active,
+button[type='submit'].saveTicketBtn:active,
+input[type='submit'].saveTicketBtn:focus,
+button[type='submit'].saveTicketBtn:focus {
+    background: var(--dark-grey);
+    color: #fff;
+    border-color: var(--dark-grey);
 }
 
 .mainwrapper .header {

@@ -3,9 +3,9 @@ name: Deploy Leantime
 on:
   push:
     branches:
-      - develop    
-      - master   
-  workflow_dispatch:  
+      - develop
+      - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -56,7 +56,6 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction
 
             echo "Installing NPM dependencies..."
-            npm ci 
 
             echo "Building frontend assets..."
             npx mix --production
@@ -141,7 +140,7 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction
 
             echo "Installing NPM dependencies..."
-            npm ci 
+            npm ci
 
             echo "Building frontend assets..."
             npx mix --production
