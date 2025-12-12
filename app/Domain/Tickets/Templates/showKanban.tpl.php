@@ -100,7 +100,7 @@ $allTicketGroups = $tpl->get('allTickets');
 
     <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
-    <div class="maincontentinner kanban-board-wrapper" >
+    <div class="maincontentinner kanban-board-wrapper" style="overflow-y:auto;">
 
          <div class="row">
             <div class="col-md-4">
@@ -154,6 +154,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
             top: 110px;
             justify-content: flex-start;
             z-index: 9;
+            margin-bottom:50px;
             ">
         <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
             <div class="column">
