@@ -1,37 +1,46 @@
 /**
  Timesheet Filter Preferences Manager
  */
+
 (function invokeFilterPreferences() {
-    const PREFERENCES_ENDPOINT = '/timesheets/saveFilterPreferences';
+    'use strict';
+
+    // Configuration
+    const PROFILE_ENDPOINT = '/timesheets/saveFilterPreferences';
 
     let currentPreferences = {};
-    let dbTableButtonsStateInstance = null;
+    let dataTableInstance = null;
+
 
     /**
-     * Initialize filter preferences UI
+     * Initialize filter preferences
      */
-    function init(dataTableButtons) {
-        dbTableButtonsStateInstance = dataTableButtons;
+    function init(dataTable) {
+        dataTableInstance = dataTable;
 
-        const checkDBButtonsAndInit = function () {
+        let attempts = 0;
+        const maxAttempts = 20;
+
+        const checkAndInit = function () {
 
             const dtButtons = jQuery('#tableButtons .dt-buttons');
-
             if (dtButtons.length > 0) {
                 initUI();
             }
+
         };
 
-        //Waits for buttons to load
-        setTimeout(checkDBButtonsAndInit, 100);
+        setTimeout(checkAndInit, 100);
     }
 
+
     /**
-     * Get profile preference
+     * Get current filter state from the form
      */
     async function loadPreference(name) {
+        console.log('[Profiles] Loading preference:', name);
         try {
-            const response = await fetch(leantime.appUrl + PREFERENCES_ENDPOINT, {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -98,7 +107,7 @@
                 const data = await response.json();
                 if (data.status === 'success') {
                     // Reload preferences
-                    await loadAllProfilePreferences();
+                    await loadAllPreferences();
                     return true;
                 } else {
                     console.error('[Profiles] Save failed:', data.message);
@@ -119,15 +128,23 @@
      * Apply filter state to the form
      */
     async function applyFilters(filters) {
+        console.log('[Profiles] Applying filters:', filters);
         if (!filters) {
+            console.warn('[Profiles] No filters to apply');
             return;
         }
+
+        // Set client
         if (filters.clientId) {
             jQuery('select[name="clientId"]').val(filters.clientId);
         }
+
+        // Set employee
         if (filters.userId) {
             jQuery('select[name="userId"]').val(filters.userId);
         }
+
+        // Set type
         if (filters.kind) {
             jQuery('select[name="kind"]').val(filters.kind);
         }
@@ -159,8 +176,10 @@
             }
         }
 
-        if (filters.columnState && dbTableButtonsStateInstance && typeof dbTableButtonsStateInstance.columns === 'function') {
-            dbTableButtonsStateInstance.columns().every(function (index) {
+        // Apply column state
+        if (filters.columnState && dataTableInstance && typeof dataTableInstance.columns === 'function') {
+            console.log('[Profiles] Applying column state from profile');
+            dataTableInstance.columns().every(function (index) {
                 const column = this;
                 const columnName = jQuery(column.header()).data('column-name');
                 if (columnName && filters.columnState.hasOwnProperty(columnName)) {
@@ -178,9 +197,10 @@
     /**
      * Load all saved preferences from backend
      */
-    async function loadAllProfilePreferences() {
+    async function loadAllPreferences() {
+        console.log('[Profiles] Loading all preferences from backend...');
         try {
-            const response = await fetch(leantime.appUrl + PREFERENCES_ENDPOINT, {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -239,10 +259,12 @@
         }
 
         // Get column state if DataTable is available
-        if (dbTableButtonsStateInstance && typeof dbTableButtonsStateInstance.columns === 'function') {
+        if (dataTableInstance && typeof dataTableInstance.columns === 'function') {
             const columnState = {};
 
-            dbTableButtonsStateInstance.columns().every(function (index) {
+            console.log("COLUMN STATE is :" + columnState)
+
+            dataTableInstance.columns().every(function (index) {
                 const column = this;
                 const columnName = jQuery(column.header()).data('column-name');
                 if (columnName) {
@@ -265,7 +287,7 @@
         }
 
         try {
-            const response = await fetch(leantime.appUrl + PREFERENCES_ENDPOINT, {
+            const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -280,10 +302,11 @@
 
             if (response.ok) {
                 const data = await response.json();
-
+                console.log('[Profiles] Delete response:', data);
                 if (data.status === 'success') {
+                    console.log('[Profiles] Profile deleted successfully');
                     // Reload preferences
-                    await loadAllProfilePreferences();
+                    await loadAllPreferences();
                     return true;
                 } else {
                     console.error('[Profiles] Delete failed:', data.message);
@@ -369,34 +392,34 @@
     function attachDropdownEventListeners() {
         // Load preference on click
         jQuery('.preference-name').off('click').on('click', function (e) {
-            e.stopPropagation()
-            const name = jQuery(this).data('name')
-            loadPreference(name)
+            e.stopPropagation();
+            const name = jQuery(this).data('name');
+            loadPreference(name);
             // Close dropdown
-            jQuery('#filterPreferencesDropdown').hide()
-        })
+            jQuery('#filterPreferencesDropdown').hide();
+        });
 
         // Delete preference
         jQuery('.delete-preference').off('click').on('click', function (e) {
-            e.stopPropagation()
-            e.preventDefault()
-            const name = jQuery(this).data('name')
+            e.stopPropagation();
+            e.preventDefault();
+            const name = jQuery(this).data('name');
             deletePreference(name).then(function (success) {
                 if (success) {
-                    updateDropdownContent()
+                    updateDropdownContent();
                 }
-            })
-        })
+            });
+        });
 
         // Hover effects
         jQuery('.preference-item').hover(
             function () {
-                jQuery(this).css('background-color', '#f8f9fa')
+                jQuery(this).css('background-color', '#f8f9fa');
             },
             function () {
-                jQuery(this).css('background-color', 'transparent')
+                jQuery(this).css('background-color', 'transparent');
             }
-        )
+        );
     }
 
 
@@ -416,12 +439,13 @@
                 <button type="button" id="filterPreferencesBtn" class="dt-button">
                     <span><i class="fa fa-bookmark"></i> Profiles</span>
                 </button>
-            `)
+            `);
+        dtButtonsContainer.prepend(preferencesButton);
+        console.log('[Profiles] Button added to dt-buttons container');
 
-        // Add filterPreferences button to .dt-buttons wrapper
-        dtButtonsContainer.prepend(preferencesButton)
 
         // Create dropdown container separately, append to body for proper positioning
+        console.log('[Profiles] Creating dropdown container...');
         const dropdownHTML = `
             <div id="filterPreferencesDropdown" style="display: none; position: absolute; z-index: 1000; background: white; border: 1px solid #d0d5dd; border-radius: 8px; width: 300px; max-height: 400px; overflow-y: auto; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15); margin-top: 4px;">
                 <div style="padding: 12px; border-bottom: 1px solid #eee; background: #f7f9fc; border-top-left-radius: 8px; border-top-right-radius: 8px;">
@@ -436,43 +460,49 @@
                     <!-- Will be populated dynamically -->
                 </div>
             </div>
-        `
+        `;
 
-        // Append dropdown to body for proper positioning
-        jQuery('body').append(dropdownHTML)
+        jQuery('body').append(dropdownHTML);
+        console.log('[Profiles] Dropdown container added to body');
 
         // Toggle dropdown
         jQuery(document).on('click', '#filterPreferencesBtn', function (e) {
-            e.stopPropagation()
-            const dropdown = jQuery('#filterPreferencesDropdown')
-            const button = jQuery(this)
+            console.log('[Profiles] Button clicked');
+            e.stopPropagation();
+            const dropdown = jQuery('#filterPreferencesDropdown');
+            const button = jQuery(this);
 
             if (dropdown.is(':visible')) {
-                dropdown.hide()
+                console.log('[Profiles] Hiding dropdown');
+                dropdown.hide();
             } else {
+                console.log('[Profiles] Showing dropdown');
                 // Position dropdown below button
-                const buttonOffset = button.offset()
-                const buttonHeight = button.outerHeight()
-
+                const buttonOffset = button.offset();
+                const buttonHeight = button.outerHeight();
                 dropdown.css({
                     top: buttonOffset.top + buttonHeight + 4,
                     left: buttonOffset.left
-                })
+                });
 
                 // Load and show preferences
-                loadAllProfilePreferences().then(function () {
-                    updateDropdownContent()
-                    dropdown.show()
-                })
+                console.log('[Profiles] Loading preferences for dropdown...');
+                loadAllPreferences().then(function () {
+                    console.log('[Profiles] Updating dropdown content...');
+                    updateDropdownContent();
+                    dropdown.show();
+                    console.log('[Profiles] Dropdown visible');
+                });
             }
-        })
+        });
 
+        console.log('[Profiles] UI initialization complete');
 
         // Save current preference
         jQuery(document).on('click', '#saveCurrentPreference', function (e) {
-            e.stopPropagation()
-            showSaveDialog()
-        })
+            e.stopPropagation();
+            showSaveDialog();
+        });
 
         // Close dropdown when clicking outside
         jQuery(document).on('click', function (e) {

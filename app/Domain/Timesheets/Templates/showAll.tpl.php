@@ -144,7 +144,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 </div>
 <!-- page header -->
 
-
+<!--this is MAIN content-->
 <div class="maincontent">
     <div class="maincontentinner">
         <form action="<?php echo BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">

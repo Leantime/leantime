@@ -21,15 +21,14 @@
 
     /**
      * Save column state to backend
+     * @param {string} tableId - Table identifier
+     * @param {object} state - Column state object
+     * @param {boolean} immediate - If true, save immediately without debounce
      */
-    async function saveColumnState(tableId, state, immediate = false) {
+    function saveColumnState(tableId, state, immediate = false) {
         clearTimeout(saveTimeout);
-
+        
         const doSave = async () => {
-
-        };
-
-        if (immediate) {
             try {
                 const response = await fetch(leantime.appUrl + SAVE_ENDPOINT, {
                     method: 'POST',
@@ -50,9 +49,13 @@
             } catch (error) {
                 console.warn('Failed to save column state:', error);
             }
-
+        };
+        
+        if (immediate) {
+            // Save immediately without debounce
             return doSave();
         } else {
+            // Debounced save
             saveTimeout = setTimeout(doSave, DEBOUNCE_MS);
         }
     }

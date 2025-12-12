@@ -35,7 +35,7 @@ package: clean build
 	cp -R ./vendor $(TARGET_DIR)
 
 	#create empty cache and storage folders
-	mkdir -p $(TARGET_DIR)/storage
+	mkdir -p $(TARGET_DIR)/storage php ./bin/leantime  view:clear
 	mkdir -p $(TARGET_DIR)/storage/framework
 	mkdir -p $(TARGET_DIR)/storage/framework/cache
 	mkdir -p $(TARGET_DIR)/storage/framework/sessions
