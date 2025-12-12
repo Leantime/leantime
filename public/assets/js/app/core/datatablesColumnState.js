@@ -1,12 +1,12 @@
 /**
  * DataTables Column State Persistence
- * 
+ *
  * Lightweight addon that hooks into DataTables column visibility events
  * and automatically saves/restores state to/from backend.
- * 
+ *
  * No UI changes - works with existing DataTables Buttons extension
- * 
- * @author Leantime Team  
+ *
+ * @author Leantime Team
  * @version 1.0.0
  */
 
@@ -16,16 +16,20 @@
     // Configuration
     const SAVE_ENDPOINT = '/timesheets/saveColumnPreferences';
     const DEBOUNCE_MS = 500;
-    
+
     let saveTimeout = null;
 
     /**
      * Save column state to backend
      */
-    function saveColumnState(tableId, state) {
+    async function saveColumnState(tableId, state, immediate = false) {
         clearTimeout(saveTimeout);
-        
-        saveTimeout = setTimeout(async () => {
+
+        const doSave = async () => {
+
+        };
+
+        if (immediate) {
             try {
                 const response = await fetch(leantime.appUrl + SAVE_ENDPOINT, {
                     method: 'POST',
@@ -46,7 +50,11 @@
             } catch (error) {
                 console.warn('Failed to save column state:', error);
             }
-        }, DEBOUNCE_MS);
+
+            return doSave();
+        } else {
+            saveTimeout = setTimeout(doSave, DEBOUNCE_MS);
+        }
     }
 
     /**
@@ -70,7 +78,7 @@
         } catch (error) {
             console.warn('Failed to load column state:', error);
         }
-        
+
         return null;
     }
 
@@ -83,7 +91,7 @@
         table.columns().every(function(index) {
             const column = this;
             const columnName = jQuery(column.header()).data('column-name');
-            
+
             if (columnName && state.hasOwnProperty(columnName)) {
                 column.visible(state[columnName]);
             }
@@ -95,16 +103,16 @@
      */
     function getColumnState(table) {
         const state = {};
-        
+
         table.columns().every(function(index) {
             const column = this;
             const columnName = jQuery(column.header()).data('column-name');
-            
+
             if (columnName) {
                 state[columnName] = column.visible();
             }
         });
-        
+
         return state;
     }
 
@@ -113,14 +121,14 @@
      */
     function hookDataTable(tableId) {
         const selector = '#' + tableId;
-        
+
         // Wait for DataTable to be initialized
         const checkInterval = setInterval(() => {
             if (jQuery.fn.dataTable.isDataTable(selector)) {
                 clearInterval(checkInterval);
-                
+
                 const table = jQuery(selector).DataTable();
-                
+
                 // Load and apply saved state
                 loadColumnState(tableId).then(savedState => {
                     if (savedState) {

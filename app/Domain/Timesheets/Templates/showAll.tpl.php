@@ -94,6 +94,24 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
 
+        // Initialize filter preferences
+        setTimeout(function() {
+
+            if (typeof leantimeFilterPreferences !== 'undefined') {
+
+                var dataTable = jQuery('#allTimesheetsTable').DataTable();
+
+                if (dataTable) {
+                    leantimeFilterPreferences.init(dataTable);
+                } else {
+                    console.error('[Profiles] Template: DataTable not found!');
+                }
+
+            } else {
+                console.error('[Profiles] Template: leantimeFilterPreferences not defined!');
+            }
+        }, 1000);
+
         // Close project checkbox dropdown when clicking outside
         jQuery(document).on('click', function(e) {
             if (!jQuery(e.target).closest('.project-dropdown-container').length) {
@@ -108,6 +126,10 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 
 <!-- ADDITIVE: Column State Persistence -->
 <script src="<?= BASE_URL ?>/assets/js/app/core/datatablesColumnState.js"></script>
+<!-- END ADDITIVE -->
+
+<!-- ADDITIVE: Filter States Persistence -->
+<script src="<?= BASE_URL ?>/assets/js/app/timesheets/filterPreferences.js?v=<?= time() ?>"></script>
 <!-- END ADDITIVE -->
 
 <!-- page header -->
@@ -125,8 +147,8 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
         <form action="<?php echo BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
 
             <div class="pull-right">
-                <div id="tableButtons" style="display:inline-block"></div>
-                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" />
+                <div id="tableButtons" style="display:inline-block; vertical-align: middle;"></div>
+                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" style="vertical-align: middle;" />
             </div>
 
             <?php
@@ -352,7 +374,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
                         <td data-order="<?= $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours"><?php echo format_hours($diff); ?></td>
-                        
+
 
                         <td data-order="<?= $tpl->e($row['name']); ?>"><a href="<?= BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
                         <td data-order="<?= $tpl->e($row['clientName']); ?>"><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
