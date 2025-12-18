@@ -6,6 +6,7 @@ foreach ($__data as $var => $val) {
 
 /** @var \Carbon\Carbon $currentDate */
 $dateFrom = $tpl->get('dateFrom');
+$hoursFormat = session('usersettings.hours_format', 'decimal');
 
 ?>
 <script type="text/javascript">
@@ -244,7 +245,7 @@ jQuery(document).ready(function(){
 
             </div>
                 <div style=" width: 100%; overflow-x:scroll;">
-            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX">
+            <table cellpadding="0" width="100%" class="table table-bordered display timesheetTable" id="dyntableX" data-hours-format="<?= $tpl->escape($hoursFormat); ?>">
                 <colgroup>
                       <col class="con0" >
                       <col class="con1" >
@@ -338,7 +339,8 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                                        echo "disabled='disabled'";
                                                    } ?>
                                                    name="<?php echo $inputNameKey ?>"
-                                                   value="<?php echo $timeRow[$dayKey]['hours']; ?>"
+                                                   value="<?php echo format_hours($timeRow[$dayKey]['hours']); ?>"
+                                                   data-decimal-value="<?php echo $timeRow[$dayKey]['hours']; ?>"
                                                     <?php if (empty($timeRow[$dayKey]['actualWorkDate'])) { ?>
                                                         data-tippy-content="Cannot add time entry in previous timezone"
                                                     <?php } ?>
@@ -354,7 +356,7 @@ foreach ($tpl->get('allTimesheets') as $timeRow) {
                                 }
                             } ?>
 
-                                <td width="7%" class="rowSum"><strong><?php echo $timeRow['rowSum']; ?></strong></td>
+                                <td width="7%" class="rowSum" data-order="<?php echo $timeRow['rowSum']; ?>"><strong><?php echo format_hours($timeRow['rowSum']); ?></strong></td>
                             </tr>
                         <?php } ?>
 
@@ -425,7 +427,7 @@ foreach ($days as $day) {
                                 <td width="7%" class="rowday<?php echo $i + 1; ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                                     echo ' active';
                                 } ?>">
-                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
+                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="<?php echo format_hours(0); ?>" data-decimal-value="0" />
                                 </td>
                                 <?php
                                 $i++;
@@ -442,9 +444,9 @@ foreach ($colSum as $key => $col) {
     $totalHours += $col;
 
     ?>
-                            <td id="<?php echo $key ?>"><?php echo $col; ?></td>
+                            <td id="<?php echo $key ?>" data-decimal="<?php echo $col; ?>"><?php echo format_hours($col); ?></td>
                         <?php } ?>
-                        <td id="finalSum"><?php echo $totalHours; ?></td>
+                        <td id="finalSum" data-decimal="<?php echo $totalHours; ?>"><?php echo format_hours($totalHours); ?></td>
                     </tr>
                 </tfoot>
             </table>

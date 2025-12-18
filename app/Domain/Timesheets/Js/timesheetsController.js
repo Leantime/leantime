@@ -139,9 +139,71 @@ leantime.timesheetsController = (function () {
         jQuery(".editTimeModal").nyroModal(canvasoptions);
     };
 
+    /**
+     * Format hours according to user preference
+     */
+    var formatHours = function (hours) {
+        var hoursFormat = jQuery('.timesheetTable').data('hours-format') ||
+            jQuery('#allTimesheetsTable').data('hours-format') ||
+            'decimal';
+
+        hours = parseFloat(hours) || 0;
+
+        if (hoursFormat === 'decimal') {
+            return hours.toFixed(2);
+        }
+
+        return formatHoursHuman(hours);
+    };
+
+    /**
+     * Convert decimal hours to human-readable format
+     */
+    var formatHoursHuman = function (hours) {
+        var totalMinutes = Math.round(hours * 60);
+
+        if (totalMinutes === 0) {
+            return '0m';
+        }
+
+        var minutesInWeek = 40 * 60;
+        var minutesInDay = 8 * 60;
+
+        var weeks = Math.floor(totalMinutes / minutesInWeek);
+        totalMinutes = totalMinutes % minutesInWeek;
+
+        var days = Math.floor(totalMinutes / minutesInDay);
+        totalMinutes = totalMinutes % minutesInDay;
+
+        var wholeHours = Math.floor(totalMinutes / 60);
+        var minutes = totalMinutes % 60;
+
+        var parts = [];
+
+        if (weeks > 0) {
+            parts.push(weeks + 'w');
+        }
+
+        if (days > 0) {
+            parts.push(days + 'd');
+        }
+
+        if (wholeHours > 0) {
+            parts.push(wholeHours + 'h');
+        }
+
+        if (minutes > 0) {
+            parts.push(minutes + 'm');
+        }
+
+        return parts.join(' ');
+    };
+
+
     // Make public what you want to have public, everything else is private
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
+        formatHours:formatHours,
     };
 })();
