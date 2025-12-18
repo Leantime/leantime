@@ -1514,8 +1514,8 @@ class Tickets
             $notification->authorId = session('userdata.id') ?? -1;
             $notification->message = $message;
 
-            // Disabled: Don't notify project users when a ticket is created
-            // $this->projectService->notifyProjectUsers($notification);
+
+            $this->projectService->notifyProjectUsers($notification);
 
             return $result;
         }
@@ -2061,7 +2061,7 @@ class Tickets
             if ($ticket) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline)); //ovdje formatiraj poruku
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [

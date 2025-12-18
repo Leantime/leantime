@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Tickets\Services\Tickets;
+use Leantime\Domain\Tickets\Services\Tickets as Tickets;
 
 class Messengers
 {
@@ -31,7 +31,7 @@ class Messengers
     public function __construct(
         Client $httpClient,
         SettingRepository $settingsRepo,
-        LanguageCore $language
+        LanguageCore $language,
     ) {
         $this->httpClient = $httpClient;
         $this->settingsRepo = $settingsRepo;
@@ -72,9 +72,12 @@ class Messengers
      */
     private function slackWebhook(NotificationModel $notification): bool
     {
-        $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
+        $ticketService = app()->make(Tickets::class);
+        $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
 
-        if ($slackWebhookURL !== '' && $slackWebhookURL !== false) {
+        $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
+        
+        if ($slackWebhookURL !== '' && $slackWebhookURL !== false && !is_array($notification->entity) && (str_contains($statusLabelsArray[$notification->entity->status]['name'], 'test') || str_contains($statusLabelsArray[$notification->entity->status]['name'], 'staging')) ) {
             $message = $this->prepareMessage($notification);
 
             $data = [
