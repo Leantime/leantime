@@ -1514,8 +1514,8 @@ class Tickets
             $notification->authorId = session('userdata.id') ?? -1;
             $notification->message = $message;
 
-
-            $this->projectService->notifyProjectUsers($notification);
+            // Disabled: Don't notify project users when a ticket is created
+            // $this->projectService->notifyProjectUsers($notification);
 
             return $result;
         }

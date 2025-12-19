@@ -31,7 +31,7 @@ class Messengers
     public function __construct(
         Client $httpClient,
         SettingRepository $settingsRepo,
-        LanguageCore $language,
+        LanguageCore $language
     ) {
         $this->httpClient = $httpClient;
         $this->settingsRepo = $settingsRepo;
