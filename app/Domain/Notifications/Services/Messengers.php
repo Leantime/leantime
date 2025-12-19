@@ -77,7 +77,7 @@ class Messengers
 
         $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
         
-        if ($slackWebhookURL !== '' && $slackWebhookURL !== false && !is_array($notification->entity) && (str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'test') || str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'staging')) ) {
+        if ($slackWebhookURL !== '' && $slackWebhookURL !== false && !is_array($notification->entity) && (str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'ready to test') || str_contains(strtolower($statusLabelsArray[$notification->entity->status]['name']), 'qa')) ) {
             $message = $this->prepareMessage($notification);
 
             $data = [
