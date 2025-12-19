@@ -2061,7 +2061,7 @@ class Tickets
             if ($ticket) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline)); //ovdje formatiraj poruku
+                $message = sprintf('%1$s moved the ticket to Staging column: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); //ovdje formatiraj poruku
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
