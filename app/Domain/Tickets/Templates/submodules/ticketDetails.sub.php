@@ -210,7 +210,7 @@ jQuery(document).ready(function($) {
     }
 
    $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
-        var changedElementId = $(this).prop('id');
+        var changedElementId = this.id;
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
