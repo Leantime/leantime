@@ -140,10 +140,10 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                         <input type="text" class="dates autosave-field" style="width:110px;" id="deadline" autocomplete="off"
                                value="<?= format($ticket->dateToFinish)->date(); ?>"
                                name="dateToFinish" placeholder="<?= $tpl->__('language.dateformat') ?>"
-                               <?php if (date('m/d/Y', strtotime($ticket->dateToFinish)) == '11/30/-0001') {
+                               <?php if (date('d/m/Y', strtotime($ticket->dateToFinish)) == '11/30/-0001') {
                                    $oldDate = 'No value';
                                  } else {
-                                   $oldDate = date('m/d/Y', strtotime($ticket->dateToFinish));
+                                   $oldDate = date('d/m/Y', strtotime($ticket->dateToFinish));
                                } ?>
                                data-old-status="<?php echo $oldDate; ?>"
                                data-user="<?= htmlspecialchars($currentUserName) ?>"/>
@@ -210,7 +210,7 @@ jQuery(document).ready(function($) {
     }
 
    $('#status-select, #priority, #storypoints, #editorId, #deadline').on('change', function() {
-        var changedElementId = this.id;
+        var changedElementId = $(this).attr('id');
         const ticketId = $('#status-change-log').data('ticket-id');
         const oldStatusKey = $(this).data('old-status');
         const newStatusKey = $(this).val();
