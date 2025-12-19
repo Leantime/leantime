@@ -240,7 +240,7 @@
                 >{!! __('menu.company') !!}</a>
             @else
             <a
-                href="{{ BASE_URL }}/setting/editCompanySettings/"
+                href="{{ BASE_URL }}/timesheets/showAll/"
                 @if ($menuType == 'company')
                     class="active"
                 @endif
