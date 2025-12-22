@@ -55,6 +55,7 @@ leantime.timesheetsController = (function () {
                             title: leantime.i18n.__("label.filename_fileexport"),
                             charset: 'utf-8',
                             bom: true,
+                            footer:true,
                             exportOptions: {
                                 orthogonal: 'export',
                                 columns: ':visible',

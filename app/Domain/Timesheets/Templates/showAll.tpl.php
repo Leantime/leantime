@@ -307,10 +307,10 @@ if ($tpl->get('paid') == '1') {
                         <th data-column-name="id"><?php echo $tpl->__('label.id'); ?></th>
                         <th data-column-name="tickId">Tick.ID</th>
                         <th data-column-name="date"><?php echo $tpl->__('label.date'); ?></th>
+                        <th data-column-name="ticket"><?php echo $tpl->__('label.ticket'); ?></th>
                         <th data-column-name="hours"><?php echo $tpl->__('label.hours'); ?></th>
                         <th data-column-name="planHours"><?php echo $tpl->__('label.plan_hours'); ?></th>
                         <th data-column-name="difference"><?php echo $tpl->__('label.difference'); ?></th>
-                        <th data-column-name="ticket"><?php echo $tpl->__('label.ticket'); ?></th>
                         <th data-column-name="project"><?php echo $tpl->__('label.project'); ?></th>
                         <th data-column-name="client"><?php echo $tpl->__('label.client'); ?></th>
                         <th data-column-name="employee"><?php echo $tpl->__('label.employee'); ?></th>
@@ -347,11 +347,12 @@ foreach ($tpl->get('allTimesheets') as $row) {
                         <td data-order="<?= $tpl->escape($row['workDate']); ?>">
                                 <?php echo format($row['workDate'])->date(); ?>
                         </td>
+                        <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>" data-export-display="<?php echo format_hours($row['hours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['hours']); ?></td>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>" data-export-display="<?php echo format_hours($row['planHours']); ?>" class="js-timesheet-hours"><?php echo format_hours($row['planHours']); ?></td>
                             <?php $diff = $row['planHours'] - $row['hours']; ?>
                         <td data-order="<?= $diff; ?>" data-export-display="<?php echo format_hours($diff); ?>" class="js-timesheet-hours"><?php echo format_hours($diff); ?></td>
-                        <td data-order="<?= $tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
+                        
 
                         <td data-order="<?= $tpl->e($row['name']); ?>"><a href="<?= BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
                         <td data-order="<?= $tpl->e($row['clientName']); ?>"><a href="<?= BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
@@ -402,9 +403,9 @@ foreach ($tpl->get('allTimesheets') as $row) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="3"><strong><?php echo $tpl->__('label.total_hours')?></strong></td>
-                        <td colspan="10" class="js-timesheet-hours" data-export-display="<?php echo format_hours($sum); ?>"><strong><?php echo format_hours($sum); ?></strong></td>
-
+        <td colspan="4"><strong><?php echo "Total hours: "?></strong></td>
+        <td><strong><?php echo round($sum,2); ?></strong></td>
+        <td colspan="3"></td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                             <input type="submit" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveInvoice" />
