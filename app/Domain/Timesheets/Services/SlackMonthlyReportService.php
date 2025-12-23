@@ -1,23 +1,27 @@
 <?php
 
-namespace Leantime\Domain\Timesheets\Controllers;
+namespace Leantime\Domain\Timesheets\Services;
 
+use Symfony\Component\HttpFoundation\Response;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 class SlackMonthlyReportService {
-    private $webhookUrl;
+    private string $webhookUrl;
     private TimesheetService $timesheetsService;
+    private TicketService $ticketService;
 
-    public function __construct() {
-        $this->$webhookUrl = env('SLACK_WEBHOOK_URL');
-        $this->timesheetService = $timesheetsService;
+    public function __construct(
+        TimesheetService $timesheetsService,
+        TicketService $ticketService
+    ) {
+        $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
+        $this->timesheetsService = $timesheetsService;
+        $this->ticketService = $ticketService;
     }
 
     public function exportCsv(): Response
-    {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-
+    {        
         $filters = $this->getFiltersFromRequest();
         
         $allTimesheets = $this->timesheetsService->getAll(
@@ -145,6 +149,4 @@ class SlackMonthlyReportService {
             'clientId' => $clientId
         ];
     }
-    
-
 }
