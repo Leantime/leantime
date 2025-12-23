@@ -1828,51 +1828,136 @@ class Tickets
      *
      * @api
      */
-    public function patch($id, $params): bool
-    {
-
-        // $params is an array of field names. Exclude id
-        if (is_array($params)) {
-            unset($params['id']);
-            unset($params['act']);
-        }
-
-        $ticket = $this->getTicket($id);
-
-        if (! $ticket) {
-            return false;
-        }
-
-        $params = $this->prepareTicketDates($params);
-
-        $return = $this->ticketRepository->patchTicket($id, $params);
-
-        self::dispatchEvent('ticket_updated');
-
-        // Todo: create events and move notification logic to notification module
-        if (isset($params['status']) && $return) {
-            $ticket = $this->getTicket($id);
-            $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
-            $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-            $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
-
-            $notification = app()->make(NotificationModel::class);
-            $notification->url = [
-                'url' => $actual_link,
-                'text' => $this->language->__('email_notifications.todo_update_cta'),
-            ];
-            $notification->entity = $ticket;
-            $notification->module = 'tickets';
-            $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
-            $notification->subject = $subject;
-            $notification->authorId = session('userdata.id');
-            $notification->message = $message;
-
-            $this->projectService->notifyProjectUsers($notification);
-        }
-
-        return $return;
+public function patch($id, $params): bool
+{
+    if (is_array($params)) {
+        unset($params['id']);
+        unset($params['act']);
     }
+
+    $ticket = $this->getTicket($id);
+
+    if (! $ticket) {
+        return false;
+    }
+
+    $oldValues = [];
+    $fieldsToLog = ['priority', 'storypoints', 'editorId'];
+    
+    foreach ($fieldsToLog as $field) {
+        if (isset($params[$field])) {
+            $oldValues[$field] = $ticket->$field ?? null;
+        }
+    }
+
+    $params = $this->prepareTicketDates($params);
+
+    $return = $this->ticketRepository->patchTicket($id, $params);
+
+    if ($return) {
+        $this->logPatchChanges($id, $oldValues, $params, $ticket);
+    }
+
+    self::dispatchEvent('ticket_updated');
+
+    if (isset($params['status']) && $return) {
+        $ticket = $this->getTicket($id);
+        $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
+        $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
+        $message = sprintf($this->language->__('email_notifications.todo_update_message'), session('userdata.name'), strip_tags($ticket->headline));
+
+        $notification = app()->make(NotificationModel::class);
+        $notification->url = [
+            'url' => $actual_link,
+            'text' => $this->language->__('email_notifications.todo_update_cta'),
+        ];
+        $notification->entity = $ticket;
+        $notification->module = 'tickets';
+        $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
+        $notification->subject = $subject;
+        $notification->authorId = session('userdata.id');
+        $notification->message = $message;
+
+        $this->projectService->notifyProjectUsers($notification);
+    }
+
+    return $return;
+}
+
+private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
+{
+    try {
+        $ticketHistoryModel = app()->make(\Leantime\Domain\Tickets\Models\TicketHistoryModel::class);
+        $currentUserName = session('userdata.name') ?? 'Unknown User';
+
+        if (isset($newParams['priority']) && isset($oldValues['priority']) && $oldValues['priority'] != $newParams['priority']) {
+            $priorities = $this->getPriorityLabels();
+            $oldPriorityText = $priorities[$oldValues['priority']] ?? 'Priority not defined';
+            $newPriorityText = $priorities[$newParams['priority']] ?? 'Priority not defined';
+            
+            $ticketHistoryModel->addStatusChange(
+                $ticketId,
+                $oldValues['priority'],
+                $newParams['priority'],
+                $oldPriorityText,
+                $newPriorityText,
+                $currentUserName,
+                'priority'
+            );
+        }
+
+        if (isset($newParams['storypoints']) && isset($oldValues['storypoints']) && $oldValues['storypoints'] != $newParams['storypoints']) {
+            $efforts = $this->getEffortLabels();
+            $oldEffortText = $efforts[$oldValues['storypoints']] ?? 'Effort not defined';
+            $newEffortText = $efforts[$newParams['storypoints']] ?? 'Effort not defined';
+            
+            $ticketHistoryModel->addStatusChange(
+                $ticketId,
+                $oldValues['storypoints'],
+                $newParams['storypoints'],
+                $oldEffortText,
+                $newEffortText,
+                $currentUserName,
+                'storypoints'
+            );
+        }
+
+        if (isset($newParams['editorId']) && isset($oldValues['editorId']) && $oldValues['editorId'] != $newParams['editorId']) {
+            $users = $this->ticketRepository->getUsersAssignedToProject(session('currentProject'));
+            
+            $oldEditorText = 'Not assigned';
+            foreach ($users as $user) {
+                if ($user['id'] == $oldValues['editorId']) {
+                    $oldEditorText = $user['firstname'] . ' ' . $user['lastname'];
+                    break;
+                }
+            }
+            
+            $newEditorText = 'Not assigned';
+            if ($newParams['editorId']) {
+                foreach ($users as $user) {
+                    if ($user['id'] == $newParams['editorId']) {
+                        $newEditorText = $user['firstname'] . ' ' . $user['lastname'];
+                        break;
+                    }
+                }
+            }
+            
+            $ticketHistoryModel->addStatusChange(
+                $ticketId,
+                $oldValues['editorId'],
+                $newParams['editorId'],
+                $oldEditorText,
+                $newEditorText,
+                $currentUserName,
+                'editorId'
+            );
+        }
+
+    } catch (\Exception $e) {
+        error_log('Failed to log patch changes: ' . $e->getMessage());
+    }
+}
 
     /**
      * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
@@ -2029,8 +2114,8 @@ class Tickets
      *
      * @api
      */
-public function updateTicketStatusAndSorting($params, $handler = null): bool
-{
+    public function updateTicketStatusAndSorting($params, $handler = null): bool
+    {
     foreach ($params as $status => $ticketList) {
         if (is_numeric($status) && ! empty($ticketList)) {
             $tickets = explode('&', $ticketList);
@@ -2047,9 +2132,9 @@ public function updateTicketStatusAndSorting($params, $handler = null): bool
                         $oldStatus = null;
                     }
 
-                    if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
-                        return false;
-                    }
+                        if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                            return false;
+                        }
 
                     if ($oldStatus !== null && $oldStatus != $status) {
                         try {
@@ -2079,36 +2164,36 @@ public function updateTicketStatusAndSorting($params, $handler = null): bool
         }
     }
 
-    if ($handler) {
-        $id = substr($handler, 7);
+        if ($handler) {
+            $id = substr($handler, 7);
 
-        $ticket = $this->getTicket($id);
+            $ticket = $this->getTicket($id);
 
-        if ($ticket) {
-            $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
-            $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-            $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); 
+            if ($ticket) {
+                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
+                $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
+                $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); 
 
-            $notification = app()->make(NotificationModel::class);
-            $notification->url = [
-                'url' => $actual_link,
-                'text' => $this->language->__('email_notifications.todo_update_cta'),
-            ];
-            $notification->entity = $ticket;
-            $notification->module = 'tickets';
-            $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
-            $notification->subject = $subject;
-            $notification->authorId = session('userdata.id') ?? -1;
-            $notification->message = $message;
+                $notification = app()->make(NotificationModel::class);
+                $notification->url = [
+                    'url' => $actual_link,
+                    'text' => $this->language->__('email_notifications.todo_update_cta'),
+                ];
+                $notification->entity = $ticket;
+                $notification->module = 'tickets';
+                $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
+                $notification->subject = $subject;
+                $notification->authorId = session('userdata.id') ?? -1;
+                $notification->message = $message;
 
-            $this->projectService->notifyProjectUsers($notification);
+                $this->projectService->notifyProjectUsers($notification);
+            }
         }
+
+        self::dispatchEvent('ticket_updated');
+
+        return true;
     }
-
-    self::dispatchEvent('ticket_updated');
-
-    return true;
-}
 
     // Delete
     /**
