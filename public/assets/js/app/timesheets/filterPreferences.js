@@ -513,8 +513,45 @@
             if (!jQuery(e.target).closest('#filterPreferencesBtn, #filterPreferencesDropdown').length) {
                 jQuery('#filterPreferencesDropdown').hide()
             }
-        })
+        });
+
+        jQuery(document).on('change', '.auto-export-checkbox', function(e) {
+            e.stopPropagation();
+            const profileName = jQuery(this).data('name');
+            const isEnabled = jQuery(this).is(':checked');
+    
+            saveAutoExportSetting(profileName, isEnabled);
+        });
+
     }
+
+    async function saveAutoExportSetting(profileName, enabled) {
+    try {
+        const response = await fetch(leantime.appUrl + PROFILE_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({
+                action: 'setAutoExport',
+                name: profileName,
+                autoExport: enabled
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('[Profiles] Auto-export setting saved');
+            }
+        }
+    } catch (error) {
+        console.error('[Profiles] Failed to save auto-export setting:', error);
+    }
+}
+
 
     // Export public API
     window.leantimeFilterPreferences = {
