@@ -341,9 +341,13 @@
         keys.forEach(function (key) {
             const pref = preferences[key];
             html += `
-                <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; transition: background 0.2s;">
+                <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap: wrap; padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; transition: background 0.2s;">
                     <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
                         ${key}
+                    </div>
+                    <div style="display:flex; gap:5px; margin-right:30px;">
+                        <input type="checkbox" id="subscribeNews" name="subscribe" value="newsletter" style="margin-bottom:10px"/>
+                        <label for="subscribeNews" style="margin-top:5px">Automatic monthly export</label>
                     </div>
                     <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer; padding: 4px 8px; font-size: 12px;" title="Delete">
                         <i class="fa fa-trash"></i>
