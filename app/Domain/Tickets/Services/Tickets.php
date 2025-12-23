@@ -2029,60 +2029,86 @@ class Tickets
      *
      * @api
      */
-    public function updateTicketStatusAndSorting($params, $handler = null): bool
-    {
+public function updateTicketStatusAndSorting($params, $handler = null): bool
+{
+    foreach ($params as $status => $ticketList) {
+        if (is_numeric($status) && ! empty($ticketList)) {
+            $tickets = explode('&', $ticketList);
 
-        // Jquery sortable serializes the array for kanban in format
-        // statusKey: ticket[]=X&ticket[]=X2...,
-        // statusKey2: ticket[]=X&ticket[]=X2...,
-        // This represents status & kanban sorting
-        foreach ($params as $status => $ticketList) {
-            if (is_numeric($status) && ! empty($ticketList)) {
-                $tickets = explode('&', $ticketList);
+            if (is_array($tickets) === true) {
+                foreach ($tickets as $key => $ticketString) {
+                    $id = substr($ticketString, 9);
 
-                if (is_array($tickets) === true) {
-                    foreach ($tickets as $key => $ticketString) {
-                        $id = substr($ticketString, 9);
+                    try {
+                        $oldTicket = $this->getTicket($id);
+                        $oldStatus = $oldTicket ? $oldTicket->status : null;
+                    } catch (\Exception $e) {
+                        error_log('Error getting old ticket status: ' . $e->getMessage());
+                        $oldStatus = null;
+                    }
 
-                        if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
-                            return false;
+                    if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
+                        return false;
+                    }
+
+                    if ($oldStatus !== null && $oldStatus != $status) {
+                        try {
+                            $statusLabels = $this->getStatusLabels();
+                            $currentUserName = session('userdata.name') ?? 'Unknown User';
+                            
+                            $oldStatusText = $statusLabels[$oldStatus]['name'] ?? 'Unknown';
+                            $newStatusText = $statusLabels[$status]['name'] ?? 'Unknown';
+                            
+                            $ticketHistoryModel = app()->make(\Leantime\Domain\Tickets\Models\TicketHistoryModel::class);
+                            
+                            $ticketHistoryModel->addStatusChange(
+                                $id,
+                                $oldStatus,
+                                $status,
+                                $oldStatusText,
+                                $newStatusText,
+                                $currentUserName,
+                                'kanban-board'
+                            );
+                        } catch (\Exception $e) {
+                            error_log('Failed to log kanban status change: ' . $e->getMessage());
                         }
                     }
                 }
             }
         }
-
-        if ($handler) {
-            // Assumes format ticket_ID
-            $id = substr($handler, 7);
-
-            $ticket = $this->getTicket($id);
-
-            if ($ticket) {
-                $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
-                $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); 
-
-                $notification = app()->make(NotificationModel::class);
-                $notification->url = [
-                    'url' => $actual_link,
-                    'text' => $this->language->__('email_notifications.todo_update_cta'),
-                ];
-                $notification->entity = $ticket;
-                $notification->module = 'tickets';
-                $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
-                $notification->subject = $subject;
-                $notification->authorId = session('userdata.id') ?? -1;
-                $notification->message = $message;
-
-                $this->projectService->notifyProjectUsers($notification);
-            }
-        }
-
-        self::dispatchEvent('ticket_updated');
-
-        return true;
     }
+
+    if ($handler) {
+        $id = substr($handler, 7);
+
+        $ticket = $this->getTicket($id);
+
+        if ($ticket) {
+            $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
+            $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
+            $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); 
+
+            $notification = app()->make(NotificationModel::class);
+            $notification->url = [
+                'url' => $actual_link,
+                'text' => $this->language->__('email_notifications.todo_update_cta'),
+            ];
+            $notification->entity = $ticket;
+            $notification->module = 'tickets';
+            $notification->projectId = $ticket->projectId ?? session('currentProject') ?? -1;
+            $notification->subject = $subject;
+            $notification->authorId = session('userdata.id') ?? -1;
+            $notification->message = $message;
+
+            $this->projectService->notifyProjectUsers($notification);
+        }
+    }
+
+    self::dispatchEvent('ticket_updated');
+
+    return true;
+}
 
     // Delete
     /**
