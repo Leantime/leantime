@@ -219,7 +219,7 @@ jQuery(document).ready(function($) {
         const user = $(this).data('user') || 'Unknown User';
 
         $.ajax({
-            url: '<?= BASE_URL ?>/tickets/ticketHistoryController/logStatusChange',
+            url: '/tickets/ticketHistoryController/logStatusChange',
             method: 'POST',
             data: {
                 ticketId: ticketId,

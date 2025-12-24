@@ -5,19 +5,23 @@ namespace Leantime\Domain\Timesheets\Services;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 
 class SlackMonthlyReportService {
     private string $webhookUrl;
     private TimesheetService $timesheetsService;
     private TicketService $ticketService;
+    private SettingRepository $settingRepository;
 
     public function __construct(
         TimesheetService $timesheetsService,
-        TicketService $ticketService
+        TicketService $ticketService,
+        SettingRepository $settingRepository
     ) {
         $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
         $this->timesheetsService = $timesheetsService;
         $this->ticketService = $ticketService;
+        $this->settingRepository = $settingRepository;
     }
 
     public function exportCsv(): Response
@@ -149,4 +153,31 @@ class SlackMonthlyReportService {
             'clientId' => $clientId
         ];
     }
+
+    public function getProfilesWithAutoExport(int $userId): array 
+{
+    $settingKey = "user.{$userId}.timesheetFilters";
+    $preferences = $this->settingRepository->getSetting($settingKey);
+    
+    if (!$preferences) {
+        return [];
+    }
+    
+    if (is_string($preferences)) {
+        $preferences = json_decode($preferences, true);
+    }
+    
+    if (!is_array($preferences)) {
+        return [];
+    }
+    
+    $autoExportProfiles = [];
+    foreach ($preferences as $name => $profile) {
+        if (isset($profile['autoExport']) && $profile['autoExport'] === true) {
+            $autoExportProfiles[$name] = $profile;
+        }
+    }
+    
+    return $autoExportProfiles;
+}
 }

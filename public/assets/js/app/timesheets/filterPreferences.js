@@ -322,42 +322,55 @@
         return false;
     }
 
-    /**
-     * Build preferences dropdown UI
-     */
-    function buildPreferencesDropdown() {
-        const preferences = currentPreferences;
-        const keys = Object.keys(preferences);
 
-        if (keys.length === 0) {
-            return `
-                <div style="padding: 12px; text-align: center; color: #666;">
-                    <i class="fa fa-info-circle"></i> No saved profiles
-                </div>
-            `;
-        }
+function buildPreferencesDropdown() {
+    const keys = Object.keys(currentPreferences);
 
-        let html = '';
-        keys.forEach(function (key) {
-            const pref = preferences[key];
-            html += `
-                <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap: wrap; padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; transition: background 0.2s;">
-                    <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">
-                        ${key}
-                    </div>
-                    <div style="display:flex; gap:5px; margin-right:30px;">
-                        <input type="checkbox" id="subscribeNews" name="subscribe" value="newsletter" style="margin-bottom:10px"/>
-                        <label for="subscribeNews" style="margin-top:5px">Automatic monthly export</label>
-                    </div>
-                    <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer; padding: 4px 8px; font-size: 12px;" title="Delete">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>
-            `;
-        });
-
-        return html;
+    if (keys.length === 0) {
+        return '<div style="padding: 12px; text-align: center; color: #666;"><i class="fa fa-info-circle"></i> No saved profiles</div>';
     }
+
+    let html = '';
+    keys.forEach(function (key) {
+        const pref = currentPreferences[key];
+        const checked = pref.autoExport ? 'checked' : '';
+        
+        html += `
+            <div class="preference-item" style="display: flex; align-items: center; justify-content: space-between;flex-wrap:wrap; padding: 10px 12px; border-bottom: 1px solid #eee;">
+                <div class="preference-name" data-name="${key}" style="flex: 1; font-weight: 500; color: #333;">${key}</div>
+                <div style="display:flex; gap:5px; margin-right:30px;">
+                    <input type="checkbox" class="auto-export" style="margin-bottom:10px;" data-preference-name="${key}" ${checked}/>
+                    <label style="margin-top:5px;">Automatic monthly export</label>
+                </div>
+                <button class="delete-preference" data-name="${key}" style="background: none; border: none; color: #dc3545; cursor: pointer;" title="Delete">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    return html;
+}
+
+function initAutoExportListeners() {
+    jQuery(document).on('change', '.auto-export', function() {        
+        fetch(leantime.appUrl + '/timesheets/saveFilterPreferences', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                action: 'setAutoExport',
+                name: this.dataset.preferenceName,
+                autoExport: this.checked
+            })
+        })
+        .then(r => r.json())
+        .catch(() => {
+            this.checked = !this.checked;
+        });
+    });
+}
+
+jQuery(document).ready(initAutoExportListeners);
 
     /**
      * Show save preference dialog

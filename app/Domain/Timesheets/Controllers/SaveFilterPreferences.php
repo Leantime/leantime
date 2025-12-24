@@ -198,7 +198,20 @@ class SaveFilterPreferences extends Controller
                         'message' => 'Preference not found'
                     ], 404);
                 }
-            } else {
+            } 
+            elseif ($action === 'setAutoExport') {
+    $autoExport = $input['autoExport'] ?? false;
+    
+    if (!isset($allPreferences[$preferenceName])) {
+        return $this->jsonResponse(['status' => 'error', 'message' => 'Profile not found'], 404);
+    }
+    
+    $allPreferences[$preferenceName]['autoExport'] = $autoExport;
+    $this->settingRepo->saveSetting($settingKey, json_encode($allPreferences));
+    
+    return $this->jsonResponse(['status' => 'success']);
+}
+            else {
                 error_log('[Profiles] Invalid action: ' . $action);
                 return $this->jsonResponse([
                     'status' => 'error',

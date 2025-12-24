@@ -7,19 +7,26 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Timesheets\Services\SlackMonthlyReportService;
 use Symfony\Component\HttpFoundation\Response;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 
 class SlackMonthlyReportController extends Controller
 {
-    private SlackMonthlyReportService $exportService;
+    private SlackMonthlyReportService $slackReportService;
+    private SettingRepository $settingRepository;
 
-    public function __construct(SlackMonthlyReportService $exportService)
+    public function __construct(SlackMonthlyReportService $slackReportService, SettingRepository $settingRepository)
     {
-        $this->exportService = $exportService;
+        $this->slackReportService = $slackReportService;
+        $this->settingRepository = $settingRepository;
     }
 
     public function run(): Response
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-        return $this->exportService->exportCsv();
+        return $this->slackReportService->exportCsv();
+    }
+    public function sendCsvFromProfilesThatHaveTickboxTrue () {
+        
+        
     }
 }
