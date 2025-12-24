@@ -352,27 +352,10 @@ if (!function_exists('format_hours_human')) {
             return $compact ? 'Om' : '0 minutes';
         }
 
-        $minutesInWeek = 40 * 60;
-        $minutesInDay = 8 * 60;
-
-        $weeks = intdiv($totalMinutes, $minutesInWeek);
-        $totalMinutes %= $minutesInWeek;
-
-        $days = intdiv($totalMinutes, $minutesInDay);
-        $totalMinutes %= $minutesInDay;
-
         $wholeHours = intdiv($totalMinutes, 60);
         $minutes = $totalMinutes % 60;
 
         $parts = [];
-
-        if ($weeks > 0) {
-            $parts[] = $compact ? "{$weeks}w" : ($weeks == 1 ? '1 week' : "{$weeks} weeks");
-        }
-
-        if ($days > 0) {
-            $parts[] = $compact ? "{$days}d" : ($days == 1 ? '1 day' : "{$days} days");
-        }
 
         if ($wholeHours > 0) {
             $parts[] = $compact ? "{$wholeHours}h" : ($wholeHours == 1 ? '1 hour' : "{$wholeHours} hours");
