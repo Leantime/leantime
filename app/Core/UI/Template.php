@@ -702,6 +702,36 @@ class Template
         return '';
     }
 
+
+    public function escapeMinimalRemoveImage(?string $content): string
+    {
+        $content = $this->convertRelativePaths($content);
+        $config = [
+            'safe' => 1,
+            'style_pass' => 1,
+            'cdata' => 1,
+            'comment' => 1,
+            'deny_attribute' => '* -href -style',
+            'keep_bad' => 0,
+        ];
+
+        if (! is_null($content)) {
+
+            $content = preg_replace('/<img[^>]*>/i', '', $content);
+
+            return htmLawed($content, [
+                'comments' => 0,
+                'cdata' => 0,
+                'deny_attribute' => 'on*',
+                'elements' => '* -applet -canvas -embed -object -script',
+                'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https',
+            ]);
+        }
+
+        return '';
+    }
+
+
     /**
      * truncate - truncate text
      *

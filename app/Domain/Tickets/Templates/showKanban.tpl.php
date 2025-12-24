@@ -250,13 +250,13 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                     <?php
                                                         $allColumns = $tpl->get('allKanbanColumns');
                                                         $columnKeys = array_keys($allColumns);
-                                                        $isFirstColumn = $key === $columnKeys[0]; 
+                                                        $isFirstColumn = $key === $columnKeys[0];
                                                         $isLastColumn = $key === end($columnKeys);
                                                     ?>
 
                                                     <?php echo app('blade.compiler')::render('@include("tickets::partials.ticketsubmenu", [
                                                                                         "ticket" => $ticket,
-                                                                                        "onTheClock" => $onTheClock,                        
+                                                                                        "onTheClock" => $onTheClock,
                                                                                         "isFirstColumn" => $isFirstColumn,
                                                                                         "isLastColumn" => $isLastColumn
                                                                                     ])', ['ticket' => $row, 'onTheClock' => $tpl->get('onTheClock'), 'isFirstColumn' => $isFirstColumn,'isLastColumn' => $isLastColumn]); ?>
@@ -271,7 +271,7 @@ $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                                                         <h4><a href="#/tickets/showTicket/<?php echo $row['id']; ?>" data-hx-get="<?= BASE_URL?>/tickets/showTicket/<?php echo $row['id']; ?>" hx-swap="none" preload="mouseover"><?php $tpl->e($row['headline']); ?></a></h4>
 
                                                         <div class="kanbanContent" style="margin-bottom: 20px">
-                                                            <?php echo $tpl->escapeMinimal($row['description']); ?>
+                                                            <?php echo $tpl->escapeMinimalRemoveImage($row['description']); ?>
                                                         </div>
 
                                                     </div>
