@@ -427,7 +427,7 @@ foreach ($tpl->get('allTimesheets') as $row) {
                     <tr>
         <td colspan="4"></td>
         <td><strong style="margin-left:-10px;"><?php echo round($sum,2); ?></strong></td>
-        <td colspan="3"></td>
+        <td colspan="8"></td>
                         <td>
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                             <input type="submit" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveInvoice" />
