@@ -34,4 +34,17 @@ class Cron
         $this->environment = $environment;
         $this->reportService = $reportService;
     }
+
+    public function exportMonthlyReportToSlack(): void
+{
+    $csvPath = $this->reportService->exportMonthlyCsv();
+
+    $this->queueSvc->push('slack.upload', [
+        'file' => $csvPath,
+        'message' => 'Monthly report',
+    ]);
+
+    $this->auditRepo->add('cron', 'Monthly CSV exported to Slack');
+}
+
 }
