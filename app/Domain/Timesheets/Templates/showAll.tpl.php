@@ -153,7 +153,7 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
     </form>
     <script>
         function exportToSlack() {
-            fetch('<?= BASE_URL?>/timesheets/slackMonthlyReportController/sendCsvFromProfilesThatHaveTickboxTrue', {
+            fetch('<?= BASE_URL?>/timesheets/slackMonthlyReportController/sendCsvFromAllProfiles', {
                 method: 'POST'
             });
         }

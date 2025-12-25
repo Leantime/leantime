@@ -187,6 +187,25 @@ public function __construct(
     return $autoExportProfiles;
 }
 
+public function getAllProfiles(int $userId): array {
+    $settingKey = "user.{$userId}.timesheetFilters";
+    $preferences = $this->settingRepository->getSetting($settingKey);
+    
+    if (!$preferences) {
+        return [];
+    }
+    
+    if (is_string($preferences)) {
+        $preferences = json_decode($preferences, true);
+    }
+    
+    if (!is_array($preferences)) {
+        return [];
+    }
+    
+    return $preferences;
+}
+
    public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
 {
     foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
