@@ -297,6 +297,10 @@ if ($tpl->get('paid') == '1') {
 }
 ?>
                         />
+                        <td style="vertical-align: top;">
+                           <form action="<?= BASE_URL?>/timesheets/slackMonthlyReportController/sendCsvFromProfilesThatHaveTickboxTrue" method="POST">
+                            <button type="submit" name="submitButton">Send to slack</button>
+                        </form>
                         <label for="paid"><?php echo $tpl->__('label.paid'); ?></label>
                     </td>
                     <td style="vertical-align: top;">

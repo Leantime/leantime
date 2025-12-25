@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class SlackMonthlyReportService {
     private string $webhookUrl;
@@ -13,16 +15,20 @@ class SlackMonthlyReportService {
     private TicketService $ticketService;
     private SettingRepository $settingRepository;
 
-    public function __construct(
-        TimesheetService $timesheetsService,
-        TicketService $ticketService,
-        SettingRepository $settingRepository
-    ) {
-        $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
-        $this->timesheetsService = $timesheetsService;
-        $this->ticketService = $ticketService;
-        $this->settingRepository = $settingRepository;
-    }
+    private \GuzzleHttp\Client $httpClient;
+
+public function __construct(
+    TimesheetService $timesheetsService,
+    TicketService $ticketService,
+    SettingRepository $settingRepository,
+    \GuzzleHttp\Client $httpClient
+) {
+    $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
+    $this->timesheetsService = $timesheetsService;
+    $this->ticketService = $ticketService;
+    $this->settingRepository = $settingRepository;
+    $this->httpClient = $httpClient;
+}
 
     public function exportCsv(): Response
     {        
@@ -70,10 +76,10 @@ class SlackMonthlyReportService {
                 $row['id'],
                 $row['ticketId'],
                 format($row['workDate'])->date(),
+                $row['headline'] ?? '',
                 format_hours($row['hours'], $hoursFormat),
                 format_hours($row['planHours'], $hoursFormat),
                 format_hours($diff, $hoursFormat),
-                $row['headline'] ?? '',
                 $row['name'] ?? '',
                 $row['clientName'] ?? '',
                 ($row['firstname'] ?? '') . ' ' . ($row['lastname'] ?? ''),
@@ -154,7 +160,7 @@ class SlackMonthlyReportService {
         ];
     }
 
-    public function getProfilesWithAutoExport(int $userId): array 
+    public function getProfilesWithEnabledAutoExport(int $userId): array 
 {
     $settingKey = "user.{$userId}.timesheetFilters";
     $preferences = $this->settingRepository->getSetting($settingKey);
@@ -179,5 +185,200 @@ class SlackMonthlyReportService {
     }
     
     return $autoExportProfiles;
+}
+
+   public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
+{
+    foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
+        $filters = [
+            'dateFrom' => isset($profile['dateFrom']) ? dtHelper()->parseUserDateTime($profile['dateFrom'])->setToDbTimezone() : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
+            'dateTo' => isset($profile['dateTo']) ? dtHelper()->parseUserDateTime($profile['dateTo'])->setToDbTimezone() : dtHelper()->userNow()->endOfMonth()->setToDbTimezone(),
+            'projectFilter' => $profile['projectFilter'] ?? -1,
+            'kind' => $profile['kind'] ?? 'all',
+            'userId' => $profile['userId'] ?? null,
+            'invEmplCheck' => $profile['invEmplCheck'] ?? '-1',
+            'invCompCheck' => $profile['invCompCheck'] ?? '0',
+            'ticketParameter' => $profile['ticketParameter'] ?? '-1',
+            'paidCheck' => $profile['paidCheck'] ?? '0',
+            'clientId' => $profile['clientId'] ?? -1,
+        ];
+
+        $columnState = $profile['filters']['columnState'] ?? [];
+
+        $csvContent = $this->generateCsvString($filters, $columnState);
+
+        $this->sendCsvToSlack($csvContent, $profileName);
+    }
+}
+
+private function sendCsvToSlack(string $csvContent, string $profileName): bool
+{
+    $slackBotToken = env('SLACK_BOT_TOKEN', '');
+    
+    if (empty($slackBotToken)) {
+        return false;
+    }
+
+    $channelId = env('SLACK_CHANNEL_ID', '');
+    
+    if (empty($channelId)) {
+        return false;
+    }
+    
+    try {
+        $filename = "timesheet_{$profileName}_" . date('Y-m-d') . ".csv";
+                
+        $getUploadUrlResponse = $this->httpClient->post('https://slack.com/api/files.getUploadURLExternal', [
+            'headers' => [
+                'Authorization' => "Bearer {$slackBotToken}",
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+            'form_params' => [
+                'filename' => $filename,
+                'length' => strlen($csvContent)
+            ]
+        ]);
+
+        $uploadUrlData = json_decode($getUploadUrlResponse->getBody()->getContents(), true);
+        
+        if (!isset($uploadUrlData['ok']) || !$uploadUrlData['ok']) {
+            return false;
+        }
+
+        $uploadUrl = $uploadUrlData['upload_url'];
+        $fileId = $uploadUrlData['file_id'];
+                
+        $uploadResponse = $this->httpClient->post($uploadUrl, [
+            'body' => $csvContent,
+            'headers' => [
+                'Content-Type' => 'text/csv',
+            ]
+        ]);
+        
+        if ($uploadResponse->getStatusCode() !== 200) {
+            error_log("File upload failed with status: " . $uploadResponse->getStatusCode());
+            return false;
+        }
+        
+        $completeResponse = $this->httpClient->post('https://slack.com/api/files.completeUploadExternal', [
+            'headers' => [
+                'Authorization' => "Bearer {$slackBotToken}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'files' => [
+                    [
+                        'id' => $fileId,
+                        'title' => "Timesheet Export - {$profileName}"
+                    ]
+                ],
+                'channel_id' => $channelId,
+                'initial_comment' => "Monthly Timesheet Report: {$profileName}"
+            ]
+        ]);
+
+        $completeData = json_decode($completeResponse->getBody()->getContents(), true);
+        
+        if (isset($completeData['ok']) && $completeData['ok']) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+        report($e);
+        return false;
+    }
+}
+
+private function generateCsvString(array $filters, array $columnState = []): string
+{
+    $allTimesheets = $this->timesheetsService->getAll(
+        $filters['dateFrom'],
+        $filters['dateTo'],
+        $filters['projectFilter'],
+        $filters['kind'],
+        $filters['userId'],
+        $filters['invEmplCheck'],
+        $filters['invCompCheck'],
+        $filters['ticketParameter'],
+        $filters['paidCheck'],
+        $filters['clientId']
+    );
+
+    $userId = $filters['userId'] ?? session('userdata.id');
+    $hoursFormat = 'decimal';
+    if ($userId) {
+        $settingsService = app()->make(\Leantime\Domain\Setting\Services\Setting::class);
+        $hoursFormat = $settingsService->getSetting('usersettings.'.$userId.'.hours_format', 'decimal');
+    }
+
+    $hourTypes = $this->timesheetsService->getBookedHourTypes();
+
+    $allColumns = [
+        'id' => 'ID',
+        'tickId' => 'Ticket ID',
+        'date' => 'Date',
+        'ticket' => 'Ticket',
+        'hours' => 'Hours',
+        'planHours' => 'Plan Hours',
+        'difference' => 'Difference',
+        'project' => 'Project',
+        'client' => 'Client',
+        'employee' => 'Employee',
+        'type' => 'Type',
+        'milestone' => 'Milestone',
+        'tags' => 'Tags',
+        'description' => 'Description',
+        'invoiced' => 'Invoiced',
+        'mgrApproval' => 'Invoiced Company',
+        'paid' => 'Paid'
+    ];
+
+    if (empty($columnState)) {
+        $columnState = array_fill_keys(array_keys($allColumns), true);
+    }
+
+    $activeColumns = array_filter($columnState, fn($value) => $value === true);
+    $headers = array_intersect_key($allColumns, $activeColumns);
+
+    $output = fopen('php://temp', 'w+');
+    
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+    
+    fputcsv($output, array_values($headers));
+
+    foreach ($allTimesheets as $row) {
+        $diff = $row['planHours'] - $row['hours'];
+        
+        $rowData = [
+            'id' => $row['id'],
+            'tickId' => $row['ticketId'],
+            'date' => format($row['workDate'])->date(),
+            'ticket' => $row['headline'] ?? '',
+            'hours' => format_hours($row['hours'], $hoursFormat),
+            'planHours' => format_hours($row['planHours'], $hoursFormat),
+            'difference' => format_hours($diff, $hoursFormat),
+            'project' => $row['name'] ?? '',
+            'client' => $row['clientName'] ?? '',
+            'employee' => ($row['firstname'] ?? '') . ' ' . ($row['lastname'] ?? ''),
+            'type' => $hourTypes[$row['kind'] ?? 'GENERAL_BILLABLE'] ?? '',
+            'milestone' => $row['milestone'] ?? '',
+            'tags' => $row['tags'] ?? '',
+            'description' => $row['description'] ?? '',
+            'invoiced' => $row['invoicedEmpl'] == '1' ? format($row['invoicedEmplDate'])->date() : '',
+            'mgrApproval' => $row['invoicedComp'] == '1' ? format($row['invoicedCompDate'])->date() : '',
+            'paid' => $row['paid'] == '1' ? format($row['paidDate'])->date() : ''
+        ];
+
+        $filteredRow = array_intersect_key($rowData, $activeColumns);
+        fputcsv($output, array_values($filteredRow));
+    }
+
+    rewind($output);
+    $csvContent = stream_get_contents($output);
+    fclose($output);
+
+    return $csvContent;
 }
 }

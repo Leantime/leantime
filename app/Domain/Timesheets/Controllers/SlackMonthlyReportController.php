@@ -20,13 +20,15 @@ class SlackMonthlyReportController extends Controller
         $this->settingRepository = $settingRepository;
     }
 
-    public function run(): Response
-    {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
-        return $this->slackReportService->exportCsv();
-    }
-    public function sendCsvFromProfilesThatHaveTickboxTrue () {
-        
-        
-    }
+   
+public function sendCsvFromProfilesThatHaveTickboxTrue(): Response
+{
+    $userId = session('userdata.id');
+    error_log("Preparing to send Slack monthly report for user ID: {$userId}");
+    $allProfiles = $this->slackReportService->getProfilesWithEnabledAutoExport($userId);
+
+    $this->slackReportService->sendMonthlyReportToSlack($allProfiles);
+
+    return new Response('Slack monthly report sent', Response::HTTP_OK);
+}
 }
