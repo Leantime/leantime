@@ -8,6 +8,8 @@ use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Timesheets\Services\SlackMonthlyReportService;
 use Symfony\Component\HttpFoundation\Response;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Core\Controller\Frontcontroller;
+
 
 class SlackMonthlyReportController extends Controller
 {
@@ -29,6 +31,6 @@ public function sendCsvFromProfilesThatHaveTickboxTrue(): Response
 
     $this->slackReportService->sendMonthlyReportToSlack($allProfiles);
 
-    return new Response('Slack monthly report sent', Response::HTTP_OK);
+    return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
 }
 }

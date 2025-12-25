@@ -147,11 +147,21 @@ $hoursFormat = session('usersettings.hours_format', 'decimal');
 <!--this is MAIN content-->
 <div class="maincontent">
     <div class="maincontentinner">
+        <div style="float:left;">
+        <button class="dt-button" onclick="exportToSlack()" style = "padding: 4px 14px;">Export to Slack</button>
+</div>
+    </form>
+    <script>
+        function exportToSlack() {
+            fetch('<?= BASE_URL?>/timesheets/slackMonthlyReportController/sendCsvFromProfilesThatHaveTickboxTrue', {
+                method: 'POST'
+            });
+        }
+</script>
         <form action="<?php echo BASE_URL ?>/timesheets/showAll" method="post" id="form" name="form">
-
-            <div class="pull-right" style="display: flex; align-items: center; gap: 5px;">
-                <div id="tableButtons" style="display:inline-block;"></div>
-                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="btn btn-primary" style="margin: 0 0 9px; padding: 4px 14px; line-height: 21px;" />
+            <div class="pull-right">
+                <div id="tableButtons" style="display:inline-block; vertical-align: middle;"></div>
+                <input type="submit" value="<?php echo $tpl->__('buttons.search')?>" class="reload" style="vertical-align: middle; margin-bottom:7px;" />
             </div>
 
             <?php
@@ -297,10 +307,6 @@ if ($tpl->get('paid') == '1') {
 }
 ?>
                         />
-                        <td style="vertical-align: top;">
-                           <form action="<?= BASE_URL?>/timesheets/slackMonthlyReportController/sendCsvFromProfilesThatHaveTickboxTrue" method="POST">
-                            <button type="submit" name="submitButton">Send to slack</button>
-                        </form>
                         <label for="paid"><?php echo $tpl->__('label.paid'); ?></label>
                     </td>
                     <td style="vertical-align: top;">
