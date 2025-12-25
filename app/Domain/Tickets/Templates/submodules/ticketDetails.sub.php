@@ -100,7 +100,7 @@ if ($currentUser && isset($currentUser['firstname'], $currentUser['lastname'])) 
                 <div class="form-group tw-flex tw-w-3/5">
                     <label class="control-label tw-mx-m tw-w-[100px]"><?php echo $tpl->__('label.editor'); ?></label>
                     <div class="">
-                        <?php 
+                        <?php
                         $oldEditorName = '';
                         foreach ($assignedUsers as $user) {
                             if ($user['id'] == $ticket->editorId) {
@@ -543,7 +543,7 @@ jQuery(document).ready(function($) {
                 $('.saveTicketBtn').trigger('click');
             }, 10);
         }
-    }, true); 
+    }, true);
 });
 </script>
 
