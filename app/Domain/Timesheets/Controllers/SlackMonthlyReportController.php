@@ -23,13 +23,16 @@ class SlackMonthlyReportController extends Controller
     }
 
    
-public function sendCsvFromAllProfiles(): Response
+public function sendCsvFromAllUsersProfiles(): Response
 {
-    $userId = session('userdata.id');
-    $allProfiles = $this->slackReportService->getAllProfiles($userId);
+    if(Auth::userIsAtLeast(Roles::$admin)) {
+        $userId = session('userdata.id');
+        $allProfiles = $this->slackReportService->getUsersProfilesWithEnabledAutoExport($userId);
 
-    $this->slackReportService->sendMonthlyReportToSlack($allProfiles);
+        $this->slackReportService->sendMonthlyReportToSlack($allProfiles);
 
+        return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
+    }
     return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
 }
 
@@ -37,7 +40,7 @@ public function sendCsvFromProfilesThatHaveTickboxTrue(): Response
 {
     if(Auth::userIsAtLeast(Roles::$admin)) {
         $userId = session('userdata.id');
-        $profilesWithEnabledAutoExport = $this->slackReportService->getProfilesWithEnabledAutoExport($userId);
+        $profilesWithEnabledAutoExport = $this->slackReportService->getAllProfiles();
 
         $this->slackReportService->sendMonthlyReportToSlack($profilesWithEnabledAutoExport);
 

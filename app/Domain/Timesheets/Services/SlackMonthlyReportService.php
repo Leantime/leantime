@@ -8,26 +8,29 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Leantime\Domain\Users\Services\Users as UserService;
 
 class SlackMonthlyReportService {
     private string $webhookUrl;
     private TimesheetService $timesheetsService;
     private TicketService $ticketService;
     private SettingRepository $settingRepository;
-
+    private UserService $userService;
     private \GuzzleHttp\Client $httpClient;
 
 public function __construct(
     TimesheetService $timesheetsService,
     TicketService $ticketService,
     SettingRepository $settingRepository,
-    \GuzzleHttp\Client $httpClient
+    \GuzzleHttp\Client $httpClient,
+    UserService $userService
 ) {
     $this->webhookUrl = env('SLACK_WEBHOOK_URL', '');
     $this->timesheetsService = $timesheetsService;
     $this->ticketService = $ticketService;
     $this->settingRepository = $settingRepository;
     $this->httpClient = $httpClient;
+    $this->userService = $userService;
 }
 
     private function getFiltersFromRequest(): array
@@ -93,7 +96,7 @@ public function __construct(
         ];
     }
 
-    public function getProfilesWithEnabledAutoExport(int $userId): array 
+    public function getUsersProfilesWithEnabledAutoExport(int $userId): array 
 {
     $settingKey = "user.{$userId}.timesheetFilters";
     $preferences = $this->settingRepository->getSetting($settingKey);
@@ -120,7 +123,7 @@ public function __construct(
     return $autoExportProfiles;
 }
 
-public function getAllProfiles(int $userId): array {
+public function getAllUsersProfiles(int $userId): array {
     $settingKey = "user.{$userId}.timesheetFilters";
     $preferences = $this->settingRepository->getSetting($settingKey);
     
@@ -139,8 +142,23 @@ public function getAllProfiles(int $userId): array {
     return $preferences;
 }
 
+public function getAllProfiles(): array {
+    $allUsers = $this->userService->getAll();
+    $allProfiles = [];
+    foreach ($allUsers as $user) {
+        $userId = $user['id'];
+        $profiles = $this->getAllUsersProfiles($userId);
+        if (!empty($profiles)) {
+            $allProfiles[$userId] = $profiles;
+        }
+    }
+    return $allProfiles;
+}
+
    public function sendMonthlyReportToSlack($profilesWithEnabledAutoExport): void
 {
+    $allUsers = $this->userService->getAll();
+    $allProfiles = [];
     foreach ($profilesWithEnabledAutoExport as $profileName => $profile) {
         $filters = [
             'dateFrom' => isset($profile['dateFrom']) ? dtHelper()->parseUserDateTime($profile['dateFrom'])->setToDbTimezone() : dtHelper()->userNow()->startOfMonth()->setToDbTimezone(),
@@ -156,10 +174,12 @@ public function getAllProfiles(int $userId): array {
         ];
 
         $columnState = $profile['filters']['columnState'] ?? [];
+        $reportName = $profile['name'] ?? " ";
+        error_log("Generating report for profile: " . $profile['name']);
 
         $csvContent = $this->generateCsvString($filters, $columnState);
 
-        $this->sendCsvToSlack($csvContent, $profileName);
+        $this->sendCsvToSlack($csvContent, $reportName);
     }
 }
 
