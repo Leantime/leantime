@@ -39,10 +39,9 @@ public function sendCsvFromAllUsersProfiles(): Response
 public function sendCsvFromProfilesThatHaveTickboxTrue(): Response
 {
     if(Auth::userIsAtLeast(Roles::$admin)) {
-        $userId = session('userdata.id');
         $profilesWithEnabledAutoExport = $this->slackReportService->getAllProfiles();
 
-        $this->slackReportService->sendMonthlyReportToSlack($profilesWithEnabledAutoExport);
+        $this->slackReportService->sendAutomaticMonthlyReportToSlack($profilesWithEnabledAutoExport);
 
         return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
     }
