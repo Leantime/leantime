@@ -10,12 +10,12 @@
         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
         </a>
-        <ul class="dropdown-menu" 
+        <ul class="dropdown-menu"
             style="{{ ($isFirstColumn ?? false)
                 ? 'left:0; right:auto;'
                 : (($isLastColumn ?? false)
                     ? 'right:0; left:auto;'
-                    : '') }}">            
+                    : '') }}">
             <li class="nav-header">{{ __("subtitles.todo") }}</li>
             @dispatchEvent("beforeShowTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/showTicket/{{ $ticket["id"] }}" class=''><i class="fa fa-edit"></i> {{  __("links.edit_todo") }}</a></li>
@@ -42,6 +42,17 @@
         <input type="hidden" name="planHours" value="<?=  $ticket['planHours'] ?>">
         <input type="hidden" name="hourRemaining" value="<?=  $ticket['hourRemaining'] ?>">
         <button type="submit" class="submit_button"><i class="fa fa-clone"></i> Clone To-Do</button>
+    </form></li>
+            <li><form method="POST" action="<?= BASE_URL ?>/tickets/pinTicket" >
+        <input type="hidden" name="id" value="<?= $ticket['id'] ?>">
+        <?php
+            $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
+            $isPinned = $ticketService->isTicketPinned($ticket['id'], session('currentProject'));
+        ?>
+        <button type="submit" class="submit_button">
+            <i class="fa fa-thumbtack" style="{{ $isPinned ? 'transform: rotate(45deg);' : '' }}"></i>
+            {{ $isPinned ? 'Unpin Ticket' : 'Pin Ticket' }}
+        </button>
     </form></li>
             @dispatchEvent("beforeDeleteTicket", ["ticket"=>$ticket])
             <li><a href="#/tickets/delTicket/{{ $ticket["id"] }}" class="delete"><i class="fa fa-trash"></i> {{  __("links.delete_todo") }}</a></li>

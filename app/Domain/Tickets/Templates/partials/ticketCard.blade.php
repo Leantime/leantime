@@ -1,4 +1,4 @@
-<div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
+<div class="ticketBox fixed priority-border-{{ $row['priority'] }} {{ isset($row['pinned']) && $row['pinned'] ? 'pinned-ticket' : '' }}" data-val="{{ $row['id'] }}">
     <div class="row">
         <div class="col-md-8 titleContainer">
             @if($cardType == "full")
@@ -7,7 +7,12 @@
                     <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ $row['parentHeadline'] }}</a> //
                 @endif
             @endif
-            <strong><a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a></strong>
+            <strong>
+                @if(isset($row['pinned']) && $row['pinned'])
+                    <i class="fa fa-thumbtack" style="color: var(--accent2); margin-right: 5px; transform: rotate(45deg);" data-tippy-content="{{ __('text.pinned_ticket') }}"></i>
+                @endif
+                <a href="#/tickets/showTicket/{{ $row['id'] }}" >{{ $row['headline'] }}</a>
+            </strong>
 
         </div>
         <div class="col-md-4 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
@@ -137,3 +142,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    .pinned-ticket {
+        box-shadow: 0 2px 8px rgba(0, 94, 168, 0.15) !important;
+        border-left: 3px solid var(--accent2) !important;
+    }
+    
+    .pinned-ticket:hover {
+        box-shadow: 0 4px 12px rgba(0, 94, 168, 0.25) !important;
+    }
+</style>

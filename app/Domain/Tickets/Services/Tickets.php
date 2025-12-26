@@ -590,6 +590,14 @@ class Tickets
             $searchCriteria['orderBy'] ?? 'date'
         );
 
+        // Apply pinned sorting if project is set
+        if (session()->exists('currentProject')) {
+            $tickets = $this->sortTicketsWithPinned(
+                $tickets,
+                (int) session('currentProject')
+            );
+        }
+
         if (
             $searchCriteria['groupBy'] == null
             || $searchCriteria['groupBy'] == ''
@@ -714,6 +722,18 @@ class Tickets
             default:
                 $ticketGroups = array_sort($ticketGroups, 'label');
                 break;
+        }
+
+        // Apply pinned sorting to items within each group if project is set
+        if (session()->exists('currentProject')) {
+            foreach ($ticketGroups as $key => $group) {
+                if (isset($group['items']) && is_array($group['items'])) {
+                    $ticketGroups[$key]['items'] = $this->sortTicketsWithPinned(
+                        $group['items'],
+                        (int) session('currentProject')
+                    );
+                }
+            }
         }
 
         return $ticketGroups;
@@ -1841,22 +1861,35 @@ public function patch($id, $params): bool
         return false;
     }
 
-    $oldValues = [];
-    $fieldsToLog = ['priority', 'storypoints', 'editorId'];
-    
-    foreach ($fieldsToLog as $field) {
-        if (isset($params[$field])) {
-            $oldValues[$field] = $ticket->$field ?? null;
+        $params = $this->prepareTicketDates($params);
+
+        // Auto-unpin if status is changing
+        if (isset($params['status']) && session()->exists('currentProject')) {
+            $oldStatus = $ticket->status;
+            $newStatus = (int) $params['status'];
+
+            if ($oldStatus != $newStatus) {
+                $projectId = (int) session('currentProject');
+                if ($this->isTicketPinned($id, $projectId)) {
+                    $this->unpinTicket($id, $projectId);
+                }
+            }
         }
-    }
 
-    $params = $this->prepareTicketDates($params);
+        $oldValues = [];
+        $fieldsToLog = ['priority', 'storypoints', 'editorId'];
 
-    $return = $this->ticketRepository->patchTicket($id, $params);
+        foreach ($fieldsToLog as $field) {
+            if (isset($params[$field])) {
+                $oldValues[$field] = $ticket->$field ?? null;
+            }
+        }
 
-    if ($return) {
-        $this->logPatchChanges($id, $oldValues, $params, $ticket);
-    }
+        $return = $this->ticketRepository->patchTicket($id, $params);
+
+        if ($return) {
+            $this->logPatchChanges($id, $oldValues, $params, $ticket);
+        }
 
     self::dispatchEvent('ticket_updated');
 
@@ -1894,7 +1927,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
             $priorities = $this->getPriorityLabels();
             $oldPriorityText = $priorities[$oldValues['priority']] ?? 'Priority not defined';
             $newPriorityText = $priorities[$newParams['priority']] ?? 'Priority not defined';
-            
+
             $ticketHistoryModel->addStatusChange(
                 $ticketId,
                 $oldValues['priority'],
@@ -1910,7 +1943,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
             $efforts = $this->getEffortLabels();
             $oldEffortText = $efforts[$oldValues['storypoints']] ?? 'Effort not defined';
             $newEffortText = $efforts[$newParams['storypoints']] ?? 'Effort not defined';
-            
+
             $ticketHistoryModel->addStatusChange(
                 $ticketId,
                 $oldValues['storypoints'],
@@ -1924,7 +1957,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
 
         if (isset($newParams['editorId']) && isset($oldValues['editorId']) && $oldValues['editorId'] != $newParams['editorId']) {
             $users = $this->ticketRepository->getUsersAssignedToProject(session('currentProject'));
-            
+
             $oldEditorText = 'Not assigned';
             foreach ($users as $user) {
                 if ($user['id'] == $oldValues['editorId']) {
@@ -1932,7 +1965,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
                     break;
                 }
             }
-            
+
             $newEditorText = 'Not assigned';
             if ($newParams['editorId']) {
                 foreach ($users as $user) {
@@ -1942,7 +1975,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
                     }
                 }
             }
-            
+
             $ticketHistoryModel->addStatusChange(
                 $ticketId,
                 $oldValues['editorId'],
@@ -2140,12 +2173,12 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
                         try {
                             $statusLabels = $this->getStatusLabels();
                             $currentUserName = session('userdata.name') ?? 'Unknown User';
-                            
+
                             $oldStatusText = $statusLabels[$oldStatus]['name'] ?? 'Unknown';
                             $newStatusText = $statusLabels[$status]['name'] ?? 'Unknown';
-                            
+
                             $ticketHistoryModel = app()->make(\Leantime\Domain\Tickets\Models\TicketHistoryModel::class);
-                            
+
                             $ticketHistoryModel->addStatusChange(
                                 $id,
                                 $oldStatus,
@@ -2157,6 +2190,14 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
                             );
                         } catch (\Exception $e) {
                             error_log('Failed to log kanban status change: ' . $e->getMessage());
+                        }
+
+                        // Auto-unpin if moved to different column
+                        if (session()->exists('currentProject')) {
+                            $projectId = (int) session('currentProject');
+                            if ($this->isTicketPinned($id, $projectId)) {
+                                $this->unpinTicket($id, $projectId);
+                            }
                         }
                     }
                 }
@@ -2172,7 +2213,7 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
             if ($ticket) {
                 $subject = sprintf($this->language->__('email_notifications.todo_update_subject'), $id, strip_tags($ticket->headline));
                 $actual_link = BASE_URL.'/dashboard/home#/tickets/showTicket/'.$id;
-                $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline)); 
+                $message = sprintf('%1$s has the ticket ready to test: \'%2$s\'', session('userdata.name'), strip_tags($ticket->headline));
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = [
@@ -3306,5 +3347,143 @@ private function logPatchChanges($ticketId, $oldValues, $newParams, $oldTicket)
         }
 
         return $todo;
+    }
+
+    /**
+     * Get pinned tickets for a user in a project
+     */
+    public function getPinnedTickets(int $projectId): array
+    {
+        $key = "pinnedTickets.project_{$projectId}";
+        $pinnedJson = $this->settingsRepo->getSetting($key, '[]');
+
+        $pinned = json_decode($pinnedJson, true);
+        return is_array($pinned) ? $pinned : [];
+    }
+
+    /**
+     * Pin a ticket for a user in a project
+     */
+    public function pinTicket(int $ticketId, int $projectId): bool
+    {
+        $pinned = $this->getPinnedTickets($projectId);
+
+        if (!in_array($ticketId, $pinned)) {
+            $pinned[] = $ticketId;
+            $key = "pinnedTickets.project_{$projectId}";
+            return $this->settingsRepo->saveSetting($key, json_encode($pinned));
+        }
+
+        return true;
+    }
+
+    /**
+     * Unpin a ticket for a user in a project
+     */
+    public function unpinTicket(int $ticketId, int $projectId): bool
+    {
+        $pinned = $this->getPinnedTickets($projectId);
+
+        $index = array_search($ticketId, $pinned);
+        if ($index !== false) {
+            unset($pinned[$index]);
+            $pinned = array_values($pinned); // Reindex array
+            $key = "pinnedTickets.project_{$projectId}";
+            return $this->settingsRepo->saveSetting($key, json_encode($pinned));
+        }
+
+        return true;
+    }
+
+    /**
+     * Unpin a ticket and update its position to stay at the top
+     */
+    public function unpinTicketAndKeepPosition(int $ticketId, int $projectId, int $status): bool
+    {
+        // First unpin the ticket
+        if (!$this->unpinTicket($ticketId, $projectId)) {
+            return false;
+        }
+
+        // Get all tickets in the same column (status)
+        $searchCriteria = $this->prepareTicketSearchArray([
+            'currentProject' => $projectId,
+            'status' => $status
+        ]);
+
+        $tickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, 'kanbansort', null, false);
+
+        if (empty($tickets)) {
+            return true;
+        }
+
+        // Find the minimum kanbanSortIndex among unpinned tickets
+        $minSortIndex = PHP_INT_MAX;
+        $pinnedTickets = $this->getPinnedTickets($projectId);
+
+        foreach ($tickets as $ticket) {
+            // Skip pinned tickets and the ticket we're unpinning
+            if (!in_array($ticket['id'], $pinnedTickets) && $ticket['id'] != $ticketId) {
+                // Check if kanbanSortIndex exists and is set
+                $sortIndex = isset($ticket['kanbanSortIndex']) ? (int)$ticket['kanbanSortIndex'] : 0;
+                if ($sortIndex < $minSortIndex) {
+                    $minSortIndex = $sortIndex;
+                }
+            }
+        }
+
+        // This keeps it at the top of unpinned tickets
+        $newSortIndex = ($minSortIndex === PHP_INT_MAX) ? 100 : max(0, $minSortIndex - 100);
+
+        // Update the ticket's kanbanSortIndex
+        return $this->ticketRepository->patchTicket($ticketId, ['kanbanSortIndex' => $newSortIndex]);
+    }
+
+    /**
+     * Check if a ticket is pinned
+     */
+    public function isTicketPinned(int $ticketId, int $projectId): bool
+    {
+        $pinned = $this->getPinnedTickets($projectId);
+        return in_array($ticketId, $pinned);
+    }
+
+    /**
+     * Sort tickets to put pinned ones first
+     */
+    public function sortTicketsWithPinned(array $tickets, int $projectId): array
+    {
+        $pinned = $this->getPinnedTickets($projectId);
+
+        if (empty($pinned)) {
+            return $tickets;
+        }
+
+        // Separate pinned and unpinned tickets
+        $pinnedTickets = [];
+        $unpinnedTickets = [];
+
+        foreach ($tickets as $ticket) {
+            $ticketId = is_array($ticket) ? $ticket['id'] : $ticket->id;
+            if (in_array($ticketId, $pinned)) {
+                // Add pinned flag
+                if (is_array($ticket)) {
+                    $ticket['pinned'] = true;
+                } else {
+                    $ticket->pinned = true;
+                }
+                $pinnedTickets[] = $ticket;
+            } else {
+                if (is_array($ticket)) {
+                    $ticket['pinned'] = false;
+                } else {
+                    $ticket->pinned = false;
+                }
+                $unpinnedTickets[] = $ticket;
+            }
+        }
+
+        // Return pinned tickets first, then unpinned
+        return array_merge($pinnedTickets, $unpinnedTickets);
     }
 }

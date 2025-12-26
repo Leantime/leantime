@@ -61,6 +61,17 @@ $todoTypeIcons = $tpl->get('ticketTypeIcons');
         <input type="hidden" name="hourRemaining" value="<?=  $ticket->hourRemaining?>">
         <button type="submit" class="button-primary"><i class="fa fa-clone"></i> Clone To-Do</button>
     </form></li>
+                <li><form method="POST" action="<?= BASE_URL ?>/tickets/pinTicket" style="margin: 0;">
+        <input type="hidden" name="id" value="<?= $ticket->id ?>">
+        @php
+            $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
+            $isPinned = $ticketService->isTicketPinned($ticket->id, session('currentProject'));
+        @endphp
+        <button type="submit" class="button-primary" style="width: 100%; text-align: left;">
+            <i class="fa fa-thumbtack" style="{{ $isPinned ? 'transform: rotate(45deg);' : '' }}"></i>
+            {{ $isPinned ? 'Unpin Ticket' : 'Pin Ticket' }}
+        </button>
+    </form></li>
                 <li class="nav-header border"><?php echo $tpl->__('subtitles.track_time'); ?></li>
                 <li id="timerContainer-ticketDetails-{{ $ticket->id }}"
                     hx-get="{{BASE_URL}}/tickets/timerButton/get-status/{{ $ticket->id }}"
