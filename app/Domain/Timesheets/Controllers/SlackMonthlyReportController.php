@@ -35,11 +35,14 @@ public function sendCsvFromAllProfiles(): Response
 
 public function sendCsvFromProfilesThatHaveTickboxTrue(): Response
 {
-    $userId = session('userdata.id');
-    $profilesWithEnabledAutoExport = $this->slackReportService->getProfilesWithEnabledAutoExport($userId);
+    if(Auth::userIsAtLeast(Roles::$admin)) {
+        $userId = session('userdata.id');
+        $profilesWithEnabledAutoExport = $this->slackReportService->getProfilesWithEnabledAutoExport($userId);
 
-    $this->slackReportService->sendMonthlyReportToSlack($profilesWithEnabledAutoExport);
+        $this->slackReportService->sendMonthlyReportToSlack($profilesWithEnabledAutoExport);
 
+        return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
+    }
     return Frontcontroller::redirect(BASE_URL.'/timesheets/showAll');
 }
 }
