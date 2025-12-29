@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "Deploying to STAGING"
 
-          # Deploy using git pull on server
+          # Deploy using git pull
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << ENDSSH
             set -e  # Exit on error
 
