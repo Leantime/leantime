@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - bugfix/#4973-fix-production-cicd
+      - master
   workflow_dispatch:
 
 jobs:
@@ -111,7 +111,7 @@ jobs:
           fi
 
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/bugfix/#4973-fix-production-cicd'
+        if: github.ref == 'refs/heads/master'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
