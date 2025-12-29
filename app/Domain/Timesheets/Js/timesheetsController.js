@@ -114,10 +114,11 @@ leantime.timesheetsController = (function () {
         var canvasoptions = {
             sizes: {
                 minW:  700,
+                maxW:  1000,
                 minH: 1000,
             },
-            resizable: true,
-            autoSizable: true,
+            resizable: false,
+            autoSizable: false,
             callbacks: {
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();

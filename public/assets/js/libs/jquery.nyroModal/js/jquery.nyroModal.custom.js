@@ -194,9 +194,17 @@ jQuery(function($, undefined) {
                         this.sizes.w = this.sizes.minW;
                     }
 
+                    if (this.sizes.maxW && this.sizes.maxW < this.sizes.w) {
+                        this.sizes.w = this.sizes.maxW;
+                    }
+
                     if (this.sizes.minH && this.sizes.minH > this.sizes.h) {
                         this.sizes.h = this.sizes.minH;
 
+                    }
+
+                    if (this.sizes.maxH && this.sizes.maxH < this.sizes.h) {
+                        this.sizes.h = this.sizes.maxH;
                     }
 
                     if (this.sizes.h > maxHeight || this.sizes.w > maxWidth) {
