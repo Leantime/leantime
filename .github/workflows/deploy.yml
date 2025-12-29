@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - master
+      - bugfix/#4973-fix-production-cicd
   workflow_dispatch:
 
 jobs:
@@ -56,6 +56,7 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction
 
             echo "Installing NPM dependencies..."
+            npm ci
 
             echo "Building frontend assets..."
             npx mix --production
@@ -110,7 +111,7 @@ jobs:
           fi
 
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/bugfix/#4973-fix-production-cicd'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
